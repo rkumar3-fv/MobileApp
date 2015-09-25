@@ -1,45 +1,48 @@
 ﻿namespace FreedomVoice.Core
 {
+    using System.Collections.Generic;
     using System.IO;
     using System.Net;
     using System.Text;
     using System.Threading.Tasks;
+    using Entities;
+    using Entities.Base;
+    using Newtonsoft.Json;
 
     public static class ApiHelper
     {
         public static CookieContainer CookieContainer { get; set; }
 
-        public static string Login(string login, string password)
+        public static BaseResult<string> Login(string login, string password)
         {
             CookieContainer = new CookieContainer();
             var postdata = string.Format("UserName={0}&Password={1}", login, password);
-            var res = MakeAsyncPostRequest("/api/v1/login", postdata, "application/x-www-form-urlencoded").Result;
-            return string.IsNullOrEmpty(res) ? "success" : res;
+            return MakeAsyncPostRequest<string>("/api/v1/login", postdata, "application/x-www-form-urlencoded").Result;
         }
 
-        public static string GetSystems()
+        public static BaseResult<DefaultPhoneNumbers> GetSystems()
         {
-            return MakeAsyncGetRequest("/api/v1/systems", "application/json").Result;
+            return MakeAsyncGetRequest<DefaultPhoneNumbers>("/api/v1/systems", "application/json").Result;
         }
 
-        public static string GetMailboxes(string systemPhoneNumber)
+        public static BaseResult<List<Mailbox>> GetMailboxes(string systemPhoneNumber)
         {
-            return MakeAsyncGetRequest(string.Format("/api/v1/systems/{0}/mailboxes", systemPhoneNumber), "application/json").Result;
+            return MakeAsyncGetRequest<List<Mailbox>>(string.Format("/api/v1/systems/{0}/mailboxes", systemPhoneNumber), "application/json").Result;
         }
 
-        public static string GetMailboxesWithCounts(string systemPhoneNumber)
+        public static BaseResult<List<MailboxWithCount>> GetMailboxesWithCounts(string systemPhoneNumber)
         {
-            return MakeAsyncGetRequest(string.Format("/api/v1/systems/{0}/mailboxesWithCounts", systemPhoneNumber), "application/json").Result;
+            return MakeAsyncGetRequest<List<MailboxWithCount>>(string.Format("/api/v1/systems/{0}/mailboxesWithCounts", systemPhoneNumber), "application/json").Result;
         }
 
-        public static string GetFolders(string systemPhoneNumber, int mailboxNumber)
+        public static BaseResult<List<Folder>> GetFolders(string systemPhoneNumber, int mailboxNumber)
         {
-            return MakeAsyncGetRequest(string.Format("/api/v1/systems/{0}/mailboxes/{1}/folders", systemPhoneNumber, mailboxNumber), "application/json").Result;
+            return MakeAsyncGetRequest<List<Folder>>(string.Format("/api/v1/systems/{0}/mailboxes/{1}/folders", systemPhoneNumber, mailboxNumber), "application/json").Result;
         }
 
-        public static string GetMesages(string systemPhoneNumber, int mailboxNumber, string folderName, int pageSize, int pageNumber, bool asc)
+        public static BaseResult<List<Message>> GetMesages(string systemPhoneNumber, int mailboxNumber, string folderName, int pageSize, int pageNumber, bool asc)
         {
-            return MakeAsyncGetRequest(string.Format("/api/v1/systems/{0}/mailboxes/{1}/folders/{2}/messages?PageSize={3}&PageNumber={4}&SortAsc={5}", systemPhoneNumber, mailboxNumber, folderName, pageSize, pageNumber, asc), "application/json").Result;
+            return MakeAsyncGetRequest<List<Message>>(string.Format("/api/v1/systems/{0}/mailboxes/{1}/folders/{2}/messages?PageSize={3}&PageNumber={4}&SortAsc={5}", systemPhoneNumber, mailboxNumber, folderName, pageSize, pageNumber, asc), "application/json").Result;
         }
 
         private static HttpWebRequest GetRequest(string url, string method, string contentType)
@@ -51,7 +54,7 @@
             return request;
         }
 
-        private static async Task<string> MakeAsyncPostRequest(string url, string postData, string contentType)
+        private static async Task<BaseResult<T>> MakeAsyncPostRequest<T>(string url, string postData, string contentType)
         {
             var request = GetRequest(url, "POST", contentType);
 
@@ -62,36 +65,67 @@
 
             SetRequestStreamData(requestStreamTask, GetRequestBytes(postData));
 
-            Task<WebResponse> task = Task.Factory.FromAsync<WebResponse>(request.BeginGetResponse, request.EndGetResponse, null);
-
-            try
-            {
-                var response = await task;
-                return ReadStreamFromResponse(response);
-            }
-            catch (WebException ex)
-            {
-                var resp = (HttpWebResponse) ex.Response;
-                return resp.StatusCode.ToString();
-            }
+            return await GetResponce<T>(request);
 
         }
 
-        private static async Task<string> MakeAsyncGetRequest(string url, string contentType)
+        private static async Task<BaseResult<T>> MakeAsyncGetRequest<T>(string url, string contentType)
         {
             var request = GetRequest(url, "GET", contentType);
 
+            return await GetResponce<T>(request);
+        }
+
+
+        private static async Task<BaseResult<T>> GetResponce<T>(HttpWebRequest request)
+        {
             Task<WebResponse> task = Task.Factory.FromAsync<WebResponse>(request.BeginGetResponse, request.EndGetResponse, null);
+
+            BaseResult<T> retResult = null;
             try
             {
                 var response = await task;
-                return ReadStreamFromResponse(response);
+                retResult = new BaseResult<T>
+                {
+                    Code = HttpStatusCode.OK,
+                    Result = JsonConvert.DeserializeObject<T>(ReadStreamFromResponse(response))
+                };
             }
             catch (WebException ex)
             {
                 var resp = (HttpWebResponse)ex.Response;
-                return resp.StatusCode.ToString();
+                if (resp != null)
+                {
+                    switch (resp.StatusCode)
+                    {
+                        case HttpStatusCode.Unauthorized:
+                            {
+                                retResult = new BaseResult<T>
+                                {
+                                    Code = HttpStatusCode.Unauthorized,
+                                    Result = default(T)
+                                };
+                                break;
+                            }
+
+                        case HttpStatusCode.BadRequest:
+                            {
+                                retResult = new BaseResult<T>
+                                {
+                                    Code = HttpStatusCode.BadRequest,
+                                    Result = default(T)
+                                };
+                                break;
+                            }
+                    }
+                }
+                else
+                {
+                    throw ex;
+                }
             }
+
+            return retResult;
         }
 
         private static void SetRequestStreamData(Stream response, byte[] postData)
