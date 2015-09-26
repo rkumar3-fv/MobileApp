@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="ApplicationName">FreedomVoice</string>
+  <string name="ApplicationTitle">Freedom Voice</string>
+  <string name="ActivityAuth_title">Auth</string>
+  <string name="ActivityAuth_loginLabel">Login</string>
+  <string name="ActivityAuth_passwordLabel">Password</string>
+  <string name="ActivityAuth_authButton">Authorize</string>
+  <string name="ActivityAuth_restoreButton">Forgot your password?</string>
+  <string name="ActivityAuth_incorrectPassword">Incorrect password</string>
+  <string name="ActivityAuth_connectionError">Connection error</string>
+  <string name="ActivityAuth_connectionTryAgain">Try again</string>
+</resources>
