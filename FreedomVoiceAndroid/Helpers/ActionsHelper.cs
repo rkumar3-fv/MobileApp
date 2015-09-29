@@ -1,5 +1,7 @@
+using Android.Content;
 using Android.OS;
 using Android.Support.V4.Util;
+using com.FreedomVoice.MobileApp.Android.Services;
 using Java.Util.Concurrent.Atomic;
 
 namespace com.FreedomVoice.MobileApp.Android.Helpers
@@ -11,10 +13,11 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
     /// <param name="args">ActionsHelperEventArgs</param>
     public delegate void ActionsHelperEvent(object sender, ActionsHelperEventArgs args);
 
-    public class ActionsHelper
+    public class ActionsHelper : IComServiceResultReceiver
     {
         public event ActionsHelperEvent HelperEvent;
         private readonly App _app;
+        private readonly ComServiceResultReceiver _receiver;
         private readonly LongSparseArray _requestArray;
         private readonly AtomicLong _idCounter;
 
@@ -23,6 +26,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             _app = app;
             _idCounter = new AtomicLong();
             _requestArray = new LongSparseArray();
+            _receiver = new ComServiceResultReceiver(new Handler());
         }
 
         /// <summary>
@@ -57,8 +61,21 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         public long Authorize(string login, string password)
         {
             var requestId = RequestId;
-            //TODO: run Authorize action in service
+            var intent = new Intent(_app, typeof(ComService));
+            intent.PutExtra(ComService.RequestIdTag, requestId);
+            intent.PutExtra(ComServiceResultReceiver.ReceiverTag, _receiver);
+            _app.StartService(intent);
             return requestId;
+        }
+
+        /// <summary>
+        /// Responses from ComService
+        /// </summary>
+        /// <param name="resultCode">result code</param>
+        /// <param name="resultData">result data bundle</param>
+        public void OnReceiveResult(int resultCode, Bundle resultData)
+        {
+            
         }
     }
 }
