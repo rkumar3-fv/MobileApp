@@ -7,6 +7,7 @@
     using System.Threading.Tasks;
     using Entities;
     using Entities.Base;
+    using Entities.Enums;
     using Newtonsoft.Json;
 
     public static class ApiHelper
@@ -45,6 +46,11 @@
             return MakeAsyncGetRequest<List<Message>>(string.Format("/api/v1/systems/{0}/mailboxes/{1}/folders/{2}/messages?PageSize={3}&PageNumber={4}&SortAsc={5}", systemPhoneNumber, mailboxNumber, folderName, pageSize, pageNumber, asc), "application/json").Result;
         }
 
+        public static Stream GetMedia(string systemPhoneNumber, int mailboxNumber, string folderName, string messageId, MediaType mediaType)
+        {
+            return MakeAsyncFileDownload(string.Format("/api/v1/systems/{0}/mailboxes/{1}/folders/{2}/messages/{3}/media/{4}", systemPhoneNumber, mailboxNumber, folderName, messageId, mediaType), "application/json").Result;
+        }
+
         private static HttpWebRequest GetRequest(string url, string method, string contentType)
         {
             var request = (HttpWebRequest)WebRequest.Create(WebResources.AppUrl + url);
@@ -76,6 +82,17 @@
             return await GetResponce<T>(request);
         }
 
+
+        private static async Task<Stream> MakeAsyncFileDownload(string url, string contentType)
+        {
+            var request = GetRequest(url, "GET", contentType);
+
+            Task<WebResponse> task = Task.Factory.FromAsync<WebResponse>(request.BeginGetResponse, request.EndGetResponse, null);
+
+            var response = await task;
+
+            return response.GetResponseStream();
+        }
 
         private static async Task<BaseResult<T>> GetResponce<T>(HttpWebRequest request)
         {
