@@ -3,13 +3,14 @@
     using System;
     using Enums;
     using Newtonsoft.Json;
+    using Newtonsoft.Json.Converters;
 
     public class Message
     {
         [JsonProperty("Id")]
         public string Id { get; set; }
 
-        [JsonProperty("MessageType")]
+        [JsonConverter(typeof(StringEnumConverter))]
         public MessageType Type { get; set; }
 
         [JsonProperty("Name")]
