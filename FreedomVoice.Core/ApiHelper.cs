@@ -48,7 +48,7 @@
 
         public static Stream GetMedia(string systemPhoneNumber, int mailboxNumber, string folderName, string messageId, MediaType mediaType)
         {
-            return MakeAsyncFileDownload(string.Format("/api/v1/systems/{0}/mailboxes/{1}/folders/{2}/messages/{3}/media/{4}", systemPhoneNumber, mailboxNumber, folderName, messageId, "Pdf"), "application/json").Result;
+            return MakeAsyncFileDownload(string.Format("/api/v1/systems/{0}/mailboxes/{1}/folders/{2}/messages/{3}/media/{4}", systemPhoneNumber, mailboxNumber, folderName, messageId, mediaType), "application/json").Result;
         }
 
         private static HttpWebRequest GetRequest(string url, string method, string contentType)

@@ -2,9 +2,8 @@
 {
     using System;
     using System.IO;
-    using Aspose.Pdf.Generator;
     using FreedomVoice.Core;
-    using MediaType = FreedomVoice.Core.Entities.Enums.MediaType;
+    using FreedomVoice.Core.Entities.Enums;
 
     class Program
     {
@@ -28,9 +27,8 @@
             Console.Write(Environment.NewLine);
 
 
-            var str = MediaType.Mp3.ToString();
 
-            var res = ApiHelper.GetMedia("7607124648", 802, "Sent", "I160057839", MediaType.Mp3);
+            var res = ApiHelper.GetMedia("7607124648", 802, "Sent", "I160057839", MediaType.Wav);
             using (MemoryStream ms = new MemoryStream())
             {
                 res.CopyTo(ms);
