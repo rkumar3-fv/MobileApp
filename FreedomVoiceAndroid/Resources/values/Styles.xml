@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<resources>
+  <!-- Activity w/o action bar theme -->
+  <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <item name="colorPrimary">@color/colorPrimary</item>
+    <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+    <item name="android:windowBackground">@color/colorBackground</item>
+    <item name="colorAccent">@color/colorBaseControls</item>
+    <item name="colorControlActivated">@color/colorActivatedControls</item>
+    <item name="colorControlNormal">@color/colorBaseControls</item>
+  </style>
+
+  <!-- Activity w/ action bar theme -->
+  <style name="AppThemeActionBar" parent="Theme.AppCompat.Light">
+    <item name="colorPrimary">@color/colorPrimary</item>
+    <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+    <item name="android:windowBackground">@color/colorBackground</item>
+    <item name="colorAccent">@color/colorBaseControls</item>
+    <item name="colorControlActivated">@color/colorActivatedControls</item>
+    <item name="colorControlNormal">@color/colorBaseControls</item>
+    <item name="android:actionBarStyle">@style/ActionBarTheme</item>
+    <item name="actionBarStyle">@style/ActionBarTheme</item>
+  </style>
+
+  <!-- ActionBar theme for AuthActivity -->
+  <style name="ActionBarTheme" parent="@style/Widget.AppCompat.ActionBar">
+    <item name="android:icon">@drawable/ic_launcher</item>
+    <item name="android:background">@color/colorPrimary</item>
+    <item name="android:displayOptions">showHome|showTitle</item>
+    <item name="displayOptions">showHome|showTitle</item>
+    <item name="android:icon">@drawable/ic_launcher</item>
+    <item name="icon">@drawable/ic_launcher</item>
+    <item name="background">@color/colorPrimary</item>
+    <item name="titleTextStyle">@style/Theme.MyAuthTheme.ActionBar.TitleTextStyle</item>
+  </style>
+
+  <!-- ActionBar title style -->
+  <style name="Theme.MyAuthTheme.ActionBar.TitleTextStyle" parent="android:style/TextAppearance.Holo.Widget.ActionBar.Title">
+    <item name="android:textColor">@color/colorActionBarText</item>
+  </style>
+  
+  <!-- Text styles -->
+  <style name="AuthLabelText">
+    <item name="android:textColor">@color/textColorSecondary</item>
+    <item name="android:textSize">@dimen/text_main</item>
+    <item name="android:lines">1</item>
+  </style>
+</resources>
