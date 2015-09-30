@@ -1,5 +1,6 @@
 using Android.App;
 using Android.OS;
+using com.FreedomVoice.MobileApp.Android.Helpers;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
 {
@@ -15,6 +16,15 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         {
             base.OnCreate(bundle);
             SetContentView(Resource.Layout.act_content);
+        }
+
+        /// <summary>
+        /// Helper event callback action
+        /// </summary>
+        /// <param name="args">Result args</param>
+        protected override void OnHelperEvent(ActionsHelperEventArgs args)
+        {
+            
         }
     }
 }

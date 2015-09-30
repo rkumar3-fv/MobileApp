@@ -2,6 +2,7 @@ using System;
 using Android.App;
 using Android.Content;
 using Android.Runtime;
+using com.FreedomVoice.MobileApp.Android.Helpers;
 
 namespace com.FreedomVoice.MobileApp.Android
 {
@@ -15,6 +16,8 @@ namespace com.FreedomVoice.MobileApp.Android
         Theme = "@style/AppTheme")]
     public class App : Application
     {
+        public const string RestoreUrl = "http://www.freedomvoice.com";
+
         /// <summary>
         /// Get app context
         /// </summary>
@@ -32,6 +35,12 @@ namespace com.FreedomVoice.MobileApp.Android
         public override void OnCreate()
         {
             base.OnCreate();
+            Helper = new ActionsHelper(this);
         }
+
+        /// <summary>
+        /// Application actions helper
+        /// </summary>
+        public ActionsHelper Helper { get; private set; }
     }
 }
