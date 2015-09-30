@@ -44,6 +44,7 @@
     <Compile Include="ApiHelper.cs" />
     <Compile Include="Entities\Base\BaseResult.cs" />
     <Compile Include="Entities\Enums\MediaType.cs" />
+    <Compile Include="Entities\Enums\ErrorCodes.cs" />
     <Compile Include="Entities\Enums\MessageType.cs" />
     <Compile Include="Entities\Folder.cs" />
     <Compile Include="Entities\Message.cs" />

@@ -1,10 +1,10 @@
 ﻿namespace FreedomVoice.Core.Entities.Base
 {
-    using System.Net;
+    using Enums;
 
     public class BaseResult<T>
     {
-        public HttpStatusCode Code { get; set; }
+        public ErrorCodes Code { get; set; }
 
         public T Result { get; set; }
     }
