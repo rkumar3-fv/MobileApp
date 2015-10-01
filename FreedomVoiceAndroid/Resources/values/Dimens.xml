@@ -19,4 +19,9 @@
   <dimen name="auth_activity_login_label_margin">60dp</dimen>
   <dimen name="auth_activity_elements_vertical_margin">16dp</dimen>
   <dimen name="auth_activity_text_horizontal_margin">32dp</dimen>
+  
+  <!-- Restore Activity -->
+  <dimen name="restore_activity_info_label_margin">32dp</dimen>
+  <dimen name="restore_activity_elements_vertical_margin">16dp</dimen>
+  <dimen name="restore_activity_text_horizontal_margin">32dp</dimen>
 </resources>

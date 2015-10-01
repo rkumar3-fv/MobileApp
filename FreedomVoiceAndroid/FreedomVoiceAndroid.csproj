@@ -70,6 +70,8 @@
     <Compile Include="Activities\AuthActivity.cs" />
     <Compile Include="Activities\BaseActivity.cs" />
     <Compile Include="Activities\ContentActivity.cs" />
+    <Compile Include="Activities\InactiveActivity.cs" />
+    <Compile Include="Activities\RestoreActivity.cs" />
     <Compile Include="App.cs" />
     <Compile Include="Helpers\ActionsHelper.cs" />
     <Compile Include="Helpers\ActionsHelperEventArgs.cs" />
@@ -91,6 +93,7 @@
     <None Include="packages.config" />
     <None Include="Properties\AndroidManifest.xml" />
     <AndroidResource Include="Resources\layout\act_content.axml" />
+    <AndroidResource Include="Resources\layout\act_inactive.axml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Assets\" />
@@ -144,6 +147,44 @@
       <Project>{f4fc9f9f-082c-4f29-977a-da7ec449ba56}</Project>
       <Name>FreedomVoice.Core</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\act_restore.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-hdpi\ic_action_back.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-hdpi\ic_action_logout.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-mdpi\ic_action_back.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-mdpi\ic_action_logout.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xhdpi\ic_action_back.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xhdpi\ic_action_logout.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxhdpi\ic_action_back.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxhdpi\ic_action_logout.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxxhdpi\ic_action_back.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxxhdpi\ic_action_logout.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\menu\menu_logout.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

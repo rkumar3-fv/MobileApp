@@ -16,8 +16,6 @@ namespace com.FreedomVoice.MobileApp.Android
         Theme = "@style/AppTheme")]
     public class App : Application
     {
-        public const string RestoreUrl = "http://www.freedomvoice.com";
-
         /// <summary>
         /// Get app context
         /// </summary>

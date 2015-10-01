@@ -4,7 +4,6 @@ using Android.Content;
 using Android.OS;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Helpers;
-using Uri = Android.Net.Uri;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
 {
@@ -15,14 +14,14 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         Label = "@string/ApplicationTitle", 
         MainLauncher = true, 
         Icon = "@mipmap/ic_launcher", 
-        Theme = "@style/AppThemeActionBar",
-        NoHistory = true)]
+        Theme = "@style/AppThemeActionBar")]
     public class AuthActivity : BaseActivity
     {
         private Button _authButton;
         private Button _forgotButton;
         private EditText _loginText;
         private EditText _passwordText;
+        private TextView _errorText;
 
         protected override void OnCreate(Bundle bundle)
         {
@@ -32,10 +31,10 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             _forgotButton = FindViewById<Button>(Resource.Id.authActivity_restoreButton);
             _loginText = FindViewById<EditText>(Resource.Id.authActivity_loginField);
             _passwordText = FindViewById<EditText>(Resource.Id.authActivity_passwordField);
+            _errorText = FindViewById<TextView>(Resource.Id.authActivity_errorText);
 
             _authButton.Click += AuthButtonOnClick;
             _forgotButton.Click += ForgotButtonOnClick;
-            
         }
 
         /// <summary>
@@ -47,14 +46,12 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             _authButton.Enabled = false;
         }
 
-
         /// <summary>
         /// Restore password in browser
         /// </summary>
         private void ForgotButtonOnClick(object sender, EventArgs e)
-        {
-            var uri = Uri.Parse(App.RestoreUrl);
-            var intent = new Intent(Intent.ActionView, uri);
+        {            
+            var intent = new Intent(this, typeof(RestoreActivity));
             StartActivity(intent);
         }
 

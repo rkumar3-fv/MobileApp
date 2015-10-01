@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:layout_marginTop="@dimen/activity_vertical_margin"
+    android:layout_marginBottom="@dimen/activity_vertical_margin"
+    android:layout_marginStart="@dimen/activity_horizontal_margin"
+    android:layout_marginEnd="@dimen/activity_horizontal_margin">
+  <TextView
+      android:layout_height="wrap_content"
+      android:layout_width="match_parent"
+      android:lines="2"
+      style="@style/AuthLabelText"
+      android:text="@string/ActivityRestore_description"
+      android:layout_marginTop="@dimen/restore_activity_info_label_margin"
+      android:layout_marginStart="@dimen/restore_activity_text_horizontal_margin"
+      android:layout_marginEnd="@dimen/restore_activity_text_horizontal_margin"/>
+  <TextView
+        style="@style/AuthLabelText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/ActivityRestore_emailLabel"
+        android:layout_marginStart="@dimen/restore_activity_text_horizontal_margin"
+        android:layout_marginEnd="@dimen/restore_activity_text_horizontal_margin"
+        android:layout_marginTop="@dimen/restore_activity_elements_vertical_margin" />
+  <EditText
+        android:id="@+id/restoreActivity_emailField"
+        android:textColor="@color/colorBaseControls"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxLength="50"
+        android:inputType="textEmailAddress"
+        android:layout_marginTop="@dimen/restore_activity_elements_vertical_margin"
+        android:layout_marginStart="@dimen/restore_activity_text_horizontal_margin"
+        android:layout_marginEnd="@dimen/restore_activity_text_horizontal_margin"
+        android:lines="1" />
+  <Button
+        android:id="@+id/restoreActivity_sendButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/ActivityRestore_sendButton"
+        android:layout_marginTop="@dimen/restore_activity_elements_vertical_margin"
+        android:layout_marginStart="@dimen/restore_activity_text_horizontal_margin"
+        android:layout_marginEnd="@dimen/restore_activity_text_horizontal_margin"
+        android:textAlignment="center" />
+  <TextView
+        android:id="@+id/restoreActivity_resultText"
+        style="@style/AuthLabelText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        android:layout_marginTop="@dimen/restore_activity_elements_vertical_margin"/>
+</LinearLayout>
