@@ -1417,8 +1417,8 @@ namespace com.FreedomVoice.MobileApp.Android
 		public partial class Id
 		{
 			
-			// aapt resource value: 0x7f0c0059
-			public const int action0 = 2131492953;
+			// aapt resource value: 0x7f0c005b
+			public const int action0 = 2131492955;
 			
 			// aapt resource value: 0x7f0c0040
 			public const int action_bar = 2131492928;
@@ -1444,8 +1444,8 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f0c0041
 			public const int action_context_bar = 2131492929;
 			
-			// aapt resource value: 0x7f0c005d
-			public const int action_divider = 2131492957;
+			// aapt resource value: 0x7f0c005f
+			public const int action_divider = 2131492959;
 			
 			// aapt resource value: 0x7f0c0002
 			public const int action_menu_divider = 2131492866;
@@ -1498,14 +1498,14 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f0c0036
 			public const int buttonPanel = 2131492918;
 			
-			// aapt resource value: 0x7f0c005a
-			public const int cancel_action = 2131492954;
+			// aapt resource value: 0x7f0c005c
+			public const int cancel_action = 2131492956;
 			
 			// aapt resource value: 0x7f0c0038
 			public const int checkbox = 2131492920;
 			
-			// aapt resource value: 0x7f0c0060
-			public const int chronometer = 2131492960;
+			// aapt resource value: 0x7f0c0062
+			public const int chronometer = 2131492962;
 			
 			// aapt resource value: 0x7f0c0017
 			public const int collapseActionView = 2131492887;
@@ -1531,6 +1531,9 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f0c000c
 			public const int disableHome = 2131492876;
 			
+			// aapt resource value: 0x7f0c0056
+			public const int disclaimerActivity_agreeButton = 2131492950;
+			
 			// aapt resource value: 0x7f0c001c
 			public const int dropdown = 2131492892;
 			
@@ -1540,8 +1543,8 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f0c0014
 			public const int end = 2131492884;
 			
-			// aapt resource value: 0x7f0c0065
-			public const int end_padder = 2131492965;
+			// aapt resource value: 0x7f0c0067
+			public const int end_padder = 2131492967;
 			
 			// aapt resource value: 0x7f0c0027
 			public const int expand_activities_button = 2131492903;
@@ -1564,14 +1567,17 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f0c0028
 			public const int image = 2131492904;
 			
+			// aapt resource value: 0x7f0c0057
+			public const int inactiveActivity_dialButton = 2131492951;
+			
+			// aapt resource value: 0x7f0c0066
+			public const int info = 2131492966;
+			
+			// aapt resource value: 0x7f0c0060
+			public const int line1 = 2131492960;
+			
 			// aapt resource value: 0x7f0c0064
-			public const int info = 2131492964;
-			
-			// aapt resource value: 0x7f0c005e
-			public const int line1 = 2131492958;
-			
-			// aapt resource value: 0x7f0c0062
-			public const int line3 = 2131492962;
+			public const int line3 = 2131492964;
 			
 			// aapt resource value: 0x7f0c0009
 			public const int listMode = 2131492873;
@@ -1579,11 +1585,11 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f0c002a
 			public const int list_item = 2131492906;
 			
-			// aapt resource value: 0x7f0c005c
-			public const int media_actions = 2131492956;
+			// aapt resource value: 0x7f0c005e
+			public const int media_actions = 2131492958;
 			
-			// aapt resource value: 0x7f0c0066
-			public const int menu_action_logout = 2131492966;
+			// aapt resource value: 0x7f0c0068
+			public const int menu_action_logout = 2131492968;
 			
 			// aapt resource value: 0x7f0c0015
 			public const int middle = 2131492885;
@@ -1612,14 +1618,14 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f0c003a
 			public const int radio = 2131492922;
 			
-			// aapt resource value: 0x7f0c0056
-			public const int restoreActivity_emailField = 2131492950;
-			
 			// aapt resource value: 0x7f0c0058
-			public const int restoreActivity_resultText = 2131492952;
+			public const int restoreActivity_emailField = 2131492952;
 			
-			// aapt resource value: 0x7f0c0057
-			public const int restoreActivity_sendButton = 2131492951;
+			// aapt resource value: 0x7f0c005a
+			public const int restoreActivity_resultText = 2131492954;
+			
+			// aapt resource value: 0x7f0c0059
+			public const int restoreActivity_sendButton = 2131492953;
 			
 			// aapt resource value: 0x7f0c001f
 			public const int screen = 2131492895;
@@ -1684,8 +1690,8 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f0c0022
 			public const int src_over = 2131492898;
 			
-			// aapt resource value: 0x7f0c005b
-			public const int status_bar_latest_event_content = 2131492955;
+			// aapt resource value: 0x7f0c005d
+			public const int status_bar_latest_event_content = 2131492957;
 			
 			// aapt resource value: 0x7f0c004b
 			public const int submit_area = 2131492939;
@@ -1693,17 +1699,17 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f0c000b
 			public const int tabMode = 2131492875;
 			
-			// aapt resource value: 0x7f0c0063
-			public const int text = 2131492963;
+			// aapt resource value: 0x7f0c0065
+			public const int text = 2131492965;
 			
-			// aapt resource value: 0x7f0c0061
-			public const int text2 = 2131492961;
+			// aapt resource value: 0x7f0c0063
+			public const int text2 = 2131492963;
 			
 			// aapt resource value: 0x7f0c0033
 			public const int textSpacerNoButtons = 2131492915;
 			
-			// aapt resource value: 0x7f0c005f
-			public const int time = 2131492959;
+			// aapt resource value: 0x7f0c0061
+			public const int time = 2131492961;
 			
 			// aapt resource value: 0x7f0c002c
 			public const int title = 2131492908;
@@ -1849,46 +1855,49 @@ namespace com.FreedomVoice.MobileApp.Android
 			public const int act_content = 2130968602;
 			
 			// aapt resource value: 0x7f04001b
-			public const int act_inactive = 2130968603;
+			public const int act_disclaimer = 2130968603;
 			
 			// aapt resource value: 0x7f04001c
-			public const int act_restore = 2130968604;
+			public const int act_inactive = 2130968604;
 			
 			// aapt resource value: 0x7f04001d
-			public const int notification_media_action = 2130968605;
+			public const int act_restore = 2130968605;
 			
 			// aapt resource value: 0x7f04001e
-			public const int notification_media_cancel_action = 2130968606;
+			public const int notification_media_action = 2130968606;
 			
 			// aapt resource value: 0x7f04001f
-			public const int notification_template_big_media = 2130968607;
+			public const int notification_media_cancel_action = 2130968607;
 			
 			// aapt resource value: 0x7f040020
-			public const int notification_template_big_media_narrow = 2130968608;
+			public const int notification_template_big_media = 2130968608;
 			
 			// aapt resource value: 0x7f040021
-			public const int notification_template_lines = 2130968609;
+			public const int notification_template_big_media_narrow = 2130968609;
 			
 			// aapt resource value: 0x7f040022
-			public const int notification_template_media = 2130968610;
+			public const int notification_template_lines = 2130968610;
 			
 			// aapt resource value: 0x7f040023
-			public const int notification_template_part_chronometer = 2130968611;
+			public const int notification_template_media = 2130968611;
 			
 			// aapt resource value: 0x7f040024
-			public const int notification_template_part_time = 2130968612;
+			public const int notification_template_part_chronometer = 2130968612;
 			
 			// aapt resource value: 0x7f040025
-			public const int select_dialog_item_material = 2130968613;
+			public const int notification_template_part_time = 2130968613;
 			
 			// aapt resource value: 0x7f040026
-			public const int select_dialog_multichoice_material = 2130968614;
+			public const int select_dialog_item_material = 2130968614;
 			
 			// aapt resource value: 0x7f040027
-			public const int select_dialog_singlechoice_material = 2130968615;
+			public const int select_dialog_multichoice_material = 2130968615;
 			
 			// aapt resource value: 0x7f040028
-			public const int support_simple_spinner_dropdown_item = 2130968616;
+			public const int select_dialog_singlechoice_material = 2130968616;
+			
+			// aapt resource value: 0x7f040029
+			public const int support_simple_spinner_dropdown_item = 2130968617;
 			
 			static Layout()
 			{
@@ -1959,26 +1968,41 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f060015
 			public const int ActivityAuth_title = 2131099669;
 			
+			// aapt resource value: 0x7f060021
+			public const int ActivityDisclaimer_info = 2131099681;
+			
+			// aapt resource value: 0x7f060022
+			public const int ActivityDisclaimer_okButton = 2131099682;
+			
+			// aapt resource value: 0x7f060020
+			public const int ActivityDisclaimer_title = 2131099680;
+			
+			// aapt resource value: 0x7f06001e
+			public const int ActivityInactive_info = 2131099678;
+			
 			// aapt resource value: 0x7f06001d
 			public const int ActivityInactive_title = 2131099677;
 			
-			// aapt resource value: 0x7f060022
-			public const int ActivityRestore_badResponse = 2131099682;
-			
 			// aapt resource value: 0x7f06001f
-			public const int ActivityRestore_description = 2131099679;
+			public const int ActivityIncative_callButton = 2131099679;
 			
-			// aapt resource value: 0x7f060021
-			public const int ActivityRestore_emailLabel = 2131099681;
+			// aapt resource value: 0x7f060027
+			public const int ActivityRestore_badResponse = 2131099687;
+			
+			// aapt resource value: 0x7f060024
+			public const int ActivityRestore_description = 2131099684;
+			
+			// aapt resource value: 0x7f060026
+			public const int ActivityRestore_emailLabel = 2131099686;
+			
+			// aapt resource value: 0x7f060028
+			public const int ActivityRestore_goodResponse = 2131099688;
+			
+			// aapt resource value: 0x7f060025
+			public const int ActivityRestore_sendButton = 2131099685;
 			
 			// aapt resource value: 0x7f060023
-			public const int ActivityRestore_goodResponse = 2131099683;
-			
-			// aapt resource value: 0x7f060020
-			public const int ActivityRestore_sendButton = 2131099680;
-			
-			// aapt resource value: 0x7f06001e
-			public const int ActivityRestore_title = 2131099678;
+			public const int ActivityRestore_title = 2131099683;
 			
 			// aapt resource value: 0x7f060012
 			public const int ApplicationName = 2131099666;

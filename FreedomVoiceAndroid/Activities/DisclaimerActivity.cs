@@ -1,4 +1,4 @@
-using Android.App;
+﻿using Android.App;
 using Android.OS;
 using Android.Support.V7.Internal.View;
 using Android.Views;
@@ -8,20 +8,20 @@ using com.FreedomVoice.MobileApp.Android.Helpers;
 namespace com.FreedomVoice.MobileApp.Android.Activities
 {
     [Activity(
-        Label = "@string/ActivityInactive_title",
-        Theme = "@style/AppThemeActionBar")]
-    public class InactiveActivity : BaseActivity
+        Label = "@string/ActivityDisclaimer_title",
+        Theme = "@style/AppThemeActionBar",
+        NoHistory = true)]
+    public class DisclaimerActivity : BaseActivity
     {
-        private Button _dialButton;
+        private Button _agreeButton;
 
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
-            SetContentView(Resource.Layout.act_inactive);
-            _dialButton = FindViewById<Button>(Resource.Id.inactiveActivity_dialButton);
+            SetContentView(Resource.Layout.act_disclaimer);
+            _agreeButton = FindViewById<Button>(Resource.Id.disclaimerActivity_agreeButton);
 
-            SupportActionBar.SetTitle(Resource.String.ActivityInactive_title);
-            SupportActionBar.SetIcon(Resource.Drawable.ic_action_back);
+            SupportActionBar.SetTitle(Resource.String.ActivityDisclaimer_title);
         }
 
         public override bool OnCreateOptionsMenu(IMenu menu)
@@ -34,7 +34,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
 
         protected override void OnHelperEvent(ActionsHelperEventArgs args)
         {
-            
+
         }
     }
 }

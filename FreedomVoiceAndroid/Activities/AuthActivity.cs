@@ -11,8 +11,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
     /// Authorization activity
     /// </summary>
     [Activity(
-        Label = "@string/ApplicationTitle", 
-        MainLauncher = true, 
+        Label = "@string/ApplicationTitle",
+        MainLauncher = true,
         Icon = "@mipmap/ic_launcher", 
         Theme = "@style/AppThemeActionBar")]
     public class AuthActivity : BaseActivity

@@ -15,7 +15,7 @@
   <string name="ActivityInactive_info">The account you have selected is not available. Please contact Customer Care at (800) 477-1477.</string>
   <string name="ActivityIncative_callButton">Call Customer Care</string>
   <string name="ActivityDisclaimer_title">911 Disclaimer</string>
-  <string name="ActivityDisclaimer_info">The FreedomVoice app is not intended for dailing emergency numbers, such as 911. Please use your device's standart dialer when dialing emergency numbers.</string>
+  <string name="ActivityDisclaimer_info">The FreedomVoice app is not intended for dailing emergency numbers, such as 911. Please use your device\'s standart dialer when dialing emergency numbers.</string>
   <string name="ActivityDisclaimer_okButton">I Understand</string>
   <string name="ActivityRestore_title">Forgot password</string>
   <string name="ActivityRestore_description">Enter your email address below to get a confirmation email to reset your password.</string>

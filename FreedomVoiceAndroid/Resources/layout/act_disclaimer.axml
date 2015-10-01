@@ -11,17 +11,17 @@
     <TextView
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:lines="3"
+        android:lines="6"
         style="@style/AuthLabelText"
-        android:text="@string/ActivityInactive_info"
+        android:text="@string/ActivityDisclaimer_info"
         android:layout_marginTop="@dimen/restore_activity_info_label_margin"
         android:layout_marginStart="@dimen/restore_activity_text_horizontal_margin"
         android:layout_marginEnd="@dimen/restore_activity_text_horizontal_margin" />
     <Button
-        android:id="@+id/inactiveActivity_dialButton"
+        android:id="@+id/disclaimerActivity_agreeButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/ActivityIncative_callButton"
+        android:text="@string/ActivityDisclaimer_okButton"
         android:layout_marginTop="@dimen/restore_activity_elements_vertical_margin"
         android:layout_marginStart="@dimen/restore_activity_text_horizontal_margin"
         android:layout_marginEnd="@dimen/restore_activity_text_horizontal_margin"
