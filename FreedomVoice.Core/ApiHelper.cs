@@ -1,7 +1,9 @@
 ﻿namespace FreedomVoice.Core
 {
+    using System;
     using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
     using System.Net;
     using System.Text;
     using System.Threading;
@@ -24,40 +26,77 @@
             return MakeAsyncPostRequest<string>("/api/v1/login", postdata, "application/x-www-form-urlencoded", cts.Token).Result;
         }
 
-         public static BaseResult<DefaultPhoneNumbers> GetSystems()
-         {
+        public static BaseResult<string> PasswordReset(string login)
+        {
+            var cts = new CancellationTokenSource();
+
+            CookieContainer = new CookieContainer();
+            var postdata = string.Format("UserName={0}", login);
+            return MakeAsyncPostRequest<string>("/api/v1/passwordReset", postdata, "application/x-www-form-urlencoded", cts.Token).Result;
+        }
+
+        public static BaseResult<DefaultPhoneNumbers> GetSystems()
+        {
             var cts = new CancellationTokenSource();
 
             return MakeAsyncGetRequest<DefaultPhoneNumbers>("/api/v1/systems", "application/json", cts.Token).Result;
-         }
-         
-         public static BaseResult<List<Mailbox>> GetMailboxes(string systemPhoneNumber)
-         {
+        }
+
+        public static BaseResult<PresentationPhoneNumbers> GetPresentationPhoneNumbers(string systemPhoneNumber)
+        {
+            var cts = new CancellationTokenSource();
+
+            return MakeAsyncGetRequest<PresentationPhoneNumbers>(string.Format("api/v1/systems/{0}/presentationPhoneNumbers", systemPhoneNumber), "application/json", cts.Token).Result;
+        }
+
+        public static BaseResult<List<Mailbox>> GetMailboxes(string systemPhoneNumber)
+        {
             var cts = new CancellationTokenSource();
 
             return MakeAsyncGetRequest<List<Mailbox>>(string.Format("/api/v1/systems/{0}/mailboxes", systemPhoneNumber), "application/json", cts.Token).Result;
-         }
-         
-         public static BaseResult<List<MailboxWithCount>> GetMailboxesWithCounts(string systemPhoneNumber)
-         {
+        }
+
+        public static BaseResult<List<MailboxWithCount>> GetMailboxesWithCounts(string systemPhoneNumber)
+        {
             var cts = new CancellationTokenSource();
 
             return MakeAsyncGetRequest<List<MailboxWithCount>>(string.Format("/api/v1/systems/{0}/mailboxesWithCounts", systemPhoneNumber), "application/json", cts.Token).Result;
-         }
-         
-         public static BaseResult<List<Folder>> GetFolders(string systemPhoneNumber, int mailboxNumber)
-         {
+        }
+
+        public static BaseResult<List<Folder>> GetFolders(string systemPhoneNumber, int mailboxNumber)
+        {
             var cts = new CancellationTokenSource();
 
             return MakeAsyncGetRequest<List<Folder>>(string.Format("/api/v1/systems/{0}/mailboxes/{1}/folders", systemPhoneNumber, mailboxNumber), "application/json", cts.Token).Result;
-         }
-         
-         public static BaseResult<List<Message>> GetMesages(string systemPhoneNumber, int mailboxNumber, string folderName, int pageSize, int pageNumber, bool asc)
-         {
-            var cts = new CancellationTokenSource();
+        }
 
-            return MakeAsyncGetRequest<List<Message>>(string.Format("/api/v1/systems/{0}/mailboxes/{1}/folders/{2}/messages?PageSize={3}&PageNumber={4}&SortAsc={5}",  systemPhoneNumber, mailboxNumber, folderName, pageSize, pageNumber, asc), "application/json", cts.Token).Result;
-         }
+        public static BaseResult<List<Message>> GetMesages(string systemPhoneNumber, int mailboxNumber, string folderName, int pageSize, int pageNumber, bool asc)
+        {
+            var cts = new CancellationTokenSource();
+            var res = MakeAsyncGetRequest<List<Message>>(string.Format("/api/v1/systems/{0}/mailboxes/{1}/folders/{2}/messages?PageSize={3}&PageNumber={4}&SortAsc={5}", systemPhoneNumber, mailboxNumber, folderName, pageSize, pageNumber, asc), "application/json", cts.Token).Result;
+            return res;
+        }
+
+        public static BaseResult<string> MoveMessages(string systemPhoneNumber, int mailboxNumber, string destinationFolder, List<string> messageIds)
+        {
+            var cts = new CancellationTokenSource();
+            var messagesStr = messageIds.Aggregate(string.Empty, (current, messageId) => current + ("&MessageIds=" + messageId));
+
+            var postdata = string.Format("DestinationFolderName={0}{1}", destinationFolder, messagesStr);
+            var res = MakeAsyncPostRequest<string>(string.Format("/api/v1/systems/{0}/mailboxes/{1}/moveMessages", systemPhoneNumber, mailboxNumber), postdata, "application/x-www-form-urlencoded", cts.Token).Result;
+            return res;
+
+        }
+
+        public static BaseResult<string> DeleteMessages(string systemPhoneNumber, int mailboxNumber, List<string> messageIds)
+        {
+            var cts = new CancellationTokenSource();
+            var postdata = messageIds.Aggregate(string.Empty, (current, messageId) => current + ("&MessageIds=" + messageId));
+
+            var res = MakeAsyncPostRequest<string>(string.Format("/api/v1/systems/{0}/mailboxes/{1}/deleteMessages", systemPhoneNumber, mailboxNumber), postdata, "application/x-www-form-urlencoded", cts.Token).Result;
+            return res;
+
+        }
 
         public static Stream GetMedia(string systemPhoneNumber, int mailboxNumber, string folderName, string messageId, MediaType mediaType)
         {
@@ -95,10 +134,10 @@
                     catch (WebException)
                     {
                         baseRes = new BaseResult<T>
-                                  {
-                                      Code = ErrorCodes.ConnectionLost,
-                                      Result = default(T)
-                                  };
+                        {
+                            Code = ErrorCodes.ConnectionLost,
+                            Result = default(T)
+                        };
                     }
 
                     return baseRes;
@@ -132,37 +171,37 @@
                     var response = await task;
                     ct.ThrowIfCancellationRequested();
                     retResult = new BaseResult<Stream>
-                                {
-                                    Code = ErrorCodes.Ok,
-                                    Result = response.GetResponseStream()
-                                };
+                    {
+                        Code = ErrorCodes.Ok,
+                        Result = response.GetResponseStream()
+                    };
                 }
                 catch (WebException ex)
                 {
-                    var resp = (HttpWebResponse) ex.Response;
+                    var resp = (HttpWebResponse)ex.Response;
                     if (resp != null)
                     {
                         switch (resp.StatusCode)
                         {
                             case HttpStatusCode.Unauthorized:
-                            {
-                                retResult = new BaseResult<Stream>
-                                            {
-                                                Code = ErrorCodes.Unauthorized,
-                                                Result = Stream.Null
-                                            };
-                                break;
-                            }
+                                {
+                                    retResult = new BaseResult<Stream>
+                                    {
+                                        Code = ErrorCodes.Unauthorized,
+                                        Result = Stream.Null
+                                    };
+                                    break;
+                                }
 
                             case HttpStatusCode.BadRequest:
-                            {
-                                retResult = new BaseResult<Stream>
-                                            {
-                                                Code = ErrorCodes.BadRequest,
-                                                Result = Stream.Null
-                                            };
-                                break;
-                            }
+                                {
+                                    retResult = new BaseResult<Stream>
+                                    {
+                                        Code = ErrorCodes.BadRequest,
+                                        Result = Stream.Null
+                                    };
+                                    break;
+                                }
                         }
                     }
 
@@ -193,37 +232,37 @@
                     var response = await task;
                     ct.ThrowIfCancellationRequested();
                     retResult = new BaseResult<T>
-                                {
-                                    Code = ErrorCodes.Ok,
-                                    Result = JsonConvert.DeserializeObject<T>(ReadStreamFromResponse(response))
-                                };
+                    {
+                        Code = ErrorCodes.Ok,
+                        Result = JsonConvert.DeserializeObject<T>(ReadStreamFromResponse(response))
+                    };
                 }
                 catch (WebException ex)
                 {
-                    var resp = (HttpWebResponse) ex.Response;
+                    var resp = (HttpWebResponse)ex.Response;
                     if (resp != null)
                     {
                         switch (resp.StatusCode)
                         {
                             case HttpStatusCode.Unauthorized:
-                            {
-                                retResult = new BaseResult<T>
-                                            {
-                                                Code = ErrorCodes.Unauthorized,
-                                                Result = default(T)
-                                            };
-                                break;
-                            }
+                                {
+                                    retResult = new BaseResult<T>
+                                    {
+                                        Code = ErrorCodes.Unauthorized,
+                                        Result = default(T)
+                                    };
+                                    break;
+                                }
 
                             case HttpStatusCode.BadRequest:
-                            {
-                                retResult = new BaseResult<T>
-                                            {
-                                                Code = ErrorCodes.BadRequest,
-                                                Result = default(T)
-                                            };
-                                break;
-                            }
+                                {
+                                    retResult = new BaseResult<T>
+                                    {
+                                        Code = ErrorCodes.BadRequest,
+                                        Result = default(T)
+                                    };
+                                    break;
+                                }
                         }
                     }
 

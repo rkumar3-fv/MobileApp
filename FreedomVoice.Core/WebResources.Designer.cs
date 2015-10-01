@@ -62,7 +62,7 @@ namespace FreedomVoice.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to https://api.freedomvoice.com/.
+        ///   Looks up a localized string similar to https://api.freedomvoice.com.
         /// </summary>
         internal static string AppUrl {
             get {
