@@ -38,6 +38,14 @@
   <style name="Theme.MyAuthTheme.ActionBar.TitleTextStyle" parent="android:style/TextAppearance.Holo.Widget.ActionBar.Title">
     <item name="android:textColor">@color/colorActionBarText</item>
   </style>
+
+  <!-- Borderless button style -->
+  <style name="BorderlessButtonStyle" parent="Widget.AppCompat.Button.Borderless">
+    <item name="android:textSize">@dimen/text_secondary</item>
+    <item name="android:textColor">@color/colorBaseControls</item>
+    <item name="android:textAlignment">center</item>
+    <item name="android:layout_centerHorizontal">true</item>
+  </style>
   
   <!-- Text styles -->
   <style name="AuthLabelText">

@@ -14,7 +14,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         Label = "@string/ApplicationTitle",
         MainLauncher = true,
         Icon = "@mipmap/ic_launcher", 
-        Theme = "@style/AppThemeActionBar")]
+        Theme = "@style/AppTheme")]
     public class AuthActivity : BaseActivity
     {
         private Button _authButton;

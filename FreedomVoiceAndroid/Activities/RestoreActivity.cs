@@ -7,8 +7,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
 {
     [Activity(
         Label = "@string/ActivityRestore_title",
-        Theme = "@style/AppThemeActionBar",
-        NoHistory = true)]
+        Theme = "@style/AppThemeActionBar")]
     public class RestoreActivity : BaseActivity
     {
         private EditText _emailText;
