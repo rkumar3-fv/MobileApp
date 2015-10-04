@@ -1,30 +1,33 @@
 using System.Collections.Generic;
 using Android.OS;
-using Android.Support.V7.App;
+using Android.Support.V4.App;
 using com.FreedomVoice.MobileApp.Android.Helpers;
 
-namespace com.FreedomVoice.MobileApp.Android.Activities
+namespace com.FreedomVoice.MobileApp.Android.Fragments
 {
-    public abstract class BaseActivity : AppCompatActivity
+    /// <summary>
+    /// Base viewpager fragment
+    /// </summary>
+    public abstract class BasePagerFragment : Fragment
     {
         protected ActionsHelper _helper;
         protected List<long> _waitingActions;
 
-        protected override void OnCreate(Bundle savedInstanceState)
+        public override void OnActivityCreated(Bundle savedInstanceState)
         {
-            base.OnCreate(savedInstanceState);
-            var app = App.GetApplication(this);
+            base.OnActivityCreated(savedInstanceState);
+            var app = App.GetApplication(Activity);
             _waitingActions = new List<long>();
             _helper = app.Helper;
         }
 
-        protected override void OnPause()
+        public override void OnPause()
         {
             base.OnPause();
             _helper.HelperEvent -= OnHelperEvent;
         }
 
-        protected override void OnResume()
+        public override void OnResume()
         {
             base.OnResume();
             _helper.HelperEvent += OnHelperEvent;
@@ -39,9 +42,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         /// <param name="args">Result args</param>
         private void OnHelperEvent(object sender, ActionsHelperEventArgs args)
         {
-            if (args.DataBundle == null) return;
+            if (!_waitingActions.Contains(args.RequestId) || args.DataBundle == null) return;
             OnHelperEvent(args);
-            if (!_waitingActions.Contains(args.RequestId)) return;
             _helper.RemoveResult(args.RequestId);
             _waitingActions.Remove(args.RequestId);
         }

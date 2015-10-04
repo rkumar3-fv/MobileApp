@@ -44,6 +44,13 @@
     <item name="android:textAlignment">center</item>
     <item name="android:layout_centerHorizontal">true</item>
   </style>
+
+  <!-- Numeric keyboard style -->
+  <style name="KeyButtonStyle" parent="Widget.AppCompat.Button.Borderless">
+    <item name="android:textSize">@dimen/text_numeric_keyboard</item>
+    <item name="android:textColor">@color/colorBaseControls</item>
+    <item name="android:layout_margin">@dimen/fragment_keypad_key_spacing</item>
+  </style>
   
   <!-- Text styles -->
   <style name="AuthLabelText">
