@@ -24,6 +24,17 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             return true;
         }
 
+        public override bool OnOptionsItemSelected(IMenuItem item)
+        {
+            switch (item.ItemId)
+            {
+                case Resource.Id.menu_action_logout:
+                    //TODO: logout
+                    return true;
+            }
+            return base.OnOptionsItemSelected(item);
+        }
+
         /// <summary>
         /// Action button click result
         /// </summary>

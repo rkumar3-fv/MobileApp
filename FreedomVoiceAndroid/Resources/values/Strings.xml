@@ -23,4 +23,8 @@
   <string name="ActivityRestore_emailLabel">Email</string>
   <string name="ActivityRestore_badResponse">Please enter a valid email address.</string>
   <string name="ActivityRestore_goodResponse">Password reset email sent.</string>
+  <string name="FragmentKeypad_title">Keypad</string>
+  <string name="FragmentMessages_title">Messages</string>
+  <string name="FragmentRecents_title">Recents</string>
+  <string name="FragmentContacts_title">Contacts</string>
 </resources>

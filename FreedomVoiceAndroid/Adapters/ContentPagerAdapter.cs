@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using Android.Runtime;
 using Android.Support.V4.App;
+using Android.Views;
+using Android.Widget;
 using Fragment = Android.Support.V4.App.Fragment;
 using FragmentManager = Android.Support.V4.App.FragmentManager;
 

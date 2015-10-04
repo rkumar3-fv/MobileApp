@@ -3,36 +3,29 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <android.support.v4.view.ViewPager
-        android:id="@+id/contentActivity_contentPager"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
     <android.support.design.widget.AppBarLayout
         android:id="@+id/contentActivity_contentAppBar"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:fitsSystemWindows="true">
-        <android.support.design.widget.CollapsingToolbarLayout
-            android:id="@+id/contentActivity_collapsingToolbar"
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/contentActivity_toolbar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:layout_scrollFlags="scroll|enterAlways" />
+        <android.support.design.widget.TabLayout
+            android:id="@+id/contentActivity_tabs"
+            style="@style/ContentTabLayoutStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
             android:fitsSystemWindows="true"
-            app:contentScrim="?attr/colorPrimary"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed">
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/contentActivity_toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                app:popupTheme="@style/ActionBarTheme" />
-            <android.support.design.widget.TabLayout
-                android:id="@+id/contentActivity_tabs"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:fitsSystemWindows="true"
-                app:tabIndicatorColor="@color/colorPrimary"
-                app:tabMode="scrollable" />
-        </android.support.design.widget.CollapsingToolbarLayout>
+            app:tabIndicatorColor="@color/colorPrimary"
+            app:tabMode="scrollable" />
     </android.support.design.widget.AppBarLayout>
+    <android.support.v4.view.ViewPager
+        android:id="@+id/contentActivity_contentPager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 </android.support.design.widget.CoordinatorLayout>

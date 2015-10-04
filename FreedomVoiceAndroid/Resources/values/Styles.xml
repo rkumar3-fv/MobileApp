@@ -52,6 +52,22 @@
     <item name="android:layout_margin">@dimen/fragment_keypad_key_spacing</item>
   </style>
   
+  <!-- Content tabs style -->
+  <style name="ContentTabLayoutStyle" parent="Widget.Design.TabLayout">
+    <item name="tabIndicatorColor">@color/colorTabIndicator</item>
+    <item name="tabIndicatorHeight">@dimen/content_activity_tab_indicator_size</item>
+    <item name="tabPaddingStart">@dimen/content_activity_tab_padding</item>
+    <item name="tabPaddingEnd">@dimen/content_activity_tab_padding</item>
+    <item name="tabBackground">@color/colorPrimary</item>
+    <item name="tabTextAppearance">@style/ContentTabTextAppearanceStyle</item>
+    <item name="tabSelectedTextColor">@color/colorActionBarText</item>
+  </style>
+  <style name="ContentTabTextAppearanceStyle" parent="TextAppearance.Design.Tab">
+    <item name="android:textSize">@dimen/content_activity_tab_text_size</item>
+    <item name="android:textColor">@color/textColorSecondary</item>
+    <item name="textAllCaps">true</item>
+  </style>
+  
   <!-- Text styles -->
   <style name="AuthLabelText">
     <item name="android:textColor">@color/textColorSecondary</item>

@@ -31,6 +31,11 @@
   <dimen name="info_activity_elements_vertical_margin">16dp</dimen>
   <dimen name="info_activity_text_horizontal_margin">32dp</dimen>
   
+  <!-- Content activity -->
+  <dimen name="content_activity_tab_text_size">14sp</dimen>
+  <dimen name="content_activity_tab_padding">12dp</dimen>
+  <dimen name="content_activity_tab_indicator_size">6dp</dimen>
+  
   <!-- Keyboard fragment -->
   <dimen name="fragment_keypad_text_vertical_margin">32dp</dimen>
   <dimen name="fragment_keypad_text_horizontal_margin">16dp</dimen>
