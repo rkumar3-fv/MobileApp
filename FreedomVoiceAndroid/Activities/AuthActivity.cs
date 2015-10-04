@@ -12,7 +12,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
     /// </summary>
     [Activity(
         Label = "@string/ApplicationTitle",
-        MainLauncher = true,
+        //MainLauncher = true,
         Icon = "@mipmap/ic_launcher", 
         Theme = "@style/AppTheme")]
     public class AuthActivity : BaseActivity
