@@ -47,6 +47,11 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             return view;
         }
 
+        public override void OnResume()
+        {
+            base.OnResume();
+        }
+
         protected override void OnHelperEvent(ActionsHelperEventArgs args)
         {
             

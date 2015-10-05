@@ -20,6 +20,11 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
 
             return _recyclerView;
         }
+        
+        public override void OnResume()
+        {
+            base.OnResume();
+        }
 
         protected override void OnHelperEvent(ActionsHelperEventArgs args)
         {

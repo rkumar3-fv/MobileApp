@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using Android.OS;
 using Android.Support.V4.App;
+using Android.Views;
+using com.FreedomVoice.MobileApp.Android.Activities;
 using com.FreedomVoice.MobileApp.Android.Helpers;
 
 namespace com.FreedomVoice.MobileApp.Android.Fragments
@@ -33,6 +35,15 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             _helper.HelperEvent += OnHelperEvent;
             foreach (var waitingAction in _waitingActions)
                 _helper.GetRusultById(waitingAction);
+        }
+
+        /// <summary>
+        /// Get current content activity
+        /// </summary>
+        /// <returns></returns>
+        public ContentActivity GetContentActivity()
+        {
+            return Activity as ContentActivity;
         }
 
         /// <summary>

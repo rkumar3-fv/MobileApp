@@ -12,13 +12,12 @@ using Toolbar = Android.Support.V7.Widget.Toolbar;
 namespace com.FreedomVoice.MobileApp.Android.Activities
 {
     /// <summary>
-    /// Main pplication screen
+    /// Main aplication screen
     /// </summary>
     [Activity(
-        //MainLauncher = true,
         Label = "@string/ApplicationTitle",
         Icon = "@drawable/ic_launcher")]
-    class ContentActivity : BaseActivity
+    public class ContentActivity : BaseActivity
     {
         private ContentPagerAdapter _pagerAdapter;
         private ContentPager _viewPager;
@@ -43,7 +42,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             if (_viewPager != null)
             {
                 _viewPager.AllowSwipe = false;
-                _viewPager.OffscreenPageLimit = 4;
+                _viewPager.OffscreenPageLimit = 1;
                 _pagerAdapter.AddFragment(recentsFragment, Resource.String.FragmentRecents_title, Resource.Drawable.ic_tab_history);
                 _pagerAdapter.AddFragment(contactsFragment, Resource.String.FragmentContacts_title, Resource.Drawable.ic_tab_contacts);
                 _pagerAdapter.AddFragment(keypadFragment, Resource.String.FragmentKeypad_title, Resource.Drawable.ic_tab_keypad);
