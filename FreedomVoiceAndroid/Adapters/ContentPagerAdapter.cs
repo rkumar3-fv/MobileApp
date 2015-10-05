@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Android.Content;
 using Android.Runtime;
 using Android.Support.V4.App;
 using Android.Views;
@@ -11,28 +12,44 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
 {
     public class ContentPagerAdapter : FragmentPagerAdapter
     {
+        private readonly Context _context;
         private readonly List<Fragment> _fragments;
-        private readonly List<string> _fragmentTitles; 
+        private readonly List<int> _fragmentTitles;
+        private readonly List<int> _fragmentImages; 
 
         public ContentPagerAdapter(IntPtr javaReference, JniHandleOwnership transfer) : base(javaReference, transfer)
         {
         }
 
-        public ContentPagerAdapter(FragmentManager fm) : base(fm)
+        public ContentPagerAdapter(FragmentManager fm, Context context) : base(fm)
         {
+            _context = context;
             _fragments = new List<Fragment>();
-            _fragmentTitles = new List<string>();
+            _fragmentTitles = new List<int>();
+            _fragmentImages = new List<int>();
+        }
+
+        public View GetTabView(int position)
+        {
+            var view = LayoutInflater.From(_context).Inflate(Resource.Layout.tab_header, null);
+            var textView = view.FindViewById<TextView>(Resource.Id.tabHeader_title);
+            var imageView = view.FindViewById<ImageView>(Resource.Id.tabHeader_icon);
+            textView.SetText(_fragmentTitles[position]);
+            imageView.SetImageResource(_fragmentImages[position]);
+            return view;
         }
 
         /// <summary>
         /// Add fragment to viewpager
         /// </summary>
         /// <param name="fragment">new fragment</param>
-        /// <param name="title">tab title</param>
-        public void AddFragment(Fragment fragment, string title)
+        /// <param name="titleRes">tab title resource</param>
+        /// <param name="iconRes">tab icon resource</param>
+        public void AddFragment(Fragment fragment, int titleRes, int iconRes)
         {
             _fragments.Add(fragment);
-            _fragmentTitles.Add(title);
+            _fragmentTitles.Add(titleRes);
+            _fragmentImages.Add(iconRes);
         }
 
         /// <summary>
@@ -45,6 +62,7 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
             var index = _fragments.IndexOf(fragment);
             _fragments.Remove(fragment);
             _fragmentTitles.RemoveAt(index);
+            _fragmentImages.RemoveAt(index);
         }
 
         /// <summary>
@@ -56,6 +74,7 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
             if (index>=_fragments.Count) return;
             _fragments.RemoveAt(index);
             _fragmentTitles.RemoveAt(index);
+            _fragmentImages.RemoveAt(index);
         }
 
         /// <summary>
@@ -75,7 +94,7 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
 
         public override Java.Lang.ICharSequence GetPageTitleFormatted(int position)
         {
-            return new Java.Lang.String(_fragmentTitles[position]);
+            return new Java.Lang.String(_context.GetString(_fragmentTitles[position]));
         }
     }
 }

@@ -1,14 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
+    android:gravity="center_horizontal"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/content_activity_tab_text_padding">
     <ImageView
         android:id="@+id/tabHeader_icon"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/content_activity_tab_icon_padding" />
     <TextView
         android:id="@+id/tabHeader_title"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorActionBarText"
+        android:textSize="@dimen/text_tab"
+        android:textAllCaps="true"
+        android:lines="1" />
 </LinearLayout>

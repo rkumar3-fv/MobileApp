@@ -90,6 +90,6 @@
             style="@style/KeyButtonStyle"
             android:layout_columnSpan="2"
             android:layout_gravity="right"
-            android:background="@drawable/ic_action_dial" />
+            android:drawableBottom="@drawable/ic_action_dial" />
     </GridLayout>
 </LinearLayout>

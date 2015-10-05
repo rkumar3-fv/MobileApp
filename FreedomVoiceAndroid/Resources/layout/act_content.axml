@@ -12,18 +12,27 @@
             android:id="@+id/contentActivity_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:layout_scrollFlags="scroll|enterAlways" />
+            app:layout_scrollFlags="scroll|enterAlways"
+            app:theme="@style/ToolbarTheme"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+            <Spinner
+                android:id="@+id/contentActivity_toolbarSpinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </android.support.v7.widget.Toolbar>
         <android.support.design.widget.TabLayout
             android:id="@+id/contentActivity_tabs"
-            style="@style/ContentTabLayoutStyle"
+            style="@style/ActionBarTheme"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/content_activity_tab_height"
             android:layout_gravity="bottom"
+            android:background="@color/colorPrimary"
             android:fitsSystemWindows="true"
-            app:tabIndicatorColor="@color/colorPrimary"
+            app:tabIndicatorColor="@color/colorTabIndicator"
+            app:tabIndicatorHeight="@dimen/content_activity_tab_indicator_size"
             app:tabMode="scrollable" />
     </android.support.design.widget.AppBarLayout>
-    <android.support.v4.view.ViewPager
+    <com.FreedomVoice.MobileApp.Android.Adapters.ContentPager
         android:id="@+id/contentActivity_contentPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

@@ -63,6 +63,11 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         {
             
         }
+
+        public override void OnBackPressed()
+        {
+            MoveTaskToBack(true);
+        }
     }
 }
 

@@ -1,5 +1,6 @@
 ﻿using Android.App;
 using Android.OS;
+using Android.Views;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Helpers;
 
@@ -22,10 +23,28 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             _restoreButton = FindViewById<Button>(Resource.Id.restoreActivity_sendButton);
             _resultLabel = FindViewById<TextView>(Resource.Id.restoreActivity_resultText);
 
-            SupportActionBar.SetIcon(Resource.Drawable.ic_action_back);
             SupportActionBar.SetTitle(Resource.String.ActivityRestore_title);
+            SupportActionBar.SetHomeAsUpIndicator(Resource.Drawable.ic_action_back);
+            SupportActionBar.SetDisplayHomeAsUpEnabled(true);
+            SupportActionBar.SetHomeButtonEnabled(true);
         }
-        
+
+        public override bool OnCreateOptionsMenu(IMenu menu)
+        {
+            return true;
+        }
+
+        public override bool OnOptionsItemSelected(IMenuItem item)
+        {
+            switch (item.ItemId)
+            {
+                case global::Android.Resource.Id.Home:
+                    OnBackPressed();
+                    return true;
+            }
+            return base.OnOptionsItemSelected(item);
+        }
+
         protected override void OnHelperEvent(ActionsHelperEventArgs args)
         {
 

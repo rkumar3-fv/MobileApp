@@ -1,13 +1,13 @@
 using Android.App;
 using Android.OS;
-using Android.Support.V4.View;
-using Android.Support.V7.Widget;
 using Android.Support.Design.Widget;
 using Android.Support.V7.Internal.View;
 using Android.Views;
+using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Adapters;
 using com.FreedomVoice.MobileApp.Android.Fragments;
 using com.FreedomVoice.MobileApp.Android.Helpers;
+using Toolbar = Android.Support.V7.Widget.Toolbar;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
 {
@@ -15,40 +15,54 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
     /// Main pplication screen
     /// </summary>
     [Activity(
+        //MainLauncher = true,
         Label = "@string/ApplicationTitle",
         Icon = "@drawable/ic_launcher")]
     class ContentActivity : BaseActivity
     {
         private ContentPagerAdapter _pagerAdapter;
-        private ViewPager _viewPager;
+        private ContentPager _viewPager;
         private Toolbar _toolbar;
         private TabLayout _tabLayout;
+        private Spinner _toolbarSpinner;
 
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
             SetContentView(Resource.Layout.act_content);
             _tabLayout = FindViewById<TabLayout>(Resource.Id.contentActivity_tabs);
-            _viewPager = FindViewById<ViewPager>(Resource.Id.contentActivity_contentPager);
+            _viewPager = FindViewById<ContentPager>(Resource.Id.contentActivity_contentPager);
             _toolbar = FindViewById<Toolbar>(Resource.Id.contentActivity_toolbar);
+            _toolbarSpinner = FindViewById<Spinner>(Resource.Id.contentActivity_toolbarSpinner);
             SetSupportActionBar(_toolbar);
-            _pagerAdapter = new ContentPagerAdapter(SupportFragmentManager);
+            _pagerAdapter = new ContentPagerAdapter(SupportFragmentManager, this);
             var contactsFragment = new ContactsFragment();
             var keypadFragment = new KeypadFragment();
             var messagesFragment = new MessagesFragment();
             var recentsFragment = new RecentsFragment();
             if (_viewPager != null)
             {
+                _viewPager.AllowSwipe = false;
                 _viewPager.OffscreenPageLimit = 4;
-                _pagerAdapter.AddFragment(recentsFragment, GetString(Resource.String.FragmentRecents_title));
-                _pagerAdapter.AddFragment(contactsFragment, GetString(Resource.String.FragmentContacts_title));
-                _pagerAdapter.AddFragment(keypadFragment, GetString(Resource.String.FragmentKeypad_title));
-                _pagerAdapter.AddFragment(messagesFragment, GetString(Resource.String.FragmentMessages_title));
+                _pagerAdapter.AddFragment(recentsFragment, Resource.String.FragmentRecents_title, Resource.Drawable.ic_tab_history);
+                _pagerAdapter.AddFragment(contactsFragment, Resource.String.FragmentContacts_title, Resource.Drawable.ic_tab_contacts);
+                _pagerAdapter.AddFragment(keypadFragment, Resource.String.FragmentKeypad_title, Resource.Drawable.ic_tab_keypad);
+                _pagerAdapter.AddFragment(messagesFragment, Resource.String.FragmentMessages_title, Resource.Drawable.ic_tab_messages);
                 _viewPager.Adapter = _pagerAdapter;
                 _viewPager.CurrentItem = 3;
             }
             _tabLayout.SetupWithViewPager(_viewPager);
-    }
+            for (var i = 0; i < _pagerAdapter.Count; i++)
+            {
+                var tab = _tabLayout.GetTabAt(i);
+                tab.SetCustomView(_pagerAdapter.GetTabView(i));
+            }
+        }
+
+        public Spinner GetToolbarSpinner()
+        {
+            return _toolbarSpinner;
+        }
 
         public override bool OnCreateOptionsMenu(IMenu menu)
         {
