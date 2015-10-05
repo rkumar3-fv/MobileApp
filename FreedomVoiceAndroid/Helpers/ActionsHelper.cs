@@ -61,11 +61,29 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         public long Authorize(string login, string password)
         {
             var requestId = RequestId;
+            var intent = PrepareIntent(requestId);
+            _app.StartService(intent);
+            return requestId;
+        }
+
+        /// <summary>
+        /// Logout action
+        /// </summary>
+        /// <returns>request ID</returns>
+        public long Logout()
+        {
+            var requestId = RequestId;
+            var intent = PrepareIntent(requestId);
+            _app.StartService(intent);
+            return requestId;
+        }
+
+        private Intent PrepareIntent(long requestId)
+        {
             var intent = new Intent(_app, typeof(ComService));
             intent.PutExtra(ComService.RequestIdTag, requestId);
             intent.PutExtra(ComServiceResultReceiver.ReceiverTag, _receiver);
-            _app.StartService(intent);
-            return requestId;
+            return intent;
         }
 
         /// <summary>

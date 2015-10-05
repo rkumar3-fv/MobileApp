@@ -41,8 +41,9 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 case global::Android.Resource.Id.Home:
                     OnBackPressed();
                     return true;
+                default:
+                    return base.OnOptionsItemSelected(item);
             }
-            return base.OnOptionsItemSelected(item);
         }
 
         protected override void OnHelperEvent(ActionsHelperEventArgs args)

@@ -29,10 +29,14 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             switch (item.ItemId)
             {
                 case Resource.Id.menu_action_logout:
-                    //TODO: logout
+                    _helper.Logout();
                     return true;
-            }
-            return base.OnOptionsItemSelected(item);
+                case global::Android.Resource.Id.Home:
+                    OnBackPressed();
+                    return true;
+                default:
+                    return base.OnOptionsItemSelected(item);
+            } 
         }
 
         /// <summary>
