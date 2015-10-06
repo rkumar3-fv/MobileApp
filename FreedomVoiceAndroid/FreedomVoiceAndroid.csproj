@@ -72,6 +72,7 @@
   <ItemGroup>
     <Compile Include="Activities\AuthActivity.cs" />
     <Compile Include="Activities\BaseActivity.cs" />
+    <Compile Include="Activities\SelectActivity.cs" />
     <Compile Include="Adapters\ContentPager.cs" />
     <Compile Include="Adapters\ContentPagerAdapter.cs" />
     <Compile Include="Fragments\ContactsFragment.cs" />
@@ -123,6 +124,18 @@
       <SubType>AndroidResource</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\tab_header.axml">
+      <SubType>AndroidResource</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\act_select.axml">
+      <SubType>AndroidResource</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\item_account.axml">
+      <SubType>AndroidResource</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\item_message.axml">
+      <SubType>AndroidResource</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\item_extension.axml">
       <SubType>AndroidResource</SubType>
     </AndroidResource>
   </ItemGroup>
