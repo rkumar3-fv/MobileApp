@@ -7,11 +7,15 @@ using com.FreedomVoice.MobileApp.Android.Helpers;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
 {
+    /// <summary>
+    /// Phone number selection activity
+    /// </summary>
     [Activity
         (Label = "@string/ActivitySelect_title",
         Theme = "@style/AppThemeActionBar")]
     public class SelectActivity : BaseActivity
     {
+        private bool _logoutInProcess;
         private RecyclerView _selectView;
 
         protected override void OnCreate(Bundle bundle)
@@ -34,7 +38,11 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             switch (item.ItemId)
             {
                 case Resource.Id.menu_action_logout:
-                    _helper.Logout();
+                    if (!_logoutInProcess)
+                    {
+                        _logoutInProcess = true;
+                        WaitingActions.Add(Helper.Logout());
+                    }
                     return true;
                 default:
                     return base.OnOptionsItemSelected(item);

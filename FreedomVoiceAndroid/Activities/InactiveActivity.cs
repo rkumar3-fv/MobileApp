@@ -7,6 +7,9 @@ using com.FreedomVoice.MobileApp.Android.Helpers;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
 {
+    /// <summary>
+    /// Inactive phone number status info
+    /// </summary>
     [Activity(
         Label = "@string/ActivityInactive_title",
         Theme = "@style/AppThemeActionBar")]

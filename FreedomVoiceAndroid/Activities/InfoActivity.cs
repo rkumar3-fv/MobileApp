@@ -6,8 +6,12 @@ using Android.Widget;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
 {
+    /// <summary>
+    /// Abstract activity with info & one confirmation button
+    /// </summary>
     public abstract class InfoActivity : BaseActivity
     {
+        private bool _logoutInProcess;
         protected Button ActionButton;
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -29,7 +33,11 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             switch (item.ItemId)
             {
                 case Resource.Id.menu_action_logout:
-                    _helper.Logout();
+                    if (!_logoutInProcess)
+                    {
+                        _logoutInProcess = true;
+                        WaitingActions.Add(Helper.Logout());
+                    }
                     return true;
                 case global::Android.Resource.Id.Home:
                     OnBackPressed();

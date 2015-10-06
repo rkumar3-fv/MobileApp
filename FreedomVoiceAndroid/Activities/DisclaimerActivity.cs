@@ -6,6 +6,9 @@ using com.FreedomVoice.MobileApp.Android.Helpers;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
 {
+    /// <summary>
+    /// 911 disclaimer info activity
+    /// </summary>
     [Activity(
         Label = "@string/ActivityDisclaimer_title",
         Theme = "@style/AppThemeActionBar",

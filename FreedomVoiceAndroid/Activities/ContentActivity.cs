@@ -19,6 +19,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         Icon = "@drawable/ic_launcher")]
     public class ContentActivity : BaseActivity
     {
+        private bool _logoutInProcess;
         private ContentPagerAdapter _pagerAdapter;
         private ContentPager _viewPager;
         private Toolbar _toolbar;
@@ -76,10 +77,15 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             switch (item.ItemId)
             {
                 case Resource.Id.menu_action_logout:
-                    //TODO: logout
+                    if (!_logoutInProcess)
+                    {
+                        _logoutInProcess = true;
+                        WaitingActions.Add(Helper.Logout());
+                    }
                     return true;
+                default:
+                    return base.OnOptionsItemSelected(item);
             }
-            return base.OnOptionsItemSelected(item);
         }
 
         /// <summary>

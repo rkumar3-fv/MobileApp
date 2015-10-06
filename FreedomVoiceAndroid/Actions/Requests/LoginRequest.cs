@@ -44,7 +44,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
         {
             return new ParcelableLoginCreator();
         }
-
+        
         public class ParcelableLoginCreator : Object, IParcelableCreator
         {
             public Object CreateFromParcel(Parcel source)

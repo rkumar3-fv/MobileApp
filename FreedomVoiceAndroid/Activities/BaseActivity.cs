@@ -5,31 +5,34 @@ using com.FreedomVoice.MobileApp.Android.Helpers;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
 {
+    /// <summary>
+    /// Base app activity with helper subscription
+    /// </summary>
     public abstract class BaseActivity : AppCompatActivity
     {
-        protected ActionsHelper _helper;
-        protected List<long> _waitingActions;
+        protected ActionsHelper Helper;
+        protected List<long> WaitingActions;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             var app = App.GetApplication(this);
-            _waitingActions = new List<long>();
-            _helper = app.Helper;
+            WaitingActions = new List<long>();
+            Helper = app.Helper;
         }
 
         protected override void OnPause()
         {
             base.OnPause();
-            _helper.HelperEvent -= OnHelperEvent;
+            Helper.HelperEvent -= OnHelperEvent;
         }
 
         protected override void OnResume()
         {
             base.OnResume();
-            _helper.HelperEvent += OnHelperEvent;
-            foreach (var waitingAction in _waitingActions)
-                _helper.GetRusultById(waitingAction);
+            Helper.HelperEvent += OnHelperEvent;
+            foreach (var waitingAction in WaitingActions)
+                Helper.GetRusultById(waitingAction);
         }
 
         /// <summary>
@@ -41,9 +44,9 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         {
             if (args.DataBundle == null) return;
             OnHelperEvent(args);
-            if (!_waitingActions.Contains(args.RequestId)) return;
-            _helper.RemoveResult(args.RequestId);
-            _waitingActions.Remove(args.RequestId);
+            if (!WaitingActions.Contains(args.RequestId)) return;
+            Helper.RemoveResult(args.RequestId);
+            WaitingActions.Remove(args.RequestId);
         }
 
         /// <summary>

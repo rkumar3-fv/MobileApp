@@ -47,7 +47,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             {
                 if (_errorText.Visibility == ViewStates.Visible)
                     _errorText.Visibility = ViewStates.Invisible;
-                _waitingActions.Add(_helper.Authorize(_loginText.Text, _passwordText.Text));
+                WaitingActions.Add(Helper.Authorize(_loginText.Text, _passwordText.Text));
                 _authButton.Enabled = false;
             }
             else

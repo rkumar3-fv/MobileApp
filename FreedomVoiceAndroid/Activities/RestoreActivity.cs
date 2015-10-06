@@ -1,13 +1,16 @@
 ﻿using System;
-using System.Net.Mail;
 using Android.App;
 using Android.OS;
 using Android.Views;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Helpers;
+using com.FreedomVoice.MobileApp.Android.Utils;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
 {
+    /// <summary>
+    /// Password restoration activity
+    /// </summary>
     [Activity(
         Label = "@string/ActivityRestore_title",
         Theme = "@style/AppThemeActionBar")]
@@ -38,10 +41,10 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         private void RestoreButtonOnClick(object sender, EventArgs e)
         {
             if (_emailText.Length() > 5)
-                if (IsEmailValid(_emailText.Text))
+                if (DataValidationUtils.IsEmailValid(_emailText.Text))
                 {
                     _resultLabel.Text = "";
-                    _waitingActions.Add(_helper.RestorePassword(_emailText.Text));
+                    WaitingActions.Add(Helper.RestorePassword(_emailText.Text));
                     _restoreButton.Enabled = false;
                     return;
                 }
@@ -68,24 +71,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         protected override void OnHelperEvent(ActionsHelperEventArgs args)
         {
 
-        }
-
-        /// <summary>
-        /// E-Mail format checking
-        /// </summary>
-        /// <param name="email">entered e-mail</param>
-        /// <returns>validation result</returns>
-        private bool IsEmailValid(string email)
-        {
-            try
-            {
-                var mailAddress = new MailAddress(email);
-                return true;
-            }
-            catch (FormatException)
-            {
-                return false;
-            }
         }
     }
 }

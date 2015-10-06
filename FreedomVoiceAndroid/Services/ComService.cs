@@ -29,8 +29,6 @@ namespace com.FreedomVoice.MobileApp.Android.Services
             return StartCommandResult.NotSticky;
         }
 
-        
-
         public override void OnDestroy()
         {
             base.OnDestroy();
