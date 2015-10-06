@@ -1,6 +1,7 @@
 using Android.Content;
 using Android.OS;
 using Android.Support.V4.Util;
+using com.FreedomVoice.MobileApp.Android.Actions.Requests;
 using com.FreedomVoice.MobileApp.Android.Services;
 using Java.Util.Concurrent.Atomic;
 
@@ -62,6 +63,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         {
             var requestId = RequestId;
             var intent = PrepareIntent(requestId);
+            intent.PutExtra(ComService.RequestTag, new LoginRequest(requestId, login, password));
             _app.StartService(intent);
             return requestId;
         }
@@ -74,6 +76,21 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         {
             var requestId = RequestId;
             var intent = PrepareIntent(requestId);
+            intent.PutExtra(ComService.RequestTag, new LogoutRequest(requestId));
+            _app.StartService(intent);
+            return requestId;
+        }
+
+        /// <summary>
+        /// Restore password action
+        /// </summary>
+        /// <param name="email">e-mail</param>
+        /// <returns>request ID</returns>
+        public long RestorePassword(string email)
+        {
+            var requestId = RequestId;
+            var intent = PrepareIntent(requestId);
+            intent.PutExtra(ComService.RequestTag, new RestorePasswordRequest(requestId, email));
             _app.StartService(intent);
             return requestId;
         }
@@ -81,6 +98,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         private Intent PrepareIntent(long requestId)
         {
             var intent = new Intent(_app, typeof(ComService));
+            intent.SetAction(ComService.ExecuteAction);
             intent.PutExtra(ComService.RequestIdTag, requestId);
             intent.PutExtra(ComServiceResultReceiver.ReceiverTag, _receiver);
             return intent;

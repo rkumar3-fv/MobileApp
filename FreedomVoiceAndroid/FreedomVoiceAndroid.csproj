@@ -48,6 +48,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Mono.Android" />
+    <Reference Include="Mono.Android.Export" />
     <Reference Include="mscorlib" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -70,6 +71,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Actions\BaseAction.cs" />
+    <Compile Include="Actions\Requests\BaseRequest.cs" />
+    <Compile Include="Actions\Requests\LoginRequest.cs" />
+    <Compile Include="Actions\Requests\LogoutRequest.cs" />
+    <Compile Include="Actions\Requests\RestorePasswordRequest.cs" />
+    <Compile Include="Actions\Responses\BaseResponse.cs" />
     <Compile Include="Activities\AuthActivity.cs" />
     <Compile Include="Activities\BaseActivity.cs" />
     <Compile Include="Activities\SelectActivity.cs" />

@@ -10,6 +10,8 @@ namespace com.FreedomVoice.MobileApp.Android.Services
     [Service (Exported = false)]
     public class ComService : Service
     {
+        public const string ExecuteAction = "ComServiceExecute";
+        public const string CancelAction = "ComServiceCancel";
         public const string RequestTag = "ComServiceRequest";
         public const string RequestIdTag = "ComServiceRequestId";
 
@@ -26,6 +28,8 @@ namespace com.FreedomVoice.MobileApp.Android.Services
                 _receiver = intent.GetParcelableExtra(ComServiceResultReceiver.ReceiverTag) as ComServiceResultReceiver;
             return StartCommandResult.NotSticky;
         }
+
+        
 
         public override void OnDestroy()
         {

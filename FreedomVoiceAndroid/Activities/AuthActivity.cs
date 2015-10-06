@@ -2,6 +2,7 @@
 using Android.App;
 using Android.Content;
 using Android.OS;
+using Android.Views;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Helpers;
 
@@ -42,8 +43,16 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         /// </summary>
         private void AuthButtonOnClick(object sender, EventArgs eventArgs)
         {
-            _waitingActions.Add(_helper.Authorize(_loginText.Text, _passwordText.Text));
-            _authButton.Enabled = false;
+            if ((_loginText.Length() > 0) && (_passwordText.Length() > 0))
+            {
+                if (_errorText.Visibility == ViewStates.Visible)
+                    _errorText.Visibility = ViewStates.Invisible;
+                _waitingActions.Add(_helper.Authorize(_loginText.Text, _passwordText.Text));
+                _authButton.Enabled = false;
+            }
+            else
+                if (_errorText.Visibility != ViewStates.Visible)
+                    _errorText.Visibility = ViewStates.Visible;
         }
 
         /// <summary>
