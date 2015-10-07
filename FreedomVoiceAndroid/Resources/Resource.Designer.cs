@@ -2276,7 +2276,7 @@ namespace com.FreedomVoice.MobileApp.Android
 			public const int search_voice_btn = 2131165283;
 			
 			// aapt resource value: 0x7f070076
-			public const int selectActivity_accountsList = 2131165302;
+			public const int selectAccountActivity_accountsList = 2131165302;
 			
 			// aapt resource value: 0x7f070064
 			public const int select_dialog_listview = 2131165284;

@@ -1,6 +1,8 @@
 using System.Threading.Tasks;
 using Android.OS;
 using com.FreedomVoice.MobileApp.Android.Actions.Responses;
+using FreedomVoice.Core;
+using FreedomVoice.Core.Entities.Enums;
 using Java.Interop;
 using Object = Java.Lang.Object;
 
@@ -34,9 +36,17 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
             dest.WriteString(_password);
         }
 
-        public override Task<BaseResponse> ExecuteRequest()
+        /// <summary>
+        /// Execute login action async
+        /// </summary>
+        /// <returns>LoginResponse or ErrorResponse</returns>
+        public override async Task<BaseResponse> ExecuteRequest()
         {
-            throw new System.NotImplementedException();
+            var asyncRes = await ApiHelper.Login(_login, _password);
+            var errorResponse = CheckErrorResponse(Id, asyncRes.Code);
+            if (errorResponse != null)
+                return errorResponse;
+            return new LoginResponse(Id);
         }
 
         [ExportField("CREATOR")]

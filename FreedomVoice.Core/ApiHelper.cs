@@ -16,13 +16,13 @@
     {
         public static CookieContainer CookieContainer { get; set; }
 
-        public static BaseResult<string> Login(string login, string password)
+        public async static Task<BaseResult<string>> Login(string login, string password)
         {
             var cts = new CancellationTokenSource();
 
             CookieContainer = new CookieContainer();
             var postdata = string.Format("UserName={0}&Password={1}", login, password);
-            return MakeAsyncPostRequest<string>("/api/v1/login", postdata, "application/x-www-form-urlencoded", cts.Token).Result;
+            return await MakeAsyncPostRequest<string>("/api/v1/login", postdata, "application/x-www-form-urlencoded", cts.Token);
         }
 
         public static BaseResult<string> PasswordReset(string login)

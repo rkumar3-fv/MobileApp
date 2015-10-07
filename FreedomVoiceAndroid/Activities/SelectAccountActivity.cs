@@ -3,6 +3,7 @@ using Android.OS;
 using Android.Support.V7.Internal.View;
 using Android.Support.V7.Widget;
 using Android.Views;
+using com.FreedomVoice.MobileApp.Android.Adapters;
 using com.FreedomVoice.MobileApp.Android.Helpers;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
@@ -13,16 +14,20 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
     [Activity
         (Label = "@string/ActivitySelect_title",
         Theme = "@style/AppThemeActionBar")]
-    public class SelectActivity : BaseActivity
+    public class SelectAccountActivity : BaseActivity
     {
         private bool _logoutInProcess;
         private RecyclerView _selectView;
+        private AccountsRecyclerAdapter _adapter;
 
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
             SetContentView(Resource.Layout.act_select);
-            _selectView = FindViewById<RecyclerView>(Resource.Id.selectActivity_accountsList);
+            _selectView = FindViewById<RecyclerView>(Resource.Id.selectAccountActivity_accountsList);
+            _selectView.SetLayoutManager(new LinearLayoutManager(this));
+            _adapter = new AccountsRecyclerAdapter();
+            _selectView.SetAdapter(_adapter);
         }
 
         public override bool OnCreateOptionsMenu(IMenu menu)

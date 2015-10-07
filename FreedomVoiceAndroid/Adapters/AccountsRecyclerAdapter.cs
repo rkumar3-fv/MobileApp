@@ -9,16 +9,16 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
     /// <summary>
     /// SelectAccount recycler view adapter
     /// </summary>
-    public class SelectRecyclerAdapter : RecyclerView.Adapter
+    public class AccountsRecyclerAdapter : RecyclerView.Adapter
     {
         private List<Account> _accountsList;
 
-        public SelectRecyclerAdapter()
+        public AccountsRecyclerAdapter()
         {
             _accountsList = new List<Account>();
         }
 
-        public SelectRecyclerAdapter(List<Account> accountsList)
+        public AccountsRecyclerAdapter(List<Account> accountsList)
         {
             _accountsList = accountsList;
         }
