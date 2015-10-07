@@ -41,18 +41,18 @@ namespace FreedomVoice.Core
             return await MakeAsyncGetRequest<DefaultPhoneNumbers>("/api/v1/systems", "application/json", cts.Token);
         }
 
-        public static BaseResult<PresentationPhoneNumbers> GetPresentationPhoneNumbers(string systemPhoneNumber)
+        public async static Task<BaseResult<PresentationPhoneNumbers>> GetPresentationPhoneNumbers(string systemPhoneNumber)
         {
             var cts = new CancellationTokenSource();
 
-            return MakeAsyncGetRequest<PresentationPhoneNumbers>(string.Format("api/v1/systems/{0}/presentationPhoneNumbers", systemPhoneNumber), "application/json", cts.Token).Result;
+            return await MakeAsyncGetRequest<PresentationPhoneNumbers>($"api/v1/systems/{systemPhoneNumber}/presentationPhoneNumbers", "application/json", cts.Token);
         }
 
-        public static BaseResult<List<Mailbox>> GetMailboxes(string systemPhoneNumber)
+        public async static Task<BaseResult<List<Mailbox>>> GetMailboxes(string systemPhoneNumber)
         {
             var cts = new CancellationTokenSource();
 
-            return MakeAsyncGetRequest<List<Mailbox>>(string.Format("/api/v1/systems/{0}/mailboxes", systemPhoneNumber), "application/json", cts.Token).Result;
+            return await MakeAsyncGetRequest<List<Mailbox>>($"/api/v1/systems/{systemPhoneNumber}/mailboxes", "application/json", cts.Token);
         }
 
         public static BaseResult<List<MailboxWithCount>> GetMailboxesWithCounts(string systemPhoneNumber)

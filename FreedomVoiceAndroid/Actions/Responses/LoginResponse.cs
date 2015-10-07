@@ -4,15 +4,16 @@ using Object = Java.Lang.Object;
 
 namespace com.FreedomVoice.MobileApp.Android.Actions.Responses
 {
+    /// <summary>
+    /// Successful login action response
+    /// </summary>
     public class LoginResponse : BaseResponse
     {
         public LoginResponse(long requestId) : base(requestId)
-        {
-        }
+        {}
 
         private LoginResponse(Parcel parcel) : base(parcel)
-        {
-        }
+        {}
 
         [ExportField("CREATOR")]
         public static ParcelableLoginResponseCreator InitializeCreator()

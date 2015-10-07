@@ -4,6 +4,9 @@ using Object = Java.Lang.Object;
 
 namespace com.FreedomVoice.MobileApp.Android.Actions.Responses
 {
+    /// <summary>
+    /// Response with error code
+    /// </summary>
     public class ErrorResponse : BaseResponse
     {
         public const int ErrorBadRequest = 1;

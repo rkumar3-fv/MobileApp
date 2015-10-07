@@ -73,7 +73,9 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
 
         protected override void OnHelperEvent(ActionsHelperEventArgs args)
         {
-
+            if (_restoreButton.Enabled == false)
+                _restoreButton.Enabled = true;
+            //TODO: check restore response
         }
 
         /// <summary>

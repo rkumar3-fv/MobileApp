@@ -7,6 +7,8 @@ namespace TestApp
     {
         static void Main(string[] args)
         {
+            Console.Write(@"Restore method: " + ApiHelper.PasswordReset("a055@gmail.com").Result);
+            Console.Write(Environment.NewLine);
 
             Console.Write(@"Login method: " + ApiHelper.Login("freedomvoice.user1.267055@gmail.com", "user1654654").Result.Code);
             Console.Write(Environment.NewLine);
