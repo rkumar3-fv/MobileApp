@@ -1,5 +1,6 @@
 ﻿using System;
 using Android.App;
+using Android.Content;
 using Android.OS;
 using Android.Views;
 using Android.Widget;
@@ -43,12 +44,14 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             if (_emailText.Length() > 5)
                 if (DataValidationUtils.IsEmailValid(_emailText.Text))
                 {
-                    _resultLabel.Text = "";
+                    if (_resultLabel.Visibility == ViewStates.Visible)
+                        _resultLabel.Visibility = ViewStates.Invisible;
                     WaitingActions.Add(Helper.RestorePassword(_emailText.Text));
                     _restoreButton.Enabled = false;
                     return;
                 }
-             _resultLabel.Text = GetString(Resource.String.ActivityRestore_badResponse);
+            if (_resultLabel.Visibility != ViewStates.Visible)
+                _resultLabel.Visibility = ViewStates.Visible;
         }
 
         public override bool OnCreateOptionsMenu(IMenu menu)
@@ -71,6 +74,16 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         protected override void OnHelperEvent(ActionsHelperEventArgs args)
         {
 
+        }
+
+        /// <summary>
+        /// Good restoration result action
+        /// </summary>
+        private void RestorationSuccessfull()
+        {
+            Toast.MakeText(this, Resource.String.ActivityRestore_goodResponse, ToastLength.Long).Show();
+            var intent = new Intent(this, typeof(AuthActivity));
+            StartActivity(intent);
         }
     }
 }

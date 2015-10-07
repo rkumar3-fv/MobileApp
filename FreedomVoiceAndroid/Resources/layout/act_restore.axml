@@ -50,6 +50,8 @@
         android:id="@+id/restoreActivity_resultText"
         style="@style/AuthLabelText"
         android:textColor="@color/textColorError"
+        android:text="@string/ActivityRestore_badResponse"
+        android:visibility="invisible"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/restore_activity_elements_vertical_margin" />

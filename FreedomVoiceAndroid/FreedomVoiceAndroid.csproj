@@ -82,6 +82,11 @@
     <Compile Include="Activities\SelectActivity.cs" />
     <Compile Include="Adapters\ContentPager.cs" />
     <Compile Include="Adapters\ContentPagerAdapter.cs" />
+    <Compile Include="Adapters\ExtensionsRecyclerAdapter.cs" />
+    <Compile Include="Adapters\SelectRecyclerAdapter.cs" />
+    <Compile Include="Entities\Account.cs" />
+    <Compile Include="Entities\Entity.cs" />
+    <Compile Include="Entities\Extension.cs" />
     <Compile Include="Fragments\ContactsFragment.cs" />
     <Compile Include="Activities\ContentActivity.cs" />
     <Compile Include="Activities\DisclaimerActivity.cs" />

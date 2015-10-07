@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
     <ImageView
         android:id="@+id/itemMessage_messageIcon"
         android:layout_alignParentTop="true"
@@ -27,7 +27,16 @@
         android:id="@+id/itemMessage_messageDate"
         android:layout_toRightOf="@id/itemMessage_messageIcon"
         android:layout_toLeftOf="@id/itemMessage_messageStamp"
+        android:layout_below="@id/itemMessage_messageFrom"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:lines="1" />
+    <FrameLayout
+        android:id="@+id/itemMessage_expandableFrame"
+        android:layout_toRightOf="@id/itemMessage_messageIcon"
+        android:layout_toLeftOf="@id/itemMessage_messageStamp"
+        android:layout_below="@id/itemMessage_messageDate"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:visibility="gone" />
 </RelativeLayout>
