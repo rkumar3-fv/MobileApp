@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.OS;
@@ -17,7 +18,7 @@ namespace com.FreedomVoice.MobileApp.Android.Services
         public const string RequestTag = "ComServiceRequest";
         public const string RequestIdTag = "ComServiceRequestId";
 
-        private ComServiceResultReceiver _receiver;
+        private ResultReceiver _receiver;
 
         //TODO: convert to map
         private readonly List<long> _activeActions = new List<long>(); 
@@ -29,8 +30,8 @@ namespace com.FreedomVoice.MobileApp.Android.Services
 
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
         {
-            if (_receiver != null)
-                _receiver = intent.GetParcelableExtra(ComServiceResultReceiver.ReceiverTag) as ComServiceResultReceiver;
+            if (_receiver == null)
+                _receiver = intent.GetParcelableExtra(ComServiceResultReceiver.ReceiverTag) as ResultReceiver;
             if (intent.Action == CancelAction)
             {
                 //TODO : cancel action
@@ -45,7 +46,11 @@ namespace com.FreedomVoice.MobileApp.Android.Services
             return StartCommandResult.NotSticky;
         }
 
-        private async void ExecuteRequest(BaseRequest request)
+        /// <summary>
+        /// Async request execution
+        /// </summary>
+        /// <param name="request">request for execution</param>
+        private async Task ExecuteRequest(BaseRequest request)
         {
             var result = await request.ExecuteRequest();
             var data = new Bundle();

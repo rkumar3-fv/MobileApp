@@ -1,17 +1,17 @@
-﻿namespace FreedomVoice.Core
-{
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Net;
-    using System.Text;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using Entities;
-    using Entities.Base;
-    using Entities.Enums;
-    using Newtonsoft.Json;
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using FreedomVoice.Core.Entities;
+using FreedomVoice.Core.Entities.Base;
+using FreedomVoice.Core.Entities.Enums;
+using Newtonsoft.Json;
 
+namespace FreedomVoice.Core
+{
     public static class ApiHelper
     {
         public static CookieContainer CookieContainer { get; set; }
@@ -21,24 +21,24 @@
             var cts = new CancellationTokenSource();
 
             CookieContainer = new CookieContainer();
-            var postdata = string.Format("UserName={0}&Password={1}", login, password);
+            var postdata = $"UserName={login}&Password={password}";
             return await MakeAsyncPostRequest<string>("/api/v1/login", postdata, "application/x-www-form-urlencoded", cts.Token);
         }
 
-        public static BaseResult<string> PasswordReset(string login)
+        public async static Task<BaseResult<string>> PasswordReset(string login)
         {
             var cts = new CancellationTokenSource();
 
             CookieContainer = new CookieContainer();
-            var postdata = string.Format("UserName={0}", login);
-            return MakeAsyncPostRequest<string>("/api/v1/passwordReset", postdata, "application/x-www-form-urlencoded", cts.Token).Result;
+            var postdata = $"UserName={login}";
+            return await MakeAsyncPostRequest<string>("/api/v1/passwordReset", postdata, "application/x-www-form-urlencoded", cts.Token);
         }
 
-        public static BaseResult<DefaultPhoneNumbers> GetSystems()
+        public async static Task<BaseResult<DefaultPhoneNumbers>> GetSystems()
         {
             var cts = new CancellationTokenSource();
 
-            return MakeAsyncGetRequest<DefaultPhoneNumbers>("/api/v1/systems", "application/json", cts.Token).Result;
+            return await MakeAsyncGetRequest<DefaultPhoneNumbers>("/api/v1/systems", "application/json", cts.Token);
         }
 
         public static BaseResult<PresentationPhoneNumbers> GetPresentationPhoneNumbers(string systemPhoneNumber)

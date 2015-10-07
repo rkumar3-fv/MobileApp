@@ -4,6 +4,7 @@ using Android.Content;
 using Android.OS;
 using Android.Views;
 using Android.Widget;
+using com.FreedomVoice.MobileApp.Android.Actions.Responses;
 using com.FreedomVoice.MobileApp.Android.Helpers;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
@@ -70,7 +71,31 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         /// <param name="args">Result args</param>
         protected override void OnHelperEvent(ActionsHelperEventArgs args)
         {
-            
+            if (_authButton.Enabled == false)
+                _authButton.Enabled = true;
+            if (args.ResponseData is LoginResponse)
+            {
+                var intent = new Intent(this, typeof(SelectAccountActivity));
+                StartActivity(intent);
+            }
+            else if (args.ResponseData is ErrorResponse)
+            {
+                var error = (ErrorResponse)args.ResponseData;
+                switch (error.ErrorCode)
+                {
+                    case ErrorResponse.ErrorBadRequest:
+
+                        break;
+                    case ErrorResponse.ErrorUnauthorized:
+
+                        break;
+                    default:
+
+                        break;
+                }
+                if (_errorText.Visibility != ViewStates.Visible)
+                    _errorText.Visibility = ViewStates.Visible;
+            }
         }
 
         public override void OnBackPressed()

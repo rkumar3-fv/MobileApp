@@ -53,7 +53,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         /// <param name="args">Result args</param>
         private void OnHelperEvent(object sender, ActionsHelperEventArgs args)
         {
-            if (!_waitingActions.Contains(args.RequestId) || args.DataBundle == null) return;
+            if (!_waitingActions.Contains(args.RequestId) || args.ResponseData == null) return;
             OnHelperEvent(args);
             _helper.RemoveResult(args.RequestId);
             _waitingActions.Remove(args.RequestId);

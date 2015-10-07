@@ -2,7 +2,6 @@ using System.Threading.Tasks;
 using Android.OS;
 using com.FreedomVoice.MobileApp.Android.Actions.Responses;
 using FreedomVoice.Core;
-using FreedomVoice.Core.Entities.Enums;
 using Java.Interop;
 using Object = Java.Lang.Object;
 

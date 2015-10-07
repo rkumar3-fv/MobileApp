@@ -42,7 +42,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         /// <param name="args">Result args</param>
         private void OnHelperEvent(object sender, ActionsHelperEventArgs args)
         {
-            if (args.DataBundle == null) return;
+            if (args.ResponseData == null) return;
             OnHelperEvent(args);
             if (!WaitingActions.Contains(args.RequestId)) return;
             Helper.RemoveResult(args.RequestId);
