@@ -1,7 +1,10 @@
 using System;
 using Android.App;
 using Android.Content;
+using Android.Graphics;
 using Android.Runtime;
+using Android.Util;
+using Android.Views;
 using com.FreedomVoice.MobileApp.Android.Helpers;
 
 namespace com.FreedomVoice.MobileApp.Android
@@ -16,7 +19,7 @@ namespace com.FreedomVoice.MobileApp.Android
         Theme = "@style/AppTheme")]
     public class App : Application
     {
-        public const string RestoreUrl = "http://www.freedomvoice.com";
+        public const string AppPackage = "com.FreedomVoice.MobileApp.Android";
 
         /// <summary>
         /// Get app context

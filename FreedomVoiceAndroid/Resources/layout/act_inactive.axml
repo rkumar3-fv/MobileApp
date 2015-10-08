@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:layout_marginTop="@dimen/activity_vertical_margin"
+    android:layout_marginBottom="@dimen/activity_vertical_margin"
+    android:layout_marginStart="@dimen/activity_horizontal_margin"
+    android:layout_marginEnd="@dimen/activity_horizontal_margin">
+    <TextView
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:lines="3"
+        style="@style/AuthLabelText"
+        android:text="@string/ActivityInactive_info"
+        android:layout_marginTop="@dimen/info_activity_info_label_margin"
+        android:layout_marginStart="@dimen/info_activity_text_horizontal_margin"
+        android:layout_marginEnd="@dimen/info_activity_text_horizontal_margin" />
+    <Button
+        android:id="@+id/inactiveActivity_dialButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/ActivityIncative_callButton"
+        android:layout_marginTop="@dimen/info_activity_elements_vertical_margin"
+        android:layout_marginStart="@dimen/info_activity_text_horizontal_margin"
+        android:layout_marginEnd="@dimen/info_activity_text_horizontal_margin"
+        android:textAlignment="center" />
+</LinearLayout>

@@ -1,36 +1,37 @@
 using System;
-using System.Collections.Generic;
 using Android.OS;
 using Android.Support.V7.App;
+using Android.Util;
 using com.FreedomVoice.MobileApp.Android.Helpers;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
 {
+    /// <summary>
+    /// Base app activity with helper subscription
+    /// </summary>
     public abstract class BaseActivity : AppCompatActivity
     {
-        protected ActionsHelper _helper;
-        protected List<long> _waitingActions;
+        protected ActionsHelper Helper;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             var app = App.GetApplication(this);
-            _waitingActions = new List<long>();
-            _helper = app.Helper;
+            Helper = app.Helper;
         }
 
         protected override void OnPause()
         {
             base.OnPause();
-            _helper.HelperEvent -= OnHelperEvent;
+            Log.Debug(App.AppPackage, $"ACTIVITY {GetType().Name} paused");
+            Helper.HelperEvent -= OnHelperEvent;
         }
 
         protected override void OnResume()
         {
             base.OnResume();
-            _helper.HelperEvent += OnHelperEvent;
-            foreach (var waitingAction in _waitingActions)
-                _helper.GetRusultById(waitingAction);
+            Log.Debug(App.AppPackage, $"ACTIVITY {GetType().Name} resumed");
+            Helper.HelperEvent += OnHelperEvent;
         }
 
         /// <summary>
@@ -38,12 +39,17 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         /// </summary>
         /// <param name="sender">ActionsHelper</param>
         /// <param name="args">Result args</param>
-        private void OnHelperEvent(object sender, ActionsHelperEventArgs args)
+        private void OnHelperEvent(object sender, EventArgs args)
         {
-            if (!_waitingActions.Contains(args.RequestId) || args.DataBundle == null) return;
-            OnHelperEvent(args);
-            _helper.RemoveResult(args.RequestId);
-            _waitingActions.Remove(args.RequestId);
+            Log.Debug(App.AppPackage, $"ACTIVITY {GetType().Name} handle event {args.GetType().Name}");
+            var arg = args as ActionsHelperIntentArgs;
+            if (arg != null)
+            {
+                var intentArg = arg;
+                StartActivity(intentArg.IntentData);
+            }
+            else
+                OnHelperEvent(args as ActionsHelperEventArgs);
         }
 
         /// <summary>

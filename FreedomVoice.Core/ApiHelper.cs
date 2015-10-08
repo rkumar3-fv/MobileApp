@@ -1,6 +1,5 @@
 ﻿namespace FreedomVoice.Core
 {
-    using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
@@ -17,13 +16,15 @@
     {
         public static CookieContainer CookieContainer { get; set; }
 
-        public static BaseResult<string> Login(string login, string password)
+        public async static Task<BaseResult<string>> Login(string login, string password)
         {
-            var cts = new CancellationTokenSource();
-
             CookieContainer = new CookieContainer();
             var postdata = string.Format("UserName={0}&Password={1}", login, password);
-            return MakeAsyncPostRequest<string>("/api/v1/login", postdata, "application/x-www-form-urlencoded", cts.Token).Result;
+            return await MakeAsyncPostRequest<string>(
+                "/api/v1/login",
+                postdata,
+                "application/x-www-form-urlencoded",
+                CancellationToken.None);
         }
 
         public static void Logout()
@@ -31,84 +32,121 @@
             CookieContainer = null;
         }
 
-        public static BaseResult<string> PasswordReset(string login)
+        public async static Task<BaseResult<string>> PasswordReset(string login)
         {
-            var cts = new CancellationTokenSource();
-
-            CookieContainer = new CookieContainer();
             var postdata = string.Format("UserName={0}", login);
-            return MakeAsyncPostRequest<string>("/api/v1/passwordReset", postdata, "application/x-www-form-urlencoded", cts.Token).Result;
+            return await MakeAsyncPostRequest<string>(
+                "/api/v1/passwordReset",
+                postdata,
+                "application/x-www-form-urlencoded",
+                CancellationToken.None);
         }
 
-        public static BaseResult<DefaultPhoneNumbers> GetSystems()
+        public async static Task<BaseResult<DefaultPhoneNumbers>> GetSystems()
         {
-            var cts = new CancellationTokenSource();
-
-            return MakeAsyncGetRequest<DefaultPhoneNumbers>("/api/v1/systems", "application/json", cts.Token).Result;
+            return await MakeAsyncGetRequest<DefaultPhoneNumbers>(
+                "/api/v1/systems",
+                "application/json",
+                CancellationToken.None);
         }
 
-        public static BaseResult<PresentationPhoneNumbers> GetPresentationPhoneNumbers(string systemPhoneNumber)
+        public async static Task<BaseResult<PresentationPhoneNumbers>> GetPresentationPhoneNumbers(string systemPhoneNumber)
         {
-            var cts = new CancellationTokenSource();
-
-            return MakeAsyncGetRequest<PresentationPhoneNumbers>(string.Format("api/v1/systems/{0}/presentationPhoneNumbers", systemPhoneNumber), "application/json", cts.Token).Result;
+            return await MakeAsyncGetRequest<PresentationPhoneNumbers>(
+                string.Format("api/v1/systems/{0}/presentationPhoneNumbers", systemPhoneNumber),
+                "application/json",
+                CancellationToken.None)
+                ;
         }
 
-        public static BaseResult<List<Mailbox>> GetMailboxes(string systemPhoneNumber)
+        public async static Task<BaseResult<CreateCallReservationSetting>> CreateCallReservation(string systemPhoneNumber, string expectedCallerIdNumber, string presentationPhoneNumber, string destinationPhoneNumber)
         {
-            var cts = new CancellationTokenSource();
+            var postdata = string.Format(
+                "ExpectedCallerIdNumber={0}&PresentationPhoneNumber={1}&DestinationPhoneNumber={2}",
+                expectedCallerIdNumber,
+                presentationPhoneNumber,
+                destinationPhoneNumber);
 
-            return MakeAsyncGetRequest<List<Mailbox>>(string.Format("/api/v1/systems/{0}/mailboxes", systemPhoneNumber), "application/json", cts.Token).Result;
+            return await MakeAsyncPostRequest<CreateCallReservationSetting>(
+                string.Format("api/v1/systems/{0}/createCallReservation", systemPhoneNumber),
+                postdata,
+                "application/x-www-form-urlencoded",
+                CancellationToken.None);
         }
 
-        public static BaseResult<List<MailboxWithCount>> GetMailboxesWithCounts(string systemPhoneNumber)
+        public async static Task<BaseResult<List<Mailbox>>> GetMailboxes(string systemPhoneNumber)
         {
-            var cts = new CancellationTokenSource();
-
-            return MakeAsyncGetRequest<List<MailboxWithCount>>(string.Format("/api/v1/systems/{0}/mailboxesWithCounts", systemPhoneNumber), "application/json", cts.Token).Result;
+            return await MakeAsyncGetRequest<List<Mailbox>>(
+                string.Format("/api/v1/systems/{0}/mailboxes", systemPhoneNumber),
+                "application/json",
+                CancellationToken.None);
         }
 
-        public static BaseResult<List<Folder>> GetFolders(string systemPhoneNumber, int mailboxNumber)
+        public async static Task<BaseResult<List<MailboxWithCount>>> GetMailboxesWithCounts(string systemPhoneNumber)
         {
-            var cts = new CancellationTokenSource();
-
-            return MakeAsyncGetRequest<List<Folder>>(string.Format("/api/v1/systems/{0}/mailboxes/{1}/folders", systemPhoneNumber, mailboxNumber), "application/json", cts.Token).Result;
+            return await MakeAsyncGetRequest<List<MailboxWithCount>>(
+                string.Format("/api/v1/systems/{0}/mailboxesWithCounts", systemPhoneNumber),
+                "application/json",
+                CancellationToken.None);
         }
 
-        public static BaseResult<List<Message>> GetMesages(string systemPhoneNumber, int mailboxNumber, string folderName, int pageSize, int pageNumber, bool asc)
+        public async static Task<BaseResult<List<Folder>>> GetFolders(string systemPhoneNumber, int mailboxNumber)
         {
-            var cts = new CancellationTokenSource();
-            var res = MakeAsyncGetRequest<List<Message>>(string.Format("/api/v1/systems/{0}/mailboxes/{1}/folders/{2}/messages?PageSize={3}&PageNumber={4}&SortAsc={5}", systemPhoneNumber, mailboxNumber, folderName, pageSize, pageNumber, asc), "application/json", cts.Token).Result;
-            return res;
+            return await MakeAsyncGetRequest<List<Folder>>(
+                string.Format("/api/v1/systems/{0}/mailboxes/{1}/folders", systemPhoneNumber, mailboxNumber),
+                "application/json",
+                CancellationToken.None);
         }
 
-        public static BaseResult<string> MoveMessages(string systemPhoneNumber, int mailboxNumber, string destinationFolder, List<string> messageIds)
+        public async static Task<BaseResult<List<Message>>> GetMesages(string systemPhoneNumber, int mailboxNumber, string folderName, int pageSize, int pageNumber, bool asc)
         {
-            var cts = new CancellationTokenSource();
+            return await MakeAsyncGetRequest<List<Message>>(
+                string.Format(
+                    "/api/v1/systems/{0}/mailboxes/{1}/folders/{2}/messages?PageSize={3}&PageNumber={4}&SortAsc={5}",
+                    systemPhoneNumber,
+                    mailboxNumber,
+                    folderName,
+                    pageSize,
+                    pageNumber,
+                    asc),
+                "application/json",
+                CancellationToken.None);
+        }
+
+        public async static Task<BaseResult<string>> MoveMessages(string systemPhoneNumber, int mailboxNumber, string destinationFolder, List<string> messageIds)
+        {
             var messagesStr = messageIds.Aggregate(string.Empty, (current, messageId) => current + ("&MessageIds=" + messageId));
 
             var postdata = string.Format("DestinationFolderName={0}{1}", destinationFolder, messagesStr);
-            var res = MakeAsyncPostRequest<string>(string.Format("/api/v1/systems/{0}/mailboxes/{1}/moveMessages", systemPhoneNumber, mailboxNumber), postdata, "application/x-www-form-urlencoded", cts.Token).Result;
-            return res;
-
+            return await MakeAsyncPostRequest<string>(
+                string.Format("/api/v1/systems/{0}/mailboxes/{1}/moveMessages", systemPhoneNumber, mailboxNumber),
+                postdata,
+                "application/x-www-form-urlencoded",
+                CancellationToken.None);
         }
 
-        public static BaseResult<string> DeleteMessages(string systemPhoneNumber, int mailboxNumber, List<string> messageIds)
+        public async static Task<BaseResult<string>> DeleteMessages(string systemPhoneNumber, int mailboxNumber, List<string> messageIds)
         {
-            var cts = new CancellationTokenSource();
             var postdata = messageIds.Aggregate(string.Empty, (current, messageId) => current + ("&MessageIds=" + messageId));
 
-            var res = MakeAsyncPostRequest<string>(string.Format("/api/v1/systems/{0}/mailboxes/{1}/deleteMessages", systemPhoneNumber, mailboxNumber), postdata, "application/x-www-form-urlencoded", cts.Token).Result;
-            return res;
-
+            return await MakeAsyncPostRequest<string>(
+                string.Format("/api/v1/systems/{0}/mailboxes/{1}/deleteMessages", systemPhoneNumber, mailboxNumber),
+                postdata,
+                "application/x-www-form-urlencoded",
+                CancellationToken.None);
         }
 
-        public static Stream GetMedia(string systemPhoneNumber, int mailboxNumber, string folderName, string messageId, MediaType mediaType)
+        public async static Task<BaseResult<Stream>> GetMedia(string systemPhoneNumber, int mailboxNumber, string folderName, string messageId, MediaType mediaType, CancellationToken token)
         {
-            var cts = new CancellationTokenSource();
-            cts.Cancel();
-
-            return MakeAsyncFileDownload(string.Format("/api/v1/systems/{0}/mailboxes/{1}/folders/{2}/messages/{3}/media/{4}", systemPhoneNumber, mailboxNumber, folderName, messageId, mediaType), "application/json", cts.Token).Result.Result;
+            return await MakeAsyncFileDownload(
+                string.Format("/api/v1/systems/{0}/mailboxes/{1}/folders/{2}/messages/{3}/media/{4}",
+                systemPhoneNumber, 
+                mailboxNumber, 
+                folderName, 
+                messageId, 
+                mediaType), 
+                "application/json", 
+                token);
         }
 
         private static HttpWebRequest GetRequest(string url, string method, string contentType)
@@ -207,6 +245,16 @@
                                     };
                                     break;
                                 }
+
+                            case HttpStatusCode.NotFound:
+                                {
+                                    retResult = new BaseResult<Stream>
+                                    {
+                                        Code = ErrorCodes.NotFound,
+                                        Result = Stream.Null
+                                    };
+                                    break;
+                                }
                         }
                     }
 
@@ -264,6 +312,16 @@
                                     retResult = new BaseResult<T>
                                     {
                                         Code = ErrorCodes.BadRequest,
+                                        Result = default(T)
+                                    };
+                                    break;
+                                }
+
+                            case HttpStatusCode.NotFound:
+                                {
+                                    retResult = new BaseResult<T>
+                                    {
+                                        Code = ErrorCodes.NotFound,
                                         Result = default(T)
                                     };
                                     break;

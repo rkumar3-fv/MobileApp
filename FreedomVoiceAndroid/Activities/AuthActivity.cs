@@ -2,9 +2,9 @@
 using Android.App;
 using Android.Content;
 using Android.OS;
+using Android.Views;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Helpers;
-using Uri = Android.Net.Uri;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
 {
@@ -12,17 +12,28 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
     /// Authorization activity
     /// </summary>
     [Activity(
-        Label = "@string/ApplicationTitle", 
-        MainLauncher = true, 
+        MainLauncher = true,
+        Label = "@string/ApplicationTitle",
         Icon = "@mipmap/ic_launcher", 
-        Theme = "@style/AppThemeActionBar",
-        NoHistory = true)]
+        Theme = "@style/AppTheme")]
     public class AuthActivity : BaseActivity
     {
+        /// <summary>
+        /// Debug data set
+        /// REMOVE BEFORE RELEASE!
+        /// </summary>
+        private void DebugData()
+        {
+            //TODO: REMOVE
+            _loginText.Text = "freedomvoice.user1.267055@gmail.com";
+            _passwordText.Text = "user1654654";
+        }
+
         private Button _authButton;
         private Button _forgotButton;
         private EditText _loginText;
         private EditText _passwordText;
+        private TextView _errorText;
 
         protected override void OnCreate(Bundle bundle)
         {
@@ -32,10 +43,16 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             _forgotButton = FindViewById<Button>(Resource.Id.authActivity_restoreButton);
             _loginText = FindViewById<EditText>(Resource.Id.authActivity_loginField);
             _passwordText = FindViewById<EditText>(Resource.Id.authActivity_passwordField);
+            _errorText = FindViewById<TextView>(Resource.Id.authActivity_errorText);
 
             _authButton.Click += AuthButtonOnClick;
             _forgotButton.Click += ForgotButtonOnClick;
-            
+        }
+
+        protected override void OnResume()
+        {
+            base.OnResume();
+            DebugData();
         }
 
         /// <summary>
@@ -43,18 +60,24 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         /// </summary>
         private void AuthButtonOnClick(object sender, EventArgs eventArgs)
         {
-            _waitingActions.Add(_helper.Authorize(_loginText.Text, _passwordText.Text));
-            _authButton.Enabled = false;
+            if ((_loginText.Length() > 0) && (_passwordText.Length() > 0))
+            {
+                if (_errorText.Visibility == ViewStates.Visible)
+                    _errorText.Visibility = ViewStates.Invisible;
+                //_authButton.Enabled = false;
+                Helper.Authorize(_loginText.Text, _passwordText.Text);
+            }
+            else
+                if (_errorText.Visibility != ViewStates.Visible)
+                    _errorText.Visibility = ViewStates.Visible;
         }
-
 
         /// <summary>
         /// Restore password in browser
         /// </summary>
         private void ForgotButtonOnClick(object sender, EventArgs e)
-        {
-            var uri = Uri.Parse(App.RestoreUrl);
-            var intent = new Intent(Intent.ActionView, uri);
+        {            
+            var intent = new Intent(this, typeof(RestoreActivity));
             StartActivity(intent);
         }
 
@@ -65,6 +88,11 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         protected override void OnHelperEvent(ActionsHelperEventArgs args)
         {
             
+        }
+
+        public override void OnBackPressed()
+        {
+            MoveTaskToBack(true);
         }
     }
 }

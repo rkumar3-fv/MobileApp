@@ -8,4 +8,10 @@
   <color name="colorBackground">#b2ebf2</color>
   <color name="textColorPrimary">#212121</color>
   <color name="textColorSecondary">#727272</color>
+  <color name="textColorSuccess">#8bc34a</color>
+  <color name="textColorError">#ff5722</color>
+  <color name="textColorNewMessages">#0097a7</color>
+  <color name="colorTabIndicator">#ffffff</color>
+  <color name="colorFabPrimary">#4caf50</color>
+  <color name="colorFabPressed">#8bc34a</color>
 </resources>

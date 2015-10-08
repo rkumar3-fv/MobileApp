@@ -7,6 +7,7 @@
         BadRequest,
         ConnectionLost,
         Cancelled,
-        Unknown
+        Unknown,
+        NotFound
     }
 }

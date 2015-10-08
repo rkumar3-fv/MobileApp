@@ -3,6 +3,8 @@
   <!-- Text-->
   <dimen name="text_main">18sp</dimen>
   <dimen name="text_secondary">12sp</dimen>
+  <dimen name="text_numeric_keyboard">22sp</dimen>
+  <dimen name="text_tab">14sp</dimen>
   
   <!-- Toolbar -->
   <dimen name="toolbar_elevation">4dp</dimen>
@@ -19,4 +21,38 @@
   <dimen name="auth_activity_login_label_margin">60dp</dimen>
   <dimen name="auth_activity_elements_vertical_margin">16dp</dimen>
   <dimen name="auth_activity_text_horizontal_margin">32dp</dimen>
+  
+  <!-- Restore Activity -->
+  <dimen name="restore_activity_info_label_margin">32dp</dimen>
+  <dimen name="restore_activity_elements_vertical_margin">16dp</dimen>
+  <dimen name="restore_activity_text_horizontal_margin">32dp</dimen>
+  
+  <!-- Info-type activity -->
+  <dimen name="info_activity_info_label_margin">60dp</dimen>
+  <dimen name="info_activity_elements_vertical_margin">16dp</dimen>
+  <dimen name="info_activity_text_horizontal_margin">32dp</dimen>
+  
+  <!-- Select account activity -->
+  <dimen name="select_acc_activity_top_padding">6dp</dimen>
+  <dimen name="select_acc_activity_horizontal_margin">5dp</dimen>
+  <dimen name="select_acc_activity_element_spacing">4dp</dimen>
+  <dimen name="select_acc_activity_min_element_height">48dp</dimen>
+  <dimen name="select_acc_activity_text_padding">16dp</dimen>
+  
+  <!-- Content activity -->
+  <dimen name="content_activity_tab_text_size">14sp</dimen>
+  <dimen name="content_activity_tab_elevation">3dp</dimen>
+  <dimen name="content_activity_tab_indicator_size">6dp</dimen>
+  <dimen name="content_activity_tab_text_padding">8dp</dimen>
+  <dimen name="content_activity_tab_icon_padding">4dp</dimen>
+  <dimen name="content_activity_tab_height">74dp</dimen>
+  
+  <!-- Keyboard fragment -->
+  <dimen name="fragment_keypad_text_vertical_margin">32dp</dimen>
+  <dimen name="fragment_keypad_text_horizontal_margin">16dp</dimen>
+  <dimen name="fragment_keypad_spacing">16dp</dimen>
+  <dimen name="fragment_keypad_key_spacing">4dp</dimen>
+  <dimen name="fragment_keypad_fab_elevation">6dp</dimen>
+  <dimen name="fragment_keypad_fab_translation">12dp</dimen>
+  <dimen name="fragment_keypad_fab_ripple">48dp</dimen>
 </resources>

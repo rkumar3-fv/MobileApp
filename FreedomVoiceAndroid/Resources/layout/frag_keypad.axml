@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:layout_marginTop="@dimen/activity_vertical_margin"
+    android:layout_marginBottom="@dimen/activity_vertical_margin"
+    android:layout_marginStart="@dimen/activity_horizontal_margin"
+    android:layout_marginEnd="@dimen/activity_horizontal_margin">
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/fragment_keypad_text_vertical_margin"
+        android:layout_marginStart="@dimen/fragment_keypad_text_horizontal_margin"
+        android:layout_marginEnd="@dimen/fragment_keypad_text_horizontal_margin">
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorBaseControls"
+            android:cursorVisible="false"
+            android:gravity="center"
+            android:editable="false"
+            android:inputType="phone"
+            android:id="@+id/keypadFragment_dialText" />
+        <ImageButton
+            android:id="@+id/keypadFragment_backspace"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_action_backspace"
+            android:background="@android:color/transparent"
+            android:layout_marginRight="@dimen/fragment_keypad_key_spacing"
+            android:layout_gravity="right|center_vertical" />
+    </FrameLayout>
+    <GridLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/fragment_keypad_spacing"
+        android:columnCount="3">
+        <Button
+            android:id="@+id/keypadFragment_buttonOne"
+            style="@style/KeyButtonStyle"
+            android:text="1" />
+        <Button
+            android:id="@+id/keypadFragment_buttonTwo"
+            style="@style/KeyButtonStyle"
+            android:text="2" />
+        <Button
+            android:id="@+id/keypadFragment_buttonThree"
+            style="@style/KeyButtonStyle"
+            android:text="3" />
+        <Button
+            android:id="@+id/keypadFragment_buttonFour"
+            style="@style/KeyButtonStyle"
+            android:text="4" />
+        <Button
+            android:id="@+id/keypadFragment_buttonFive"
+            style="@style/KeyButtonStyle"
+            android:text="5" />
+        <Button
+            android:id="@+id/keypadFragment_buttonSix"
+            style="@style/KeyButtonStyle"
+            android:text="6" />
+        <Button
+            android:id="@+id/keypadFragment_buttonSeven"
+            style="@style/KeyButtonStyle"
+            android:text="7" />
+        <Button
+            android:id="@+id/keypadFragment_buttonEight"
+            style="@style/KeyButtonStyle"
+            android:text="8" />
+        <Button
+            android:id="@+id/keypadFragment_buttonNine"
+            style="@style/KeyButtonStyle"
+            android:text="9" />
+        <Button
+            android:id="@+id/keypadFragment_buttonStar"
+            style="@style/KeyButtonStyle"
+            android:text="*" />
+        <Button
+            android:id="@+id/keypadFragment_buttonZero"
+            style="@style/KeyButtonStyle"
+            android:text="0" />
+        <Button
+            android:id="@+id/keypadFragment_buttonHash"
+            style="@style/KeyButtonStyle"
+            android:text="#" />
+    </GridLayout>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/keypadFragment_buttonDial"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_action_dial"
+        android:layout_gravity="bottom|center"
+        app:elevation="@dimen/fragment_keypad_fab_elevation"
+        app:pressedTranslationZ="@dimen/fragment_keypad_fab_translation"
+        app:backgroundTint="@color/colorFabPrimary"
+        app:rippleColor="@color/colorFabPressed" />
+</LinearLayout>
