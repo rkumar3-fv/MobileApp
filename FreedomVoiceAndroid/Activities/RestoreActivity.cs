@@ -46,8 +46,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 {
                     if (_resultLabel.Visibility == ViewStates.Visible)
                         _resultLabel.Visibility = ViewStates.Invisible;
-                    WaitingActions.Add(Helper.RestorePassword(_emailText.Text));
                     _restoreButton.Enabled = false;
+                    Helper.RestorePassword(_emailText.Text);
                     return;
                 }
             if (_resultLabel.Visibility != ViewStates.Visible)
@@ -73,9 +73,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
 
         protected override void OnHelperEvent(ActionsHelperEventArgs args)
         {
-            if (_restoreButton.Enabled == false)
-                _restoreButton.Enabled = true;
-            //TODO: check restore response
+            
         }
 
         /// <summary>

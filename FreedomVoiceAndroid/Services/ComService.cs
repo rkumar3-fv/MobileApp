@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.OS;
+using Android.Util;
 using com.FreedomVoice.MobileApp.Android.Actions.Requests;
 
 namespace com.FreedomVoice.MobileApp.Android.Services
@@ -28,6 +29,12 @@ namespace com.FreedomVoice.MobileApp.Android.Services
             return null;
         }
 
+        public override void OnCreate()
+        {
+            base.OnCreate();
+            Log.Debug(App.AppPackage, "SERVICE CREATED");
+        }
+
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
         {
             if (_receiver == null)
@@ -41,7 +48,10 @@ namespace com.FreedomVoice.MobileApp.Android.Services
                 _activeActions.Add(intent.GetLongExtra(RequestIdTag, 0));
                 var request = intent.GetParcelableExtra(RequestTag) as BaseRequest;
                 if (request != null)
+                {
+                    Log.Debug(App.AppPackage, "SERVICE REQUEST ID=" + request.Id);
                     ExecuteRequest(request);
+                }
             }
             return StartCommandResult.NotSticky;
         }
@@ -55,12 +65,14 @@ namespace com.FreedomVoice.MobileApp.Android.Services
             var result = await request.ExecuteRequest();
             var data = new Bundle();
             data.PutParcelable(ComServiceResultReceiver.ReceiverDataExtra, result);
+            Log.Debug(App.AppPackage, "SERVICE RESPONSE ID=" + request.Id);
             _receiver.Send(Result.Ok, data);
         }
 
         public override void OnDestroy()
         {
             base.OnDestroy();
+            Log.Debug(App.AppPackage, "SERVICE DESTROYED");
             _receiver = null;
         }
     }

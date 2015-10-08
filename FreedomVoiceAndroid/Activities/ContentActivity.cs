@@ -43,7 +43,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             if (_viewPager != null)
             {
                 _viewPager.AllowSwipe = false;
-                _viewPager.OffscreenPageLimit = 1;
+                _viewPager.OffscreenPageLimit = 4;
                 _pagerAdapter.AddFragment(recentsFragment, Resource.String.FragmentRecents_title, Resource.Drawable.ic_tab_history);
                 _pagerAdapter.AddFragment(contactsFragment, Resource.String.FragmentContacts_title, Resource.Drawable.ic_tab_contacts);
                 _pagerAdapter.AddFragment(keypadFragment, Resource.String.FragmentKeypad_title, Resource.Drawable.ic_tab_keypad);
@@ -80,7 +80,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                     if (!_logoutInProcess)
                     {
                         _logoutInProcess = true;
-                        WaitingActions.Add(Helper.Logout());
                     }
                     return true;
                 default:

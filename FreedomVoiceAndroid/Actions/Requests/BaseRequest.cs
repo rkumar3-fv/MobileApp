@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Android.OS;
 using com.FreedomVoice.MobileApp.Android.Actions.Responses;
@@ -9,9 +10,9 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
     /// Abstract request action
     /// <see href="https://webservices.freedomvoice.com/FreedomAPI/FreedomAPI.asmx">FreedomAPI</see>
     /// </summary>
-    public abstract class BaseRequest : BaseAction
+    public abstract class BaseRequest : BaseAction, IEquatable<BaseRequest>
     {
-        protected readonly long Id;
+        public long Id { get; }
 
         protected BaseRequest(long id)
         {
@@ -57,6 +58,28 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
         public override void WriteToParcel(Parcel dest, ParcelableWriteFlags flags)
         {
             dest.WriteLong(Id);
+        }
+
+        public bool Equals(BaseRequest other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Id == other.Id;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            return obj.GetType() == GetType() && Equals((BaseRequest) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return (base.GetHashCode()*397) ^ Id.GetHashCode();
+            }
         }
     }
 }

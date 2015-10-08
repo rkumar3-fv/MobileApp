@@ -10,7 +10,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
     /// <summary>
     /// Restore password action
     /// </summary>
-    public class RestorePasswordRequest : BaseRequest
+    public class RestorePasswordRequest : BaseRequest, IEquatable<RestorePasswordRequest>
     {
         private readonly string _email;
 
@@ -51,6 +51,28 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
             public Object[] NewArray(int size)
             {
                 return new Object[size];
+            }
+        }
+
+        public bool Equals(RestorePasswordRequest other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return base.Equals(other) && string.Equals(_email, other._email);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            return obj.GetType() == GetType() && Equals((RestorePasswordRequest) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return (base.GetHashCode()*397) ^ (_email?.GetHashCode() ?? 0);
             }
         }
     }

@@ -16,6 +16,8 @@ namespace com.FreedomVoice.MobileApp.Android
         Theme = "@style/AppTheme")]
     public class App : Application
     {
+        public const string AppPackage = "com.FreedomVoice.MobileApp.Android";
+
         /// <summary>
         /// Get app context
         /// </summary>

@@ -106,6 +106,7 @@
     <Compile Include="Fragments\RecentsFragment.cs" />
     <Compile Include="Helpers\ActionsHelper.cs" />
     <Compile Include="Helpers\ActionsHelperEventArgs.cs" />
+    <Compile Include="Helpers\ActionsHelperIntentArgs.cs" />
     <Compile Include="Helpers\AppPreferencesHelper.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -36,7 +36,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                     if (!_logoutInProcess)
                     {
                         _logoutInProcess = true;
-                        WaitingActions.Add(Helper.Logout());
                     }
                     return true;
                 case global::Android.Resource.Id.Home:
