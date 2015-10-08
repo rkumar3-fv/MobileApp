@@ -1616,6 +1616,12 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f060087
 			public const int fragment_keypad_fab_elevation = 2131099783;
 			
+			// aapt resource value: 0x7f060089
+			public const int fragment_keypad_fab_ripple = 2131099785;
+			
+			// aapt resource value: 0x7f060088
+			public const int fragment_keypad_fab_translation = 2131099784;
+			
 			// aapt resource value: 0x7f060086
 			public const int fragment_keypad_key_spacing = 2131099782;
 			
@@ -1627,9 +1633,6 @@ namespace com.FreedomVoice.MobileApp.Android
 			
 			// aapt resource value: 0x7f060083
 			public const int fragment_keypad_text_vertical_margin = 2131099779;
-			
-			// aapt resource value: 0x7f060088
-			public const int fragment_leypad_fab_translation = 2131099784;
 			
 			// aapt resource value: 0x7f060046
 			public const int highlight_alpha_material_colored = 2131099718;

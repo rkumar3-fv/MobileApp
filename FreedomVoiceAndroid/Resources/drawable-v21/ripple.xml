@@ -5,6 +5,9 @@
   <item android:id="@android:id/mask">
     <shape android:shape="oval">
       <solid android:color="?android:colorAccent" />
+      <size
+       android:width="@dimen/fragment_keypad_fab_ripple"
+        android:height="@dimen/fragment_keypad_fab_ripple"/>
     </shape>
   </item>
 </ripple>

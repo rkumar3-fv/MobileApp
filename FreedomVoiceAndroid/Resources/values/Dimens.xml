@@ -53,5 +53,6 @@
   <dimen name="fragment_keypad_spacing">16dp</dimen>
   <dimen name="fragment_keypad_key_spacing">4dp</dimen>
   <dimen name="fragment_keypad_fab_elevation">6dp</dimen>
-  <dimen name="fragment_leypad_fab_translation">12dp</dimen>
+  <dimen name="fragment_keypad_fab_translation">12dp</dimen>
+  <dimen name="fragment_keypad_fab_ripple">48dp</dimen>
 </resources>
