@@ -26,6 +26,11 @@
             return MakeAsyncPostRequest<string>("/api/v1/login", postdata, "application/x-www-form-urlencoded", cts.Token).Result;
         }
 
+        public static void Logout()
+        {
+            CookieContainer = null;
+        }
+
         public static BaseResult<string> PasswordReset(string login)
         {
             var cts = new CancellationTokenSource();
