@@ -23,14 +23,14 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         protected override void OnPause()
         {
             base.OnPause();
-            Log.Debug(App.AppPackage,"ACTIVITY "+Class.Name+" paused");
+            Log.Debug(App.AppPackage, $"ACTIVITY {GetType().Name} paused");
             Helper.HelperEvent -= OnHelperEvent;
         }
 
         protected override void OnResume()
         {
             base.OnResume();
-            Log.Debug(App.AppPackage, "ACTIVITY " + Class.Name + " resumed");
+            Log.Debug(App.AppPackage, $"ACTIVITY {GetType().Name} resumed");
             Helper.HelperEvent += OnHelperEvent;
         }
 
@@ -41,7 +41,15 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         /// <param name="args">Result args</param>
         private void OnHelperEvent(object sender, EventArgs args)
         {
-            
+            Log.Debug(App.AppPackage, $"ACTIVITY {GetType().Name} handle event {args.GetType().Name}");
+            var arg = args as ActionsHelperIntentArgs;
+            if (arg != null)
+            {
+                var intentArg = arg;
+                StartActivity(intentArg.IntentData);
+            }
+            else
+                OnHelperEvent(args as ActionsHelperEventArgs);
         }
 
         /// <summary>

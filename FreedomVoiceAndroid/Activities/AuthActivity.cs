@@ -18,6 +18,17 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         Theme = "@style/AppTheme")]
     public class AuthActivity : BaseActivity
     {
+        /// <summary>
+        /// Debug data set
+        /// REMOVE BEFORE RELEASE!
+        /// </summary>
+        private void DebugData()
+        {
+            //TODO: REMOVE
+            _loginText.Text = "freedomvoice.user1.267055@gmail.com";
+            _passwordText.Text = "user1654654";
+        }
+
         private Button _authButton;
         private Button _forgotButton;
         private EditText _loginText;
@@ -38,6 +49,12 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             _forgotButton.Click += ForgotButtonOnClick;
         }
 
+        protected override void OnResume()
+        {
+            base.OnResume();
+            DebugData();
+        }
+
         /// <summary>
         /// Authorization action running
         /// </summary>
@@ -47,7 +64,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             {
                 if (_errorText.Visibility == ViewStates.Visible)
                     _errorText.Visibility = ViewStates.Invisible;
-                _authButton.Enabled = false;
+                //_authButton.Enabled = false;
                 Helper.Authorize(_loginText.Text, _passwordText.Text);
             }
             else

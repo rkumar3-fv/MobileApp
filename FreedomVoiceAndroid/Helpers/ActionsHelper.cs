@@ -8,6 +8,7 @@ using Android.OS;
 using Android.Util;
 using com.FreedomVoice.MobileApp.Android.Actions.Requests;
 using com.FreedomVoice.MobileApp.Android.Actions.Responses;
+using com.FreedomVoice.MobileApp.Android.Activities;
 using com.FreedomVoice.MobileApp.Android.Entities;
 using com.FreedomVoice.MobileApp.Android.Services;
 using Java.Util.Concurrent.Atomic;
@@ -144,11 +145,20 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         /// <returns>request ID</returns>
         public long Authorize(string login, string password)
         {
-            _userLogin = login;
-            _userPassword = password;
+            if (IsLoggedIn)
+                return -1;
+
             var requestId = RequestId;
+            var loginRequest = new LoginRequest(requestId, login, password);
+            foreach (var request in _waitingRequestArray.Where(response => response.Value is LoginRequest).Where(request => ((LoginRequest)(request.Value)).Equals(loginRequest)))
+            {
+                Log.Debug(App.AppPackage, "HELPER REQUEST: Duplicate Authorize request. Execute ID=" + request.Key);
+                return request.Key;
+            }
+            _userLogin = login;
+            _userPassword = password;   
             Log.Debug(App.AppPackage, "HELPER REQUEST: Authorize ID="+requestId);
-            PrepareIntent(requestId, new LoginRequest(requestId, login, password));
+            PrepareIntent(requestId, loginRequest);
             return requestId;
         }
 
@@ -158,9 +168,18 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         /// <returns>request ID</returns>
         public long Logout()
         {
+            if (!IsLoggedIn)
+                return -1;
+
             var requestId = RequestId;
+            var logoutRequest = new LogoutRequest(requestId);
+            foreach (var request in _waitingRequestArray.Where(response => response.Value is LogoutRequest).Where(request => ((LogoutRequest)(request.Value)).Equals(logoutRequest)))
+            {
+                Log.Debug(App.AppPackage, "HELPER REQUEST: Duplicate Logout request. Execute ID=" + request.Key);
+                return request.Key;
+            }
             Log.Debug(App.AppPackage, "HELPER REQUEST: Logout ID=" + requestId);
-            PrepareIntent(requestId, new LogoutRequest(requestId));
+            PrepareIntent(requestId, logoutRequest);
             return requestId;
         }
 
@@ -172,8 +191,14 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         public long RestorePassword(string email)
         {
             var requestId = RequestId;
+            var restoreRequest = new RestorePasswordRequest(requestId, email);
+            foreach (var request in _waitingRequestArray.Where(response => response.Value is RestorePasswordRequest).Where(request => ((RestorePasswordRequest)(request.Value)).Equals(restoreRequest)))
+            {
+                Log.Debug(App.AppPackage, "HELPER REQUEST: Duplicate RestorePassword request. Execute ID=" + request.Key);
+                return request.Key;
+            }
             Log.Debug(App.AppPackage, "HELPER REQUEST: RestorePassword ID=" + requestId);
-            PrepareIntent(requestId, new RestorePasswordRequest(requestId, email));
+            PrepareIntent(requestId, restoreRequest);
             return requestId;
         }
 
@@ -184,8 +209,14 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         public long GetAccounts()
         {
             var requestId = RequestId;
+            var getAccsRequest = new GetAccountsRequest(requestId);
+            foreach (var request in _waitingRequestArray.Where(response => response.Value is GetAccountsRequest).Where(request => ((GetAccountsRequest)(request.Value)).Equals(getAccsRequest)))
+            {
+                Log.Debug(App.AppPackage, "HELPER REQUEST: Duplicate RestorePassword request. Execute ID=" + request.Key);
+                return request.Key;
+            }
             Log.Debug(App.AppPackage, "HELPER REQUEST: GetAccounts ID=" + requestId);
-            PrepareIntent(requestId, new GetAccountsRequest(requestId));  
+            PrepareIntent(requestId, getAccsRequest);  
             return requestId;
         }
 
@@ -226,7 +257,43 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         /// <param name="response">response from ComService</param>
         private void ResponseResultActionExecutor(BaseResponse response)
         {
-            Log.Debug(App.AppPackage, "HELPER EXECUTOR: ");
+            var type = response.GetType().Name;
+            Intent intent;
+            Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId}, Type is {type}");
+            switch (type)
+            {
+                // Login action response
+                case "LoginResponse":
+                    GetAccounts();
+                    break;
+                
+                // GetAccounts action response
+                case "GetAccountsResponse":
+                    var accsResponse = (GetAccountsResponse) response;
+                    switch (accsResponse.AccountsList.Count)
+                    {
+                        // No one account is active
+                        case 0:
+                            SelectedAccount = null;
+                            intent = new Intent(_app, typeof (InactiveActivity));
+                            break;
+
+                        // Only one active account
+                        case 1:
+                            AccountsList = accsResponse.AccountsList;
+                            SelectedAccount = AccountsList[0];
+                            intent = new Intent(_app, typeof(ContentActivity));
+                            break;
+
+                        // More than one active accounts
+                        default:
+                            AccountsList = accsResponse.AccountsList;
+                            intent = new Intent(_app, typeof(SelectAccountActivity));
+                            break;
+                    }
+                    HelperEvent?.Invoke(this, new ActionsHelperIntentArgs(response.RequestId, intent));
+                    break;
+            }
         }
     }
 }

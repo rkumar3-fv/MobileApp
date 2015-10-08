@@ -24,14 +24,14 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         public override void OnPause()
         {
             base.OnPause();
-            Log.Debug(App.AppPackage, "FRAGMENT " + Class.Name + " paused");
+            Log.Debug(App.AppPackage, $"FRAGMENT {GetType().Name} paused");
             _helper.HelperEvent -= OnHelperEvent;
         }
 
         public override void OnResume()
         {
             base.OnResume();
-            Log.Debug(App.AppPackage, "FRAGMENT " + Class.Name + " resumed");
+            Log.Debug(App.AppPackage, $"FRAGMENT {GetType().Name} resumed");
             _helper.HelperEvent += OnHelperEvent;
         }
 

@@ -26,7 +26,9 @@
         android:layout_marginTop="@dimen/auth_activity_elements_vertical_margin"
         android:layout_marginStart="@dimen/auth_activity_text_horizontal_margin"
         android:layout_marginEnd="@dimen/auth_activity_text_horizontal_margin"
-        android:lines="1" />
+        android:singleLine="true"
+        android:maxLines="1"
+        android:scrollHorizontally="true" />
     <TextView
         android:id="@+id/authActivity_passwordLabel"
         style="@style/AuthLabelText"
@@ -48,7 +50,9 @@
         android:layout_marginTop="@dimen/auth_activity_elements_vertical_margin"
         android:layout_marginStart="@dimen/auth_activity_text_horizontal_margin"
         android:layout_marginEnd="@dimen/auth_activity_text_horizontal_margin"
-        android:lines="1" />
+        android:singleLine="true"
+        android:maxLines="1"
+        android:scrollHorizontally="true" />
     <Button
         android:id="@+id/authActivity_loginButton"
         android:layout_centerHorizontal="true"

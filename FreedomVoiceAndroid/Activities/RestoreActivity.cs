@@ -17,6 +17,16 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         Theme = "@style/AppThemeActionBar")]
     public class RestoreActivity : BaseActivity
     {
+        /// <summary>
+        /// Debug data set
+        /// REMOVE BEFORE RELEASE!
+        /// </summary>
+        private void DebugData()
+        {
+            //TODO: REMOVE
+            _emailText.Text = "freedomvoice.user1.267055@gmail.com";
+        }
+
         private EditText _emailText;
         private Button _restoreButton;
         private TextView _resultLabel;
@@ -34,6 +44,12 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             SupportActionBar.SetHomeAsUpIndicator(Resource.Drawable.ic_action_back);
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
             SupportActionBar.SetHomeButtonEnabled(true);
+        }
+
+        protected override void OnResume()
+        {
+            base.OnResume();
+            DebugData();
         }
 
         /// <summary>

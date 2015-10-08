@@ -62,9 +62,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
 
         public bool Equals(BaseRequest other)
         {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
-            return Id == other.Id;
+            return !ReferenceEquals(null, other);
         }
 
         public override bool Equals(object obj)
