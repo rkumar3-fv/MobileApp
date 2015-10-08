@@ -87,6 +87,11 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             }
         }
 
+        public override void OnBackPressed()
+        {
+            MoveTaskToBack(true);
+        }
+
         /// <summary>
         /// Helper event callback action
         /// </summary>

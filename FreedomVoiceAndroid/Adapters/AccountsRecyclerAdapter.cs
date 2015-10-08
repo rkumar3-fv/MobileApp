@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
 using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Entities;
+using com.FreedomVoice.MobileApp.Android.Utils;
 
 namespace com.FreedomVoice.MobileApp.Android.Adapters
 {
@@ -12,6 +14,11 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
     public class AccountsRecyclerAdapter : RecyclerView.Adapter
     {
         private List<Account> _accountsList;
+
+        /// <summary>
+        /// Item short click event
+        /// </summary>
+        public event EventHandler<int> ItemClick;
 
         public AccountsRecyclerAdapter()
         {
@@ -50,13 +57,18 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
         {
             var viewHolder = holder as ViewHolder;
             if (viewHolder != null)
-                viewHolder.AccountText.Text = _accountsList[position].AccountName;
+                viewHolder.AccountText.Text = DataFormatUtils.ToPhoneNumber(_accountsList[position].AccountName);
         }
 
         public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)
         {
             var itemView = LayoutInflater.From(parent.Context).Inflate(Resource.Layout.item_account, parent, false);
-            return new ViewHolder(itemView);
+            return new ViewHolder(itemView, OnClick);
+        }
+
+        private void OnClick(int position)
+        {
+            ItemClick?.Invoke(this, position);
         }
 
         /// <summary>
@@ -69,14 +81,16 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
         /// </summary>
         private class ViewHolder : RecyclerView.ViewHolder
         {
+            
             /// <summary>
             /// Account text field
             /// </summary>
             public TextView AccountText { get; private set; }
 
-            public ViewHolder(View itemView) : base(itemView)
+            public ViewHolder(View itemView, Action<int> listener ) : base(itemView)
             {
                 AccountText = itemView.FindViewById<TextView>(Resource.Id.itemAccount_numberText);
+                itemView.Click += (sender, e) => listener(AdapterPosition);
             }
         }
     }

@@ -14,6 +14,7 @@
         android:id="@+id/tabHeader_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:gravity="center"
         android:textColor="@color/colorActionBarText"
         android:textSize="@dimen/text_tab"
         android:textAllCaps="true"

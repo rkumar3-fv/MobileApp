@@ -12,4 +12,6 @@
   <color name="textColorError">#ff5722</color>
   <color name="textColorNewMessages">#0097a7</color>
   <color name="colorTabIndicator">#ffffff</color>
+  <color name="colorFabPrimary">#4caf50</color>
+  <color name="colorFabPressed">#8bc34a</color>
 </resources>

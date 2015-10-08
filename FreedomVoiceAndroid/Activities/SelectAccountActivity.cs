@@ -1,10 +1,13 @@
 using Android.App;
+using Android.Content;
 using Android.OS;
 using Android.Support.V7.Internal.View;
 using Android.Support.V7.Widget;
+using Android.Util;
 using Android.Views;
 using com.FreedomVoice.MobileApp.Android.Adapters;
 using com.FreedomVoice.MobileApp.Android.Helpers;
+using com.FreedomVoice.MobileApp.Android.Utils;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
 {
@@ -26,8 +29,23 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             SetContentView(Resource.Layout.act_select);
             _selectView = FindViewById<RecyclerView>(Resource.Id.selectAccountActivity_accountsList);
             _selectView.SetLayoutManager(new LinearLayoutManager(this));
-            _adapter = new AccountsRecyclerAdapter();
+            _adapter = new AccountsRecyclerAdapter(Helper.AccountsList);
             _selectView.SetAdapter(_adapter);
+            _adapter.ItemClick += SelectViewOnClick;
+        }
+
+        /// <summary>
+        /// Account list click
+        /// </summary>
+        /// <param name="sender">adapter-sender</param>
+        /// <param name="position">selected element</param>
+        private void SelectViewOnClick(object sender, int position)
+        {
+            if (position >= Helper.AccountsList.Count) return;
+            Log.Debug(App.AppPackage, $"ACTIVITY {GetType().Name}: select account #{DataFormatUtils.ToPhoneNumber(_adapter.AccountName(position))}");
+            Helper.SelectedAccount = Helper.AccountsList[position];
+            var intent = new Intent(this, typeof(ContentActivity));
+            StartActivity(intent);
         }
 
         public override bool OnCreateOptionsMenu(IMenu menu)

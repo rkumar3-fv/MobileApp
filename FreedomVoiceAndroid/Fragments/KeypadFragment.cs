@@ -1,4 +1,5 @@
 using Android.OS;
+using Android.Support.Design.Widget;
 using Android.Views;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Helpers;
@@ -24,7 +25,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         private Button _buttonZero;
         private Button _buttonStar;
         private Button _buttonHash;
-        private Button _buttonDial;
+        private FloatingActionButton _buttonDial;
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
@@ -43,7 +44,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             _buttonZero = view.FindViewById<Button>(Resource.Id.keypadFragment_buttonZero);
             _buttonStar = view.FindViewById<Button>(Resource.Id.keypadFragment_buttonStar);
             _buttonHash = view.FindViewById<Button>(Resource.Id.keypadFragment_buttonHash);
-            _buttonDial = view.FindViewById<Button>(Resource.Id.keypadFragment_buttonDial);
+            _buttonDial = view.FindViewById<FloatingActionButton>(Resource.Id.keypadFragment_buttonDial);
             return view;
         }
 

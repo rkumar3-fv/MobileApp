@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using Android.Content;
+using Android.Content.Res;
+using Android.Graphics;
 using Android.Runtime;
 using Android.Support.V4.App;
 using Android.Views;
@@ -35,6 +37,9 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
             var textView = view.FindViewById<TextView>(Resource.Id.tabHeader_title);
             var imageView = view.FindViewById<ImageView>(Resource.Id.tabHeader_icon);
             textView.SetText(_fragmentTitles[position]);
+            var metrics = _context.Resources.DisplayMetrics;
+            textView.SetWidth((metrics.WidthPixels)/4);
+
             imageView.SetImageResource(_fragmentImages[position]);
             return view;
         }

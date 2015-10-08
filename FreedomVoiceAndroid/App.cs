@@ -1,7 +1,10 @@
 using System;
 using Android.App;
 using Android.Content;
+using Android.Graphics;
 using Android.Runtime;
+using Android.Util;
+using Android.Views;
 using com.FreedomVoice.MobileApp.Android.Helpers;
 
 namespace com.FreedomVoice.MobileApp.Android
