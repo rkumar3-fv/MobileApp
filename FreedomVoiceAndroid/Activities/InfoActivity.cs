@@ -1,5 +1,4 @@
 using System;
-using Android.OS;
 using Android.Support.V7.Internal.View;
 using Android.Views;
 using Android.Widget;
@@ -11,12 +10,11 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
     /// </summary>
     public abstract class InfoActivity : BaseActivity
     {
-        private bool _logoutInProcess;
         protected Button ActionButton;
 
-        protected override void OnCreate(Bundle savedInstanceState)
+        protected override void OnStart()
         {
-            base.OnCreate(savedInstanceState);
+            base.OnStart();
             ActionButton.Click += ActionButtonOnClick;
         }
 
@@ -33,10 +31,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             switch (item.ItemId)
             {
                 case Resource.Id.menu_action_logout:
-                    if (!_logoutInProcess)
-                    {
-                        _logoutInProcess = true;
-                    }
+                    Helper.Logout();
                     return true;
                 case global::Android.Resource.Id.Home:
                     OnBackPressed();

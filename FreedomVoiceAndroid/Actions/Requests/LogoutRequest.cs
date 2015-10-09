@@ -1,7 +1,7 @@
-using System;
 using System.Threading.Tasks;
 using Android.OS;
 using com.FreedomVoice.MobileApp.Android.Actions.Responses;
+using FreedomVoice.Core;
 using Java.Interop;
 using Object = Java.Lang.Object;
 
@@ -18,9 +18,13 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
         public LogoutRequest(Parcel parcel) : base(parcel)
         {}
 
-        public override Task<BaseResponse> ExecuteRequest()
+        public override async Task<BaseResponse> ExecuteRequest()
         {
-            throw new NotImplementedException();
+            var asyncRes = await ApiHelper.Logout();
+            var errorResponse = CheckErrorResponse(Id, asyncRes.Code);
+            if (errorResponse != null)
+                return errorResponse;
+            return new LogoutResponse(Id);
         }
 
         [ExportField("CREATOR")]

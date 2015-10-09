@@ -1,4 +1,3 @@
-using System;
 using System.Text.RegularExpressions;
 
 namespace com.FreedomVoice.MobileApp.Android.Utils

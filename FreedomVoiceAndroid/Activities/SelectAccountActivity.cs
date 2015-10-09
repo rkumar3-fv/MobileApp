@@ -19,7 +19,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         Theme = "@style/AppThemeActionBar")]
     public class SelectAccountActivity : BaseActivity
     {
-        private bool _logoutInProcess;
         private RecyclerView _selectView;
         private AccountsRecyclerAdapter _adapter;
 
@@ -44,7 +43,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             if (position >= Helper.AccountsList.Count) return;
             Log.Debug(App.AppPackage, $"ACTIVITY {GetType().Name}: select account #{DataFormatUtils.ToPhoneNumber(_adapter.AccountName(position))}");
             Helper.SelectedAccount = Helper.AccountsList[position];
-            var intent = new Intent(this, typeof(ContentActivity));
+            var intent = (Helper.IsFirstRun)? new Intent(this, typeof(DisclaimerActivity)): new Intent(this, typeof(ContentActivity));
             StartActivity(intent);
         }
 
@@ -61,10 +60,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             switch (item.ItemId)
             {
                 case Resource.Id.menu_action_logout:
-                    if (!_logoutInProcess)
-                    {
-                        _logoutInProcess = true;
-                    }
+                    Helper.Logout();
                     return true;
                 default:
                     return base.OnOptionsItemSelected(item);

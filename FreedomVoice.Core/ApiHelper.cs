@@ -27,9 +27,15 @@
                 CancellationToken.None);
         }
 
-        public static void Logout()
+        public async static Task<BaseResult<string>> Logout()
         {
             CookieContainer = null;
+            var res = new BaseResult<string>
+            {
+                Code = ErrorCodes.Ok,
+                Result = ""
+            };
+            return res;
         }
 
         public async static Task<BaseResult<string>> PasswordReset(string login)

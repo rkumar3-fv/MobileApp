@@ -1613,17 +1613,20 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f06006b
 			public const int drawer_size = 2131099755;
 			
-			// aapt resource value: 0x7f060087
-			public const int fragment_keypad_fab_elevation = 2131099783;
+			// aapt resource value: 0x7f060088
+			public const int fragment_keypad_fab_elevation = 2131099784;
+			
+			// aapt resource value: 0x7f06008a
+			public const int fragment_keypad_fab_ripple = 2131099786;
 			
 			// aapt resource value: 0x7f060089
-			public const int fragment_keypad_fab_ripple = 2131099785;
-			
-			// aapt resource value: 0x7f060088
-			public const int fragment_keypad_fab_translation = 2131099784;
+			public const int fragment_keypad_fab_translation = 2131099785;
 			
 			// aapt resource value: 0x7f060086
 			public const int fragment_keypad_key_spacing = 2131099782;
+			
+			// aapt resource value: 0x7f060087
+			public const int fragment_keypad_number_spacing = 2131099783;
 			
 			// aapt resource value: 0x7f060085
 			public const int fragment_keypad_spacing = 2131099781;
@@ -2887,8 +2890,8 @@ namespace com.FreedomVoice.MobileApp.Android
 		public partial class Style
 		{
 			
-			// aapt resource value: 0x7f090148
-			public const int AccountItemText = 2131296584;
+			// aapt resource value: 0x7f09014b
+			public const int AccountItemText = 2131296587;
 			
 			// aapt resource value: 0x7f090142
 			public const int ActionBarTheme = 2131296578;
@@ -2911,8 +2914,8 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f090141
 			public const int AppThemeActionBar = 2131296577;
 			
-			// aapt resource value: 0x7f090147
-			public const int AuthLabelText = 2131296583;
+			// aapt resource value: 0x7f09014a
+			public const int AuthLabelText = 2131296586;
 			
 			// aapt resource value: 0x7f090081
 			public const int Base_AlertDialog_AppCompat = 2131296385;
@@ -3334,6 +3337,9 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f090144
 			public const int BorderlessButtonStyle = 2131296580;
 			
+			// aapt resource value: 0x7f090145
+			public const int BorderlessEditText = 2131296581;
+			
 			// aapt resource value: 0x7f090000
 			public const int CardView = 2131296256;
 			
@@ -3343,8 +3349,14 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f090002
 			public const int CardView_Light = 2131296258;
 			
-			// aapt resource value: 0x7f090145
-			public const int KeyButtonStyle = 2131296581;
+			// aapt resource value: 0x7f090148
+			public const int ContentTabLayoutTheme = 2131296584;
+			
+			// aapt resource value: 0x7f090149
+			public const int CustomTabTextAppearance = 2131296585;
+			
+			// aapt resource value: 0x7f090146
+			public const int KeyButtonStyle = 2131296582;
 			
 			// aapt resource value: 0x7f090012
 			public const int Platform_AppCompat = 2131296274;
@@ -3646,8 +3658,8 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f0900ee
 			public const int ThemeOverlay_AppCompat_Light = 2131296494;
 			
-			// aapt resource value: 0x7f090146
-			public const int ToolbarTheme = 2131296582;
+			// aapt resource value: 0x7f090147
+			public const int ToolbarTheme = 2131296583;
 			
 			// aapt resource value: 0x7f0900ef
 			public const int Widget_AppCompat_ActionBar = 2131296495;

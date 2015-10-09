@@ -24,15 +24,12 @@
         </android.support.v7.widget.Toolbar>
         <android.support.design.widget.TabLayout
             android:id="@+id/contentActivity_tabs"
-            style="@style/ActionBarTheme"
+            style="@style/ContentTabLayoutTheme"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/content_activity_tab_height"
+            android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:background="@color/colorPrimary"
             android:fitsSystemWindows="true"
-            app:tabIndicatorColor="@color/colorTabIndicator"
-            app:tabIndicatorHeight="@dimen/content_activity_tab_indicator_size"
-            app:tabMode="scrollable" />
+            app:tabMode="fixed" />
     </android.support.design.widget.AppBarLayout>
     <com.FreedomVoice.MobileApp.Android.Adapters.ContentPager
         android:id="@+id/contentActivity_contentPager"

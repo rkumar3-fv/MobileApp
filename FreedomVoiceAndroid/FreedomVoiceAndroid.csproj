@@ -86,6 +86,7 @@
     <Compile Include="Actions\Responses\ErrorResponse.cs" />
     <Compile Include="Actions\Responses\GetAccountsResponse.cs" />
     <Compile Include="Actions\Responses\LoginResponse.cs" />
+    <Compile Include="Actions\Responses\LogoutResponse.cs" />
     <Compile Include="Actions\Responses\RestoreResponse.cs" />
     <Compile Include="Activities\AuthActivity.cs" />
     <Compile Include="Activities\BaseActivity.cs" />

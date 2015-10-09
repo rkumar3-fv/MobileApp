@@ -1,21 +1,39 @@
 ﻿using System;
 using FreedomVoice.Core;
+using System.IO;
+using System.Threading;
+using FreedomVoice.Core.Entities.Enums;
 
 namespace TestApp
 {
-    using System.IO;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using FreedomVoice.Core.Entities.Enums;
-
     class Program
     {
+        private static string _login;
+        private static string _passwd;
+
         static void Main(string[] args)
         {
+            if (args.Length == 2)
+            {
+                _login = args[0];
+                _passwd = args[1];
+            }
+            else
+            {
+                _login = "freedomvoice.user1.267055@gmail.com";
+                _passwd = "user1654654";
+            }
+
             // Console.Write(@"Restore method: " + ApiHelper.PasswordReset("a055@gmail.com").Result);
             // Console.Write(Environment.NewLine);
 
-            Console.Write(@"Login method: " + ApiHelper.Login("freedomvoice.user1.267055@gmail.com", "user1654654").Result.Code);
+            Console.Write(@"Login method: " + ApiHelper.Login(_login, _passwd).Result.Code);
+            Console.Write(Environment.NewLine);
+
+            Console.Write(@"Logout method: " + ApiHelper.Logout().Result.Code);
+            Console.Write(Environment.NewLine);
+
+            Console.Write(@"Login method: " + ApiHelper.Login(_login, _passwd).Result.Code);
             Console.Write(Environment.NewLine);
 
             Console.WriteLine(@"Systems method: ");
@@ -42,13 +60,17 @@ namespace TestApp
             // Console.Write(@"Messages method: " + ApiHelper.DeleteMessages("7607124648", 802, new List<string> { "I159985458", "I159987614" }));
             // Console.Write(Environment.NewLine);
 
-             var res = ApiHelper.GetMedia("7607124648", 802, "Sent", "I160057839", MediaType.Pdf, CancellationToken.None).Result;
-             using (MemoryStream ms = new MemoryStream())
+            Console.WriteLine(@"Media method: ");
+            if (File.Exists($"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\\{"file.pdf"}"))
+                File.Delete($"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\\{"file.pdf"}");
+            var res = ApiHelper.GetMedia("7607124648", 802, "Sent", "I160057839", MediaType.Pdf, CancellationToken.None).Result;
+             using (var ms = new MemoryStream())
              {
                  res.Result.CopyTo(ms);
                  var bytes = ms.ToArray();
              
-                 using (FileStream file = new FileStream(@"D:\file1.Pdf", FileMode.Create,FileAccess.Write))
+                 using (var file = new FileStream(
+                     $"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\\{"file.pdf"}", FileMode.Create,FileAccess.Write))
                  {
                      ms.Read(bytes, 0, (int)ms.Length);
                      file.Write(bytes, 0, bytes.Length);
@@ -56,9 +78,12 @@ namespace TestApp
                  }
              
              }
-            // 
-            // Console.Write(@"Media method: ");
-            // Console.Write(Environment.NewLine);
+            var files = Directory.GetFiles(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "*.pdf");
+            foreach (var file in files)
+            {
+                Console.WriteLine(file);
+            }
+            Console.Write(Environment.NewLine);
 
             Console.ReadKey();
         }

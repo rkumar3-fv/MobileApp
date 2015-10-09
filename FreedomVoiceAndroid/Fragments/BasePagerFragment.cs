@@ -12,27 +12,27 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
     /// </summary>
     public abstract class BasePagerFragment : Fragment
     {
-        protected ActionsHelper _helper;
+        protected ActionsHelper Helper;
 
         public override void OnActivityCreated(Bundle savedInstanceState)
         {
             base.OnActivityCreated(savedInstanceState);
             var app = App.GetApplication(Activity);
-            _helper = app.Helper;
+            Helper = app.Helper;
         }
 
         public override void OnPause()
         {
             base.OnPause();
             Log.Debug(App.AppPackage, $"FRAGMENT {GetType().Name} paused");
-            _helper.HelperEvent -= OnHelperEvent;
+            Helper.HelperEvent -= OnHelperEvent;
         }
 
         public override void OnResume()
         {
             base.OnResume();
             Log.Debug(App.AppPackage, $"FRAGMENT {GetType().Name} resumed");
-            _helper.HelperEvent += OnHelperEvent;
+            Helper.HelperEvent += OnHelperEvent;
         }
 
         /// <summary>

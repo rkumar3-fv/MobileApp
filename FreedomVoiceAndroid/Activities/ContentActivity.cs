@@ -19,7 +19,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         Icon = "@drawable/ic_launcher")]
     public class ContentActivity : BaseActivity
     {
-        private bool _logoutInProcess;
         private ContentPagerAdapter _pagerAdapter;
         private ContentPager _viewPager;
         private Toolbar _toolbar;
@@ -52,11 +51,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 _viewPager.CurrentItem = 3;
             }
             _tabLayout.SetupWithViewPager(_viewPager);
-            for (var i = 0; i < _pagerAdapter.Count; i++)
-            {
-                var tab = _tabLayout.GetTabAt(i);
-                tab.SetCustomView(_pagerAdapter.GetTabView(i));
-            }
         }
 
         public Spinner GetToolbarSpinner()
@@ -77,10 +71,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             switch (item.ItemId)
             {
                 case Resource.Id.menu_action_logout:
-                    if (!_logoutInProcess)
-                    {
-                        _logoutInProcess = true;
-                    }
+                    Helper.Logout();
                     return true;
                 default:
                     return base.OnOptionsItemSelected(item);

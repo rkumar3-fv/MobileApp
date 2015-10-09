@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.OS;
@@ -27,7 +26,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         /// <summary>
         /// Is first app launch flag
         /// </summary>
-        private bool _isFirstRun;
+        public bool IsFirstRun { get; private set; }
 
         /// <summary>
         /// Last entered user login
@@ -95,8 +94,8 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             _receiver = new ComServiceResultReceiver(new Handler());
             _receiver.SetListener(this);
             _preferencesHelper = AppPreferencesHelper.Instance(_app);
-            _isFirstRun = _preferencesHelper.IsFirstRun();
-            Log.Debug(App.AppPackage, "HELPER: " + (_isFirstRun ? "First run" : "Not first run"));
+            IsFirstRun = _preferencesHelper.IsFirstRun();
+            Log.Debug(App.AppPackage, "HELPER: " + (IsFirstRun ? "First run" : "Not first run"));
         }
 
         /// <summary>
@@ -135,6 +134,15 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         {
             if (_unhandledResponseArray.ContainsKey(id))
                 _unhandledResponseArray.Remove(id);
+        }
+
+        /// <summary>
+        /// Sets that not first app usage
+        /// </summary>
+        public void DisclaimerApplied()
+        {
+            IsFirstRun = false;
+            _preferencesHelper.SetNotIsFirstRun();
         }
 
         /// <summary>
@@ -205,7 +213,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         /// <summary>
         /// Get accounts action
         /// </summary>
-        /// <returns></returns>
+        /// <returns>request ID</returns>
         public long GetAccounts()
         {
             var requestId = RequestId;
@@ -217,6 +225,20 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             }
             Log.Debug(App.AppPackage, "HELPER REQUEST: GetAccounts ID=" + requestId);
             PrepareIntent(requestId, getAccsRequest);  
+            return requestId;
+        }
+
+        /// <summary>
+        /// Call request
+        /// </summary>
+        /// <param name="number">number for outgoing call</param>
+        /// <returns>request ID</returns>
+        public long Call(string number)
+        {
+            var requestId = RequestId;
+
+            Log.Debug(App.AppPackage, "HELPER REQUEST: Call ID=" + requestId);
+
             return requestId;
         }
 
@@ -259,17 +281,35 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         {
             var type = response.GetType().Name;
             Intent intent;
+            if (!_waitingRequestArray.ContainsKey(response.RequestId))
+            {
+                Log.Debug(App.AppPackage, $"HELPER EXECUTOR: NOT WAITED response for request with ID={response.RequestId}, Type is {type}");
+                return;
+            }
             Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId}, Type is {type}");
             switch (type)
             {
                 // Login action response
                 case "LoginResponse":
+                    IsLoggedIn = true;
                     GetAccounts();
                     break;
-                
+
+                // Login action response
+                case "LogoutResponse":
+                    _userLogin = "";
+                    _userPassword = "";
+                    IsLoggedIn = false;
+                    AccountsList = null;
+                    SelectedAccount = null;
+                    intent = new Intent(_app, typeof(AuthActivity));
+                    HelperEvent?.Invoke(this, new ActionsHelperIntentArgs(response.RequestId, intent));
+                    break;
+
                 // GetAccounts action response
                 case "GetAccountsResponse":
                     var accsResponse = (GetAccountsResponse) response;
+                    Log.Debug(App.AppPackage, $"HELPER EXECUTOR: detect {accsResponse.AccountsList.Count} accounts");
                     switch (accsResponse.AccountsList.Count)
                     {
                         // No one account is active
@@ -282,7 +322,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                         case 1:
                             AccountsList = accsResponse.AccountsList;
                             SelectedAccount = AccountsList[0];
-                            intent = new Intent(_app, typeof(ContentActivity));
+                            intent = IsFirstRun ? new Intent(_app, typeof(DisclaimerActivity)) : new Intent(_app, typeof(SelectAccountActivity));
                             break;
 
                         // More than one active accounts
@@ -294,6 +334,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                     HelperEvent?.Invoke(this, new ActionsHelperIntentArgs(response.RequestId, intent));
                     break;
             }
+            _waitingRequestArray.Remove(response.RequestId);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using Android.App;
+using Android.Content;
 using Android.OS;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Helpers;
@@ -20,8 +21,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             base.OnCreate(bundle);
             SetContentView(Resource.Layout.act_disclaimer);
             ActionButton = FindViewById<Button>(Resource.Id.disclaimerActivity_agreeButton);
-
-            SupportActionBar.SetTitle(Resource.String.ActivityDisclaimer_title);
         }
 
         /// <summary>
@@ -29,7 +28,9 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         /// </summary>
         protected override void ActionButtonOnClick(object sender, EventArgs eventArgs)
         {
-            
+            var intent = new Intent(this, typeof (ContentActivity));
+            Helper.DisclaimerApplied();
+            StartActivity(intent);
         }
 
         protected override void OnHelperEvent(ActionsHelperEventArgs args)

@@ -16,14 +16,18 @@
         android:layout_marginStart="@dimen/fragment_keypad_text_horizontal_margin"
         android:layout_marginEnd="@dimen/fragment_keypad_text_horizontal_margin">
         <EditText
-            android:layout_width="wrap_content"
+            android:theme="@style/BorderlessEditText"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/colorBaseControls"
-            android:cursorVisible="false"
-            android:gravity="center"
-            android:editable="false"
             android:inputType="phone"
-            android:id="@+id/keypadFragment_dialText" />
+            android:id="@+id/keypadFragment_dialText"
+            android:singleLine="true"
+            android:maxLines="1"
+            android:scrollHorizontally="true"
+            android:layout_gravity="right|center_vertical"
+            android:layout_marginRight="@dimen/fragment_keypad_number_spacing"
+            android:phoneNumber="true" />
         <ImageButton
             android:id="@+id/keypadFragment_backspace"
             android:layout_width="wrap_content"
