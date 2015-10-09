@@ -74,7 +74,7 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
         /// <summary>
         /// Account list length
         /// </summary>
-        public override int ItemCount => _accountsList.Count;
+        public override int ItemCount => _accountsList?.Count ?? 0;
 
         /// <summary>
         /// Account selection viewholder

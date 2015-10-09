@@ -29,6 +29,7 @@
   <string name="ActivityExtension_oneMessage">1 unread message</string>
   <string name="ActivityExtension_moreMessages">unread messages</string>
   <string name="FragmentKeypad_title">Keypad</string>
+  <string name="FragmentKeypad_callerId">Show as Caller ID</string>
   <string name="FragmentMessages_title">Messages</string>
   <string name="FragmentRecents_title">Recents</string>
   <string name="FragmentContacts_title">Contacts</string>

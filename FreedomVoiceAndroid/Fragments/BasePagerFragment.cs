@@ -17,7 +17,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         public override void OnActivityCreated(Bundle savedInstanceState)
         {
             base.OnActivityCreated(savedInstanceState);
-            var app = App.GetApplication(Activity);
+            var app = App.GetApplication(Activity as BaseActivity);
             Helper = app.Helper;
         }
 

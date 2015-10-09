@@ -90,13 +90,29 @@
   </style>
   
   <!-- Text styles -->
+  <!-- Auth activity small label -->
   <style name="AuthLabelText">
     <item name="android:textColor">@color/textColorSecondary</item>
     <item name="android:textSize">@dimen/text_main</item>
     <item name="android:lines">1</item>
   </style>
 
+  <!-- Auth activity large label -->
+  <style name="AuthLargeLabelText">
+    <item name="android:textColor">@color/textColorSecondary</item>
+    <item name="android:textSize">@dimen/text_main</item>
+    <item name="android:lines">1</item>
+  </style>
+
+  <!-- SelectAccount list item text -->
   <style name="AccountItemText">
+    <item name="android:textColor">@color/textColorPrimary</item>
+    <item name="android:textSize">@dimen/text_main</item>
+    <item name="android:lines">1</item>
+  </style>
+
+  <!-- Keypad caller id label -->
+  <style name="CallerIdLabelText">
     <item name="android:textColor">@color/textColorPrimary</item>
     <item name="android:textSize">@dimen/text_main</item>
     <item name="android:lines">1</item>

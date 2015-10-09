@@ -11,7 +11,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
     /// </summary>
     public abstract class BaseActivity : AppCompatActivity
     {
-        protected ActionsHelper Helper;
+        public ActionsHelper Helper;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {

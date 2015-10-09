@@ -9,6 +9,24 @@
     android:layout_marginBottom="@dimen/activity_vertical_margin"
     android:layout_marginStart="@dimen/activity_horizontal_margin"
     android:layout_marginEnd="@dimen/activity_horizontal_margin">
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center">
+        <TextView
+            style="@style/CallerIdLabelText"
+            android:layout_centerHorizontal="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/FragmentKeypad_callerId"
+            android:layout_weight="1" />
+        <Spinner
+            android:id="@+id/keypadFragment_idSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+    </LinearLayout>
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -33,7 +51,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_action_backspace"
-            android:background="@drawable/ripple"
+            android:background="@android:color/transparent"
             android:layout_marginRight="@dimen/fragment_keypad_key_spacing"
             android:layout_gravity="right|center_vertical" />
     </FrameLayout>
@@ -45,62 +63,50 @@
         <Button
             android:id="@+id/keypadFragment_buttonOne"
             style="@style/KeyButtonStyle"
-            android:background="@drawable/ripple"
             android:text="1" />
         <Button
             android:id="@+id/keypadFragment_buttonTwo"
             style="@style/KeyButtonStyle"
-            android:background="@drawable/ripple"
             android:text="2" />
         <Button
             android:id="@+id/keypadFragment_buttonThree"
             style="@style/KeyButtonStyle"
-            android:background="@drawable/ripple"
             android:text="3" />
         <Button
             android:id="@+id/keypadFragment_buttonFour"
             style="@style/KeyButtonStyle"
-            android:background="@drawable/ripple"
             android:text="4" />
         <Button
             android:id="@+id/keypadFragment_buttonFive"
             style="@style/KeyButtonStyle"
-            android:background="@drawable/ripple"
             android:text="5" />
         <Button
             android:id="@+id/keypadFragment_buttonSix"
             style="@style/KeyButtonStyle"
-            android:background="@drawable/ripple"
             android:text="6" />
         <Button
             android:id="@+id/keypadFragment_buttonSeven"
             style="@style/KeyButtonStyle"
-            android:background="@drawable/ripple"
             android:text="7" />
         <Button
             android:id="@+id/keypadFragment_buttonEight"
             style="@style/KeyButtonStyle"
-            android:background="@drawable/ripple"
             android:text="8" />
         <Button
             android:id="@+id/keypadFragment_buttonNine"
             style="@style/KeyButtonStyle"
-            android:background="@drawable/ripple"
             android:text="9" />
         <Button
             android:id="@+id/keypadFragment_buttonStar"
             style="@style/KeyButtonStyle"
-            android:background="@drawable/ripple"
             android:text="*" />
         <Button
             android:id="@+id/keypadFragment_buttonZero"
             style="@style/KeyButtonStyle"
-            android:background="@drawable/ripple"
             android:text="0" />
         <Button
             android:id="@+id/keypadFragment_buttonHash"
             style="@style/KeyButtonStyle"
-            android:background="@drawable/ripple"
             android:text="#" />
     </GridLayout>
     <android.support.design.widget.FloatingActionButton

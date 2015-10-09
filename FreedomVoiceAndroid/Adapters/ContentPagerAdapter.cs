@@ -45,6 +45,16 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
         }
 
         /// <summary>
+        /// Get tab name
+        /// </summary>
+        /// <param name="index">index</param>
+        /// <returns>tab title</returns>
+        public string GetTabName(int index)
+        {
+            return (index < _fragmentTitles.Count) ? _context.GetString(_fragmentTitles[index]) : "";
+        }
+
+        /// <summary>
         /// Add fragment to viewpager
         /// </summary>
         /// <param name="fragment">new fragment</param>

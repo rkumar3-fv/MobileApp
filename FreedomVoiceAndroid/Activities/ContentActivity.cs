@@ -1,6 +1,8 @@
+using System;
 using Android.App;
 using Android.OS;
 using Android.Support.Design.Widget;
+using Android.Support.V4.View;
 using Android.Support.V7.Internal.View;
 using Android.Views;
 using Android.Widget;
@@ -49,8 +51,21 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 _pagerAdapter.AddFragment(messagesFragment, Resource.String.FragmentMessages_title, Resource.Drawable.ic_tab_messages);
                 _viewPager.Adapter = _pagerAdapter;
                 _viewPager.CurrentItem = 3;
+                _viewPager.PageSelected += ViewPagerOnPageSelected;
             }
             _tabLayout.SetupWithViewPager(_viewPager);
+            
+        }
+
+        protected override void OnResume()
+        {
+            base.OnResume();
+            SupportActionBar.Title = _pagerAdapter.GetTabName(_viewPager.CurrentItem);
+        }
+
+        private void ViewPagerOnPageSelected(object sender, ViewPager.PageSelectedEventArgs pageSelectedEventArgs)
+        {
+            SupportActionBar.Title = _pagerAdapter.GetTabName(_viewPager.CurrentItem);
         }
 
         public Spinner GetToolbarSpinner()

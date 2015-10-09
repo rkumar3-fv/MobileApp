@@ -91,6 +91,7 @@
     <Compile Include="Activities\AuthActivity.cs" />
     <Compile Include="Activities\BaseActivity.cs" />
     <Compile Include="Activities\SelectAccountActivity.cs" />
+    <Compile Include="Adapters\CallerIdSpinnerAdapter.cs" />
     <Compile Include="Adapters\ContentPager.cs" />
     <Compile Include="Adapters\ContentPagerAdapter.cs" />
     <Compile Include="Adapters\ExtensionsRecyclerAdapter.cs" />
@@ -165,6 +166,12 @@
       <SubType>AndroidResource</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout-v21\frag_keypad.axml">
+      <SubType>AndroidResource</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\item_spinner.axml">
+      <SubType>AndroidResource</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\item_spinner_drop.axml">
       <SubType>AndroidResource</SubType>
     </AndroidResource>
   </ItemGroup>

@@ -74,13 +74,13 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
         public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)
         {
             var itemView = LayoutInflater.From(parent.Context).Inflate(Resource.Layout.item_extension, parent, false);
-            return new ExtensionsRecyclerAdapter.ViewHolder(itemView);
+            return new ViewHolder(itemView);
         }
 
         /// <summary>
         /// Extensions list length
         /// </summary>
-        public override int ItemCount => _extensionsList.Count;
+        public override int ItemCount => _extensionsList?.Count ?? 0;
 
         /// <summary>
         /// Extension selection viewholder
