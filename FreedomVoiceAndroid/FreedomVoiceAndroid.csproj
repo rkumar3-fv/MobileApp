@@ -94,11 +94,14 @@
     <Compile Include="Adapters\CallerIdSpinnerAdapter.cs" />
     <Compile Include="Adapters\ContentPager.cs" />
     <Compile Include="Adapters\ContentPagerAdapter.cs" />
-    <Compile Include="Adapters\ExtensionsRecyclerAdapter.cs" />
+    <Compile Include="Adapters\MessagesRecyclerAdapter.cs" />
     <Compile Include="Adapters\AccountsRecyclerAdapter.cs" />
     <Compile Include="Entities\Account.cs" />
     <Compile Include="Entities\Entity.cs" />
     <Compile Include="Entities\Extension.cs" />
+    <Compile Include="Entities\Folder.cs" />
+    <Compile Include="Entities\Message.cs" />
+    <Compile Include="Entities\MessageItem.cs" />
     <Compile Include="Fragments\ContactsFragment.cs" />
     <Compile Include="Activities\ContentActivity.cs" />
     <Compile Include="Activities\DisclaimerActivity.cs" />
@@ -172,6 +175,9 @@
       <SubType>AndroidResource</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\item_spinner_drop.axml">
+      <SubType>AndroidResource</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\item_folder.axml">
       <SubType>AndroidResource</SubType>
     </AndroidResource>
   </ItemGroup>

@@ -1,5 +1,7 @@
+using System.Collections.Generic;
 using Android.OS;
 using Java.Interop;
+using Java.Lang;
 using Object = Java.Lang.Object;
 
 namespace com.FreedomVoice.MobileApp.Android.Entities
@@ -7,7 +9,7 @@ namespace com.FreedomVoice.MobileApp.Android.Entities
     /// <summary>
     /// Extension entity
     /// </summary>
-    public class Extension : Entity
+    public class Extension : MessageItem
     {
         /// <summary>
         /// Extension name
@@ -19,22 +21,32 @@ namespace com.FreedomVoice.MobileApp.Android.Entities
         /// </summary>
         public int MailsCount { get; set; }
 
-        public Extension(string name, int count)
+        /// <summary>
+        /// Folders
+        /// </summary>
+        public List<Folder> Folders {get; set; } 
+
+        public Extension(int id, string name, int count, List<Folder> folders ) : base (id)
         {
             ExtensionName = name;
+            Folders = folders;
             MailsCount = count;
         }
 
-        private Extension(Parcel parcel)
+        public Extension(int id, string name, int count) : this(id, name, count, new List<Folder>())
+        { }
+
+        private Extension(Parcel parcel) : base (parcel)
         {
             ExtensionName = parcel.ReadString();
-            MailsCount = parcel.ReadInt();
+            parcel.ReadList(Folders, ClassLoader.SystemClassLoader);
         }
 
         public override void WriteToParcel(Parcel dest, ParcelableWriteFlags flags)
         {
+            base.WriteToParcel(dest, flags);
             dest.WriteString(ExtensionName);
-            dest.WriteInt(MailsCount);
+            dest.WriteList(Folders);
         }
 
         [ExportField("CREATOR")]

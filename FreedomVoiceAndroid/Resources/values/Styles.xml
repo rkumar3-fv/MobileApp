@@ -10,6 +10,16 @@
     <item name="colorControlNormal">@color/colorBaseControls</item>
   </style>
 
+  <!-- AuthActivity w/o action bar theme -->
+  <style name="AuthAppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <item name="colorPrimary">@color/colorPrimary</item>
+    <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+    <item name="android:windowBackground">@color/colorBackground</item>
+    <item name="colorAccent">@color/colorBaseControls</item>
+    <item name="colorControlActivated">@color/colorActivatedControls</item>
+    <item name="colorControlNormal">@color/colorBaseControls</item>
+  </style>
+
   <!-- Activity w/ action bar theme -->
   <style name="AppThemeActionBar" parent="Theme.AppCompat.Light">
     <item name="colorPrimary">@color/colorPrimary</item>

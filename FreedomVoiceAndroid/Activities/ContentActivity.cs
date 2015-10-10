@@ -1,4 +1,3 @@
-using System;
 using Android.App;
 using Android.OS;
 using Android.Support.Design.Widget;
@@ -18,7 +17,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
     /// </summary>
     [Activity(
         Label = "@string/ApplicationTitle",
-        Icon = "@drawable/ic_launcher")]
+        Icon = "@drawable/ic_launcher",
+        Theme = "@style/AppTheme")]
     public class ContentActivity : BaseActivity
     {
         private ContentPagerAdapter _pagerAdapter;

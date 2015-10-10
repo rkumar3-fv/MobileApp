@@ -30,6 +30,15 @@
   <string name="ActivityExtension_moreMessages">unread messages</string>
   <string name="FragmentKeypad_title">Keypad</string>
   <string name="FragmentKeypad_callerId">Show as Caller ID</string>
+  <string name="FragmentKeypad_twoButton">ABC</string>
+  <string name="FragmentKeypad_threeButton">DEF</string>
+  <string name="FragmentKeypad_fourButton">GHI</string>
+  <string name="FragmentKeypad_fiveButton">JKL</string>
+  <string name="FragmentKeypad_sixButton">MNO</string>
+  <string name="FragmentKeypad_sevenButton">PQRS</string>
+  <string name="FragmentKeypad_eightButton">TUV</string>
+  <string name="FragmentKeypad_nineButton">WXYZ</string>
+  <string name="FragmentKeypad_zeroButton">+</string>
   <string name="FragmentMessages_title">Messages</string>
   <string name="FragmentRecents_title">Recents</string>
   <string name="FragmentContacts_title">Contacts</string>
