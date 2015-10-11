@@ -15,9 +15,9 @@
     <item name="colorPrimary">@color/colorPrimary</item>
     <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
     <item name="android:windowBackground">@drawable/background</item>
-    <item name="colorAccent">@color/colorBaseControls</item>
-    <item name="colorControlActivated">@color/colorActivatedControls</item>
-    <item name="colorControlNormal">@color/colorBaseControls</item>
+    <item name="colorAccent">@color/colorFieldsNormal</item>
+    <item name="colorControlActivated">@color/colorFieldsActive</item>
+    <item name="colorControlNormal">@color/colorFieldsNormal</item>
   </style>
 
   <!-- Activity w/ action bar theme -->
@@ -45,15 +45,40 @@
   <!-- ActionBar title style -->
   <style name="Theme.MyAuthTheme.ActionBar.TitleTextStyle" parent="android:style/TextAppearance.Holo.Widget.ActionBar.Title">
     <item name="android:textColor">@color/colorActionBarText</item>
+    <item name="android:textSize">@dimen/toolbar_text</item>
   </style>
 
+  <!-- AuthActivity edit fields style -->
+  <style name="AuthEditTextStyle">
+    <item name="android:maxLength">64</item>
+    <item name="android:textSize">@dimen/auth_activity_edit_text_size</item>
+    <item name="android:textColor">@color/colorFieldsActive</item>
+    <item name="android:textColorHint">@color/colorFieldsHint</item>
+    <item name="android:singleLine">true</item>
+    <item name="android:maxLines">1</item>
+    <item name="android:scrollHorizontally">true</item>
+    <item name="android:maxHeight">@dimen/auth_activity_field_height_max</item>
+  </style>
+  
   <!-- Borderless restore button style -->
   <style name="BorderlessRestoreButtonStyle" parent="Widget.AppCompat.Button.Borderless">
-    <item name="android:textSize">@dimen/auth_activity_forgot_button_text</item>
+    <item name="android:textSize">@dimen/activity_button_text</item>
     <item name="android:textColor">@color/textForgotPassword</item>
     <item name="android:textAlignment">center</item>
     <item name="android:textAllCaps">false</item>
     <item name="android:layout_centerHorizontal">true</item>
+    <item name="android:minHeight">@dimen/activity_button_size</item>
+  </style>
+  
+  <!-- AppButtonStyle -->
+  <style name="AppButtonStyle" parent="Widget.AppCompat.Button">
+    <item name="android:background">@color/colorButton</item>
+    <item name="android:elevation">@dimen/activity_button_elevation</item>
+    <item name="android:textSize">@dimen/activity_button_text</item>
+    <item name="android:textColor">@color/colorActionBarText</item>
+    <item name="android:textAlignment">center</item>
+    <item name="android:minHeight">@dimen/activity_button_size</item>
+    <item name="android:textAllCaps">true</item>
   </style>
 
   <!-- Borderless EditText for number -->
@@ -92,26 +117,27 @@
     <item name="tabPaddingEnd">@dimen/content_activity_tab_text_padding</item>
     <item name="tabBackground">@color/colorPrimary</item>
     <item name="tabTextAppearance">@style/CustomTabTextAppearance</item>
-    <item name="tabSelectedTextColor">@color/colorActionBarText</item>
+    <item name="tabSelectedTextColor">@color/colorTabIndicator</item>
   </style>
   <style name="CustomTabTextAppearance" parent="TextAppearance.Design.Tab">
     <item name="android:textSize">@dimen/content_activity_tab_text_size</item>
-    <item name="android:textColor">@color/textColorSecondary</item>
+    <item name="android:textColor">@color/colorTabIndicatorInactive</item>
     <item name="textAllCaps">true</item>
   </style>
   
   <!-- Text styles -->
-  <!-- Auth activity small label -->
-  <style name="AuthLabelText">
-    <item name="android:textColor">@color/textColorSecondary</item>
-    <item name="android:textSize">@dimen/text_main</item>
+  <!-- Auth activity error label -->
+  <style name="AuthErrorLabelText">
+    <item name="android:textColor">@color/textColorError</item>
+    <item name="android:textSize">@dimen/auth_activity_error_text_size</item>
     <item name="android:lines">1</item>
   </style>
 
   <!-- Auth activity large label -->
   <style name="AuthLargeLabelText">
-    <item name="android:textColor">@color/textColorSecondary</item>
-    <item name="android:textSize">@dimen/text_main</item>
+    <item name="android:fontFamily">sans-serif-light</item>
+    <item name="android:textColor">@color/colorActionBarText</item>
+    <item name="android:textSize">@dimen/auth_activity_auth_title_text</item>
     <item name="android:lines">1</item>
   </style>
 
@@ -124,7 +150,7 @@
 
   <!-- Keypad caller id label -->
   <style name="CallerIdLabelText">
-    <item name="android:textColor">@color/textColorPrimary</item>
+    <item name="android:textColor">@color/textColorSecondary</item>
     <item name="android:textSize">@dimen/text_main</item>
     <item name="android:lines">1</item>
   </style>

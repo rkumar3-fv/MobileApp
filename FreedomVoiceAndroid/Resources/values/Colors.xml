@@ -1,19 +1,24 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <resources>
   <color name="colorActionBarText">#ffffff</color>
-  <color name="colorPrimaryDark">#0097a7</color>
-  <color name="colorPrimary">#00bcd4</color>
+  <color name="colorPrimaryDark">#126ea5</color>
+  <color name="colorPrimary">#1789ce</color>
   <color name="colorBaseControls">#00838f</color>
   <color name="colorActivatedControls">#00bcd4</color>
-  <color name="colorBackground">#b2ebf2</color>
+  <color name="colorBackground">#ffffff</color>
   <color name="textColorPrimary">#212121</color>
-  <color name="textColorSecondary">#727272</color>
-  <color name="textColorSuccess">#8bc34a</color>
-  <color name="textColorError">#ff5722</color>
+  <color name="textColorSecondary">#d9000000</color>
   <color name="textColorNewMessages">#0097a7</color>
   <color name="colorTabIndicator">#ffffff</color>
+  <color name="colorTabIndicatorInactive">#b3ffffff</color>
   <color name="colorFabPrimary">#4caf50</color>
   <color name="colorFabPressed">#8bc34a</color>
 
   <color name="textForgotPassword">#03678f</color>
+  <color name="colorButton">#f0aa1e</color>
+  <color name="colorFieldsActive">#ffffff</color>
+  <color name="colorFieldsNormal">#59ffffff</color>
+  <color name="colorFieldsHint">#80ffffff</color>
+  <color name="textColorError">#fec95f</color>
+  <color name="colorDivider">#26000000</color>
 </resources>

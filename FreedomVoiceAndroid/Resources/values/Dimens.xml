@@ -1,47 +1,59 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <resources>
   <!-- Text-->
-  <dimen name="text_main">18sp</dimen>
-  <dimen name="text_secondary">12sp</dimen>
+  <dimen name="text_main">16sp</dimen>
+  <dimen name="text_secondary">14sp</dimen>
   <dimen name="text_numeric_keyboard">22sp</dimen>
   <dimen name="text_tab">14sp</dimen>
   
   <!-- Toolbar -->
   <dimen name="toolbar_elevation">4dp</dimen>
+  <dimen name="toolbar_text">20sp</dimen>
   
   <!-- Drawer -->
   <dimen name="drawer_size">240dp</dimen>
   <dimen name="drawer_elevation">6dp</dimen>
   
+  <!-- Logo -->
+  <dimen name="logo_horizontal">328dp</dimen>
+  <dimen name="logo_vertical">51dp</dimen>
+  
   <!-- All activities -->
+  <dimen name="activity_element_divider">1dp</dimen>
   <dimen name="activity_horizontal_margin">16dp</dimen>
   <dimen name="activity_vertical_margin">16dp</dimen>
+  <dimen name="activity_button_elevation">4dp</dimen>
+  <dimen name="activity_button_size">36dp</dimen>
+  <dimen name="activity_button_text">14sp</dimen>
   
   <!-- Auth Activity -->
-  <dimen name="auth_activity_horizontal_margin">16dp</dimen>
   <dimen name="auth_activity_vertical_margin">8dp</dimen>
-  <dimen name="auth_activity_forgot_button">36dp</dimen>
-  <dimen name="auth_activity_forgot_button_text">14sp</dimen>
-  <dimen name="auth_activity_login_label_margin">60dp</dimen>
-  <dimen name="auth_activity_elements_vertical_margin">16dp</dimen>
-  <dimen name="auth_activity_text_horizontal_margin">32dp</dimen>
+  <dimen name="auth_activity_auth_title_text">36sp</dimen>
+  <dimen name="auth_activity_edit_text_size">16sp</dimen>
+  <dimen name="auth_activity_error_text_size">12sp</dimen>
+  <dimen name="auth_activity_welcome_email_spacing">28dp</dimen>
+  <dimen name="auth_activity_error_message_spacing">3dp</dimen>
+  <dimen name="auth_activity_login_password_spacing">16dp</dimen>
+  <dimen name="auth_activity_password_button_spacing">48dp</dimen>
+  <dimen name="auth_activity_field_height_max">48dp</dimen>
   
   <!-- Restore Activity -->
   <dimen name="restore_activity_info_label_margin">32dp</dimen>
   <dimen name="restore_activity_elements_vertical_margin">16dp</dimen>
   <dimen name="restore_activity_text_horizontal_margin">32dp</dimen>
   
-  <!-- Info-type activity -->
-  <dimen name="info_activity_info_label_margin">60dp</dimen>
-  <dimen name="info_activity_elements_vertical_margin">16dp</dimen>
-  <dimen name="info_activity_text_horizontal_margin">32dp</dimen>
+  <!-- Disclaimer activity -->
+  <dimen name="disclaimer_activity_bottom_margin">83dp</dimen>
+  <dimen name="disclaimer_activity_button_margin">47dp</dimen>
+  <dimen name="disclaimer_activity_text_margin">30dp</dimen>
+
+  <!-- Inactive activity -->
+  <dimen name="inactive_activity_button_margin">57dp</dimen>
+  <dimen name="inactive_activity_text_margin">43dp</dimen>
   
   <!-- Select account activity -->
-  <dimen name="select_acc_activity_top_padding">6dp</dimen>
-  <dimen name="select_acc_activity_horizontal_margin">5dp</dimen>
-  <dimen name="select_acc_activity_element_spacing">4dp</dimen>
-  <dimen name="select_acc_activity_min_element_height">48dp</dimen>
-  <dimen name="select_acc_activity_text_padding">16dp</dimen>
+  <dimen name="select_acc_activity_element_height">48dp</dimen>
+  <dimen name="select_acc_activity_element_padding">8dp</dimen>
   
   <!-- Content activity -->
   <dimen name="content_activity_tab_text_size">14sp</dimen>

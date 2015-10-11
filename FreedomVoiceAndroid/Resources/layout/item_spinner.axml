@@ -6,7 +6,6 @@
     <TextView
         android:id="@+id/itemSpinner_idText"
         style="@style/AccountItemText"
-        android:layout_marginStart="@dimen/select_acc_activity_text_padding"
         android:layout_gravity="center_vertical"
         android:layout_height="wrap_content"
         android:layout_width="match_parent" />

@@ -1,18 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="@dimen/select_acc_activity_top_padding"
-    android:minHeight="@dimen/select_acc_activity_min_element_height"
-    card:theme="@style/CardView.Light"
-    android:elevation="@dimen/content_activity_tab_elevation"
-    android:background="?android:attr/selectableItemBackground">
+    android:minHeight="@dimen/select_acc_activity_element_height">
     <TextView
         android:id="@+id/itemAccount_numberText"
         style="@style/AccountItemText"
-        android:layout_marginStart="@dimen/select_acc_activity_text_padding"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
         android:layout_gravity="center_vertical"
+        android:minHeight="@dimen/select_acc_activity_element_height"
         android:layout_height="wrap_content"
         android:layout_width="match_parent" />
-</android.support.v7.widget.CardView>
+</LinearLayout>

@@ -4,56 +4,37 @@
     android:layout_height="fill_parent"
     android:orientation="vertical"
     android:gravity="center_horizontal"
-    android:layout_marginTop="@dimen/activity_vertical_margin"
-    android:layout_marginBottom="@dimen/activity_vertical_margin"
     android:layout_marginStart="@dimen/activity_horizontal_margin"
     android:layout_marginEnd="@dimen/activity_horizontal_margin">
     <TextView
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:lines="2"
-        style="@style/AuthLabelText"
+        android:textSize="@dimen/text_secondary"
+        android:textColor="@color/textColorSecondary"
         android:text="@string/ActivityRestore_description"
-        android:layout_marginTop="@dimen/restore_activity_info_label_margin"
-        android:layout_marginStart="@dimen/restore_activity_text_horizontal_margin"
-        android:layout_marginEnd="@dimen/restore_activity_text_horizontal_margin" />
-    <TextView
-        style="@style/AuthLabelText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/ActivityRestore_emailLabel"
-        android:layout_marginStart="@dimen/restore_activity_text_horizontal_margin"
-        android:layout_marginEnd="@dimen/restore_activity_text_horizontal_margin"
-        android:layout_marginTop="@dimen/restore_activity_elements_vertical_margin" />
+        android:layout_marginTop="@dimen/restore_activity_info_label_margin" />
     <EditText
         android:id="@+id/restoreActivity_emailField"
-        android:textColor="@color/colorBaseControls"
+        style="@style/AuthEditTextStyle"
+        android:hint="@string/ActivityRestore_emailLabel"
         android:gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:maxLength="50"
         android:inputType="textEmailAddress"
-        android:layout_marginTop="@dimen/restore_activity_elements_vertical_margin"
-        android:layout_marginStart="@dimen/restore_activity_text_horizontal_margin"
-        android:layout_marginEnd="@dimen/restore_activity_text_horizontal_margin"
-        android:singleLine="true"
-        android:maxLines="1"
-        android:scrollHorizontally="true" />
+        android:layout_marginTop="@dimen/restore_activity_elements_vertical_margin" />
     <Button
         android:id="@+id/restoreActivity_sendButton"
+        style="@style/AppButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/ActivityRestore_sendButton"
-        android:layout_marginTop="@dimen/restore_activity_elements_vertical_margin"
-        android:layout_marginStart="@dimen/restore_activity_text_horizontal_margin"
-        android:layout_marginEnd="@dimen/restore_activity_text_horizontal_margin"
-        android:textAlignment="center" />
+        android:layout_marginTop="@dimen/restore_activity_elements_vertical_margin" />
     <TextView
         android:id="@+id/restoreActivity_resultText"
-        style="@style/AuthLabelText"
-        android:textColor="@color/textColorError"
+        style="@style/AuthErrorLabelText"
         android:text="@string/ActivityRestore_badResponse"
-        android:visibility="invisible"
+        android:visibility="visible"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/restore_activity_elements_vertical_margin" />
