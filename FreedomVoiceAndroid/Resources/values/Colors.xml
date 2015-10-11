@@ -14,4 +14,6 @@
   <color name="colorTabIndicator">#ffffff</color>
   <color name="colorFabPrimary">#4caf50</color>
   <color name="colorFabPressed">#8bc34a</color>
+
+  <color name="textForgotPassword">#03678f</color>
 </resources>

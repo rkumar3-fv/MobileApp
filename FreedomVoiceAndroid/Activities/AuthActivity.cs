@@ -14,7 +14,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
     [Activity(
         MainLauncher = true,
         Label = "@string/ApplicationTitle",
-        Icon = "@mipmap/ic_launcher", 
+        Icon = "@mipmap/ic_launcher",
+        WindowSoftInputMode = SoftInput.AdjustResize,
         Theme = "@style/AuthAppTheme")]
     public class AuthActivity : BaseActivity
     {
