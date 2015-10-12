@@ -38,9 +38,9 @@
   <dimen name="auth_activity_field_height_max">48dp</dimen>
   
   <!-- Restore Activity -->
-  <dimen name="restore_activity_info_label_margin">32dp</dimen>
-  <dimen name="restore_activity_elements_vertical_margin">16dp</dimen>
-  <dimen name="restore_activity_text_horizontal_margin">32dp</dimen>
+  <dimen name="restore_activity_info_label_margin">30dp</dimen>
+  <dimen name="restore_activity_info_field_margin">20dp</dimen>
+  <dimen name="restore_activity_field_button_margin">33dp</dimen>
   
   <!-- Disclaimer activity -->
   <dimen name="disclaimer_activity_bottom_margin">83dp</dimen>
@@ -66,6 +66,9 @@
   <!-- Messages fragment -->
   <dimen name="fragment_msg_element_height">48dp</dimen>
   <dimen name="fragment_msg_element_padding">8dp</dimen>
+  <dimen name="fragment_msg_ind_width">32dp</dimen>
+  <dimen name="fragment_msg_ind_height">23dp</dimen>
+  <dimen name="fragment_msg_ind_corner">2dp</dimen>
   
   <!-- Keyboard fragment -->
   <dimen name="fragment_keypad_text_vertical_margin">32dp</dimen>

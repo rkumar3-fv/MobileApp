@@ -26,8 +26,8 @@
     <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
     <item name="android:windowBackground">@color/colorBackground</item>
     <item name="colorAccent">@color/colorBaseControls</item>
-    <item name="colorControlActivated">@color/colorActivatedControls</item>
-    <item name="colorControlNormal">@color/colorBaseControls</item>
+    <item name="colorControlActivated">@color/colorDivider</item>
+    <item name="colorControlNormal">@color/colorDivider</item>
     <item name="android:actionBarStyle">@style/ActionBarTheme</item>
     <item name="actionBarStyle">@style/ActionBarTheme</item>
   </style>
@@ -54,6 +54,18 @@
     <item name="android:textSize">@dimen/auth_activity_edit_text_size</item>
     <item name="android:textColor">@color/colorFieldsActive</item>
     <item name="android:textColorHint">@color/colorFieldsHint</item>
+    <item name="android:singleLine">true</item>
+    <item name="android:maxLines">1</item>
+    <item name="android:scrollHorizontally">true</item>
+    <item name="android:maxHeight">@dimen/auth_activity_field_height_max</item>
+  </style>
+
+  <!-- RestoreActivity edit fields style -->
+  <style name="RestoreEditTextStyle">
+    <item name="android:maxLength">64</item>
+    <item name="android:textSize">@dimen/auth_activity_edit_text_size</item>
+    <item name="android:textColor">@color/textColorSecondary</item>
+    <item name="android:textColorHint">@color/colorBlackFieldsHint</item>
     <item name="android:singleLine">true</item>
     <item name="android:maxLines">1</item>
     <item name="android:scrollHorizontally">true</item>
@@ -145,6 +157,13 @@
   <style name="ListItemText">
     <item name="android:textColor">@color/textColorPrimary</item>
     <item name="android:textSize">@dimen/text_main</item>
+    <item name="android:lines">1</item>
+  </style>
+
+  <!-- Message indicator text -->
+  <style name="MessagesCounterText">
+    <item name="android:textColor">@color/messageIndicatorText</item>
+    <item name="android:textSize">@dimen/text_secondary</item>
     <item name="android:lines">1</item>
   </style>
 

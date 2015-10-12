@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using Android.Content;
-using Android.Graphics;
 using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
@@ -64,6 +63,7 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
                     viewHolder.ExtensionName.Text = $"{extension.Id} - {extension.ExtensionName}";
                 if (extension.MailsCount == 0) return;
                 viewHolder.ExtensionInfo.Text = extension.MailsCount.ToString();
+                viewHolder.InfoLayout.Visibility = ViewStates.Visible;
             }
             else if (contentItem is Folder)
             {
@@ -119,6 +119,8 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
         /// </summary>
         private class ExtensionViewHolder : RecyclerView.ViewHolder
         {
+            public LinearLayout InfoLayout { get; }
+
             /// <summary>
             /// Extension name field
             /// </summary>
@@ -133,6 +135,7 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
             {
                 ExtensionName = itemView.FindViewById<TextView>(Resource.Id.itemExt_title);
                 ExtensionInfo = itemView.FindViewById<TextView>(Resource.Id.itemExt_info);
+                InfoLayout = itemView.FindViewById<LinearLayout>(Resource.Id.itemExt_back);
             }
         }
 

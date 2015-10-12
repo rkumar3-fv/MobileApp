@@ -1,93 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:layout_marginBottom="@dimen/auth_activity_vertical_margin"
     android:layout_marginStart="@dimen/activity_horizontal_margin"
-    android:layout_marginEnd="@dimen/activity_horizontal_margin">
-    <Button
-        android:id="@+id/authActivity_restoreButton"
-        style="@style/BorderlessRestoreButtonStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/ActivityAuth_restoreButton"
-        android:layout_alignParentBottom="true" />
+    android:layout_marginEnd="@dimen/activity_horizontal_margin"
+    android:orientation="vertical"
+    android:fillViewport="true">
     <RelativeLayout
-        android:id="@+id/authActivity_authForm"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true">
-        <TextView
-            style="@style/AuthLargeLabelText"
-            android:layout_centerHorizontal="true"
-            android:id="@+id/authActivity_loginTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/ActivityAuth_title"
-            android:layout_alignParentTop="true" />
-        <EditText
-            android:id="@+id/authActivity_loginField"
-            style="@style/AuthEditTextStyle"
-            android:layout_centerHorizontal="true"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/ActivityAuth_loginHint"
-            android:layout_below="@id/authActivity_loginTitle"
-            android:layout_marginTop="@dimen/auth_activity_welcome_email_spacing" />
-        <TextView
-            android:id="@+id/authActivity_loginError"
-            style="@style/AuthErrorLabelText"
-            android:layout_centerHorizontal="true"
-            android:layout_below="@id/authActivity_loginField"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/auth_activity_error_message_spacing" />
-        <EditText
-            android:id="@+id/authActivity_passwordField"
-            style="@style/AuthEditTextStyle"
-            android:layout_centerHorizontal="true"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/authActivity_loginField"
-            android:hint="@string/ActivityAuth_passwordHint"
-            android:inputType="textPassword"
-            android:layout_marginTop="@dimen/auth_activity_login_password_spacing" />
-        <TextView
-            android:id="@+id/authActivity_errorText"
-            style="@style/AuthErrorLabelText"
-            android:textColor="@color/textColorError"
-            android:layout_centerHorizontal="true"
-            android:layout_below="@id/authActivity_passwordField"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/auth_activity_error_message_spacing" />
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_marginBottom="@dimen/auth_activity_vertical_margin">
         <Button
-            android:id="@+id/authActivity_loginButton"
-            style="@style/AppButtonStyle"
-            android:layout_centerHorizontal="true"
+            android:id="@+id/authActivity_restoreButton"
+            style="@style/BorderlessRestoreButtonStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/authActivity_passwordField"
-            android:text="@string/ActivityAuth_authButton"
-            android:layout_marginTop="@dimen/auth_activity_password_button_spacing" />
+            android:text="@string/ActivityAuth_restoreButton"
+            android:layout_alignParentBottom="true" />
+        <RelativeLayout
+            android:id="@+id/authActivity_authForm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true">
+            <TextView
+                style="@style/AuthLargeLabelText"
+                android:layout_centerHorizontal="true"
+                android:id="@+id/authActivity_loginTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ActivityAuth_title"
+                android:layout_alignParentTop="true" />
+            <EditText
+                android:id="@+id/authActivity_loginField"
+                style="@style/AuthEditTextStyle"
+                android:layout_centerHorizontal="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/ActivityAuth_loginHint"
+                android:layout_below="@id/authActivity_loginTitle"
+                android:layout_marginTop="@dimen/auth_activity_welcome_email_spacing" />
+            <TextView
+                android:id="@+id/authActivity_loginError"
+                style="@style/AuthErrorLabelText"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/authActivity_loginField"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/auth_activity_error_message_spacing" />
+            <EditText
+                android:id="@+id/authActivity_passwordField"
+                style="@style/AuthEditTextStyle"
+                android:layout_centerHorizontal="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/authActivity_loginField"
+                android:hint="@string/ActivityAuth_passwordHint"
+                android:inputType="textPassword"
+                android:layout_marginTop="@dimen/auth_activity_login_password_spacing" />
+            <TextView
+                android:id="@+id/authActivity_errorText"
+                style="@style/AuthErrorLabelText"
+                android:textColor="@color/textColorError"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/authActivity_passwordField"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/auth_activity_error_message_spacing" />
+            <Button
+                android:id="@+id/authActivity_loginButton"
+                style="@style/AppButtonStyle"
+                android:layout_centerHorizontal="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/authActivity_passwordField"
+                android:text="@string/ActivityAuth_authButton"
+                android:layout_marginTop="@dimen/auth_activity_password_button_spacing" />
+        </RelativeLayout>
+        <Button
+            android:id="@+id/authActivity_forgotButton"
+            style="@style/BorderlessRestoreButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/ActivityAuth_restoreButton"
+            android:layout_alignParentBottom="true" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_above="@id/authActivity_authForm">
+            <ImageView
+                android:layout_width="@dimen/logo_horizontal"
+                android:layout_height="@dimen/logo_vertical"
+                android:src="@drawable/logo_white"
+                android:layout_gravity="center" />
+        </LinearLayout>
     </RelativeLayout>
-    <Button
-        android:id="@+id/authActivity_restoreButton"
-        style="@style/BorderlessRestoreButtonStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/ActivityAuth_restoreButton"
-        android:layout_alignParentBottom="true" />
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:layout_above="@id/authActivity_authForm">
-        <ImageView
-            android:layout_width="@dimen/logo_horizontal"
-            android:layout_height="@dimen/logo_vertical"
-            android:src="@drawable/logo_white"
-            android:layout_gravity="center" />
-    </LinearLayout>
-</RelativeLayout>
+</ScrollView>

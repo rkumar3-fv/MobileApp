@@ -2,6 +2,7 @@
 using Android.App;
 using Android.Content;
 using Android.OS;
+using Android.Util;
 using Android.Views;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Helpers;
@@ -42,7 +43,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             base.OnCreate(bundle);
             SetContentView(Resource.Layout.act_auth);
             _authButton = FindViewById<Button>(Resource.Id.authActivity_loginButton);
-            _forgotButton = FindViewById<Button>(Resource.Id.authActivity_restoreButton);
+            _forgotButton = FindViewById<Button>(Resource.Id.authActivity_forgotButton);
             _loginText = FindViewById<EditText>(Resource.Id.authActivity_loginField);
             _passwordText = FindViewById<EditText>(Resource.Id.authActivity_passwordField);
             _errorTextLogin = FindViewById<TextView>(Resource.Id.authActivity_loginError);
@@ -89,7 +90,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         /// Restore password in browser
         /// </summary>
         private void ForgotButtonOnClick(object sender, EventArgs e)
-        {            
+        {
+            Log.Debug(App.AppPackage, "RESTORE LAUNCHED");
             var intent = new Intent(this, typeof(RestoreActivity));
             StartActivity(intent);
         }

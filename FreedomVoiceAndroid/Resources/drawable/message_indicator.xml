@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+  <solid android:color="@color/messageIndicator"/>
+  <corners 
+    android:bottomRightRadius="@dimen/fragment_msg_ind_corner" 
+    android:bottomLeftRadius="@dimen/fragment_msg_ind_corner"
+    android:topLeftRadius="@dimen/fragment_msg_ind_corner" 
+    android:topRightRadius="@dimen/fragment_msg_ind_corner"/>
+</shape>
