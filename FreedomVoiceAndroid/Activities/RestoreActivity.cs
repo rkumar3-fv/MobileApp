@@ -17,16 +17,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         Theme = "@style/AppThemeActionBar")]
     public class RestoreActivity : BaseActivity
     {
-        /// <summary>
-        /// Debug data set
-        /// REMOVE BEFORE RELEASE!
-        /// </summary>
-        private void DebugData()
-        {
-            //TODO: REMOVE
-            _emailText.Text = "freedomvoice.user1.267055@gmail.com";
-        }
-
         private EditText _emailText;
         private Button _restoreButton;
         private TextView _resultLabel;
@@ -46,12 +36,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             SupportActionBar.SetHomeButtonEnabled(true);
         }
 
-        protected override void OnResume()
-        {
-            base.OnResume();
-            DebugData();
-        }
-
         /// <summary>
         /// Restore button click action
         /// </summary>
@@ -60,14 +44,12 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             if (_emailText.Length() > 5)
                 if (DataValidationUtils.IsEmailValid(_emailText.Text))
                 {
-                    if (_resultLabel.Visibility == ViewStates.Visible)
-                        _resultLabel.Visibility = ViewStates.Invisible;
+                    _resultLabel.Text = "";
                     _restoreButton.Enabled = false;
-                    Helper.RestorePassword(_emailText.Text);
+                    //Helper.RestorePassword(_emailText.Text);
                     return;
                 }
-            if (_resultLabel.Visibility != ViewStates.Visible)
-                _resultLabel.Visibility = ViewStates.Visible;
+            _resultLabel.Text = GetString(Resource.String.ActivityRestore_badEmail);
         }
 
         public override bool OnCreateOptionsMenu(IMenu menu)

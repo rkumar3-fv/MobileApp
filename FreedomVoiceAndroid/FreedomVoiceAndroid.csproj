@@ -79,25 +79,32 @@
     <Compile Include="Actions\BaseAction.cs" />
     <Compile Include="Actions\Requests\BaseRequest.cs" />
     <Compile Include="Actions\Requests\GetAccountsRequest.cs" />
+    <Compile Include="Actions\Requests\GetExtensionsRequest.cs" />
     <Compile Include="Actions\Requests\LoginRequest.cs" />
     <Compile Include="Actions\Requests\LogoutRequest.cs" />
     <Compile Include="Actions\Requests\RestorePasswordRequest.cs" />
     <Compile Include="Actions\Responses\BaseResponse.cs" />
     <Compile Include="Actions\Responses\ErrorResponse.cs" />
     <Compile Include="Actions\Responses\GetAccountsResponse.cs" />
+    <Compile Include="Actions\Responses\GetExtensionsResponse.cs" />
     <Compile Include="Actions\Responses\LoginResponse.cs" />
     <Compile Include="Actions\Responses\LogoutResponse.cs" />
     <Compile Include="Actions\Responses\RestoreResponse.cs" />
     <Compile Include="Activities\AuthActivity.cs" />
     <Compile Include="Activities\BaseActivity.cs" />
     <Compile Include="Activities\SelectAccountActivity.cs" />
+    <Compile Include="Adapters\CallerIdSpinnerAdapter.cs" />
     <Compile Include="Adapters\ContentPager.cs" />
     <Compile Include="Adapters\ContentPagerAdapter.cs" />
-    <Compile Include="Adapters\ExtensionsRecyclerAdapter.cs" />
+    <Compile Include="Adapters\DividerItemDecorator.cs" />
+    <Compile Include="Adapters\MessagesRecyclerAdapter.cs" />
     <Compile Include="Adapters\AccountsRecyclerAdapter.cs" />
     <Compile Include="Entities\Account.cs" />
     <Compile Include="Entities\Entity.cs" />
     <Compile Include="Entities\Extension.cs" />
+    <Compile Include="Entities\Folder.cs" />
+    <Compile Include="Entities\Message.cs" />
+    <Compile Include="Entities\MessageItem.cs" />
     <Compile Include="Fragments\ContactsFragment.cs" />
     <Compile Include="Activities\ContentActivity.cs" />
     <Compile Include="Activities\DisclaimerActivity.cs" />
@@ -167,6 +174,18 @@
     <AndroidResource Include="Resources\layout-v21\frag_keypad.axml">
       <SubType>AndroidResource</SubType>
     </AndroidResource>
+    <AndroidResource Include="Resources\layout\item_spinner.axml">
+      <SubType>AndroidResource</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\item_spinner_drop.axml">
+      <SubType>AndroidResource</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\item_folder.axml">
+      <SubType>AndroidResource</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\act_restore.axml">
+      <SubType>AndroidResource</SubType>
+    </AndroidResource>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Assets\" />
@@ -220,11 +239,6 @@
       <Project>{F4FC9F9F-082C-4F29-977A-DA7EC449BA56}</Project>
       <Name>FreedomVoice.Core</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\layout\act_restore.axml">
-      <SubType>Designer</SubType>
-    </AndroidResource>
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable-hdpi\ic_action_back.png" />
@@ -441,6 +455,78 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable-v21\ripple.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxxhdpi\background.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxhdpi\background.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xhdpi\background.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-mdpi\background.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-hdpi\background.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxxhdpi\logo_disclaimer.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxxhdpi\logo_grey.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxxhdpi\logo_white.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxhdpi\logo_disclaimer.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxhdpi\logo_grey.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxhdpi\logo_white.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xhdpi\logo_disclaimer.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xhdpi\logo_grey.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xhdpi\logo_white.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-mdpi\logo_disclaimer.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-mdpi\logo_grey.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-mdpi\logo_white.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-hdpi\logo_disclaimer.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-hdpi\logo_grey.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-hdpi\logo_white.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\divider.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\button_selector.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-v21\button_selector.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\message_indicator.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

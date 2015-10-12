@@ -1,5 +1,4 @@
 using System;
-using com.FreedomVoice.MobileApp.Android.Actions.Responses;
 
 namespace com.FreedomVoice.MobileApp.Android.Helpers
 {
@@ -8,10 +7,19 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
     /// </summary>
     public class ActionsHelperEventArgs : EventArgs, IEquatable<ActionsHelperEventArgs>
     {
-        public ActionsHelperEventArgs(long requestId, BaseResponse response)
+        public const int AuthLoginError = 11;
+        public const int AuthPasswdError = 12;
+        public const int RestoreError = 21;
+        public const int RestoreWrongEmail = 22;
+        public const int RestoreOk = 23;
+        public const int MsgExtensionsUpdated = 31;
+        public const int MsgFoldersUpdated = 32;
+        public const int MsgMessagesUpdated = 33;
+
+        public ActionsHelperEventArgs(long requestId, int code)
         {
             RequestId = requestId;
-            ResponseData = response;
+            Code = code;
         }
 
         /// <summary>
@@ -20,20 +28,20 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         public long RequestId { get; }
 
         /// <summary>
-        /// Response data
+        /// Response code
         /// </summary>
-        public BaseResponse ResponseData { get; }
-
+        public int Code { get; }
+        
         /// <summary>
         /// Response equality comparer
         /// </summary>
-        /// <param name="other">Another response callback</param>
+        /// <param name="other">Another code</param>
         /// <returns>equals or not</returns>
         public bool Equals(ActionsHelperEventArgs other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return RequestId == other.RequestId && Equals(ResponseData, other.ResponseData);
+            return RequestId == other.RequestId && Code == other.Code;
         }
 
         /// <summary>
@@ -55,7 +63,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         {
             unchecked
             {
-                return (RequestId.GetHashCode()*397) ^ (ResponseData?.GetHashCode() ?? 0);
+                return (RequestId.GetHashCode()*397) ^ Code;
             }
         }
     }

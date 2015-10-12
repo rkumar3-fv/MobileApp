@@ -1,10 +1,13 @@
 using System;
+using System.Linq;
 using Android.OS;
 using Android.Support.Design.Widget;
 using Android.Telephony;
+using Android.Text;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using com.FreedomVoice.MobileApp.Android.Adapters;
 using com.FreedomVoice.MobileApp.Android.Helpers;
 using com.FreedomVoice.MobileApp.Android.Utils;
 
@@ -15,6 +18,8 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
     /// </summary>
     public class KeypadFragment : BasePagerFragment
     {
+        private string _enteredNumber="";
+        private Spinner _idSpinner;
         private EditText _dialEdit;
         private ImageButton _backspaceButton;
         private Button _buttonOne;
@@ -34,8 +39,13 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             var view = inflater.Inflate(Resource.Layout.frag_keypad, container, false);
+            _idSpinner = view.FindViewById<Spinner>(Resource.Id.keypadFragment_idSpinner);
+            _idSpinner.ItemSelected += (sender, args) =>
+            {
+                Helper.SelectedAccount = Helper.AccountsList[args.Position];
+                Log.Debug(App.AppPackage, $"ACCOUNT CHANGED to {DataFormatUtils.ToPhoneNumber(Helper.SelectedAccount.AccountName)}");
+            };
             _dialEdit = view.FindViewById<EditText>(Resource.Id.keypadFragment_dialText);
-            //_dialEdit.AddTextChangedListener();
             _backspaceButton = view.FindViewById<ImageButton>(Resource.Id.keypadFragment_backspace);
             _backspaceButton.Click += BackspaceButtonOnClick;
             _backspaceButton.LongClick += BackspaceButtonOnLongClick;
@@ -69,13 +79,27 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             return view;
         }
 
+        public override void OnActivityCreated(Bundle savedInstanceState)
+        {
+            base.OnActivityCreated(savedInstanceState);
+            var adapter = new CallerIdSpinnerAdapter(Activity, Helper.AccountsList);
+            _idSpinner.Adapter = adapter;
+        }
+
+        public override void OnResume()
+        {
+            base.OnResume();
+            _idSpinner.SetSelection(Helper.AccountsList.IndexOf(Helper.SelectedAccount));
+        }
+
         /// <summary>
         /// Digit button click event
         /// </summary>
         private void ButtonDigitOnClick(string s)
         {
             Log.Debug(App.AppPackage, $"KEYPAD: add {s}");
-            _dialEdit.Text=_dialEdit.Text.Insert(_dialEdit.Text.Length, s);
+            _enteredNumber=_enteredNumber.Insert(_enteredNumber.Length, s);
+            SetupNewText();
         }
 
         /// <summary>
@@ -83,7 +107,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         /// </summary>
         private void ButtonDialOnClick(object sender, EventArgs e)
         {
-            var normalizedNumber = PhoneNumberUtils.NormalizeNumber(_dialEdit.Text);
+            var normalizedNumber = PhoneNumberUtils.NormalizeNumber(_enteredNumber);
             Log.Debug(App.AppPackage, $"KEYPAD: dial to {DataFormatUtils.ToPhoneNumber(normalizedNumber)}");
             Helper.Call(normalizedNumber);
         }
@@ -93,11 +117,12 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         /// </summary>
         private void BackspaceButtonOnClick(object sender, EventArgs eventArgs)
         {
-            if (_dialEdit.Text.Length > 0)
+            if (_enteredNumber.Length > 0)
             {
-                var newString = _dialEdit.Text.Substring(0, _dialEdit.Text.Length - 1);
-                Log.Debug(App.AppPackage, $"KEYPAD: remove symbol {_dialEdit.Text.Substring(_dialEdit.Text.Length-1)}");
-                _dialEdit.Text = newString;
+                var newString = _enteredNumber.Substring(0, _enteredNumber.Length - 1);
+                Log.Debug(App.AppPackage, $"KEYPAD: remove symbol {_enteredNumber.Substring(_enteredNumber.Length-1)}");
+                _enteredNumber = newString;
+                SetupNewText();
             }
             else
                 Log.Debug(App.AppPackage, $"KEYPAD: nothing to remove");
@@ -117,7 +142,13 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         private void BackspaceButtonOnLongClick(object sender, View.LongClickEventArgs longClickEventArgs)
         {
             Log.Debug(App.AppPackage, $"KEYPAD: clear phone");
-            _dialEdit.Text = "";
+            _enteredNumber = "";
+            SetupNewText();
+        }
+
+        private void SetupNewText()
+        {
+            _dialEdit.Text = DataFormatUtils.ToPhoneNumber(_enteredNumber);
         }
 
         protected override void OnHelperEvent(ActionsHelperEventArgs args)

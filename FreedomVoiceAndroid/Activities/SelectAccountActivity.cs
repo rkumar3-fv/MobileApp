@@ -28,6 +28,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             SetContentView(Resource.Layout.act_select);
             _selectView = FindViewById<RecyclerView>(Resource.Id.selectAccountActivity_accountsList);
             _selectView.SetLayoutManager(new LinearLayoutManager(this));
+            _selectView.AddItemDecoration(new DividerItemDecorator(this, Resource.Drawable.divider));
             _adapter = new AccountsRecyclerAdapter(Helper.AccountsList);
             _selectView.SetAdapter(_adapter);
             _adapter.ItemClick += SelectViewOnClick;
@@ -43,6 +44,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             if (position >= Helper.AccountsList.Count) return;
             Log.Debug(App.AppPackage, $"ACTIVITY {GetType().Name}: select account #{DataFormatUtils.ToPhoneNumber(_adapter.AccountName(position))}");
             Helper.SelectedAccount = Helper.AccountsList[position];
+            Helper.GetExtensions();
             var intent = (Helper.IsFirstRun)? new Intent(this, typeof(DisclaimerActivity)): new Intent(this, typeof(ContentActivity));
             StartActivity(intent);
         }

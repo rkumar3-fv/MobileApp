@@ -54,6 +54,11 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         public List<Account>AccountsList { get; private set; }
 
         /// <summary>
+        /// Available extensions
+        /// </summary>
+        public List<Extension>ExtensionsList { get; private set; } 
+
+        /// <summary>
         /// Event for activity or fragment handling
         /// </summary>
         public event ActionsHelperEvent HelperEvent;
@@ -95,6 +100,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             _receiver.SetListener(this);
             _preferencesHelper = AppPreferencesHelper.Instance(_app);
             IsFirstRun = _preferencesHelper.IsFirstRun();
+            ExtensionsList = new List<Extension>();
             Log.Debug(App.AppPackage, "HELPER: " + (IsFirstRun ? "First run" : "Not first run"));
         }
 
@@ -220,11 +226,29 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             var getAccsRequest = new GetAccountsRequest(requestId);
             foreach (var request in _waitingRequestArray.Where(response => response.Value is GetAccountsRequest).Where(request => ((GetAccountsRequest)(request.Value)).Equals(getAccsRequest)))
             {
-                Log.Debug(App.AppPackage, "HELPER REQUEST: Duplicate RestorePassword request. Execute ID=" + request.Key);
+                Log.Debug(App.AppPackage, "HELPER REQUEST: Duplicate GetAccounts request. Execute ID=" + request.Key);
                 return request.Key;
             }
             Log.Debug(App.AppPackage, "HELPER REQUEST: GetAccounts ID=" + requestId);
             PrepareIntent(requestId, getAccsRequest);  
+            return requestId;
+        }
+
+        /// <summary>
+        /// Get or update extensions list
+        /// </summary>
+        /// <returns>request ID</returns>
+        public long GetExtensions()
+        {
+            var requestId = RequestId;
+            var getExtRequest = new GetExtensionsRequest(requestId, SelectedAccount.AccountName);
+            foreach (var request in _waitingRequestArray.Where(response => response.Value is GetExtensionsRequest).Where(request => ((GetExtensionsRequest)(request.Value)).Equals(getExtRequest)))
+            {
+                Log.Debug(App.AppPackage, "HELPER REQUEST: Duplicate GetExtensions request. Execute ID=" + request.Key);
+                return request.Key;
+            }
+            Log.Debug(App.AppPackage, "HELPER REQUEST: GetExtensions ID=" + requestId);
+            PrepareIntent(requestId, getExtRequest);
             return requestId;
         }
 
@@ -289,21 +313,45 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId}, Type is {type}");
             switch (type)
             {
+                case "ErrorResponse":
+                    var errorResponse = (ErrorResponse) response;
+                    switch (errorResponse.ErrorCode)
+                    {
+                        // Authorization failed
+                        case ErrorResponse.ErrorUnauthorized:
+                            if (IsLoggedIn)
+                            {
+                                Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} failed: UNAUTHORIZED");
+                                DoLogout(response.RequestId);
+                            }
+                            else
+                            {
+                                Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} failed: BAD PASSWORD");
+                                HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, ActionsHelperEventArgs.AuthPasswdError));
+                            }
+                            break;
+                        //Bad request format
+                        case ErrorResponse.ErrorBadRequest:
+                            if (!IsLoggedIn)
+                            {
+                                Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} failed: BAD LOGIN");
+                                HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, ActionsHelperEventArgs.AuthLoginError));
+                            }
+                            break;
+                    }
+                    break;
+
                 // Login action response
                 case "LoginResponse":
                     IsLoggedIn = true;
+                    Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} successed: YOU ARE LOGGED IN");
                     GetAccounts();
                     break;
 
                 // Login action response
                 case "LogoutResponse":
-                    _userLogin = "";
-                    _userPassword = "";
-                    IsLoggedIn = false;
-                    AccountsList = null;
-                    SelectedAccount = null;
-                    intent = new Intent(_app, typeof(AuthActivity));
-                    HelperEvent?.Invoke(this, new ActionsHelperIntentArgs(response.RequestId, intent));
+                    Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} successed: YOU ARE LOGGED OUT");
+                    DoLogout(response.RequestId);
                     break;
 
                 // GetAccounts action response
@@ -323,6 +371,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                             AccountsList = accsResponse.AccountsList;
                             SelectedAccount = AccountsList[0];
                             intent = IsFirstRun ? new Intent(_app, typeof(DisclaimerActivity)) : new Intent(_app, typeof(SelectAccountActivity));
+                            GetExtensions();
                             break;
 
                         // More than one active accounts
@@ -333,8 +382,30 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                     }
                     HelperEvent?.Invoke(this, new ActionsHelperIntentArgs(response.RequestId, intent));
                     break;
+
+                case "GetExtensionsResponse":
+                    Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} successed: YOU GET EXTENSIONS LIST");
+                    var extResponse = (GetExtensionsResponse)response;
+                    ExtensionsList = extResponse.ExtensionsList;
+                    HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, ActionsHelperEventArgs.MsgExtensionsUpdated));
+                    break;
             }
             _waitingRequestArray.Remove(response.RequestId);
+        }
+
+        /// <summary>
+        /// Clear login info
+        /// </summary>
+        /// <param name="id"></param>
+        private void DoLogout(long id)
+        {
+            _userLogin = "";
+            _userPassword = "";
+            IsLoggedIn = false;
+            AccountsList = null;
+            SelectedAccount = null;
+            var intent = new Intent(_app, typeof(AuthActivity));
+            HelperEvent?.Invoke(this, new ActionsHelperIntentArgs(id, intent));
         }
     }
 }
