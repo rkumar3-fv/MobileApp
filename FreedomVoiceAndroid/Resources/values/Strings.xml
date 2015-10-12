@@ -8,6 +8,8 @@
   <string name="ActivityAuth_passwordHint">Password</string>
   <string name="ActivityAuth_authButton">Log In</string>
   <string name="ActivityAuth_restoreButton">Forgot your password?</string>
+  <string name="ActivityAuth_badLogin">Please enter a valid login.</string>
+  <string name="ActivityAuth_badPassword">Please enter a password.</string>
   <string name="ActivityAuth_incorrectLogin">The email is not registered with us.</string>
   <string name="ActivityAuth_incorrectPassword">The password you entered doesn\'t match.</string>
   <string name="ActivityAuth_connectionError">Connection error</string>
@@ -22,7 +24,8 @@
   <string name="ActivityRestore_description">Enter your email address below to get a confirmation email to reset your password.</string>
   <string name="ActivityRestore_sendButton">Send</string>
   <string name="ActivityRestore_emailLabel">Email</string>
-  <string name="ActivityRestore_badResponse">Please enter a valid email address.</string>
+  <string name="ActivityRestore_unregistered">The email is not registered with us.</string>
+  <string name="ActivityRestore_badEmail">Please enter a valid email address.</string>
   <string name="ActivityRestore_goodResponse">Password reset email sent.</string>
   <string name="ActivitySelect_title">Select account</string>
   <string name="ActivityExtension_title">Select extension</string>

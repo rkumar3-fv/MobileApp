@@ -34,7 +34,7 @@
   <dimen name="auth_activity_welcome_email_spacing">28dp</dimen>
   <dimen name="auth_activity_error_message_spacing">3dp</dimen>
   <dimen name="auth_activity_login_password_spacing">16dp</dimen>
-  <dimen name="auth_activity_password_button_spacing">48dp</dimen>
+  <dimen name="auth_activity_password_button_spacing">23dp</dimen>
   <dimen name="auth_activity_field_height_max">48dp</dimen>
   
   <!-- Restore Activity -->

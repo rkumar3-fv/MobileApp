@@ -289,6 +289,25 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId}, Type is {type}");
             switch (type)
             {
+                case "ErrorResponse":
+                    var errorResponse = (ErrorResponse) response;
+                    switch (errorResponse.ErrorCode)
+                    {
+                        // Authorization failed
+                        case ErrorResponse.ErrorUnauthorized:
+                            if (IsLoggedIn)
+                                DoLogout(response.RequestId);
+                            else
+                                HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, ActionsHelperEventArgs.AuthPasswdError));
+                            break;
+                        //Bad request format
+                        case ErrorResponse.ErrorBadRequest:
+                            if (!IsLoggedIn)
+                                HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, ActionsHelperEventArgs.AuthLoginError));
+                            break;
+                    }
+                    break;
+
                 // Login action response
                 case "LoginResponse":
                     IsLoggedIn = true;
@@ -297,13 +316,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 
                 // Login action response
                 case "LogoutResponse":
-                    _userLogin = "";
-                    _userPassword = "";
-                    IsLoggedIn = false;
-                    AccountsList = null;
-                    SelectedAccount = null;
-                    intent = new Intent(_app, typeof(AuthActivity));
-                    HelperEvent?.Invoke(this, new ActionsHelperIntentArgs(response.RequestId, intent));
+                    DoLogout(response.RequestId);
                     break;
 
                 // GetAccounts action response
@@ -335,6 +348,21 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                     break;
             }
             _waitingRequestArray.Remove(response.RequestId);
+        }
+
+        /// <summary>
+        /// Clear login info
+        /// </summary>
+        /// <param name="id"></param>
+        private void DoLogout(long id)
+        {
+            _userLogin = "";
+            _userPassword = "";
+            IsLoggedIn = false;
+            AccountsList = null;
+            SelectedAccount = null;
+            var intent = new Intent(_app, typeof(AuthActivity));
+            HelperEvent?.Invoke(this, new ActionsHelperIntentArgs(id, intent));
         }
     }
 }

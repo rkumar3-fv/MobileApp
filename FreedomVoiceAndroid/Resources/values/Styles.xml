@@ -72,7 +72,7 @@
   
   <!-- AppButtonStyle -->
   <style name="AppButtonStyle" parent="Widget.AppCompat.Button">
-    <item name="android:background">@color/colorButton</item>
+    <item name="android:background">@drawable/button_selector</item>
     <item name="android:elevation">@dimen/activity_button_elevation</item>
     <item name="android:textSize">@dimen/activity_button_text</item>
     <item name="android:textColor">@color/colorActionBarText</item>

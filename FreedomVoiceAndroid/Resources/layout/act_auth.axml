@@ -41,7 +41,6 @@
             android:layout_below="@id/authActivity_loginField"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/ActivityAuth_incorrectLogin"
             android:layout_marginTop="@dimen/auth_activity_error_message_spacing" />
         <EditText
             android:id="@+id/authActivity_passwordField"
@@ -61,7 +60,6 @@
             android:layout_below="@id/authActivity_passwordField"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/ActivityAuth_incorrectPassword"
             android:layout_marginTop="@dimen/auth_activity_error_message_spacing" />
         <Button
             android:id="@+id/authActivity_loginButton"

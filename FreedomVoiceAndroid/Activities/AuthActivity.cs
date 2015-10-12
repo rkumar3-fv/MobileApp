@@ -34,7 +34,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         private Button _forgotButton;
         private EditText _loginText;
         private EditText _passwordText;
-        private TextView _errorText;
+        private TextView _errorTextLogin;
+        private TextView _errorTextPassword;
 
         protected override void OnCreate(Bundle bundle)
         {
@@ -44,7 +45,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             _forgotButton = FindViewById<Button>(Resource.Id.authActivity_restoreButton);
             _loginText = FindViewById<EditText>(Resource.Id.authActivity_loginField);
             _passwordText = FindViewById<EditText>(Resource.Id.authActivity_passwordField);
-            _errorText = FindViewById<TextView>(Resource.Id.authActivity_errorText);
+            _errorTextLogin = FindViewById<TextView>(Resource.Id.authActivity_loginError);
+            _errorTextPassword = FindViewById<TextView>(Resource.Id.authActivity_errorText);
 
             _authButton.Click += AuthButtonOnClick;
             _forgotButton.Click += ForgotButtonOnClick;
@@ -61,16 +63,26 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         /// </summary>
         private void AuthButtonOnClick(object sender, EventArgs eventArgs)
         {
-            if ((_loginText.Length() > 0) && (_passwordText.Length() > 0))
+            HideErrors();
+            if (_loginText.Text.Length == 0)
             {
-                if (_errorText.Visibility == ViewStates.Visible)
-                    _errorText.Visibility = ViewStates.Invisible;
-                //_authButton.Enabled = false;
-                Helper.Authorize(_loginText.Text, _passwordText.Text);
+                _errorTextLogin.Text = GetString(Resource.String.ActivityAuth_badLogin);
+                return;
             }
-            else
-                if (_errorText.Visibility != ViewStates.Visible)
-                    _errorText.Visibility = ViewStates.Visible;
+            if (_passwordText.Text.Length == 0)
+            {
+                _errorTextPassword.Text = GetString(Resource.String.ActivityAuth_badPassword);
+                return;
+            }
+            Helper.Authorize(_loginText.Text, _passwordText.Text);
+        }
+
+        private void HideErrors()
+        {
+            if (_errorTextLogin.Text.Length > 0)
+                _errorTextLogin.Text = "";
+            if (_errorTextPassword.Text.Length > 0)
+                _errorTextPassword.Text = "";
         }
 
         /// <summary>
@@ -88,7 +100,15 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         /// <param name="args">Result args</param>
         protected override void OnHelperEvent(ActionsHelperEventArgs args)
         {
-            
+            switch (args.Code)
+            {
+                case ActionsHelperEventArgs.AuthLoginError:
+                    _errorTextLogin.Text = GetString(Resource.String.ActivityAuth_incorrectLogin);
+                    return;
+                case ActionsHelperEventArgs.AuthPasswdError:
+                    _errorTextPassword.Text = GetString(Resource.String.ActivityAuth_incorrectPassword);
+                    return;
+            }
         }
 
         public override void OnBackPressed()
