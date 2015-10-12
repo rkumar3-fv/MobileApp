@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Android.Content;
+using Android.Graphics;
 using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
@@ -59,9 +60,10 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
                 var viewHolder = holder as ExtensionViewHolder;
                 var extension = contentItem as Extension;
                 if (viewHolder == null) return;
-                viewHolder.ExtensionName.Text = extension.ExtensionName;
-                if (extension.MailsCount != 0)
-                    viewHolder.ExtensionInfo.Text = extension.MailsCount.ToString();
+                if (extension.ExtensionName.Length > 0)
+                    viewHolder.ExtensionName.Text = $"{extension.Id} - {extension.ExtensionName}";
+                if (extension.MailsCount == 0) return;
+                viewHolder.ExtensionInfo.Text = extension.MailsCount.ToString();
             }
             else if (contentItem is Folder)
             {

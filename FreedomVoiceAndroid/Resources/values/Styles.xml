@@ -13,7 +13,7 @@
   <!-- AuthActivity w/o action bar theme -->
   <style name="AuthAppTheme" parent="Theme.AppCompat.Light.NoActionBar">
     <item name="colorPrimary">@color/colorPrimary</item>
-    <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+    <item name="colorPrimaryDark">@color/colorAuthHeader</item>
     <item name="android:windowBackground">@drawable/background</item>
     <item name="colorAccent">@color/colorFieldsNormal</item>
     <item name="colorControlActivated">@color/colorFieldsActive</item>
@@ -141,8 +141,8 @@
     <item name="android:lines">1</item>
   </style>
 
-  <!-- SelectAccount list item text -->
-  <style name="AccountItemText">
+  <!-- List item main text -->
+  <style name="ListItemText">
     <item name="android:textColor">@color/textColorPrimary</item>
     <item name="android:textSize">@dimen/text_main</item>
     <item name="android:lines">1</item>

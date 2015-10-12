@@ -63,6 +63,10 @@
   <dimen name="content_activity_tab_icon_padding">4dp</dimen>
   <dimen name="content_activity_tab_height">74dp</dimen>
   
+  <!-- Messages fragment -->
+  <dimen name="fragment_msg_element_height">48dp</dimen>
+  <dimen name="fragment_msg_element_padding">8dp</dimen>
+  
   <!-- Keyboard fragment -->
   <dimen name="fragment_keypad_text_vertical_margin">32dp</dimen>
   <dimen name="fragment_keypad_text_horizontal_margin">16dp</dimen>

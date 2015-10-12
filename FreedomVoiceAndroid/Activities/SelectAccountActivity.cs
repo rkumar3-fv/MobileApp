@@ -28,6 +28,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             SetContentView(Resource.Layout.act_select);
             _selectView = FindViewById<RecyclerView>(Resource.Id.selectAccountActivity_accountsList);
             _selectView.SetLayoutManager(new LinearLayoutManager(this));
+            _selectView.AddItemDecoration(new DividerItemDecorator(this, Resource.Drawable.divider));
             _adapter = new AccountsRecyclerAdapter(Helper.AccountsList);
             _selectView.SetAdapter(_adapter);
             _adapter.ItemClick += SelectViewOnClick;

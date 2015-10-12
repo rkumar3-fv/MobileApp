@@ -5,7 +5,6 @@
     android:layout_height="fill_parent">
     <TextView
         android:id="@+id/itemSpinnerDrop_idText"
-        style="@style/AccountItemText"
         android:layout_gravity="center_vertical"
         android:layout_height="wrap_content"
         android:layout_width="match_parent" />
