@@ -11,7 +11,7 @@
   <color name="textColorNewMessages">#0097a7</color>
   <color name="colorTabIndicator">#ffffff</color>
   <color name="colorTabIndicatorInactive">#b3ffffff</color>
-  <color name="colorFabPrimary">#4caf50</color>
+  <color name="colorFabPrimary">#85b640</color>
   <color name="colorFabPressed">#8bc34a</color>
 
   <color name="messageIndicator">#1a000000</color>
@@ -25,4 +25,6 @@
   <color name="colorBlackFieldsHint">#66000000</color>
   <color name="textColorError">#fec95f</color>
   <color name="colorDivider">#26000000</color>
+  <color name="colorKeyOnKeyboardMain">#038ac1</color>
+  <color name="colorKeyOnKeyboardSecondary">#8c000000</color>
 </resources>

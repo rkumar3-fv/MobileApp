@@ -44,14 +44,12 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             if (_emailText.Length() > 5)
                 if (DataValidationUtils.IsEmailValid(_emailText.Text))
                 {
-                    if (_resultLabel.Visibility == ViewStates.Visible)
-                        _resultLabel.Visibility = ViewStates.Invisible;
+                    _resultLabel.Text = "";
                     _restoreButton.Enabled = false;
                     //Helper.RestorePassword(_emailText.Text);
                     return;
                 }
-            if (_resultLabel.Visibility != ViewStates.Visible)
-                _resultLabel.Visibility = ViewStates.Visible;
+            _resultLabel.Text = GetString(Resource.String.ActivityRestore_badEmail);
         }
 
         public override bool OnCreateOptionsMenu(IMenu menu)

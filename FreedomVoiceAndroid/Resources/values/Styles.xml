@@ -97,19 +97,23 @@
   <style name="BorderlessEditText">
     <item name="android:background">@android:color/transparent</item>
     <item name="background">@android:color/transparent</item>
+    <item name="android:textColor">@color/textColorSecondary</item>
+    <item name="android:textSize">@dimen/fragment_keypad_number_size</item>
     <item name="android:cursorVisible">false</item>
     <item name="android:focusable">false</item>
     <item name="android:editable">false</item>
     <item name="colorControlNormal">@android:color/transparent</item>
     <item name="colorAccent">@android:color/transparent</item>
     <item name="colorControlActivated">@android:color/transparent</item>
+    <item name="android:singleLine">true</item>
+    <item name="android:maxLines">1</item>
+    <item name="android:scrollHorizontally">true</item>
   </style>
   
   <!-- Numeric keyboard style -->
   <style name="KeyButtonStyle" parent="Widget.AppCompat.Button.Borderless">
-    <item name="android:textSize">@dimen/text_numeric_keyboard</item>
-    <item name="android:textColor">@color/colorBaseControls</item>
-    <item name="android:layout_margin">@dimen/fragment_keypad_key_spacing</item>
+    <item name="android:textSize">@dimen/fragment_keypad_key_text_size</item>
+    <item name="android:textColor">@color/colorKeyOnKeyboardMain</item>
   </style>
   
   <!-- Content toolbar theme -->
@@ -167,8 +171,8 @@
     <item name="android:lines">1</item>
   </style>
 
-  <!-- Keypad caller id label -->
-  <style name="CallerIdLabelText">
+  <!-- Keypad caller id spinner -->
+  <style name="CallerIdSpinnerText">
     <item name="android:textColor">@color/textColorSecondary</item>
     <item name="android:textSize">@dimen/text_main</item>
     <item name="android:lines">1</item>
