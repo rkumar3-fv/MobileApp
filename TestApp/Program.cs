@@ -44,7 +44,13 @@ namespace TestApp
 
             Console.Write(@"Mailboxes method: " + ApiHelper.GetMailboxes("7607124648"));
             Console.Write(Environment.NewLine);
-            Console.Write(@"Mailboxes method: " + ApiHelper.GetMailboxesWithCounts("7607124648"));
+
+            var resMb = ApiHelper.GetMailboxesWithCounts("7607124648").Result;
+            Console.WriteLine(@"Mailboxes method with count: " + resMb.Result.Count);
+            foreach (var mailboxWithCount in resMb.Result)
+            {
+                Console.WriteLine($"{mailboxWithCount.DisplayName} (x{mailboxWithCount.MailboxNumber}) - {mailboxWithCount.UnreadMessages}");
+            }
             Console.Write(Environment.NewLine);
 
             Console.Write(@"Folders method: " + ApiHelper.GetFolders("7607124648", 802));

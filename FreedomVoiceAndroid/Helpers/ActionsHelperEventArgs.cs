@@ -12,6 +12,9 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         public const int RestoreError = 21;
         public const int RestoreWrongEmail = 22;
         public const int RestoreOk = 23;
+        public const int MsgExtensionsUpdated = 31;
+        public const int MsgFoldersUpdated = 32;
+        public const int MsgMessagesUpdated = 33;
 
         public ActionsHelperEventArgs(long requestId, int code)
         {

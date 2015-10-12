@@ -43,6 +43,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             if (position >= Helper.AccountsList.Count) return;
             Log.Debug(App.AppPackage, $"ACTIVITY {GetType().Name}: select account #{DataFormatUtils.ToPhoneNumber(_adapter.AccountName(position))}");
             Helper.SelectedAccount = Helper.AccountsList[position];
+            Helper.GetExtensions();
             var intent = (Helper.IsFirstRun)? new Intent(this, typeof(DisclaimerActivity)): new Intent(this, typeof(ContentActivity));
             StartActivity(intent);
         }
