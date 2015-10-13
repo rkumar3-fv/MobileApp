@@ -17,6 +17,11 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         Theme = "@style/AppThemeActionBar")]
     public class RestoreActivity : BaseActivity
     {
+        private void DebugOnly()
+        {
+            _emailText.Text = "freedomvoice.user2.267055@gmail.com";
+        }
+
         private EditText _emailText;
         private Button _restoreButton;
         private TextView _resultLabel;
@@ -36,6 +41,12 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             SupportActionBar.SetHomeButtonEnabled(true);
         }
 
+        protected override void OnResume()
+        {
+            base.OnResume();
+            DebugOnly();
+        }
+
         /// <summary>
         /// Restore button click action
         /// </summary>
@@ -45,8 +56,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 if (DataValidationUtils.IsEmailValid(_emailText.Text))
                 {
                     _resultLabel.Text = "";
-                    _restoreButton.Enabled = false;
-                    //Helper.RestorePassword(_emailText.Text);
+                    Helper.RestorePassword(_emailText.Text);
                     return;
                 }
             _resultLabel.Text = GetString(Resource.String.ActivityRestore_badEmail);
@@ -71,7 +81,21 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
 
         protected override void OnHelperEvent(ActionsHelperEventArgs args)
         {
-            
+            foreach (var code in args.Codes)
+            {
+                switch (code)
+                {
+                    case ActionsHelperEventArgs.RestoreError:
+                        _resultLabel.Text = GetString(Resource.String.ActivityRestore_badEmail);
+                        return;
+                    case ActionsHelperEventArgs.RestoreWrongEmail:
+                        _resultLabel.Text = GetString(Resource.String.ActivityRestore_unregistered);
+                        return;
+                    case ActionsHelperEventArgs.RestoreOk:
+                        RestorationSuccessfull();
+                        return;
+                }
+            }
         }
 
         /// <summary>

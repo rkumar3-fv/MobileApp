@@ -164,6 +164,13 @@
     <item name="android:lines">1</item>
   </style>
 
+  <!-- List item secondary text -->
+  <style name="ListItemSecondaryText">
+    <item name="android:textColor">@color/messageIndicatorText</item>
+    <item name="android:textSize">@dimen/text_small</item>
+    <item name="android:lines">1</item>
+  </style>
+
   <!-- Message indicator text -->
   <style name="MessagesCounterText">
     <item name="android:textColor">@color/messageIndicatorText</item>

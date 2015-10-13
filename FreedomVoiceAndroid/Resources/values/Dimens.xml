@@ -3,6 +3,7 @@
   <!-- Text-->
   <dimen name="text_main">16sp</dimen>
   <dimen name="text_secondary">14sp</dimen>
+  <dimen name="text_small">12sp</dimen>
   <dimen name="text_tab">14sp</dimen>
   
   <!-- Toolbar -->
@@ -64,10 +65,12 @@
   
   <!-- Messages fragment -->
   <dimen name="fragment_msg_element_height">48dp</dimen>
+  <dimen name="fragment_msg_element_big_height">72dp</dimen>
   <dimen name="fragment_msg_element_padding">8dp</dimen>
   <dimen name="fragment_msg_ind_width">32dp</dimen>
   <dimen name="fragment_msg_ind_height">23dp</dimen>
   <dimen name="fragment_msg_ind_corner">2dp</dimen>
+  <dimen name="fragment_msg_text_padding">56dp</dimen>
   
   <!-- Keyboard fragment -->
   <dimen name="fragment_keypad_spinner_size">56dp</dimen>

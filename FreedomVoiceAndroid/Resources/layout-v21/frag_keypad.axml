@@ -26,8 +26,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/fragment_keypad_spinner_size"
             android:layout_weight="1"
-            android:divider="@color/colorDivider"
-            android:dividerHeight="@dimen/activity_element_divider" />
+            android:spinnerMode="dropdown" />
     </LinearLayout>
     <FrameLayout
         android:layout_width="match_parent"

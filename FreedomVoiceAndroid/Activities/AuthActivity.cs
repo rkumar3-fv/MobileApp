@@ -20,6 +20,12 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         Theme = "@style/AuthAppTheme")]
     public class AuthActivity : BaseActivity
     {
+        private void DebugOnly()
+        {
+            _loginText.Text = "freedomvoice.adm.267055@gmail.com";
+            _passwordText.Text = "adm654654";
+        }
+
         private Button _authButton;
         private Button _forgotButton;
         private EditText _loginText;
@@ -40,6 +46,12 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
 
             _authButton.Click += AuthButtonOnClick;
             _forgotButton.Click += ForgotButtonOnClick;
+        }
+
+        protected override void OnResume()
+        {
+            base.OnResume();
+            DebugOnly();
         }
 
         /// <summary>
@@ -85,14 +97,17 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         /// <param name="args">Result args</param>
         protected override void OnHelperEvent(ActionsHelperEventArgs args)
         {
-            switch (args.Code)
+            foreach (var code in args.Codes)
             {
-                case ActionsHelperEventArgs.AuthLoginError:
-                    _errorTextLogin.Text = GetString(Resource.String.ActivityAuth_incorrectLogin);
-                    return;
-                case ActionsHelperEventArgs.AuthPasswdError:
-                    _errorTextPassword.Text = GetString(Resource.String.ActivityAuth_incorrectPassword);
-                    return;
+                switch (code)
+                {
+                    case ActionsHelperEventArgs.AuthLoginError:
+                        _errorTextLogin.Text = GetString(Resource.String.ActivityAuth_incorrectLogin);
+                        return;
+                    case ActionsHelperEventArgs.AuthPasswdError:
+                        _errorTextPassword.Text = GetString(Resource.String.ActivityAuth_incorrectPassword);
+                        return;
+                }
             }
         }
 

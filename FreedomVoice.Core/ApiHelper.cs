@@ -27,8 +27,8 @@
         public async static Task<BaseResult<string>> Logout()
         {
             CookieContainer = null;
-
-            return new BaseResult<string> { Code = ErrorCodes.Ok, Result = "" };
+            var task = Task.Run(() => new BaseResult<string> { Code = ErrorCodes.Ok, Result = "" });
+            return await task;
         }
 
         public async static Task<BaseResult<string>> PasswordReset(string login)
@@ -179,7 +179,7 @@
             BaseResult<Stream> retResult = null;
             using (ct.Register(request.Abort, false))
             {
-                Task<WebResponse> task = Task.Factory.FromAsync<WebResponse>(request.BeginGetResponse, request.EndGetResponse, null);
+                var task = Task.Factory.FromAsync<WebResponse>(request.BeginGetResponse, request.EndGetResponse, null);
 
                 try
                 {
@@ -323,7 +323,7 @@
 
         private static string ReadStreamFromResponse(WebResponse response)
         {
-            using (Stream responseStream = response.GetResponseStream())
+            using (var responseStream = response.GetResponseStream())
             using (var sr = new StreamReader(responseStream))
             {
                 return sr.ReadToEnd();

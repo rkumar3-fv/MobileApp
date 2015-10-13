@@ -24,8 +24,22 @@ namespace TestApp
                 _passwd = "user1654654";
             }
 
-            // Console.Write(@"Restore method: " + ApiHelper.PasswordReset("a055@gmail.com").Result);
-            // Console.Write(Environment.NewLine);
+            var resRestore = ApiHelper.PasswordReset("oops@gmail.com").Result;
+            Console.Write(@"Restore method not registered email: " + (resRestore?.Code.ToString() ?? "null"));
+            Console.Write(Environment.NewLine);
+
+            resRestore = ApiHelper.PasswordReset("oops").Result;
+            Console.Write(@"Restore method wrong email format: " + (resRestore?.Code.ToString() ?? "null"));
+            Console.Write(Environment.NewLine);
+
+            Console.Write(@"Restore method valid: " + ApiHelper.PasswordReset("freedomvoice.user2.267055@gmail.com").Result.Code);
+            Console.Write(Environment.NewLine);
+
+            Console.Write(@"Login method not regisered email: " + ApiHelper.Login("oops@gmail.com", _passwd).Result.Code);
+            Console.Write(Environment.NewLine);
+
+            Console.Write(@"Login method wrong format: " + ApiHelper.Login("oops", _passwd).Result.Code);
+            Console.Write(Environment.NewLine);
 
             Console.Write(@"Login method: " + ApiHelper.Login(_login, _passwd).Result.Code);
             Console.Write(Environment.NewLine);

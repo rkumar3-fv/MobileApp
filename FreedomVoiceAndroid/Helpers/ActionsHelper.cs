@@ -327,15 +327,22 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                             else
                             {
                                 Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} failed: BAD PASSWORD");
-                                HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, ActionsHelperEventArgs.AuthPasswdError));
+                                HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new []{ActionsHelperEventArgs.AuthPasswdError}));
                             }
                             break;
                         //Bad request format
                         case ErrorResponse.ErrorBadRequest:
                             if (!IsLoggedIn)
                             {
+                                Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} failed: BAD LOGIN FORMAT");
+                                HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new []{ActionsHelperEventArgs.AuthLoginError, ActionsHelperEventArgs.RestoreError}));
+                            }
+                            break;
+                        case ErrorResponse.ErrorNotFound:
+                            if (!IsLoggedIn)
+                            {
                                 Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} failed: BAD LOGIN");
-                                HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, ActionsHelperEventArgs.AuthLoginError));
+                                HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] {ActionsHelperEventArgs.RestoreWrongEmail }));
                             }
                             break;
                     }
@@ -346,6 +353,12 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                     IsLoggedIn = true;
                     Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} successed: YOU ARE LOGGED IN");
                     GetAccounts();
+                    break;
+
+                // Restore password response
+                case "RestorePasswordResponse":
+                    Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} failed: BAD LOGIN");
+                    HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.RestoreOk }));
                     break;
 
                 // Login action response
@@ -387,7 +400,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                     Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} successed: YOU GET EXTENSIONS LIST");
                     var extResponse = (GetExtensionsResponse)response;
                     ExtensionsList = extResponse.ExtensionsList;
-                    HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, ActionsHelperEventArgs.MsgExtensionsUpdated));
+                    HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new []{ActionsHelperEventArgs.MsgExtensionsUpdated}));
                     break;
             }
             _waitingRequestArray.Remove(response.RequestId);

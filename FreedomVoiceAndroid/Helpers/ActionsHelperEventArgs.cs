@@ -7,19 +7,19 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
     /// </summary>
     public class ActionsHelperEventArgs : EventArgs, IEquatable<ActionsHelperEventArgs>
     {
-        public const int AuthLoginError = 11;
-        public const int AuthPasswdError = 12;
-        public const int RestoreError = 21;
-        public const int RestoreWrongEmail = 22;
-        public const int RestoreOk = 23;
+        public const int AuthLoginError = 11;           //BadRequest
+        public const int AuthPasswdError = 12;          //Unauthorized
+        public const int RestoreError = 21;             //BadRequest
+        public const int RestoreWrongEmail = 22;        //NotFound
+        public const int RestoreOk = 23;                //OK
         public const int MsgExtensionsUpdated = 31;
         public const int MsgFoldersUpdated = 32;
         public const int MsgMessagesUpdated = 33;
 
-        public ActionsHelperEventArgs(long requestId, int code)
+        public ActionsHelperEventArgs(long requestId, int[] codes)
         {
             RequestId = requestId;
-            Code = code;
+            Codes = codes;
         }
 
         /// <summary>
@@ -28,42 +28,30 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         public long RequestId { get; }
 
         /// <summary>
-        /// Response code
+        /// Response codes
         /// </summary>
-        public int Code { get; }
-        
-        /// <summary>
-        /// Response equality comparer
-        /// </summary>
-        /// <param name="other">Another code</param>
-        /// <returns>equals or not</returns>
+        public int[] Codes { get; }
+
         public bool Equals(ActionsHelperEventArgs other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return RequestId == other.RequestId && Code == other.Code;
+            return RequestId == other.RequestId && Equals(Codes, other.Codes);
         }
 
-        /// <summary>
-        /// Response equality comparer
-        /// </summary>
-        /// <param name="obj">Another object</param>
-        /// <returns>equals or not</returns>
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == GetType() && Equals((ActionsHelperEventArgs) obj);
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((ActionsHelperEventArgs) obj);
         }
 
-        /// <summary>
-        /// Response callback hashcode
-        /// </summary>
         public override int GetHashCode()
         {
             unchecked
             {
-                return (RequestId.GetHashCode()*397) ^ Code;
+                return (RequestId.GetHashCode()*397) ^ (Codes != null ? Codes.GetHashCode() : 0);
             }
         }
     }

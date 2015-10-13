@@ -36,11 +36,14 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
 
         protected override void OnHelperEvent(ActionsHelperEventArgs args)
         {
-            switch (args.Code)
+            foreach (var code in args.Codes)
             {
-                case ActionsHelperEventArgs.MsgExtensionsUpdated:
-                    _adapter.CurrentContent = Helper.ExtensionsList.Cast<MessageItem>().ToList();
-                    break;
+                switch (code)
+                {
+                    case ActionsHelperEventArgs.MsgExtensionsUpdated:
+                        _adapter.CurrentContent = Helper.ExtensionsList.Cast<MessageItem>().ToList();
+                        break;
+                }
             }
         }
     }

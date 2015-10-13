@@ -1,25 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
-    android:layout_width="fill_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:minHeight="@dimen/fragment_msg_element_height"
     android:gravity="center_vertical"
     android:clickable="true"
     android:focusable="true"
-    android:background="?android:attr/selectableItemBackground">
+    android:background="?android:attr/selectableItemBackground"
+    android:layout_marginStart="@dimen/activity_horizontal_margin">
     <ImageView
         android:id="@+id/itemFolder_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1" />
+        android:layout_alignParentStart="true"
+        android:layout_gravity="center_vertical" />
+    <LinearLayout
+        android:id="@+id/itemFolder_back"
+        android:layout_width="@dimen/fragment_msg_ind_width"
+        android:layout_height="@dimen/fragment_msg_ind_height"
+        android:background="@drawable/message_indicator"
+        android:visibility="invisible"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:layout_alignParentEnd="true"
+        android:layout_gravity="center_vertical">
+        <TextView
+            android:id="@+id/itemFolder_info"
+            style="@style/MessagesCounterText"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
     <TextView
         android:id="@+id/itemFolder_title"
-        android:layout_width="fill_parent"
+        style="@style/ListItemText"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1" />
-    <TextView
-        android:id="@+id/itemFolder_info"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1" />
-</LinearLayout>
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="@dimen/fragment_msg_text_padding"
+        android:layout_toLeftOf="@id/itemFolder_back"
+        android:layout_gravity="center_vertical" />
+</RelativeLayout>

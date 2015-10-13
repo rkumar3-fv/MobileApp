@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Android.Content;
+using Android.Graphics;
 using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
@@ -62,7 +63,7 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
                 if (extension.ExtensionName.Length > 0)
                     viewHolder.ExtensionName.Text = $"{extension.Id} - {extension.ExtensionName}";
                 if (extension.MailsCount == 0) return;
-                viewHolder.ExtensionInfo.Text = extension.MailsCount.ToString();
+                viewHolder.ExtensionInfo.Text = extension.MailsCount > 99 ? "99+" : extension.MailsCount.ToString();
                 viewHolder.InfoLayout.Visibility = ViewStates.Visible;
             }
             else if (contentItem is Folder)
@@ -71,9 +72,19 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
                 var folder = contentItem as Folder;
                 if (viewHolder == null) return;
                 viewHolder.FoldersName.Text = folder.FolderName;
-                if (folder.MailsCount != 0)
-                    viewHolder.FoldersInfo.Text = folder.MailsCount.ToString();
-                //TODO: icons
+                if (folder.FolderName == _context.GetString(Resource.String.FragmentMessages_folderNew))
+                    viewHolder.FoldersIcon.SetImageResource(Resource.Drawable.ic_new_folder);
+                else if (folder.FolderName == _context.GetString(Resource.String.FragmentMessages_folderSent))
+                    viewHolder.FoldersIcon.SetImageResource(Resource.Drawable.ic_send_folder);
+                else if (folder.FolderName == _context.GetString(Resource.String.FragmentMessages_folderTrash))
+                    viewHolder.FoldersIcon.SetImageResource(Resource.Drawable.ic_trash_folder);
+                else if (folder.FolderName == _context.GetString(Resource.String.FragmentMessages_folderSaved))
+                    viewHolder.FoldersIcon.SetImageResource(Resource.Drawable.ic_save_folder);
+                else
+                    viewHolder.FoldersIcon.SetImageResource(Resource.Drawable.ic_other_folder);
+                if (folder.MailsCount == 0) return;
+                viewHolder.FoldersInfo.Text = folder.MailsCount > 99 ? "99+" : folder.MailsCount.ToString();
+                viewHolder.InfoLayout.Visibility = ViewStates.Visible;
             }
             else
             {
@@ -83,7 +94,28 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
                 viewHolder.MessageDate.Text = message.MessageDate;
                 viewHolder.MessageStamp.Text = message.Length.ToString();
                 viewHolder.MessageFrom.Text = (message.FromName.Length > 0) ? message.FromName : message.FromNumber;
-                //TODO:icons
+                switch (message.MessageType)
+                {
+                    case Message.TypeFax:
+                        viewHolder.MessageIcon.SetImageResource(message.Unread
+                            ? Resource.Drawable.ic_msg_fax_unread
+                            : Resource.Drawable.ic_msg_fax);
+                        break;
+                    case Message.TypeRec:
+                        viewHolder.MessageIcon.SetImageResource(message.Unread
+                            ? Resource.Drawable.ic_msg_callrec_unread
+                            : Resource.Drawable.ic_msg_callrec);
+                        break;
+                    case Message.TypeVoice:
+                        viewHolder.MessageIcon.SetImageResource(message.Unread
+                            ? Resource.Drawable.ic_msg_voicemail_unread
+                            : Resource.Drawable.ic_msg_voicemail);
+                        break;
+                }
+                if (!message.Unread) return;
+                viewHolder.MessageFrom.SetTypeface(null, TypefaceStyle.Bold);
+                viewHolder.MessageDate.SetTypeface(null, TypefaceStyle.Bold);
+                viewHolder.MessageDate.SetTextColor(_context.GetColorStateList(Resource.Color.textColorPrimary));
             }
         }
 
@@ -119,6 +151,9 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
         /// </summary>
         private class ExtensionViewHolder : RecyclerView.ViewHolder
         {
+            /// <summary>
+            /// Colored layout for messages counter
+            /// </summary>
             public LinearLayout InfoLayout { get; }
 
             /// <summary>
@@ -145,6 +180,11 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
         private class FoldersViewHolder : RecyclerView.ViewHolder
         {
             /// <summary>
+            /// Colored layout for messages counter
+            /// </summary>
+            public LinearLayout InfoLayout { get; }
+
+            /// <summary>
             /// Folder icon
             /// </summary>
             public ImageView FoldersIcon { get; }
@@ -164,6 +204,7 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
                 FoldersIcon = itemView.FindViewById<ImageView>(Resource.Id.itemFolder_icon);
                 FoldersName = itemView.FindViewById<TextView>(Resource.Id.itemFolder_title);
                 FoldersInfo = itemView.FindViewById<TextView>(Resource.Id.itemFolder_info);
+                InfoLayout = itemView.FindViewById<LinearLayout>(Resource.Id.itemFolder_back);
             }
         }
 

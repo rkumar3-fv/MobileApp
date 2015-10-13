@@ -44,6 +44,10 @@
   <string name="FragmentKeypad_nineButton">WXYZ</string>
   <string name="FragmentKeypad_zeroButton">+</string>
   <string name="FragmentMessages_title">Messages</string>
+  <string name="FragmentMessages_folderNew">New</string>
+  <string name="FragmentMessages_folderSent">Sent</string>
+  <string name="FragmentMessages_folderTrash">Trash</string>
+  <string name="FragmentMessages_folderSaved">Saved</string>
   <string name="FragmentRecents_title">Recents</string>
   <string name="FragmentContacts_title">Contacts</string>
 </resources>
