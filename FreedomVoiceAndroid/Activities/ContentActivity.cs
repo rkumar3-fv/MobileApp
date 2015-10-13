@@ -36,6 +36,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             _toolbar = FindViewById<Toolbar>(Resource.Id.contentActivity_toolbar);
             _toolbarSpinner = FindViewById<Spinner>(Resource.Id.contentActivity_toolbarSpinner);
             SetSupportActionBar(_toolbar);
+            SupportActionBar.SetHomeAsUpIndicator(Resource.Drawable.ic_action_back);
             _pagerAdapter = new ContentPagerAdapter(SupportFragmentManager, this);
             var contactsFragment = new ContactsFragment();
             var keypadFragment = new KeypadFragment();
@@ -50,7 +51,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 _pagerAdapter.AddFragment(keypadFragment, Resource.String.FragmentKeypad_title, Resource.Drawable.ic_tab_keypad);
                 _pagerAdapter.AddFragment(messagesFragment, Resource.String.FragmentMessages_title, Resource.Drawable.ic_tab_messages);
                 _viewPager.Adapter = _pagerAdapter;
-                _viewPager.CurrentItem = 3;
+                _viewPager.CurrentItem = 2;
                 _viewPager.PageSelected += ViewPagerOnPageSelected;
             }
             _tabLayout.SetupWithViewPager(_viewPager);
@@ -65,7 +66,24 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
 
         private void ViewPagerOnPageSelected(object sender, ViewPager.PageSelectedEventArgs pageSelectedEventArgs)
         {
+            if (_viewPager.CurrentItem == 3)
+                if (Helper.SelectedFolder != -1)
+                {
+                    SupportActionBar.Title = Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].FolderName;
+                    SupportActionBar.SetDisplayHomeAsUpEnabled(true);
+                    SupportActionBar.SetHomeButtonEnabled(true);
+                    return;
+                }
+                else if (Helper.SelectedExtension != -1)
+                {
+                    SupportActionBar.Title = $"{Helper.ExtensionsList[Helper.SelectedExtension].Id} - {Helper.ExtensionsList[Helper.SelectedExtension].ExtensionName}";
+                    SupportActionBar.SetDisplayHomeAsUpEnabled(true);
+                    SupportActionBar.SetHomeButtonEnabled(true);
+                    return;
+                }
             SupportActionBar.Title = _pagerAdapter.GetTabName(_viewPager.CurrentItem);
+            SupportActionBar.SetDisplayHomeAsUpEnabled(false);
+            SupportActionBar.SetHomeButtonEnabled(false);
         }
 
         public Spinner GetToolbarSpinner()
@@ -85,6 +103,19 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         {
             switch (item.ItemId)
             {
+                case global::Android.Resource.Id.Home:
+                    Helper.GetPrevious();
+                    if (Helper.SelectedFolder != -1)
+                        SupportActionBar.Title = Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].FolderName;
+                    else if (Helper.SelectedExtension != -1)
+                        SupportActionBar.Title = $"{Helper.ExtensionsList[Helper.SelectedExtension].Id} - {Helper.ExtensionsList[Helper.SelectedExtension].ExtensionName}";
+                    else
+                    {
+                        SupportActionBar.Title = _pagerAdapter.GetTabName(_viewPager.CurrentItem);
+                        SupportActionBar.SetDisplayHomeAsUpEnabled(false);
+                        SupportActionBar.SetHomeButtonEnabled(false);
+                    }
+                    return true;
                 case Resource.Id.menu_action_logout:
                     Helper.Logout();
                     return true;

@@ -2958,15 +2958,6 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f0a0024
 			public const int ActivityDisclaimer_title = 2131361828;
 			
-			// aapt resource value: 0x7f0a0032
-			public const int ActivityExtension_moreMessages = 2131361842;
-			
-			// aapt resource value: 0x7f0a0030
-			public const int ActivityExtension_noMessages = 2131361840;
-			
-			// aapt resource value: 0x7f0a0031
-			public const int ActivityExtension_oneMessage = 2131361841;
-			
 			// aapt resource value: 0x7f0a002f
 			public const int ActivityExtension_title = 2131361839;
 			
@@ -3009,59 +3000,59 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f0a0014
 			public const int ApplicationTitle = 2131361812;
 			
-			// aapt resource value: 0x7f0a0044
-			public const int FragmentContacts_title = 2131361860;
+			// aapt resource value: 0x7f0a0041
+			public const int FragmentContacts_title = 2131361857;
 			
-			// aapt resource value: 0x7f0a0034
-			public const int FragmentKeypad_callerId = 2131361844;
-			
-			// aapt resource value: 0x7f0a003b
-			public const int FragmentKeypad_eightButton = 2131361851;
+			// aapt resource value: 0x7f0a0031
+			public const int FragmentKeypad_callerId = 2131361841;
 			
 			// aapt resource value: 0x7f0a0038
-			public const int FragmentKeypad_fiveButton = 2131361848;
-			
-			// aapt resource value: 0x7f0a0037
-			public const int FragmentKeypad_fourButton = 2131361847;
-			
-			// aapt resource value: 0x7f0a003c
-			public const int FragmentKeypad_nineButton = 2131361852;
-			
-			// aapt resource value: 0x7f0a003a
-			public const int FragmentKeypad_sevenButton = 2131361850;
-			
-			// aapt resource value: 0x7f0a0039
-			public const int FragmentKeypad_sixButton = 2131361849;
-			
-			// aapt resource value: 0x7f0a0036
-			public const int FragmentKeypad_threeButton = 2131361846;
-			
-			// aapt resource value: 0x7f0a0033
-			public const int FragmentKeypad_title = 2131361843;
+			public const int FragmentKeypad_eightButton = 2131361848;
 			
 			// aapt resource value: 0x7f0a0035
-			public const int FragmentKeypad_twoButton = 2131361845;
+			public const int FragmentKeypad_fiveButton = 2131361845;
 			
-			// aapt resource value: 0x7f0a003d
-			public const int FragmentKeypad_zeroButton = 2131361853;
+			// aapt resource value: 0x7f0a0034
+			public const int FragmentKeypad_fourButton = 2131361844;
+			
+			// aapt resource value: 0x7f0a0039
+			public const int FragmentKeypad_nineButton = 2131361849;
+			
+			// aapt resource value: 0x7f0a0037
+			public const int FragmentKeypad_sevenButton = 2131361847;
+			
+			// aapt resource value: 0x7f0a0036
+			public const int FragmentKeypad_sixButton = 2131361846;
+			
+			// aapt resource value: 0x7f0a0033
+			public const int FragmentKeypad_threeButton = 2131361843;
+			
+			// aapt resource value: 0x7f0a0030
+			public const int FragmentKeypad_title = 2131361840;
+			
+			// aapt resource value: 0x7f0a0032
+			public const int FragmentKeypad_twoButton = 2131361842;
+			
+			// aapt resource value: 0x7f0a003a
+			public const int FragmentKeypad_zeroButton = 2131361850;
+			
+			// aapt resource value: 0x7f0a003c
+			public const int FragmentMessages_folderNew = 2131361852;
 			
 			// aapt resource value: 0x7f0a003f
-			public const int FragmentMessages_folderNew = 2131361855;
+			public const int FragmentMessages_folderSaved = 2131361855;
 			
-			// aapt resource value: 0x7f0a0042
-			public const int FragmentMessages_folderSaved = 2131361858;
-			
-			// aapt resource value: 0x7f0a0040
-			public const int FragmentMessages_folderSent = 2131361856;
-			
-			// aapt resource value: 0x7f0a0041
-			public const int FragmentMessages_folderTrash = 2131361857;
+			// aapt resource value: 0x7f0a003d
+			public const int FragmentMessages_folderSent = 2131361853;
 			
 			// aapt resource value: 0x7f0a003e
-			public const int FragmentMessages_title = 2131361854;
+			public const int FragmentMessages_folderTrash = 2131361854;
 			
-			// aapt resource value: 0x7f0a0043
-			public const int FragmentRecents_title = 2131361859;
+			// aapt resource value: 0x7f0a003b
+			public const int FragmentMessages_title = 2131361851;
+			
+			// aapt resource value: 0x7f0a0040
+			public const int FragmentRecents_title = 2131361856;
 			
 			// aapt resource value: 0x7f0a0015
 			public const int MenuItem_logout = 2131361813;

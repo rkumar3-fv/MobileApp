@@ -73,6 +73,9 @@ namespace TestApp
             Console.Write(@"Messages method: " + ApiHelper.GetMesages("7607124648", 802, "Sent", 10, 1, true));
             Console.Write(Environment.NewLine);
 
+            Console.Write(@"CallReservation method: " + ApiHelper.CreateCallReservation("7607124648", "9898846477", "7607124648", "8477163106").Result.Code);
+            Console.Write(Environment.NewLine);
+
 
             // Console.Write(@"Messages method: " + ApiHelper.MoveMessages("7607124648", 802, "New", new List<string> { "I159985458", "I159987614" }));
             // Console.Write(Environment.NewLine);

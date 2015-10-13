@@ -12,7 +12,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         public const int RestoreError = 21;             //BadRequest
         public const int RestoreWrongEmail = 22;        //NotFound
         public const int RestoreOk = 23;                //OK
-        public const int MsgExtensionsUpdated = 31;
+        public const int MsgUpdated = 31;
         public const int MsgFoldersUpdated = 32;
         public const int MsgMessagesUpdated = 33;
 

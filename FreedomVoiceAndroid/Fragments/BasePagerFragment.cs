@@ -13,6 +13,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
     public abstract class BasePagerFragment : Fragment
     {
         protected ActionsHelper Helper;
+        protected ContentActivity ContentActivity => Activity as ContentActivity;
 
         public override void OnActivityCreated(Bundle savedInstanceState)
         {
@@ -51,7 +52,9 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         /// <param name="args">Result args</param>
         private void OnHelperEvent(object sender, EventArgs args)
         {
-            
+            var eventArgs = args as ActionsHelperEventArgs;
+            if (eventArgs != null)
+                OnHelperEvent(eventArgs);
         }
 
         /// <summary>

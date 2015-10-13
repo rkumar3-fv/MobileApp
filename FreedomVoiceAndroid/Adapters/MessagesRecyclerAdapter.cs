@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Android.Content;
 using Android.Graphics;
@@ -20,6 +21,16 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
         private readonly Context _context;
         private List<MessageItem> _currentContent;
 
+        /// <summary>
+        /// Item short click event
+        /// </summary>
+        public event EventHandler<int> ItemClick;
+
+        private void OnClick(int position)
+        {
+            ItemClick?.Invoke(this, position);
+        }
+
         public MessagesRecyclerAdapter(Context context) : this (new List<MessageItem>(), context)
         {}
 
@@ -37,6 +48,7 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
             get { return _currentContent; }
             set
             {
+                if (_currentContent.Equals(value)) return;
                 _currentContent = value;
                 NotifyDataSetChanged();
             }
@@ -62,9 +74,11 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
                 if (viewHolder == null) return;
                 if (extension.ExtensionName.Length > 0)
                     viewHolder.ExtensionName.Text = $"{extension.Id} - {extension.ExtensionName}";
-                if (extension.MailsCount == 0) return;
-                viewHolder.ExtensionInfo.Text = extension.MailsCount > 99 ? "99+" : extension.MailsCount.ToString();
-                viewHolder.InfoLayout.Visibility = ViewStates.Visible;
+                if (extension.MailsCount > 0)
+                {
+                    viewHolder.ExtensionInfo.Text = extension.MailsCount > 99 ? "99+" : extension.MailsCount.ToString();
+                    viewHolder.InfoLayout.Visibility = ViewStates.Visible;
+                }
             }
             else if (contentItem is Folder)
             {
@@ -82,9 +96,11 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
                     viewHolder.FoldersIcon.SetImageResource(Resource.Drawable.ic_save_folder);
                 else
                     viewHolder.FoldersIcon.SetImageResource(Resource.Drawable.ic_other_folder);
-                if (folder.MailsCount == 0) return;
-                viewHolder.FoldersInfo.Text = folder.MailsCount > 99 ? "99+" : folder.MailsCount.ToString();
-                viewHolder.InfoLayout.Visibility = ViewStates.Visible;
+                if (folder.MailsCount > 0)
+                {
+                    viewHolder.FoldersInfo.Text = folder.MailsCount > 99 ? "99+" : folder.MailsCount.ToString();
+                    viewHolder.InfoLayout.Visibility = ViewStates.Visible;
+                }
             }
             else
             {
@@ -112,10 +128,12 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
                             : Resource.Drawable.ic_msg_voicemail);
                         break;
                 }
-                if (!message.Unread) return;
-                viewHolder.MessageFrom.SetTypeface(null, TypefaceStyle.Bold);
-                viewHolder.MessageDate.SetTypeface(null, TypefaceStyle.Bold);
-                viewHolder.MessageDate.SetTextColor(_context.GetColorStateList(Resource.Color.textColorPrimary));
+                if (message.Unread)
+                {
+                    viewHolder.MessageFrom.SetTypeface(null, TypefaceStyle.Bold);
+                    viewHolder.MessageDate.SetTypeface(null, TypefaceStyle.Bold);
+                    viewHolder.MessageDate.SetTextColor(_context.GetColorStateList(Resource.Color.textColorPrimary));
+                }
             }
         }
 
@@ -124,11 +142,11 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
             switch (viewType)
             {
                 case CodeExtension:
-                    return new ExtensionViewHolder(LayoutInflater.From(parent.Context).Inflate(Resource.Layout.item_extension, parent, false));
+                    return new ExtensionViewHolder(LayoutInflater.From(parent.Context).Inflate(Resource.Layout.item_extension, parent, false), OnClick);
                 case CodeFolder:
-                    return new FoldersViewHolder(LayoutInflater.From(parent.Context).Inflate(Resource.Layout.item_folder, parent, false));
+                    return new FoldersViewHolder(LayoutInflater.From(parent.Context).Inflate(Resource.Layout.item_folder, parent, false), OnClick);
                 default:
-                    return new MessagesViewHolder(LayoutInflater.From(parent.Context).Inflate(Resource.Layout.item_message, parent, false));
+                    return new MessagesViewHolder(LayoutInflater.From(parent.Context).Inflate(Resource.Layout.item_message, parent, false), OnClick);
             }
         }
 
@@ -166,11 +184,12 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
             /// </summary>
             public TextView ExtensionInfo { get; }
 
-            public ExtensionViewHolder(View itemView) : base(itemView)
+            public ExtensionViewHolder(View itemView, Action<int> listener) : base(itemView)
             {
                 ExtensionName = itemView.FindViewById<TextView>(Resource.Id.itemExt_title);
                 ExtensionInfo = itemView.FindViewById<TextView>(Resource.Id.itemExt_info);
                 InfoLayout = itemView.FindViewById<LinearLayout>(Resource.Id.itemExt_back);
+                itemView.Click += (sender, e) => listener(AdapterPosition);
             }
         }
 
@@ -199,12 +218,13 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
             /// </summary>
             public TextView FoldersInfo { get; }
 
-            public FoldersViewHolder(View itemView) : base(itemView)
+            public FoldersViewHolder(View itemView, Action<int> listener) : base(itemView)
             {
                 FoldersIcon = itemView.FindViewById<ImageView>(Resource.Id.itemFolder_icon);
                 FoldersName = itemView.FindViewById<TextView>(Resource.Id.itemFolder_title);
                 FoldersInfo = itemView.FindViewById<TextView>(Resource.Id.itemFolder_info);
                 InfoLayout = itemView.FindViewById<LinearLayout>(Resource.Id.itemFolder_back);
+                itemView.Click += (sender, e) => listener(AdapterPosition);
             }
         }
 
@@ -233,12 +253,13 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
             /// </summary>
             public TextView MessageDate { get; }
 
-            public MessagesViewHolder(View itemView) : base(itemView)
+            public MessagesViewHolder(View itemView, Action<int> listener) : base(itemView)
             {
                 MessageIcon = itemView.FindViewById<ImageView>(Resource.Id.itemMessage_messageIcon);
                 MessageStamp = itemView.FindViewById<TextView>(Resource.Id.itemMessage_messageStamp);
                 MessageDate = itemView.FindViewById<TextView>(Resource.Id.itemMessage_messageDate);
                 MessageFrom = itemView.FindViewById<TextView>(Resource.Id.itemMessage_messageFrom);
+                itemView.Click += (sender, e) => listener(AdapterPosition);
             }
         }
     }

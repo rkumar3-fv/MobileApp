@@ -59,6 +59,21 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         public List<Extension>ExtensionsList { get; private set; } 
 
         /// <summary>
+        /// Selected extension index
+        /// </summary>
+        public int SelectedExtension { get; private set; } 
+
+        /// <summary>
+        /// Selected folder index
+        /// </summary>
+        public int SelectedFolder { get; private set; }
+
+        /// <summary>
+        /// Selected message index
+        /// </summary>
+        public int SelectedMessage { get; private set; }
+
+        /// <summary>
         /// Event for activity or fragment handling
         /// </summary>
         public event ActionsHelperEvent HelperEvent;
@@ -78,11 +93,6 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         /// </summary>
         private readonly Dictionary<long, BaseRequest> _waitingRequestArray;
 
-        /// <summary>
-        /// Unhandled responses from server
-        /// </summary>
-        private readonly Dictionary<long, BaseResponse> _unhandledResponseArray;
-
         private readonly AtomicLong _idCounter;
         private readonly AppPreferencesHelper _preferencesHelper;
 
@@ -95,52 +105,22 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             _app = app;
             _idCounter = new AtomicLong();
             _waitingRequestArray = new Dictionary<long, BaseRequest>();
-            _unhandledResponseArray = new Dictionary<long, BaseResponse>();
             _receiver = new ComServiceResultReceiver(new Handler());
             _receiver.SetListener(this);
             _preferencesHelper = AppPreferencesHelper.Instance(_app);
             IsFirstRun = _preferencesHelper.IsFirstRun();
             ExtensionsList = new List<Extension>();
             Log.Debug(App.AppPackage, "HELPER: " + (IsFirstRun ? "First run" : "Not first run"));
+
+            SelectedExtension = -1;
+            SelectedFolder = -1;
+            SelectedMessage = -1;
         }
 
         /// <summary>
         /// Get next ID for request
         /// </summary>
         private long RequestId => _idCounter.IncrementAndGet();
-
-        /// <summary>
-        /// Get all unhandled responses
-        /// </summary>
-        public void GetUnhandledResponses()
-        {
-            foreach (var response in _unhandledResponseArray)
-            {
-                //TODO: notification
-            }
-        }
-
-        /// <summary>
-        /// Get unhandled responses by type
-        /// </summary>
-        /// <typeparam name="T">Response type</typeparam>
-        public void GetUnhandledResponse<T>()
-        {
-            foreach (var response in _unhandledResponseArray.Where(response => response.Value is T))
-            {
-                //TODO: notification
-            }
-        }
-
-        /// <summary>
-        /// Remove unhandled response
-        /// </summary>
-        /// <param name="id">request ID</param>
-        public void RemoveUnhandledResponse(long id)
-        {
-            if (_unhandledResponseArray.ContainsKey(id))
-                _unhandledResponseArray.Remove(id);
-        }
 
         /// <summary>
         /// Sets that not first app usage
@@ -240,14 +220,25 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         /// <returns>request ID</returns>
         public long GetExtensions()
         {
+            if (ExtensionsList != null && ExtensionsList.Count == 0)
+                return ForceLoadExtensions();
+            return -1;
+        }
+
+        /// <summary>
+        /// Force update extensions list
+        /// </summary>
+        /// <returns>request ID</returns>
+        public long ForceLoadExtensions()
+        {
             var requestId = RequestId;
             var getExtRequest = new GetExtensionsRequest(requestId, SelectedAccount.AccountName);
             foreach (var request in _waitingRequestArray.Where(response => response.Value is GetExtensionsRequest).Where(request => ((GetExtensionsRequest)(request.Value)).Equals(getExtRequest)))
             {
-                Log.Debug(App.AppPackage, "HELPER REQUEST: Duplicate GetExtensions request. Execute ID=" + request.Key);
+                Log.Debug(App.AppPackage, "HELPER REQUEST: Duplicate ForceLoadExtensions request. Execute ID=" + request.Key);
                 return request.Key;
             }
-            Log.Debug(App.AppPackage, "HELPER REQUEST: GetExtensions ID=" + requestId);
+            Log.Debug(App.AppPackage, "HELPER REQUEST: ForceLoadExtensions ID=" + requestId);
             PrepareIntent(requestId, getExtRequest);
             return requestId;
         }
@@ -283,6 +274,37 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             Log.Debug(App.AppPackage, "HELPER INTENT CREATED: request ID="+requestId);
             _app.StartService(intent);
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public List<MessageItem> GetCurrent()
+        {
+            if ((SelectedExtension == -1)||(SelectedExtension > ExtensionsList.Count))
+                return ExtensionsList.Cast<MessageItem>().ToList();
+            if ((SelectedFolder ==-1)||(SelectedFolder > ExtensionsList[SelectedExtension].Folders.Count))
+                return ExtensionsList[SelectedExtension].Folders.Cast<MessageItem>().ToList();
+            return ExtensionsList[SelectedExtension].Folders[SelectedFolder].MessagesList.Cast<MessageItem>().ToList();
+        } 
+
+        public List<MessageItem> GetNext(int position)
+        {
+            if (SelectedExtension == -1)
+                SelectedExtension = position;
+            else if (SelectedFolder == -1)
+                SelectedFolder = position;
+            return GetCurrent();
+        }
+
+        public void GetPrevious()
+        {
+            if (SelectedFolder != -1)
+                SelectedFolder = -1;
+            else if (SelectedExtension != -1)
+                SelectedExtension = -1;
+            HelperEvent?.Invoke(this, new ActionsHelperEventArgs(-1, new[] { ActionsHelperEventArgs.MsgUpdated }));
+        } 
 
         /// <summary>
         /// Responses from ComService
@@ -384,7 +406,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                             AccountsList = accsResponse.AccountsList;
                             SelectedAccount = AccountsList[0];
                             intent = IsFirstRun ? new Intent(_app, typeof(DisclaimerActivity)) : new Intent(_app, typeof(SelectAccountActivity));
-                            GetExtensions();
+                            ForceLoadExtensions();
                             break;
 
                         // More than one active accounts
@@ -399,8 +421,14 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                 case "GetExtensionsResponse":
                     Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} successed: YOU GET EXTENSIONS LIST");
                     var extResponse = (GetExtensionsResponse)response;
-                    ExtensionsList = extResponse.ExtensionsList;
-                    HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new []{ActionsHelperEventArgs.MsgExtensionsUpdated}));
+                    if (!ExtensionsList.Equals(extResponse.ExtensionsList))
+                    {
+                        ExtensionsList = extResponse.ExtensionsList;
+                        SelectedExtension = -1;
+                        SelectedFolder = -1;
+                        SelectedMessage = -1;
+                    }
+                    HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new []{ActionsHelperEventArgs.MsgUpdated}));
                     break;
             }
             _waitingRequestArray.Remove(response.RequestId);
@@ -417,6 +445,9 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             IsLoggedIn = false;
             AccountsList = null;
             SelectedAccount = null;
+            SelectedExtension = -1;
+            SelectedFolder = -1;
+            SelectedMessage = -1;
             var intent = new Intent(_app, typeof(AuthActivity));
             HelperEvent?.Invoke(this, new ActionsHelperIntentArgs(id, intent));
         }
