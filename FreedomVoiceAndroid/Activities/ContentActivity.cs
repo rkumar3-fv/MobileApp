@@ -61,10 +61,15 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         protected override void OnResume()
         {
             base.OnResume();
-            SupportActionBar.Title = _pagerAdapter.GetTabName(_viewPager.CurrentItem);
+            SetToolbarContent();
         }
 
         private void ViewPagerOnPageSelected(object sender, ViewPager.PageSelectedEventArgs pageSelectedEventArgs)
+        {
+            SetToolbarContent();
+        }
+
+        public void SetToolbarContent()
         {
             if (_viewPager.CurrentItem == 3)
                 if (Helper.SelectedFolder != -1)
@@ -105,16 +110,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             {
                 case global::Android.Resource.Id.Home:
                     Helper.GetPrevious();
-                    if (Helper.SelectedFolder != -1)
-                        SupportActionBar.Title = Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].FolderName;
-                    else if (Helper.SelectedExtension != -1)
-                        SupportActionBar.Title = $"{Helper.ExtensionsList[Helper.SelectedExtension].Id} - {Helper.ExtensionsList[Helper.SelectedExtension].ExtensionName}";
-                    else
-                    {
-                        SupportActionBar.Title = _pagerAdapter.GetTabName(_viewPager.CurrentItem);
-                        SupportActionBar.SetDisplayHomeAsUpEnabled(false);
-                        SupportActionBar.SetHomeButtonEnabled(false);
-                    }
+                    SetToolbarContent();
                     return true;
                 case Resource.Id.menu_action_logout:
                     Helper.Logout();

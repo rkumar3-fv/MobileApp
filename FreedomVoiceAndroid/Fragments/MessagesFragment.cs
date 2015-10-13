@@ -1,5 +1,6 @@
 using Android.OS;
 using Android.Runtime;
+using Android.Support.V4.Widget;
 using Android.Support.V7.Widget;
 using Android.Util;
 using Android.Views;
@@ -11,15 +12,19 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
     /// <summary>
     /// Messages tab
     /// </summary>
-    public class MessagesFragment : BasePagerFragment
+    public class MessagesFragment : BasePagerFragment, SwipeRefreshLayout.IOnRefreshListener
     {
         private MessagesRecyclerAdapter _adapter;
         private RecyclerView _recyclerView;
+        private SwipeRefreshLayout _swipeRefresh;
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             var view = inflater.Inflate(Resource.Layout.frag_messages, container, false);
-            _recyclerView = view.JavaCast<RecyclerView>();
+            _swipeRefresh = view.FindViewById<SwipeRefreshLayout>(Resource.Id.messagesFragment_swipe);
+            _swipeRefresh.SetOnRefreshListener(this);
+            _swipeRefresh.SetColorSchemeResources(Resource.Color.colorPullRefreshFirst, Resource.Color.colorPullRefreshSecond, Resource.Color.colorPullRefreshThird);
+            _recyclerView = view.FindViewById<RecyclerView>(Resource.Id.messagesFragment_recyclerView);
             _recyclerView.SetLayoutManager(new LinearLayoutManager(Activity));
             _recyclerView.AddItemDecoration(new DividerItemDecorator(Activity, Resource.Drawable.divider));
             _adapter = new MessagesRecyclerAdapter(Context);
@@ -36,14 +41,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             if (position > _adapter.CurrentContent.Count) return;
             Log.Debug(App.AppPackage, $"FRAGMENT {GetType().Name}: select item #{position}");
             _adapter.CurrentContent = Helper.GetNext(position);
-            ContentActivity.SupportActionBar.SetDisplayHomeAsUpEnabled(true);
-            ContentActivity.SupportActionBar.SetHomeButtonEnabled(true);
-            if (Helper.SelectedFolder != -1)
-                ContentActivity.SupportActionBar.Title = Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].FolderName;
-            else if (Helper.SelectedExtension != -1)
-                ContentActivity.SupportActionBar.Title = $"{Helper.ExtensionsList[Helper.SelectedExtension].Id} - {Helper.ExtensionsList[Helper.SelectedExtension].ExtensionName}";
-            else
-                ContentActivity.SupportActionBar.Title = GetString(Resource.String.FragmentMessages_title);
+            ContentActivity.SetToolbarContent();
         }
 
         public override void OnResume()
@@ -60,9 +58,15 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                 {
                     case ActionsHelperEventArgs.MsgUpdated:
                         _adapter.CurrentContent = Helper.GetCurrent();
+                        _swipeRefresh.Refreshing = false;
                         break;
                 }
             }
+        }
+
+        public void OnRefresh()
+        {
+            Helper.ForceLoadExtensions();
         }
     }
 }

@@ -4,8 +4,6 @@
     android:layout_height="wrap_content"
     android:minHeight="@dimen/fragment_msg_element_height"
     android:gravity="center_vertical"
-    android:clickable="true"
-    android:focusable="true"
     android:background="?android:attr/selectableItemBackground">
     <LinearLayout
         android:id="@+id/itemExt_back"
