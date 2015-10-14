@@ -282,10 +282,10 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         public List<MessageItem> GetCurrent()
         {
             if ((SelectedExtension == -1)||(SelectedExtension > ExtensionsList.Count))
-                return ExtensionsList.Cast<MessageItem>().ToList();
+                return ExtensionsList?.Cast<MessageItem>().ToList();
             if ((SelectedFolder ==-1)||(SelectedFolder > ExtensionsList[SelectedExtension].Folders.Count))
-                return ExtensionsList[SelectedExtension].Folders.Cast<MessageItem>().ToList();
-            return ExtensionsList[SelectedExtension].Folders[SelectedFolder].MessagesList.Cast<MessageItem>().ToList();
+                return ExtensionsList[SelectedExtension].Folders?.Cast<MessageItem>().ToList();
+            return ExtensionsList[SelectedExtension].Folders[SelectedFolder].MessagesList?.Cast<MessageItem>().ToList();
         } 
 
         public List<MessageItem> GetNext(int position)

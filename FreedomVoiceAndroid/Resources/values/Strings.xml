@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="ApplicationName">FreedomVoice</string>
-  <string name="ApplicationTitle">Freedom Voice</string>
+  <string name="ApplicationTitle">FreedomVoice</string>
   <string name="MenuItem_logout">Logout</string>
   <string name="ActivityAuth_title">Welcome</string>
   <string name="ActivityAuth_loginHint">Username or Email</string>

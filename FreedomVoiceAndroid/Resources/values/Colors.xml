@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <resources>
+  <color name="colorTransparent">#00000000</color>
   <color name="colorActionBarText">#ffffff</color>
   <color name="colorPrimaryDark">#126ea5</color>
   <color name="colorPrimary">#1789ce</color>

@@ -11,8 +11,7 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="@dimen/fragment_keypad_spinner_size"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
-        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:background="@drawable/border"
         android:gravity="center">
         <TextView
             style="@style/CallerIdSpinnerText"
@@ -20,19 +19,20 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/FragmentKeypad_callerId"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
             android:layout_weight="1" />
         <Spinner
             android:id="@+id/keypadFragment_idSpinner"
             android:layout_width="match_parent"
             android:layout_height="@dimen/fragment_keypad_spinner_size"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
             android:layout_weight="1"
             android:spinnerMode="dropdown" />
     </LinearLayout>
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
-        android:layout_marginEnd="@dimen/activity_horizontal_margin">
+        android:background="@drawable/border">
         <EditText
             android:theme="@style/BorderlessEditText"
             android:layout_width="match_parent"
@@ -41,14 +41,16 @@
             android:id="@+id/keypadFragment_dialText"
             android:layout_gravity="right|center_vertical"
             android:phoneNumber="true"
-            android:layout_marginRight="@dimen/fragment_keypad_key_spacing" />
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/fragment_keypad_backspace_spacing" />
         <ImageButton
             android:id="@+id/keypadFragment_backspace"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_action_backspace"
             android:background="@android:color/transparent"
-            android:layout_gravity="right|center_vertical" />
+            android:layout_gravity="right|center_vertical"
+            android:layout_marginRight="@dimen/activity_horizontal_margin" />
     </FrameLayout>
     <GridLayout
         android:layout_width="wrap_content"

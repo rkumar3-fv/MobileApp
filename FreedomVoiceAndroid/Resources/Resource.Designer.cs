@@ -985,32 +985,32 @@ namespace com.FreedomVoice.MobileApp.Android
 		public partial class Color
 		{
 			
-			// aapt resource value: 0x7f080065
-			public const int abc_background_cache_hint_selector_material_dark = 2131230821;
-			
 			// aapt resource value: 0x7f080066
-			public const int abc_background_cache_hint_selector_material_light = 2131230822;
+			public const int abc_background_cache_hint_selector_material_dark = 2131230822;
 			
 			// aapt resource value: 0x7f080067
-			public const int abc_color_highlight_material = 2131230823;
+			public const int abc_background_cache_hint_selector_material_light = 2131230823;
+			
+			// aapt resource value: 0x7f080068
+			public const int abc_color_highlight_material = 2131230824;
 			
 			// aapt resource value: 0x7f080004
 			public const int abc_input_method_navigation_guard = 2131230724;
 			
-			// aapt resource value: 0x7f080068
-			public const int abc_primary_text_disable_only_material_dark = 2131230824;
-			
 			// aapt resource value: 0x7f080069
-			public const int abc_primary_text_disable_only_material_light = 2131230825;
+			public const int abc_primary_text_disable_only_material_dark = 2131230825;
 			
 			// aapt resource value: 0x7f08006a
-			public const int abc_primary_text_material_dark = 2131230826;
+			public const int abc_primary_text_disable_only_material_light = 2131230826;
 			
 			// aapt resource value: 0x7f08006b
-			public const int abc_primary_text_material_light = 2131230827;
+			public const int abc_primary_text_material_dark = 2131230827;
 			
 			// aapt resource value: 0x7f08006c
-			public const int abc_search_url_text = 2131230828;
+			public const int abc_primary_text_material_light = 2131230828;
+			
+			// aapt resource value: 0x7f08006d
+			public const int abc_search_url_text = 2131230829;
 			
 			// aapt resource value: 0x7f080005
 			public const int abc_search_url_text_normal = 2131230725;
@@ -1021,11 +1021,11 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f080007
 			public const int abc_search_url_text_selected = 2131230727;
 			
-			// aapt resource value: 0x7f08006d
-			public const int abc_secondary_text_material_dark = 2131230829;
-			
 			// aapt resource value: 0x7f08006e
-			public const int abc_secondary_text_material_light = 2131230830;
+			public const int abc_secondary_text_material_dark = 2131230830;
+			
+			// aapt resource value: 0x7f08006f
+			public const int abc_secondary_text_material_light = 2131230831;
 			
 			// aapt resource value: 0x7f080008
 			public const int accent_material_dark = 2131230728;
@@ -1081,74 +1081,77 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f080003
 			public const int cardview_shadow_start_color = 2131230723;
 			
-			// aapt resource value: 0x7f080047
-			public const int colorActionBarText = 2131230791;
-			
-			// aapt resource value: 0x7f08004b
-			public const int colorActivatedControls = 2131230795;
-			
-			// aapt resource value: 0x7f080057
-			public const int colorAuthHeader = 2131230807;
+			// aapt resource value: 0x7f080048
+			public const int colorActionBarText = 2131230792;
 			
 			// aapt resource value: 0x7f08004c
-			public const int colorBackground = 2131230796;
+			public const int colorActivatedControls = 2131230796;
 			
-			// aapt resource value: 0x7f08004a
-			public const int colorBaseControls = 2131230794;
+			// aapt resource value: 0x7f080058
+			public const int colorAuthHeader = 2131230808;
 			
-			// aapt resource value: 0x7f08005d
-			public const int colorBlackFieldsHint = 2131230813;
+			// aapt resource value: 0x7f08004d
+			public const int colorBackground = 2131230797;
 			
-			// aapt resource value: 0x7f080059
-			public const int colorButton = 2131230809;
+			// aapt resource value: 0x7f08004b
+			public const int colorBaseControls = 2131230795;
 			
-			// aapt resource value: 0x7f080054
-			public const int colorButtonPressed = 2131230804;
-			
-			// aapt resource value: 0x7f08005f
-			public const int colorDivider = 2131230815;
-			
-			// aapt resource value: 0x7f080053
-			public const int colorFabPressed = 2131230803;
-			
-			// aapt resource value: 0x7f080052
-			public const int colorFabPrimary = 2131230802;
+			// aapt resource value: 0x7f08005e
+			public const int colorBlackFieldsHint = 2131230814;
 			
 			// aapt resource value: 0x7f08005a
-			public const int colorFieldsActive = 2131230810;
+			public const int colorButton = 2131230810;
 			
-			// aapt resource value: 0x7f08005c
-			public const int colorFieldsHint = 2131230812;
-			
-			// aapt resource value: 0x7f08005b
-			public const int colorFieldsNormal = 2131230811;
+			// aapt resource value: 0x7f080055
+			public const int colorButtonPressed = 2131230805;
 			
 			// aapt resource value: 0x7f080060
-			public const int colorKeyOnKeyboardMain = 2131230816;
+			public const int colorDivider = 2131230816;
+			
+			// aapt resource value: 0x7f080054
+			public const int colorFabPressed = 2131230804;
+			
+			// aapt resource value: 0x7f080053
+			public const int colorFabPrimary = 2131230803;
+			
+			// aapt resource value: 0x7f08005b
+			public const int colorFieldsActive = 2131230811;
+			
+			// aapt resource value: 0x7f08005d
+			public const int colorFieldsHint = 2131230813;
+			
+			// aapt resource value: 0x7f08005c
+			public const int colorFieldsNormal = 2131230812;
 			
 			// aapt resource value: 0x7f080061
-			public const int colorKeyOnKeyboardSecondary = 2131230817;
-			
-			// aapt resource value: 0x7f080049
-			public const int colorPrimary = 2131230793;
-			
-			// aapt resource value: 0x7f080048
-			public const int colorPrimaryDark = 2131230792;
+			public const int colorKeyOnKeyboardMain = 2131230817;
 			
 			// aapt resource value: 0x7f080062
-			public const int colorPullRefreshFirst = 2131230818;
+			public const int colorKeyOnKeyboardSecondary = 2131230818;
+			
+			// aapt resource value: 0x7f08004a
+			public const int colorPrimary = 2131230794;
+			
+			// aapt resource value: 0x7f080049
+			public const int colorPrimaryDark = 2131230793;
 			
 			// aapt resource value: 0x7f080063
-			public const int colorPullRefreshSecond = 2131230819;
+			public const int colorPullRefreshFirst = 2131230819;
 			
 			// aapt resource value: 0x7f080064
-			public const int colorPullRefreshThird = 2131230820;
+			public const int colorPullRefreshSecond = 2131230820;
 			
-			// aapt resource value: 0x7f080050
-			public const int colorTabIndicator = 2131230800;
+			// aapt resource value: 0x7f080065
+			public const int colorPullRefreshThird = 2131230821;
 			
 			// aapt resource value: 0x7f080051
-			public const int colorTabIndicatorInactive = 2131230801;
+			public const int colorTabIndicator = 2131230801;
+			
+			// aapt resource value: 0x7f080052
+			public const int colorTabIndicatorInactive = 2131230802;
+			
+			// aapt resource value: 0x7f080047
+			public const int colorTransparent = 2131230791;
 			
 			// aapt resource value: 0x7f08003e
 			public const int design_fab_shadow_end_color = 2131230782;
@@ -1243,11 +1246,11 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f08002b
 			public const int material_grey_900 = 2131230763;
 			
-			// aapt resource value: 0x7f080055
-			public const int messageIndicator = 2131230805;
-			
 			// aapt resource value: 0x7f080056
-			public const int messageIndicatorText = 2131230806;
+			public const int messageIndicator = 2131230806;
+			
+			// aapt resource value: 0x7f080057
+			public const int messageIndicatorText = 2131230807;
 			
 			// aapt resource value: 0x7f08002c
 			public const int primary_dark_material_dark = 2131230764;
@@ -1297,11 +1300,11 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f08003b
 			public const int switch_thumb_disabled_material_light = 2131230779;
 			
-			// aapt resource value: 0x7f08006f
-			public const int switch_thumb_material_dark = 2131230831;
-			
 			// aapt resource value: 0x7f080070
-			public const int switch_thumb_material_light = 2131230832;
+			public const int switch_thumb_material_dark = 2131230832;
+			
+			// aapt resource value: 0x7f080071
+			public const int switch_thumb_material_light = 2131230833;
 			
 			// aapt resource value: 0x7f08003c
 			public const int switch_thumb_normal_material_dark = 2131230780;
@@ -1309,20 +1312,20 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f08003d
 			public const int switch_thumb_normal_material_light = 2131230781;
 			
-			// aapt resource value: 0x7f08005e
-			public const int textColorError = 2131230814;
+			// aapt resource value: 0x7f08005f
+			public const int textColorError = 2131230815;
 			
-			// aapt resource value: 0x7f08004f
-			public const int textColorNewMessages = 2131230799;
-			
-			// aapt resource value: 0x7f08004d
-			public const int textColorPrimary = 2131230797;
+			// aapt resource value: 0x7f080050
+			public const int textColorNewMessages = 2131230800;
 			
 			// aapt resource value: 0x7f08004e
-			public const int textColorSecondary = 2131230798;
+			public const int textColorPrimary = 2131230798;
 			
-			// aapt resource value: 0x7f080058
-			public const int textForgotPassword = 2131230808;
+			// aapt resource value: 0x7f08004f
+			public const int textColorSecondary = 2131230799;
+			
+			// aapt resource value: 0x7f080059
+			public const int textForgotPassword = 2131230809;
 			
 			static Color()
 			{
@@ -1701,16 +1704,22 @@ namespace com.FreedomVoice.MobileApp.Android
 			public const int drawer_size = 2131099756;
 			
 			// aapt resource value: 0x7f06009c
-			public const int fragment_keypad_bottom_margin = 2131099804;
+			public const int fragment_keypad_backspace_spacing = 2131099804;
 			
 			// aapt resource value: 0x7f06009d
-			public const int fragment_keypad_fab_elevation = 2131099805;
-			
-			// aapt resource value: 0x7f06009f
-			public const int fragment_keypad_fab_ripple = 2131099807;
+			public const int fragment_keypad_bottom_margin = 2131099805;
 			
 			// aapt resource value: 0x7f06009e
-			public const int fragment_keypad_fab_translation = 2131099806;
+			public const int fragment_keypad_button_ripple = 2131099806;
+			
+			// aapt resource value: 0x7f06009f
+			public const int fragment_keypad_fab_elevation = 2131099807;
+			
+			// aapt resource value: 0x7f0600a1
+			public const int fragment_keypad_fab_ripple = 2131099809;
+			
+			// aapt resource value: 0x7f0600a0
+			public const int fragment_keypad_fab_translation = 2131099808;
 			
 			// aapt resource value: 0x7f06009a
 			public const int fragment_keypad_key_size = 2131099802;
@@ -2020,97 +2029,100 @@ namespace com.FreedomVoice.MobileApp.Android
 			public const int background = 2130837566;
 			
 			// aapt resource value: 0x7f02003f
-			public const int button_selector = 2130837567;
+			public const int border = 2130837567;
 			
 			// aapt resource value: 0x7f020040
-			public const int design_fab_background = 2130837568;
+			public const int button_selector = 2130837568;
 			
 			// aapt resource value: 0x7f020041
-			public const int design_snackbar_background = 2130837569;
+			public const int design_fab_background = 2130837569;
 			
 			// aapt resource value: 0x7f020042
-			public const int divider = 2130837570;
+			public const int design_snackbar_background = 2130837570;
 			
 			// aapt resource value: 0x7f020043
-			public const int ic_action_back = 2130837571;
+			public const int divider = 2130837571;
 			
 			// aapt resource value: 0x7f020044
-			public const int ic_action_backspace = 2130837572;
+			public const int ic_action_back = 2130837572;
 			
 			// aapt resource value: 0x7f020045
-			public const int ic_action_delete = 2130837573;
+			public const int ic_action_backspace = 2130837573;
 			
 			// aapt resource value: 0x7f020046
-			public const int ic_action_dial = 2130837574;
+			public const int ic_action_delete = 2130837574;
 			
 			// aapt resource value: 0x7f020047
-			public const int ic_action_logout = 2130837575;
+			public const int ic_action_dial = 2130837575;
 			
 			// aapt resource value: 0x7f020048
-			public const int ic_launcher = 2130837576;
+			public const int ic_action_logout = 2130837576;
 			
 			// aapt resource value: 0x7f020049
-			public const int ic_msg_callrec = 2130837577;
+			public const int ic_launcher = 2130837577;
 			
 			// aapt resource value: 0x7f02004a
-			public const int ic_msg_callrec_unread = 2130837578;
+			public const int ic_msg_callrec = 2130837578;
 			
 			// aapt resource value: 0x7f02004b
-			public const int ic_msg_fax = 2130837579;
+			public const int ic_msg_callrec_unread = 2130837579;
 			
 			// aapt resource value: 0x7f02004c
-			public const int ic_msg_fax_unread = 2130837580;
+			public const int ic_msg_fax = 2130837580;
 			
 			// aapt resource value: 0x7f02004d
-			public const int ic_msg_voicemail = 2130837581;
+			public const int ic_msg_fax_unread = 2130837581;
 			
 			// aapt resource value: 0x7f02004e
-			public const int ic_msg_voicemail_unread = 2130837582;
+			public const int ic_msg_voicemail = 2130837582;
 			
 			// aapt resource value: 0x7f02004f
-			public const int ic_new_folder = 2130837583;
+			public const int ic_msg_voicemail_unread = 2130837583;
 			
 			// aapt resource value: 0x7f020050
-			public const int ic_other_folder = 2130837584;
+			public const int ic_new_folder = 2130837584;
 			
 			// aapt resource value: 0x7f020051
-			public const int ic_save_folder = 2130837585;
+			public const int ic_other_folder = 2130837585;
 			
 			// aapt resource value: 0x7f020052
-			public const int ic_send_folder = 2130837586;
+			public const int ic_save_folder = 2130837586;
 			
 			// aapt resource value: 0x7f020053
-			public const int ic_tab_contacts = 2130837587;
+			public const int ic_send_folder = 2130837587;
 			
 			// aapt resource value: 0x7f020054
-			public const int ic_tab_history = 2130837588;
+			public const int ic_tab_contacts = 2130837588;
 			
 			// aapt resource value: 0x7f020055
-			public const int ic_tab_keypad = 2130837589;
+			public const int ic_tab_history = 2130837589;
 			
 			// aapt resource value: 0x7f020056
-			public const int ic_tab_messages = 2130837590;
+			public const int ic_tab_keypad = 2130837590;
 			
 			// aapt resource value: 0x7f020057
-			public const int ic_trash_folder = 2130837591;
+			public const int ic_tab_messages = 2130837591;
 			
 			// aapt resource value: 0x7f020058
-			public const int logo_disclaimer = 2130837592;
+			public const int ic_trash_folder = 2130837592;
 			
 			// aapt resource value: 0x7f020059
-			public const int logo_grey = 2130837593;
+			public const int logo_disclaimer = 2130837593;
 			
 			// aapt resource value: 0x7f02005a
-			public const int logo_white = 2130837594;
+			public const int logo_grey = 2130837594;
 			
 			// aapt resource value: 0x7f02005b
-			public const int message_indicator = 2130837595;
-			
-			// aapt resource value: 0x7f02005d
-			public const int notification_template_icon_bg = 2130837597;
+			public const int logo_white = 2130837595;
 			
 			// aapt resource value: 0x7f02005c
-			public const int ripple = 2130837596;
+			public const int message_indicator = 2130837596;
+			
+			// aapt resource value: 0x7f02005e
+			public const int notification_template_icon_bg = 2130837598;
+			
+			// aapt resource value: 0x7f02005d
+			public const int ripple = 2130837597;
 			
 			static Drawable()
 			{
