@@ -21,8 +21,10 @@ namespace com.FreedomVoice.MobileApp.Android.Dialogs
         public override void OnStart()
         {
             base.OnStart();
-            OkButton.Click += OkButtonOnClick;
-            CancelButton.Click += CancelButtonOnClick;
+            if (OkButton != null)
+                OkButton.Click += OkButtonOnClick;
+            if (CancelButton != null)
+                CancelButton.Click += CancelButtonOnClick;
         }
 
         public override Dialog OnCreateDialog(Bundle savedInstanceState)

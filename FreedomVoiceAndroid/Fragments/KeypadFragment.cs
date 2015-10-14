@@ -1,13 +1,12 @@
 using System;
-using System.Linq;
 using Android.OS;
 using Android.Support.Design.Widget;
 using Android.Telephony;
-using Android.Text;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Adapters;
+using com.FreedomVoice.MobileApp.Android.Dialogs;
 using com.FreedomVoice.MobileApp.Android.Helpers;
 using com.FreedomVoice.MobileApp.Android.Utils;
 
@@ -107,9 +106,17 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         /// </summary>
         private void ButtonDialOnClick(object sender, EventArgs e)
         {
-            var normalizedNumber = PhoneNumberUtils.NormalizeNumber(_enteredNumber);
-            Log.Debug(App.AppPackage, $"KEYPAD: dial to {DataFormatUtils.ToPhoneNumber(normalizedNumber)}");
-            Helper.Call(normalizedNumber);
+            if ((Helper.PhoneNumber == null)||(Helper.PhoneNumber.Length == 0))
+            {
+                var logoutDialog = new NoCellularDialogFragment();
+                logoutDialog.Show(ContentActivity.SupportFragmentManager, GetString(Resource.String.DlgCellular_title));
+            }
+            else
+            {
+                var normalizedNumber = PhoneNumberUtils.NormalizeNumber(_enteredNumber);
+                Log.Debug(App.AppPackage, $"KEYPAD: dial to {DataFormatUtils.ToPhoneNumber(normalizedNumber)}");
+                Helper.Call(normalizedNumber);
+            }
         }
 
         /// <summary>

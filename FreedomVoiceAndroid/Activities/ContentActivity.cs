@@ -19,7 +19,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
     [Activity(
         Label = "@string/ApplicationTitle",
         Icon = "@drawable/ic_launcher",
-        Theme = "@style/AppTheme")]
+        Theme = "@style/AppTheme",
+        WindowSoftInputMode = SoftInput.StateHidden)]
     public class ContentActivity : BaseActivity
     {
         private ContentPagerAdapter _pagerAdapter;

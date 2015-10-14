@@ -105,6 +105,7 @@
     <Compile Include="Dialogs\DialogEventArgs.cs" />
     <Compile Include="Dialogs\DialogResult.cs" />
     <Compile Include="Dialogs\LogoutDialogFragment.cs" />
+    <Compile Include="Dialogs\NoCellularDialogFragment.cs" />
     <Compile Include="Entities\Account.cs" />
     <Compile Include="Entities\Entity.cs" />
     <Compile Include="Entities\Extension.cs" />
@@ -193,6 +194,9 @@
       <SubType>AndroidResource</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\dlg_logout.axml">
+      <SubType>AndroidResource</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\dlg_cellular.axml">
       <SubType>AndroidResource</SubType>
     </AndroidResource>
   </ItemGroup>

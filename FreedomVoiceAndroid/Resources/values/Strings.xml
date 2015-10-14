@@ -52,4 +52,6 @@
   <string name="DlgLogout_title">Confirm logout?</string>
   <string name="DlgLogout_content">Your Recents list will be cleared.</string>
   <string name="DlgLogout_ok">LOG OUT</string>
+  <string name="DlgCellular_title">NoCellular</string>
+  <string name="DlgCellular_content">Your device does not appear to support making cellular voice calls.</string>
 </resources>

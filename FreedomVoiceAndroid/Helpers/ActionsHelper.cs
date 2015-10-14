@@ -4,6 +4,7 @@ using System.Linq;
 using Android.App;
 using Android.Content;
 using Android.OS;
+using Android.Telephony;
 using Android.Util;
 using com.FreedomVoice.MobileApp.Android.Actions.Requests;
 using com.FreedomVoice.MobileApp.Android.Actions.Responses;
@@ -27,6 +28,12 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         /// Is first app launch flag
         /// </summary>
         public bool IsFirstRun { get; private set; }
+
+        /// <summary>
+        /// Current phone number
+        /// May be null if cellular inactive
+        /// </summary>
+        public string PhoneNumber { get; private set; }
 
         /// <summary>
         /// Last entered user login
@@ -109,9 +116,13 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             _receiver.SetListener(this);
             _preferencesHelper = AppPreferencesHelper.Instance(_app);
             IsFirstRun = _preferencesHelper.IsFirstRun();
-            ExtensionsList = new List<Extension>();
             Log.Debug(App.AppPackage, "HELPER: " + (IsFirstRun ? "First run" : "Not first run"));
 
+            var telemanager = app.GetSystemService(Context.TelephonyService) as TelephonyManager;
+            PhoneNumber = telemanager?.Line1Number;
+            Log.Debug(App.AppPackage, "HELPER: " + ((PhoneNumber == null) ? "NO CELLULAR" : $" PHONE NUMBER IS {PhoneNumber}"));
+
+            ExtensionsList = new List<Extension>();
             SelectedExtension = -1;
             SelectedFolder = -1;
             SelectedMessage = -1;
