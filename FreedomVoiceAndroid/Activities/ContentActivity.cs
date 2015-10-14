@@ -6,6 +6,7 @@ using Android.Support.V7.Internal.View;
 using Android.Views;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Adapters;
+using com.FreedomVoice.MobileApp.Android.Dialogs;
 using com.FreedomVoice.MobileApp.Android.Fragments;
 using com.FreedomVoice.MobileApp.Android.Helpers;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
@@ -113,7 +114,9 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                     SetToolbarContent();
                     return true;
                 case Resource.Id.menu_action_logout:
-                    Helper.Logout();
+                    var logoutDialog = new LogoutDialogFragment();
+                    logoutDialog.DialogEvent += OnDialogEvent;
+                    logoutDialog.Show(SupportFragmentManager, GetString(Resource.String.DlgLogout_title));
                     return true;
                 default:
                     return base.OnOptionsItemSelected(item);

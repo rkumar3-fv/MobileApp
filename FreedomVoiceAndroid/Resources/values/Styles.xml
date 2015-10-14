@@ -81,6 +81,16 @@
     <item name="android:layout_centerHorizontal">true</item>
     <item name="android:minHeight">@dimen/activity_button_size</item>
   </style>
+
+  <!-- Borderless dialog button style -->
+  <style name="BorderlessDialogButtonStyle" parent="Widget.AppCompat.Button.Borderless">
+    <item name="android:textSize">@dimen/dlg_action_bar_font</item>
+    <item name="android:textColor">@color/colorDlgButton</item>
+    <item name="android:textAlignment">center</item>
+    <item name="android:textAllCaps">true</item>
+    <item name="android:layout_centerHorizontal">true</item>
+    <item name="android:minHeight">@dimen/dlg_action_bar_button</item>
+  </style>
   
   <!-- AppButtonStyle -->
   <style name="AppButtonStyle" parent="Widget.AppCompat.Button">
@@ -183,5 +193,18 @@
     <item name="android:textColor">@color/textColorSecondary</item>
     <item name="android:textSize">@dimen/text_main</item>
     <item name="android:lines">1</item>
+  </style>
+
+  <!-- Dialog title text -->
+  <style name="DlgTitleText">
+    <item name="android:textColor">@color/colorDlgTitle</item>
+    <item name="android:textSize">@dimen/dlg_title_font</item>
+    <item name="android:lines">1</item>
+  </style>
+
+  <!-- Dialog content text -->
+  <style name="DlgContentText">
+    <item name="android:textColor">@color/colorDlgContent</item>
+    <item name="android:textSize">@dimen/dlg_content_font</item>
   </style>
 </resources>

@@ -6,6 +6,7 @@ using Android.Support.V7.Widget;
 using Android.Util;
 using Android.Views;
 using com.FreedomVoice.MobileApp.Android.Adapters;
+using com.FreedomVoice.MobileApp.Android.Dialogs;
 using com.FreedomVoice.MobileApp.Android.Helpers;
 using com.FreedomVoice.MobileApp.Android.Utils;
 
@@ -62,7 +63,9 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             switch (item.ItemId)
             {
                 case Resource.Id.menu_action_logout:
-                    Helper.Logout();
+                    var logoutDialog = new LogoutDialogFragment();
+                    logoutDialog.DialogEvent += OnDialogEvent;
+                    logoutDialog.Show(SupportFragmentManager, GetString(Resource.String.DlgLogout_title));
                     return true;
                 default:
                     return base.OnOptionsItemSelected(item);

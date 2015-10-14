@@ -2,6 +2,7 @@ using System;
 using Android.Support.V7.Internal.View;
 using Android.Views;
 using Android.Widget;
+using com.FreedomVoice.MobileApp.Android.Dialogs;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
 {
@@ -31,7 +32,9 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             switch (item.ItemId)
             {
                 case Resource.Id.menu_action_logout:
-                    Helper.Logout();
+                    var logoutDialog = new LogoutDialogFragment();
+                    logoutDialog.DialogEvent += OnDialogEvent;
+                    logoutDialog.Show(SupportFragmentManager, GetString(Resource.String.DlgLogout_title));
                     return true;
                 case global::Android.Resource.Id.Home:
                     OnBackPressed();

@@ -49,9 +49,16 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
             set
             {
                 if (_currentContent.Equals(value)) return;
+                Clean();
                 _currentContent = value;
                 NotifyDataSetChanged();
             }
+        }
+
+        public void Clean()
+        {
+            _currentContent.Clear();
+            NotifyDataSetChanged();
         }
 
         /// <summary>

@@ -47,4 +47,9 @@
   <string name="FragmentMessages_folderSaved">Saved</string>
   <string name="FragmentRecents_title">Recents</string>
   <string name="FragmentContacts_title">Contacts</string>
+  <string name="Dlg_ok">OK</string>
+  <string name="Dlg_cancel">CANCEL</string>
+  <string name="DlgLogout_title">Confirm logout?</string>
+  <string name="DlgLogout_content">Your Recents list will be cleared.</string>
+  <string name="DlgLogout_ok">LOG OUT</string>
 </resources>

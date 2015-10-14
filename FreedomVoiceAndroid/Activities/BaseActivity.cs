@@ -2,6 +2,7 @@ using System;
 using Android.OS;
 using Android.Support.V7.App;
 using Android.Util;
+using com.FreedomVoice.MobileApp.Android.Dialogs;
 using com.FreedomVoice.MobileApp.Android.Helpers;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
@@ -50,6 +51,20 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             }
             else
                 OnHelperEvent(args as ActionsHelperEventArgs);
+        }
+
+        /// <summary>
+        /// Dialog actions handler
+        /// </summary>
+        protected void OnDialogEvent(object sender, DialogEventArgs args)
+        {
+            switch (sender.GetType().Name)
+            {
+                case "LogoutDialogFragment":
+                    if (args.Result == DialogResult.Ok)
+                        Helper.Logout();
+                    break;
+            }
         }
 
         /// <summary>

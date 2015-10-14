@@ -31,4 +31,7 @@
   <color name="colorPullRefreshFirst">#f0aa1e</color>
   <color name="colorPullRefreshSecond">#6bcbda</color>
   <color name="colorPullRefreshThird">#5a6f8a</color>
+  <color name="colorDlgButton">#038ac1</color>
+  <color name="colorDlgTitle">#d9000000</color>
+  <color name="colorDlgContent">#8c000000</color>
 </resources>
