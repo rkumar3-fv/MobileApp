@@ -45,6 +45,8 @@
   <string name="FragmentMessages_folderSent">Sent</string>
   <string name="FragmentMessages_folderTrash">Trash</string>
   <string name="FragmentMessages_folderSaved">Saved</string>
+  <string name="FragmentMessages_onePage">1 page</string>
+  <string name="FragmentMessages_morePage">pages</string>
   <string name="FragmentRecents_title">Recents</string>
   <string name="FragmentContacts_title">Contacts</string>
   <string name="Dlg_ok">OK</string>

@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using Android.Content;
 using Android.Graphics;
+using Android.Support.V4.Content;
 using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Entities;
+using com.FreedomVoice.MobileApp.Android.Utils;
 
 namespace com.FreedomVoice.MobileApp.Android.Adapters
 {
@@ -115,31 +117,34 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
                 var message = contentItem as Message;
                 if ((viewHolder == null)||(message == null)) return;
                 viewHolder.MessageDate.Text = message.MessageDate;
-                viewHolder.MessageStamp.Text = message.Length.ToString();
-                viewHolder.MessageFrom.Text = (message.FromName.Length > 0) ? message.FromName : message.FromNumber;
+                viewHolder.MessageFrom.Text = (message.FromName.Length > 1) ? message.FromName : DataFormatUtils.ToPhoneNumber(message.FromNumber);
                 switch (message.MessageType)
                 {
                     case Message.TypeFax:
                         viewHolder.MessageIcon.SetImageResource(message.Unread
                             ? Resource.Drawable.ic_msg_fax_unread
                             : Resource.Drawable.ic_msg_fax);
+                        viewHolder.MessageStamp.Text = message.Length == 1 ? 
+                            _context.GetString(Resource.String.FragmentMessages_onePage) : $"{message.Length} {_context.GetString(Resource.String.FragmentMessages_morePage)}";
                         break;
                     case Message.TypeRec:
                         viewHolder.MessageIcon.SetImageResource(message.Unread
                             ? Resource.Drawable.ic_msg_callrec_unread
                             : Resource.Drawable.ic_msg_callrec);
+                        viewHolder.MessageStamp.Text = DataFormatUtils.ToDuration(message.Length);
                         break;
                     case Message.TypeVoice:
                         viewHolder.MessageIcon.SetImageResource(message.Unread
                             ? Resource.Drawable.ic_msg_voicemail_unread
                             : Resource.Drawable.ic_msg_voicemail);
+                        viewHolder.MessageStamp.Text = DataFormatUtils.ToDuration(message.Length);
                         break;
                 }
                 if (message.Unread)
                 {
                     viewHolder.MessageFrom.SetTypeface(null, TypefaceStyle.Bold);
                     viewHolder.MessageDate.SetTypeface(null, TypefaceStyle.Bold);
-                    viewHolder.MessageDate.SetTextColor(_context.GetColorStateList(Resource.Color.textColorPrimary));
+                    viewHolder.MessageDate.SetTextColor(ContextCompat.GetColorStateList(_context, Resource.Color.textColorPrimary));
                 }
             }
         }

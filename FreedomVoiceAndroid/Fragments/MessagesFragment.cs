@@ -1,5 +1,4 @@
 using Android.OS;
-using Android.Runtime;
 using Android.Support.V4.Widget;
 using Android.Support.V7.Widget;
 using Android.Util;
@@ -41,6 +40,12 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             if (position > _adapter.CurrentContent.Count) return;
             Log.Debug(App.AppPackage, $"FRAGMENT {GetType().Name}: select item #{position}");
             _adapter.CurrentContent = Helper.GetNext(position);
+            if (Helper.SelectedMessage != -1)
+                ;//TODO: OPEN MSG DETAILS
+            else if (Helper.SelectedFolder != -1)
+                Helper.ForceLoadMessages();
+            else
+                Helper.ForceLoadFolders();
             ContentActivity.SetToolbarContent();
         }
 

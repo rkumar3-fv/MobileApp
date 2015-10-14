@@ -20,8 +20,8 @@ namespace TestApp
             }
             else
             {
-                _login = "freedomvoice.user1.267055@gmail.com";
-                _passwd = "user1654654";
+                _login = "freedomvoice.adm.267055@gmail.com";
+                _passwd = "adm654654";
             }
 
             var resRestore = ApiHelper.PasswordReset("oops@gmail.com").Result;
@@ -67,10 +67,36 @@ namespace TestApp
             }
             Console.Write(Environment.NewLine);
 
-            Console.Write(@"Folders method: " + ApiHelper.GetFolders("7607124648", 802));
+            var resFolders = ApiHelper.GetFolders("7607124648", 802).Result;
+            Console.WriteLine($"Folders method: {resFolders.Code}");
+            foreach (var folder in resFolders.Result)
+            {
+                Console.WriteLine($"{folder.Name} - {folder.MessageCount}");
+            }
             Console.Write(Environment.NewLine);
 
-            Console.Write(@"Messages method: " + ApiHelper.GetMesages("7607124648", 802, "Sent", 10, 1, true));
+            resFolders = ApiHelper.GetFolders("7607124648", 803).Result;
+            Console.WriteLine($"Folders method: {resFolders.Code}");
+            foreach (var folder in resFolders.Result)
+            {
+                Console.WriteLine($"{folder.Name} - {folder.MessageCount}");
+            }
+            Console.Write(Environment.NewLine);
+
+            var resMsg = ApiHelper.GetMesages("7607124648", 802, "Sent", 10, 1, true).Result;
+            Console.WriteLine($"Messages method: {resMsg.Code}");
+            foreach (var msg in resMsg.Result)
+            {
+                Console.WriteLine($"Message {msg.Name} ({msg.Id}) from {msg.SourceName} ({msg.SourceNumber}) is "+((msg.Unread)?"new":"old"));
+            }
+            Console.Write(Environment.NewLine);
+
+            resMsg = ApiHelper.GetMesages("7607124648", 803, "New", 10, 1, true).Result;
+            Console.WriteLine($"Messages method: {resMsg.Code}");
+            foreach (var msg in resMsg.Result)
+            {
+                Console.WriteLine($"Message {msg.Name} ({msg.Id}) from {msg.SourceName} ({msg.SourceNumber}) is " + ((msg.Unread) ? "new" : "old"));
+            }
             Console.Write(Environment.NewLine);
 
             Console.Write(@"CallReservation method: " + ApiHelper.CreateCallReservation("7607124648", "9898846477", "7607124648", "8477163106").Result.Code);

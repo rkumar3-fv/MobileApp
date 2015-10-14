@@ -1,10 +1,11 @@
+using System;
 using Android.OS;
 using Java.Interop;
 using Object = Java.Lang.Object;
 
 namespace com.FreedomVoice.MobileApp.Android.Entities
 {
-    public class Message : MessageItem
+    public class Message : MessageItem, IEquatable<Message>
     {
         public const int TypeFax = 0;
         public const int TypeVoice = 1;
@@ -13,37 +14,37 @@ namespace com.FreedomVoice.MobileApp.Android.Entities
         /// <summary>
         /// Unread flag
         /// </summary>
-        public bool Unread { get; set; }
+        public bool Unread { get; }
 
         /// <summary>
         /// Message name
         /// </summary>
-        public string Name { get; set; }
+        public string Name { get; }
 
         /// <summary>
         /// Recipient's name
         /// </summary>
-        public string FromName { get; set; }
+        public string FromName { get; }
         
         /// <summary>
         /// Recipient's number
         /// </summary>
-        public string FromNumber { get; set; }
+        public string FromNumber { get; }
 
         /// <summary>
         /// Message date
         /// </summary>
-        public string MessageDate { get; set; }
+        public string MessageDate { get; }
 
         /// <summary>
         /// Message type
         /// </summary>
-        public int MessageType { get; set; }
+        public int MessageType { get; }
 
         /// <summary>
         /// Message length
         /// </summary>
-        public int Length { get; set; }
+        public int Length { get; }
 
         public Message(int id, string name, string fromName, string fromNumber, string date, int type, bool unread, int length) : base(id)
         {
@@ -95,6 +96,37 @@ namespace com.FreedomVoice.MobileApp.Android.Entities
             public Object[] NewArray(int size)
             {
                 return new Object[size];
+            }
+        }
+
+        public bool Equals(Message other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return base.Equals(other) && Unread == other.Unread && string.Equals(Name, other.Name) && string.Equals(FromName, other.FromName) && string.Equals(FromNumber, other.FromNumber) 
+                && string.Equals(MessageDate, other.MessageDate) && MessageType == other.MessageType && Length == other.Length;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            return obj.GetType() == GetType() && Equals((Message) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hashCode = base.GetHashCode();
+                hashCode = (hashCode*397) ^ Unread.GetHashCode();
+                hashCode = (hashCode*397) ^ (Name?.GetHashCode() ?? 0);
+                hashCode = (hashCode*397) ^ (FromName?.GetHashCode() ?? 0);
+                hashCode = (hashCode*397) ^ (FromNumber?.GetHashCode() ?? 0);
+                hashCode = (hashCode*397) ^ (MessageDate?.GetHashCode() ?? 0);
+                hashCode = (hashCode*397) ^ MessageType;
+                hashCode = (hashCode*397) ^ Length;
+                return hashCode;
             }
         }
     }

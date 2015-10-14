@@ -1,3 +1,4 @@
+using System;
 using System.Text.RegularExpressions;
 
 namespace com.FreedomVoice.MobileApp.Android.Utils
@@ -40,6 +41,16 @@ namespace com.FreedomVoice.MobileApp.Android.Utils
         {
             var phoneRegex = new Regex(PhoneExtRegex);
             return phoneRegex.IsMatch(unformatted) ? phoneRegex.Replace(unformatted, "($1) $2-$3 x$4") : unformatted;
+        }
+
+        /// <summary>
+        /// Get formatted duration
+        /// </summary>
+        /// <param name="length">unformatted duration</param>
+        /// <returns>formated duration</returns>
+        public static string ToDuration(int length)
+        {
+            return length/3600 == 0 ? $"{(length/60)%60}:{length%60:00}" : $"{length/3600}:{(length/60)%60:00}:{length%60:00}";
         }
     }
 }

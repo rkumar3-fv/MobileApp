@@ -255,6 +255,44 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         }
 
         /// <summary>
+        /// Force update current folders list
+        /// </summary>
+        /// <returns></returns>
+        public long ForceLoadFolders()
+        {
+            if (SelectedExtension == -1) return -1;
+            var requestId = RequestId;
+            var getFoldersRequest = new GetFoldersRequest(requestId, SelectedAccount.AccountName, ExtensionsList[SelectedExtension].Id);
+            foreach (var request in _waitingRequestArray.Where(response => response.Value is GetFoldersRequest).Where(request => ((GetFoldersRequest)(request.Value)).Equals(getFoldersRequest)))
+            {
+                Log.Debug(App.AppPackage, "HELPER REQUEST: Duplicate ForceLoadFolders request. Execute ID=" + request.Key);
+                return request.Key;
+            }
+            Log.Debug(App.AppPackage, "HELPER REQUEST: ForceLoadFolders ID=" + requestId);
+            PrepareIntent(requestId, getFoldersRequest);
+            return requestId;
+        }
+
+        /// <summary>
+        /// Force update current messages list
+        /// </summary>
+        /// <returns></returns>
+        public long ForceLoadMessages()
+        {
+            if ((SelectedExtension == -1)||(SelectedFolder == -1)) return -1;
+            var requestId = RequestId;
+            var getMsgRequest = new GetMessagesRequest(requestId, SelectedAccount.AccountName, ExtensionsList[SelectedExtension].Id, ExtensionsList[SelectedExtension].Folders[SelectedFolder].FolderName);
+            foreach (var request in _waitingRequestArray.Where(response => response.Value is GetMessagesRequest).Where(request => ((GetMessagesRequest)(request.Value)).Equals(getMsgRequest)))
+            {
+                Log.Debug(App.AppPackage, "HELPER REQUEST: Duplicate ForceLoadMessages request. Execute ID=" + request.Key);
+                return request.Key;
+            }
+            Log.Debug(App.AppPackage, "HELPER REQUEST: ForceLoadMessages ID=" + requestId);
+            PrepareIntent(requestId, getMsgRequest);
+            return requestId;
+        }
+
+        /// <summary>
         /// Call request
         /// </summary>
         /// <param name="number">number for outgoing call</param>
@@ -440,6 +478,28 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                         SelectedMessage = -1;
                     }
                     HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new []{ActionsHelperEventArgs.MsgUpdated}));
+                    break;
+                case "GetFoldersResponse":
+                    Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} successed: YOU GET FOLDERS LIST");
+                    var foldersResponse = (GetFoldersResponse)response;
+                    if (!ExtensionsList[SelectedExtension].Folders.Equals(foldersResponse.FoldersList))
+                    {
+                        ExtensionsList[SelectedExtension].Folders = foldersResponse.FoldersList;
+                        SelectedFolder = -1;
+                        SelectedMessage = -1;
+                    }
+                    HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.MsgUpdated }));
+                    break;
+
+                case "GetMessagesResponse":
+                    Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} successed: YOU GET MESSAGES LIST");
+                    var msgResponse = (GetMessagesResponse)response;
+                    if (!ExtensionsList[SelectedExtension].Folders[SelectedFolder].MessagesList.Equals(msgResponse.MessagesList))
+                    {
+                        ExtensionsList[SelectedExtension].Folders[SelectedFolder].MessagesList = msgResponse.MessagesList;
+                        SelectedMessage = -1;
+                    }
+                    HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.MsgUpdated }));
                     break;
             }
             _waitingRequestArray.Remove(response.RequestId);
