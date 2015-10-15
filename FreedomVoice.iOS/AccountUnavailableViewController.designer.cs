@@ -9,21 +9,13 @@ using System;
 using System.CodeDom.Compiler;
 using UIKit;
 
-namespace FreedomVoice.iOS.ViewControllers
+namespace FreedomVoice.iOS
 {
-	[Register ("MainTabBarController")]
-	partial class MainTabBarController
+	[Register ("AccountUnavailableViewController")]
+	partial class AccountUnavailableViewController
 	{
-		[Outlet]
-		[GeneratedCode ("iOS Designer", "1.0")]
-		UITabBar MainTabBar { get; set; }
-
 		void ReleaseDesignerOutlets ()
 		{
-			if (MainTabBar != null) {
-				MainTabBar.Dispose ();
-				MainTabBar = null;
-			}
 		}
 	}
 }

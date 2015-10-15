@@ -1,8 +1,8 @@
 using System;
 using CoreGraphics;
-using Foundation;
 using FreedomVoice.Core;
 using FreedomVoice.Core.Entities.Enums;
+using FreedomVoice.iOS.Helpers;
 using UIKit;
 
 namespace FreedomVoice.iOS.ViewControllers
@@ -15,9 +15,7 @@ namespace FreedomVoice.iOS.ViewControllers
         {
             base.ViewDidLoad();
 
-            NavigationController.NavigationBar.TintColor = UIColor.White;
-            NavigationController.NavigationBar.TitleTextAttributes = new UIStringAttributes { ForegroundColor = UIColor.White };
-            NavigationController.NavigationBar.BarTintColor = new UIColor(0.016f, 0.588f, 0.816f, 1);
+            NavigationController.SetDefaultNavigationBarStyle();
 
             EmailTextField.BorderStyle = UITextBorderStyle.RoundedRect;
 
@@ -26,13 +24,22 @@ namespace FreedomVoice.iOS.ViewControllers
         }
 
         partial void SendButton_TouchUpInside(UIButton sender)
-	    {
-	        ProceedPasswordReset();
+        {
+            var emailAddress = EmailTextField.Text.Trim();
+            if (Validation.IsValidEmail(emailAddress))
+            {
+                ProceedPasswordReset(emailAddress);
+            }
+            else
+            {
+                InvokeOnMainThread(() => { EmailValidationLabel.Hidden = false; EmailTextField.Layer.BorderColor = new CGColor(0.996f, 0.788f, 0.373f, 1); });
+                EmailTextField.BecomeFirstResponder();
+            }
         }
 
-	    async private void ProceedPasswordReset()
+	    async private void ProceedPasswordReset(string emailAddress)
 	    {
-            var passwordResetResult = await ApiHelper.PasswordReset(EmailTextField.Text.Trim());
+            var passwordResetResult = await ApiHelper.PasswordReset(emailAddress);
             switch (passwordResetResult.Code)
             {
                 case ErrorCodes.Ok:
@@ -42,13 +49,7 @@ namespace FreedomVoice.iOS.ViewControllers
                     new UIAlertView("Password reset error", "Service is unreachable. Please try again later.", null, "OK", null).Show();
                     break;
                 default:
-                    InvokeOnMainThread(() => {
-                        EmailValidationLabel.Text = "Please enter a valid email address.";
-                        EmailValidationLabel.Hidden = false;
-                        EmailTextField.Layer.BorderColor = new CGColor(0.996f, 0.788f, 0.373f, 1);
-                        EmailTextField.Layer.BorderWidth = 1;
-                        EmailTextField.Layer.CornerRadius = 5;
-                    });
+                    InvokeOnMainThread(() => { EmailValidationLabel.Hidden = false; EmailTextField.Layer.BorderColor = new CGColor(0.996f, 0.788f, 0.373f, 1); });
                     EmailTextField.BecomeFirstResponder();
                     break;
             }
@@ -65,7 +66,7 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private void ReturnToLogin()
         {
-            DismissViewController(false, null);
+            NavigationController.PopViewController(false);
         }
     }
 }

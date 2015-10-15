@@ -1,6 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using FreedomVoice.Core;
 using FreedomVoice.iOS.Entities;
+using FreedomVoice.iOS.Helpers;
 using FreedomVoice.iOS.TableViewSources;
 using UIKit;
 
@@ -8,18 +12,65 @@ namespace FreedomVoice.iOS.ViewControllers
 {
 	partial class AccountsTableViewController : UITableViewController
 	{
-	    public List<Account> Accounts { get; set; }
+        private LoadingOverlay _loadingOverlay;
+	    private List<Account> _accountsList = new List<Account>();
 
-		public AccountsTableViewController(IntPtr handle) : base (handle) { }
+	    public AccountsTableViewController(IntPtr handle) : base(handle) { }
 
-	    public override void ViewDidLoad()
+	    public override async void ViewDidLoad()
 	    {
 	        base.ViewDidLoad();
 
-            NavigationController.NavigationBar.TitleTextAttributes = new UIStringAttributes { ForegroundColor = UIColor.White };
-            NavigationController.NavigationBar.BarTintColor = new UIColor(0.016f, 0.588f, 0.816f, 1);
+            NavigationItem.SetRightBarButtonItem(Appearance.GetLogoutBarButton(), true);
+            NavigationController.SetDefaultNavigationBarStyle();
 
-            AccountsTableView.Source = new AccountSource(Accounts, NavigationController);
-	    }
-	}
+            ShowOverlay();
+            UIApplication.SharedApplication.NetworkActivityIndicatorVisible = true;
+
+            await GetAccountsList();
+
+            if (_accountsList.Count == 1)
+            {
+                var appDelegate = UIApplication.SharedApplication.Delegate as AppDelegate;
+                appDelegate.RootNavigationController = new UINavigationController();
+
+                var tabBarController = AppDelegate.GetViewController<MainTabBarController>("MainTabBarController");
+                tabBarController.Title = _accountsList.First().FormattedPhoneNumber;
+                tabBarController.SelectedAccount = _accountsList.First();
+                appDelegate.RootNavigationController.PushViewController(tabBarController, false);
+                appDelegate.SetRootViewController(appDelegate.RootNavigationController, false);
+            }
+
+            HideOverlay();
+            UIApplication.SharedApplication.NetworkActivityIndicatorVisible = false;
+        }
+
+	    public override void ViewWillAppear(bool animated)
+	    {
+            base.ViewWillAppear(animated);
+
+            AccountsTableView.Source = new AccountSource(_accountsList, NavigationController);
+            AccountsTableView.ReloadData();
+        }
+
+	    private void ShowOverlay()
+        {
+            _loadingOverlay = new LoadingOverlay(UIScreen.MainScreen.Bounds);
+            View.Add(_loadingOverlay);
+        }
+
+        private void HideOverlay()
+        {
+            _loadingOverlay.Hide();
+        }
+
+        private async Task GetAccountsList()
+        {
+            await Task.Run(async () =>
+            {
+                var systems = await ApiHelper.GetSystems();
+                _accountsList = systems.Result.PhoneNumbers.Select(phoneNumber => new Account { PhoneNumber = phoneNumber }).ToList();
+            });
+        }
+    }
 }

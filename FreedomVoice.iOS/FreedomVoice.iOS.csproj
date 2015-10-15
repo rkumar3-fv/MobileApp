@@ -85,6 +85,13 @@
     <CodesignKey>iPhone Distribution</CodesignKey>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Helpers\Appearance.cs" />
+    <Compile Include="Helpers\Validation.cs" />
+    <Compile Include="ViewControllers\EmergencyDisclaimerViewController.cs" />
+    <Compile Include="ViewControllers\EmergencyDisclaimerViewController.designer.cs">
+      <DependentUpon>EmergencyDisclaimerViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Helpers\LoadingOverlay.cs" />
     <Compile Include="ViewControllers\AccountUnavailableViewController.cs" />
     <Compile Include="ViewControllers\AccountUnavailableViewController.designer.cs">
       <DependentUpon>AccountUnavailableViewController.cs</DependentUpon>
@@ -116,7 +123,6 @@
     <Compile Include="ViewControllers\ForgotPasswordViewController.designer.cs">
       <DependentUpon>ForgotPasswordViewController.cs</DependentUpon>
     </Compile>
-    <Compile Include="Helpers\GradientRenderer.cs" />
     <Compile Include="ViewControllers\LoginViewController.cs" />
     <Compile Include="ViewControllers\LoginViewController.designer.cs">
       <DependentUpon>LoginViewController.cs</DependentUpon>
