@@ -42,7 +42,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             _idSpinner.ItemSelected += (sender, args) =>
             {
                 Helper.SelectedAccount.SelectedPresentationNumber = args.Position;
-                Log.Debug(App.AppPackage, $"PRESENTATION NUMBER SET to {DataFormatUtils.ToPhoneNumber(Helper.SelectedAccount.AccountName)}");
+                Log.Debug(App.AppPackage, $"PRESENTATION NUMBER SET to {DataFormatUtils.ToPhoneNumber(Helper.SelectedAccount.PresentationNumber)}");
             };
             _dialEdit = view.FindViewById<EditText>(Resource.Id.keypadFragment_dialText);
             _backspaceButton = view.FindViewById<ImageButton>(Resource.Id.keypadFragment_backspace);

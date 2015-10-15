@@ -81,6 +81,7 @@
   <ItemGroup>
     <Compile Include="Actions\BaseAction.cs" />
     <Compile Include="Actions\Requests\BaseRequest.cs" />
+    <Compile Include="Actions\Requests\CallReservationRequest.cs" />
     <Compile Include="Actions\Requests\GetAccountsRequest.cs" />
     <Compile Include="Actions\Requests\GetExtensionsRequest.cs" />
     <Compile Include="Actions\Requests\GetFoldersRequest.cs" />
@@ -90,6 +91,7 @@
     <Compile Include="Actions\Requests\LogoutRequest.cs" />
     <Compile Include="Actions\Requests\RestorePasswordRequest.cs" />
     <Compile Include="Actions\Responses\BaseResponse.cs" />
+    <Compile Include="Actions\Responses\CallReservationResponse.cs" />
     <Compile Include="Actions\Responses\ErrorResponse.cs" />
     <Compile Include="Actions\Responses\GetAccountsResponse.cs" />
     <Compile Include="Actions\Responses\GetExtensionsResponse.cs" />

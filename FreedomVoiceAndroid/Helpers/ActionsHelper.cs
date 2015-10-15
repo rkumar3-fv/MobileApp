@@ -12,6 +12,7 @@ using com.FreedomVoice.MobileApp.Android.Activities;
 using com.FreedomVoice.MobileApp.Android.Entities;
 using com.FreedomVoice.MobileApp.Android.Services;
 using Java.Util.Concurrent.Atomic;
+using Uri = Android.Net.Uri;
 
 namespace com.FreedomVoice.MobileApp.Android.Helpers
 {
@@ -315,9 +316,15 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         public long Call(string number)
         {
             var requestId = RequestId;
-
-            Log.Debug(App.AppPackage, "HELPER REQUEST: Call ID=" + requestId);
-
+            var reserveCallRequest = new CallReservationRequest(requestId, SelectedAccount.AccountName, SelectedAccount.PresentationNumber, PhoneNumber, number);
+            foreach (var request in _waitingRequestArray.Where(response => response.Value is GetMessagesRequest).Where(request => ((GetMessagesRequest)(request.Value)).Equals(reserveCallRequest)))
+            {
+                Log.Debug(App.AppPackage, "HELPER REQUEST: Duplicate call reservation request. Execute ID=" + request.Key);
+                return request.Key;
+            }
+            Log.Debug(App.AppPackage, $"HELPER REQUEST: Call ID={requestId}");
+            Log.Debug(App.AppPackage, $"Call from {reserveCallRequest.Account} (shows as {reserveCallRequest.PresentationNumber}) to {reserveCallRequest.DialingNumber} using SIM {reserveCallRequest.RealSIMNumber}");
+            PrepareIntent(requestId, reserveCallRequest);
             return requestId;
         }
 
@@ -504,7 +511,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 
                 // Get extensions response
                 case "GetExtensionsResponse":
-                    Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} successed: YOU GET EXTENSIONS LIST");
+                    Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} successed - YOU GET EXTENSIONS LIST");
                     var extResponse = (GetExtensionsResponse)response;
                     if (!ExtensionsList.Equals(extResponse.ExtensionsList))
                     {
@@ -518,7 +525,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 
                 // Get folders response
                 case "GetFoldersResponse":
-                    Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} successed: YOU GET FOLDERS LIST");
+                    Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} successed - YOU GET FOLDERS LIST");
                     var foldersResponse = (GetFoldersResponse)response;
                     if (!ExtensionsList[SelectedExtension].Folders.Equals(foldersResponse.FoldersList))
                     {
@@ -531,7 +538,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 
                 // Get messages response
                 case "GetMessagesResponse":
-                    Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} successed: YOU GET MESSAGES LIST");
+                    Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} successed - YOU GET MESSAGES LIST");
                     var msgResponse = (GetMessagesResponse)response;
                     if (!ExtensionsList[SelectedExtension].Folders[SelectedFolder].MessagesList.Equals(msgResponse.MessagesList))
                     {
@@ -539,6 +546,20 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                         SelectedMessage = -1;
                     }
                     HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.MsgUpdated }));
+                    break;
+
+                // Call reservation response
+                case "CallReservationResponse":
+                    Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} successed (Call reservation)");
+                    var callResponse = (CallReservationResponse)response;
+                    if (callResponse.ServiceNumber.Length > 6)
+                    {
+                        var callIntent = new Intent(Intent.ActionCall, Uri.Parse("tel:" + callResponse.ServiceNumber));
+                        Log.Debug(App.AppPackage, $"ACTIVITY {GetType().Name} CREATES CALL to {callResponse.ServiceNumber}");
+                        HelperEvent?.Invoke(this, new ActionsHelperIntentArgs(response.RequestId, callIntent));
+                    }
+                    else
+                        HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.CallReservationFail }));
                     break;
             }
             _waitingRequestArray.Remove(response.RequestId);

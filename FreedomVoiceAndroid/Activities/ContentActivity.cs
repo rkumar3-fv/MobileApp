@@ -1,4 +1,5 @@
 using Android.App;
+using Android.Content.PM;
 using Android.OS;
 using Android.Support.Design.Widget;
 using Android.Support.V4.View;
@@ -20,6 +21,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         Label = "@string/ApplicationTitle",
         Icon = "@drawable/ic_launcher",
         Theme = "@style/AppTheme",
+        ScreenOrientation = ScreenOrientation.Portrait, 
         WindowSoftInputMode = SoftInput.StateHidden)]
     public class ContentActivity : BaseActivity
     {

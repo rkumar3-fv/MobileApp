@@ -1,6 +1,7 @@
 using System;
 using Android.App;
 using Android.Content;
+using Android.Content.PM;
 using Android.OS;
 using Android.Util;
 using Android.Views;
@@ -16,6 +17,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
     /// </summary>
     [Activity(
         Label = "@string/ActivityInactive_title",
+        ScreenOrientation = ScreenOrientation.Portrait,
         Theme = "@style/AppThemeActionBar")]
     public class InactiveActivity : InfoActivity
     {

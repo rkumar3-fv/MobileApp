@@ -15,6 +15,8 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         public const int MsgUpdated = 31;
         public const int MsgFoldersUpdated = 32;
         public const int MsgMessagesUpdated = 33;
+        public const int CallReservationOk = 41;
+        public const int CallReservationFail = 42;
 
         public ActionsHelperEventArgs(long requestId, int[] codes)
         {
