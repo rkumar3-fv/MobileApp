@@ -17,6 +17,7 @@
   <string name="ActivityInactive_title">Account Unavailable</string>
   <string name="ActivityInactive_info">The account you have selected is not available. Please contact Customer Care at (800) 477-1477.</string>
   <string name="ActivityIncative_callButton">Call Customer Care</string>
+  <string name="ActivityInactive_customerNumber">8004771477</string>
   <string name="ActivityDisclaimer_title">Emergency Disclaimer</string>
   <string name="ActivityDisclaimer_info">The FreedomVoice app is not intended for dailing emergency numbers, such as 911. Emergency 911 services are provided by your cellular phone carrier.</string>
   <string name="ActivityDisclaimer_okButton">I Understand</string>

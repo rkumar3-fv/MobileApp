@@ -101,6 +101,7 @@
     <Compile Include="Actions\Responses\RestorePasswordResponse.cs" />
     <Compile Include="Activities\AuthActivity.cs" />
     <Compile Include="Activities\BaseActivity.cs" />
+    <Compile Include="Activities\InactiveActiviyWithBack.cs" />
     <Compile Include="Activities\SelectAccountActivity.cs" />
     <Compile Include="Adapters\CallerIdSpinnerAdapter.cs" />
     <Compile Include="Adapters\ContentPager.cs" />
@@ -141,6 +142,8 @@
     <Compile Include="Services\IComServiceResultReceiver.cs" />
     <Compile Include="Utils\DataFormatUtils.cs" />
     <Compile Include="Utils\DataValidationUtils.cs" />
+    <Compile Include="Utils\CallStateHelper.cs" />
+    <Compile Include="Utils\DialingEventArgs.cs" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\act_auth.axml" />

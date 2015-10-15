@@ -1,11 +1,10 @@
 using System;
 using Android.App;
 using Android.Content;
-using Android.Graphics;
 using Android.Runtime;
-using Android.Util;
-using Android.Views;
+using Android.Telephony;
 using com.FreedomVoice.MobileApp.Android.Helpers;
+using com.FreedomVoice.MobileApp.Android.Utils;
 
 namespace com.FreedomVoice.MobileApp.Android
 {
@@ -20,6 +19,11 @@ namespace com.FreedomVoice.MobileApp.Android
     public class App : Application
     {
         public const string AppPackage = "com.FreedomVoice.MobileApp.Android";
+
+        /// <summary>
+        /// Call state helper
+        /// </summary>
+        public CallStateHelper CallState { get; private set; }
 
         /// <summary>
         /// Get app context
@@ -39,6 +43,18 @@ namespace com.FreedomVoice.MobileApp.Android
         {
             base.OnCreate();
             Helper = new ActionsHelper(this);
+            
+            CallState = new CallStateHelper();
+            CallState.CallEvent += CallStateOnCallEvent;
+            var telManager = (TelephonyManager)GetSystemService(TelephonyService);
+            telManager.Listen(CallState, PhoneStateListenerFlags.CallState);
+        }
+
+        private void CallStateOnCallEvent(object sender, DialingEventArgs args)
+        {
+            var intent = PackageManager.GetLaunchIntentForPackage(BaseContext.PackageName);
+            intent.AddFlags(ActivityFlags.ClearTop);
+            StartActivity(intent);
         }
 
         /// <summary>

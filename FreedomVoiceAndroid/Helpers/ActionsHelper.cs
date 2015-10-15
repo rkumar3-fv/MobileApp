@@ -490,7 +490,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                     {
                         // No one active presentation numbers
                         case 0:
-                            intent = new Intent(_app, typeof(InactiveActivity));
+                            intent = new Intent(_app, typeof(InactiveActiviyWithBack));
                             break;
                         // One or more presentation numbers
                         default:

@@ -108,8 +108,8 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         {
             if ((Helper.PhoneNumber == null)||(Helper.PhoneNumber.Length == 0))
             {
-                var logoutDialog = new NoCellularDialogFragment();
-                logoutDialog.Show(ContentActivity.SupportFragmentManager, GetString(Resource.String.DlgCellular_title));
+                var noCellularDialog = new NoCellularDialogFragment();
+                noCellularDialog.Show(ContentActivity.SupportFragmentManager, GetString(Resource.String.DlgCellular_title));
             }
             else
             {
