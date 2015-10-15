@@ -56,87 +56,229 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:columnCount="3">
-        <Button
+        <LinearLayout
             android:id="@+id/keypadFragment_buttonOne"
-            style="@style/KeyButtonStyle"
+            android:orientation="vertical"
+            android:clickable="true"
+            android:background="@android:color/transparent"
             android:layout_width="@dimen/fragment_keypad_key_size"
-            android:layout_height="@dimen/fragment_keypad_key_size"
-            android:text="1" />
-        <Button
+            android:layout_height="@dimen/fragment_keypad_key_size">
+            <TextView
+                style="@style/KeyButtonTextMainStyle"
+                android:text="@string/FragmentKeypad_oneButtonTitle"
+                android:layout_gravity="center_horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                style="@style/KeyButtonTextSecondaryStyle"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/FragmentKeypad_oneButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+        <LinearLayout
             android:id="@+id/keypadFragment_buttonTwo"
-            style="@style/KeyButtonStyle"
+            android:orientation="vertical"
+            android:clickable="true"
+            android:background="@android:color/transparent"
             android:layout_width="@dimen/fragment_keypad_key_size"
             android:layout_height="@dimen/fragment_keypad_key_size"
             android:layout_marginStart="@dimen/fragment_keypad_key_spacing"
-            android:layout_marginEnd="@dimen/fragment_keypad_key_spacing"
-            android:text="2" />
-        <Button
+            android:layout_marginEnd="@dimen/fragment_keypad_key_spacing">
+            <TextView
+                style="@style/KeyButtonTextMainStyle"
+                android:text="@string/FragmentKeypad_twoButtonTitle"
+                android:layout_gravity="center_horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                style="@style/KeyButtonTextSecondaryStyle"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/FragmentKeypad_twoButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+        <LinearLayout
             android:id="@+id/keypadFragment_buttonThree"
-            style="@style/KeyButtonStyle"
+            android:orientation="vertical"
+            android:clickable="true"
+            android:background="@android:color/transparent"
             android:layout_width="@dimen/fragment_keypad_key_size"
-            android:layout_height="@dimen/fragment_keypad_key_size"
-            android:text="3" />
-        <Button
+            android:layout_height="@dimen/fragment_keypad_key_size">
+            <TextView
+                style="@style/KeyButtonTextMainStyle"
+                android:text="@string/FragmentKeypad_threeButtonTitle"
+                android:layout_gravity="center_horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                style="@style/KeyButtonTextSecondaryStyle"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/FragmentKeypad_threeButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+        <LinearLayout
             android:id="@+id/keypadFragment_buttonFour"
-            style="@style/KeyButtonStyle"
+            android:orientation="vertical"
+            android:clickable="true"
+            android:background="@android:color/transparent"
             android:layout_width="@dimen/fragment_keypad_key_size"
-            android:layout_height="@dimen/fragment_keypad_key_size"
-            android:text="4" />
-        <Button
+            android:layout_height="@dimen/fragment_keypad_key_size">
+            <TextView
+                style="@style/KeyButtonTextMainStyle"
+                android:text="@string/FragmentKeypad_fourButtonTitle"
+                android:layout_gravity="center_horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                style="@style/KeyButtonTextSecondaryStyle"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/FragmentKeypad_fourButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+        <LinearLayout
             android:id="@+id/keypadFragment_buttonFive"
-            style="@style/KeyButtonStyle"
+            android:orientation="vertical"
+            android:clickable="true"
+            android:background="@android:color/transparent"
             android:layout_width="@dimen/fragment_keypad_key_size"
             android:layout_height="@dimen/fragment_keypad_key_size"
             android:layout_marginStart="@dimen/fragment_keypad_key_spacing"
-            android:layout_marginEnd="@dimen/fragment_keypad_key_spacing"
-            android:text="5" />
-        <Button
+            android:layout_marginEnd="@dimen/fragment_keypad_key_spacing">
+            <TextView
+                style="@style/KeyButtonTextMainStyle"
+                android:text="@string/FragmentKeypad_fiveButtonTitle"
+                android:layout_gravity="center_horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                style="@style/KeyButtonTextSecondaryStyle"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/FragmentKeypad_fiveButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+        <LinearLayout
             android:id="@+id/keypadFragment_buttonSix"
-            style="@style/KeyButtonStyle"
+            android:orientation="vertical"
+            android:clickable="true"
+            android:background="@android:color/transparent"
             android:layout_width="@dimen/fragment_keypad_key_size"
-            android:layout_height="@dimen/fragment_keypad_key_size"
-            android:text="6" />
-        <Button
+            android:layout_height="@dimen/fragment_keypad_key_size">
+            <TextView
+                style="@style/KeyButtonTextMainStyle"
+                android:text="@string/FragmentKeypad_sixButtonTitle"
+                android:layout_gravity="center_horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                style="@style/KeyButtonTextSecondaryStyle"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/FragmentKeypad_sixButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+        <LinearLayout
             android:id="@+id/keypadFragment_buttonSeven"
-            style="@style/KeyButtonStyle"
+            android:orientation="vertical"
+            android:clickable="true"
+            android:background="@android:color/transparent"
             android:layout_width="@dimen/fragment_keypad_key_size"
-            android:layout_height="@dimen/fragment_keypad_key_size"
-            android:text="7" />
-        <Button
+            android:layout_height="@dimen/fragment_keypad_key_size">
+            <TextView
+                style="@style/KeyButtonTextMainStyle"
+                android:text="@string/FragmentKeypad_sevenButtonTitle"
+                android:layout_gravity="center_horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                style="@style/KeyButtonTextSecondaryStyle"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/FragmentKeypad_sevenButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+        <LinearLayout
             android:id="@+id/keypadFragment_buttonEight"
-            style="@style/KeyButtonStyle"
+            android:orientation="vertical"
+            android:clickable="true"
+            android:background="@android:color/transparent"
             android:layout_width="@dimen/fragment_keypad_key_size"
             android:layout_height="@dimen/fragment_keypad_key_size"
             android:layout_marginStart="@dimen/fragment_keypad_key_spacing"
-            android:layout_marginEnd="@dimen/fragment_keypad_key_spacing"
-            android:text="8" />
-        <Button
+            android:layout_marginEnd="@dimen/fragment_keypad_key_spacing">
+            <TextView
+                style="@style/KeyButtonTextMainStyle"
+                android:text="@string/FragmentKeypad_eightButtonTitle"
+                android:layout_gravity="center_horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                style="@style/KeyButtonTextSecondaryStyle"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/FragmentKeypad_eightButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+        <LinearLayout
             android:id="@+id/keypadFragment_buttonNine"
-            style="@style/KeyButtonStyle"
+            android:orientation="vertical"
+            android:clickable="true"
+            android:background="@android:color/transparent"
             android:layout_width="@dimen/fragment_keypad_key_size"
-            android:layout_height="@dimen/fragment_keypad_key_size"
-            android:text="9" />
+            android:layout_height="@dimen/fragment_keypad_key_size">
+            <TextView
+                style="@style/KeyButtonTextMainStyle"
+                android:text="@string/FragmentKeypad_nineButtonTitle"
+                android:layout_gravity="center_horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                style="@style/KeyButtonTextSecondaryStyle"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/FragmentKeypad_nineButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
         <Button
             android:id="@+id/keypadFragment_buttonStar"
             style="@style/KeyButtonStyle"
+            android:background="@android:color/transparent"
             android:layout_width="@dimen/fragment_keypad_key_size"
             android:layout_height="@dimen/fragment_keypad_key_size"
-            android:text="*"
+            android:text="@string/FragmentKeypad_starButtonTitle"
             android:textColor="@color/colorKeyOnKeyboardSecondary" />
-        <Button
+        <LinearLayout
             android:id="@+id/keypadFragment_buttonZero"
-            style="@style/KeyButtonStyle"
+            android:orientation="vertical"
+            android:clickable="true"
+            android:background="@android:color/transparent"
             android:layout_width="@dimen/fragment_keypad_key_size"
             android:layout_height="@dimen/fragment_keypad_key_size"
             android:layout_marginStart="@dimen/fragment_keypad_key_spacing"
-            android:layout_marginEnd="@dimen/fragment_keypad_key_spacing"
-            android:text="0" />
+            android:layout_marginEnd="@dimen/fragment_keypad_key_spacing">
+            <TextView
+                style="@style/KeyButtonTextMainStyle"
+                android:text="@string/FragmentKeypad_zeroButtonTitle"
+                android:layout_gravity="center_horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                style="@style/KeyButtonTextSecondaryStyle"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/FragmentKeypad_zeroButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
         <Button
             android:id="@+id/keypadFragment_buttonHash"
             style="@style/KeyButtonStyle"
+            android:background="@android:color/transparent"
             android:layout_width="@dimen/fragment_keypad_key_size"
             android:layout_height="@dimen/fragment_keypad_key_size"
-            android:text="#"
+            android:text="@string/FragmentKeypad_hashButtonTitle"
             android:textColor="@color/colorKeyOnKeyboardSecondary" />
     </GridLayout>
     <android.support.design.widget.FloatingActionButton

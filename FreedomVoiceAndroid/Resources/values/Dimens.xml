@@ -79,6 +79,7 @@
   <dimen name="fragment_keypad_key_text_size">36sp</dimen>
   <dimen name="fragment_keypad_key_small_text_size">12sp</dimen>
   <dimen name="fragment_keypad_key_size">64dp</dimen>
+  <dimen name="fragment_keypad_key_top_spacing">12dp</dimen>
   <dimen name="fragment_keypad_key_spacing">40dp</dimen>
   <dimen name="fragment_keypad_backspace_spacing">56dp</dimen>
   <dimen name="fragment_keypad_bottom_margin">76dp</dimen>

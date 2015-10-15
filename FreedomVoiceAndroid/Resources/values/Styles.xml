@@ -207,4 +207,16 @@
     <item name="android:textColor">@color/colorDlgContent</item>
     <item name="android:textSize">@dimen/dlg_content_font</item>
   </style>
+
+  <!-- Numeric keyboard main text style -->
+  <style name="KeyButtonTextMainStyle">
+    <item name="android:textSize">@dimen/fragment_keypad_key_text_size</item>
+    <item name="android:textColor">@color/colorKeyOnKeyboardMain</item>
+  </style>
+  
+  <!-- Numeric keyboard secondary text style -->
+  <style name="KeyButtonTextSecondaryStyle">
+    <item name="android:textSize">@dimen/fragment_keypad_key_small_text_size</item>
+    <item name="android:textColor">@color/colorKeyOnKeyboardSecondary</item>
+  </style>
 </resources>

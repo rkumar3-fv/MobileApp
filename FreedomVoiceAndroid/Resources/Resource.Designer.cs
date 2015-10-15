@@ -1652,32 +1652,32 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f060081
 			public const int disclaimer_activity_text_margin = 2131099777;
 			
-			// aapt resource value: 0x7f0600a1
-			public const int dlg_action_bar_button = 2131099809;
-			
-			// aapt resource value: 0x7f0600a3
-			public const int dlg_action_bar_font = 2131099811;
-			
-			// aapt resource value: 0x7f0600a0
-			public const int dlg_action_bar_height = 2131099808;
-			
 			// aapt resource value: 0x7f0600a2
-			public const int dlg_action_bar_padding = 2131099810;
-			
-			// aapt resource value: 0x7f0600a7
-			public const int dlg_content_font = 2131099815;
-			
-			// aapt resource value: 0x7f06009f
-			public const int dlg_elevation = 2131099807;
+			public const int dlg_action_bar_button = 2131099810;
 			
 			// aapt resource value: 0x7f0600a4
-			public const int dlg_margin = 2131099812;
+			public const int dlg_action_bar_font = 2131099812;
+			
+			// aapt resource value: 0x7f0600a1
+			public const int dlg_action_bar_height = 2131099809;
+			
+			// aapt resource value: 0x7f0600a3
+			public const int dlg_action_bar_padding = 2131099811;
+			
+			// aapt resource value: 0x7f0600a8
+			public const int dlg_content_font = 2131099816;
+			
+			// aapt resource value: 0x7f0600a0
+			public const int dlg_elevation = 2131099808;
 			
 			// aapt resource value: 0x7f0600a5
-			public const int dlg_padding = 2131099813;
+			public const int dlg_margin = 2131099813;
 			
 			// aapt resource value: 0x7f0600a6
-			public const int dlg_title_font = 2131099814;
+			public const int dlg_padding = 2131099814;
+			
+			// aapt resource value: 0x7f0600a7
+			public const int dlg_title_font = 2131099815;
 			
 			// aapt resource value: 0x7f06006a
 			public const int drawer_elevation = 2131099754;
@@ -1685,23 +1685,23 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f060069
 			public const int drawer_size = 2131099753;
 			
-			// aapt resource value: 0x7f060099
-			public const int fragment_keypad_backspace_spacing = 2131099801;
-			
 			// aapt resource value: 0x7f06009a
-			public const int fragment_keypad_bottom_margin = 2131099802;
+			public const int fragment_keypad_backspace_spacing = 2131099802;
 			
 			// aapt resource value: 0x7f06009b
-			public const int fragment_keypad_button_ripple = 2131099803;
+			public const int fragment_keypad_bottom_margin = 2131099803;
 			
 			// aapt resource value: 0x7f06009c
-			public const int fragment_keypad_fab_elevation = 2131099804;
-			
-			// aapt resource value: 0x7f06009e
-			public const int fragment_keypad_fab_ripple = 2131099806;
+			public const int fragment_keypad_button_ripple = 2131099804;
 			
 			// aapt resource value: 0x7f06009d
-			public const int fragment_keypad_fab_translation = 2131099805;
+			public const int fragment_keypad_fab_elevation = 2131099805;
+			
+			// aapt resource value: 0x7f06009f
+			public const int fragment_keypad_fab_ripple = 2131099807;
+			
+			// aapt resource value: 0x7f06009e
+			public const int fragment_keypad_fab_translation = 2131099806;
 			
 			// aapt resource value: 0x7f060097
 			public const int fragment_keypad_key_size = 2131099799;
@@ -1709,11 +1709,14 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f060096
 			public const int fragment_keypad_key_small_text_size = 2131099798;
 			
-			// aapt resource value: 0x7f060098
-			public const int fragment_keypad_key_spacing = 2131099800;
+			// aapt resource value: 0x7f060099
+			public const int fragment_keypad_key_spacing = 2131099801;
 			
 			// aapt resource value: 0x7f060095
 			public const int fragment_keypad_key_text_size = 2131099797;
+			
+			// aapt resource value: 0x7f060098
+			public const int fragment_keypad_key_top_spacing = 2131099800;
 			
 			// aapt resource value: 0x7f060094
 			public const int fragment_keypad_number_size = 2131099796;
@@ -3012,86 +3015,125 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f080014
 			public const int ApplicationTitle = 2131230740;
 			
-			// aapt resource value: 0x7f08004b
-			public const int DlgCellular_content = 2131230795;
+			// aapt resource value: 0x7f080058
+			public const int DlgCellular_content = 2131230808;
 			
-			// aapt resource value: 0x7f08004a
-			public const int DlgCellular_title = 2131230794;
+			// aapt resource value: 0x7f080057
+			public const int DlgCellular_title = 2131230807;
 			
-			// aapt resource value: 0x7f080048
-			public const int DlgLogout_content = 2131230792;
+			// aapt resource value: 0x7f080055
+			public const int DlgLogout_content = 2131230805;
 			
-			// aapt resource value: 0x7f080049
-			public const int DlgLogout_ok = 2131230793;
+			// aapt resource value: 0x7f080056
+			public const int DlgLogout_ok = 2131230806;
 			
-			// aapt resource value: 0x7f080047
-			public const int DlgLogout_title = 2131230791;
+			// aapt resource value: 0x7f080054
+			public const int DlgLogout_title = 2131230804;
 			
-			// aapt resource value: 0x7f080046
-			public const int Dlg_cancel = 2131230790;
+			// aapt resource value: 0x7f080053
+			public const int Dlg_cancel = 2131230803;
 			
-			// aapt resource value: 0x7f080045
-			public const int Dlg_ok = 2131230789;
+			// aapt resource value: 0x7f080052
+			public const int Dlg_ok = 2131230802;
 			
-			// aapt resource value: 0x7f080044
-			public const int FragmentContacts_title = 2131230788;
+			// aapt resource value: 0x7f080051
+			public const int FragmentContacts_title = 2131230801;
 			
 			// aapt resource value: 0x7f080032
 			public const int FragmentKeypad_callerId = 2131230770;
 			
-			// aapt resource value: 0x7f080039
-			public const int FragmentKeypad_eightButton = 2131230777;
+			// aapt resource value: 0x7f080042
+			public const int FragmentKeypad_eightButton = 2131230786;
 			
-			// aapt resource value: 0x7f080036
-			public const int FragmentKeypad_fiveButton = 2131230774;
+			// aapt resource value: 0x7f080041
+			public const int FragmentKeypad_eightButtonTitle = 2131230785;
 			
-			// aapt resource value: 0x7f080035
-			public const int FragmentKeypad_fourButton = 2131230773;
+			// aapt resource value: 0x7f08003c
+			public const int FragmentKeypad_fiveButton = 2131230780;
+			
+			// aapt resource value: 0x7f08003b
+			public const int FragmentKeypad_fiveButtonTitle = 2131230779;
 			
 			// aapt resource value: 0x7f08003a
-			public const int FragmentKeypad_nineButton = 2131230778;
+			public const int FragmentKeypad_fourButton = 2131230778;
 			
-			// aapt resource value: 0x7f080038
-			public const int FragmentKeypad_sevenButton = 2131230776;
+			// aapt resource value: 0x7f080039
+			public const int FragmentKeypad_fourButtonTitle = 2131230777;
 			
-			// aapt resource value: 0x7f080037
-			public const int FragmentKeypad_sixButton = 2131230775;
+			// aapt resource value: 0x7f080048
+			public const int FragmentKeypad_hashButtonTitle = 2131230792;
+			
+			// aapt resource value: 0x7f080044
+			public const int FragmentKeypad_nineButton = 2131230788;
+			
+			// aapt resource value: 0x7f080043
+			public const int FragmentKeypad_nineButtonTitle = 2131230787;
 			
 			// aapt resource value: 0x7f080034
-			public const int FragmentKeypad_threeButton = 2131230772;
+			public const int FragmentKeypad_oneButton = 2131230772;
+			
+			// aapt resource value: 0x7f080033
+			public const int FragmentKeypad_oneButtonTitle = 2131230771;
+			
+			// aapt resource value: 0x7f080040
+			public const int FragmentKeypad_sevenButton = 2131230784;
+			
+			// aapt resource value: 0x7f08003f
+			public const int FragmentKeypad_sevenButtonTitle = 2131230783;
+			
+			// aapt resource value: 0x7f08003e
+			public const int FragmentKeypad_sixButton = 2131230782;
+			
+			// aapt resource value: 0x7f08003d
+			public const int FragmentKeypad_sixButtonTitle = 2131230781;
+			
+			// aapt resource value: 0x7f080047
+			public const int FragmentKeypad_starButtonTitle = 2131230791;
+			
+			// aapt resource value: 0x7f080038
+			public const int FragmentKeypad_threeButton = 2131230776;
+			
+			// aapt resource value: 0x7f080037
+			public const int FragmentKeypad_threeButtonTitle = 2131230775;
 			
 			// aapt resource value: 0x7f080031
 			public const int FragmentKeypad_title = 2131230769;
 			
-			// aapt resource value: 0x7f080033
-			public const int FragmentKeypad_twoButton = 2131230771;
+			// aapt resource value: 0x7f080036
+			public const int FragmentKeypad_twoButton = 2131230774;
 			
-			// aapt resource value: 0x7f08003b
-			public const int FragmentKeypad_zeroButton = 2131230779;
+			// aapt resource value: 0x7f080035
+			public const int FragmentKeypad_twoButtonTitle = 2131230773;
 			
-			// aapt resource value: 0x7f08003d
-			public const int FragmentMessages_folderNew = 2131230781;
+			// aapt resource value: 0x7f080046
+			public const int FragmentKeypad_zeroButton = 2131230790;
 			
-			// aapt resource value: 0x7f080040
-			public const int FragmentMessages_folderSaved = 2131230784;
+			// aapt resource value: 0x7f080045
+			public const int FragmentKeypad_zeroButtonTitle = 2131230789;
 			
-			// aapt resource value: 0x7f08003e
-			public const int FragmentMessages_folderSent = 2131230782;
+			// aapt resource value: 0x7f08004a
+			public const int FragmentMessages_folderNew = 2131230794;
 			
-			// aapt resource value: 0x7f08003f
-			public const int FragmentMessages_folderTrash = 2131230783;
+			// aapt resource value: 0x7f08004d
+			public const int FragmentMessages_folderSaved = 2131230797;
 			
-			// aapt resource value: 0x7f080042
-			public const int FragmentMessages_morePage = 2131230786;
+			// aapt resource value: 0x7f08004b
+			public const int FragmentMessages_folderSent = 2131230795;
 			
-			// aapt resource value: 0x7f080041
-			public const int FragmentMessages_onePage = 2131230785;
+			// aapt resource value: 0x7f08004c
+			public const int FragmentMessages_folderTrash = 2131230796;
 			
-			// aapt resource value: 0x7f08003c
-			public const int FragmentMessages_title = 2131230780;
+			// aapt resource value: 0x7f08004f
+			public const int FragmentMessages_morePage = 2131230799;
 			
-			// aapt resource value: 0x7f080043
-			public const int FragmentRecents_title = 2131230787;
+			// aapt resource value: 0x7f08004e
+			public const int FragmentMessages_onePage = 2131230798;
+			
+			// aapt resource value: 0x7f080049
+			public const int FragmentMessages_title = 2131230793;
+			
+			// aapt resource value: 0x7f080050
+			public const int FragmentRecents_title = 2131230800;
 			
 			// aapt resource value: 0x7f080015
 			public const int MenuItem_logout = 2131230741;
@@ -3645,6 +3687,12 @@ namespace com.FreedomVoice.MobileApp.Android
 			
 			// aapt resource value: 0x7f090148
 			public const int KeyButtonStyle = 2131296584;
+			
+			// aapt resource value: 0x7f090154
+			public const int KeyButtonTextMainStyle = 2131296596;
+			
+			// aapt resource value: 0x7f090155
+			public const int KeyButtonTextSecondaryStyle = 2131296597;
 			
 			// aapt resource value: 0x7f09014f
 			public const int ListItemSecondaryText = 2131296591;
