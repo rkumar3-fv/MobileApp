@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Android.OS;
 using Android.Util;
@@ -13,6 +12,10 @@ using Object = Java.Lang.Object;
 
 namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
 {
+    /// <summary>
+    /// Messages list request
+    /// <see href="https://api.freedomvoice.com/Help/Api/GET-api-v1-systems-systemPhoneNumber-mailboxes-mailboxNumber-folders-folderName-messages_PageSize_PageNumber_SortAsc">API - Get messages request</see>
+    /// </summary>
     public class GetMessagesRequest : BaseRequest
     {
         /// <summary>

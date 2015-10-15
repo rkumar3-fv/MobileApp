@@ -9,6 +9,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
 {
     /// <summary>
     /// Accounts list request
+    /// <see href="https://api.freedomvoice.com/Help/Api/GET-api-v1-systems">API - Get accounts request</see>
     /// </summary>
     public class GetAccountsRequest : BaseRequest
     {

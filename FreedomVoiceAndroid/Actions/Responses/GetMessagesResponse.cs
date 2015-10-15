@@ -10,6 +10,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Responses
 {
     /// <summary>
     /// Messages list response
+    /// <see href="https://api.freedomvoice.com/Help/Api/GET-api-v1-systems-systemPhoneNumber-mailboxes-mailboxNumber-folders-folderName-messages_PageSize_PageNumber_SortAsc">API - Get messages request</see>
     /// </summary>
     public class GetMessagesResponse : BaseResponse, IEquatable<GetMessagesResponse>
     {

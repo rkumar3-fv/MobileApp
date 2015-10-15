@@ -90,6 +90,11 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
                     viewHolder.ExtensionInfo.Text = extension.MailsCount > 99 ? "99+" : extension.MailsCount.ToString();
                     viewHolder.InfoLayout.Visibility = ViewStates.Visible;
                 }
+                else
+                {
+                    viewHolder.ExtensionInfo.Text = "";
+                    viewHolder.InfoLayout.Visibility = ViewStates.Invisible;
+                }
             }
             else if (contentItem is Folder)
             {
@@ -98,7 +103,19 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
                 if (viewHolder == null) return;
                 viewHolder.FoldersName.Text = folder.FolderName;
                 if (folder.FolderName == _context.GetString(Resource.String.FragmentMessages_folderNew))
+                {
                     viewHolder.FoldersIcon.SetImageResource(Resource.Drawable.ic_new_folder);
+                    if (folder.MailsCount > 0)
+                    {
+                        viewHolder.FoldersInfo.Text = folder.MailsCount > 99 ? "99+" : folder.MailsCount.ToString();
+                        viewHolder.InfoLayout.Visibility = ViewStates.Visible;
+                    }
+                    else
+                    {
+                        viewHolder.FoldersInfo.Text = "";
+                        viewHolder.InfoLayout.Visibility = ViewStates.Invisible;
+                    }
+                }
                 else if (folder.FolderName == _context.GetString(Resource.String.FragmentMessages_folderSent))
                     viewHolder.FoldersIcon.SetImageResource(Resource.Drawable.ic_send_folder);
                 else if (folder.FolderName == _context.GetString(Resource.String.FragmentMessages_folderTrash))
@@ -107,11 +124,6 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
                     viewHolder.FoldersIcon.SetImageResource(Resource.Drawable.ic_save_folder);
                 else
                     viewHolder.FoldersIcon.SetImageResource(Resource.Drawable.ic_other_folder);
-                if (folder.MailsCount > 0)
-                {
-                    viewHolder.FoldersInfo.Text = folder.MailsCount > 99 ? "99+" : folder.MailsCount.ToString();
-                    viewHolder.InfoLayout.Visibility = ViewStates.Visible;
-                }
             }
             else
             {
@@ -147,6 +159,12 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
                     viewHolder.MessageFrom.SetTypeface(null, TypefaceStyle.Bold);
                     viewHolder.MessageDate.SetTypeface(null, TypefaceStyle.Bold);
                     viewHolder.MessageDate.SetTextColor(ContextCompat.GetColorStateList(_context, Resource.Color.textColorPrimary));
+                }
+                else
+                {
+                    viewHolder.MessageFrom.SetTypeface(null, TypefaceStyle.Normal);
+                    viewHolder.MessageDate.SetTypeface(null, TypefaceStyle.Normal);
+                    viewHolder.MessageDate.SetTextColor(ContextCompat.GetColorStateList(_context, Resource.Color.messageIndicatorText));
                 }
             }
         }

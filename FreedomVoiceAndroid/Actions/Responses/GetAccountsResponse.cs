@@ -10,6 +10,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Responses
 {
     /// <summary>
     /// Accounts list response
+    /// <see href="https://api.freedomvoice.com/Help/Api/GET-api-v1-systems">API - Get accounts request</see>
     /// </summary>
     public class GetAccountsResponse : BaseResponse, IEquatable<GetAccountsResponse>
     {

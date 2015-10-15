@@ -11,6 +11,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
 {
     /// <summary>
     /// Extensions list request
+    /// <see href="https://api.freedomvoice.com/Help/Api/GET-api-v1-systems-systemPhoneNumber-mailboxesWithCounts">API - Get extensions request</see>
     /// </summary>
     public class GetExtensionsRequest : BaseRequest
     {

@@ -10,6 +10,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
 {
     /// <summary>
     /// Restore password action
+    /// <see href="https://api.freedomvoice.com/Help/Api/POST-api-v1-passwordReset">API - Restore password request</see>
     /// </summary>
     public class RestorePasswordRequest : BaseRequest, IEquatable<RestorePasswordRequest>
     {

@@ -6,6 +6,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Responses
 {
     /// <summary>
     /// Sucessful password restoration action
+    /// <see href="https://api.freedomvoice.com/Help/Api/POST-api-v1-passwordReset">API - Restore password request</see>
     /// </summary>
     public class RestorePasswordResponse : BaseResponse
     {

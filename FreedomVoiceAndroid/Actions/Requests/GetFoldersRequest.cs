@@ -12,6 +12,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
 {
     /// <summary>
     /// Folders list request
+    /// <see href="https://api.freedomvoice.com/Help/Api/GET-api-v1-systems-systemPhoneNumber-mailboxes-mailboxNumber-folders">API - Get folders request</see>
     /// </summary>
     public class GetFoldersRequest : BaseRequest
     {

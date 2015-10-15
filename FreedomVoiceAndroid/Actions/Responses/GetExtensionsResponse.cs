@@ -10,6 +10,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Responses
 {
     /// <summary>
     /// Extensions list response
+    /// <see href="https://api.freedomvoice.com/Help/Api/GET-api-v1-systems-systemPhoneNumber-mailboxesWithCounts">API - Get extensions request</see>
     /// </summary>
     public class GetExtensionsResponse : BaseResponse, IEquatable<GetExtensionsResponse>
     {

@@ -25,42 +25,56 @@ namespace TestApp
             }
 
             var resRestore = ApiHelper.PasswordReset("oops@gmail.com").Result;
-            Console.Write(@"Restore method not registered email: " + (resRestore?.Code.ToString() ?? "null"));
+            Console.WriteLine(@"Restore method not registered email: " + (resRestore?.Code.ToString() ?? "null"));
             Console.Write(Environment.NewLine);
 
             resRestore = ApiHelper.PasswordReset("oops").Result;
-            Console.Write(@"Restore method wrong email format: " + (resRestore?.Code.ToString() ?? "null"));
+            Console.WriteLine(@"Restore method wrong email format: " + (resRestore?.Code.ToString() ?? "null"));
             Console.Write(Environment.NewLine);
 
-            Console.Write(@"Restore method valid: " + ApiHelper.PasswordReset("freedomvoice.user2.267055@gmail.com").Result.Code);
+            Console.WriteLine(@"Restore method valid: " + ApiHelper.PasswordReset("freedomvoice.user2.267055@gmail.com").Result.Code);
             Console.Write(Environment.NewLine);
 
-            Console.Write(@"Login method not regisered email: " + ApiHelper.Login("oops@gmail.com", _passwd).Result.Code);
+            Console.WriteLine(@"Login method not regisered email: " + ApiHelper.Login("oops@gmail.com", _passwd).Result.Code);
             Console.Write(Environment.NewLine);
 
-            Console.Write(@"Login method wrong format: " + ApiHelper.Login("oops", _passwd).Result.Code);
+            Console.WriteLine(@"Login method wrong format: " + ApiHelper.Login("oops", _passwd).Result.Code);
             Console.Write(Environment.NewLine);
 
-            Console.Write(@"Login method: " + ApiHelper.Login(_login, _passwd).Result.Code);
+            Console.WriteLine(@"Login method: " + ApiHelper.Login(_login, _passwd).Result.Code);
             Console.Write(Environment.NewLine);
 
-            Console.Write(@"Logout method: " + ApiHelper.Logout().Result.Code);
+            Console.WriteLine(@"Logout method: " + ApiHelper.Logout().Result.Code);
             Console.Write(Environment.NewLine);
 
-            Console.Write(@"Login method: " + ApiHelper.Login(_login, _passwd).Result.Code);
+            Console.WriteLine(@"Login method: " + ApiHelper.Login(_login, _passwd).Result.Code);
+            Console.Write(Environment.NewLine);
+
+            Console.WriteLine(@"Login method another one: " + ApiHelper.Login(_login, _passwd).Result.Code);
             Console.Write(Environment.NewLine);
 
             Console.WriteLine(@"Systems method: ");
-            var phoneNumbers = ApiHelper.GetSystems().Result.Result.PhoneNumbers;
-            foreach (var phoneNumber in phoneNumbers)
+            var syst = ApiHelper.GetSystems().Result.Result.PhoneNumbers;
+            foreach (var phoneNumber in syst)
                 Console.WriteLine(phoneNumber);
             Console.Write(Environment.NewLine);
 
-            Console.Write(@"Mailboxes method: " + ApiHelper.GetMailboxes("7607124648"));
+            var phoneNumbers = ApiHelper.GetPresentationPhoneNumbers("7607124648").Result;
+            Console.WriteLine($"Presentation phones method: {phoneNumbers.Code}");
+            foreach (var phoneNumber in phoneNumbers.Result.PhoneNumbers)
+                Console.WriteLine(phoneNumber);
+            Console.Write(Environment.NewLine);
+
+            var mb = ApiHelper.GetMailboxes("4153730879").Result;
+            Console.WriteLine(@"Mailboxes method with count for #4153730879: " + mb.Code);
+            foreach (var mailbox in mb.Result)
+            {
+                Console.WriteLine($"{mailbox.DisplayName} (x{mailbox.MailboxNumber})");
+            }
             Console.Write(Environment.NewLine);
 
             var resMb = ApiHelper.GetMailboxesWithCounts("7607124648").Result;
-            Console.WriteLine(@"Mailboxes method with count: " + resMb.Result.Count);
+            Console.WriteLine(@"Mailboxes method with count for #7607124648: " + resMb.Code);
             foreach (var mailboxWithCount in resMb.Result)
             {
                 Console.WriteLine($"{mailboxWithCount.DisplayName} (x{mailboxWithCount.MailboxNumber}) - {mailboxWithCount.UnreadMessages}");
@@ -99,7 +113,9 @@ namespace TestApp
             }
             Console.Write(Environment.NewLine);
 
-            Console.Write(@"CallReservation method: " + ApiHelper.CreateCallReservation("7607124648", "9898846477", "7607124648", "8477163106").Result.Code);
+            var reserv = ApiHelper.CreateCallReservation("7607124648", "8005551212", "7607124648", "8005556767").Result;
+            Console.WriteLine($"CallReservation method: {reserv.Code}");
+            Console.WriteLine($"Result: {((reserv.Result==null)?("NULL"):(reserv.Result.CallReservationSetting))}");
             Console.Write(Environment.NewLine);
 
 

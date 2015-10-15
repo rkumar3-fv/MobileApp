@@ -70,7 +70,9 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 _errorTextPassword.Text = GetString(Resource.String.ActivityAuth_badPassword);
                 return;
             }
-            Helper.Authorize(_loginText.Text, _passwordText.Text);
+            var res = Helper.Authorize(_loginText.Text, _passwordText.Text);
+            if (res == -1)
+                Helper.GetAccounts();
         }
 
         private void HideErrors()

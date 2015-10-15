@@ -7,6 +7,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Responses
 {
     /// <summary>
     /// Response with error code
+    /// <see href="https://api.freedomvoice.com/Help">FreedomVoice REST API</see>
     /// </summary>
     public class ErrorResponse : BaseResponse, IEquatable<ErrorResponse>
     {

@@ -173,9 +173,6 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         /// <returns>request ID</returns>
         public long Logout()
         {
-            if (!IsLoggedIn)
-                return -1;
-
             var requestId = RequestId;
             var logoutRequest = new LogoutRequest(requestId);
             foreach (var request in _waitingRequestArray.Where(response => response.Value is LogoutRequest).Where(request => ((LogoutRequest)(request.Value)).Equals(logoutRequest)))

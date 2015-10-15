@@ -8,7 +8,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
 {
     /// <summary>
     /// Abstract request action
-    /// <see href="https://webservices.freedomvoice.com/FreedomAPI/FreedomAPI.asmx">FreedomAPI</see>
+    /// <see href="https://api.freedomvoice.com/Help">FreedomVoice REST API</see>
     /// </summary>
     public abstract class BaseRequest : BaseAction, IEquatable<BaseRequest>
     {
