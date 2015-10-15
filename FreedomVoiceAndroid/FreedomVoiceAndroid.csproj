@@ -53,7 +53,7 @@
     <Reference Include="System" />
     <Reference Include="System.Collections" />
     <Reference Include="System.Core" />
-	<Reference Include="System.Runtime" />
+    <Reference Include="System.Runtime" />
     <Reference Include="System.Threading.Tasks" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml" />
@@ -85,6 +85,7 @@
     <Compile Include="Actions\Requests\GetExtensionsRequest.cs" />
     <Compile Include="Actions\Requests\GetFoldersRequest.cs" />
     <Compile Include="Actions\Requests\GetMessagesRequest.cs" />
+    <Compile Include="Actions\Requests\GetPresentationNumbersRequest.cs" />
     <Compile Include="Actions\Requests\LoginRequest.cs" />
     <Compile Include="Actions\Requests\LogoutRequest.cs" />
     <Compile Include="Actions\Requests\RestorePasswordRequest.cs" />
@@ -94,6 +95,7 @@
     <Compile Include="Actions\Responses\GetExtensionsResponse.cs" />
     <Compile Include="Actions\Responses\GetFoldersResponse.cs" />
     <Compile Include="Actions\Responses\GetMessagesResponse.cs" />
+    <Compile Include="Actions\Responses\GetPresentationNumbersResponse.cs" />
     <Compile Include="Actions\Responses\LoginResponse.cs" />
     <Compile Include="Actions\Responses\LogoutResponse.cs" />
     <Compile Include="Actions\Responses\RestorePasswordResponse.cs" />

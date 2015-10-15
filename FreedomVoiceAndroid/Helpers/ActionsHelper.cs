@@ -223,6 +223,24 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         }
 
         /// <summary>
+        /// Get presentation numbers action
+        /// </summary>
+        /// <returns>request ID</returns>
+        public long GetPresentationNumbers()
+        {
+            var requestId = RequestId;
+            var getPresNumbersRequest = new GetPresentationNumbersRequest(requestId, SelectedAccount.AccountName);
+            foreach (var request in _waitingRequestArray.Where(response => response.Value is GetPresentationNumbersRequest).Where(request => ((GetPresentationNumbersRequest)(request.Value)).Equals(getPresNumbersRequest)))
+            {
+                Log.Debug(App.AppPackage, "HELPER REQUEST: Duplicate GetPresentationNumbers request. Execute ID=" + request.Key);
+                return request.Key;
+            }
+            Log.Debug(App.AppPackage, "HELPER REQUEST: GetPresentationNumbers ID=" + requestId);
+            PrepareIntent(requestId, getPresNumbersRequest);
+            return requestId;
+        }
+
+        /// <summary>
         /// Get or update extensions list
         /// </summary>
         /// <returns>request ID</returns>
@@ -445,25 +463,46 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                         case 0:
                             SelectedAccount = null;
                             intent = new Intent(_app, typeof (InactiveActivity));
+                            HelperEvent?.Invoke(this, new ActionsHelperIntentArgs(response.RequestId, intent));
                             break;
 
                         // Only one active account
                         case 1:
                             AccountsList = accsResponse.AccountsList;
                             SelectedAccount = AccountsList[0];
-                            intent = IsFirstRun ? new Intent(_app, typeof(DisclaimerActivity)) : new Intent(_app, typeof(SelectAccountActivity));
-                            ForceLoadExtensions();
+                            GetPresentationNumbers();
                             break;
 
                         // More than one active accounts
                         default:
                             AccountsList = accsResponse.AccountsList;
                             intent = new Intent(_app, typeof(SelectAccountActivity));
+                            HelperEvent?.Invoke(this, new ActionsHelperIntentArgs(response.RequestId, intent));
+                            break;
+                    }
+                    break;
+
+                // Get presentation numbers response
+                case "GetPresentationNumbersResponse":
+                    var numbResponse = (GetPresentationNumbersResponse)response;
+                    Log.Debug(App.AppPackage, $"HELPER EXECUTOR: detect {numbResponse.NumbersList.Count} numbers");
+                    switch (numbResponse.NumbersList.Count)
+                    {
+                        // No one active presentation numbers
+                        case 0:
+                            intent = new Intent(_app, typeof(InactiveActivity));
+                            break;
+                        // One or more presentation numbers
+                        default:
+                            SelectedAccount.PresentationNumbers = numbResponse.NumbersList;
+                            intent = IsFirstRun ? new Intent(_app, typeof(DisclaimerActivity)) : new Intent(_app, typeof(ContentActivity));
+                            ForceLoadExtensions();
                             break;
                     }
                     HelperEvent?.Invoke(this, new ActionsHelperIntentArgs(response.RequestId, intent));
                     break;
 
+                // Get extensions response
                 case "GetExtensionsResponse":
                     Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} successed: YOU GET EXTENSIONS LIST");
                     var extResponse = (GetExtensionsResponse)response;
@@ -476,6 +515,8 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                     }
                     HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new []{ActionsHelperEventArgs.MsgUpdated}));
                     break;
+
+                // Get folders response
                 case "GetFoldersResponse":
                     Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} successed: YOU GET FOLDERS LIST");
                     var foldersResponse = (GetFoldersResponse)response;
@@ -488,6 +529,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                     HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.MsgUpdated }));
                     break;
 
+                // Get messages response
                 case "GetMessagesResponse":
                     Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} successed: YOU GET MESSAGES LIST");
                     var msgResponse = (GetMessagesResponse)response;

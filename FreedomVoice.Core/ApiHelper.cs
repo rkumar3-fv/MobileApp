@@ -45,7 +45,7 @@
         public async static Task<BaseResult<PresentationPhoneNumbers>> GetPresentationPhoneNumbers(string systemPhoneNumber)
         {
             return await MakeAsyncGetRequest<PresentationPhoneNumbers>(
-                $"api/v1/systems/{systemPhoneNumber}/presentationPhoneNumbers",
+                $"/api/v1/systems/{systemPhoneNumber}/presentationPhoneNumbers",
                 "application/json",
                 CancellationToken.None);
         }
@@ -55,7 +55,7 @@
             var postdata = $"ExpectedCallerIdNumber={expectedCallerIdNumber}&PresentationPhoneNumber={presentationPhoneNumber}&DestinationPhoneNumber={destinationPhoneNumber}";
 
             return await MakeAsyncPostRequest<CreateCallReservationSetting>(
-                $"api/v1/systems/{systemPhoneNumber}/createCallReservation",
+                $"/api/v1/systems/{systemPhoneNumber}/createCallReservation",
                 postdata,
                 "application/x-www-form-urlencoded",
                 CancellationToken.None);

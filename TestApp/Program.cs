@@ -54,8 +54,8 @@ namespace TestApp
             Console.Write(Environment.NewLine);
 
             Console.WriteLine(@"Systems method: ");
-            var syst = ApiHelper.GetSystems().Result.Result.PhoneNumbers;
-            foreach (var phoneNumber in syst)
+            var syst = ApiHelper.GetSystems().Result;
+            foreach (var phoneNumber in syst.Result.PhoneNumbers)
                 Console.WriteLine(phoneNumber);
             Console.Write(Environment.NewLine);
 

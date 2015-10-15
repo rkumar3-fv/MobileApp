@@ -41,8 +41,8 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             _idSpinner = view.FindViewById<Spinner>(Resource.Id.keypadFragment_idSpinner);
             _idSpinner.ItemSelected += (sender, args) =>
             {
-                Helper.SelectedAccount = Helper.AccountsList[args.Position];
-                Log.Debug(App.AppPackage, $"ACCOUNT CHANGED to {DataFormatUtils.ToPhoneNumber(Helper.SelectedAccount.AccountName)}");
+                Helper.SelectedAccount.SelectedPresentationNumber = args.Position;
+                Log.Debug(App.AppPackage, $"PRESENTATION NUMBER SET to {DataFormatUtils.ToPhoneNumber(Helper.SelectedAccount.AccountName)}");
             };
             _dialEdit = view.FindViewById<EditText>(Resource.Id.keypadFragment_dialText);
             _backspaceButton = view.FindViewById<ImageButton>(Resource.Id.keypadFragment_backspace);
@@ -81,14 +81,14 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         public override void OnActivityCreated(Bundle savedInstanceState)
         {
             base.OnActivityCreated(savedInstanceState);
-            var adapter = new CallerIdSpinnerAdapter(Activity, Helper.AccountsList);
+            var adapter = new CallerIdSpinnerAdapter(Activity, Helper.SelectedAccount.PresentationNumbers);
             _idSpinner.Adapter = adapter;
         }
 
         public override void OnResume()
         {
             base.OnResume();
-            _idSpinner.SetSelection(Helper.AccountsList.IndexOf(Helper.SelectedAccount));
+            _idSpinner.SetSelection(Helper.SelectedAccount.SelectedPresentationNumber);
         }
 
         /// <summary>

@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using Android.Content;
 using Android.Views;
 using Android.Widget;
-using com.FreedomVoice.MobileApp.Android.Entities;
 using com.FreedomVoice.MobileApp.Android.Utils;
 using Object = Java.Lang.Object;
 
@@ -14,28 +13,28 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
     class CallerIdSpinnerAdapter: BaseAdapter, ISpinnerAdapter
     {
         private readonly Context _context;
-        private List<Account> _accountsList;
+        private List<string> _numbersList;
 
-        public CallerIdSpinnerAdapter(Context context, List<Account> list)
+        public CallerIdSpinnerAdapter(Context context, List<string> list)
         {
             _context = context;
-            _accountsList = list;
+            _numbersList = list;
         }
 
         /// <summary>
         /// Caller IDs list
         /// </summary>
-        public List<Account> AccountsList
+        public List<string> NumbersList
         {
-            get { return _accountsList; }
+            get { return _numbersList; }
             set 
             {
-                _accountsList = value;
+                _numbersList = value;
                 NotifyDataSetChanged();
             }
         }
 
-        public CallerIdSpinnerAdapter(Context context) : this (context, new List<Account>())
+        public CallerIdSpinnerAdapter(Context context) : this (context, new List<string>())
         { }
 
         /// <summary>
@@ -45,7 +44,7 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
         /// <returns>Account object</returns>
         public override Object GetItem(int position)
         {
-            return _accountsList[position];
+            return _numbersList[position];
         }
 
         /// <summary>
@@ -53,9 +52,9 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
         /// </summary>
         /// <param name="position">position</param>
         /// <returns>Account</returns>
-        public Account GetAccount(int position)
+        public string GetPresentationNumber(int position)
         {
-            return _accountsList[position];
+            return _numbersList[position];
         }
 
         public override long GetItemId(int position)
@@ -77,7 +76,7 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
                 holder.SpinnerValue = view.FindViewById<TextView>(Resource.Id.itemSpinner_idText);
                 view.Tag = holder;
             }
-            holder.SpinnerValue.Text = DataFormatUtils.ToPhoneNumber(_accountsList[position].AccountName);
+            holder.SpinnerValue.Text = DataFormatUtils.ToPhoneNumber(_numbersList[position]);
             return view;
         }
 
@@ -95,14 +94,14 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
                 holder.SpinnerValue = view.FindViewById<TextView>(Resource.Id.itemSpinnerDrop_idText);
                 view.Tag = holder;
             }
-            holder.SpinnerValue.Text = DataFormatUtils.ToPhoneNumber(_accountsList[position].AccountName);
+            holder.SpinnerValue.Text = DataFormatUtils.ToPhoneNumber(_numbersList[position]);
             return view;
         }
 
         /// <summary>
         /// Get accounts count
         /// </summary>
-        public override int Count => _accountsList?.Count ?? 0;
+        public override int Count => _numbersList?.Count ?? 0;
 
         private class ViewHolder: Object
         {

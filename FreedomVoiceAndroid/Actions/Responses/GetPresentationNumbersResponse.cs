@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Android.OS;
-using com.FreedomVoice.MobileApp.Android.Entities;
 using Java.Interop;
 using Java.Lang;
 using Object = Java.Lang.Object;
@@ -9,36 +8,39 @@ using Object = Java.Lang.Object;
 namespace com.FreedomVoice.MobileApp.Android.Actions.Responses
 {
     /// <summary>
-    /// Accounts list response
-    /// <see href="https://api.freedomvoice.com/Help/Api/GET-api-v1-systems">API - Get accounts request</see>
+    /// Presentation numbers list response
+    /// <see href="https://api.freedomvoice.com/Help/Api/GET-api-v1-systems-systemPhoneNumber-presentationPhoneNumbers">API - Get accounts request</see>
     /// </summary>
-    public class GetAccountsResponse : BaseResponse, IEquatable<GetAccountsResponse>
+    public class GetPresentationNumbersResponse : BaseResponse, IEquatable<GetPresentationNumbersResponse>
     {
-        public List<Account>AccountsList { get; }
+        /// <summary>
+        /// Presentation numbers list
+        /// </summary>
+        public List<string> NumbersList { get; }
 
         /// <summary>
         /// Response init for GetAccountsRequest
         /// </summary>
         /// <param name="requestId">Request ID</param>
-        /// <param name="accounts">Accounts' numbers enum</param>
-        public GetAccountsResponse(long requestId, IEnumerable<string> accounts) : base(requestId)
+        /// <param name="numbers">Presentation numbers' enum</param>
+        public GetPresentationNumbersResponse(long requestId, IEnumerable<string> numbers) : base(requestId)
         {
-            AccountsList = new List<Account>();
-            foreach (var account in accounts)
+            NumbersList = new List<string>();
+            foreach (var number in numbers)
             {
-                AccountsList.Add(new Account(account, new List<string>()));
+                NumbersList.Add(number);
             }
         }
 
-        public GetAccountsResponse(Parcel parcel) : base(parcel)
+        public GetPresentationNumbersResponse(Parcel parcel) : base(parcel)
         {
-            parcel.ReadList(AccountsList, ClassLoader.SystemClassLoader);
+            parcel.ReadList(NumbersList, ClassLoader.SystemClassLoader);
         }
 
         public override void WriteToParcel(Parcel dest, ParcelableWriteFlags flags)
         {
             base.WriteToParcel(dest, flags);
-            dest.WriteList(AccountsList);
+            dest.WriteList(NumbersList);
         }
 
         [ExportField("CREATOR")]
@@ -60,25 +62,25 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Responses
             }
         }
 
-        public bool Equals(GetAccountsResponse other)
+        public bool Equals(GetPresentationNumbersResponse other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return base.Equals(other) && Equals(AccountsList, other.AccountsList);
+            return base.Equals(other) && Equals(NumbersList, other.NumbersList);
         }
 
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == GetType() && Equals((GetAccountsResponse) obj);
+            return obj.GetType() == GetType() && Equals((GetPresentationNumbersResponse) obj);
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                return (base.GetHashCode()*397) ^ (AccountsList?.GetHashCode() ?? 0);
+                return (base.GetHashCode()*397) ^ (NumbersList?.GetHashCode() ?? 0);
             }
         }
     }
