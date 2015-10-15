@@ -51,12 +51,14 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
             set
             {
                 if (_currentContent.Equals(value)) return;
-                Clean();
                 _currentContent = value;
                 NotifyDataSetChanged();
             }
         }
 
+        /// <summary>
+        /// Clean view content
+        /// </summary>
         public void Clean()
         {
             _currentContent.Clear();

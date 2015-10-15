@@ -4,7 +4,9 @@ using Android.Support.V7.Widget;
 using Android.Util;
 using Android.Views;
 using com.FreedomVoice.MobileApp.Android.Adapters;
+using com.FreedomVoice.MobileApp.Android.Entities;
 using com.FreedomVoice.MobileApp.Android.Helpers;
+using Message = com.FreedomVoice.MobileApp.Android.Entities.Message;
 
 namespace com.FreedomVoice.MobileApp.Android.Fragments
 {
@@ -52,6 +54,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         public override void OnResume()
         {
             base.OnResume();
+            TraceContent();
             _adapter.CurrentContent = Helper.GetCurrent();
         }
 
@@ -62,8 +65,34 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                 switch (code)
                 {
                     case ActionsHelperEventArgs.MsgUpdated:
+                        TraceContent();              
                         _adapter.CurrentContent = Helper.GetCurrent();
                         _swipeRefresh.Refreshing = false;
+                        break;
+                }
+            }
+        }
+
+        private void TraceContent()
+        {
+            foreach (var messageItem in Helper.GetCurrent())
+            {
+                switch (messageItem.GetType().Name)
+                {
+                    case "Extension":
+                        var ext = (Extension)messageItem;
+                        Log.Debug(App.AppPackage,
+                            $"Extension {ext.ExtensionName} ({ext.Id}) - {ext.MailsCount} unread");
+                        break;
+                    case "Folder":
+                        var fold = (Folder)messageItem;
+                        Log.Debug(App.AppPackage,
+                            $"Folder {fold.FolderName} - {fold.MailsCount} mails");
+                        break;
+                    case "Message":
+                        var msg = (Message)messageItem;
+                        Log.Debug(App.AppPackage,
+                            $"Message {msg.Name} ({(msg.Unread?"Unread":"Old")}) - from: {msg.FromNumber} received {msg.MessageDate}");
                         break;
                 }
             }
