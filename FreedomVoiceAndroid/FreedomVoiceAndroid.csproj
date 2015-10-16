@@ -82,6 +82,7 @@
     <Compile Include="Actions\BaseAction.cs" />
     <Compile Include="Actions\Requests\BaseRequest.cs" />
     <Compile Include="Actions\Requests\CallReservationRequest.cs" />
+    <Compile Include="Actions\Requests\DeleteMessageRequest.cs" />
     <Compile Include="Actions\Requests\GetAccountsRequest.cs" />
     <Compile Include="Actions\Requests\GetExtensionsRequest.cs" />
     <Compile Include="Actions\Requests\GetFoldersRequest.cs" />
@@ -89,9 +90,12 @@
     <Compile Include="Actions\Requests\GetPresentationNumbersRequest.cs" />
     <Compile Include="Actions\Requests\LoginRequest.cs" />
     <Compile Include="Actions\Requests\LogoutRequest.cs" />
+    <Compile Include="Actions\Requests\RemoveMessageRequest.cs" />
+    <Compile Include="Actions\Requests\RestoreMessageRequest.cs" />
     <Compile Include="Actions\Requests\RestorePasswordRequest.cs" />
     <Compile Include="Actions\Responses\BaseResponse.cs" />
     <Compile Include="Actions\Responses\CallReservationResponse.cs" />
+    <Compile Include="Actions\Responses\DeleteMessageResponse.cs" />
     <Compile Include="Actions\Responses\ErrorResponse.cs" />
     <Compile Include="Actions\Responses\GetAccountsResponse.cs" />
     <Compile Include="Actions\Responses\GetExtensionsResponse.cs" />
@@ -100,6 +104,8 @@
     <Compile Include="Actions\Responses\GetPresentationNumbersResponse.cs" />
     <Compile Include="Actions\Responses\LoginResponse.cs" />
     <Compile Include="Actions\Responses\LogoutResponse.cs" />
+    <Compile Include="Actions\Responses\RemoveMessageResponse.cs" />
+    <Compile Include="Actions\Responses\RestoreMessageResponse.cs" />
     <Compile Include="Actions\Responses\RestorePasswordResponse.cs" />
     <Compile Include="Activities\AuthActivity.cs" />
     <Compile Include="Activities\BaseActivity.cs" />

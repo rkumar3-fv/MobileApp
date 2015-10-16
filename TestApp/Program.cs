@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using FreedomVoice.Core;
 using System.IO;
 using System.Threading;
@@ -105,7 +106,7 @@ namespace TestApp
             }
             Console.Write(Environment.NewLine);
 
-            resMsg = ApiHelper.GetMesages("7607124648", 803, "New", 10, 1, true).Result;
+            resMsg = ApiHelper.GetMesages("7607124648", 802, "New", 10, 1, true).Result;
             Console.WriteLine($"Messages method: {resMsg.Code}");
             foreach (var msg in resMsg.Result)
             {
@@ -119,11 +120,19 @@ namespace TestApp
             Console.Write(Environment.NewLine);
 
 
-            // Console.Write(@"Messages method: " + ApiHelper.MoveMessages("7607124648", 802, "New", new List<string> { "I159985458", "I159987614" }));
-            // Console.Write(Environment.NewLine);
-            //
-            // Console.Write(@"Messages method: " + ApiHelper.DeleteMessages("7607124648", 802, new List<string> { "I159985458", "I159987614" }));
-            // Console.Write(Environment.NewLine);
+            Console.Write(@"Messages move method Saved -> New: " + ApiHelper.MoveMessages("7607124648", 802, "New", new List<string> { "A159991316" }).Result.Code);
+            Console.Write(Environment.NewLine);
+            Console.Write(@"Messages move method New -> Saved: " + ApiHelper.MoveMessages("7607124648", 802, "Saved", new List<string> { "A159991316" }).Result.Code);
+            Console.Write(Environment.NewLine);
+
+            Console.Write(@"Messages move method Saved -> Trash: " + ApiHelper.MoveMessages("7607124648", 802, "Trash", new List<string> { "I160057801" }).Result.Code);
+            Console.Write(Environment.NewLine);
+            Console.Write(@"Messages move method Trash -> Saved: " + ApiHelper.MoveMessages("7607124648", 802, "Saved", new List<string> { "I160057801" }).Result.Code);
+            Console.Write(Environment.NewLine);
+
+            // WARNING! Delete message without restoration
+            //Console.Write(@"Messages delete method: " + ApiHelper.DeleteMessages("7607124648", 802, new List<string> { "I160057839" }));
+            Console.Write(Environment.NewLine);
 
             Console.WriteLine(@"Media method: ");
             if (File.Exists($"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\\{"file.pdf"}"))
