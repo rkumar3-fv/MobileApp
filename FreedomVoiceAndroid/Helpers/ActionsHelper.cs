@@ -273,7 +273,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         /// <summary>
         /// Force update current folders list
         /// </summary>
-        /// <returns></returns>
+        /// <returns>request ID</returns>
         public long ForceLoadFolders()
         {
             if (SelectedExtension == -1) return -1;
@@ -292,7 +292,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         /// <summary>
         /// Force update current messages list
         /// </summary>
-        /// <returns></returns>
+        /// <returns>request ID</returns>
         public long ForceLoadMessages()
         {
             if ((SelectedExtension == -1)||(SelectedFolder == -1)) return -1;
@@ -329,6 +329,66 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         }
 
         /// <summary>
+        /// Remove message action
+        /// </summary>
+        /// <param name="index">index of message</param>
+        /// <returns>request ID</returns>
+        public long RemoveMessage(int index)
+        {
+            var requestId = RequestId;
+            var removeRequest = new RemoveMessageRequest(requestId, SelectedAccount.AccountName, ExtensionsList[SelectedExtension].Id, 
+                ExtensionsList[SelectedExtension].Folders[SelectedFolder].MessagesList[index].Name);
+            foreach (var request in _waitingRequestArray.Where(response => response.Value is RemoveMessageRequest).Where(request => ((RemoveMessageRequest)(request.Value)).Equals(removeRequest)))
+            {
+                Log.Debug(App.AppPackage, "HELPER REQUEST: Duplicate Remove message request. Execute ID=" + request.Key);
+                return request.Key;
+            }
+            Log.Debug(App.AppPackage, "HELPER REQUEST: Remove message request ID=" + requestId);
+            PrepareIntent(requestId, removeRequest);
+            return requestId;
+        }
+
+        /// <summary>
+        /// Delete message action
+        /// </summary>
+        /// <param name="index">index of message</param>
+        /// <returns>request ID</returns>
+        public long DeleteMessage(int index)
+        {
+            var requestId = RequestId;
+            var deleteRequest = new DeleteMessageRequest(requestId, SelectedAccount.AccountName, ExtensionsList[SelectedExtension].Id,
+                ExtensionsList[SelectedExtension].Folders[SelectedFolder].MessagesList[index].Name);
+            foreach (var request in _waitingRequestArray.Where(response => response.Value is DeleteMessageRequest).Where(request => ((DeleteMessageRequest)(request.Value)).Equals(deleteRequest)))
+            {
+                Log.Debug(App.AppPackage, "HELPER REQUEST: Duplicate Delete message request. Execute ID=" + request.Key);
+                return request.Key;
+            }
+            Log.Debug(App.AppPackage, "HELPER REQUEST: Delete message request ID=" + requestId);
+            PrepareIntent(requestId, deleteRequest);
+            return requestId;
+        }
+
+        /// <summary>
+        /// Restore message action
+        /// </summary>
+        /// <param name="messageCode">message ID</param>
+        /// <returns>request ID</returns>
+        public long RestoreMessage(string messageCode)
+        {
+            var requestId = RequestId;
+            var restoreRequest = new RestoreMessageRequest(requestId, SelectedAccount.AccountName, ExtensionsList[SelectedExtension].Id, messageCode,
+                ExtensionsList[SelectedExtension].Folders[SelectedFolder].FolderName);
+            foreach (var request in _waitingRequestArray.Where(response => response.Value is RestoreMessageRequest).Where(request => ((RestoreMessageRequest)(request.Value)).Equals(restoreRequest)))
+            {
+                Log.Debug(App.AppPackage, "HELPER REQUEST: Duplicate Restore message request. Execute ID=" + request.Key);
+                return request.Key;
+            }
+            Log.Debug(App.AppPackage, "HELPER REQUEST: Restore message request ID=" + requestId);
+            PrepareIntent(requestId, restoreRequest);
+            return requestId;
+        }
+
+        /// <summary>
         /// Prepare intent for request
         /// </summary>
         /// <param name="requestId">request ID</param>
@@ -347,9 +407,9 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         }
 
         /// <summary>
-        /// 
+        /// Get current messages list content
         /// </summary>
-        /// <returns></returns>
+        /// <returns>list content</returns>
         public List<MessageItem> GetCurrent()
         {
             if ((SelectedExtension == -1)||(SelectedExtension > ExtensionsList.Count))
@@ -359,6 +419,11 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             return ExtensionsList[SelectedExtension].Folders[SelectedFolder].MessagesList?.Cast<MessageItem>().ToList();
         } 
 
+        /// <summary>
+        /// Move messages list to next level
+        /// </summary>
+        /// <param name="position">selected element</param>
+        /// <returns>next level list content</returns>
         public List<MessageItem> GetNext(int position)
         {
             if (SelectedExtension == -1)
@@ -368,6 +433,9 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             return GetCurrent();
         }
 
+        /// <summary>
+        /// Move messages list to previous level
+        /// </summary>
         public void GetPrevious()
         {
             if (SelectedFolder != -1)
@@ -561,6 +629,24 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                     else
                         HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.CallReservationFail }));
                     break;
+
+                // Move message to trash response
+                case "RemoveMessageResponse":
+                    Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} successed - MESSAGE REMOVED");
+                    HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.MsgMessagesUpdated }));
+                    break;
+
+                // Restore message from trash response
+                case "RestoreMessageResponse":
+                    Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} successed - MESSAGE RESTORED");
+                    HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.MsgMessagesUpdated }));
+                    break;
+
+                // Delete message from trash response
+                case "DeleteMessageResponse":
+                    Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} successed - MESSAGE DELETED");
+                    HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.MsgMessagesUpdated }));
+                    break;
             }
             _waitingRequestArray.Remove(response.RequestId);
         }
@@ -568,7 +654,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         /// <summary>
         /// Clear login info
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="id">request ID</param>
         private void DoLogout(long id)
         {
             _userLogin = "";
