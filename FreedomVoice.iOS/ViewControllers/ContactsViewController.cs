@@ -7,6 +7,7 @@ using Foundation;
 using UIKit;
 using Xamarin.Contacts;
 using CoreGraphics;
+using FreedomVoice.iOS.Helpers;
 
 namespace FreedomVoice.iOS.ViewControllers
 {
@@ -73,35 +74,41 @@ namespace FreedomVoice.iOS.ViewControllers
 
             searchBar = new UISearchBar();
             searchBar.Placeholder = "Search";
-            searchBar.SizeToFit();
+            searchBar.SizeToFit();            
             searchBar.AutocorrectionType = UITextAutocorrectionType.No;
-            searchBar.AutocapitalizationType = UITextAutocapitalizationType.None;
+            searchBar.AutocapitalizationType = UITextAutocapitalizationType.None;            
+
             searchBar.SearchButtonClicked += (sender, e) =>
             {
                 Search();
             };
 
+            searchBar.CancelButtonClicked += (sender, e) => {                
+                Reset();
+            };
+
 
             searchBar.TextChanged += (sender, e) =>
             {
-                if (string.IsNullOrEmpty(e.SearchText))
-                {
-                    searchBar.Text = string.Empty;
-                    Reset();
-                }
-                else
-                {
-                    Search();
-                }
+                if (string.IsNullOrEmpty(e.SearchText))                                    
+                    Reset();                                    
+                else                
+                    Search();                
             };
+            
 
             TableView.TableHeaderView = searchBar;
+            TableView.SectionIndexBackgroundColor = UIColor.Clear;
 
-
-            var frame = new CGRect(20, 50, 300, 30);
+            var containerWidth = 80;
+            var containerHeight = 20;
+            
+            var frame = new CGRect(View.Frame.Width / 2 - containerWidth / 2, View.Frame.Height / 2 - containerHeight / 2, containerWidth, containerHeight);            
             lblNoResults = new UILabel(frame);            
             lblNoResults.Text = "No Result";
-            lblNoResults.Alpha = 0f;
+            lblNoResults.MinimumFontSize = 36f;
+            lblNoResults.TextColor = UIColor.FromRGB(127,127,127);
+            lblNoResults.Alpha = 0f;            
             View.Add(lblNoResults);
         }
         public override nint RowsInSection(UITableView tableview, nint section)
@@ -181,6 +188,7 @@ namespace FreedomVoice.iOS.ViewControllers
 
         void Reset()
         {
+            searchBar.Text = string.Empty;
             bInSearchMode = false;
             var book = new Xamarin.Contacts.AddressBook();
             people = (from b in book select b).ToList();
@@ -189,11 +197,49 @@ namespace FreedomVoice.iOS.ViewControllers
         }
 
         void CheckResult()
-        {            
-            if (people.Count == 0)                            
+        {
+            if (people.Count == 0)
+            {
                 lblNoResults.Alpha = 1f;
-            else                            
-                lblNoResults.Alpha = 0f;            
+                TableView.SeparatorStyle = UITableViewCellSeparatorStyle.None;
+            }
+            else
+            {
+                lblNoResults.Alpha = 0f;
+                TableView.SeparatorStyle = UITableViewCellSeparatorStyle.SingleLine;
+            }
+
+            searchBar.ShowsCancelButton = !String.IsNullOrEmpty(searchBar.Text);
         }
+        
+
+        public override void RowSelected(UITableView tableView, NSIndexPath indexPath)
+        {
+
+            var pe = (from p in people where p.DisplayName.ToUpper().StartsWith(keys[indexPath.Section]) select p).ToList()[indexPath.Row];
+            Console.WriteLine($"pe.Phones.Count(){pe.Phones.Count()}");
+
+            if (PhoneCapability.IsAirplaneMode())
+            {
+                UIAlertController okAlertController = UIAlertController.Create(null, "Airplane Mode must be turned off to make calls from the FreedomVoice app.", UIAlertControllerStyle.Alert);
+                okAlertController.AddAction(UIAlertAction.Create("Settings", UIAlertActionStyle.Default, a => {
+                    var settingsString = UIApplication.OpenSettingsUrlString;                    
+                    var url = new NSUrl(settingsString);
+                    UIApplication.SharedApplication.OpenUrl(url);
+                }));
+                okAlertController.AddAction(UIAlertAction.Create("Cancel", UIAlertActionStyle.Cancel, null));
+
+                PresentViewController(okAlertController, true, null);
+                return;
+            }
+
+            if (!PhoneCapability.IsCellularEnabled())                
+            {
+                UIAlertController okAlertController = UIAlertController.Create(null, "Your device does not appear to support making cellular voice calls.", UIAlertControllerStyle.Alert);
+                okAlertController.AddAction(UIAlertAction.Create("Ok", UIAlertActionStyle.Default, a => {}));
+                PresentViewController(okAlertController, true, null);
+                return;
+            }
+        }        
     }
 }
