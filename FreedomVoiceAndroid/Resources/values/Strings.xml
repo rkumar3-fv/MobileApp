@@ -61,8 +61,17 @@
   <string name="FragmentMessages_folderSaved">Saved</string>
   <string name="FragmentMessages_onePage">1 page</string>
   <string name="FragmentMessages_morePage">pages</string>
+  <string name="FragmentMessages_remove">Message Removed</string>
+  <string name="FragmentMessages_removeUndo">UNDO</string>
   <string name="FragmentRecents_title">Recents</string>
   <string name="FragmentContacts_title">Contacts</string>
+  <string name="ActivityVoice_title">Voicemail</string>
+  <string name="ActivityVoice_speaker">Speaker</string>
+  <string name="ActivityVoice_callback">Call back</string>
+  <string name="ActivityRecord_title">Call Record</string>
+  <string name="ActivityFax_title">Fax</string>
+  <string name="ActivityFax_view">View Fax</string>
+  <string name="Timestamp_yesterday">Yesterday</string>
   <string name="Dlg_ok">OK</string>
   <string name="Dlg_cancel">CANCEL</string>
   <string name="DlgLogout_title">Confirm logout?</string>

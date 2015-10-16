@@ -52,5 +52,21 @@ namespace com.FreedomVoice.MobileApp.Android.Utils
         {
             return length/3600 == 0 ? $"{(length/60)%60}:{length%60:00}" : $"{length/3600}:{(length/60)%60:00}:{length%60:00}";
         }
+
+        /// <summary>
+        /// Date formatter
+        /// </summary>
+        /// <param name="yesterdayLabel">label for "yesterday"</param>
+        /// <param name="date">date for formatting</param>
+        /// <returns>formatted date</returns>
+        public static string ToFormattedDate(string yesterdayLabel, DateTime date)
+        {
+            var current = DateTime.Now;
+            if ((date.DayOfYear == current.DayOfYear) && (date.Year == current.Year))
+                return date.ToString("HH:mm tt");
+            if ((date.DayOfYear == current.DayOfYear) && (date.Year == current.Year))
+                return $"{yesterdayLabel} {date.ToString("HH:mm tt")}";
+            return date.ToString("MM/dd/hhhh HH:mm tt");
+        }
     }
 }

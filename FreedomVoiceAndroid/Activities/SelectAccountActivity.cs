@@ -1,11 +1,8 @@
 using Android.App;
 using Android.OS;
-using Android.Support.V7.Internal.View;
 using Android.Support.V7.Widget;
 using Android.Util;
-using Android.Views;
 using com.FreedomVoice.MobileApp.Android.Adapters;
-using com.FreedomVoice.MobileApp.Android.Dialogs;
 using com.FreedomVoice.MobileApp.Android.Helpers;
 using com.FreedomVoice.MobileApp.Android.Utils;
 
@@ -17,7 +14,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
     [Activity
         (Label = "@string/ActivitySelect_title",
         Theme = "@style/AppThemeActionBar")]
-    public class SelectAccountActivity : BaseActivity
+    public class SelectAccountActivity : LogoutActivity
     {
         private RecyclerView _selectView;
         private AccountsRecyclerAdapter _adapter;
@@ -47,28 +44,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             Helper.GetPresentationNumbers();
             //var intent = (Helper.IsFirstRun)? new Intent(this, typeof(DisclaimerActivity)): new Intent(this, typeof(ContentActivity));
             //StartActivity(intent);
-        }
-
-        public override bool OnCreateOptionsMenu(IMenu menu)
-        {
-            base.OnCreateOptionsMenu(menu);
-            var inflater = new SupportMenuInflater(this);
-            inflater.Inflate(Resource.Menu.menu_logout, menu);
-            return true;
-        }
-
-        public override bool OnOptionsItemSelected(IMenuItem item)
-        {
-            switch (item.ItemId)
-            {
-                case Resource.Id.menu_action_logout:
-                    var logoutDialog = new LogoutDialogFragment();
-                    logoutDialog.DialogEvent += OnDialogEvent;
-                    logoutDialog.Show(SupportFragmentManager, GetString(Resource.String.DlgLogout_title));
-                    return true;
-                default:
-                    return base.OnOptionsItemSelected(item);
-            }
         }
 
         public override void OnBackPressed()

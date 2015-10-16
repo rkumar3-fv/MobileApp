@@ -23,7 +23,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         Theme = "@style/AppTheme",
         ScreenOrientation = ScreenOrientation.Portrait, 
         WindowSoftInputMode = SoftInput.StateHidden)]
-    public class ContentActivity : BaseActivity
+    public class ContentActivity : LogoutActivity
     {
         private ContentPagerAdapter _pagerAdapter;
         private ContentPager _viewPager;
@@ -100,14 +100,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             return _toolbarSpinner;
         }
 
-        public override bool OnCreateOptionsMenu(IMenu menu)
-        {
-            base.OnCreateOptionsMenu(menu);
-            var inflater = new SupportMenuInflater(this);
-            inflater.Inflate(Resource.Menu.menu_logout, menu);
-            return true;
-        }
-
         public override bool OnOptionsItemSelected(IMenuItem item)
         {
             switch (item.ItemId)
@@ -117,9 +109,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                     SetToolbarContent();
                     return true;
                 case Resource.Id.menu_action_logout:
-                    var logoutDialog = new LogoutDialogFragment();
-                    logoutDialog.DialogEvent += OnDialogEvent;
-                    logoutDialog.Show(SupportFragmentManager, GetString(Resource.String.DlgLogout_title));
+                    LogoutAction();
                     return true;
                 default:
                     return base.OnOptionsItemSelected(item);

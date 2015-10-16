@@ -54,20 +54,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         }
 
         /// <summary>
-        /// Dialog actions handler
-        /// </summary>
-        protected void OnDialogEvent(object sender, DialogEventArgs args)
-        {
-            switch (sender.GetType().Name)
-            {
-                case "LogoutDialogFragment":
-                    if (args.Result == DialogResult.Ok)
-                        Helper.Logout();
-                    break;
-            }
-        }
-
-        /// <summary>
         /// Helper event callback action
         /// </summary>
         /// <param name="args">Result args</param>

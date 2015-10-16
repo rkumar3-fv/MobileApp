@@ -2973,6 +2973,12 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f080030
 			public const int ActivityExtension_title = 2131230768;
 			
+			// aapt resource value: 0x7f080058
+			public const int ActivityFax_title = 2131230808;
+			
+			// aapt resource value: 0x7f080059
+			public const int ActivityFax_view = 2131230809;
+			
 			// aapt resource value: 0x7f080024
 			public const int ActivityInactive_customerNumber = 2131230756;
 			
@@ -2984,6 +2990,9 @@ namespace com.FreedomVoice.MobileApp.Android
 			
 			// aapt resource value: 0x7f080023
 			public const int ActivityIncative_callButton = 2131230755;
+			
+			// aapt resource value: 0x7f080057
+			public const int ActivityRecord_title = 2131230807;
 			
 			// aapt resource value: 0x7f08002d
 			public const int ActivityRestore_badEmail = 2131230765;
@@ -3009,35 +3018,44 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f08002f
 			public const int ActivitySelect_title = 2131230767;
 			
+			// aapt resource value: 0x7f080056
+			public const int ActivityVoice_callback = 2131230806;
+			
+			// aapt resource value: 0x7f080055
+			public const int ActivityVoice_speaker = 2131230805;
+			
+			// aapt resource value: 0x7f080054
+			public const int ActivityVoice_title = 2131230804;
+			
 			// aapt resource value: 0x7f080013
 			public const int ApplicationName = 2131230739;
 			
 			// aapt resource value: 0x7f080014
 			public const int ApplicationTitle = 2131230740;
 			
-			// aapt resource value: 0x7f080058
-			public const int DlgCellular_content = 2131230808;
+			// aapt resource value: 0x7f080061
+			public const int DlgCellular_content = 2131230817;
 			
-			// aapt resource value: 0x7f080057
-			public const int DlgCellular_title = 2131230807;
+			// aapt resource value: 0x7f080060
+			public const int DlgCellular_title = 2131230816;
 			
-			// aapt resource value: 0x7f080055
-			public const int DlgLogout_content = 2131230805;
+			// aapt resource value: 0x7f08005e
+			public const int DlgLogout_content = 2131230814;
 			
-			// aapt resource value: 0x7f080056
-			public const int DlgLogout_ok = 2131230806;
+			// aapt resource value: 0x7f08005f
+			public const int DlgLogout_ok = 2131230815;
 			
-			// aapt resource value: 0x7f080054
-			public const int DlgLogout_title = 2131230804;
+			// aapt resource value: 0x7f08005d
+			public const int DlgLogout_title = 2131230813;
+			
+			// aapt resource value: 0x7f08005c
+			public const int Dlg_cancel = 2131230812;
+			
+			// aapt resource value: 0x7f08005b
+			public const int Dlg_ok = 2131230811;
 			
 			// aapt resource value: 0x7f080053
-			public const int Dlg_cancel = 2131230803;
-			
-			// aapt resource value: 0x7f080052
-			public const int Dlg_ok = 2131230802;
-			
-			// aapt resource value: 0x7f080051
-			public const int FragmentContacts_title = 2131230801;
+			public const int FragmentContacts_title = 2131230803;
 			
 			// aapt resource value: 0x7f080032
 			public const int FragmentKeypad_callerId = 2131230770;
@@ -3129,14 +3147,23 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f08004e
 			public const int FragmentMessages_onePage = 2131230798;
 			
+			// aapt resource value: 0x7f080050
+			public const int FragmentMessages_remove = 2131230800;
+			
+			// aapt resource value: 0x7f080051
+			public const int FragmentMessages_removeUndo = 2131230801;
+			
 			// aapt resource value: 0x7f080049
 			public const int FragmentMessages_title = 2131230793;
 			
-			// aapt resource value: 0x7f080050
-			public const int FragmentRecents_title = 2131230800;
+			// aapt resource value: 0x7f080052
+			public const int FragmentRecents_title = 2131230802;
 			
 			// aapt resource value: 0x7f080015
 			public const int MenuItem_logout = 2131230741;
+			
+			// aapt resource value: 0x7f08005a
+			public const int Timestamp_yesterday = 2131230810;
 			
 			// aapt resource value: 0x7f080000
 			public const int abc_action_bar_home_description = 2131230720;

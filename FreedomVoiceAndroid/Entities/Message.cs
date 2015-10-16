@@ -34,7 +34,7 @@ namespace com.FreedomVoice.MobileApp.Android.Entities
         /// <summary>
         /// Message date
         /// </summary>
-        public string MessageDate { get; }
+        public DateTime MessageDate { get; }
 
         /// <summary>
         /// Message type
@@ -46,7 +46,7 @@ namespace com.FreedomVoice.MobileApp.Android.Entities
         /// </summary>
         public int Length { get; }
 
-        public Message(int id, string name, string fromName, string fromNumber, string date, int type, bool unread, int length) : base(id)
+        public Message(int id, string name, string fromName, string fromNumber, DateTime date, int type, bool unread, int length) : base(id)
         {
             Name = name;
             FromName = fromName;
@@ -62,7 +62,7 @@ namespace com.FreedomVoice.MobileApp.Android.Entities
             Name = parcel.ReadString();
             FromName = parcel.ReadString();
             FromNumber = parcel.ReadString();
-            MessageDate = parcel.ReadString();
+            MessageDate = DateTime.FromFileTime(parcel.ReadLong());
             MessageType = parcel.ReadInt();
             Unread = (parcel.ReadByte() == 1);
             Length = parcel.ReadInt();
@@ -74,7 +74,7 @@ namespace com.FreedomVoice.MobileApp.Android.Entities
             dest.WriteString(Name);
             dest.WriteString(FromName);
             dest.WriteString(FromNumber);
-            dest.WriteString(MessageDate);
+            dest.WriteLong(MessageDate.ToFileTime());
             dest.WriteInt(MessageType);
             dest.WriteByte(Unread?(sbyte)1:(sbyte)0);
             dest.WriteInt(Length);
@@ -103,8 +103,8 @@ namespace com.FreedomVoice.MobileApp.Android.Entities
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return base.Equals(other) && Unread == other.Unread && string.Equals(Name, other.Name) && string.Equals(FromName, other.FromName) && string.Equals(FromNumber, other.FromNumber) 
-                && string.Equals(MessageDate, other.MessageDate) && MessageType == other.MessageType && Length == other.Length;
+            return base.Equals(other) && Unread == other.Unread && string.Equals(Name, other.Name) && string.Equals(FromName, other.FromName) 
+                && string.Equals(FromNumber, other.FromNumber) && MessageDate.Equals(other.MessageDate) && MessageType == other.MessageType && Length == other.Length;
         }
 
         public override bool Equals(object obj)
@@ -123,7 +123,7 @@ namespace com.FreedomVoice.MobileApp.Android.Entities
                 hashCode = (hashCode*397) ^ (Name?.GetHashCode() ?? 0);
                 hashCode = (hashCode*397) ^ (FromName?.GetHashCode() ?? 0);
                 hashCode = (hashCode*397) ^ (FromNumber?.GetHashCode() ?? 0);
-                hashCode = (hashCode*397) ^ (MessageDate?.GetHashCode() ?? 0);
+                hashCode = (hashCode*397) ^ MessageDate.GetHashCode();
                 hashCode = (hashCode*397) ^ MessageType;
                 hashCode = (hashCode*397) ^ Length;
                 return hashCode;

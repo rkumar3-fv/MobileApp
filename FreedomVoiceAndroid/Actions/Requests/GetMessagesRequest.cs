@@ -83,7 +83,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
                     message.Id, 
                     message.SourceName,
                     message.SourceNumber,
-                    message.ReceivedOn.ToShortDateString(),
+                    message.ReceivedOn,
                     type,
                     message.Unread,
                     message.Length));

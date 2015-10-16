@@ -130,7 +130,7 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
                 var viewHolder = holder as MessagesViewHolder;
                 var message = contentItem as Message;
                 if ((viewHolder == null)||(message == null)) return;
-                viewHolder.MessageDate.Text = message.MessageDate;
+                viewHolder.MessageDate.Text = DataFormatUtils.ToFormattedDate(_context.GetString(Resource.String.Timestamp_yesterday), message.MessageDate);
                 viewHolder.MessageFrom.Text = (message.FromName.Length > 1) ? message.FromName : DataFormatUtils.ToPhoneNumber(message.FromNumber);
                 switch (message.MessageType)
                 {
