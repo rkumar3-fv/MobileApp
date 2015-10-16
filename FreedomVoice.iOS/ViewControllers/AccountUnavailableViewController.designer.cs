@@ -9,7 +9,7 @@ using System;
 using System.CodeDom.Compiler;
 using UIKit;
 
-namespace FreedomVoice.iOS
+namespace FreedomVoice.iOS.ViewControllers
 {
 	[Register ("AccountUnavailableViewController")]
 	partial class AccountUnavailableViewController

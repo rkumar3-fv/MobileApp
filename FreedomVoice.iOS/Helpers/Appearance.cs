@@ -14,14 +14,7 @@ namespace FreedomVoice.iOS.Helpers
 
         public static UIBarButtonItem GetLogoutBarButton()
         {
-            return new UIBarButtonItem("[=>]", UIBarButtonItemStyle.Plain, (s, args) => { (UIApplication.SharedApplication.Delegate as AppDelegate).GoToLoginScreen(); });
-        }
-
-        public static void SetDefaultNavigationBarStyle(this UINavigationController controller)
-        {
-            controller.NavigationBar.TintColor = UIColor.White;
-            controller.NavigationBar.TitleTextAttributes = new UIStringAttributes { ForegroundColor = UIColor.White };
-            controller.NavigationBar.BarTintColor = new UIColor(0.016f, 0.588f, 0.816f, 1);
+            return new UIBarButtonItem("Logout", UIBarButtonItemStyle.Plain, (s, args) => { (UIApplication.SharedApplication.Delegate as AppDelegate).GoToLoginScreen(); });
         }
 
         public static void AddLinearGradientToView(this UIView view, UIColor topColor, UIColor bottomColor)

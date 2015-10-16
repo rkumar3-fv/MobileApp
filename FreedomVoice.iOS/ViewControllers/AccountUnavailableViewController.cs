@@ -1,10 +1,10 @@
-using Foundation;
 using System;
+using Foundation;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.Helpers;
 using UIKit;
 
-namespace FreedomVoice.iOS
+namespace FreedomVoice.iOS.ViewControllers
 {
 	partial class AccountUnavailableViewController : UIViewController
 	{
@@ -16,6 +16,9 @@ namespace FreedomVoice.iOS
         {
             base.ViewDidLoad();
 
+            Title = SelectedAccount.FormattedPhoneNumber;
+
+            NavigationItem.SetLeftBarButtonItem(Appearance.GetBackBarButton(NavigationController), true);
             NavigationItem.SetRightBarButtonItem(Appearance.GetLogoutBarButton(), true);
 
             CallCustomerCareButton.Layer.CornerRadius = 5;
@@ -28,7 +31,7 @@ namespace FreedomVoice.iOS
 
             if (!UIApplication.SharedApplication.OpenUrl(url))
             {
-                var alert = new UIAlertView("Not supported", "Scheme 'tel:' is not supported on this device", null, "OK", null);
+                var alert = new UIAlertView("Not supported", "Your device does not appear to support making cellular voice calls.", null, "OK", null);
                 alert.Show();
             };
         }

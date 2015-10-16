@@ -1,19 +1,28 @@
 using System;
+using System.Threading.Tasks;
 using CoreGraphics;
-using FreedomVoice.Core;
+using FreedomVoice.Core.Entities.Base;
 using FreedomVoice.iOS.Helpers;
 using FreedomVoice.Core.Entities.Enums;
+using FreedomVoice.iOS.Utilities;
+using FreedomVoice.iOS.ViewModels;
 using UIKit;
 
 namespace FreedomVoice.iOS.ViewControllers
 {
-	partial class LoginViewController : UIViewController
-	{
+	partial class LoginViewController : BaseViewController
+    {
+        readonly LoginViewModel _loginViewModel;
+
         public event EventHandler OnLoginSuccess;
 
-        private LoadingOverlay _loadingOverlay;
+	    public LoginViewController(IntPtr handle) : base(handle)
+	    {
+            _loginViewModel = ServiceContainer.Resolve<LoginViewModel>();
 
-        public LoginViewController (IntPtr handle) : base (handle) { }
+            _loginViewModel.IsBusyChanged += OnIsBusyChanged;
+            _loginViewModel.IsValidChanged += OnIsValidChanged;
+        }
 
 	    public override void ViewDidLoad()
 	    {
@@ -21,11 +30,22 @@ namespace FreedomVoice.iOS.ViewControllers
 
 	        Title = "Login";
 
-            UsernameTextField.ShouldReturn += (field) => { field.ResignFirstResponder(); return true; };
-            PasswordTextField.ShouldReturn += (field) => { field.ResignFirstResponder(); return true; };
+            UsernameTextField.SetDidChangeNotification(text => _loginViewModel.Username = text.Text);
+	        UsernameTextField.ShouldReturn = _ => { OnUsernameReturn(); return false; };
 
-            UsernameTextField.Text = "freedomvoice.user1.267055@gmail.com";
-            PasswordTextField.Text = "user1654654";
+            PasswordTextField.SetDidChangeNotification(text => _loginViewModel.Password = text.Text);
+            PasswordTextField.ShouldReturn = _ => {
+                if (_loginViewModel.IsValid) ProceedLogin();
+                else
+                {
+                    OnUsernameReturn();
+                    OnPasswordReturn();
+                }
+                return false;
+            };
+
+            UsernameTextField.Text = _loginViewModel.Username = "freedomvoice.user1.267055@gmail.com";
+            PasswordTextField.Text = _loginViewModel.Password = "user1654654";
 
             View.AddLinearGradientToView(new UIColor(0, 0.231f, 0.424f, 1), new UIColor(0.855f, 0.949f, 0.965f, 1));
 
@@ -35,71 +55,121 @@ namespace FreedomVoice.iOS.ViewControllers
             LoginButton.ClipsToBounds = true;
         }
 
-	    async partial void LoginButton_TouchUpInside(UIButton sender)
+        partial void LoginButton_TouchUpInside(UIButton sender)
 	    {
-	        var username = UsernameTextField.Text.Trim();
-	        var password = PasswordTextField.Text.Trim();
-
-            if (!Validation.IsValidEmail(username))
-	        {
-                InvokeOnMainThread(() => { UsernameValidationLabel.Hidden = false; UsernameTextField.Layer.BorderColor = new CGColor(0.996f, 0.788f, 0.373f, 1); });
-                UsernameTextField.BecomeFirstResponder();
-            }
-
-            if (password == string.Empty)
-            {
-                InvokeOnMainThread(() => { PasswordValidationLabel.Hidden = false; PasswordTextField.Layer.BorderColor = new CGColor(0.996f, 0.788f, 0.373f, 1); });
-                PasswordTextField.BecomeFirstResponder();
-            }
-
-            ShowOverlay();
             UIApplication.SharedApplication.NetworkActivityIndicatorVisible = true;
 
-            var result = await ApiHelper.Login(username, password);
-            switch (result.Code)
-            {
-                case ErrorCodes.Ok:
-                    OnLoginSuccess?.Invoke(sender, new EventArgs());
-                    break;
-                case ErrorCodes.ConnectionLost:
-                    new UIAlertView("Login Error", "Service is unreachable. Please try again later.", null, "OK", null).Show();
-                    break;
-                case ErrorCodes.Unauthorized:
-                case ErrorCodes.BadRequest:
-                    InvokeOnMainThread(() => { UsernameValidationLabel.Hidden = false; UsernameTextField.Layer.BorderColor = new CGColor(0.996f, 0.788f, 0.373f, 1); });
-                    UsernameTextField.BecomeFirstResponder();
-                    break;
-            }
+            ProceedLogin();
 
-            HideOverlay();
             UIApplication.SharedApplication.NetworkActivityIndicatorVisible = false;
         }
 
-        private void ShowOverlay()
+        partial void ForgotPassword_TouchUpInside(UIButton sender)
         {
-            _loadingOverlay = new LoadingOverlay(UIScreen.MainScreen.Bounds);
-            View.Add(_loadingOverlay);
+            var forgotPasswordController = AppDelegate.GetViewController<ForgotPasswordViewController>();
+            NavigationController.PushViewController(forgotPasswordController, true);
         }
 
-        private void HideOverlay()
+        private void OnIsBusyChanged(object sender, EventArgs e)
         {
-            _loadingOverlay.Hide();
+            if (!IsViewLoaded)
+                return;
+
+            View.UserInteractionEnabled = ActivityIndicator.Hidden = !_loginViewModel.IsBusy;
+            LoginButton.Hidden = _loginViewModel.IsBusy;
         }
 
-        public override void ViewWillAppear(bool animated)
+        private void OnIsValidChanged(object sender, EventArgs e)
+        {
+            if (IsViewLoaded)
+                LoginButton.Enabled = _loginViewModel.IsValid;
+        }
+
+	    private void OnUsernameReturn()
 	    {
-            NavigationController.NavigationBar.Hidden = true;
+	        if (_loginViewModel.Errors.Contains(LoginViewModel.UsernameError))
+	        {
+                UsernameValidationLabel.Hidden = false;
+                UsernameTextField.Layer.BorderColor = new CGColor(0.996f, 0.788f, 0.373f, 1);
+                UsernameTextField.BecomeFirstResponder();
+            }
+            else
+                PasswordTextField.BecomeFirstResponder();
+        }
+
+        private void OnPasswordReturn()
+        {
+            if (!_loginViewModel.Errors.Contains(LoginViewModel.PasswordError)) return;
+
+            PasswordValidationLabel.Hidden = false;
+            PasswordTextField.Layer.BorderColor = new CGColor(0.996f, 0.788f, 0.373f, 1);
+            PasswordTextField.BecomeFirstResponder();
+        }
+
+        private async void ProceedLogin()
+        {
+            UsernameTextField.ResignFirstResponder();
+            PasswordTextField.ResignFirstResponder();
+
+            await _loginViewModel.LoginAsync().ContinueWith(_ => BeginInvokeOnMainThread(() => { OnProceedLoginResponse(_); }));
+        }
+
+	    private void OnProceedLoginResponse(Task<BaseResult<string>> _)
+	    {
+	        switch (_.Result.Code)
+	        {
+	            case ErrorCodes.Ok:
+	                OnLoginSuccess?.Invoke(null, EventArgs.Empty);
+	                break;
+	            case ErrorCodes.ConnectionLost:
+	                new UIAlertView("Login Error", "Service is unreachable. Please try again later.", null, "OK", null).Show();
+	                break;
+	            case ErrorCodes.Unauthorized:
+	            case ErrorCodes.BadRequest:
+	                UsernameValidationLabel.Hidden = false;
+	                UsernameTextField.Layer.BorderColor = new CGColor(0.996f, 0.788f, 0.373f, 1);
+	                UsernameTextField.BecomeFirstResponder();
+	                break;
+	        }
+	    }
+
+	    public override void ViewWillAppear(bool animated)
+	    {
+            base.ViewWillAppear(animated);
+
+            //UsernameTextField.Text = string.Empty;
             UsernameValidationLabel.Hidden = true;
+
+            //PasswordTextField.Text = string.Empty;
             PasswordValidationLabel.Hidden = true;
 
-            base.ViewWillAppear(animated);
-	    }
+            NavigationController.NavigationBar.Hidden = true;
+        }
 
         public override void ViewWillDisappear(bool animated)
         {
-            NavigationController.NavigationBar.Hidden = false;
-
             base.ViewWillAppear(animated);
+            NavigationController.NavigationBar.Hidden = false;
         }
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+
+            _loginViewModel.IsBusyChanged -= OnIsBusyChanged;
+            _loginViewModel.IsValidChanged -= OnIsValidChanged;
+        }
+
+        //protected override void OnKeyboardChanged(bool visible, nfloat height)
+        //{
+        //    //We "center" the popup when the keyboard appears/disappears
+        //    var frame = container.Frame;
+
+        //    if (visible)
+        //        frame.Y -= height / 2f;
+        //    else
+        //        frame.Y += height / 2f;
+        //    container.Frame = frame;
+        //}
     }
 }

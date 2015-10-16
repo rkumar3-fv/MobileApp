@@ -7,9 +7,9 @@ namespace FreedomVoice.iOS.ViewControllers
 {
 	partial class MainTabBarController : UITabBarController
 	{
-        public Account SelectedAccount { get; set; }
+        public Account SelectedAccount { private get; set; }
 
-	    public bool ShowBackButton { get; set; }
+        private bool IsRootController => NavigationController.ViewControllers.Length > 1;
 
         public MainTabBarController(IntPtr handle) : base(handle) { }
 
@@ -17,13 +17,13 @@ namespace FreedomVoice.iOS.ViewControllers
 	    {
 	        base.ViewDidLoad();
 
+	        Title = SelectedAccount.FormattedPhoneNumber;
 	        SelectedIndex = 2;
 
-            if (ShowBackButton)
+            if (IsRootController)
                 NavigationItem.SetLeftBarButtonItem(Appearance.GetBackBarButton(NavigationController, "Accounts"), true);
 
             NavigationItem.SetRightBarButtonItem(Appearance.GetLogoutBarButton(), true);
-            NavigationController.SetDefaultNavigationBarStyle();
 	    }
 	}
 }

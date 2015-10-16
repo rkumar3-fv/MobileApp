@@ -62,10 +62,10 @@
                                     <color key="titleColor" colorSpace="calibratedRGB" red="0.011764705882352941" green="0.403921568627451" blue="0.5607843137254902" alpha="1"/>
                                 </state>
                                 <connections>
-                                    <segue id="3586" destination="1198" kind="push"/>
+                                    <action selector="ForgotPassword_TouchUpInside:" destination="1156" id="4304" eventType="touchUpInside"/>
                                 </connections>
                             </button>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" minimumFontSize="17" id="1163" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" placeholder="Username or Email" clearsOnBeginEditing="YES">
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" minimumFontSize="17" id="1163" translatesAutoresizingMaskIntoConstraints="NO" placeholder="Username or Email" clearsOnBeginEditing="YES" fixedFrame="YES">
                                 <rect key="frame" x="25" y="220" width="270" height="40"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                 <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="emailAddress"/>
@@ -100,6 +100,12 @@
                                 <color key="textColor" colorSpace="calibratedRGB" red="0.996078431372549" green="0.788235294117647" blue="0.37254901960784315" alpha="1"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" style="gray" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4284">
+                                <rect key="frame" x="189" y="220" width="20" height="20"/>
+                            </activityIndicatorView>
+                            <activityIndicatorView contentMode="scaleToFill" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="4285" animating="YES" fixedFrame="YES" hidden="YES" opaque="NO">
+                                <rect key="frame" x="142" y="356" width="37" height="37"/>
+                            </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" colorSpace="calibratedWhite" white="0" alpha="0"/>
                     </view>
@@ -111,14 +117,14 @@
                         <outlet property="WelcomeLabel" destination="1165" id="name-outlet-1165"/>
                         <outlet property="UsernameValidationLabel" destination="1175" id="name-outlet-1175"/>
                         <outlet property="PasswordValidationLabel" destination="1176" id="name-outlet-1176"/>
-                        <segue id="3859" destination="2566" kind="modal"/>
+                        <outlet property="ActivityIndicator" destination="4285" id="name-outlet-4285"/>
                     </connections>
                     <navigationItem title="Title" id="2036" key="navigationItem"/>
                     <nil key="simulatedTopBarMetrics"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="1158" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1681" y="893"/>
+            <point key="canvasLocation" x="-1514" y="479"/>
         </scene>
         <scene sceneID="1197">
             <objects>
@@ -169,12 +175,16 @@
                                 <color key="textColor" colorSpace="calibratedRGB" red="0.996078431372549" green="0.788235294117647" blue="0.37254901960784315" alpha="1"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="4323" animating="YES" fixedFrame="YES" hidden="YES">
+                                <rect key="frame" x="150" y="215" width="20" height="20"/>
+                            </activityIndicatorView>
                         </subviews>
                     </view>
                     <connections>
                         <outlet property="SendButton" destination="1367" id="name-outlet-1367"/>
                         <outlet property="EmailValidationLabel" destination="3875" id="name-outlet-3875"/>
                         <outlet property="EmailTextField" destination="1372" id="name-outlet-1372"/>
+                        <outlet property="ActivityIndicator" destination="4323" id="name-outlet-4323"/>
                     </connections>
                     <navigationItem title="Forgot Password" id="2923" key="navigationItem">
                         <barButtonItem key="backBarButtonItem" title="Login" id="4298"/>
@@ -358,40 +368,6 @@
             </objects>
             <point key="canvasLocation" x="1329" y="1857"/>
         </scene>
-        <scene sceneID="2565">
-            <objects>
-                <tableViewController id="2566" sceneMemberID="viewController" customClass="AccountsTableViewController" storyboardIdentifier="AccountsTableViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" title="Select Account">
-                    <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="2567">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="2570">
-                                <rect key="frame" x="0.0" y="22" width="320" height="44"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="2570" id="2571">
-                                    <rect key="frame" x="0.0" y="0.0" width="320" height="43.5"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                </tableViewCellContentView>
-                            </tableViewCell>
-                        </prototypes>
-                        <connections>
-                            <outlet property="dataSource" destination="2566" id="2568"/>
-                            <outlet property="delegate" destination="2566" id="2569"/>
-                        </connections>
-                        <color key="tintColor" colorSpace="calibratedRGB" red="1" green="0" blue="0" alpha="1"/>
-                    </tableView>
-                    <connections>
-                        <segue id="2663" destination="1074" kind="push"/>
-                        <segue id="2867" destination="2814" kind="push"/>
-                        <outlet property="AccountsTableView" destination="2567" id="name-outlet-2567"/>
-                        <segue id="4105" destination="4004" kind="modal"/>
-                    </connections>
-                </tableViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="2572" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-1174" y="1582"/>
-        </scene>
         <scene sceneID="2813">
             <objects>
                 <navigationController definesPresentationContext="YES" id="2814" sceneMemberID="viewController">
@@ -523,6 +499,36 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4012" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-133" y="1022"/>
+        </scene>
+        <scene sceneID="4364">
+            <objects>
+                <viewController id="4365" sceneMemberID="viewController" customClass="AccountsViewController" storyboardIdentifier="AccountsViewController" title="Select Account" useStoryboardIdentifierAsRestorationIdentifier="YES">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="4362"/>
+                        <viewControllerLayoutGuide type="bottom" id="4363"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="4366">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="4638" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" clearsContextBeforeDrawing="NO" opaque="NO">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <prototypes/>
+                            </tableView>
+                        </subviews>
+                    </view>
+                    <connections>
+                        <segue id="4461" destination="2814" kind="push"/>
+                        <segue id="4538" destination="4004" kind="modal"/>
+                        <segue id="4636" destination="1074" kind="push"/>
+                        <outlet property="AccountsTableView" destination="4638" id="name-outlet-4638"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="4367" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-1242" y="1587"/>
         </scene>
     </scenes>
     <resources>

@@ -4,6 +4,7 @@ using Foundation;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.Helpers;
 using FreedomVoice.iOS.TableViewCells;
+using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.ViewControllers;
 using UIKit;
 
@@ -22,7 +23,7 @@ namespace FreedomVoice.iOS.TableViewSources
 
         public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
         {
-            var cell = tableView.DequeueReusableCell(AccountCell.Key) as AccountCell ?? new AccountCell();
+            var cell = tableView.DequeueReusableCell(AccountCell.AccountCellId) as AccountCell ?? new AccountCell();
             cell.TextLabel.Text = _accounts[indexPath.Row].FormattedPhoneNumber;
             cell.Accessory = UITableViewCellAccessory.DisclosureIndicator;
 
@@ -31,45 +32,38 @@ namespace FreedomVoice.iOS.TableViewSources
 
         public override nint RowsInSection(UITableView tableview, nint section)
         {
-            return _accounts.Count;
+            return _accounts?.Count ?? 0;
         }
 
         public override void RowSelected(UITableView tableView, NSIndexPath indexPath)
         {
+            tableView.DeselectRow(indexPath, false);
             var selectedAccount = _accounts[indexPath.Row];
 
             //TODO: Account not available
             //if (AccountNotAvailable)
             //{
-            //    var accountUnavailableController = AppDelegate.GetViewController<AccountUnavailableViewController>("AccountUnavailableViewController");
+            //    var accountUnavailableController = AppDelegate.GetViewController<AccountUnavailableViewController>();
             //    accountUnavailableController.SelectedAccount = selectedAccount;
-            //    accountUnavailableController.Title = selectedAccount.FormattedPhoneNumber;
-            //    accountUnavailableController.NavigationItem.SetLeftBarButtonItem(Misc.GetBackBarButton(_navigationController), true);
-
             //    _navigationController.PushViewController(accountUnavailableController, true);
 
             //    return;
             //}
 
-            if (!AppDelegate.DisclaimerWasShown)
+            if (!UserDefault.DisclaimerWasShown)
             {
-                var emergencyDisclaimerController = AppDelegate.GetViewController<EmergencyDisclaimerViewController>("EmergencyDisclaimerViewController");
+                var emergencyDisclaimerController = AppDelegate.GetViewController<EmergencyDisclaimerViewController>();
                 emergencyDisclaimerController.SelectedAccount = selectedAccount;
-                emergencyDisclaimerController.ViewController = _navigationController;
+                emergencyDisclaimerController.ParentController = _navigationController;
 
-                var rootNavigationController = new UINavigationController();
-                rootNavigationController.PushViewController(emergencyDisclaimerController, false);
-
-                (UIApplication.SharedApplication.Delegate as AppDelegate).SetRootViewController(rootNavigationController, true);
+                var navigationController = new UINavigationController(emergencyDisclaimerController);
+                Theme.TransitionController(navigationController);
 
                 return;
             }
 
-            var tabBarController = AppDelegate.GetViewController<MainTabBarController>("MainTabBarController");
+            var tabBarController = AppDelegate.GetViewController<MainTabBarController>();
             tabBarController.SelectedAccount = selectedAccount;
-            tabBarController.Title = selectedAccount.FormattedPhoneNumber;
-            tabBarController.NavigationItem.SetLeftBarButtonItem(Appearance.GetBackBarButton(_navigationController), true);
-
             _navigationController.PushViewController(tabBarController, true);
         }
     }
