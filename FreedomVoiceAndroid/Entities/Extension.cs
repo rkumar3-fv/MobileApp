@@ -20,7 +20,7 @@ namespace com.FreedomVoice.MobileApp.Android.Entities
         /// <summary>
         /// Mails counter
         /// </summary>
-        public int MailsCount { get; }
+        public int MailsCount { get; set; }
 
         /// <summary>
         /// Folders
@@ -89,7 +89,6 @@ namespace com.FreedomVoice.MobileApp.Android.Entities
             {
                 var hashCode = base.GetHashCode();
                 hashCode = (hashCode*397) ^ (ExtensionName?.GetHashCode() ?? 0);
-                hashCode = (hashCode*397) ^ MailsCount;
                 return hashCode;
             }
         }

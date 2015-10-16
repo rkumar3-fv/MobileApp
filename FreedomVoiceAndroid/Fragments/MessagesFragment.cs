@@ -1,6 +1,9 @@
+using System;
 using Android.OS;
+using Android.Support.Design.Widget;
 using Android.Support.V4.Widget;
 using Android.Support.V7.Widget;
+using Android.Support.V7.Widget.Helper;
 using Android.Util;
 using Android.Views;
 using com.FreedomVoice.MobileApp.Android.Adapters;
@@ -15,9 +18,15 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
     /// </summary>
     public class MessagesFragment : BasePagerFragment, SwipeRefreshLayout.IOnRefreshListener
     {
+        private int _removedMsgIndex;
+        private bool _remove;
+
+        private Snackbar _snackbar;
+        private SnackbarCallback _snackCallback;
         private MessagesRecyclerAdapter _adapter;
         private RecyclerView _recyclerView;
         private SwipeRefreshLayout _swipeRefresh;
+        private ItemTouchHelper _swipeTouchHelper;
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
@@ -31,7 +40,55 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             _adapter = new MessagesRecyclerAdapter(Context);
             _recyclerView.SetAdapter(_adapter);
             _adapter.ItemClick += MessageViewOnClick;
+
+            var swipeListener = new SwipeCallback(0, ItemTouchHelper.Left | ItemTouchHelper.Right, ContentActivity, Resource.Color.colorRemoveList, Resource.Drawable.ic_action_delete);
+            swipeListener.SwipeEvent += OnSwipeEvent;
+            _swipeTouchHelper = new ItemTouchHelper(swipeListener);
+
+            _snackCallback = new SnackbarCallback();
+            _snackCallback.SnackbarEvent += OnSnackbarDissmiss;
             return _recyclerView;
+        }
+
+        private void OnSnackbarDissmiss(object sender, EventArgs args)
+        {
+            if (_remove)
+            {
+                if (Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].FolderName ==
+                    GetString(Resource.String.FragmentMessages_folderTrash))
+                    Helper.DeleteMessage(_removedMsgIndex);
+                else
+                    Helper.RemoveMessage(_removedMsgIndex);
+                Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].MailsCount--;
+                if (Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].MessagesList[_removedMsgIndex].Unread)
+                    Helper.ExtensionsList[Helper.SelectedExtension].MailsCount--;
+                Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].MessagesList.RemoveAt(_removedMsgIndex);
+            }
+            else
+            {
+                Log.Debug(App.AppPackage, $"UNDO message {_removedMsgIndex}");
+                _remove = false;
+                _adapter.InsertItem(Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].MessagesList[_removedMsgIndex], _removedMsgIndex);
+            }
+        }
+
+        private void OnUndoClick(View view)
+        {
+            _remove = false;
+        }
+
+        /// <summary>
+        /// Message swipe
+        /// </summary>
+        private void OnSwipeEvent(object sender, SwipeCallbackEventArgs args)
+        {
+            Log.Debug(App.AppPackage, $"SWIPED message {args.ElementIndex}");
+            _remove = true;
+            _removedMsgIndex = args.ElementIndex;
+            _snackbar = Snackbar.Make(View, Resource.String.FragmentMessages_remove, Snackbar.LengthLong).SetAction(Resource.String.FragmentMessages_removeUndo, OnUndoClick)
+                .SetActionTextColor(Resource.Color.colorUndoList).SetCallback(_snackCallback);
+            _snackbar.Show();
+            _adapter.RemoveItem(args.ElementIndex);
         }
 
         /// <summary>
@@ -45,7 +102,10 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             if (Helper.SelectedMessage != -1)
                 ;//TODO: OPEN MSG DETAILS
             else if (Helper.SelectedFolder != -1)
+            {
                 Helper.ForceLoadMessages();
+                _swipeTouchHelper.AttachToRecyclerView(_recyclerView);
+            }
             else
                 Helper.ForceLoadFolders();
             ContentActivity.SetToolbarContent();
@@ -65,7 +125,11 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                 switch (code)
                 {
                     case ActionsHelperEventArgs.MsgUpdated:
-                        TraceContent();              
+                        TraceContent();
+                        if (Helper.SelectedFolder == -1)
+                            _swipeTouchHelper.AttachToRecyclerView(null);
+                        else
+                            _swipeTouchHelper.AttachToRecyclerView(_recyclerView);
                         _adapter.CurrentContent = Helper.GetCurrent();
                         _swipeRefresh.Refreshing = false;
                         break;

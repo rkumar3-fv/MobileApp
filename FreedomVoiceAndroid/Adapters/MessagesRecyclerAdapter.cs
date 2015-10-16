@@ -66,6 +66,27 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
         }
 
         /// <summary>
+        /// Remove item
+        /// </summary>
+        /// <param name="index">item index</param>
+        public void RemoveItem(int index)
+        {
+            _currentContent.RemoveAt(index);
+            NotifyItemRemoved(index);
+        }
+
+        /// <summary>
+        /// Insert item
+        /// </summary>
+        /// <param name="item">inserted item</param>
+        /// <param name="index">item index</param>
+        public void InsertItem(MessageItem item, int index)
+        {
+            _currentContent.Insert(index, item);
+            NotifyItemInserted(index);
+        }
+
+        /// <summary>
         /// Get messages item by position
         /// </summary>
         /// <param name="position">position number</param>

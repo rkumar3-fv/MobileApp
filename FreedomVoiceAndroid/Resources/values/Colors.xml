@@ -34,4 +34,6 @@
   <color name="colorDlgButton">#038ac1</color>
   <color name="colorDlgTitle">#d9000000</color>
   <color name="colorDlgContent">#8c000000</color>
+  <color name="colorRemoveList">#f04e3d</color>
+  <color name="colorUndoList">#85b640</color>
 </resources>

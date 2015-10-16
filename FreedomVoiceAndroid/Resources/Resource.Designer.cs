@@ -952,32 +952,32 @@ namespace com.FreedomVoice.MobileApp.Android
 		public partial class Color
 		{
 			
-			// aapt resource value: 0x7f0c0065
-			public const int abc_background_cache_hint_selector_material_dark = 2131492965;
-			
-			// aapt resource value: 0x7f0c0066
-			public const int abc_background_cache_hint_selector_material_light = 2131492966;
-			
 			// aapt resource value: 0x7f0c0067
-			public const int abc_color_highlight_material = 2131492967;
+			public const int abc_background_cache_hint_selector_material_dark = 2131492967;
+			
+			// aapt resource value: 0x7f0c0068
+			public const int abc_background_cache_hint_selector_material_light = 2131492968;
+			
+			// aapt resource value: 0x7f0c0069
+			public const int abc_color_highlight_material = 2131492969;
 			
 			// aapt resource value: 0x7f0c0000
 			public const int abc_input_method_navigation_guard = 2131492864;
 			
-			// aapt resource value: 0x7f0c0068
-			public const int abc_primary_text_disable_only_material_dark = 2131492968;
-			
-			// aapt resource value: 0x7f0c0069
-			public const int abc_primary_text_disable_only_material_light = 2131492969;
-			
 			// aapt resource value: 0x7f0c006a
-			public const int abc_primary_text_material_dark = 2131492970;
+			public const int abc_primary_text_disable_only_material_dark = 2131492970;
 			
 			// aapt resource value: 0x7f0c006b
-			public const int abc_primary_text_material_light = 2131492971;
+			public const int abc_primary_text_disable_only_material_light = 2131492971;
 			
 			// aapt resource value: 0x7f0c006c
-			public const int abc_search_url_text = 2131492972;
+			public const int abc_primary_text_material_dark = 2131492972;
+			
+			// aapt resource value: 0x7f0c006d
+			public const int abc_primary_text_material_light = 2131492973;
+			
+			// aapt resource value: 0x7f0c006e
+			public const int abc_search_url_text = 2131492974;
 			
 			// aapt resource value: 0x7f0c0001
 			public const int abc_search_url_text_normal = 2131492865;
@@ -988,11 +988,11 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f0c0003
 			public const int abc_search_url_text_selected = 2131492867;
 			
-			// aapt resource value: 0x7f0c006d
-			public const int abc_secondary_text_material_dark = 2131492973;
+			// aapt resource value: 0x7f0c006f
+			public const int abc_secondary_text_material_dark = 2131492975;
 			
-			// aapt resource value: 0x7f0c006e
-			public const int abc_secondary_text_material_light = 2131492974;
+			// aapt resource value: 0x7f0c0070
+			public const int abc_secondary_text_material_light = 2131492976;
 			
 			// aapt resource value: 0x7f0c0004
 			public const int accent_material_dark = 2131492868;
@@ -1108,6 +1108,9 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f0c0061
 			public const int colorPullRefreshThird = 2131492961;
 			
+			// aapt resource value: 0x7f0c0065
+			public const int colorRemoveList = 2131492965;
+			
 			// aapt resource value: 0x7f0c004d
 			public const int colorTabIndicator = 2131492941;
 			
@@ -1116,6 +1119,9 @@ namespace com.FreedomVoice.MobileApp.Android
 			
 			// aapt resource value: 0x7f0c0043
 			public const int colorTransparent = 2131492931;
+			
+			// aapt resource value: 0x7f0c0066
+			public const int colorUndoList = 2131492966;
 			
 			// aapt resource value: 0x7f0c003a
 			public const int design_fab_shadow_end_color = 2131492922;
@@ -1264,11 +1270,11 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f0c0037
 			public const int switch_thumb_disabled_material_light = 2131492919;
 			
-			// aapt resource value: 0x7f0c006f
-			public const int switch_thumb_material_dark = 2131492975;
+			// aapt resource value: 0x7f0c0071
+			public const int switch_thumb_material_dark = 2131492977;
 			
-			// aapt resource value: 0x7f0c0070
-			public const int switch_thumb_material_light = 2131492976;
+			// aapt resource value: 0x7f0c0072
+			public const int switch_thumb_material_light = 2131492978;
 			
 			// aapt resource value: 0x7f0c0038
 			public const int switch_thumb_normal_material_dark = 2131492920;

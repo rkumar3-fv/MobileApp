@@ -119,6 +119,9 @@
     <Compile Include="Adapters\DividerItemDecorator.cs" />
     <Compile Include="Adapters\MessagesRecyclerAdapter.cs" />
     <Compile Include="Adapters\AccountsRecyclerAdapter.cs" />
+    <Compile Include="Adapters\SnackbarCallback.cs" />
+    <Compile Include="Adapters\SwipeCallback.cs" />
+    <Compile Include="Adapters\SwipeCallbackEventArgs.cs" />
     <Compile Include="Dialogs\BaseDialogFragment.cs" />
     <Compile Include="Dialogs\DialogEventArgs.cs" />
     <Compile Include="Dialogs\DialogResult.cs" />
