@@ -1,6 +1,7 @@
 using System;
 using Android.OS;
 using Android.Support.Design.Widget;
+using Android.Support.V4.Content;
 using Android.Support.V4.Widget;
 using Android.Support.V7.Widget;
 using Android.Support.V7.Widget.Helper;
@@ -86,7 +87,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             _remove = true;
             _removedMsgIndex = args.ElementIndex;
             _snackbar = Snackbar.Make(View, Resource.String.FragmentMessages_remove, Snackbar.LengthLong).SetAction(Resource.String.FragmentMessages_removeUndo, OnUndoClick)
-                .SetActionTextColor(Resource.Color.colorUndoList).SetCallback(_snackCallback);
+                .SetActionTextColor(ContextCompat.GetColor(ContentActivity, Resource.Color.colorUndoList)).SetCallback(_snackCallback);
             _snackbar.Show();
             _adapter.RemoveItem(args.ElementIndex);
         }

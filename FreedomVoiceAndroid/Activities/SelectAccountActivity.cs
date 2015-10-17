@@ -1,4 +1,5 @@
 using Android.App;
+using Android.Content;
 using Android.OS;
 using Android.Support.V7.Widget;
 using Android.Util;
@@ -42,8 +43,14 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             Log.Debug(App.AppPackage, $"ACTIVITY {GetType().Name}: select account #{DataFormatUtils.ToPhoneNumber(_adapter.AccountName(position))}");
             Helper.SelectedAccount = Helper.AccountsList[position];
             Helper.GetPresentationNumbers();
-            //var intent = (Helper.IsFirstRun)? new Intent(this, typeof(DisclaimerActivity)): new Intent(this, typeof(ContentActivity));
-            //StartActivity(intent);
+        }
+
+        protected override void OnResume()
+        {
+            base.OnResume();
+            if (Helper.SelectedAccount == null) return;
+            var intent = (Helper.IsFirstRun)? new Intent(this, typeof(DisclaimerActivity)): new Intent(this, typeof(ContentActivity));
+            StartActivity(intent);
         }
 
         public override void OnBackPressed()

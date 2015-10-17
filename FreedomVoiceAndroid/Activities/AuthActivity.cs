@@ -52,6 +52,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         {
             base.OnResume();
             DebugOnly();
+            if (Helper.IsLoggedIn)
+                Helper.GetAccounts();
         }
 
         /// <summary>
