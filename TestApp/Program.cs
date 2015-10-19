@@ -111,8 +111,36 @@ namespace TestApp
             }
             Console.Write(Environment.NewLine);
 
-            resMsg = ApiHelper.GetMesages("7607124648", 802, "New", 10, 1, true).Result;
-            Console.WriteLine($"Messages method: {resMsg.Code}");
+            resMsg = ApiHelper.GetMesages("7607124648", 80, "New", 10, 1, true).Result;
+            Console.WriteLine($"Get Messages method Account=7607124648; x80 - New: {resMsg.Code}");
+            foreach (var msg in resMsg.Result)
+            {
+                Console.WriteLine($"Message {msg.Name} ({msg.Id}) from {msg.SourceName} ({msg.SourceNumber}) is " + ((msg.Unread) ? "new" : "old"));
+            }
+            Console.Write(Environment.NewLine);
+
+            Console.WriteLine(@"Get Media method: ");
+            if (File.Exists($"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\\{"file80.pdf"}"))
+                File.Delete($"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\\{"file80.pdf"}");
+            var resFile = ApiHelper.GetMedia("7607124648", 80, "New", "I161141228", MediaType.Pdf, CancellationToken.None).Result;
+            using (var ms = new MemoryStream())
+            {
+                resFile.Result.CopyTo(ms);
+                var bytes = ms.ToArray();
+
+                using (var file = new FileStream(
+                    $"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\\{"file80.pdf"}", FileMode.Create, FileAccess.Write))
+                {
+                    ms.Read(bytes, 0, (int)ms.Length);
+                    file.Write(bytes, 0, bytes.Length);
+                    ms.Close();
+                }
+                Console.WriteLine(@"Content from Account=7607124648; x80 - New; I161141228 received: file80.pdf");
+            }
+            Console.Write(Environment.NewLine);
+
+            resMsg = ApiHelper.GetMesages("7607124648", 80, "New", 10, 1, true).Result;
+            Console.WriteLine($"Get Messages method Account=7607124648; x80 - New: {resMsg.Code}");
             foreach (var msg in resMsg.Result)
             {
                 Console.WriteLine($"Message {msg.Name} ({msg.Id}) from {msg.SourceName} ({msg.SourceNumber}) is " + ((msg.Unread) ? "new" : "old"));
@@ -142,7 +170,7 @@ namespace TestApp
             Console.WriteLine(@"Media method: ");
             if (File.Exists($"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\\{"file.pdf"}"))
                 File.Delete($"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\\{"file.pdf"}");
-            var res = ApiHelper.GetMedia("7607124648", 802, "Sent", "I160057839", MediaType.Pdf, CancellationToken.None).Result;
+            var res = ApiHelper.GetMedia("7607124648", 80, "New", "I161141228", MediaType.Pdf, CancellationToken.None).Result;
              using (var ms = new MemoryStream())
              {
                  res.Result.CopyTo(ms);

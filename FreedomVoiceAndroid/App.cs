@@ -1,6 +1,7 @@
 using System;
 using Android.App;
 using Android.Content;
+using Android.Gms.Analytics;
 using Android.Runtime;
 using Android.Telephony;
 using com.FreedomVoice.MobileApp.Android.Helpers;
@@ -19,6 +20,22 @@ namespace com.FreedomVoice.MobileApp.Android
     public class App : Application
     {
         public const string AppPackage = "com.FreedomVoice.MobileApp.Android";
+        private Tracker _tracker;
+
+        /// <summary>
+        /// Analytics tracker
+        /// </summary>
+        public Tracker AnalyticsTracker
+        {
+            get
+            {
+                if (_tracker != null) return _tracker;
+                var analytics = GoogleAnalytics.GetInstance(this);
+                //TODO: ADD analytics key
+                _tracker = analytics.NewTracker("");
+                return _tracker;
+            }
+        }
 
         /// <summary>
         /// Call state helper
