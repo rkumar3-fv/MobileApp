@@ -5,9 +5,9 @@
     android:layout_height="match_parent">
     <android.support.v7.widget.RecyclerView
         android:id="@+id/messagesFragment_recyclerView"
+        style="@style/ScrollTheme"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scrollbars="vertical"
         android:paddingTop="@dimen/fragment_msg_element_padding"
         android:paddingBottom="@dimen/fragment_msg_element_padding"
         android:clipToPadding="false" />

@@ -54,6 +54,11 @@ namespace TestApp
             Console.WriteLine(@"Login method another one: " + ApiHelper.Login(_login, _passwd).Result.Code);
             Console.Write(Environment.NewLine);
 
+            var timeRestore = ApiHelper.GetPollingInterval().Result;
+            Console.WriteLine(@"Polling interval request: " + (timeRestore?.Code.ToString() ?? "null"));
+            Console.WriteLine($"Polling interval is : {(timeRestore?.Result.PollingIntervalSeconds.ToString() ?? "empty")}");
+            Console.Write(Environment.NewLine);
+
             Console.WriteLine(@"Systems method: ");
             var syst = ApiHelper.GetSystems().Result;
             foreach (var phoneNumber in syst.Result.PhoneNumbers)
@@ -116,7 +121,7 @@ namespace TestApp
 
             var reserv = ApiHelper.CreateCallReservation("7607124648", "8005551212", "7607124648", "8005556767").Result;
             Console.WriteLine($"CallReservation method: {reserv.Code}");
-            Console.WriteLine($"Result: {((reserv.Result==null)?("NULL"):(reserv.Result.CallReservationSetting))}");
+            Console.WriteLine($"Result: {((reserv.Result==null)?("NULL"):(reserv.Result.SwitchboardPhoneNumber))}");
             Console.Write(Environment.NewLine);
 
 

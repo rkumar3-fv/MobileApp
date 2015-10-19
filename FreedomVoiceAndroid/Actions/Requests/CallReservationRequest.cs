@@ -56,7 +56,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
             var errorResponse = CheckErrorResponse(Id, asyncRes.Code);
             if (errorResponse != null)
                 return errorResponse;
-            return new CallReservationResponse(Id, asyncRes.Result.CallReservationSetting);
+            return new CallReservationResponse(Id, asyncRes.Result.SwitchboardPhoneNumber);
         }
 
         public override void WriteToParcel(Parcel dest, ParcelableWriteFlags flags)

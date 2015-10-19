@@ -1,7 +1,9 @@
 ﻿using System;
 using Android.App;
 using Android.Content;
+using Android.Graphics;
 using Android.OS;
+using Android.Support.V4.Content;
 using Android.Views;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Helpers;
@@ -22,9 +24,11 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             _emailText.Text = "freedomvoice.user2.267055@gmail.com";
         }
 
+        private Color _errorColor;
         private EditText _emailText;
         private Button _restoreButton;
         private TextView _resultLabel;
+        private ProgressBar _progressSend;
 
         protected override void OnCreate(Bundle bundle)
         {
@@ -33,12 +37,15 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             _emailText = FindViewById<EditText>(Resource.Id.restoreActivity_emailField);
             _restoreButton = FindViewById<Button>(Resource.Id.restoreActivity_sendButton);
             _resultLabel = FindViewById<TextView>(Resource.Id.restoreActivity_resultText);
+            _progressSend = FindViewById<ProgressBar>(Resource.Id.restoreActivity_progress);
             _restoreButton.Click += RestoreButtonOnClick;
 
             SupportActionBar.SetTitle(Resource.String.ActivityRestore_title);
             SupportActionBar.SetHomeAsUpIndicator(Resource.Drawable.ic_action_back);
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
             SupportActionBar.SetHomeButtonEnabled(true);
+
+            _errorColor = new Color(ContextCompat.GetColor(this, Resource.Color.textColorError));
         }
 
         protected override void OnResume()
@@ -55,11 +62,18 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             if (_emailText.Length() > 5)
                 if (DataValidationUtils.IsEmailValid(_emailText.Text))
                 {
-                    _resultLabel.Text = "";
+                    _emailText.Background.ClearColorFilter();
+                    if (_progressSend.Visibility == ViewStates.Invisible)
+                        _progressSend.Visibility = ViewStates.Visible;
+                    if (_restoreButton.Text.Length > 0)
+                        _restoreButton.Text = "";
+                    if (_resultLabel.Text.Length > 0)
+                        _resultLabel.Text = "";
                     Helper.RestorePassword(_emailText.Text);
                     return;
                 }
             _resultLabel.Text = GetString(Resource.String.ActivityRestore_badEmail);
+            _emailText.Background.SetColorFilter(_errorColor, PorterDuff.Mode.SrcAtop);
         }
 
         public override bool OnCreateOptionsMenu(IMenu menu)
@@ -83,6 +97,10 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         {
             foreach (var code in args.Codes)
             {
+                if (_progressSend.Visibility == ViewStates.Visible)
+                    _progressSend.Visibility = ViewStates.Invisible;
+                if (_restoreButton.Text.Length == 0)
+                    _restoreButton.Text = GetString(Resource.String.ActivityRestore_sendButton);
                 switch (code)
                 {
                     case ActionsHelperEventArgs.RestoreError:

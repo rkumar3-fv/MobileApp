@@ -47,6 +47,14 @@
     <item name="android:textColor">@color/colorActionBarText</item>
     <item name="android:textSize">@dimen/toolbar_text</item>
   </style>
+  
+  <!-- Scrollbar style -->
+  <style name="ScrollTheme" >
+    <item name="android:scrollbarSize">@dimen/activity_scroll_width</item>
+    <item name="android:scrollbarThumbVertical">@drawable/scrollbar</item>
+    <item name="android:scrollbars">vertical</item>
+    <item name="android:scrollbarStyle">insideOverlay</item>
+  </style>
 
   <!-- AuthActivity edit fields style -->
   <style name="AuthEditTextStyle">

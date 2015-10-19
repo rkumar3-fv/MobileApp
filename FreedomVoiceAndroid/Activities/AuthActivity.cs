@@ -1,7 +1,9 @@
 ﻿using System;
 using Android.App;
 using Android.Content;
+using Android.Graphics;
 using Android.OS;
+using Android.Support.V4.Content;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
@@ -26,12 +28,14 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             _passwordText.Text = "adm654654";
         }
 
+        private Color _errorColor;
         private Button _authButton;
         private Button _forgotButton;
         private EditText _loginText;
         private EditText _passwordText;
         private TextView _errorTextLogin;
         private TextView _errorTextPassword;
+        private ProgressBar _progressLogin;
 
         protected override void OnCreate(Bundle bundle)
         {
@@ -43,9 +47,11 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             _passwordText = FindViewById<EditText>(Resource.Id.authActivity_passwordField);
             _errorTextLogin = FindViewById<TextView>(Resource.Id.authActivity_loginError);
             _errorTextPassword = FindViewById<TextView>(Resource.Id.authActivity_errorText);
+            _progressLogin = FindViewById<ProgressBar>(Resource.Id.authActivity_progress);
 
             _authButton.Click += AuthButtonOnClick;
             _forgotButton.Click += ForgotButtonOnClick;
+            _errorColor = new Color(ContextCompat.GetColor(this, Resource.Color.textColorError));
         }
 
         protected override void OnResume()
@@ -64,25 +70,40 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             HideErrors();
             if (_loginText.Text.Length == 0)
             {
+                _loginText.Background.SetColorFilter(_errorColor, PorterDuff.Mode.SrcAtop);
                 _errorTextLogin.Text = GetString(Resource.String.ActivityAuth_badLogin);
                 return;
             }
             if (_passwordText.Text.Length == 0)
             {
+                _passwordText.Background.SetColorFilter(_errorColor, PorterDuff.Mode.SrcAtop);
                 _errorTextPassword.Text = GetString(Resource.String.ActivityAuth_badPassword);
                 return;
             }
             var res = Helper.Authorize(_loginText.Text, _passwordText.Text);
             if (res == -1)
                 Helper.GetAccounts();
+            else
+            {
+                if (_progressLogin.Visibility == ViewStates.Invisible)
+                    _progressLogin.Visibility = ViewStates.Visible;
+                if (_authButton.Text.Length != 0)
+                    _authButton.Text = "";
+            }
         }
 
         private void HideErrors()
         {
             if (_errorTextLogin.Text.Length > 0)
+            {
+                _loginText.Background.ClearColorFilter();
                 _errorTextLogin.Text = "";
+            }
             if (_errorTextPassword.Text.Length > 0)
+            {
+                _passwordText.Background.ClearColorFilter();
                 _errorTextPassword.Text = "";
+            }
         }
 
         /// <summary>
@@ -103,12 +124,18 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         {
             foreach (var code in args.Codes)
             {
+                if (_progressLogin.Visibility == ViewStates.Visible)
+                    _progressLogin.Visibility = ViewStates.Invisible;
+                if (_authButton.Text.Length == 0)
+                    _authButton.Text = GetString(Resource.String.ActivityAuth_authButton);
                 switch (code)
                 {
                     case ActionsHelperEventArgs.AuthLoginError:
+                        _loginText.Background.SetColorFilter(_errorColor, PorterDuff.Mode.SrcAtop);
                         _errorTextLogin.Text = GetString(Resource.String.ActivityAuth_incorrectLogin);
                         return;
                     case ActionsHelperEventArgs.AuthPasswdError:
+                        _passwordText.Background.SetColorFilter(_errorColor, PorterDuff.Mode.SrcAtop);
                         _errorTextPassword.Text = GetString(Resource.String.ActivityAuth_incorrectPassword);
                         return;
                 }
