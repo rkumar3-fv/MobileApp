@@ -31,8 +31,7 @@ namespace com.FreedomVoice.MobileApp.Android
             {
                 if (_tracker != null) return _tracker;
                 var analytics = GoogleAnalytics.GetInstance(this);
-                //TODO: ADD analytics key
-                _tracker = analytics.NewTracker("");
+                _tracker = analytics.NewTracker("UA-69040520-1");
                 return _tracker;
             }
         }
@@ -60,6 +59,11 @@ namespace com.FreedomVoice.MobileApp.Android
         {
             base.OnCreate();
             Helper = new ActionsHelper(this);
+
+            var pInfo = PackageManager.GetPackageInfo(PackageName, 0);
+            _tracker.SetAppName(GetString(Resource.String.ApplicationName));
+            _tracker.SetAppVersion($"{pInfo.VersionCode} ({pInfo.VersionName})");
+            _tracker.SetScreenResolution(Resources.DisplayMetrics.WidthPixels, Resources.DisplayMetrics.HeightPixels);
             
             CallState = new CallStateHelper();
             CallState.CallEvent += CallStateOnCallEvent;

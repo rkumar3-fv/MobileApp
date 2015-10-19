@@ -1,4 +1,5 @@
 using System;
+using Android.Gms.Analytics;
 using Android.OS;
 using Android.Support.V7.App;
 using Android.Util;
@@ -13,12 +14,13 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
     public abstract class BaseActivity : AppCompatActivity
     {
         public ActionsHelper Helper;
+        protected App Appl;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            var app = App.GetApplication(this);
-            Helper = app.Helper;
+            Appl = App.GetApplication(this);
+            Helper = Appl.Helper;
         }
 
         protected override void OnPause()
@@ -33,6 +35,9 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             base.OnResume();
             Log.Debug(App.AppPackage, $"ACTIVITY {GetType().Name} resumed");
             Helper.HelperEvent += OnHelperEvent;
+
+            Appl.AnalyticsTracker.SetScreenName($"Activity {GetType().Name}");
+            Appl.AnalyticsTracker.Send(new HitBuilders.ScreenViewBuilder().Build());
         }
 
         /// <summary>
