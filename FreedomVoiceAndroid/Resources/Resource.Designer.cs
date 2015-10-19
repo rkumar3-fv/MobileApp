@@ -227,11 +227,11 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f010031
 			public const int barLength = 2130772017;
 			
-			// aapt resource value: 0x7f0100fb
-			public const int behavior_overlapTop = 2130772219;
+			// aapt resource value: 0x7f0100f2
+			public const int behavior_overlapTop = 2130772210;
 			
-			// aapt resource value: 0x7f0100f3
-			public const int borderWidth = 2130772211;
+			// aapt resource value: 0x7f0100ea
+			public const int borderWidth = 2130772202;
 			
 			// aapt resource value: 0x7f010085
 			public const int borderlessButtonStyle = 2130772101;
@@ -284,11 +284,11 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f0100c3
 			public const int collapseIcon = 2130772163;
 			
-			// aapt resource value: 0x7f0100e7
-			public const int collapsedTitleGravity = 2130772199;
+			// aapt resource value: 0x7f0100de
+			public const int collapsedTitleGravity = 2130772190;
 			
-			// aapt resource value: 0x7f0100e3
-			public const int collapsedTitleTextAppearance = 2130772195;
+			// aapt resource value: 0x7f0100da
+			public const int collapsedTitleTextAppearance = 2130772186;
 			
 			// aapt resource value: 0x7f01002b
 			public const int color = 2130772011;
@@ -332,8 +332,8 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f01001a
 			public const int contentInsetStart = 2130771994;
 			
-			// aapt resource value: 0x7f0100e4
-			public const int contentScrim = 2130772196;
+			// aapt resource value: 0x7f0100db
+			public const int contentScrim = 2130772187;
 			
 			// aapt resource value: 0x7f0100a8
 			public const int controlBackground = 2130772136;
@@ -389,41 +389,41 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f01001e
 			public const int elevation = 2130771998;
 			
-			// aapt resource value: 0x7f01010e
-			public const int errorEnabled = 2130772238;
+			// aapt resource value: 0x7f010105
+			public const int errorEnabled = 2130772229;
 			
-			// aapt resource value: 0x7f01010f
-			public const int errorTextAppearance = 2130772239;
+			// aapt resource value: 0x7f010106
+			public const int errorTextAppearance = 2130772230;
 			
 			// aapt resource value: 0x7f010022
 			public const int expandActivityOverflowButtonDrawable = 2130772002;
 			
-			// aapt resource value: 0x7f0100d8
-			public const int expanded = 2130772184;
-			
-			// aapt resource value: 0x7f0100e8
-			public const int expandedTitleGravity = 2130772200;
-			
-			// aapt resource value: 0x7f0100dd
-			public const int expandedTitleMargin = 2130772189;
-			
-			// aapt resource value: 0x7f0100e1
-			public const int expandedTitleMarginBottom = 2130772193;
-			
-			// aapt resource value: 0x7f0100e0
-			public const int expandedTitleMarginEnd = 2130772192;
-			
-			// aapt resource value: 0x7f0100de
-			public const int expandedTitleMarginStart = 2130772190;
+			// aapt resource value: 0x7f0100cf
+			public const int expanded = 2130772175;
 			
 			// aapt resource value: 0x7f0100df
-			public const int expandedTitleMarginTop = 2130772191;
+			public const int expandedTitleGravity = 2130772191;
 			
-			// aapt resource value: 0x7f0100e2
-			public const int expandedTitleTextAppearance = 2130772194;
+			// aapt resource value: 0x7f0100d4
+			public const int expandedTitleMargin = 2130772180;
 			
-			// aapt resource value: 0x7f0100f1
-			public const int fabSize = 2130772209;
+			// aapt resource value: 0x7f0100d8
+			public const int expandedTitleMarginBottom = 2130772184;
+			
+			// aapt resource value: 0x7f0100d7
+			public const int expandedTitleMarginEnd = 2130772183;
+			
+			// aapt resource value: 0x7f0100d5
+			public const int expandedTitleMarginStart = 2130772181;
+			
+			// aapt resource value: 0x7f0100d6
+			public const int expandedTitleMarginTop = 2130772182;
+			
+			// aapt resource value: 0x7f0100d9
+			public const int expandedTitleTextAppearance = 2130772185;
+			
+			// aapt resource value: 0x7f0100e8
+			public const int fabSize = 2130772200;
 			
 			// aapt resource value: 0x7f01002e
 			public const int gapBetweenBars = 2130772014;
@@ -431,8 +431,8 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f010042
 			public const int goIcon = 2130772034;
 			
-			// aapt resource value: 0x7f0100f9
-			public const int headerLayout = 2130772217;
+			// aapt resource value: 0x7f0100f0
+			public const int headerLayout = 2130772208;
 			
 			// aapt resource value: 0x7f010005
 			public const int height = 2130771973;
@@ -440,11 +440,11 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f010019
 			public const int hideOnContentScroll = 2130771993;
 			
-			// aapt resource value: 0x7f010110
-			public const int hintAnimationEnabled = 2130772240;
+			// aapt resource value: 0x7f010107
+			public const int hintAnimationEnabled = 2130772231;
 			
-			// aapt resource value: 0x7f01010d
-			public const int hintTextAppearance = 2130772237;
+			// aapt resource value: 0x7f010104
+			public const int hintTextAppearance = 2130772228;
 			
 			// aapt resource value: 0x7f01007f
 			public const int homeAsUpIndicator = 2130772095;
@@ -464,29 +464,29 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f010021
 			public const int initialActivityCount = 2130772001;
 			
-			// aapt resource value: 0x7f0100fa
-			public const int insetForeground = 2130772218;
+			// aapt resource value: 0x7f0100f1
+			public const int insetForeground = 2130772209;
 			
 			// aapt resource value: 0x7f010006
 			public const int isLightTheme = 2130771974;
 			
-			// aapt resource value: 0x7f0100f7
-			public const int itemBackground = 2130772215;
+			// aapt resource value: 0x7f0100ee
+			public const int itemBackground = 2130772206;
 			
-			// aapt resource value: 0x7f0100f5
-			public const int itemIconTint = 2130772213;
+			// aapt resource value: 0x7f0100ec
+			public const int itemIconTint = 2130772204;
 			
 			// aapt resource value: 0x7f010018
 			public const int itemPadding = 2130771992;
 			
-			// aapt resource value: 0x7f0100f8
-			public const int itemTextAppearance = 2130772216;
+			// aapt resource value: 0x7f0100ef
+			public const int itemTextAppearance = 2130772207;
 			
-			// aapt resource value: 0x7f0100f6
-			public const int itemTextColor = 2130772214;
+			// aapt resource value: 0x7f0100ed
+			public const int itemTextColor = 2130772205;
 			
-			// aapt resource value: 0x7f0100ea
-			public const int keylines = 2130772202;
+			// aapt resource value: 0x7f0100e1
+			public const int keylines = 2130772193;
 			
 			// aapt resource value: 0x7f01003d
 			public const int layout = 2130772029;
@@ -494,56 +494,29 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f010000
 			public const int layoutManager = 2130771968;
 			
-			// aapt resource value: 0x7f0100ed
-			public const int layout_anchor = 2130772205;
+			// aapt resource value: 0x7f0100e4
+			public const int layout_anchor = 2130772196;
 			
-			// aapt resource value: 0x7f0100ef
-			public const int layout_anchorGravity = 2130772207;
+			// aapt resource value: 0x7f0100e6
+			public const int layout_anchorGravity = 2130772198;
 			
-			// aapt resource value: 0x7f0100ec
-			public const int layout_behavior = 2130772204;
-			
-			// aapt resource value: 0x7f0100db
-			public const int layout_collapseMode = 2130772187;
-			
-			// aapt resource value: 0x7f0100dc
-			public const int layout_collapseParallaxMultiplier = 2130772188;
-			
-			// aapt resource value: 0x7f0100d0
-			public const int layout_heightPercent = 2130772176;
-			
-			// aapt resource value: 0x7f0100ee
-			public const int layout_keyline = 2130772206;
-			
-			// aapt resource value: 0x7f0100d5
-			public const int layout_marginBottomPercent = 2130772181;
-			
-			// aapt resource value: 0x7f0100d7
-			public const int layout_marginEndPercent = 2130772183;
+			// aapt resource value: 0x7f0100e3
+			public const int layout_behavior = 2130772195;
 			
 			// aapt resource value: 0x7f0100d2
-			public const int layout_marginLeftPercent = 2130772178;
-			
-			// aapt resource value: 0x7f0100d1
-			public const int layout_marginPercent = 2130772177;
-			
-			// aapt resource value: 0x7f0100d4
-			public const int layout_marginRightPercent = 2130772180;
-			
-			// aapt resource value: 0x7f0100d6
-			public const int layout_marginStartPercent = 2130772182;
+			public const int layout_collapseMode = 2130772178;
 			
 			// aapt resource value: 0x7f0100d3
-			public const int layout_marginTopPercent = 2130772179;
+			public const int layout_collapseParallaxMultiplier = 2130772179;
 			
-			// aapt resource value: 0x7f0100d9
-			public const int layout_scrollFlags = 2130772185;
+			// aapt resource value: 0x7f0100e5
+			public const int layout_keyline = 2130772197;
 			
-			// aapt resource value: 0x7f0100da
-			public const int layout_scrollInterpolator = 2130772186;
+			// aapt resource value: 0x7f0100d0
+			public const int layout_scrollFlags = 2130772176;
 			
-			// aapt resource value: 0x7f0100cf
-			public const int layout_widthPercent = 2130772175;
+			// aapt resource value: 0x7f0100d1
+			public const int layout_scrollInterpolator = 2130772177;
 			
 			// aapt resource value: 0x7f01009f
 			public const int listChoiceBackgroundIndicator = 2130772127;
@@ -581,8 +554,8 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f0100c7
 			public const int logoDescription = 2130772167;
 			
-			// aapt resource value: 0x7f0100fc
-			public const int maxActionInlineWidth = 2130772220;
+			// aapt resource value: 0x7f0100f3
+			public const int maxActionInlineWidth = 2130772211;
 			
 			// aapt resource value: 0x7f0100c2
 			public const int maxButtonHeight = 2130772162;
@@ -590,8 +563,8 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f010033
 			public const int measureWithLargestChild = 2130772019;
 			
-			// aapt resource value: 0x7f0100f4
-			public const int menu = 2130772212;
+			// aapt resource value: 0x7f0100eb
+			public const int menu = 2130772203;
 			
 			// aapt resource value: 0x7f010025
 			public const int multiChoiceItemLayout = 2130772005;
@@ -635,8 +608,8 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f01003a
 			public const int preserveIconSpacing = 2130772026;
 			
-			// aapt resource value: 0x7f0100f2
-			public const int pressedTranslationZ = 2130772210;
+			// aapt resource value: 0x7f0100e9
+			public const int pressedTranslationZ = 2130772201;
 			
 			// aapt resource value: 0x7f010017
 			public const int progressBarPadding = 2130771991;
@@ -659,8 +632,8 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f010002
 			public const int reverseLayout = 2130771970;
 			
-			// aapt resource value: 0x7f0100f0
-			public const int rippleColor = 2130772208;
+			// aapt resource value: 0x7f0100e7
+			public const int rippleColor = 2130772199;
 			
 			// aapt resource value: 0x7f010044
 			public const int searchHintIcon = 2130772036;
@@ -710,11 +683,11 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f01003c
 			public const int state_above_anchor = 2130772028;
 			
-			// aapt resource value: 0x7f0100eb
-			public const int statusBarBackground = 2130772203;
+			// aapt resource value: 0x7f0100e2
+			public const int statusBarBackground = 2130772194;
 			
-			// aapt resource value: 0x7f0100e5
-			public const int statusBarScrim = 2130772197;
+			// aapt resource value: 0x7f0100dc
+			public const int statusBarScrim = 2130772188;
 			
 			// aapt resource value: 0x7f010049
 			public const int submitBackground = 2130772041;
@@ -746,53 +719,53 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f01004c
 			public const int switchTextAppearance = 2130772044;
 			
-			// aapt resource value: 0x7f010100
-			public const int tabBackground = 2130772224;
+			// aapt resource value: 0x7f0100f7
+			public const int tabBackground = 2130772215;
 			
-			// aapt resource value: 0x7f0100ff
-			public const int tabContentStart = 2130772223;
+			// aapt resource value: 0x7f0100f6
+			public const int tabContentStart = 2130772214;
 			
-			// aapt resource value: 0x7f010102
-			public const int tabGravity = 2130772226;
+			// aapt resource value: 0x7f0100f9
+			public const int tabGravity = 2130772217;
 			
-			// aapt resource value: 0x7f0100fd
-			public const int tabIndicatorColor = 2130772221;
+			// aapt resource value: 0x7f0100f4
+			public const int tabIndicatorColor = 2130772212;
 			
-			// aapt resource value: 0x7f0100fe
-			public const int tabIndicatorHeight = 2130772222;
+			// aapt resource value: 0x7f0100f5
+			public const int tabIndicatorHeight = 2130772213;
 			
-			// aapt resource value: 0x7f010104
-			public const int tabMaxWidth = 2130772228;
+			// aapt resource value: 0x7f0100fb
+			public const int tabMaxWidth = 2130772219;
+			
+			// aapt resource value: 0x7f0100fa
+			public const int tabMinWidth = 2130772218;
+			
+			// aapt resource value: 0x7f0100f8
+			public const int tabMode = 2130772216;
 			
 			// aapt resource value: 0x7f010103
-			public const int tabMinWidth = 2130772227;
+			public const int tabPadding = 2130772227;
+			
+			// aapt resource value: 0x7f010102
+			public const int tabPaddingBottom = 2130772226;
 			
 			// aapt resource value: 0x7f010101
-			public const int tabMode = 2130772225;
+			public const int tabPaddingEnd = 2130772225;
 			
-			// aapt resource value: 0x7f01010c
-			public const int tabPadding = 2130772236;
+			// aapt resource value: 0x7f0100ff
+			public const int tabPaddingStart = 2130772223;
 			
-			// aapt resource value: 0x7f01010b
-			public const int tabPaddingBottom = 2130772235;
+			// aapt resource value: 0x7f010100
+			public const int tabPaddingTop = 2130772224;
 			
-			// aapt resource value: 0x7f01010a
-			public const int tabPaddingEnd = 2130772234;
+			// aapt resource value: 0x7f0100fe
+			public const int tabSelectedTextColor = 2130772222;
 			
-			// aapt resource value: 0x7f010108
-			public const int tabPaddingStart = 2130772232;
+			// aapt resource value: 0x7f0100fc
+			public const int tabTextAppearance = 2130772220;
 			
-			// aapt resource value: 0x7f010109
-			public const int tabPaddingTop = 2130772233;
-			
-			// aapt resource value: 0x7f010107
-			public const int tabSelectedTextColor = 2130772231;
-			
-			// aapt resource value: 0x7f010105
-			public const int tabTextAppearance = 2130772229;
-			
-			// aapt resource value: 0x7f010106
-			public const int tabTextColor = 2130772230;
+			// aapt resource value: 0x7f0100fd
+			public const int tabTextColor = 2130772221;
 			
 			// aapt resource value: 0x7f010028
 			public const int textAllCaps = 2130772008;
@@ -833,8 +806,8 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f010007
 			public const int title = 2130771975;
 			
-			// aapt resource value: 0x7f0100e9
-			public const int titleEnabled = 2130772201;
+			// aapt resource value: 0x7f0100e0
+			public const int titleEnabled = 2130772192;
 			
 			// aapt resource value: 0x7f0100c1
 			public const int titleMarginBottom = 2130772161;
@@ -860,8 +833,8 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f01000b
 			public const int titleTextStyle = 2130771979;
 			
-			// aapt resource value: 0x7f0100e6
-			public const int toolbarId = 2130772198;
+			// aapt resource value: 0x7f0100dd
+			public const int toolbarId = 2130772189;
 			
 			// aapt resource value: 0x7f01008a
 			public const int toolbarNavigationButtonStyle = 2130772106;
@@ -4493,7 +4466,7 @@ namespace com.FreedomVoice.MobileApp.Android
 			public static int[] AppBarLayout = new int[] {
 					16842964,
 					2130771998,
-					2130772184};
+					2130772175};
 			
 			// aapt resource value: 0
 			public const int AppBarLayout_android_background = 0;
@@ -4505,8 +4478,8 @@ namespace com.FreedomVoice.MobileApp.Android
 			public const int AppBarLayout_expanded = 2;
 			
 			public static int[] AppBarLayout_LayoutParams = new int[] {
-					2130772185,
-					2130772186};
+					2130772176,
+					2130772177};
 			
 			// aapt resource value: 0
 			public const int AppBarLayout_LayoutParams_layout_scrollFlags = 0;
@@ -4525,8 +4498,8 @@ namespace com.FreedomVoice.MobileApp.Android
 			public const int AppCompatTextView_textAllCaps = 1;
 			
 			public static int[] CollapsingAppBarLayout_LayoutParams = new int[] {
-					2130772187,
-					2130772188};
+					2130772178,
+					2130772179};
 			
 			// aapt resource value: 0
 			public const int CollapsingAppBarLayout_LayoutParams_layout_collapseMode = 0;
@@ -4536,19 +4509,19 @@ namespace com.FreedomVoice.MobileApp.Android
 			
 			public static int[] CollapsingToolbarLayout = new int[] {
 					2130771975,
+					2130772180,
+					2130772181,
+					2130772182,
+					2130772183,
+					2130772184,
+					2130772185,
+					2130772186,
+					2130772187,
+					2130772188,
 					2130772189,
 					2130772190,
 					2130772191,
-					2130772192,
-					2130772193,
-					2130772194,
-					2130772195,
-					2130772196,
-					2130772197,
-					2130772198,
-					2130772199,
-					2130772200,
-					2130772201};
+					2130772192};
 			
 			// aapt resource value: 11
 			public const int CollapsingToolbarLayout_collapsedTitleGravity = 11;
@@ -4607,8 +4580,8 @@ namespace com.FreedomVoice.MobileApp.Android
 			public const int CompoundButton_buttonTintMode = 2;
 			
 			public static int[] CoordinatorLayout = new int[] {
-					2130772202,
-					2130772203};
+					2130772193,
+					2130772194};
 			
 			// aapt resource value: 0
 			public const int CoordinatorLayout_keylines = 0;
@@ -4618,10 +4591,10 @@ namespace com.FreedomVoice.MobileApp.Android
 			
 			public static int[] CoordinatorLayout_LayoutParams = new int[] {
 					16842931,
-					2130772204,
-					2130772205,
-					2130772206,
-					2130772207};
+					2130772195,
+					2130772196,
+					2130772197,
+					2130772198};
 			
 			// aapt resource value: 0
 			public const int CoordinatorLayout_LayoutParams_android_layout_gravity = 0;
@@ -4677,10 +4650,10 @@ namespace com.FreedomVoice.MobileApp.Android
 					2130771998,
 					2130772173,
 					2130772174,
-					2130772208,
-					2130772209,
-					2130772210,
-					2130772211};
+					2130772199,
+					2130772200,
+					2130772201,
+					2130772202};
 			
 			// aapt resource value: 0
 			public const int FloatingActionButton_android_background = 0;
@@ -4907,12 +4880,12 @@ namespace com.FreedomVoice.MobileApp.Android
 					16842973,
 					16843039,
 					2130771998,
-					2130772212,
-					2130772213,
-					2130772214,
-					2130772215,
-					2130772216,
-					2130772217};
+					2130772203,
+					2130772204,
+					2130772205,
+					2130772206,
+					2130772207,
+					2130772208};
 			
 			// aapt resource value: 0
 			public const int NavigationView_android_background = 0;
@@ -4943,44 +4916,6 @@ namespace com.FreedomVoice.MobileApp.Android
 			
 			// aapt resource value: 4
 			public const int NavigationView_menu = 4;
-			
-			public static int[] PercentLayout_Layout = new int[] {
-					2130772175,
-					2130772176,
-					2130772177,
-					2130772178,
-					2130772179,
-					2130772180,
-					2130772181,
-					2130772182,
-					2130772183};
-			
-			// aapt resource value: 1
-			public const int PercentLayout_Layout_layout_heightPercent = 1;
-			
-			// aapt resource value: 6
-			public const int PercentLayout_Layout_layout_marginBottomPercent = 6;
-			
-			// aapt resource value: 8
-			public const int PercentLayout_Layout_layout_marginEndPercent = 8;
-			
-			// aapt resource value: 3
-			public const int PercentLayout_Layout_layout_marginLeftPercent = 3;
-			
-			// aapt resource value: 2
-			public const int PercentLayout_Layout_layout_marginPercent = 2;
-			
-			// aapt resource value: 5
-			public const int PercentLayout_Layout_layout_marginRightPercent = 5;
-			
-			// aapt resource value: 7
-			public const int PercentLayout_Layout_layout_marginStartPercent = 7;
-			
-			// aapt resource value: 4
-			public const int PercentLayout_Layout_layout_marginTopPercent = 4;
-			
-			// aapt resource value: 0
-			public const int PercentLayout_Layout_layout_widthPercent = 0;
 			
 			public static int[] PopupWindow = new int[] {
 					16843126,
@@ -5021,13 +4956,13 @@ namespace com.FreedomVoice.MobileApp.Android
 			public const int RecyclerView_stackFromEnd = 4;
 			
 			public static int[] ScrimInsetsFrameLayout = new int[] {
-					2130772218};
+					2130772209};
 			
 			// aapt resource value: 0
 			public const int ScrimInsetsFrameLayout_insetForeground = 0;
 			
 			public static int[] ScrollingViewBehavior_Params = new int[] {
-					2130772219};
+					2130772210};
 			
 			// aapt resource value: 0
 			public const int ScrollingViewBehavior_Params_behavior_overlapTop = 0;
@@ -5105,7 +5040,7 @@ namespace com.FreedomVoice.MobileApp.Android
 			public static int[] SnackbarLayout = new int[] {
 					16843039,
 					2130771998,
-					2130772220};
+					2130772211};
 			
 			// aapt resource value: 0
 			public const int SnackbarLayout_android_maxWidth = 0;
@@ -5177,22 +5112,22 @@ namespace com.FreedomVoice.MobileApp.Android
 			public const int SwitchCompat_track = 3;
 			
 			public static int[] TabLayout = new int[] {
+					2130772212,
+					2130772213,
+					2130772214,
+					2130772215,
+					2130772216,
+					2130772217,
+					2130772218,
+					2130772219,
+					2130772220,
 					2130772221,
 					2130772222,
 					2130772223,
 					2130772224,
 					2130772225,
 					2130772226,
-					2130772227,
-					2130772228,
-					2130772229,
-					2130772230,
-					2130772231,
-					2130772232,
-					2130772233,
-					2130772234,
-					2130772235,
-					2130772236};
+					2130772227};
 			
 			// aapt resource value: 3
 			public const int TabLayout_tabBackground = 3;
@@ -5267,10 +5202,10 @@ namespace com.FreedomVoice.MobileApp.Android
 			public static int[] TextInputLayout = new int[] {
 					16842906,
 					16843088,
-					2130772237,
-					2130772238,
-					2130772239,
-					2130772240};
+					2130772228,
+					2130772229,
+					2130772230,
+					2130772231};
 			
 			// aapt resource value: 1
 			public const int TextInputLayout_android_hint = 1;

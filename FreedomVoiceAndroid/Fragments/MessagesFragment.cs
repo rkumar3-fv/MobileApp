@@ -86,10 +86,12 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             Log.Debug(App.AppPackage, $"SWIPED message {args.ElementIndex}");
             _remove = true;
             _removedMsgIndex = args.ElementIndex;
-            _snackbar = Snackbar.Make(View, Resource.String.FragmentMessages_remove, Snackbar.LengthLong).SetAction(Resource.String.FragmentMessages_removeUndo, OnUndoClick)
-                .SetActionTextColor(ContextCompat.GetColor(ContentActivity, Resource.Color.colorUndoList)).SetCallback(_snackCallback);
-            _snackbar.Show();
+            //_snackbar = Snackbar.Make(View, Resource.String.FragmentMessages_remove, Snackbar.LengthLong).SetAction(Resource.String.FragmentMessages_removeUndo, OnUndoClick)
+            //    .SetActionTextColor(ContextCompat.GetColor(ContentActivity, Resource.Color.colorUndoList)).SetCallback(_snackCallback);
+            //_snackbar.Show();
             _adapter.RemoveItem(args.ElementIndex);
+            //TODO: waiting for update support lib
+            OnSnackbarDissmiss(this, null);
         }
 
         /// <summary>
