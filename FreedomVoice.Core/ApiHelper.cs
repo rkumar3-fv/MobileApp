@@ -37,6 +37,11 @@
             return await MakeAsyncPostRequest<string>("/api/v1/passwordReset", postdata, "application/x-www-form-urlencoded", CancellationToken.None);
         }
 
+        public async static Task<BaseResult<PollingInterval>> GetPollingInterval()
+        {
+            return await MakeAsyncGetRequest<PollingInterval>("/api/v1/settings/pollingInterval", "application/json", CancellationToken.None);
+        }
+
         public async static Task<BaseResult<DefaultPhoneNumbers>> GetSystems()
         {
             return await MakeAsyncGetRequest<DefaultPhoneNumbers>("/api/v1/systems", "application/json", CancellationToken.None);

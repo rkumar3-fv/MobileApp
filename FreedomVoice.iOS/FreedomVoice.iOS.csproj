@@ -80,11 +80,12 @@
     <ConsolePause>False</ConsolePause>
     <MtouchArch>ARMv7, ARM64</MtouchArch>
     <CodesignEntitlements>
-	</CodesignEntitlements>
+    </CodesignEntitlements>
     <CodesignProvision>Automatic:AppStore</CodesignProvision>
     <CodesignKey>iPhone Distribution</CodesignKey>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Helpers\PhoneCapability.cs" />
     <Compile Include="ViewControllers\AccountUnavailableViewController.cs" />
     <Compile Include="ViewControllers\AccountUnavailableViewController.designer.cs">
       <DependentUpon>AccountUnavailableViewController.cs</DependentUpon>
