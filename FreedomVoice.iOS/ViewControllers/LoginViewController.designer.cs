@@ -16,6 +16,10 @@ namespace FreedomVoice.iOS.ViewControllers
 	{
 		[Outlet]
 		[GeneratedCode ("iOS Designer", "1.0")]
+		UIButton DialNumber { get; set; }
+
+		[Outlet]
+		[GeneratedCode ("iOS Designer", "1.0")]
 		UIButton ForgotPasswordButton { get; set; }
 
 		[Outlet]
@@ -48,6 +52,10 @@ namespace FreedomVoice.iOS.ViewControllers
 
 		void ReleaseDesignerOutlets ()
 		{
+			if (DialNumber != null) {
+				DialNumber.Dispose ();
+				DialNumber = null;
+			}
 			if (ForgotPasswordButton != null) {
 				ForgotPasswordButton.Dispose ();
 				ForgotPasswordButton = null;

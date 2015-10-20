@@ -105,6 +105,6 @@ namespace FreedomVoice.iOS.ViewControllers
             NavigationController.NavigationBar.Hidden = false;
 
             base.ViewWillAppear(animated);
-        }
+        }        
     }
 }
