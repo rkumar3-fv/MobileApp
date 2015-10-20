@@ -16,6 +16,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Responses
         public const int ErrorConnection = 3;
         public const int ErrorUnauthorized = 4;
         public const int ErrorNotFound = 5;
+        public const int ErrorNotPaid = 6;
         public const int ErrorUnknown = 0;
 
         public ErrorResponse(long requestId, int errorCode) : base(requestId)

@@ -48,12 +48,12 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
         public async override Task<BaseResponse> ExecuteRequest()
         {
             Log.Debug(App.AppPackage, $"REQUEST FOLDERS FOR x{ExtensionId}");
-            var asyncRes = await ApiHelper.GetFolders(AccountName, ExtensionId);
+            var asyncRes = await ApiHelper.GetFoldersWithCount(AccountName, ExtensionId);
             var errorResponse = CheckErrorResponse(Id, asyncRes.Code);
             if (errorResponse != null)
                 return errorResponse;
             var listFold = asyncRes.Result;
-            var resList = listFold.Select(folder => new Folder(folder.Name, folder.MessageCount)).ToList();
+            var resList = listFold.Select(folder => new Folder(folder.Name, folder.UnreadMessages, folder.MessageCount)).ToList();
             return new GetFoldersResponse(Id, resList);
         }
 

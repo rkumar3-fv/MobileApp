@@ -23,23 +23,31 @@ namespace com.FreedomVoice.MobileApp.Android.Entities
         public int MailsCount { get; set; }
 
         /// <summary>
+        /// Mails in folder
+        /// </summary>
+        public int TotalMailsCount { get; set; }
+
+        /// <summary>
         /// Messages in folder
         /// </summary>
         public List<Message> MessagesList { get; set; }
 
-        public Folder(string name, int count, List<Message> messages) : base(0)
+        public Folder(string name, int count, int total, List<Message> messages) : base(0)
         {
             FolderName = name;
             MessagesList = messages;
             MailsCount = count;
+            TotalMailsCount = total;
         }
 
-        public Folder(string name, int count) : this(name, count, new List<Message>())
+        public Folder(string name, int count, int total) : this(name, count, total, new List<Message>())
         { }
 
         private Folder(Parcel parcel) : base(parcel)
         {
             FolderName = parcel.ReadString();
+            MailsCount = parcel.ReadInt();
+            TotalMailsCount = parcel.ReadInt();
             parcel.ReadList(MessagesList, ClassLoader.SystemClassLoader);
         }
 
@@ -47,6 +55,8 @@ namespace com.FreedomVoice.MobileApp.Android.Entities
         {
             base.WriteToParcel(dest, flags);
             dest.WriteString(FolderName);
+            dest.WriteInt(MailsCount);
+            dest.WriteInt(TotalMailsCount);
             dest.WriteList(MessagesList);
         }
 

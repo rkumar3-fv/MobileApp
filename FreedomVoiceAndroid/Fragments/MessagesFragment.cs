@@ -60,9 +60,12 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                     Helper.DeleteMessage(_removedMsgIndex);
                 else
                     Helper.RemoveMessage(_removedMsgIndex);
-                Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].MailsCount--;
+                Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].TotalMailsCount--;
                 if (Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].MessagesList[_removedMsgIndex].Unread)
+                {
+                    Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].MailsCount--;
                     Helper.ExtensionsList[Helper.SelectedExtension].MailsCount--;
+                }
                 Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].MessagesList.RemoveAt(_removedMsgIndex);
             }
             else

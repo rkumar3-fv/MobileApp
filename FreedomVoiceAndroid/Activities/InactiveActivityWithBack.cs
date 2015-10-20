@@ -11,7 +11,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         Label = "@string/ActivityInactive_title",
         ScreenOrientation = ScreenOrientation.Portrait,
         Theme = "@style/AppThemeActionBar")]
-    public class InactiveActiviyWithBack : InactiveActivity
+    public class InactiveActivityWithBack : InactiveActivity
     {
         protected override void OnCreate(Bundle bundle)
         {

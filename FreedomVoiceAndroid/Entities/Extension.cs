@@ -40,6 +40,7 @@ namespace com.FreedomVoice.MobileApp.Android.Entities
         private Extension(Parcel parcel) : base (parcel)
         {
             ExtensionName = parcel.ReadString();
+            MailsCount = parcel.ReadInt();
             parcel.ReadList(Folders, ClassLoader.SystemClassLoader);
         }
 
@@ -47,6 +48,7 @@ namespace com.FreedomVoice.MobileApp.Android.Entities
         {
             base.WriteToParcel(dest, flags);
             dest.WriteString(ExtensionName);
+            dest.WriteInt(MailsCount);
             dest.WriteList(Folders);
         }
 

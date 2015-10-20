@@ -44,6 +44,8 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
                     return new ErrorResponse(requestId, ErrorResponse.ErrorUnauthorized);
                 case ErrorCodes.NotFound:
                     return new ErrorResponse(requestId, ErrorResponse.ErrorNotFound);
+                case ErrorCodes.PaymentRequired:
+                    return new ErrorResponse(requestId, ErrorResponse.ErrorNotPaid);
                 case ErrorCodes.Unknown:
                     return new ErrorResponse(requestId, ErrorResponse.ErrorUnknown);
                 default:

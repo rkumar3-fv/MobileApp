@@ -499,12 +499,19 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                                 HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new []{ActionsHelperEventArgs.AuthLoginError, ActionsHelperEventArgs.RestoreError}));
                             }
                             break;
+                        //Account not found error
                         case ErrorResponse.ErrorNotFound:
                             if (!IsLoggedIn)
                             {
                                 Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} failed: BAD LOGIN");
                                 HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] {ActionsHelperEventArgs.RestoreWrongEmail }));
                             }
+                            break;
+                        //Number on hold (payment required) error
+                        case ErrorResponse.ErrorNotPaid:
+                            SelectedAccount = null;
+                            intent = new Intent(_app, typeof(InactiveActivityWithBack));
+                            HelperEvent?.Invoke(this, new ActionsHelperIntentArgs(response.RequestId, intent));
                             break;
                     }
                     break;
@@ -565,7 +572,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                     {
                         // No one active presentation numbers
                         case 0:
-                            intent = new Intent(_app, typeof(InactiveActiviyWithBack));
+                            intent = new Intent(_app, typeof(InactiveActivityWithBack));
                             break;
                         // One or more presentation numbers
                         default:

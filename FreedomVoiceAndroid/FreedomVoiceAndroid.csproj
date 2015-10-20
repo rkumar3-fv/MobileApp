@@ -126,7 +126,7 @@
     <Compile Include="Actions\Responses\RestorePasswordResponse.cs" />
     <Compile Include="Activities\AuthActivity.cs" />
     <Compile Include="Activities\BaseActivity.cs" />
-    <Compile Include="Activities\InactiveActiviyWithBack.cs" />
+    <Compile Include="Activities\InactiveActivityWithBack.cs" />
     <Compile Include="Activities\LogoutActivity.cs" />
     <Compile Include="Activities\MessageDetailsActivity.cs" />
     <Compile Include="Activities\SelectAccountActivity.cs" />
