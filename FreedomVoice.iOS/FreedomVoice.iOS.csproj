@@ -123,10 +123,6 @@
       <DependentUpon>EmergencyDisclaimerViewController.cs</DependentUpon>
     </Compile>
     <Compile Include="Helpers\DialData.cs" />
-    <Compile Include="ViewControllers\KeypadController.cs" />
-    <Compile Include="ViewControllers\KeypadController.designer.cs">
-      <DependentUpon>KeypadController.cs</DependentUpon>
-    </Compile>
     <Compile Include="ViewControllers\AccountUnavailableViewController.cs" />
     <Compile Include="ViewControllers\AccountUnavailableViewController.designer.cs">
       <DependentUpon>AccountUnavailableViewController.cs</DependentUpon>

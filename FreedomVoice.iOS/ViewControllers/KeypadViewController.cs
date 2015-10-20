@@ -1,8 +1,10 @@
 using CoreGraphics;
 using FreedomVoice.Core.Utils;
 using FreedomVoice.iOS.Helpers;
+using FreedomVoice.iOS.SharedViews;
 using MRoundedButton;
 using System;
+using System.Drawing;
 using UIKit;
 
 namespace FreedomVoice.iOS.ViewControllers
@@ -46,6 +48,9 @@ namespace FreedomVoice.iOS.ViewControllers
 
                 View.AddSubview(button);
             }
+
+            var callerIdView = new CallerIdView(new RectangleF(0, 65, 320, 44));
+            View.AddSubviews(callerIdView);
         }
 
         partial void ClearPhone_TouchUpInside(UIButton sender)
