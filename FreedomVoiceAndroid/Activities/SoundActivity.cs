@@ -1,9 +1,6 @@
 using System;
-using Android.Content;
-using Android.Util;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Utils;
-using Uri = Android.Net.Uri;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
 {
@@ -41,9 +38,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         /// </summary>
         private void CallBackButtonOnClick(object sender, EventArgs eventArgs)
         {
-            var callIntent = new Intent(Intent.ActionCall, Uri.Parse("tel:" + Msg.FromNumber));
-            Log.Debug(App.AppPackage, $"ACTIVITY {GetType().Name} CREATES CALL to {GetString(Resource.String.ActivityInactive_customerNumber)}");
-            StartActivity(callIntent);
+            Helper.Call(Msg.FromNumber);
         }
     }
 }

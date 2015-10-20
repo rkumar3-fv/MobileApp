@@ -141,6 +141,8 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         private void ButtonZeroOnLongClick(object sender, View.LongClickEventArgs longClickEventArgs)
         {
             Log.Debug(App.AppPackage, $"KEYPAD: + added");
+            _enteredNumber = _enteredNumber.Insert(_enteredNumber.Length, "+");
+            SetupNewText();
         }
 
         /// <summary>
