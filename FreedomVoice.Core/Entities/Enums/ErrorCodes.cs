@@ -8,6 +8,7 @@
         ConnectionLost,
         Cancelled,
         Unknown,
-        NotFound
+        NotFound,
+        PaymentRequired
     }
 }

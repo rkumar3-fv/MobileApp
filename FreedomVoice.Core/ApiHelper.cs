@@ -90,6 +90,14 @@
                 CancellationToken.None);
         }
 
+        public async static Task<BaseResult<List<MessageFolderWithCounts>>> GetFoldersWithCount(string systemPhoneNumber, int mailboxNumber)
+        {
+            return await MakeAsyncGetRequest<List<MessageFolderWithCounts>>(
+                $"/api/v1/systems/{systemPhoneNumber}/mailboxes/{mailboxNumber}/foldersWithCounts",
+                "application/json",
+                CancellationToken.None);
+        }
+
         public async static Task<BaseResult<List<Message>>> GetMesages(string systemPhoneNumber, int mailboxNumber, string folderName, int pageSize, int pageNumber, bool asc)
         {
             return await MakeAsyncGetRequest<List<Message>>(
@@ -230,6 +238,15 @@
                                     };
                                     break;
                                 }
+                            case HttpStatusCode.PaymentRequired:
+                                {
+                                    retResult = new BaseResult<Stream>
+                                    {
+                                        Code = ErrorCodes.PaymentRequired,
+                                        Result = Stream.Null
+                                    };
+                                    break;
+                                }
                         }
                     }
 
@@ -295,6 +312,15 @@
                                     retResult = new BaseResult<T>
                                     {
                                         Code = ErrorCodes.NotFound,
+                                        Result = default(T)
+                                    };
+                                    break;
+                                }
+                            case HttpStatusCode.PaymentRequired:
+                                {
+                                    retResult = new BaseResult<T>
+                                    {
+                                        Code = ErrorCodes.PaymentRequired,
                                         Result = default(T)
                                     };
                                     break;
