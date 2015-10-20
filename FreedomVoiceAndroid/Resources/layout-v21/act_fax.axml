@@ -9,15 +9,48 @@
         android:src="@drawable/logo_fax" />
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/details_activity_number_margin"
         android:layout_marginStart="@dimen/activity_horizontal_margin"
         android:layout_marginEnd="@dimen/activity_horizontal_margin">
+        <TextView
+            android:id="@+id/faxActivity_senderText"
+            style="@style/MsgDetailsSenderText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginBottom="@dimen/details_activity_stamp_margin" />
+        <TextView
+            android:id="@+id/faxActivity_dateText"
+            style="@style/MessagesCounterText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/faxActivity_senderText"
+            android:layout_alignParentStart="true" />
+        <TextView
+            android:id="@+id/faxActivity_stampText"
+            style="@style/MessagesCounterText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/faxActivity_senderText"
+            android:layout_alignParentEnd="true" />
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:background="@drawable/border"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="@dimen/details_activity_number_margin">
         <ImageButton
             android:id="@+id/faxActivity_deleteButton"
             android:src="@drawable/ic_action_remove"
             android:background="@drawable/ripple"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/details_activity_actions_margin"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true" />
     </RelativeLayout>
 </LinearLayout>

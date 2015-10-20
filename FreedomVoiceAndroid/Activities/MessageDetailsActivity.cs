@@ -2,6 +2,7 @@ using System;
 using Android.OS;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Helpers;
+using com.FreedomVoice.MobileApp.Android.Utils;
 using Message = com.FreedomVoice.MobileApp.Android.Entities.Message;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
@@ -39,6 +40,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 OnBackPressed();
             if (!Msg.Equals(Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].MessagesList[Helper.SelectedMessage]))
                 OnBackPressed();
+            SenderText.Text = Msg.FromName.Length > 1 ? Msg.FromName : DataFormatUtils.ToPhoneNumber(Msg.FromNumber);
+            MessageDate.Text = DataFormatUtils.ToFormattedDate(GetString(Resource.String.Timestamp_yesterday), Msg.MessageDate);
         }
 
         /// <summary>

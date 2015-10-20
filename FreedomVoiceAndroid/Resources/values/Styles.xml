@@ -227,4 +227,11 @@
     <item name="android:textSize">@dimen/fragment_keypad_key_small_text_size</item>
     <item name="android:textColor">@color/colorKeyOnKeyboardSecondary</item>
   </style>
+  
+  <!-- Message recipient text style -->
+  <style name="MsgDetailsSenderText">
+    <item name="android:textColor">@color/textColorSecondary</item>
+    <item name="android:textSize">@dimen/text_big</item>
+    <item name="android:lines">1</item>
+  </style>
 </resources>
