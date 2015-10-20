@@ -86,17 +86,21 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Data\IExtensionsService.cs" />
-    <Compile Include="Data\Implementation\ExtensionsService.cs" />
+    <Compile Include="Data\Implementations\ExtensionsService.cs" />
+    <Compile Include="Helpers\PhoneAbilities.cs" />
+    <Compile Include="SharedViews\CallerIdView.cs" />
+    <Compile Include="TableViewCells\ContactCell.cs" />
+    <Compile Include="TableViewSources\ContactSource.cs" />
     <Compile Include="ViewControllers\AccountsViewController.cs" />
     <Compile Include="ViewControllers\AccountsViewController.designer.cs">
       <DependentUpon>AccountsViewController.cs</DependentUpon>
     </Compile>
     <Compile Include="Data\IAccountsService.cs" />
-    <Compile Include="Data\Implementation\AccountsService.cs" />
-    <Compile Include="Data\Implementation\ForgotPasswordService.cs" />
+    <Compile Include="Data\Implementations\AccountsService.cs" />
+    <Compile Include="Data\Implementations\ForgotPasswordService.cs" />
     <Compile Include="Data\IForgotPasswordService.cs" />
     <Compile Include="Data\ILoginService.cs" />
-    <Compile Include="Data\Implementation\LoginService.cs" />
+    <Compile Include="Data\Implementations\LoginService.cs" />
     <Compile Include="Data\PropertyChangedBase.cs" />
     <Compile Include="Helpers\Appearance.cs" />
     <Compile Include="Helpers\UserDefault.cs" />
@@ -108,7 +112,6 @@
     <Compile Include="Utilities\TaskExtensions.cs" />
     <Compile Include="Utilities\Theme.cs" />
     <Compile Include="Utilities\UIKitExtensions.cs" />
-    <Compile Include="ViewControllers\BaseTableViewController.cs" />
     <Compile Include="ViewControllers\BaseViewController.cs" />
     <Compile Include="ViewModels\AccountsViewModel.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
@@ -118,7 +121,6 @@
     <Compile Include="ViewControllers\EmergencyDisclaimerViewController.designer.cs">
       <DependentUpon>EmergencyDisclaimerViewController.cs</DependentUpon>
     </Compile>
-    <Compile Include="Helpers\LoadingOverlay.cs" />
     <Compile Include="ViewControllers\AccountUnavailableViewController.cs" />
     <Compile Include="ViewControllers\AccountUnavailableViewController.designer.cs">
       <DependentUpon>AccountUnavailableViewController.cs</DependentUpon>

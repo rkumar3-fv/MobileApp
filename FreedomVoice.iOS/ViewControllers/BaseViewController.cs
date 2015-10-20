@@ -17,14 +17,13 @@ namespace FreedomVoice.iOS.ViewControllers
         /// <param name='handle'>
         /// Handle to Obj-C instance of object
         /// </param>
-        public BaseViewController(IntPtr handle) : base(handle)
+        protected BaseViewController(IntPtr handle) : base(handle)
         {
             //Only do this if required
-            if (HandlesKeyboardNotifications)
-            {
-                NSNotificationCenter.DefaultCenter.AddObserver(UIKeyboard.WillHideNotification, OnKeyboardNotification);
-                NSNotificationCenter.DefaultCenter.AddObserver(UIKeyboard.WillShowNotification, OnKeyboardNotification);
-            }
+            if (!HandlesKeyboardNotifications) return;
+
+            NSNotificationCenter.DefaultCenter.AddObserver(UIKeyboard.WillHideNotification, OnKeyboardNotification);
+            NSNotificationCenter.DefaultCenter.AddObserver(UIKeyboard.WillShowNotification, OnKeyboardNotification);
         }
 
         public virtual bool HandlesKeyboardNotifications

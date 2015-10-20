@@ -4,7 +4,6 @@ namespace FreedomVoice.iOS.Data
 {
     public class PropertyChangedBase : INotifyPropertyChanged
     {
-
         /// <summary>
         /// Event for INotifyPropertyChanged
         /// </summary>

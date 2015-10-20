@@ -17,10 +17,6 @@
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     </tabBar>
                     <connections>
-                        <segue id="2345" destination="2271" kind="relationship" relationship="viewControllers"/>
-                        <segue id="2439" destination="2350" kind="relationship" relationship="viewControllers"/>
-                        <segue id="2482" destination="2444" kind="relationship" relationship="viewControllers"/>
-                        <segue id="2542" destination="2487" kind="relationship" relationship="viewControllers"/>
                         <outlet property="MainTabBar" destination="1079" id="name-outlet-1079"/>
                     </connections>
                 </tabBarController>
@@ -100,9 +96,6 @@
                                 <color key="textColor" colorSpace="calibratedRGB" red="0.996078431372549" green="0.788235294117647" blue="0.37254901960784315" alpha="1"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" style="gray" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4284">
-                                <rect key="frame" x="189" y="220" width="20" height="20"/>
-                            </activityIndicatorView>
                             <activityIndicatorView contentMode="scaleToFill" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="4285" animating="YES" fixedFrame="YES" hidden="YES" opaque="NO">
                                 <rect key="frame" x="142" y="356" width="37" height="37"/>
                             </activityIndicatorView>
@@ -118,13 +111,16 @@
                         <outlet property="UsernameValidationLabel" destination="1175" id="name-outlet-1175"/>
                         <outlet property="PasswordValidationLabel" destination="1176" id="name-outlet-1176"/>
                         <outlet property="ActivityIndicator" destination="4285" id="name-outlet-4285"/>
+                        <segue id="4710" destination="1198" kind="push"/>
+                        <segue id="4781" destination="4365" kind="modal"/>
+                        <segue id="4885" destination="1074" kind="modal"/>
                     </connections>
                     <navigationItem title="Title" id="2036" key="navigationItem"/>
                     <nil key="simulatedTopBarMetrics"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="1158" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1514" y="479"/>
+            <point key="canvasLocation" x="-1379" y="567"/>
         </scene>
         <scene sceneID="1197">
             <objects>
@@ -192,27 +188,11 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="1200" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1123" y="478"/>
-        </scene>
-        <scene sceneID="2270">
-            <objects>
-                <navigationController definesPresentationContext="YES" id="2271" sceneMemberID="viewController" customClass="RecentsViewController" storyboardIdentifier="RecentsViewController" useStoryboardIdentifierAsRestorationIdentifier="YES">
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="2274">
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                    </navigationBar>
-                    <connections>
-                        <segue destination="2273" kind="relationship" relationship="rootViewController" id="2272"/>
-                    </connections>
-                    <tabBarItem key="tabBarItem" id="2344" systemItem="recents" tag="0"/>
-                    <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="2275" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="849" y="-96"/>
+            <point key="canvasLocation" x="-765" y="168"/>
         </scene>
         <scene sceneID="2276">
             <objects>
-                <viewController id="2273" sceneMemberID="viewController">
+                <viewController id="2273" sceneMemberID="viewController" customClass="RecentsViewController" storyboardIdentifier="RecentsViewController" useStoryboardIdentifierAsRestorationIdentifier="YES">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="2268"/>
                         <viewControllerLayoutGuide type="bottom" id="2269"/>
@@ -235,70 +215,11 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="2279" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1337" y="-98"/>
-        </scene>
-        <scene sceneID="2349">
-            <objects>
-                <navigationController definesPresentationContext="YES" id="2350" sceneMemberID="viewController" customClass="ContactsViewController" storyboardIdentifier="ContactsViewController">
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="2353">
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                    </navigationBar>
-                    <connections>
-                        <segue destination="2352" kind="relationship" relationship="rootViewController" id="2351"/>
-                    </connections>
-                    <tabBarItem key="tabBarItem" id="2438" systemItem="contacts" tag="1"/>
-                    <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="2354" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="890" y="544"/>
-        </scene>
-        <scene sceneID="2355">
-            <objects>
-                <viewController id="2352" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="2347"/>
-                        <viewControllerLayoutGuide type="bottom" id="2348"/>
-                    </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="2357">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                        <subviews>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Contacts" lineBreakMode="tailTruncation" minimumFontSize="10" id="2547" translatesAutoresizingMaskIntoConstraints="NO" textAlignment="center" fixedFrame="YES">
-                                <rect key="frame" x="100" y="200" width="120" height="32"/>
-                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="24"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                        </subviews>
-                    </view>
-                    <navigationItem key="navigationItem" title="Root View Controller" id="2356"/>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="2358" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1340" y="539"/>
-        </scene>
-        <scene sceneID="2443">
-            <objects>
-                <navigationController definesPresentationContext="YES" id="2444" sceneMemberID="viewController" customClass="KeypadViewController" storyboardIdentifier="KeypadViewController">
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="2447">
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                    </navigationBar>
-                    <connections>
-                        <segue destination="2446" kind="relationship" relationship="rootViewController" id="2445"/>
-                    </connections>
-                    <tabBarItem key="tabBarItem" id="2481" tag="2" title="Keypad"/>
-                    <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="2448" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="888" y="1219"/>
+            <point key="canvasLocation" x="839" y="547"/>
         </scene>
         <scene sceneID="2449">
             <objects>
-                <viewController id="2446" sceneMemberID="viewController">
+                <viewController id="2446" sceneMemberID="viewController" customClass="KeypadViewController" storyboardIdentifier="KeypadViewController" useStoryboardIdentifierAsRestorationIdentifier="YES">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="2441"/>
                         <viewControllerLayoutGuide type="bottom" id="2442"/>
@@ -321,27 +242,11 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="2452" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1342" y="1215"/>
-        </scene>
-        <scene sceneID="2486">
-            <objects>
-                <navigationController definesPresentationContext="YES" id="2487" sceneMemberID="viewController" customClass="MessagesViewController" storyboardIdentifier="MessagesViewController" useStoryboardIdentifierAsRestorationIdentifier="YES">
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="2490">
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                    </navigationBar>
-                    <connections>
-                        <segue destination="2489" kind="relationship" relationship="rootViewController" id="2488"/>
-                    </connections>
-                    <tabBarItem key="tabBarItem" title="Messages" id="2541" tag="3"/>
-                    <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="2491" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="850" y="1859"/>
+            <point key="canvasLocation" x="1254" y="1238"/>
         </scene>
         <scene sceneID="2492">
             <objects>
-                <viewController id="2489" sceneMemberID="viewController">
+                <viewController id="2489" sceneMemberID="viewController" customClass="MessagesViewController" storyboardIdentifier="MessagesViewController" useStoryboardIdentifierAsRestorationIdentifier="YES">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="2484"/>
                         <viewControllerLayoutGuide type="bottom" id="2485"/>
@@ -366,7 +271,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="2495" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1329" y="1857"/>
+            <point key="canvasLocation" x="839" y="1239"/>
         </scene>
         <scene sceneID="2813">
             <objects>
@@ -529,6 +434,33 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4367" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-1242" y="1587"/>
+        </scene>
+        <scene sceneID="4999">
+            <objects>
+                <viewController id="5000" sceneMemberID="viewController" customClass="ContactsViewController" storyboardIdentifier="ContactsViewController" useStoryboardIdentifierAsRestorationIdentifier="YES">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="4997"/>
+                        <viewControllerLayoutGuide type="bottom" id="4998"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="5001" clipsSubviews="YES">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" dataMode="prototypes" style="plain" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="5036" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" alwaysBounceVertical="YES">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <prototypes/>
+                            </tableView>
+                        </subviews>
+                    </view>
+                    <connections>
+                        <outlet property="ContactsTableView" destination="5036" id="name-outlet-5036"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="5002" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1250" y="545"/>
         </scene>
     </scenes>
     <resources>

@@ -12,7 +12,7 @@ namespace FreedomVoice.iOS.Utilities
 		public static void SetDidChangeNotification(this UITextField textField, Action<UITextField> callback)
         {
             if (callback == null)
-                throw new ArgumentNullException("callback");
+                throw new ArgumentNullException(nameof(callback));
 
             NSNotificationCenter.DefaultCenter.AddObserver(UITextField.TextFieldTextDidChangeNotification, _ => callback(textField), textField);
         }
@@ -23,7 +23,7 @@ namespace FreedomVoice.iOS.Utilities
         public static void SetDidChangeNotification(this UITextView textView, Action<UITextView> callback)
         {
             if (callback == null)
-                throw new ArgumentNullException("callback");
+                throw new ArgumentNullException(nameof(callback));
 
             NSNotificationCenter.DefaultCenter.AddObserver(UITextView.TextDidChangeNotification, _ => callback(textView), textView);
         }
