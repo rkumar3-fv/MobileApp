@@ -14,8 +14,16 @@ namespace FreedomVoice.iOS.ViewControllers
 	[Register ("MainTabBarController")]
 	partial class MainTabBarController
 	{
+		[Outlet]
+		[GeneratedCode ("iOS Designer", "1.0")]
+		UITabBar MainTabBar { get; set; }
+
 		void ReleaseDesignerOutlets ()
 		{
+			if (MainTabBar != null) {
+				MainTabBar.Dispose ();
+				MainTabBar = null;
+			}
 		}
 	}
 }

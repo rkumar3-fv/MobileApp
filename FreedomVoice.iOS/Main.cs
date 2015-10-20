@@ -1,4 +1,5 @@
-﻿using UIKit;
+﻿using FreedomVoice.iOS.Data;
+using UIKit;
 
 namespace FreedomVoice.iOS
 {
@@ -6,6 +7,8 @@ namespace FreedomVoice.iOS
     {
         static void Main(string[] args)
         {
+            ServiceRegistrar.Startup();
+
             UIApplication.Main(args, null, "AppDelegate");
         }
     }

@@ -85,7 +85,42 @@
     <CodesignKey>iPhone Distribution</CodesignKey>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Helpers\PhoneCapability.cs" />
+    <Compile Include="Data\IExtensionsService.cs" />
+    <Compile Include="Data\Implementations\ExtensionsService.cs" />
+    <Compile Include="Helpers\PhoneAbilities.cs" />
+    <Compile Include="SharedViews\CallerIdView.cs" />
+    <Compile Include="TableViewCells\ContactCell.cs" />
+    <Compile Include="TableViewSources\ContactSource.cs" />
+    <Compile Include="ViewControllers\AccountsViewController.cs" />
+    <Compile Include="ViewControllers\AccountsViewController.designer.cs">
+      <DependentUpon>AccountsViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Data\IAccountsService.cs" />
+    <Compile Include="Data\Implementations\AccountsService.cs" />
+    <Compile Include="Data\Implementations\ForgotPasswordService.cs" />
+    <Compile Include="Data\IForgotPasswordService.cs" />
+    <Compile Include="Data\ILoginService.cs" />
+    <Compile Include="Data\Implementations\LoginService.cs" />
+    <Compile Include="Data\PropertyChangedBase.cs" />
+    <Compile Include="Helpers\Appearance.cs" />
+    <Compile Include="Helpers\UserDefault.cs" />
+    <Compile Include="Helpers\Validation.cs" />
+    <Compile Include="Main.cs" />
+    <Compile Include="Utilities\ServiceContainer.cs" />
+    <Compile Include="Data\ServiceRegistrar.cs" />
+    <Compile Include="Utilities\SynchronizeInvoke.cs" />
+    <Compile Include="Utilities\TaskExtensions.cs" />
+    <Compile Include="Utilities\Theme.cs" />
+    <Compile Include="Utilities\UIKitExtensions.cs" />
+    <Compile Include="ViewControllers\BaseViewController.cs" />
+    <Compile Include="ViewModels\AccountsViewModel.cs" />
+    <Compile Include="ViewModels\BaseViewModel.cs" />
+    <Compile Include="ViewModels\ForgotPasswordViewModel.cs" />
+    <Compile Include="ViewModels\LoginViewModel.cs" />
+    <Compile Include="ViewControllers\EmergencyDisclaimerViewController.cs" />
+    <Compile Include="ViewControllers\EmergencyDisclaimerViewController.designer.cs">
+      <DependentUpon>EmergencyDisclaimerViewController.cs</DependentUpon>
+    </Compile>
     <Compile Include="ViewControllers\AccountUnavailableViewController.cs" />
     <Compile Include="ViewControllers\AccountUnavailableViewController.designer.cs">
       <DependentUpon>AccountUnavailableViewController.cs</DependentUpon>
@@ -93,10 +128,6 @@
     <Compile Include="Entities\Account.cs" />
     <Compile Include="TableViewCells\AccountCell.cs" />
     <Compile Include="TableViewSources\AccountSource.cs" />
-    <Compile Include="ViewControllers\AccountsTableViewController.cs" />
-    <Compile Include="ViewControllers\AccountsTableViewController.designer.cs">
-      <DependentUpon>AccountsTableViewController.cs</DependentUpon>
-    </Compile>
     <Compile Include="ViewControllers\ContactsViewController.cs" />
     <Compile Include="ViewControllers\ContactsViewController.designer.cs">
       <DependentUpon>ContactsViewController.cs</DependentUpon>
@@ -117,12 +148,10 @@
     <Compile Include="ViewControllers\ForgotPasswordViewController.designer.cs">
       <DependentUpon>ForgotPasswordViewController.cs</DependentUpon>
     </Compile>
-    <Compile Include="Helpers\GradientRenderer.cs" />
     <Compile Include="ViewControllers\LoginViewController.cs" />
     <Compile Include="ViewControllers\LoginViewController.designer.cs">
       <DependentUpon>LoginViewController.cs</DependentUpon>
     </Compile>
-    <Compile Include="Main.cs" />
     <Compile Include="AppDelegate.cs" />
     <None Include="Info.plist" />
     <Compile Include="ViewControllers\MainTabBarController.cs" />
@@ -165,5 +194,6 @@
       <Version>0.7.7</Version>
     </XamarinComponentReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 </Project>

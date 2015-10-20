@@ -5,8 +5,8 @@ namespace FreedomVoice.iOS.TableViewCells
 {
     public class AccountCell : UITableViewCell
     {
-        public static readonly NSString Key = new NSString("AccoundCell");
+        public static readonly NSString AccountCellId = new NSString("AccoundCell");
 
-        public AccountCell() : base(UITableViewCellStyle.Default, Key) { }
+        public AccountCell() : base(UITableViewCellStyle.Default, AccountCellId) { }
     }
 }

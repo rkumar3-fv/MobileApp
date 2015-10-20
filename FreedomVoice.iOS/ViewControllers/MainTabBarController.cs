@@ -1,43 +1,59 @@
 using System;
 using FreedomVoice.iOS.Entities;
-using UIKit;
 using FreedomVoice.iOS.Helpers;
+using UIKit;
 using Foundation;
 
 namespace FreedomVoice.iOS.ViewControllers
 {
 	partial class MainTabBarController : UITabBarController
 	{
-	    public Account SelectedAccount { get; set; }
+        public Account SelectedAccount { private get; set; }
 
-        NetworkStatus internetStatus;
-        public MainTabBarController(IntPtr handle) : base (handle)
-		{
+        private bool IsRootController => NavigationController.ViewControllers.Length > 1;
 
-		}
+        NetworkStatus _internetStatus;
+
+        UIViewController _recentsTab, _contactsTab, _keypadTab, _messagesTab;
+
+        public MainTabBarController(IntPtr handle) : base(handle) { }
 
 	    public override void ViewDidLoad()
 	    {
 	        base.ViewDidLoad();
 
-            NavigationController.NavigationBar.TintColor = UIColor.White;
-            NavigationController.NavigationBar.TitleTextAttributes = new UIStringAttributes { ForegroundColor = UIColor.White };
-            NavigationController.NavigationBar.BarTintColor = new UIColor(0.016f, 0.588f, 0.816f, 1);
+            Title = SelectedAccount.FormattedPhoneNumber;
 
-            UpdateStatus(null, null);
+            var recentsViewController = AppDelegate.GetViewController<RecentsViewController>();
+	        _recentsTab = new UINavigationController(recentsViewController) { TabBarItem = new UITabBarItem(UITabBarSystemItem.Recents, 0) };
+
+	        var contactsViewController = AppDelegate.GetViewController<ContactsViewController>();
+            _contactsTab = contactsViewController;
+            _contactsTab.TabBarItem = new UITabBarItem(UITabBarSystemItem.Contacts, 1);
+
+            var keypadViewController = AppDelegate.GetViewController<KeypadViewController>();
+	        _keypadTab = new UINavigationController(keypadViewController) { Title = "Keypad" };
+
+	        var messagesViewController = AppDelegate.GetViewController<MessagesViewController>();
+	        _messagesTab = new UINavigationController(messagesViewController) { Title = "Messages" };
+
+	        ViewControllers = new[] { _recentsTab, _contactsTab, _keypadTab, _messagesTab };
+
+            SelectedIndex = 2;
+
+            if (IsRootController)
+                NavigationItem.SetLeftBarButtonItem(Appearance.GetBackBarButton(NavigationController, "Accounts"), true);
+
+            NavigationItem.SetRightBarButtonItem(Appearance.GetLogoutBarButton(), true);
+
+            UpdateStatus(null, EventArgs.Empty);
             PhoneCapability.ReachabilityChanged += UpdateStatus;
         }
 
-	    public override void ViewWillAppear(bool animated)
-        {
-            base.ViewWillAppear(animated);
-        }
-
-        void UpdateStatus(object sender, EventArgs e)
+        private void UpdateStatus(object sender, EventArgs e)
         {            
-            internetStatus = PhoneCapability.InternetConnectionStatus();            
-            NSUserDefaults.StandardUserDefaults.SetInt((int)internetStatus, PhoneCapability.INTERNET_STATUS);            
+            _internetStatus = PhoneCapability.InternetConnectionStatus();            
+            NSUserDefaults.StandardUserDefaults.SetInt((int)_internetStatus, PhoneCapability.INTERNET_STATUS);            
         }
-
     }
 }

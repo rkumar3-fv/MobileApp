@@ -16,6 +16,10 @@ namespace FreedomVoice.iOS.ViewControllers
 	{
 		[Outlet]
 		[GeneratedCode ("iOS Designer", "1.0")]
+		UIActivityIndicatorView ActivityIndicator { get; set; }
+
+		[Outlet]
+		[GeneratedCode ("iOS Designer", "1.0")]
 		UIButton ForgotPasswordButton { get; set; }
 
 		[Outlet]
@@ -42,12 +46,20 @@ namespace FreedomVoice.iOS.ViewControllers
 		[GeneratedCode ("iOS Designer", "1.0")]
 		UILabel WelcomeLabel { get; set; }
 
+		[Action ("ForgotPassword_TouchUpInside:")]
+		[GeneratedCode ("iOS Designer", "1.0")]
+		partial void ForgotPassword_TouchUpInside (UIButton sender);
+
 		[Action ("LoginButton_TouchUpInside:")]
 		[GeneratedCode ("iOS Designer", "1.0")]
 		partial void LoginButton_TouchUpInside (UIButton sender);
 
 		void ReleaseDesignerOutlets ()
 		{
+			if (ActivityIndicator != null) {
+				ActivityIndicator.Dispose ();
+				ActivityIndicator = null;
+			}
 			if (ForgotPasswordButton != null) {
 				ForgotPasswordButton.Dispose ();
 				ForgotPasswordButton = null;
