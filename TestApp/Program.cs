@@ -151,6 +151,8 @@ namespace TestApp
             Console.WriteLine($"CallReservation method: {reserv.Code}");
             Console.WriteLine($"Result: {((reserv.Result==null)?("NULL"):(reserv.Result.SwitchboardPhoneNumber))}");
             Console.Write(Environment.NewLine);
+            var folders = ApiHelper.GetFoldersWithCount("7607124648", 802).Result;
+
 
 
             Console.Write(@"Messages move method Saved -> New: " + ApiHelper.MoveMessages("7607124648", 802, "New", new List<string> { "A159991316" }).Result.Code);
