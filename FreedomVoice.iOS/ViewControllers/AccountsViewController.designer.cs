@@ -11,8 +11,8 @@ using UIKit;
 
 namespace FreedomVoice.iOS.ViewControllers
 {
-	[Register ("AccountsTableViewController")]
-	partial class AccountsTableViewController
+	[Register ("AccountsViewController")]
+	partial class AccountsViewController
 	{
 		[Outlet]
 		[GeneratedCode ("iOS Designer", "1.0")]

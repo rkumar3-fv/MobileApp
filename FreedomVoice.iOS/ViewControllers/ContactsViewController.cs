@@ -1,245 +1,182 @@
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
+using System.Drawing;
 using System.Linq;
-
-using Foundation;
 using UIKit;
-using Xamarin.Contacts;
 using CoreGraphics;
+using Foundation;
 using FreedomVoice.iOS.Helpers;
+using FreedomVoice.iOS.SharedViews;
+using FreedomVoice.iOS.TableViewSources;
+using Xamarin.Contacts;
 
 namespace FreedomVoice.iOS.ViewControllers
 {
-    partial class ContactsViewController : UITableViewController
+    partial class ContactsViewController : UIViewController
     {
-        List<Contact> people;
-        string cellIdentifier = "cell";
-        UIRefreshControl uirc;
-        string[] letters = new string[] { "A", "B", "C", "D", "E", "F", "G", "H", "I",
-            "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" };
-        Dictionary<string, string> indexedTableItems;
-        string[] keys;
+        private List<Contact> _contactList;
+        private List<Contact> _filteredContactList;
 
-        UISearchBar searchBar;
-        private UIAlertView alert;
+        private int ContactsCount => _contactList.Count;
+        private int FilteredContactsCount => _filteredContactList.Count;
 
-        bool bInSearchMode = false;
-        UILabel lblNoResults;
+        private ContactSource _contactSource;
+        private UISearchBar _contactsSearchBar;
+        private UILabel _noResultsLabel;
 
-        public ContactsViewController(IntPtr handle) : base(handle)
-        {
-            people = new List<Contact>();
-            keys = new string[0];
-        }
+        public ContactsViewController(IntPtr handle) : base(handle) { }
 
-
-        public override void ViewDidLoad()
+        public override async void ViewDidLoad()
         {
             base.ViewDidLoad();
 
-            var book = new Xamarin.Contacts.AddressBook();
-            uirc = new UIRefreshControl();
-            uirc.ValueChanged += (sender, e) =>
+            const int containerWidth = 80;
+            const int containerHeight = 20;
+
+            var frame = new CGRect(View.Frame.Width / 2 - containerWidth / 2, View.Frame.Height / 2 - containerHeight / 2, containerWidth, containerHeight);
+            _noResultsLabel = new UILabel(frame)
             {
-                people = (from b in book select b).ToList();
-                TableView.ReloadData();
-                uirc.EndRefreshing();
-            };
-            RefreshControl = uirc;
-
-            book.RequestPermission().ContinueWith(t =>
-            {
-                if (!t.Result)
-                {
-                    alert = new UIAlertView("Permission denied", "User has denied this app access to their contacts", null, "Close");
-                    alert.Show();
-                    return;
-                }
-                people = (from b in book select b).ToList();
-                indexedTableItems = new Dictionary<string, string>();
-                foreach (var l in letters)
-                {
-                    var ContactCount = (from p in people where p.DisplayName.ToUpper().StartsWith(l) select p).Count();
-                    if (ContactCount > 0)
-                    {
-                        indexedTableItems.Add(l, l);
-                    }
-                }
-                keys = indexedTableItems.Keys.ToArray();
-                TableView.ReloadData();
-                CheckResult();
-            }, TaskScheduler.FromCurrentSynchronizationContext());
-
-
-            searchBar = new UISearchBar();
-            searchBar.Placeholder = "Search";
-            searchBar.SizeToFit();            
-            searchBar.AutocorrectionType = UITextAutocorrectionType.No;
-            searchBar.AutocapitalizationType = UITextAutocapitalizationType.None;            
-
-            searchBar.SearchButtonClicked += (sender, e) =>
-            {
-                Search();
+                Text = "No Result",
+                MinimumFontSize = 38f,
+                TextColor = UIColor.FromRGB(127, 127, 127),
+                Alpha = 0f
             };
 
-            searchBar.CancelButtonClicked += (sender, e) => {                
-                Reset();
-            };
+            View.Add(_noResultsLabel);
 
-
-            searchBar.TextChanged += (sender, e) =>
+            var addressBook = new Xamarin.Contacts.AddressBook();
+            if (!await addressBook.RequestPermission())
             {
-                if (string.IsNullOrEmpty(e.SearchText))                                    
-                    Reset();                                    
-                else                
-                    Search();                
-            };
-            
-
-            TableView.TableHeaderView = searchBar;
-            TableView.SectionIndexBackgroundColor = UIColor.Clear;
-
-            var containerWidth = 80;
-            var containerHeight = 20;
-            
-            var frame = new CGRect(View.Frame.Width / 2 - containerWidth / 2, View.Frame.Height / 2 - containerHeight / 2, containerWidth, containerHeight);            
-            lblNoResults = new UILabel(frame);            
-            lblNoResults.Text = "No Result";
-            lblNoResults.MinimumFontSize = 36f;
-            lblNoResults.TextColor = UIColor.FromRGB(127,127,127);
-            lblNoResults.Alpha = 0f;            
-            View.Add(lblNoResults);
-        }
-        public override nint RowsInSection(UITableView tableview, nint section)
-        {
-            var count = (from p in people where p.DisplayName.ToUpper().StartsWith(keys[section].ToUpper()) select p).Count();
-            return count;
-        }
-        public override string[] SectionIndexTitles(UITableView tableView)
-        {
-            if (bInSearchMode)
-                return null;
-
-            return keys;
-        }
-        public override nint NumberOfSections(UITableView tableView)
-        {
-            return keys.Length;
-        }
-        public override string TitleForHeader(UITableView tableView, nint section)
-        {
-
-            if (bInSearchMode)
-                return null;
-
-            return keys[section];
-        }
-        public override string TitleForFooter(UITableView tableView, nint section)
-        {
-            return null;
-        }
-
-        public override void CommitEditingStyle(UITableView tableView, UITableViewCellEditingStyle editingStyle, Foundation.NSIndexPath indexPath)
-        {
-            switch (editingStyle)
-            {
-                case UITableViewCellEditingStyle.Delete:
-                    var pe = (from p in people where p.DisplayName.ToUpper().StartsWith(keys[indexPath.Section]) select p).ToList()[indexPath.Row];
-                    people.Remove(pe);
-                    tableView.DeleteRows(new NSIndexPath[] { indexPath }, UITableViewRowAnimation.Fade);
-                    break;
-                case UITableViewCellEditingStyle.None:
-                    Console.WriteLine("CommitEditingStyle:None called");
-                    break;
-            }
-        }
-        public override bool CanEditRow(UITableView tableView, NSIndexPath indexPath)
-        {
-            return false;
-        }
-        public override string TitleForDeleteConfirmation(UITableView tableView, NSIndexPath indexPath)
-        {
-            var pe = (from p in people where p.DisplayName.ToUpper().StartsWith(keys[indexPath.Section]) select p).ToList()[indexPath.Row];
-            return "Delete (" + pe.DisplayName + ")";
-        }
-
-        public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
-        {
-            UITableViewCell cell = tableView.DequeueReusableCell(cellIdentifier);
-            if (cell == null)
-                cell = new UITableViewCell(UITableViewCellStyle.Subtitle, cellIdentifier);
-
-            var pe = (from p in people where p.DisplayName.ToUpper().StartsWith(keys[indexPath.Section]) select p).ToList()[indexPath.Row];
-
-            cell.TextLabel.Text = pe.DisplayName;
-            cell.DetailTextLabel.Text = pe.Nickname;
-            return cell;
-        }
-
-        void Search()
-        {
-            bInSearchMode = true;
-            var peList = (from p in people where p.DisplayName.ToUpper().StartsWith(searchBar.Text.ToUpper()) select p).ToList();
-            people = peList;
-            TableView.ReloadData();
-            CheckResult();
-        }
-
-        void Reset()
-        {
-            searchBar.Text = string.Empty;
-            bInSearchMode = false;
-            var book = new Xamarin.Contacts.AddressBook();
-            people = (from b in book select b).ToList();
-            TableView.ReloadData();
-            CheckResult();
-        }
-
-        void CheckResult()
-        {
-            if (people.Count == 0)
-            {
-                lblNoResults.Alpha = 1f;
-                TableView.SeparatorStyle = UITableViewCellSeparatorStyle.None;
-            }
-            else
-            {
-                lblNoResults.Alpha = 0f;
-                TableView.SeparatorStyle = UITableViewCellSeparatorStyle.SingleLine;
+                // We don't have the permission to access user's contacts: check if the READ_CONTACTS has been set
+                new UIAlertView("Permission denied", "User has denied this app access to their contacts", null, "Close").Show();
+                return;
             }
 
-            searchBar.ShowsCancelButton = !String.IsNullOrEmpty(searchBar.Text);
+            _contactsSearchBar = new UISearchBar(new CGRect(0, 0, 320, 44))
+            {
+                Placeholder = "Search",
+                AutocapitalizationType = UITextAutocapitalizationType.None,
+                SpellCheckingType = UITextSpellCheckingType.No,
+                AutocorrectionType = UITextAutocorrectionType.No
+            };
+
+            _contactsSearchBar.ShouldBeginEditing += SearchBarOnShouldBeginEditing;
+            _contactsSearchBar.ShouldEndEditing += SearchBarOnShouldEndEditing;
+            _contactsSearchBar.TextChanged += SearchBarOnTextChanged;
+            _contactsSearchBar.CancelButtonClicked += SearchBarOnCancelButtonClicked;
+
+            var callerIdView = new CallerIdView(new RectangleF(0, 44, 320, 44));
+
+            var headerView = new UIView(new CGRect(0, 0, 320, 88));
+            headerView.AddSubviews(_contactsSearchBar, callerIdView);
+
+            _contactList = addressBook.ToList();
+            _contactSource = new ContactSource { ContactsList = _contactList };
+            _contactSource.OnRowSelected += TableSourceOnRowSelected;
+
+            ContactsTableView.Source = _contactSource;
+            ContactsTableView.TableHeaderView = headerView;
+            ContactsTableView.SectionIndexBackgroundColor = UIColor.Clear;
+
+            CheckResult(ContactsCount);
         }
-        
 
-        public override void RowSelected(UITableView tableView, NSIndexPath indexPath)
+        private void SearchBarOnTextChanged(object sender, UISearchBarTextChangedEventArgs e)
         {
+            _filteredContactList = _contactList.Where(c => c.DisplayName.StartsWith(_contactsSearchBar.Text, StringComparison.OrdinalIgnoreCase)).ToList();
+            _contactSource.IsSearchMode = !string.IsNullOrEmpty(e.SearchText);
+            _contactSource.ContactsList = _filteredContactList;
+            ContactsTableView.ReloadData();
+            CheckResult(FilteredContactsCount);
+        }
 
-            var pe = (from p in people where p.DisplayName.ToUpper().StartsWith(keys[indexPath.Section]) select p).ToList()[indexPath.Row];
-            Console.WriteLine($"pe.Phones.Count(){pe.Phones.Count()}");
+        void SearchBarOnCancelButtonClicked(object sender, EventArgs args)
+        {
+            _contactsSearchBar.Text = string.Empty;
+            _contactsSearchBar.ResignFirstResponder();
+            _contactSource.IsSearchMode = false;
+            _contactSource.ContactsList = _contactList;
+            ContactsTableView.ReloadData();
+            CheckResult(ContactsCount);
+        }
+
+        private bool SearchBarOnShouldEndEditing(UISearchBar searchBar)
+        {
+            NavigationController.SetNavigationBarHidden(false, true);
+            _contactsSearchBar.ShowsCancelButton = false;
+            return true;
+        }
+
+        private bool SearchBarOnShouldBeginEditing(UISearchBar searchBar)
+        {
+            NavigationController.SetNavigationBarHidden(true, true);
+            _contactsSearchBar.ShowsCancelButton = true;
+            return true;
+        }
+
+        private void TableSourceOnRowSelected(object sender, ContactSource.RowSelectedEventArgs e)
+        {
+            e.TableView.DeselectRow(e.IndexPath, false);
 
             if (PhoneCapability.IsAirplaneMode())
             {
-                UIAlertController okAlertController = UIAlertController.Create(null, "Airplane Mode must be turned off to make calls from the FreedomVoice app.", UIAlertControllerStyle.Alert);
-                okAlertController.AddAction(UIAlertAction.Create("Settings", UIAlertActionStyle.Default, a => {
-                    var settingsString = UIApplication.OpenSettingsUrlString;                    
-                    var url = new NSUrl(settingsString);
+                var alertController = UIAlertController.Create(null, "Airplane Mode must be turned off to make calls from the FreedomVoice app.", UIAlertControllerStyle.Alert);
+                alertController.AddAction(UIAlertAction.Create("Settings", UIAlertActionStyle.Default, a => {
+                    var url = new NSUrl(UIApplication.OpenSettingsUrlString);
                     UIApplication.SharedApplication.OpenUrl(url);
                 }));
-                okAlertController.AddAction(UIAlertAction.Create("Cancel", UIAlertActionStyle.Cancel, null));
+                alertController.AddAction(UIAlertAction.Create("Cancel", UIAlertActionStyle.Cancel, null));
 
-                PresentViewController(okAlertController, true, null);
+                PresentViewController(alertController, true, null);
                 return;
             }
 
-            if (!PhoneCapability.IsCellularEnabled())                
+            if (!PhoneCapability.IsCellularEnabled())
             {
-                UIAlertController okAlertController = UIAlertController.Create(null, "Your device does not appear to support making cellular voice calls.", UIAlertControllerStyle.Alert);
-                okAlertController.AddAction(UIAlertAction.Create("Ok", UIAlertActionStyle.Default, a => {}));
-                PresentViewController(okAlertController, true, null);
+                var alertController = UIAlertController.Create(null, "Your device does not appear to support making cellular voice calls.", UIAlertControllerStyle.Alert);
+                alertController.AddAction(UIAlertAction.Create("Ok", UIAlertActionStyle.Default, a => { }));
+                PresentViewController(alertController, true, null);
                 return;
             }
-        }        
+
+            var person = _contactList.Where(c => c.DisplayName.StartsWith(_contactSource.Keys[e.IndexPath.Section], StringComparison.OrdinalIgnoreCase)).ToList()[e.IndexPath.Row];
+
+            var phoneNumbers = person.Phones.ToList();
+            switch (phoneNumbers.Count)
+            {
+                case 0:
+                    var alertController = UIAlertController.Create(null, "No phone numbers available for this contact.", UIAlertControllerStyle.Alert);
+                    alertController.AddAction(UIAlertAction.Create("Ok", UIAlertActionStyle.Default, a => { }));
+                    PresentViewController(alertController, true, null);
+                    return;
+                case 1:
+                    PhoneCall.CreateCallReservation(string.Empty, string.Empty, string.Empty, phoneNumbers.First().Number);
+                    break;
+                default:
+                    var phoneCallController = UIAlertController.Create("Select number for " + person.DisplayName, null, UIAlertControllerStyle.Alert);
+                    foreach (var phone in phoneNumbers)
+                    {
+                        phoneCallController.AddAction(UIAlertAction.Create(phone.Label + " - " + phone.Number, UIAlertActionStyle.Default, a => {
+                            PhoneCall.CreateCallReservation(string.Empty, string.Empty, string.Empty, phone.Number);
+                        }));
+                    }
+                    PresentViewController(phoneCallController, true, null);
+                    break;
+            }
+        }
+
+        void CheckResult(int contactsCount)
+        {
+            if (contactsCount == 0)
+            {
+                _noResultsLabel.Alpha = 1f;
+                ContactsTableView.SeparatorStyle = UITableViewCellSeparatorStyle.None;
+            }
+            else
+            {
+                _noResultsLabel.Alpha = 0f;
+                ContactsTableView.SeparatorStyle = UITableViewCellSeparatorStyle.SingleLine;
+            }
+        }
     }
 }

@@ -16,6 +16,10 @@ namespace FreedomVoice.iOS.ViewControllers
 	{
 		[Outlet]
 		[GeneratedCode ("iOS Designer", "1.0")]
+		UIActivityIndicatorView ActivityIndicator { get; set; }
+
+		[Outlet]
+		[GeneratedCode ("iOS Designer", "1.0")]
 		UITextField EmailTextField { get; set; }
 
 		[Outlet]
@@ -32,6 +36,10 @@ namespace FreedomVoice.iOS.ViewControllers
 
 		void ReleaseDesignerOutlets ()
 		{
+			if (ActivityIndicator != null) {
+				ActivityIndicator.Dispose ();
+				ActivityIndicator = null;
+			}
 			if (EmailTextField != null) {
 				EmailTextField.Dispose ();
 				EmailTextField = null;

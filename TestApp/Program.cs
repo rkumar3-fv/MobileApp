@@ -68,6 +68,8 @@ namespace TestApp
 
             Console.Write(@"Folders method: " + ApiHelper.GetFolders("7607124648", 802));
             Console.Write(Environment.NewLine);
+            var folders = ApiHelper.GetFoldersWithCount("7607124648", 802).Result;
+
 
             Console.Write(@"Messages method: " + ApiHelper.GetMesages("7607124648", 802, "Sent", 10, 1, true));
             Console.Write(Environment.NewLine);
