@@ -12,7 +12,7 @@
         private readonly string _login;
         private readonly string _password;
         private readonly string _systemPhoneNumber;
-        private readonly string _systemPhoneЩтNumberOnHold;
+        private readonly string _systemPhoneNumberOnHold;
         private readonly string _presentationPhoneNumber;
         private readonly int _mailBoxNumber;
         public ApiUnitTests()
@@ -20,7 +20,7 @@
             _login = "freedomvoice.user1.267055@gmail.com";
             _password = "user1654654";
             _systemPhoneNumber = "7607124648";
-            _systemPhoneЩтNumberOnHold = "8477163106";
+            _systemPhoneNumberOnHold = "8477163106";
             _presentationPhoneNumber = "7606468294";
             _mailBoxNumber = 802;
         }
