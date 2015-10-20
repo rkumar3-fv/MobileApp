@@ -55,7 +55,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
         public async override Task<BaseResponse> ExecuteRequest()
         {
             Log.Debug(App.AppPackage, $"REQUEST MESSAGES FOR x{ExtensionId} from {Folder}");
-            var asyncRes = await ApiHelper.GetMesages(AccountName, ExtensionId, Folder, 10, 1, true);
+            var asyncRes = await ApiHelper.GetMesages(AccountName, ExtensionId, Folder, 30, 1, true);
             var errorResponse = CheckErrorResponse(Id, asyncRes.Code);
             if (errorResponse != null)
                 return errorResponse;

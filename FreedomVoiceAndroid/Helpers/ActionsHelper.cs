@@ -79,7 +79,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         /// <summary>
         /// Selected message index
         /// </summary>
-        public int SelectedMessage { get; private set; }
+        public int SelectedMessage { get; set; }
 
         /// <summary>
         /// Event for activity or fragment handling
@@ -430,6 +430,8 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                 SelectedExtension = position;
             else if (SelectedFolder == -1)
                 SelectedFolder = position;
+            else
+                SelectedMessage = position;
             return GetCurrent();
         }
 
@@ -438,7 +440,9 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         /// </summary>
         public void GetPrevious()
         {
-            if (SelectedFolder != -1)
+            if (SelectedMessage != -1)
+                SelectedMessage = -1;
+            else if (SelectedFolder != -1)
                 SelectedFolder = -1;
             else if (SelectedExtension != -1)
                 SelectedExtension = -1;

@@ -1,4 +1,5 @@
 using System;
+using Android.Content;
 using Android.OS;
 using Android.Support.Design.Widget;
 using Android.Support.V4.Content;
@@ -7,6 +8,7 @@ using Android.Support.V7.Widget;
 using Android.Support.V7.Widget.Helper;
 using Android.Util;
 using Android.Views;
+using com.FreedomVoice.MobileApp.Android.Activities;
 using com.FreedomVoice.MobileApp.Android.Adapters;
 using com.FreedomVoice.MobileApp.Android.Entities;
 using com.FreedomVoice.MobileApp.Android.Helpers;
@@ -106,7 +108,22 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             Log.Debug(App.AppPackage, $"FRAGMENT {GetType().Name}: select item #{position}");
             _adapter.CurrentContent = Helper.GetNext(position);
             if (Helper.SelectedMessage != -1)
-                ;//TODO: OPEN MSG DETAILS
+            {
+                Intent intent;
+                switch (Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].MessagesList[Helper.SelectedMessage].MessageType)
+                {
+                    case Message.TypeVoice:
+                        intent = new Intent(ContentActivity, typeof(VoiceMailActivity));
+                        break;
+                    case Message.TypeRec:
+                        intent = new Intent(ContentActivity, typeof(VoiceRecordActivity));
+                        break;
+                    default:
+                        intent = new Intent(ContentActivity, typeof(FaxActivity));
+                        break;
+                }
+                StartActivity(intent);
+            }
             else if (Helper.SelectedFolder != -1)
             {
                 Helper.ForceLoadMessages();

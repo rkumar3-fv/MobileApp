@@ -58,6 +58,14 @@
   <dimen name="select_acc_activity_element_height">48dp</dimen>
   <dimen name="select_acc_activity_element_padding">8dp</dimen>
   
+  <!-- Messages details activity -->
+  <dimen name="details_activity_image_height">200dp</dimen>
+  <dimen name="details_activity_number_margin">30dp</dimen>
+  <dimen name="details_activity_stamp_margin">20dp</dimen>
+  <dimen name="details_activity_actions_margin">10dp</dimen>
+  <dimen name="details_activity_actions_spacing">8dp</dimen>
+  <dimen name="details_activity_actions_height">36dp</dimen>
+  
   <!-- Content activity -->
   <dimen name="content_activity_tab_text_size">14sp</dimen>
   <dimen name="content_activity_tab_elevation">3dp</dimen>
