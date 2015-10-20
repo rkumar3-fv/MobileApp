@@ -37,6 +37,11 @@
             return await MakeAsyncPostRequest<string>("/api/v1/passwordReset", postdata, "application/x-www-form-urlencoded", CancellationToken.None);
         }
 
+        public async static Task<BaseResult<PollingInterval>> GetPollingInterval()
+        {
+            return await MakeAsyncGetRequest<PollingInterval>("/api/v1/settings/pollingInterval", "application/json", CancellationToken.None);
+        }
+
         public async static Task<BaseResult<DefaultPhoneNumbers>> GetSystems()
         {
             return await MakeAsyncGetRequest<DefaultPhoneNumbers>("/api/v1/systems", "application/json", CancellationToken.None);
@@ -45,7 +50,7 @@
         public async static Task<BaseResult<PresentationPhoneNumbers>> GetPresentationPhoneNumbers(string systemPhoneNumber)
         {
             return await MakeAsyncGetRequest<PresentationPhoneNumbers>(
-                $"api/v1/systems/{systemPhoneNumber}/presentationPhoneNumbers",
+                $"/api/v1/systems/{systemPhoneNumber}/presentationPhoneNumbers",
                 "application/json",
                 CancellationToken.None);
         }
@@ -55,7 +60,7 @@
             var postdata = $"ExpectedCallerIdNumber={expectedCallerIdNumber}&PresentationPhoneNumber={presentationPhoneNumber}&DestinationPhoneNumber={destinationPhoneNumber}";
 
             return await MakeAsyncPostRequest<CreateCallReservationSetting>(
-                $"api/v1/systems/{systemPhoneNumber}/createCallReservation",
+                $"/api/v1/systems/{systemPhoneNumber}/createCallReservation",
                 postdata,
                 "application/x-www-form-urlencoded",
                 CancellationToken.None);
@@ -81,6 +86,14 @@
         {
             return await MakeAsyncGetRequest<List<Folder>>(
                 $"/api/v1/systems/{systemPhoneNumber}/mailboxes/{mailboxNumber}/folders",
+                "application/json",
+                CancellationToken.None);
+        }
+
+        public async static Task<BaseResult<List<MessageFolderWithCounts>>> GetFoldersWithCount(string systemPhoneNumber, int mailboxNumber)
+        {
+            return await MakeAsyncGetRequest<List<MessageFolderWithCounts>>(
+                $"/api/v1/systems/{systemPhoneNumber}/mailboxes/{mailboxNumber}/foldersWithCounts",
                 "application/json",
                 CancellationToken.None);
         }
@@ -225,6 +238,15 @@
                                     };
                                     break;
                                 }
+                            case HttpStatusCode.PaymentRequired:
+                                {
+                                    retResult = new BaseResult<Stream>
+                                    {
+                                        Code = ErrorCodes.PaymentRequired,
+                                        Result = Stream.Null
+                                    };
+                                    break;
+                                }
                         }
                     }
 
@@ -290,6 +312,15 @@
                                     retResult = new BaseResult<T>
                                     {
                                         Code = ErrorCodes.NotFound,
+                                        Result = default(T)
+                                    };
+                                    break;
+                                }
+                            case HttpStatusCode.PaymentRequired:
+                                {
+                                    retResult = new BaseResult<T>
+                                    {
+                                        Code = ErrorCodes.PaymentRequired,
                                         Result = default(T)
                                     };
                                     break;

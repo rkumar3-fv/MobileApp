@@ -30,6 +30,11 @@ namespace TestApp
             Console.Write(@"Login method: " + ApiHelper.Login(_login, _passwd).Result.Code);
             Console.Write(Environment.NewLine);
 
+
+            Console.Write(@"Polling Interval: " + ApiHelper.GetPollingInterval().Result.Result.PollingIntervalSeconds);
+            Console.Write(Environment.NewLine);
+
+
             Console.Write(@"Logout method: " + ApiHelper.Logout().Result.Code);
             Console.Write(Environment.NewLine);
 
@@ -45,6 +50,14 @@ namespace TestApp
             Console.Write(@"Mailboxes method: " + ApiHelper.GetMailboxes("7607124648"));
             Console.Write(Environment.NewLine);
 
+
+            var a = ApiHelper.GetPresentationPhoneNumbers("7607124648").Result;
+
+
+            var c = ApiHelper.CreateCallReservation("7607124648", "7607124641", "7606468294", "7607124648").Result;
+
+
+
             var resMb = ApiHelper.GetMailboxesWithCounts("7607124648").Result;
             Console.WriteLine(@"Mailboxes method with count: " + resMb.Result.Count);
             foreach (var mailboxWithCount in resMb.Result)
@@ -55,6 +68,8 @@ namespace TestApp
 
             Console.Write(@"Folders method: " + ApiHelper.GetFolders("7607124648", 802));
             Console.Write(Environment.NewLine);
+            var folders = ApiHelper.GetFoldersWithCount("7607124648", 802).Result;
+
 
             Console.Write(@"Messages method: " + ApiHelper.GetMesages("7607124648", 802, "Sent", 10, 1, true));
             Console.Write(Environment.NewLine);

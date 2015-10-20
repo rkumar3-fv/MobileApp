@@ -4,7 +4,7 @@
 
     public class CreateCallReservationSetting
     {
-        [JsonProperty("CreateCallReservationSetting")]
-        public string CallReservationSetting { get; set; }
+        [JsonProperty("SwitchboardPhoneNumber")]
+        public string SwitchboardPhoneNumber { get; set; }
     }
 }
