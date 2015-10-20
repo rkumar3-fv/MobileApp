@@ -20,6 +20,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             SenderText = FindViewById<TextView>(Resource.Id.recordActivity_senderText);
             MessageDate = FindViewById<TextView>(Resource.Id.recordActivity_dateText);
             MessageStamp = FindViewById<TextView>(Resource.Id.recordActivity_stampText);
+            CallBackButton = FindViewById<Button>(Resource.Id.recordActivity_callbackButton);
+            SpeakerButton = FindViewById<Button>(Resource.Id.recordActivity_speakerButton);
             SupportActionBar.SetTitle(Resource.String.ActivityRecord_title);
         }
     }

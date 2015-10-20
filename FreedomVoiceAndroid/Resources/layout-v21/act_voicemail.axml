@@ -42,13 +42,35 @@
         android:background="@drawable/border"
         android:layout_alignParentStart="true"
         android:layout_marginTop="@dimen/details_activity_number_margin">
+        <Button
+            android:id="@+id/voicemailActivity_speakerButton"
+            style="@style/BorderlessMessagesButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableStart="@drawable/ic_action_speaker"
+            android:text="@string/ActivityVoice_speaker"
+            android:layout_marginTop="@dimen/details_activity_actions_margin"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true" />
+        <Button
+            android:id="@+id/voicemailActivity_callbackButton"
+            style="@style/BorderlessMessagesButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableStart="@drawable/ic_action_callback"
+            android:text="@string/ActivityVoice_callback"
+            android:layout_marginTop="@dimen/details_activity_actions_margin"
+            android:layout_marginStart="@dimen/details_activity_actions_spacing"
+            android:layout_alignParentTop="true"
+            android:layout_toEndOf="@id/voicemailActivity_speakerButton" />
         <ImageButton
             android:id="@+id/voicemailActivity_deleteButton"
             android:src="@drawable/ic_action_remove"
             android:background="@drawable/ripple"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/details_activity_actions_margin"
+            android:minHeight="@dimen/activity_button_size"
             android:layout_marginEnd="@dimen/activity_horizontal_margin"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true" />

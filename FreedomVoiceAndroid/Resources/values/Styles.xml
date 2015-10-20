@@ -90,6 +90,16 @@
     <item name="android:minHeight">@dimen/activity_button_size</item>
   </style>
 
+  <!-- Borderless message ations button style -->
+  <style name="BorderlessMessagesButtonStyle" parent="Widget.AppCompat.Button.Borderless">
+    <item name="android:textSize">@dimen/text_secondary</item>
+    <item name="android:textColor">@color/colorDlgButton</item>
+    <item name="android:gravity">center</item>
+    <item name="android:textAlignment">center</item>
+    <item name="android:textAllCaps">true</item>
+    <item name="android:minHeight">@dimen/activity_button_size</item>
+  </style>
+
   <!-- Borderless dialog button style -->
   <style name="BorderlessDialogButtonStyle" parent="Widget.AppCompat.Button.Borderless">
     <item name="android:textSize">@dimen/dlg_action_bar_font</item>

@@ -42,13 +42,24 @@
         android:background="@drawable/border"
         android:layout_alignParentStart="true"
         android:layout_marginTop="@dimen/details_activity_number_margin">
+        <Button
+            android:id="@+id/faxActivity_openFax"
+            style="@style/BorderlessMessagesButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableStart="@drawable/ic_action_view"
+            android:text="@string/ActivityFax_view"
+            android:layout_marginTop="@dimen/details_activity_actions_margin"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true" />
         <ImageButton
             android:id="@+id/faxActivity_deleteButton"
             android:src="@drawable/ic_action_remove"
             android:background="@drawable/ripple"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/details_activity_actions_margin"
+            android:minHeight="@dimen/activity_button_size"
             android:layout_marginEnd="@dimen/activity_horizontal_margin"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true" />
