@@ -1,11 +1,13 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
-namespace com.FreedomVoice.MobileApp.Android.Utils
+namespace FreedomVoice.Core.Utils
 {
-    /// <summary>
-    /// Data format actions
-    /// </summary>
-    public static class DataFormatUtils
+    public class DataFormatUtils
     {
         private const string Phone3Regex = @"^\(?([0-9]{3})\)$";
         private const string Phone4Regex = @"^\(?([0-9]{3})\)?[-. ]?([0-9]{1,3})$";

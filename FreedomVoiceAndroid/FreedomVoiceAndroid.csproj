@@ -125,7 +125,6 @@
     <Compile Include="Services\ComService.cs" />
     <Compile Include="Services\ComServiceResultReceiver.cs" />
     <Compile Include="Services\IComServiceResultReceiver.cs" />
-    <Compile Include="Utils\DataFormatUtils.cs" />
     <Compile Include="Utils\DataValidationUtils.cs" />
   </ItemGroup>
   <ItemGroup>

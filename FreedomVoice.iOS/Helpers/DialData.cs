@@ -8,8 +8,8 @@ namespace FreedomVoice.iOS.Helpers
     {
         public static List<DialItem> GetDialItems()
         {
-            int x1 = 30, x2 = 130, x3 = 225;
-            int y1 = 170, y2 = 250, y3 = 330, y4 = 410, y5 = 490;
+            int x1 = 50, x2 = 130, x3 = 205;
+            int y1 = 160, y2 = 230, y3 = 300, y4 = 370;
 
             return new List<DialItem>()
             {                
@@ -35,7 +35,7 @@ namespace FreedomVoice.iOS.Helpers
         public nfloat Y { get; set; }
         public String Text { get; set; }
         public String DetailedText { get; set; }        
-        public nfloat Width { get; set; } = 70;
-        public nfloat Height { get; set; } = 70;         
+        public nfloat Width { get; set; } = 60;
+        public nfloat Height { get; set; } = 60;         
     }
 }

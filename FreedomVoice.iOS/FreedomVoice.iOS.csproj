@@ -89,6 +89,7 @@
     <Compile Include="Data\Implementations\ExtensionsService.cs" />
     <Compile Include="Helpers\PhoneAbilities.cs" />
     <Compile Include="SharedViews\CallerIdView.cs" />
+    <Compile Include="SharedViews\KeypadView.cs" />
     <Compile Include="TableViewCells\ContactCell.cs" />
     <Compile Include="TableViewSources\ContactSource.cs" />
     <Compile Include="ViewControllers\AccountsViewController.cs" />
@@ -122,10 +123,6 @@
       <DependentUpon>EmergencyDisclaimerViewController.cs</DependentUpon>
     </Compile>
     <Compile Include="Helpers\DialData.cs" />
-    <Compile Include="RoundedButton1.cs" />
-    <Compile Include="RoundedButton1.designer.cs">
-      <DependentUpon>RoundedButton1.cs</DependentUpon>
-    </Compile>
     <Compile Include="ViewControllers\KeypadController.cs" />
     <Compile Include="ViewControllers\KeypadController.designer.cs">
       <DependentUpon>KeypadController.cs</DependentUpon>

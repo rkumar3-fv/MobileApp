@@ -9,10 +9,10 @@ using System;
 using System.CodeDom.Compiler;
 using UIKit;
 
-namespace FreedomVoice.iOS
+namespace FreedomVoice.iOS.SharedViews
 {
-	[Register ("RoundedButton1")]
-	partial class RoundedButton1
+	[Register ("KeypadView")]
+	partial class KeypadView
 	{
 		void ReleaseDesignerOutlets ()
 		{
