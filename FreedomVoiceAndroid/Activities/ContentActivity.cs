@@ -1,5 +1,6 @@
 using Android.App;
 using Android.Content.PM;
+using Android.Gms.Analytics;
 using Android.OS;
 using Android.Support.Design.Widget;
 using Android.Support.V4.Content;
@@ -70,6 +71,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         private void ViewPagerOnPageSelected(object sender, ViewPager.PageSelectedEventArgs pageSelectedEventArgs)
         {
             SetToolbarContent();
+            Appl.AnalyticsTracker.SetScreenName($"Activity {GetType().Name}, Screen {_pagerAdapter.GetItem(_viewPager.CurrentItem).GetType().Name}");
+            Appl.AnalyticsTracker.Send(new HitBuilders.ScreenViewBuilder().Build());
         }
 
         public void SetToolbarContent()

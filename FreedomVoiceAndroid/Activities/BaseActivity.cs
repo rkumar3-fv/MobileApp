@@ -1,9 +1,7 @@
 using System;
-using Android.Gms.Analytics;
 using Android.OS;
 using Android.Support.V7.App;
 using Android.Util;
-using com.FreedomVoice.MobileApp.Android.Dialogs;
 using com.FreedomVoice.MobileApp.Android.Helpers;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
@@ -35,9 +33,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             base.OnResume();
             Log.Debug(App.AppPackage, $"ACTIVITY {GetType().Name} resumed");
             Helper.HelperEvent += OnHelperEvent;
-
-            Appl.AnalyticsTracker.SetScreenName($"Activity {GetType().Name}");
-            Appl.AnalyticsTracker.Send(new HitBuilders.ScreenViewBuilder().Build());
         }
 
         /// <summary>

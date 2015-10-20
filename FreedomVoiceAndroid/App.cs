@@ -58,13 +58,7 @@ namespace com.FreedomVoice.MobileApp.Android
         public override void OnCreate()
         {
             base.OnCreate();
-            Helper = new ActionsHelper(this);
-
-            var pInfo = PackageManager.GetPackageInfo(PackageName, 0);
-            _tracker.SetAppName(GetString(Resource.String.ApplicationName));
-            _tracker.SetAppVersion($"{pInfo.VersionCode} ({pInfo.VersionName})");
-            _tracker.SetScreenResolution(Resources.DisplayMetrics.WidthPixels, Resources.DisplayMetrics.HeightPixels);
-            
+            Helper = new ActionsHelper(this); 
             CallState = new CallStateHelper();
             CallState.CallEvent += CallStateOnCallEvent;
             var telManager = (TelephonyManager)GetSystemService(TelephonyService);

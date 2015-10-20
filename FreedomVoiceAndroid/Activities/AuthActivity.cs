@@ -1,6 +1,7 @@
 ﻿using System;
 using Android.App;
 using Android.Content;
+using Android.Gms.Analytics;
 using Android.Graphics;
 using Android.OS;
 using Android.Support.V4.Content;
@@ -52,6 +53,11 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             _authButton.Click += AuthButtonOnClick;
             _forgotButton.Click += ForgotButtonOnClick;
             _errorColor = new Color(ContextCompat.GetColor(this, Resource.Color.textColorError));
+
+            var pInfo = PackageManager.GetPackageInfo(PackageName, 0);
+            Appl.AnalyticsTracker.SetAppName(GetString(Resource.String.ApplicationName));
+            Appl.AnalyticsTracker.SetAppVersion($"{pInfo.VersionCode} ({pInfo.VersionName})");
+            Appl.AnalyticsTracker.SetScreenResolution(Resources.DisplayMetrics.WidthPixels, Resources.DisplayMetrics.HeightPixels);
         }
 
         protected override void OnResume()
@@ -60,6 +66,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             DebugOnly();
             if (Helper.IsLoggedIn)
                 Helper.GetAccounts();
+            Appl.AnalyticsTracker.SetScreenName($"Activity {GetType().Name}");
+            Appl.AnalyticsTracker.Send(new HitBuilders.ScreenViewBuilder().Build());
         }
 
         /// <summary>

@@ -1,3 +1,4 @@
+using Android.Gms.Analytics;
 using Android.Support.V7.Internal.View;
 using Android.Views;
 using com.FreedomVoice.MobileApp.Android.Dialogs;
@@ -6,6 +7,13 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
 {
     public abstract class LogoutActivity : BaseActivity
     {
+        protected override void OnResume()
+        {
+            base.OnResume();
+            Appl.AnalyticsTracker.SetScreenName($"Activity {GetType().Name}");
+            Appl.AnalyticsTracker.Send(new HitBuilders.ScreenViewBuilder().Build());
+        }
+
         public override bool OnCreateOptionsMenu(IMenu menu)
         {
             base.OnCreateOptionsMenu(menu);
