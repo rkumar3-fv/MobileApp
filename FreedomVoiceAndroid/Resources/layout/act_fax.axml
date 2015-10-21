@@ -57,9 +57,10 @@
             android:id="@+id/faxActivity_deleteButton"
             android:src="@drawable/ic_action_remove"
             android:background="@android:color/transparent"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/details_activity_actions_height"
+            android:layout_height="@dimen/details_activity_actions_height"
             android:minHeight="@dimen/activity_button_size"
+            android:layout_marginTop="@dimen/details_activity_actions_margin"
             android:layout_marginEnd="@dimen/activity_horizontal_margin"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true" />

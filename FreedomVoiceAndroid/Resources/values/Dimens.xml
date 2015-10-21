@@ -87,18 +87,20 @@
   <!-- Keyboard fragment -->
   <dimen name="fragment_keypad_spinner_size">56dp</dimen>
   <dimen name="fragment_keypad_number_size">65dp</dimen>
-  <dimen name="fragment_keypad_number_size">34sp</dimen>
+  <dimen name="fragment_keypad_number_text_size">34sp</dimen>
   <dimen name="fragment_keypad_key_text_size">36sp</dimen>
   <dimen name="fragment_keypad_key_small_text_size">12sp</dimen>
   <dimen name="fragment_keypad_key_size">64dp</dimen>
   <dimen name="fragment_keypad_key_top_spacing">12dp</dimen>
   <dimen name="fragment_keypad_key_spacing">40dp</dimen>
-  <dimen name="fragment_keypad_backspace_spacing">56dp</dimen>
+  <dimen name="fragment_keypad_backspace_spacing">48dp</dimen>
   <dimen name="fragment_keypad_bottom_margin">76dp</dimen>
   <dimen name="fragment_keypad_button_ripple">64dp</dimen>
   <dimen name="fragment_keypad_fab_elevation">6dp</dimen>
   <dimen name="fragment_keypad_fab_translation">12dp</dimen>
   <dimen name="fragment_keypad_fab_ripple">48dp</dimen>
+  <dimen name="fragment_keypad_backspace_margin">8dp</dimen>
+  <dimen name="fragment_keypad_backspace_size">40dp</dimen>
   
   <!-- Dialogs -->
   <dimen name="dlg_elevation">24dp</dimen>

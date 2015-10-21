@@ -97,7 +97,7 @@
     <item name="android:gravity">center</item>
     <item name="android:textAlignment">center</item>
     <item name="android:textAllCaps">true</item>
-    <item name="android:minHeight">@dimen/activity_button_size</item>
+    <item name="android:maxHeight">@dimen/activity_button_size</item>
   </style>
 
   <!-- Borderless dialog button style -->
@@ -126,7 +126,7 @@
     <item name="android:background">@android:color/transparent</item>
     <item name="background">@android:color/transparent</item>
     <item name="android:textColor">@color/textColorSecondary</item>
-    <item name="android:textSize">@dimen/fragment_keypad_number_size</item>
+    <item name="android:textSize">@dimen/fragment_keypad_number_text_size</item>
     <item name="android:cursorVisible">false</item>
     <item name="android:focusable">false</item>
     <item name="android:editable">false</item>

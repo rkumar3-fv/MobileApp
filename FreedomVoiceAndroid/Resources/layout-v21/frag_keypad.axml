@@ -4,53 +4,52 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center_horizontal"
-    android:layout_marginStart="@dimen/activity_horizontal_margin"
-    android:layout_marginEnd="@dimen/activity_horizontal_margin">
+    android:gravity="center_horizontal">
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="@dimen/fragment_keypad_spinner_size"
-        android:background="@drawable/border"
-        android:gravity="center">
+        android:gravity="center"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin">
         <TextView
             style="@style/CallerIdSpinnerText"
             android:layout_centerHorizontal="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/FragmentKeypad_callerId"
-            android:layout_marginStart="@dimen/activity_horizontal_margin"
             android:layout_weight="1" />
         <Spinner
             android:id="@+id/keypadFragment_idSpinner"
             android:layout_width="match_parent"
             android:layout_height="@dimen/fragment_keypad_spinner_size"
-            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
             android:layout_weight="1"
             android:spinnerMode="dropdown" />
     </LinearLayout>
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/fragment_keypad_number_size"
         android:background="@drawable/border">
         <EditText
             android:theme="@style/BorderlessEditText"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/fragment_keypad_number_size"
             android:inputType="phone"
             android:id="@+id/keypadFragment_dialText"
-            android:layout_gravity="right|center_vertical"
             android:phoneNumber="true"
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
-            android:layout_marginRight="@dimen/fragment_keypad_backspace_spacing" />
+            android:layout_marginRight="@dimen/fragment_keypad_backspace_spacing"
+            android:clickable="false"
+            android:editable="false" />
         <ImageButton
             android:id="@+id/keypadFragment_backspace"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/fragment_keypad_backspace_size"
+            android:layout_height="@dimen/fragment_keypad_backspace_size"
             android:src="@drawable/ic_action_backspace"
             android:background="@drawable/ripple"
             android:layout_gravity="right|center_vertical"
-            android:layout_marginRight="@dimen/activity_horizontal_margin" />
+            android:layout_marginRight="@dimen/fragment_keypad_backspace_margin" />
     </FrameLayout>
     <GridLayout
         android:layout_width="wrap_content"
@@ -83,8 +82,8 @@
             android:background="@drawable/ripple"
             android:layout_width="@dimen/fragment_keypad_key_size"
             android:layout_height="@dimen/fragment_keypad_key_size"
-            android:layout_marginStart="@dimen/fragment_keypad_key_spacing"
-            android:layout_marginEnd="@dimen/fragment_keypad_key_spacing">
+            android:layout_marginLeft="@dimen/fragment_keypad_key_spacing"
+            android:layout_marginRight="@dimen/fragment_keypad_key_spacing">
             <TextView
                 style="@style/KeyButtonTextMainStyle"
                 android:text="@string/FragmentKeypad_twoButtonTitle"
