@@ -82,6 +82,11 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         public int SelectedMessage { get; set; }
 
         /// <summary>
+        /// Recents list
+        /// </summary>
+        public Dictionary<long, Recent> RecentsDictionary { get; } 
+
+        /// <summary>
         /// Event for activity or fragment handling
         /// </summary>
         public event ActionsHelperEvent HelperEvent;
@@ -101,6 +106,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         /// </summary>
         private readonly Dictionary<long, BaseRequest> _waitingRequestArray;
 
+        private long _successDial = -1;
         private readonly AtomicLong _idCounter;
         private readonly AppPreferencesHelper _preferencesHelper;
 
@@ -129,7 +135,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                 _preferencesHelper.SavePhoneNumber(PhoneNumber);
             }
             Log.Debug(App.AppPackage, "HELPER: " + ((PhoneNumber == null) ? "NO CELLULAR" : $" PHONE NUMBER IS {PhoneNumber}"));
-
+            RecentsDictionary = new Dictionary<long, Recent>();
             ExtensionsList = new List<Extension>();
             SelectedExtension = -1;
             SelectedFolder = -1;
@@ -454,7 +460,16 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             else if (SelectedExtension != -1)
                 SelectedExtension = -1;
             HelperEvent?.Invoke(this, new ActionsHelperEventArgs(-1, new[] { ActionsHelperEventArgs.MsgUpdated }));
-        } 
+        }
+
+        /// <summary>
+        /// Mark outgoing call as finished
+        /// </summary>
+        public void MarkCallAsFinished()
+        {
+            if (RecentsDictionary.ContainsKey(_successDial))
+                RecentsDictionary[_successDial].CallEnded();
+        }
 
         /// <summary>
         /// Responses from ComService
@@ -504,10 +519,17 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                             break;
                         //Bad request format
                         case ErrorResponse.ErrorBadRequest:
+                            // Bad login format
                             if (!IsLoggedIn)
                             {
                                 Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} failed: BAD LOGIN FORMAT");
                                 HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new []{ActionsHelperEventArgs.AuthLoginError, ActionsHelperEventArgs.RestoreError}));
+                            }
+                            // Call reservation bad request
+                            else if (_waitingRequestArray.ContainsKey(response.RequestId) && _waitingRequestArray[response.RequestId] is CallReservationRequest)
+                            {
+                                var callReservation = (CallReservationRequest) _waitingRequestArray[response.RequestId];
+                                RecentsDictionary.Add(response.RequestId, new Recent(callReservation.DialingNumber, Recent.ResultFail));
                             }
                             break;
                         //Account not found error
@@ -638,14 +660,20 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                 case "CallReservationResponse":
                     Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} successed (Call reservation)");
                     var callResponse = (CallReservationResponse)response;
+                    var callRequest = (CallReservationRequest)_waitingRequestArray[response.RequestId];
                     if (callResponse.ServiceNumber.Length > 6)
                     {
                         var callIntent = new Intent(Intent.ActionCall, Uri.Parse("tel:" + callResponse.ServiceNumber));
                         Log.Debug(App.AppPackage, $"ACTIVITY {GetType().Name} CREATES CALL to {callResponse.ServiceNumber}");
+                        RecentsDictionary.Add(response.RequestId, new Recent(callRequest.DialingNumber, Recent.ResultOk));
+                        _successDial = response.RequestId;
                         HelperEvent?.Invoke(this, new ActionsHelperIntentArgs(response.RequestId, callIntent));
                     }
                     else
+                    {
+                        RecentsDictionary.Add(response.RequestId, new Recent(callRequest.DialingNumber, Recent.ResultFail));
                         HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.CallReservationFail }));
+                    }
                     break;
 
                 // Move message to trash response
