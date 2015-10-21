@@ -12,6 +12,7 @@ using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.ViewControllers;
 using FreedomVoice.iOS.ViewModels;
 using UIKit;
+using GoogleAnalytics.iOS;
 
 namespace FreedomVoice.iOS
 {
@@ -53,6 +54,8 @@ namespace FreedomVoice.iOS
                 SetLoginViewAsRootView();
 
             Window.MakeKeyAndVisible();
+
+            InitGA();
 
             return true;
         }
@@ -146,6 +149,26 @@ namespace FreedomVoice.iOS
         public override void WillEnterForeground(UIApplication application)
         {
             
+        }
+
+        public IGAITracker Tracker;
+        public static readonly string TrackingId = "UA-69040520-2";
+        const string AllowTrackingKey = "AllowTracking";
+
+        private void InitGA()
+        {            
+            var optionsDict = NSDictionary.FromObjectAndKey(new NSString("YES"), new NSString(AllowTrackingKey));
+            NSUserDefaults.StandardUserDefaults.RegisterDefaults(optionsDict);
+            GAI.SharedInstance.OptOut = !NSUserDefaults.StandardUserDefaults.BoolForKey(AllowTrackingKey);
+            GAI.SharedInstance.DispatchInterval = 5;
+                        
+            GAI.SharedInstance.TrackUncaughtExceptions = true;                        
+            Tracker = GAI.SharedInstance.GetTracker(TrackingId);            
+        }
+
+        public override void OnActivated(UIApplication application)
+        {
+            GAI.SharedInstance.OptOut = !NSUserDefaults.StandardUserDefaults.BoolForKey(AllowTrackingKey);
         }
     }
 }

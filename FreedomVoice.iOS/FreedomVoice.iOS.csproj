@@ -173,6 +173,9 @@
     <BundleResource Include="Resources\Default-568h%402x.png" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="GoogleAnalytics.iOS">
+      <HintPath>..\Components\googleanalytics-3.0.12\lib\ios-unified\GoogleAnalytics.iOS.dll</HintPath>
+    </Reference>
     <Reference Include="MRoundedButton">
       <HintPath>..\Components\mroundedbutton-1.1.2.0\lib\ios-unified\MRoundedButton.dll</HintPath>
     </Reference>
@@ -188,6 +191,7 @@
     <Content Include="Entitlements.plist" />
     <BundleResource Include="Resources\dial%402x.png" />
     <BundleResource Include="Resources\clearPhone.png" />
+    <Content Include="GoogleService-Info.plist" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FreedomVoice.Core\FreedomVoice.Core.csproj">
@@ -196,6 +200,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <XamarinComponentReference Include="googleanalytics">
+      <Visible>False</Visible>
+      <Version>3.0.12</Version>
+    </XamarinComponentReference>
     <XamarinComponentReference Include="mroundedbutton">
       <Visible>False</Visible>
       <Version>1.1.2.0</Version>
