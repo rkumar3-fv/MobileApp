@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Android.OS;
+using Android.Util;
 using com.FreedomVoice.MobileApp.Android.Actions.Responses;
 using FreedomVoice.Core;
 using Java.Interop;
@@ -42,10 +43,17 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
         /// <returns>LoginResponse or ErrorResponse</returns>
         public override async Task<BaseResponse> ExecuteRequest()
         {
+            Log.Debug(App.AppPackage, $"{GetType().Name} ExequteRequest");
             var asyncRes = await ApiHelper.Login(_login, _password);
+            Log.Debug(App.AppPackage, $"{GetType().Name} GetResponse {(asyncRes == null ? "NULL":"NOT NULL")}");
+            Log.Debug(App.AppPackage, $"{GetType().Name} {asyncRes.Code} {asyncRes.Result}");
             var errorResponse = CheckErrorResponse(Id, asyncRes.Code);
             if (errorResponse != null)
+            {
+                Log.Debug(App.AppPackage, $"{GetType().Name} Error: {errorResponse.ErrorCode}");
                 return errorResponse;
+            }
+            Log.Debug(App.AppPackage, $"{GetType().Name} OK");
             return new LoginResponse(Id);
         }
 

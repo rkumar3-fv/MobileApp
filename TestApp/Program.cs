@@ -153,8 +153,6 @@ namespace TestApp
             Console.Write(Environment.NewLine);
             var folders = ApiHelper.GetFoldersWithCount("7607124648", 802).Result;
 
-
-
             Console.Write(@"Messages move method Saved -> New: " + ApiHelper.MoveMessages("7607124648", 802, "New", new List<string> { "A159991316" }).Result.Code);
             Console.Write(Environment.NewLine);
             Console.Write(@"Messages move method New -> Saved: " + ApiHelper.MoveMessages("7607124648", 802, "Saved", new List<string> { "A159991316" }).Result.Code);
