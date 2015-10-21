@@ -190,12 +190,6 @@
     <BundleResource Include="Resources\clearPhone.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FreedomVoice.Core\FreedomVoice.Core.csproj">
-      <Project>{f4fc9f9f-082c-4f29-977a-da7ec449ba56}</Project>
-      <Name>FreedomVoice.Core</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <XamarinComponentReference Include="mroundedbutton">
       <Visible>False</Visible>
       <Version>1.1.2.0</Version>
@@ -205,6 +199,11 @@
       <Version>0.7.7</Version>
     </XamarinComponentReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\FreedomVoice.Core\FreedomVoice.Core.csproj">
+      <Project>{f4fc9f9f-082c-4f29-977a-da7ec449ba56}</Project>
+      <Name>FreedomVoice.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 </Project>

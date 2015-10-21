@@ -1,11 +1,11 @@
-﻿namespace ApiTests
-{
-    using System.Collections.Generic;
-    using System.Linq;
-    using FreedomVoice.Core;
-    using FreedomVoice.Core.Entities.Enums;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System.Collections.Generic;
+using System.Linq;
+using FreedomVoice.Core;
+using FreedomVoice.Core.Entities.Enums;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+namespace FreedomVoice.ApiTests
+{
     [TestClass]
     public class ApiUnitTests
     {
@@ -15,6 +15,7 @@
         private readonly string _systemPhoneNumberOnHold;
         private readonly string _presentationPhoneNumber;
         private readonly int _mailBoxNumber;
+
         public ApiUnitTests()
         {
             _login = "freedomvoice.user1.267055@gmail.com";
@@ -45,29 +46,24 @@
             Assert.AreEqual(ApiHelper.Login(_login, _password + " ").Result.Code, ErrorCodes.Unauthorized);
         }
 
-
         [TestMethod]
         public void TestPollingInterval()
         {
-            ApiHelper.Login(_login, _password).GetAwaiter().OnCompleted(() =>
-                Assert.IsNotNull(ApiHelper.GetPollingInterval().Result.Result.PollingIntervalSeconds));
+            ApiHelper.Login(_login, _password).GetAwaiter().OnCompleted(() => Assert.IsNotNull(ApiHelper.GetPollingInterval().Result.Result.PollingIntervalSeconds));
 
         }
 
         [TestMethod]
         public void TestSystemNumbers()
         {
-            ApiHelper.Login(_login, _password).GetAwaiter().OnCompleted(() =>
-                Assert.AreEqual(ApiHelper.GetSystems().Result.Code, ErrorCodes.Ok));
+            ApiHelper.Login(_login, _password).GetAwaiter().OnCompleted(() => Assert.AreEqual(ApiHelper.GetSystems().Result.Code, ErrorCodes.Ok));
         }
 
         [TestMethod]
         public void TestPresentationPhoneNumbers()
         {
             ApiHelper.Login(_login, _password).GetAwaiter().OnCompleted(() =>
-            {
-                Assert.IsTrue(ApiHelper.GetPresentationPhoneNumbers(_systemPhoneNumber).Result.Result.PhoneNumbers.Any());
-            });
+                Assert.IsTrue(ApiHelper.GetPresentationPhoneNumbers(_systemPhoneNumber).Result.Result.PhoneNumbers.Any()));
         }
 
         [TestMethod]
@@ -98,14 +94,12 @@
                 Assert.IsTrue(ApiHelper.GetMailboxesWithCounts(_systemPhoneNumber).Result.Result.Count > 0));
         }
 
-
         [TestMethod]
         public void TestGetFolders()
         {
             ApiHelper.Login(_login, _password).GetAwaiter().OnCompleted(() =>
                 Assert.IsTrue(ApiHelper.GetFolders(_systemPhoneNumber, _mailBoxNumber).Result.Result.Count > 0));
         }
-
 
         [TestMethod]
         public void TestGetFoldersWithCounts()
@@ -149,7 +143,6 @@
             Assert.AreEqual(ApiHelper.GetMesages(_systemPhoneNumber, _mailBoxNumber, "New", 10, 1, true).Result.Code, ErrorCodes.Unauthorized);
         }
 
-
         [TestMethod]
         public void TestMoveMessages()
         {
@@ -171,9 +164,7 @@
                     var againMovedMessages = ApiHelper.GetMesages(_systemPhoneNumber, _mailBoxNumber, "New", 10, 1, true).Result;
                     Assert.IsTrue(messages.Result.Any());
                     Assert.AreEqual(messageId, againMovedMessages.Result.First(x => x.Id == messageId));
-                }
-                );
+                });
         }
-
     }
 }

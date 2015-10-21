@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp", "TestApp\TestApp.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreedomVoice.iOS", "FreedomVoice.iOS\FreedomVoice.iOS.csproj", "{42B6DC7E-903E-495B-9BEF-053D35506CBB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiTests", "ApiTests\ApiTests.csproj", "{200F3399-6907-4195-92A2-06C69E0D354C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreedomVoice.ApiTests", "FreedomVoice.ApiTests\FreedomVoice.ApiTests.csproj", "{200F3399-6907-4195-92A2-06C69E0D354C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

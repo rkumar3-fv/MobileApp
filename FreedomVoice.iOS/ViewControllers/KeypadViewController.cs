@@ -1,19 +1,17 @@
 using CoreGraphics;
-using FreedomVoice.Core.Utils;
 using FreedomVoice.iOS.Helpers;
 using FreedomVoice.iOS.SharedViews;
 using MRoundedButton;
 using System;
 using System.Drawing;
+using FreedomVoice.Core.Utils;
 using UIKit;
 
 namespace FreedomVoice.iOS.ViewControllers
 {
 	partial class KeypadViewController : UIViewController
     {
-		public KeypadViewController (IntPtr handle) : base (handle)
-		{
-		}
+		public KeypadViewController (IntPtr handle) : base (handle) { }
 
         private string PhoneNumber { get; set; } = string.Empty;
 
@@ -21,30 +19,34 @@ namespace FreedomVoice.iOS.ViewControllers
         {
             base.ViewDidLoad();
 
-            foreach (DialItem item in DialData.GetDialItems())
+            foreach (var item in DialData.Items)
             {
+                var buttonRect = new CGRect(item.X, item.Y, item.Width, item.Height);
+                var button = new RoundedButton(buttonRect, RoundedButtonStyle.Subtitle, item.Text)
+                {
+                    BorderColor = UIColor.Clear,
+                    TextLabel =
+                    {
+                        Text = item.Text,
+                        Font = UIFont.SystemFontOfSize(32)
+                    },
+                    DetailTextLabel =
+                    {
+                        Text = item.DetailedText,
+                        Font = UIFont.SystemFontOfSize(10)
+                    },
+                    CornerRadius = 30,
+                    BorderWidth = 1,
+                    ContentColor = UIColor.Black,
+                    ContentAnimateToColor = UIColor.FromRGB(173, 184, 197)
+                };
 
-                CGRect buttonRect = new CGRect(item.X, item.Y, item.Width, item.Height);
-                RoundedButton button = new RoundedButton(buttonRect,
-                       RoundedButtonStyle.Subtitle,
-                       item.Text
-                   );
+                button.BorderColor = UIColor.FromRGB(173, 184, 197);
 
                 button.TouchUpInside += (sender, ea) => {
                     PhoneNumber += item.Text;
                     PhoneLabel.Text = DataFormatUtils.ToPhoneNumber(PhoneNumber);
                 };
-
-                button.BorderColor = UIColor.Clear;
-                button.TextLabel.Text = item.Text;
-                button.TextLabel.Font = UIFont.SystemFontOfSize(32);
-                button.DetailTextLabel.Text = item.DetailedText;
-                button.DetailTextLabel.Font = UIFont.SystemFontOfSize(10);
-                button.CornerRadius = 30;
-                button.BorderWidth = 1;
-                button.BorderColor = UIColor.FromRGB(173, 184, 197);
-                button.ContentColor = UIColor.Black;
-                button.ContentAnimateToColor = UIColor.FromRGB(173, 184, 197);
 
                 View.AddSubview(button);
             }
@@ -55,7 +57,7 @@ namespace FreedomVoice.iOS.ViewControllers
 
         partial void ClearPhone_TouchUpInside(UIButton sender)
         {
-            if (String.IsNullOrEmpty(PhoneNumber) || PhoneNumber.Length <= 1)
+            if (string.IsNullOrEmpty(PhoneNumber) || PhoneNumber.Length <= 1)
                 PhoneLabel.Text = string.Empty;
             else
             {
@@ -63,11 +65,5 @@ namespace FreedomVoice.iOS.ViewControllers
                 PhoneLabel.Text = DataFormatUtils.ToPhoneNumber(PhoneNumber);
             }
         }
-
-        partial void KeypadDial_TouchUpInside(UIButton sender)
-        {
-            //throw new NotImplementedException();
-        }
-        
     }
 }
