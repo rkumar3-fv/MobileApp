@@ -122,7 +122,7 @@ namespace TestApp
             Console.WriteLine(@"Get Media method: ");
             if (File.Exists($"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\\{"file80.pdf"}"))
                 File.Delete($"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\\{"file80.pdf"}");
-            var resFile = ApiHelper.GetMedia("7607124648", 80, "New", "I161141228", MediaType.Pdf, CancellationToken.None).Result;
+            var resFile = ApiHelper.GetMedia("7607124648", 80, "New", "I161223944", MediaType.Pdf, CancellationToken.None).Result;
             using (var ms = new MemoryStream())
             {
                 resFile.Result.CopyTo(ms);
@@ -135,7 +135,7 @@ namespace TestApp
                     file.Write(bytes, 0, bytes.Length);
                     ms.Close();
                 }
-                Console.WriteLine(@"Content from Account=7607124648; x80 - New; I161141228 received: file80.pdf");
+                Console.WriteLine(@"Content from Account=7607124648; x80 - New; I161223944 received: file80.pdf");
             }
             Console.Write(Environment.NewLine);
 
@@ -148,10 +148,28 @@ namespace TestApp
             Console.Write(Environment.NewLine);
 
             var reserv = ApiHelper.CreateCallReservation("7607124648", "8005551212", "7607124648", "8005556767").Result;
-            Console.WriteLine($"CallReservation method: {reserv.Code}");
+            Console.WriteLine($"CallReservation method: 8005551212 -> 8005556767 - {reserv.Code}");
             Console.WriteLine($"Result: {((reserv.Result==null)?("NULL"):(reserv.Result.SwitchboardPhoneNumber))}");
             Console.Write(Environment.NewLine);
+
+            reserv = ApiHelper.CreateCallReservation("7607124648", "+79119998877", "7607124648", "8005556767").Result;
+            Console.WriteLine($"CallReservation method: +79119998877 -> 8005556767 - {reserv.Code}");
+            Console.WriteLine($"Result: {((reserv.Result == null) ? ("NULL") : (reserv.Result.SwitchboardPhoneNumber))}");
+            Console.Write(Environment.NewLine);
+
+            reserv = ApiHelper.CreateCallReservation("7607124648", "8005551212", "7607124648", "+79119998877").Result;
+            Console.WriteLine($"CallReservation method: 8005551212 -> +79119998877 - {reserv.Code}");
+            Console.WriteLine($"Result: {((reserv.Result == null) ? ("NULL") : (reserv.Result.SwitchboardPhoneNumber))}");
+            Console.Write(Environment.NewLine);
+
+            reserv = ApiHelper.CreateCallReservation("7607124648", "+79119998877", "7607124648", "+79218887766").Result;
+            Console.WriteLine($"CallReservation method: +79119998877 -> +79218887766 - {reserv.Code}");
+            Console.WriteLine($"Result: {((reserv.Result == null) ? ("NULL") : (reserv.Result.SwitchboardPhoneNumber))}");
+            Console.Write(Environment.NewLine);
+
             var folders = ApiHelper.GetFoldersWithCount("7607124648", 802).Result;
+            Console.Write($"GetFoldersWithCount method: {folders.Code}");
+            Console.Write(Environment.NewLine);
 
             Console.Write(@"Messages move method Saved -> New: " + ApiHelper.MoveMessages("7607124648", 802, "New", new List<string> { "A159991316" }).Result.Code);
             Console.Write(Environment.NewLine);

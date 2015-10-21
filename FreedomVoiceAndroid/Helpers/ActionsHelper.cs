@@ -119,8 +119,15 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             IsFirstRun = _preferencesHelper.IsFirstRun();
             Log.Debug(App.AppPackage, "HELPER: " + (IsFirstRun ? "First run" : "Not first run"));
 
+            PhoneNumber = _preferencesHelper.GetPhoneNumber();
             var telemanager = app.GetSystemService(Context.TelephonyService) as TelephonyManager;
-            PhoneNumber = telemanager?.Line1Number;
+            if (telemanager?.Line1Number == null)
+                PhoneNumber = null;
+            else if ((PhoneNumber != telemanager.Line1Number) && (telemanager.Line1Number.Length > 1))
+            {
+                PhoneNumber = telemanager.Line1Number;
+                _preferencesHelper.SavePhoneNumber(PhoneNumber);
+            }
             Log.Debug(App.AppPackage, "HELPER: " + ((PhoneNumber == null) ? "NO CELLULAR" : $" PHONE NUMBER IS {PhoneNumber}"));
 
             ExtensionsList = new List<Extension>();

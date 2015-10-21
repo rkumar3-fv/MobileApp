@@ -10,6 +10,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 
         private const string AppPreferencesFile = "waprefs";
         private const string KeyIsFirstRun = "IsFirstRun";
+        private const string KeyPhoneNumber = "PhoneNumber";
 
         private AppPreferencesHelper(Context context)
         {
@@ -39,12 +40,31 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         }
 
         /// <summary>
+        /// Get saved phone number
+        /// </summary>
+        /// <returns></returns>
+        public string GetPhoneNumber()
+        {
+            return _preferences.GetString(KeyPhoneNumber, "");
+        }
+
+        /// <summary>
         /// Set not is first run flag
         /// </summary>
         public void SetNotIsFirstRun()
         {
             var editor = _preferences.Edit();
             editor.PutBoolean(KeyIsFirstRun, false);
+            editor.Apply();
+        }
+
+        /// <summary>
+        /// Save phone number to settings
+        /// </summary>
+        public void SavePhoneNumber(string phone)
+        {
+            var editor = _preferences.Edit();
+            editor.PutString(KeyIsFirstRun, phone);
             editor.Apply();
         }
     }
