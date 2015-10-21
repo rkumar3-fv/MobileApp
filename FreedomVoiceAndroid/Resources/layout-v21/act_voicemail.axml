@@ -6,7 +6,8 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="@dimen/details_activity_image_height"
-        android:src="@drawable/logo_voicemail" />
+        android:src="@drawable/logo_voicemail"
+        android:scaleType="centerCrop" />
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -46,7 +47,7 @@
             android:id="@+id/voicemailActivity_speakerButton"
             style="@style/BorderlessMessagesButtonStyle"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/details_activity_actions_height"
             android:drawableStart="@drawable/ic_action_speaker"
             android:text="@string/ActivityVoice_speaker"
             android:layout_marginTop="@dimen/details_activity_actions_margin"
@@ -57,7 +58,7 @@
             android:id="@+id/voicemailActivity_callbackButton"
             style="@style/BorderlessMessagesButtonStyle"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/details_activity_actions_height"
             android:drawableStart="@drawable/ic_action_callback"
             android:text="@string/ActivityVoice_callback"
             android:layout_marginTop="@dimen/details_activity_actions_margin"

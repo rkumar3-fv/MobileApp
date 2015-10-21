@@ -8,7 +8,6 @@ using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Adapters;
 using com.FreedomVoice.MobileApp.Android.Dialogs;
 using com.FreedomVoice.MobileApp.Android.Helpers;
-using com.FreedomVoice.MobileApp.Android.Utils;
 using FreedomVoice.Core.Utils;
 
 namespace com.FreedomVoice.MobileApp.Android.Fragments
@@ -46,6 +45,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                 Log.Debug(App.AppPackage, $"PRESENTATION NUMBER SET to {DataFormatUtils.ToPhoneNumber(Helper.SelectedAccount.PresentationNumber)}");
             };
             _dialEdit = view.FindViewById<EditText>(Resource.Id.keypadFragment_dialText);
+            _dialEdit.KeyListener = null;
             _backspaceButton = view.FindViewById<ImageButton>(Resource.Id.keypadFragment_backspace);
             _backspaceButton.Click += BackspaceButtonOnClick;
             _backspaceButton.LongClick += BackspaceButtonOnLongClick;
