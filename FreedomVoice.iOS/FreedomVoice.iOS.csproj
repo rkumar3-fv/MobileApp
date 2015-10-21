@@ -87,11 +87,15 @@
   <ItemGroup>
     <Compile Include="Data\IExtensionsService.cs" />
     <Compile Include="Data\Implementations\ExtensionsService.cs" />
+    <Compile Include="Entities\Recent.cs" />
     <Compile Include="Helpers\PhoneAbilities.cs" />
     <Compile Include="SharedViews\CallerIdView.cs" />
     <Compile Include="SharedViews\KeypadView.cs" />
+    <Compile Include="SharedViews\RecentViewLine.cs" />
     <Compile Include="TableViewCells\ContactCell.cs" />
+    <Compile Include="TableViewCells\RecentCell.cs" />
     <Compile Include="TableViewSources\ContactSource.cs" />
+    <Compile Include="TableViewSources\RecentsSource.cs" />
     <Compile Include="ViewControllers\AccountsViewController.cs" />
     <Compile Include="ViewControllers\AccountsViewController.designer.cs">
       <DependentUpon>AccountsViewController.cs</DependentUpon>
@@ -192,6 +196,7 @@
     <BundleResource Include="Resources\dial%402x.png" />
     <BundleResource Include="Resources\clearPhone.png" />
     <Content Include="GoogleService-Info.plist" />
+    <BundleResource Include="Resources\recent.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FreedomVoice.Core\FreedomVoice.Core.csproj">
