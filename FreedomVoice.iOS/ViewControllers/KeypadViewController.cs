@@ -2,6 +2,7 @@ using CoreGraphics;
 using FreedomVoice.Core.Utils;
 using FreedomVoice.iOS.Helpers;
 using FreedomVoice.iOS.SharedViews;
+using GoogleAnalytics.iOS;
 using MRoundedButton;
 using System;
 using System.Drawing;
@@ -68,6 +69,14 @@ namespace FreedomVoice.iOS.ViewControllers
         {
             //throw new NotImplementedException();
         }
-        
+
+        public override void ViewDidAppear(bool animated)
+        {
+            base.ViewDidAppear(animated);
+
+            //GAI.SharedInstance.DefaultTracker.Set(GAIConstants.ScreenName, "Keypad Screen");
+            //GAI.SharedInstance.DefaultTracker.Send(GAIDictionaryBuilder.CreateScreenView().Build());
+        }
+
     }
 }
