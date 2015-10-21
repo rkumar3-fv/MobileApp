@@ -1,6 +1,6 @@
 using System;
 using Android.Widget;
-using com.FreedomVoice.MobileApp.Android.Utils;
+using FreedomVoice.Core.Utils;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
 {
