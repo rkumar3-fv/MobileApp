@@ -1,5 +1,6 @@
 using CoreGraphics;
 using FreedomVoice.Core.Utils;
+using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.Helpers;
 using FreedomVoice.iOS.SharedViews;
 using GoogleAnalytics.iOS;
@@ -67,7 +68,7 @@ namespace FreedomVoice.iOS.ViewControllers
 
         partial void KeypadDial_TouchUpInside(UIButton sender)
         {
-            //throw new NotImplementedException();
+            AddRecent();            
         }
 
         public override void ViewDidAppear(bool animated)
@@ -76,6 +77,12 @@ namespace FreedomVoice.iOS.ViewControllers
 
             //GAI.SharedInstance.DefaultTracker.Set(GAIConstants.ScreenName, "Keypad Screen");
             //GAI.SharedInstance.DefaultTracker.Send(GAIDictionaryBuilder.CreateScreenView().Build());
+        }
+
+        private void AddRecent()
+        {
+            var ctrl = ParentViewController.ParentViewController as MainTabBarController;
+            ctrl.Recents.Add(new Recent(string.Empty, PhoneNumber, DateTime.Now));
         }
 
     }
