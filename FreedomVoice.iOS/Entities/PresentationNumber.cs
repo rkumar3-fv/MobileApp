@@ -1,13 +1,13 @@
 ﻿namespace FreedomVoice.iOS.Entities
 {
-    public class Account
+    public class PresentationNumber
     {
-        public Account(string phoneNumber)
+        public PresentationNumber(string phoneNumber)
         {
-            PhoneNumber = phoneNumber;  
+            PhoneNumber = phoneNumber;
         }
 
-        public string PhoneNumber { get; private set; }
+        public string PhoneNumber { get; set; }
 
         public string FormattedPhoneNumber => $"({PhoneNumber.Substring(0, 3)}) {PhoneNumber.Substring(3, 3)}-{PhoneNumber.Substring(6, 4)}";
     }

@@ -7,37 +7,42 @@ using FreedomVoice.iOS.Utilities;
 
 namespace FreedomVoice.iOS.ViewModels
 {
-    public class AccountsViewModel : BaseViewModel
+    public class PresentationNumbersViewModel : BaseViewModel
     {
-        readonly IAccountsService _service;
+        readonly IPresentationNumbersService _service;
+        private readonly string _systemPhoneNumber;
 
-        public List<Account> AccountsList { get; private set; }
+        public List<PresentationNumber> PresentationNumbers;
 
         /// <summary>
         /// Constructor, requires an IService
         /// </summary>
-        public AccountsViewModel()
+        public PresentationNumbersViewModel(string systemPhoneNumber)
         {
-            _service = ServiceContainer.Resolve<IAccountsService>();
-            AccountsList = new List<Account>();
+            PresentationNumbers = new List<PresentationNumber>();
+
+            _service = ServiceContainer.Resolve<IPresentationNumbersService>();
+            _systemPhoneNumber = systemPhoneNumber;
         }
 
         /// <summary>
         /// Performs an asynchronous login
         /// </summary>
         /// <returns></returns>
-        public async Task GetAccountsListAsync()
+        public async Task GetPresentationNumbersAsync()
         {
             IsBusy = true;
+
+            _service.SetSystemNumber(_systemPhoneNumber);
 
             var requestResult = await _service.ExecuteRequest();
             if (requestResult is ErrorResponse)
                 ProceedErrorResponse(requestResult);
             else
             {
-                var data = requestResult as AccountsResponse;
+                var data = requestResult as PresentationNumbersResponse;
                 if (data != null)
-                    AccountsList = data.AccountsList;
+                    PresentationNumbers = data.PresentationNumbers;
             }
 
             IsBusy = false;

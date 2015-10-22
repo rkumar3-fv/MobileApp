@@ -1,8 +1,5 @@
 using System;
-using System.Threading.Tasks;
 using CoreGraphics;
-using FreedomVoice.Core.Entities.Base;
-using FreedomVoice.Core.Entities.Enums;
 using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.ViewModels;
 using UIKit;
@@ -24,6 +21,10 @@ namespace FreedomVoice.iOS.ViewControllers
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
+
+            _forgotPasswordViewModel.OnBadRequestResponse += OnEMailValidationFailed;
+            _forgotPasswordViewModel.OnUnauthorizedResponse += OnEMailValidationFailed;
+            _forgotPasswordViewModel.OnSuccessResponse += OnForgotPasswordSuccess;
 
             EmailTextField.SetDidChangeNotification(text => _forgotPasswordViewModel.EMail = text.Text);
             EmailTextField.ShouldReturn = _ => {
@@ -57,53 +58,47 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private void OnEMailReturn()
         {
-            if (!_forgotPasswordViewModel.Errors.Contains(ForgotPasswordViewModel.EMailError)) return;
+            if (!_forgotPasswordViewModel.Errors.Contains(ForgotPasswordViewModel.EMailError))
+                return;
 
+            OnEMailValidationFailed(null, EventArgs.Empty);
+        }
+
+        private void OnEMailValidationFailed(object sender, EventArgs e)
+        {
             EmailValidationLabel.Hidden = false;
             EmailTextField.Layer.BorderColor = new CGColor(0.996f, 0.788f, 0.373f, 1);
             EmailTextField.BecomeFirstResponder();
         }
 
+        private void OnForgotPasswordSuccess(object sender, EventArgs e)
+        {
+            ShowAlert("Password reset email sent", "Please follow the instructions inside", "Ok");
+        }
+
         partial void SendButton_TouchUpInside(UIButton sender)
         {
+            ProceedPasswordReset();
+        }
+
+	    private async void ProceedPasswordReset()
+	    {
             UIApplication.SharedApplication.NetworkActivityIndicatorVisible = true;
 
-            ProceedPasswordReset();
+            EmailTextField.ResignFirstResponder();
+
+	        _forgotPasswordViewModel.IsBusy = true;
+            await _forgotPasswordViewModel.ForgotPasswordAsync();
+            _forgotPasswordViewModel.IsBusy = false;
 
             UIApplication.SharedApplication.NetworkActivityIndicatorVisible = false;
         }
 
-	    async private void ProceedPasswordReset()
-	    {
-            EmailTextField.ResignFirstResponder();
-
-            await _forgotPasswordViewModel.ForgotPasswordAsync().ContinueWith(_ => BeginInvokeOnMainThread(() => { OnProceedPasswordResetResponse(_); }));
-        }
-
-        private void OnProceedPasswordResetResponse(Task<BaseResult<string>> _)
-        {
-            switch (_.Result.Code)
-            {
-                case ErrorCodes.Ok:
-                    ShowAlert("Password reset email sent", "Please follow the instructions inside", "Ok");
-                    break;
-                case ErrorCodes.ConnectionLost:
-                    new UIAlertView("Password reset error", "Service is unreachable. Please try again later.", null, "OK", null).Show();
-                    break;
-                default:
-                    InvokeOnMainThread(() => { EmailValidationLabel.Hidden = false; EmailTextField.Layer.BorderColor = new CGColor(0.996f, 0.788f, 0.373f, 1); });
-                    EmailTextField.BecomeFirstResponder();
-                    break;
-            }
-        }
-
         private void ShowAlert(string title, string message, params string[] buttons)
         {
-            var alert = new UIAlertView { Title = title, Message = message };
-            alert.AddButton(buttons[0]);
-
-            alert.Clicked += (s, e) => ReturnToLogin();
-            alert.Show();
+            var alertController = UIAlertController.Create(title, message, UIAlertControllerStyle.Alert);
+            alertController.AddAction(UIAlertAction.Create(buttons[0], UIAlertActionStyle.Cancel, a => { ReturnToLogin(); }));
+            PresentViewController(alertController, true, null);
         }
 
         private void ReturnToLogin()
@@ -117,6 +112,9 @@ namespace FreedomVoice.iOS.ViewControllers
 
             _forgotPasswordViewModel.IsBusyChanged -= OnIsBusyChanged;
             _forgotPasswordViewModel.IsValidChanged -= OnIsValidChanged;
+            _forgotPasswordViewModel.OnBadRequestResponse -= OnEMailValidationFailed;
+            _forgotPasswordViewModel.OnUnauthorizedResponse -= OnEMailValidationFailed;
+            _forgotPasswordViewModel.OnSuccessResponse -= OnForgotPasswordSuccess;
         }
     }
 }

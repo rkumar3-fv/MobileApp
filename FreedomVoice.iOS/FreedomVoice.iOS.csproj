@@ -85,9 +85,19 @@
     <CodesignKey>iPhone Distribution</CodesignKey>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Data\IExtensionsService.cs" />
-    <Compile Include="Data\Implementations\ExtensionsService.cs" />
+    <Compile Include="Entities\PresentationNumber.cs" />
+    <Compile Include="Services\BaseService.cs" />
+    <Compile Include="Services\Responses\AccountsResponse.cs" />
+    <Compile Include="Services\Responses\BaseResponse.cs" />
+    <Compile Include="Services\Responses\ErrorResponse.cs" />
+    <Compile Include="Services\IExtensionsService.cs" />
+    <Compile Include="Services\Implementations\ExtensionsService.cs" />
+    <Compile Include="Services\Implementations\PresentationNumbersService.cs" />
+    <Compile Include="Services\IPresentationNumbersService.cs" />
     <Compile Include="Helpers\PhoneAbilities.cs" />
+    <Compile Include="Services\Responses\ForgotPasswordResponse.cs" />
+    <Compile Include="Services\Responses\LoginResponse.cs" />
+    <Compile Include="Services\Responses\PresentationNumbersResponse.cs" />
     <Compile Include="SharedViews\CallerIdView.cs" />
     <Compile Include="SharedViews\KeypadView.cs" />
     <Compile Include="TableViewCells\ContactCell.cs" />
@@ -96,19 +106,19 @@
     <Compile Include="ViewControllers\AccountsViewController.designer.cs">
       <DependentUpon>AccountsViewController.cs</DependentUpon>
     </Compile>
-    <Compile Include="Data\IAccountsService.cs" />
-    <Compile Include="Data\Implementations\AccountsService.cs" />
-    <Compile Include="Data\Implementations\ForgotPasswordService.cs" />
-    <Compile Include="Data\IForgotPasswordService.cs" />
-    <Compile Include="Data\ILoginService.cs" />
-    <Compile Include="Data\Implementations\LoginService.cs" />
-    <Compile Include="Data\PropertyChangedBase.cs" />
+    <Compile Include="Services\IAccountsService.cs" />
+    <Compile Include="Services\Implementations\AccountsService.cs" />
+    <Compile Include="Services\Implementations\ForgotPasswordService.cs" />
+    <Compile Include="Services\IForgotPasswordService.cs" />
+    <Compile Include="Services\ILoginService.cs" />
+    <Compile Include="Services\Implementations\LoginService.cs" />
+    <Compile Include="Services\PropertyChangedBase.cs" />
     <Compile Include="Helpers\Appearance.cs" />
     <Compile Include="Helpers\UserDefault.cs" />
     <Compile Include="Helpers\Validation.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Utilities\ServiceContainer.cs" />
-    <Compile Include="Data\ServiceRegistrar.cs" />
+    <Compile Include="Services\ServiceRegistrar.cs" />
     <Compile Include="Utilities\SynchronizeInvoke.cs" />
     <Compile Include="Utilities\TaskExtensions.cs" />
     <Compile Include="Utilities\Theme.cs" />
@@ -116,6 +126,7 @@
     <Compile Include="ViewControllers\BaseViewController.cs" />
     <Compile Include="ViewModels\AccountsViewModel.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
+    <Compile Include="ViewModels\CallerIdPickerViewModel.cs" />
     <Compile Include="ViewModels\ForgotPasswordViewModel.cs" />
     <Compile Include="ViewModels\LoginViewModel.cs" />
     <Compile Include="ViewControllers\EmergencyDisclaimerViewController.cs" />
@@ -155,6 +166,7 @@
       <DependentUpon>LoginViewController.cs</DependentUpon>
     </Compile>
     <Compile Include="AppDelegate.cs" />
+    <Compile Include="ViewModels\PresentationNumbersViewModel.cs" />
     <None Include="Info.plist" />
     <Compile Include="ViewControllers\MainTabBarController.cs" />
     <Compile Include="ViewControllers\MainTabBarController.designer.cs">
@@ -173,6 +185,9 @@
     <BundleResource Include="Resources\Default-568h%402x.png" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="GoogleAnalytics.iOS">
+      <HintPath>..\Components\googleanalytics-3.0.12\lib\ios-unified\GoogleAnalytics.iOS.dll</HintPath>
+    </Reference>
     <Reference Include="MRoundedButton">
       <HintPath>..\Components\mroundedbutton-1.1.2.0\lib\ios-unified\MRoundedButton.dll</HintPath>
     </Reference>
@@ -188,8 +203,23 @@
     <Content Include="Entitlements.plist" />
     <BundleResource Include="Resources\dial%402x.png" />
     <BundleResource Include="Resources\clearPhone.png" />
+    <Content Include="GoogleService-Info.plist" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\FreedomVoice.Core\FreedomVoice.Core.csproj">
+      <Project>{f4fc9f9f-082c-4f29-977a-da7ec449ba56}</Project>
+      <Name>FreedomVoice.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <XamarinComponentReference Include="googleanalytics">
+      <Visible>False</Visible>
+      <Version>3.0.12</Version>
+    </XamarinComponentReference>
+    <XamarinComponentReference Include="googleanalytics">
+      <Visible>False</Visible>
+      <Version>3.0.12</Version>
+    </XamarinComponentReference>
     <XamarinComponentReference Include="mroundedbutton">
       <Visible>False</Visible>
       <Version>1.1.2.0</Version>

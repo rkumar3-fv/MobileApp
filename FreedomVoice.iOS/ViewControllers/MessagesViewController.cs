@@ -7,6 +7,7 @@ namespace FreedomVoice.iOS.ViewControllers
 	{
 		public MessagesViewController (IntPtr handle) : base (handle)
 		{
+
 		}
-	}
+    }
 }

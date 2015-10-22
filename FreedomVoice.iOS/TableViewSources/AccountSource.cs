@@ -64,6 +64,7 @@ namespace FreedomVoice.iOS.TableViewSources
 
             var tabBarController = AppDelegate.GetViewController<MainTabBarController>();
             tabBarController.SelectedAccount = selectedAccount;
+
             _navigationController.PushViewController(tabBarController, true);
         }
     }

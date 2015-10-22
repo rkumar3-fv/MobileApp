@@ -1,17 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Foundation;
-using FreedomVoice.Core.Entities;
-using FreedomVoice.Core.Entities.Base;
-using FreedomVoice.Core.Entities.Enums;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.Helpers;
 using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.ViewControllers;
 using FreedomVoice.iOS.ViewModels;
 using UIKit;
+using GoogleAnalytics.iOS;
 
 namespace FreedomVoice.iOS
 {
@@ -54,14 +53,16 @@ namespace FreedomVoice.iOS
 
             Window.MakeKeyAndVisible();
 
+            InitGA();
+
             return true;
         }
 
-        private void OnLoginSuccess(object sender, EventArgs e)
+        private async void OnLoginSuccess(object sender, EventArgs e)
         {
             UserDefault.IsAuthenticated = true;
 
-            ProceedGetAccountsList();
+            await ProceedGetAccountsList();
         }
 
         public void GoToLoginScreen()
@@ -72,38 +73,26 @@ namespace FreedomVoice.iOS
 
         private AccountsViewModel _accountsViewModel;
 
-        private async void ProceedGetAccountsList()
+        private async Task ProceedGetAccountsList()
         {
             _accountsViewModel = ServiceContainer.Resolve<AccountsViewModel>();
-            await _accountsViewModel.GetAccountsListAsync().ContinueWith(t => BeginInvokeOnMainThread(() => { OnProceedGetAccountsListResponse(t); }));
+            await _accountsViewModel.GetAccountsListAsync();
+            await PrepareRootView(_accountsViewModel.AccountsList);
         }
 
-        private static void OnProceedGetAccountsListResponse(Task<BaseResult<DefaultPhoneNumbers>> task)
+        private async Task PrepareRootView(List<Account> accountsList)
         {
-            var baseResult = task.Result;
-            switch (baseResult.Code)
-            {
-                case ErrorCodes.Ok:
-                    PrepareRootView(baseResult.Result);
-                    break;
-                case ErrorCodes.ConnectionLost:
-                    new UIAlertView("Accounts Retrieve Error", "Service is unreachable. Please try again later.", null, "OK", null).Show();
-                    break;
-                case ErrorCodes.Unauthorized:
-                case ErrorCodes.BadRequest:
-                    //TODO: Relogin user
-                    break;
-            }
-        }
-
-        private static void PrepareRootView(DefaultPhoneNumbers phoneNumbers)
-        {
-            var accountsList = phoneNumbers.PhoneNumbers.Select(phoneNumber => new Account { PhoneNumber = phoneNumber }).ToList();
-
             if (accountsList.Count == 1)
             {
+                var account = accountsList.First();
+
+                var presentationNumbersViewModel = new PresentationNumbersViewModel(account.PhoneNumber);
+                await presentationNumbersViewModel.GetPresentationNumbersAsync();
+
                 var mainTabController = GetViewController<MainTabBarController>();
-                mainTabController.SelectedAccount = accountsList.First();
+                mainTabController.SelectedAccount = account;
+                mainTabController.PresentationNumbers = presentationNumbersViewModel.PresentationNumbers;
+
                 var navigationController = new UINavigationController(mainTabController);
                 Theme.TransitionController(navigationController);
             }
@@ -146,6 +135,26 @@ namespace FreedomVoice.iOS
         public override void WillEnterForeground(UIApplication application)
         {
             
+        }
+
+        public IGAITracker Tracker;
+        public static readonly string TrackingId = "UA-69040520-2";
+        const string AllowTrackingKey = "AllowTracking";
+
+        private void InitGA()
+        {            
+            var optionsDict = NSDictionary.FromObjectAndKey(new NSString("YES"), new NSString(AllowTrackingKey));
+            NSUserDefaults.StandardUserDefaults.RegisterDefaults(optionsDict);
+            GAI.SharedInstance.OptOut = !NSUserDefaults.StandardUserDefaults.BoolForKey(AllowTrackingKey);
+            GAI.SharedInstance.DispatchInterval = 5;
+                        
+            GAI.SharedInstance.TrackUncaughtExceptions = true;                        
+            Tracker = GAI.SharedInstance.GetTracker(TrackingId);            
+        }
+
+        public override void OnActivated(UIApplication application)
+        {
+            GAI.SharedInstance.OptOut = !NSUserDefaults.StandardUserDefaults.BoolForKey(AllowTrackingKey);
         }
     }
 }

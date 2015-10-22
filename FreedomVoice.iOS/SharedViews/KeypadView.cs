@@ -1,7 +1,5 @@
 ﻿using Foundation;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using UIKit;
 using CoreGraphics;
 
@@ -10,10 +8,7 @@ namespace FreedomVoice.iOS.SharedViews
     [Register("KeypadView")]
     public class KeypadView : UIView
     {
-
-        public KeypadView(IntPtr handle) : base (handle)
-		{
-        }
+        public KeypadView(IntPtr handle) : base (handle) { }
 
         public override void Draw(CGRect rect)
         {
@@ -21,13 +16,11 @@ namespace FreedomVoice.iOS.SharedViews
             using (CGContext g = UIGraphics.GetCurrentContext())
             {   
                 g.SetLineWidth(1);                                                
-                UIColor.Gray.SetStroke();
+                UIColor.LightGray.SetStroke();
                 UIColor.Clear.SetFill();
+
                 var path = new CGPath();
-                path.AddLines(new CGPoint[]{
-                    new CGPoint (0, 103),
-                    new CGPoint (320, 103)
-                });
+                path.AddLines(new[] { new CGPoint (0, 103), new CGPoint (320, 103) });
 
                 path.CloseSubpath();
                 
@@ -35,5 +28,5 @@ namespace FreedomVoice.iOS.SharedViews
                 g.DrawPath(CGPathDrawingMode.Stroke);
             }
         }
-    }    
+    }
 }

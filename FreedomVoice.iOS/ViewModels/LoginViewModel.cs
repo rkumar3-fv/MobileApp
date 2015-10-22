@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
-using FreedomVoice.Core.Entities.Base;
-using FreedomVoice.iOS.Data;
 using FreedomVoice.iOS.Helpers;
+using FreedomVoice.iOS.Services;
+using FreedomVoice.iOS.Services.Responses;
 using FreedomVoice.iOS.Utilities;
 
 namespace FreedomVoice.iOS.ViewModels
@@ -33,7 +33,7 @@ namespace FreedomVoice.iOS.ViewModels
         /// </summary>
         public string Username
         {
-            get { return _username; }
+            private get { return _username; }
             set
             {
                 _username = value;
@@ -47,7 +47,7 @@ namespace FreedomVoice.iOS.ViewModels
         /// </summary>
         public string Password
         {
-            get { return _password; }
+            private get { return _password; }
             set
             {
                 _password = value;
@@ -60,14 +60,15 @@ namespace FreedomVoice.iOS.ViewModels
         /// Performs an asynchronous login
         /// </summary>
         /// <returns></returns>
-        public Task<BaseResult<string>> LoginAsync()
+        public async Task LoginAsync()
         {
-            IsBusy = true;
-            return _service.LoginAsync(Username, Password)
-                           .ContinueOnCurrentThread(t => {
-                                IsBusy = false;
-                                return t.Result;
-                            });
+            _service.SetCredentials(Username, Password);
+
+            var requestResult = await _service.ExecuteRequest();
+            if (requestResult is ErrorResponse)
+                ProceedErrorResponse(requestResult);
+            else
+                ProceedSuccessResponse();
         }
 
         /// <summary>

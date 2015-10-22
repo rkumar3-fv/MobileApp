@@ -1,9 +1,6 @@
 using System;
-using System.Threading.Tasks;
 using CoreGraphics;
-using FreedomVoice.Core.Entities.Base;
 using FreedomVoice.iOS.Helpers;
-using FreedomVoice.Core.Entities.Enums;
 using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.ViewModels;
 using UIKit;
@@ -29,6 +26,10 @@ namespace FreedomVoice.iOS.ViewControllers
 	        base.ViewDidLoad();
 
 	        Title = "Login";
+
+            _loginViewModel.OnSuccessResponse += OnLoginSuccess;
+            _loginViewModel.OnUnauthorizedResponse += OnLoginFailed;
+            _loginViewModel.OnBadRequestResponse += OnLoginFailed;
 
             UsernameTextField.SetDidChangeNotification(text => _loginViewModel.Username = text.Text);
 	        UsernameTextField.ShouldReturn = _ => { OnUsernameReturn(); return false; };
@@ -57,11 +58,7 @@ namespace FreedomVoice.iOS.ViewControllers
 
         partial void LoginButton_TouchUpInside(UIButton sender)
 	    {
-            UIApplication.SharedApplication.NetworkActivityIndicatorVisible = true;
-
             ProceedLogin();
-
-            UIApplication.SharedApplication.NetworkActivityIndicatorVisible = false;
         }
 
         partial void ForgotPassword_TouchUpInside(UIButton sender)
@@ -88,18 +85,15 @@ namespace FreedomVoice.iOS.ViewControllers
 	    private void OnUsernameReturn()
 	    {
 	        if (_loginViewModel.Errors.Contains(LoginViewModel.UsernameError))
-	        {
-                UsernameValidationLabel.Hidden = false;
-                UsernameTextField.Layer.BorderColor = new CGColor(0.996f, 0.788f, 0.373f, 1);
-                UsernameTextField.BecomeFirstResponder();
-            }
+	            OnUsernameValidationFailed();
             else
                 PasswordTextField.BecomeFirstResponder();
         }
 
         private void OnPasswordReturn()
         {
-            if (!_loginViewModel.Errors.Contains(LoginViewModel.PasswordError)) return;
+            if (!_loginViewModel.Errors.Contains(LoginViewModel.PasswordError))
+                return;
 
             PasswordValidationLabel.Hidden = false;
             PasswordTextField.Layer.BorderColor = new CGColor(0.996f, 0.788f, 0.373f, 1);
@@ -108,30 +102,31 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private async void ProceedLogin()
         {
+            UIApplication.SharedApplication.NetworkActivityIndicatorVisible = true;
+
             UsernameTextField.ResignFirstResponder();
             PasswordTextField.ResignFirstResponder();
 
-            await _loginViewModel.LoginAsync().ContinueWith(_ => BeginInvokeOnMainThread(() => { OnProceedLoginResponse(_); }));
+            _loginViewModel.IsBusy = true;
+            await _loginViewModel.LoginAsync();
+            _loginViewModel.IsBusy = false;
+
+            UIApplication.SharedApplication.NetworkActivityIndicatorVisible = false;
         }
 
-	    private void OnProceedLoginResponse(Task<BaseResult<string>> _)
+        private void OnLoginFailed(object sender, EventArgs args)
+        {
+            UsernameValidationLabel.Hidden = false;
+            UsernameTextField.Layer.BorderColor = new CGColor(0.996f, 0.788f, 0.373f, 1);
+            UsernameTextField.BecomeFirstResponder();
+        }
+
+        private void OnUsernameValidationFailed()
 	    {
-	        switch (_.Result.Code)
-	        {
-	            case ErrorCodes.Ok:
-	                OnLoginSuccess?.Invoke(null, EventArgs.Empty);
-	                break;
-	            case ErrorCodes.ConnectionLost:
-	                new UIAlertView("Login Error", "Service is unreachable. Please try again later.", null, "OK", null).Show();
-	                break;
-	            case ErrorCodes.Unauthorized:
-	            case ErrorCodes.BadRequest:
-	                UsernameValidationLabel.Hidden = false;
-	                UsernameTextField.Layer.BorderColor = new CGColor(0.996f, 0.788f, 0.373f, 1);
-	                UsernameTextField.BecomeFirstResponder();
-	                break;
-	        }
-	    }
+            UsernameValidationLabel.Hidden = false;
+            UsernameTextField.Layer.BorderColor = new CGColor(0.996f, 0.788f, 0.373f, 1);
+            UsernameTextField.BecomeFirstResponder();
+        }
 
 	    public override void ViewWillAppear(bool animated)
 	    {
@@ -158,6 +153,9 @@ namespace FreedomVoice.iOS.ViewControllers
 
             _loginViewModel.IsBusyChanged -= OnIsBusyChanged;
             _loginViewModel.IsValidChanged -= OnIsValidChanged;
+            _loginViewModel.OnSuccessResponse -= OnLoginSuccess;
+            _loginViewModel.OnUnauthorizedResponse -= OnLoginFailed;
+            _loginViewModel.OnBadRequestResponse -= OnLoginFailed;
         }
 
         //protected override void OnKeyboardChanged(bool visible, nfloat height)

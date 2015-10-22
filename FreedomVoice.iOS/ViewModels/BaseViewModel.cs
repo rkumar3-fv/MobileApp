@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using FreedomVoice.iOS.Data;
+using FreedomVoice.iOS.Services;
+using FreedomVoice.iOS.Services.Responses;
+using UIKit;
 
 namespace FreedomVoice.iOS.ViewModels
 {
@@ -46,8 +46,7 @@ namespace FreedomVoice.iOS.ViewModels
             OnPropertyChanged("IsValid");
             OnPropertyChanged("Errors");
 
-            var method = IsValidChanged;
-            method?.Invoke(this, EventArgs.Empty);
+            IsValidChanged?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -68,7 +67,7 @@ namespace FreedomVoice.iOS.ViewModels
             }
         }
 
-        bool _isBusy;
+        private bool _isBusy;
 
         /// <summary>
         /// Value inidicating if a spinner should be shown
@@ -92,11 +91,56 @@ namespace FreedomVoice.iOS.ViewModels
         /// </summary>
         private void OnIsBusyChanged()
         {
-            var method = IsBusyChanged;
-            if (method != null)
+            IsBusyChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// Event for successfull response
+        /// </summary>
+        public event EventHandler OnSuccessResponse;
+
+        /// <summary>
+        /// Event for unauthorized response
+        /// </summary>
+        public event EventHandler OnUnauthorizedResponse;
+
+        /// <summary>
+        /// Event for payment required response
+        /// </summary>
+        public event EventHandler OnPaymentRequiredResponse;
+
+        /// <summary>
+        /// Event for payment required response
+        /// </summary>
+        public event EventHandler OnBadRequestResponse;
+
+        protected void ProceedErrorResponse(BaseResponse baseResponse)
+        {
+            var response = baseResponse as ErrorResponse;
+            if (response == null) return;
+
+            switch (response.ErrorCode)
             {
-                IsBusyChanged?.Invoke(this, EventArgs.Empty);
+                case ErrorResponse.PaymentRequired:
+                    OnPaymentRequiredResponse?.Invoke(null, EventArgs.Empty);
+                    return;
+                case ErrorResponse.ErrorConnection:
+                    new UIAlertView("Service is unreachable", "Please try again later.", null, "OK", null).Show();
+                    return;
+                case ErrorResponse.ErrorUnauthorized:
+                    OnUnauthorizedResponse?.Invoke(null, EventArgs.Empty);
+                    return;
+                case ErrorResponse.ErrorBadRequest:
+                    OnBadRequestResponse?.Invoke(null, EventArgs.Empty);
+                    return;
+                case ErrorResponse.ErrorUnknown:
+                    return;
             }
+        }
+
+        protected void ProceedSuccessResponse()
+        {
+            OnSuccessResponse?.Invoke(null, EventArgs.Empty);
         }
     }
 }

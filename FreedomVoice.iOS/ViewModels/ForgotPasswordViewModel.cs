@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
-using FreedomVoice.Core.Entities.Base;
-using FreedomVoice.iOS.Data;
 using FreedomVoice.iOS.Helpers;
+using FreedomVoice.iOS.Services;
+using FreedomVoice.iOS.Services.Responses;
 using FreedomVoice.iOS.Utilities;
 
 namespace FreedomVoice.iOS.ViewModels
@@ -27,7 +27,7 @@ namespace FreedomVoice.iOS.ViewModels
         /// </summary>
         public string EMail
         {
-            get { return _email; }
+            private get { return _email; }
             set
             {
                 _email = value;
@@ -37,17 +37,18 @@ namespace FreedomVoice.iOS.ViewModels
         }
 
         /// <summary>
-        /// Performs an asynchronous login
+        /// Performs an asynchronous password reset
         /// </summary>
         /// <returns></returns>
-        public Task<BaseResult<string>> ForgotPasswordAsync()
+        public async Task ForgotPasswordAsync()
         {
-            IsBusy = true;
-            return _service.ForgotPasswordAsync(EMail)
-                           .ContinueOnCurrentThread(t => {
-                               IsBusy = false;
-                               return t.Result;
-                           });
+            _service.SetRecoveryEmail(EMail);
+
+            var requestResult = await _service.ExecuteRequest();
+            if (requestResult is ErrorResponse)
+                ProceedErrorResponse(requestResult);
+            else
+                ProceedSuccessResponse();
         }
 
         /// <summary>

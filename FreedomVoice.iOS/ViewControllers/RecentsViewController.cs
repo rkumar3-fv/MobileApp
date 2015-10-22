@@ -8,5 +8,5 @@ namespace FreedomVoice.iOS.ViewControllers
 		public RecentsViewController (IntPtr handle) : base (handle)
 		{
 		}
-	}
+    }
 }

@@ -5,6 +5,7 @@ using System.Linq;
 using UIKit;
 using CoreGraphics;
 using Foundation;
+using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.Helpers;
 using FreedomVoice.iOS.SharedViews;
 using FreedomVoice.iOS.TableViewSources;
@@ -65,7 +66,7 @@ namespace FreedomVoice.iOS.ViewControllers
             _contactsSearchBar.TextChanged += SearchBarOnTextChanged;
             _contactsSearchBar.CancelButtonClicked += SearchBarOnCancelButtonClicked;
 
-            var callerIdView = new CallerIdView(new RectangleF(0, 44, 320, 44));
+            var callerIdView = new CallerIdView(new RectangleF(0, 44, 320, 44), new List<PresentationNumber> { new PresentationNumber("1112223333"), new PresentationNumber("4445556666"), new PresentationNumber("7778889999") });
 
             var headerView = new UIView(new CGRect(0, 0, 320, 88));
             headerView.AddSubviews(_contactsSearchBar, callerIdView);
@@ -131,13 +132,13 @@ namespace FreedomVoice.iOS.ViewControllers
                 return;
             }
 
-            if (!PhoneCapability.IsCellularEnabled())
-            {
-                var alertController = UIAlertController.Create(null, "Your device does not appear to support making cellular voice calls.", UIAlertControllerStyle.Alert);
-                alertController.AddAction(UIAlertAction.Create("Ok", UIAlertActionStyle.Default, a => { }));
-                PresentViewController(alertController, true, null);
-                return;
-            }
+            //if (!PhoneCapability.IsCellularEnabled())
+            //{
+            //    var alertController = UIAlertController.Create(null, "Your device does not appear to support making cellular voice calls.", UIAlertControllerStyle.Alert);
+            //    alertController.AddAction(UIAlertAction.Create("Ok", UIAlertActionStyle.Default, null));
+            //    PresentViewController(alertController, true, null);
+            //    return;
+            //}
 
             var person = _contactList.Where(c => c.DisplayName.StartsWith(_contactSource.Keys[e.IndexPath.Section], StringComparison.OrdinalIgnoreCase)).ToList()[e.IndexPath.Row];
 
@@ -146,20 +147,21 @@ namespace FreedomVoice.iOS.ViewControllers
             {
                 case 0:
                     var alertController = UIAlertController.Create(null, "No phone numbers available for this contact.", UIAlertControllerStyle.Alert);
-                    alertController.AddAction(UIAlertAction.Create("Ok", UIAlertActionStyle.Default, a => { }));
+                    alertController.AddAction(UIAlertAction.Create("Ok", UIAlertActionStyle.Cancel, null));
                     PresentViewController(alertController, true, null);
                     return;
                 case 1:
                     PhoneCall.CreateCallReservation(string.Empty, string.Empty, string.Empty, phoneNumbers.First().Number);
                     break;
                 default:
-                    var phoneCallController = UIAlertController.Create("Select number for " + person.DisplayName, null, UIAlertControllerStyle.Alert);
+                    var phoneCallController = UIAlertController.Create("Select number for " + person.DisplayName, null, UIAlertControllerStyle.ActionSheet);
                     foreach (var phone in phoneNumbers)
                     {
                         phoneCallController.AddAction(UIAlertAction.Create(phone.Label + " - " + phone.Number, UIAlertActionStyle.Default, a => {
                             PhoneCall.CreateCallReservation(string.Empty, string.Empty, string.Empty, phone.Number);
                         }));
                     }
+                    phoneCallController.AddAction(UIAlertAction.Create("Cancel", UIAlertActionStyle.Cancel, null));
                     PresentViewController(phoneCallController, true, null);
                     break;
             }
