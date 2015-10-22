@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using Foundation;
 using UIKit;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.TableViewCells;
-using FreedomVoice.iOS.ViewControllers;
 
 namespace FreedomVoice.iOS.TableViewSources
 {
@@ -29,13 +27,10 @@ namespace FreedomVoice.iOS.TableViewSources
             
             var cell = tableView.DequeueReusableCell(RecentCell.RecentCellId) as RecentCell ?? new RecentCell();
             cell.UpdateCell(recent.TitleOrNumber, recent.FormatedDialDate/*, recent.HasIcon*/);
-            if (!string.IsNullOrEmpty(recent.Title))
-                cell.Accessory = UITableViewCellAccessory.DetailButton;
-            else
-                cell.Accessory = UITableViewCellAccessory.None;
+            cell.Accessory = !string.IsNullOrEmpty(recent.Title) ? UITableViewCellAccessory.DetailButton : UITableViewCellAccessory.None;
+
             return cell;
         }
-        
 
         public override nint RowsInSection(UITableView tableview, nint section)
         {
@@ -60,6 +55,7 @@ namespace FreedomVoice.iOS.TableViewSources
                     break;
             }
         }
+
         public override bool CanEditRow(UITableView tableView, NSIndexPath indexPath)
         {
             return true;
