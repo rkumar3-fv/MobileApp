@@ -16,12 +16,12 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         protected ActionsHelper Helper;
         protected ContentActivity ContentActivity => Activity as ContentActivity;
 
-        protected LayoutInflater Infantler;
+        protected LayoutInflater Inflater;
         protected WeakReference<View> RootView;
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            Infantler = inflater ?? LayoutInflater.From(ContentActivity);
+            Inflater = inflater ?? LayoutInflater.From(ContentActivity);
             View view;
             if (RootView == null)
                 view = null;

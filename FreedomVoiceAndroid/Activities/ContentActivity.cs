@@ -76,24 +76,42 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
 
         public void SetToolbarContent()
         {
+            _toolbar.Menu.Clear();
             if (_viewPager.CurrentItem == 3)
+            {
+                _toolbar.InflateMenu(Resource.Menu.menu_content);
                 if (Helper.SelectedFolder != -1)
                 {
-                    SupportActionBar.Title = Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].FolderName;
+                    SupportActionBar.Title =
+                        Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].FolderName;
                     SupportActionBar.SetDisplayHomeAsUpEnabled(true);
                     SupportActionBar.SetHomeButtonEnabled(true);
                     return;
                 }
                 else if (Helper.SelectedExtension != -1)
                 {
-                    SupportActionBar.Title = $"{Helper.ExtensionsList[Helper.SelectedExtension].Id} - {Helper.ExtensionsList[Helper.SelectedExtension].ExtensionName}";
+                    SupportActionBar.Title =
+                        $"{Helper.ExtensionsList[Helper.SelectedExtension].Id} - {Helper.ExtensionsList[Helper.SelectedExtension].ExtensionName}";
                     SupportActionBar.SetDisplayHomeAsUpEnabled(true);
                     SupportActionBar.SetHomeButtonEnabled(true);
                     return;
                 }
+            }
             SupportActionBar.Title = _pagerAdapter.GetTabName(_viewPager.CurrentItem);
             SupportActionBar.SetDisplayHomeAsUpEnabled(false);
             SupportActionBar.SetHomeButtonEnabled(false);
+            switch (_viewPager.CurrentItem)
+            {
+                case 0:
+                    _toolbar.InflateMenu(Resource.Menu.menu_recents);
+                    break;
+                case 1:
+                    _toolbar.InflateMenu(Resource.Menu.menu_contacts);
+                    break;
+                case 2:
+                    _toolbar.InflateMenu(Resource.Menu.menu_content);
+                    break;
+            }
         }
 
         public override bool OnCreateOptionsMenu(IMenu menu)

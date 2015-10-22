@@ -19,7 +19,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
 
         protected override View InitView()
         {
-            var view = Infantler.Inflate(Resource.Layout.frag_contacts, null, false);
+            var view = Inflater.Inflate(Resource.Layout.frag_contacts, null, false);
             _idSpinner = view.FindViewById<Spinner>(Resource.Id.contatnsFragment_idSpinner);
             _idSpinner.ItemSelected += (sender, args) =>
             {

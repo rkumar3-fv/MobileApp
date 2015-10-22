@@ -1,4 +1,5 @@
 using Android.App;
+using Android.Content.PM;
 using Android.OS;
 using Android.Widget;
 
@@ -9,7 +10,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
     /// </summary>
     [Activity(
         Label = "@string/ActivityVoice_title",
-        Theme = "@style/AppThemeActionBar")]
+        Theme = "@style/AppThemeActionBar",
+        ScreenOrientation = ScreenOrientation.Portrait)]
     public class VoiceMailActivity : SoundActivity
     {
         protected override void OnCreate(Bundle bundle)

@@ -33,7 +33,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
 
         protected override View InitView()
         {
-            var view = Infantler.Inflate(Resource.Layout.frag_messages, null, false);
+            var view = Inflater.Inflate(Resource.Layout.frag_messages, null, false);
             _swipeRefresh = view.FindViewById<SwipeRefreshLayout>(Resource.Id.messagesFragment_swipe);
             _swipeRefresh.SetOnRefreshListener(this);
             _swipeRefresh.SetColorSchemeResources(Resource.Color.colorPullRefreshFirst, Resource.Color.colorPullRefreshSecond, Resource.Color.colorPullRefreshThird);

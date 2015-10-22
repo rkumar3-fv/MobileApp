@@ -1,5 +1,6 @@
 using System;
 using Android.App;
+using Android.Content.PM;
 using Android.OS;
 using Android.Widget;
 
@@ -10,7 +11,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
     /// </summary>
     [Activity(
         Label = "@string/ActivityFax_title",
-        Theme = "@style/AppThemeActionBar")]
+        Theme = "@style/AppThemeActionBar",
+        ScreenOrientation = ScreenOrientation.Portrait)]
     public class FaxActivity : MessageDetailsActivity
     {
         private Button _openFaxButton;

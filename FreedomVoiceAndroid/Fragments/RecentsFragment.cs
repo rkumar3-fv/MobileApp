@@ -22,7 +22,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
 
         protected override View InitView()
         {
-            var view = Infantler.Inflate(Resource.Layout.frag_recents, null, false);
+            var view = Inflater.Inflate(Resource.Layout.frag_recents, null, false);
             _idSpinner = view.FindViewById<Spinner>(Resource.Id.recentsFragment_idSpinner);
             _idSpinner.ItemSelected += (sender, args) =>
             {
