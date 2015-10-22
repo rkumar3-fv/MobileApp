@@ -1,5 +1,7 @@
 using System;
 using Android.OS;
+using Android.Support.V7.Internal.View;
+using Android.Views;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Helpers;
 using FreedomVoice.Core.Utils;
@@ -67,6 +69,13 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         {
             Helper.GetPrevious();
             base.OnBackPressed();
+        }
+
+        public override bool OnCreateOptionsMenu(IMenu menu)
+        {
+            var inflater = new SupportMenuInflater(this);
+            inflater.Inflate(Resource.Menu.menu_content, menu);
+            return true;
         }
 
         /// <summary>

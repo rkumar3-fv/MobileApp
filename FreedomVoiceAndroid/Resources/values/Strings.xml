@@ -4,6 +4,8 @@
   <string name="ApplicationTitle">FreedomVoice</string>
   <string name="MenuItem_logout">Logout</string>
   <string name="MenuItem_clear">Clear recents</string>
+  <string name="MenuItem_search">Search</string>
+  <string name="MenuItem_phone">Edit phone number</string>
   <string name="ActivityAuth_title">Welcome</string>
   <string name="ActivityAuth_loginHint">Username or Email</string>
   <string name="ActivityAuth_passwordHint">Password</string>

@@ -69,11 +69,12 @@
   
   <!-- Content activity -->
   <dimen name="content_activity_tab_text_size">14sp</dimen>
-  <dimen name="content_activity_tab_elevation">3dp</dimen>
+  <dimen name="content_activity_tab_elevation">6dp</dimen>
   <dimen name="content_activity_tab_indicator_size">6dp</dimen>
   <dimen name="content_activity_tab_text_padding">8dp</dimen>
   <dimen name="content_activity_tab_icon_padding">4dp</dimen>
   <dimen name="content_activity_tab_height">74dp</dimen>
+  <dimen name="content_activity_id_elevation">4dp</dimen>
   
   <!-- Messages fragment -->
   <dimen name="fragment_msg_element_height">48dp</dimen>

@@ -5,6 +5,7 @@ using Android.OS;
 using Android.Support.Design.Widget;
 using Android.Support.V4.Content;
 using Android.Support.V4.View;
+using Android.Support.V7.Internal.View;
 using Android.Views;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Adapters;
@@ -100,6 +101,13 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         public Spinner GetToolbarSpinner()
         {
             return _toolbarSpinner;
+        }
+
+        public override bool OnCreateOptionsMenu(IMenu menu)
+        {
+            var inflater = new SupportMenuInflater(this);
+            inflater.Inflate(Resource.Menu.menu_content, menu);
+            return true;
         }
 
         public override bool OnOptionsItemSelected(IMenuItem item)

@@ -14,8 +14,7 @@
             android:layout_height="?attr/actionBarSize"
             app:layout_scrollFlags="scroll|enterAlways"
             app:theme="@style/ToolbarTheme"
-            app:titleTextAppearance="@style/Theme.MyAuthTheme.ActionBar.TitleTextStyle"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+            app:titleTextAppearance="@style/Theme.MyAuthTheme.ActionBar.TitleTextStyle">
             <Spinner
                 android:id="@+id/contentActivity_toolbarSpinner"
                 android:layout_width="wrap_content"
