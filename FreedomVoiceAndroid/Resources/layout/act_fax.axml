@@ -12,15 +12,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/details_activity_number_margin"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
-        android:layout_marginEnd="@dimen/activity_horizontal_margin">
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin">
         <TextView
             android:id="@+id/faxActivity_senderText"
             style="@style/MsgDetailsSenderText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:layout_alignParentStart="true"
+            android:layout_alignParentRight="true"
             android:layout_marginBottom="@dimen/details_activity_stamp_margin" />
         <TextView
             android:id="@+id/faxActivity_dateText"
@@ -28,20 +28,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/faxActivity_senderText"
-            android:layout_alignParentStart="true" />
+            android:layout_alignParentRight="true" />
         <TextView
             android:id="@+id/faxActivity_stampText"
             style="@style/MessagesCounterText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/faxActivity_senderText"
-            android:layout_alignParentEnd="true" />
+            android:layout_alignParentLeft="true" />
     </RelativeLayout>
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:background="@drawable/border"
-        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
         android:layout_marginTop="@dimen/details_activity_number_margin">
         <Button
             android:id="@+id/faxActivity_openFax"
@@ -51,9 +51,9 @@
             android:drawableStart="@drawable/ic_action_view"
             android:text="@string/ActivityFax_view"
             android:layout_marginTop="@dimen/details_activity_actions_margin"
-            android:layout_marginStart="@dimen/activity_horizontal_margin"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
             android:layout_alignParentTop="true"
-            android:layout_alignParentStart="true" />
+            android:layout_alignParentRight="true" />
         <ImageButton
             android:id="@+id/faxActivity_deleteButton"
             android:src="@drawable/ic_action_remove"
@@ -62,8 +62,8 @@
             android:layout_height="@dimen/details_activity_actions_height"
             android:minHeight="@dimen/activity_button_size"
             android:layout_marginTop="@dimen/details_activity_actions_margin"
-            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
             android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true" />
+            android:layout_alignParentLeft="true" />
     </RelativeLayout>
 </LinearLayout>

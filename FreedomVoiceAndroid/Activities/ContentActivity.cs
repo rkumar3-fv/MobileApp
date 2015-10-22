@@ -129,7 +129,15 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         /// <param name="args">Result args</param>
         protected override void OnHelperEvent(ActionsHelperEventArgs args)
         {
-            
+            foreach (var code in args.Codes)
+            {
+                switch (code)
+                {
+                    case ActionsHelperEventArgs.ConnectionLostError:
+                        Toast.MakeText(this, Resource.String.Snack_connectionLost, ToastLength.Long).Show();
+                        return;
+                }
+            }
         }
     }
 }

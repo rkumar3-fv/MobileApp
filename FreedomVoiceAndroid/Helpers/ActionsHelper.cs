@@ -504,6 +504,11 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                     var errorResponse = (ErrorResponse) response;
                     switch (errorResponse.ErrorCode)
                     {
+                        // Connection lost
+                        case ErrorResponse.ErrorConnection:
+                            Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} failed: CONNECTION LOST");
+                            HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.ConnectionLostError}));
+                            break;
                         // Authorization failed
                         case ErrorResponse.ErrorUnauthorized:
                             if (IsLoggedIn)

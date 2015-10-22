@@ -36,9 +36,8 @@
             android:text="@string/ActivityRestore_sendButton" />
         <ProgressBar
             android:id="@+id/restoreActivity_progress"
-            style="@style/Widget.AppCompat.ProgressBar"
+            style="@style/InButtonProgressBar"
             android:visibility="invisible"
-            android:indeterminateTint="@color/colorBaseControls"
             android:layout_width="@dimen/activity_progress"
             android:layout_height="@dimen/activity_progress"
             android:layout_centerHorizontal="true"

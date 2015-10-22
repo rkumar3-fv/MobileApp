@@ -84,7 +84,7 @@
   <dimen name="fragment_msg_ind_corner">2dp</dimen>
   <dimen name="fragment_msg_text_padding">56dp</dimen>
   
-  <!-- Keyboard fragment -->
+  <!-- Keypad fragment -->
   <dimen name="fragment_keypad_spinner_size">56dp</dimen>
   <dimen name="fragment_keypad_number_size">65dp</dimen>
   <dimen name="fragment_keypad_number_text_size">34sp</dimen>
@@ -101,6 +101,7 @@
   <dimen name="fragment_keypad_fab_ripple">48dp</dimen>
   <dimen name="fragment_keypad_backspace_margin">8dp</dimen>
   <dimen name="fragment_keypad_backspace_size">40dp</dimen>
+  <dimen name="fragment_keypad_keyboard_padding">20dp</dimen>
   
   <!-- Dialogs -->
   <dimen name="dlg_elevation">24dp</dimen>

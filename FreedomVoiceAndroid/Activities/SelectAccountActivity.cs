@@ -3,6 +3,7 @@ using Android.Content;
 using Android.OS;
 using Android.Support.V7.Widget;
 using Android.Util;
+using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Adapters;
 using com.FreedomVoice.MobileApp.Android.Helpers;
 using com.FreedomVoice.MobileApp.Android.Utils;
@@ -41,7 +42,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         private void SelectViewOnClick(object sender, int position)
         {
             if (position >= Helper.AccountsList.Count) return;
-            Log.Debug(App.AppPackage, $"ACTIVITY {GetType().Name}: select account #{DataFormatUtils.ToPhoneNumber(_adapter.AccountName(position))}");
+            Log.Debug(App.AppPackage,
+                $"ACTIVITY {GetType().Name}: select account #{DataFormatUtils.ToPhoneNumber(_adapter.AccountName(position))}");
             Helper.SelectedAccount = Helper.AccountsList[position];
             Helper.GetPresentationNumbers();
         }
@@ -50,7 +52,9 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         {
             base.OnResume();
             if (Helper.SelectedAccount == null) return;
-            var intent = (Helper.IsFirstRun)? new Intent(this, typeof(DisclaimerActivity)): new Intent(this, typeof(ContentActivity));
+            var intent = (Helper.IsFirstRun)
+                ? new Intent(this, typeof (DisclaimerActivity))
+                : new Intent(this, typeof (ContentActivity));
             StartActivity(intent);
         }
 
@@ -61,7 +65,15 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
 
         protected override void OnHelperEvent(ActionsHelperEventArgs args)
         {
-            
+            foreach (var code in args.Codes)
+            {
+                switch (code)
+                {
+                    case ActionsHelperEventArgs.ConnectionLostError:
+                        Toast.MakeText(this, Resource.String.Snack_connectionLost, ToastLength.Long).Show();
+                        return;
+                }
+            }
         }
     }
 }

@@ -55,7 +55,7 @@
     <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
     <BundleAssemblies>False</BundleAssemblies>
     <AndroidCreatePackagePerAbi>False</AndroidCreatePackagePerAbi>
-    <AndroidSupportedAbis>armeabi,armeabi-v7a,x86</AndroidSupportedAbis>
+    <AndroidSupportedAbis>armeabi,armeabi-v7a</AndroidSupportedAbis>
     <AndroidStoreUncompressedFileExtensions />
     <MandroidI18n />
     <JavaMaximumHeapSize>1G</JavaMaximumHeapSize>
@@ -163,6 +163,7 @@
     <Compile Include="Dialogs\DialogResult.cs" />
     <Compile Include="Dialogs\LogoutDialogFragment.cs" />
     <Compile Include="Dialogs\NoCellularDialogFragment.cs" />
+    <Compile Include="Dialogs\RestoreDialogFragment.cs" />
     <Compile Include="Entities\Account.cs" />
     <Compile Include="Entities\Entity.cs" />
     <Compile Include="Entities\Extension.cs" />
@@ -270,6 +271,9 @@
     <AndroidResource Include="Resources\layout-v21\act_record.axml" />
     <AndroidResource Include="Resources\layout-v21\act_voicemail.axml" />
     <AndroidResource Include="Resources\layout-v21\act_fax.axml" />
+    <AndroidResource Include="Resources\layout\dlg_restore.axml">
+      <SubType>AndroidResource</SubType>
+    </AndroidResource>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Assets\" />
@@ -860,6 +864,9 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\menu\menu_clear.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\values-mdpi\Dimens.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

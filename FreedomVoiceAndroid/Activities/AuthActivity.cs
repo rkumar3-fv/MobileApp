@@ -9,6 +9,7 @@ using Android.Util;
 using Android.Views;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Helpers;
+using Java.Util;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
 {
@@ -57,6 +58,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             var pInfo = PackageManager.GetPackageInfo(PackageName, 0);
             Appl.AnalyticsTracker.SetAppName(GetString(Resource.String.ApplicationName));
             Appl.AnalyticsTracker.SetAppVersion($"{pInfo.VersionCode} ({pInfo.VersionName})");
+            Appl.AnalyticsTracker.SetLanguage(Locale.Default.Language);
             Appl.AnalyticsTracker.SetScreenResolution(Resources.DisplayMetrics.WidthPixels, Resources.DisplayMetrics.HeightPixels);
         }
 
@@ -138,6 +140,9 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                     _authButton.Text = GetString(Resource.String.ActivityAuth_authButton);
                 switch (code)
                 {
+                    case ActionsHelperEventArgs.ConnectionLostError:
+                        Toast.MakeText(this, Resource.String.Snack_connectionLost, ToastLength.Long).Show();
+                        return;
                     case ActionsHelperEventArgs.AuthLoginError:
                         _loginText.Background.SetColorFilter(_errorColor, PorterDuff.Mode.SrcAtop);
                         _errorTextLogin.Text = GetString(Resource.String.ActivityAuth_incorrectLogin);

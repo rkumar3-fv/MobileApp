@@ -7,6 +7,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
     /// </summary>
     public class ActionsHelperEventArgs : EventArgs, IEquatable<ActionsHelperEventArgs>
     {
+        public const int ConnectionLostError = 1;       //Connection lost
         public const int AuthLoginError = 11;           //BadRequest
         public const int AuthPasswdError = 12;          //Unauthorized
         public const int RestoreError = 21;             //BadRequest
@@ -15,8 +16,8 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         public const int MsgUpdated = 31;
         public const int MsgFoldersUpdated = 32;
         public const int MsgMessagesUpdated = 33;
-        public const int CallReservationOk = 41;
-        public const int CallReservationFail = 42;
+        public const int CallReservationOk = 41;        //CallReservation - phone
+        public const int CallReservationFail = 42;      //CallReservation - BadRequest or empty
 
         public ActionsHelperEventArgs(long requestId, int[] codes)
         {

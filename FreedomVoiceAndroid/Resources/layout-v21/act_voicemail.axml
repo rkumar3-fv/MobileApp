@@ -12,15 +12,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/details_activity_number_margin"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
-        android:layout_marginEnd="@dimen/activity_horizontal_margin">
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin">
         <TextView
             android:id="@+id/voicemailActivity_senderText"
             style="@style/MsgDetailsSenderText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
             android:layout_marginBottom="@dimen/details_activity_stamp_margin" />
         <TextView
             android:id="@+id/voicemailActivity_dateText"
@@ -28,20 +28,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/voicemailActivity_senderText"
-            android:layout_alignParentStart="true" />
+            android:layout_alignParentLeft="true" />
         <TextView
             android:id="@+id/voicemailActivity_stampText"
             style="@style/MessagesCounterText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/voicemailActivity_senderText"
-            android:layout_alignParentEnd="true" />
+            android:layout_alignParentRight="true" />
     </RelativeLayout>
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:background="@drawable/border"
-        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
         android:layout_marginTop="@dimen/details_activity_number_margin">
         <Button
             android:id="@+id/voicemailActivity_speakerButton"
@@ -51,9 +51,9 @@
             android:drawableStart="@drawable/ic_action_speaker"
             android:text="@string/ActivityVoice_speaker"
             android:layout_marginTop="@dimen/details_activity_actions_margin"
-            android:layout_marginStart="@dimen/activity_horizontal_margin"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
             android:layout_alignParentTop="true"
-            android:layout_alignParentStart="true" />
+            android:layout_alignParentLeft="true" />
         <Button
             android:id="@+id/voicemailActivity_callbackButton"
             style="@style/BorderlessMessagesButtonStyle"
@@ -62,7 +62,7 @@
             android:drawableStart="@drawable/ic_action_callback"
             android:text="@string/ActivityVoice_callback"
             android:layout_marginTop="@dimen/details_activity_actions_margin"
-            android:layout_marginStart="@dimen/details_activity_actions_spacing"
+            android:layout_marginLeft="@dimen/details_activity_actions_spacing"
             android:layout_alignParentTop="true"
             android:layout_toEndOf="@id/voicemailActivity_speakerButton" />
         <ImageButton
@@ -73,8 +73,8 @@
             android:layout_height="@dimen/details_activity_actions_height"
             android:minHeight="@dimen/activity_button_size"
             android:layout_marginTop="@dimen/details_activity_actions_margin"
-            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
             android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true" />
+            android:layout_alignParentRight="true" />
     </RelativeLayout>
 </LinearLayout>

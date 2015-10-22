@@ -28,7 +28,6 @@
   <string name="ActivityRestore_emailLabel">Email</string>
   <string name="ActivityRestore_unregistered">The email is not registered with us.</string>
   <string name="ActivityRestore_badEmail">Please enter a valid email address.</string>
-  <string name="ActivityRestore_goodResponse">Password reset email sent.</string>
   <string name="ActivitySelect_title">Select Account</string>
   <string name="ActivityExtension_title">Select extension</string>
   <string name="FragmentKeypad_title">Keypad</string>
@@ -73,6 +72,7 @@
   <string name="ActivityFax_title">Fax</string>
   <string name="ActivityFax_view">View Fax</string>
   <string name="Timestamp_yesterday">Yesterday</string>
+  <string name="Snack_connectionLost">Connection lost. Try again later</string>
   <string name="Dlg_ok">OK</string>
   <string name="Dlg_cancel">CANCEL</string>
   <string name="DlgLogout_title">Confirm logout?</string>
@@ -80,4 +80,6 @@
   <string name="DlgLogout_ok">LOG OUT</string>
   <string name="DlgCellular_title">NoCellular</string>
   <string name="DlgCellular_content">Your device does not appear to support making cellular voice calls.</string>
+  <string name="DlgRestore_title">Password reset email sent</string>
+  <string name="DlgRestore_content">Please follow the instructions inside.</string>
 </resources>

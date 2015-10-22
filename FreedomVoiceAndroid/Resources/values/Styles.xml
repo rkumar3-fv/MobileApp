@@ -143,6 +143,13 @@
     <item name="android:textSize">@dimen/fragment_keypad_key_text_size</item>
     <item name="android:textColor">@color/colorKeyOnKeyboardMain</item>
   </style>
+
+  <!-- In-button progress bar -->
+  <style name="InButtonProgressBar" parent="Widget.AppCompat.ProgressBar">
+    <item name="android:indeterminate">true</item>
+    <item name="android:indeterminateTint">@color/colorBackground</item>
+    <item name="android:indeterminateTintMode">src_in</item>
+  </style>
   
   <!-- Content toolbar theme -->
   <style name="ToolbarTheme" parent="@style/Widget.AppCompat.ActionBar">

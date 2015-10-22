@@ -64,7 +64,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         public void SavePhoneNumber(string phone)
         {
             var editor = _preferences.Edit();
-            editor.PutString(KeyIsFirstRun, phone);
+            editor.PutString(KeyPhoneNumber, phone);
             editor.Apply();
         }
     }

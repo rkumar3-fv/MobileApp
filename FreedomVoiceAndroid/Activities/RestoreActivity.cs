@@ -6,6 +6,7 @@ using Android.OS;
 using Android.Support.V4.Content;
 using Android.Views;
 using Android.Widget;
+using com.FreedomVoice.MobileApp.Android.Dialogs;
 using com.FreedomVoice.MobileApp.Android.Helpers;
 using com.FreedomVoice.MobileApp.Android.Utils;
 
@@ -103,6 +104,9 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                     _restoreButton.Text = GetString(Resource.String.ActivityRestore_sendButton);
                 switch (code)
                 {
+                    case ActionsHelperEventArgs.ConnectionLostError:
+                        Toast.MakeText(this, Resource.String.Snack_connectionLost, ToastLength.Long).Show();
+                        return;
                     case ActionsHelperEventArgs.RestoreError:
                         _resultLabel.Text = GetString(Resource.String.ActivityRestore_badEmail);
                         return;
@@ -121,9 +125,26 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         /// </summary>
         private void RestorationSuccessfull()
         {
-            Toast.MakeText(this, Resource.String.ActivityRestore_goodResponse, ToastLength.Long).Show();
-            var intent = new Intent(this, typeof(AuthActivity));
-            StartActivity(intent);
+            var logoutDialog = new RestoreDialogFragment();
+            logoutDialog.DialogEvent += OnDialogEvent;
+            logoutDialog.Show(SupportFragmentManager, GetString(Resource.String.DlgLogout_title));
+        }
+
+        /// <summary>
+        /// Dialog actions handler
+        /// </summary>
+        private void OnDialogEvent(object sender, DialogEventArgs args)
+        {
+            switch (sender.GetType().Name)
+            {
+                case "RestoreDialogFragment":
+                    if (args.Result == DialogResult.Ok)
+                    {
+                        var intent = new Intent(this, typeof (AuthActivity));
+                        StartActivity(intent);
+                    }
+                    break;
+            }
         }
     }
 }

@@ -1,0 +1,5 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<resources>
+  <!-- Text-->
+  <dimen name="text_tab">12sp</dimen>
+</resources>
