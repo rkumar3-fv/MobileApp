@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.Helpers;
 using UIKit;
-using Foundation;
 
 namespace FreedomVoice.iOS.ViewControllers
 {
@@ -14,11 +13,13 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private bool IsRootController => NavigationController.ViewControllers.Length > 1;
 
-        NetworkStatus _internetStatus;
-
         UIViewController _recentsTab, _contactsTab, _keypadTab, _messagesTab;
 
-        public MainTabBarController(IntPtr handle) : base(handle) { }
+        public List<Recent> Recents { get; set; }
+
+        public MainTabBarController(IntPtr handle) : base(handle) {
+            Recents = new List<Recent>();
+        }
 
 	    public override void ViewDidLoad()
 	    {
@@ -27,7 +28,7 @@ namespace FreedomVoice.iOS.ViewControllers
             Title = SelectedAccount.FormattedPhoneNumber;
 
             var recentsViewController = AppDelegate.GetViewController<RecentsViewController>();
-	        _recentsTab = new UINavigationController(recentsViewController) { TabBarItem = new UITabBarItem(UITabBarSystemItem.Recents, 0) };
+	        _recentsTab = new UINavigationController(recentsViewController) { TabBarItem = new UITabBarItem(UITabBarSystemItem.Recents, 0) };            
 
             var contactsViewController = AppDelegate.GetViewController<ContactsViewController>();
             _contactsTab = contactsViewController;
@@ -46,9 +47,6 @@ namespace FreedomVoice.iOS.ViewControllers
             SelectedIndex = 2;
             
             NavigationItem.SetRightBarButtonItem(Appearance.GetLogoutBarButton(), true);
-
-            UpdateStatus(null, EventArgs.Empty);
-            PhoneCapability.ReachabilityChanged += UpdateStatus;
         }
 
 	    private void TabBarOnViewControllerSelected(object sender, EventArgs arg)
@@ -70,11 +68,5 @@ namespace FreedomVoice.iOS.ViewControllers
                     break;
 	        }
 	    }
-
-        private void UpdateStatus(object sender, EventArgs e)
-        {            
-            _internetStatus = PhoneCapability.InternetConnectionStatus();            
-            NSUserDefaults.StandardUserDefaults.SetInt((int)_internetStatus, PhoneCapability.INTERNET_STATUS);            
-        }
     }
 }

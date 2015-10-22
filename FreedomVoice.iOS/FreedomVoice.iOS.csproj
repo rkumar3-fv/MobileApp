@@ -85,6 +85,7 @@
     <CodesignKey>iPhone Distribution</CodesignKey>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Entities\ExtensionsWithCount.cs" />
     <Compile Include="Entities\PresentationNumber.cs" />
     <Compile Include="Services\BaseService.cs" />
     <Compile Include="Services\Responses\AccountsResponse.cs" />
@@ -94,14 +95,19 @@
     <Compile Include="Services\Implementations\ExtensionsService.cs" />
     <Compile Include="Services\Implementations\PresentationNumbersService.cs" />
     <Compile Include="Services\IPresentationNumbersService.cs" />
+    <Compile Include="Entities\Recent.cs" />
     <Compile Include="Helpers\PhoneAbilities.cs" />
     <Compile Include="Services\Responses\ForgotPasswordResponse.cs" />
     <Compile Include="Services\Responses\LoginResponse.cs" />
+    <Compile Include="Services\Responses\MailboxesWithCountsResponse.cs" />
     <Compile Include="Services\Responses\PresentationNumbersResponse.cs" />
     <Compile Include="SharedViews\CallerIdView.cs" />
     <Compile Include="SharedViews\KeypadView.cs" />
+    <Compile Include="SharedViews\RecentViewLine.cs" />
     <Compile Include="TableViewCells\ContactCell.cs" />
+    <Compile Include="TableViewCells\RecentCell.cs" />
     <Compile Include="TableViewSources\ContactSource.cs" />
+    <Compile Include="TableViewSources\RecentsSource.cs" />
     <Compile Include="ViewControllers\AccountsViewController.cs" />
     <Compile Include="ViewControllers\AccountsViewController.designer.cs">
       <DependentUpon>AccountsViewController.cs</DependentUpon>
@@ -204,6 +210,7 @@
     <BundleResource Include="Resources\dial%402x.png" />
     <BundleResource Include="Resources\clearPhone.png" />
     <Content Include="GoogleService-Info.plist" />
+    <BundleResource Include="Resources\recent.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FreedomVoice.Core\FreedomVoice.Core.csproj">

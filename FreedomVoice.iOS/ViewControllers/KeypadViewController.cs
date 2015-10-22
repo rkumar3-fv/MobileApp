@@ -72,12 +72,23 @@ namespace FreedomVoice.iOS.ViewControllers
             }
         }
 
+        partial void KeypadDial_TouchUpInside(UIButton sender)
+        {
+            AddRecent();            
+        }
+
         public override void ViewDidAppear(bool animated)
         {
             base.ViewDidAppear(animated);
 
             //GAI.SharedInstance.DefaultTracker.Set(GAIConstants.ScreenName, "Keypad Screen");
             //GAI.SharedInstance.DefaultTracker.Send(GAIDictionaryBuilder.CreateScreenView().Build());
+        }
+
+        private void AddRecent()
+        {
+            var ctrl = ParentViewController.ParentViewController as MainTabBarController;
+            ctrl?.Recents.Add(new Recent(string.Empty, PhoneNumber, DateTime.Now));
         }
     }
 }
