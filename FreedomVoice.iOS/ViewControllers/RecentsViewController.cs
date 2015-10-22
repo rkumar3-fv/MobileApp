@@ -1,20 +1,21 @@
+using Foundation;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.SharedViews;
 using FreedomVoice.iOS.TableViewSources;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using UIKit;
 
 namespace FreedomVoice.iOS.ViewControllers
 {
 	partial class RecentsViewController : UIViewController
-	{
-
-        public List<Recent> _recents { get; set; }
+	{        
         private string tempTtle = string.Empty;
         private UIBarButtonItem tempLeftButton = null;
         private UIBarButtonItem tempRightButton = null;
+        private RecentsSource _recentSource;
 
         public RecentsViewController (IntPtr handle) : base (handle)
 		{
@@ -29,23 +30,30 @@ namespace FreedomVoice.iOS.ViewControllers
             View.AddSubviews(callerIdView, recentViewLine);
 
             RecentsTableView.TableHeaderView = callerIdView;
-            RecentsTableView.Source = new RecentsSource(GetRecents());
+
+            _recentSource = new RecentsSource(GetRecentsOrdered());
+            RecentsTableView.Source = _recentSource;
+
+            _recentSource.OnRowSelected += TableSourceOnRowSelected;
         }
 
         private UIViewController MainTab { get { return ParentViewController.ParentViewController; } }
 
+        private List<Recent> GetRecentsOrdered()
+        {            
+            return GetRecents().OrderByDescending(o => o.DialDate).ToList();
+        }
 
         private List<Recent> GetRecents()
         {
-            //var tabBarController = AppDelegate.GetViewController<MainTabBarController>();
-            //return tabBarController.Recents;
-
-            return _recents;
+            var ctrl = MainTab as MainTabBarController;            
+            return ctrl.Recents;
         }   
         
         private void AddRecent(Recent recent)
         {
-            GetRecents().Add(recent);
+            var ctrl = MainTab as MainTabBarController;
+            ctrl.Recents.Add(recent);
         }
 
         private void ClearRecent()
@@ -110,14 +118,34 @@ namespace FreedomVoice.iOS.ViewControllers
             var alertController = UIAlertController.Create(null, null, UIAlertControllerStyle.ActionSheet);
             alertController.AddAction(UIAlertAction.Create("Clear All Recents", UIAlertActionStyle.Default, a => {
                 ReturnToRecentsView();
-                _recents = new List<Recent>();
-                RecentsTableView.Source = new RecentsSource(GetRecents());
+                ClearRecent();
+                _recentSource.SetRecents(GetRecentsOrdered());
                 RecentsTableView.ReloadData();
             }));            
             alertController.AddAction(UIAlertAction.Create("Cancel", UIAlertActionStyle.Cancel, a => { ReturnToRecentsView(); }));
 
             PresentViewController(alertController, true, null);
             return;
+        }
+
+        private void TableSourceOnRowSelected(object sender, RecentsSource.RowSelectedEventArgs e)
+        {
+            e.TableView.DeselectRow(e.IndexPath, false);
+            var recent = GetRecentsOrdered()[e.IndexPath.Row];            
+
+            if (recent != null)
+            {
+                RecentsTableView.BeginUpdates();
+                var newRecent = (Recent)recent.Clone();
+                newRecent.DialDate = DateTime.Now;                                
+                AddRecent(newRecent);
+                _recentSource.SetRecents(GetRecentsOrdered());
+                e.TableView.InsertRows(new NSIndexPath[] {
+                    NSIndexPath.FromRowSection (e.TableView.NumberOfRowsInSection (0), 0)
+                    }, UITableViewRowAnimation.Fade);
+                RecentsTableView.EndUpdates();
+                RecentsTableView.ReloadData();
+            }
         }
     }
 }

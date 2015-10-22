@@ -121,12 +121,12 @@ namespace FreedomVoice.iOS.Helpers
 
         public static bool IsAirplaneMode()
         {
-            return Convert.ToInt32(NSUserDefaults.StandardUserDefaults.IntForKey(INTERNET_STATUS)) == (int)NetworkStatus.NotReachable;
+            return InternetConnectionStatus() == NetworkStatus.NotReachable;
         }
 
         public static bool IsCellularEnabled()
         {
-            var url = new NSUrl("tel:760-712-4648");
+            var url = new NSUrl("tel:");
 
             return UIApplication.SharedApplication.OpenUrl(url);
         }

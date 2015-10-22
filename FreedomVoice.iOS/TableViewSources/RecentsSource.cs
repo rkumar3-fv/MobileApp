@@ -11,11 +11,16 @@ namespace FreedomVoice.iOS.TableViewSources
 {
     public class RecentsSource : UITableViewSource
     {
-        private readonly List<Recent> _recents;        
+        private List<Recent> _recents;        
 
         public RecentsSource(List<Recent> recents)
         {
             _recents = recents;            
+        }
+
+        public void SetRecents(List<Recent> recents)
+        {
+            _recents = recents;
         }
 
         public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
@@ -24,13 +29,17 @@ namespace FreedomVoice.iOS.TableViewSources
             
             var cell = tableView.DequeueReusableCell(RecentCell.RecentCellId) as RecentCell ?? new RecentCell();
             cell.UpdateCell(recent.TitleOrNumber, recent.FormatedDialDate/*, recent.HasIcon*/);
-            cell.Accessory = UITableViewCellAccessory.DetailButton;
+            if (!string.IsNullOrEmpty(recent.Title))
+                cell.Accessory = UITableViewCellAccessory.DetailButton;
+            else
+                cell.Accessory = UITableViewCellAccessory.None;
             return cell;
         }
+        
 
         public override nint RowsInSection(UITableView tableview, nint section)
         {
-            return _recents?.Count ?? 0;
+            return _recents.Count;
         }
 
         public override void AccessoryButtonTapped(UITableView tableView, NSIndexPath indexPath)
@@ -54,6 +63,24 @@ namespace FreedomVoice.iOS.TableViewSources
         public override bool CanEditRow(UITableView tableView, NSIndexPath indexPath)
         {
             return true;
+        }
+
+        public event EventHandler<RowSelectedEventArgs> OnRowSelected;
+        public class RowSelectedEventArgs : EventArgs
+        {
+            public UITableView TableView { get; private set; }
+            public NSIndexPath IndexPath { get; private set; }
+
+            public RowSelectedEventArgs(UITableView tableView, NSIndexPath indexPath)
+            {
+                TableView = tableView;
+                IndexPath = indexPath;
+            }
+        }
+
+        public override void RowSelected(UITableView tableView, NSIndexPath indexPath)
+        {
+            OnRowSelected?.Invoke(this, new RowSelectedEventArgs(tableView, indexPath));
         }
     }
 }

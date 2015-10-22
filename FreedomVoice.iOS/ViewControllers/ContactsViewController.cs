@@ -9,6 +9,7 @@ using FreedomVoice.iOS.Helpers;
 using FreedomVoice.iOS.SharedViews;
 using FreedomVoice.iOS.TableViewSources;
 using Xamarin.Contacts;
+using FreedomVoice.iOS.Entities;
 
 namespace FreedomVoice.iOS.ViewControllers
 {
@@ -151,6 +152,7 @@ namespace FreedomVoice.iOS.ViewControllers
                     return;
                 case 1:
                     PhoneCall.CreateCallReservation(string.Empty, string.Empty, string.Empty, phoneNumbers.First().Number);
+                    AddRecent(person.DisplayName, phoneNumbers.First().Number);
                     break;
                 default:
                     var phoneCallController = UIAlertController.Create("Select number for " + person.DisplayName, null, UIAlertControllerStyle.Alert);
@@ -158,11 +160,17 @@ namespace FreedomVoice.iOS.ViewControllers
                     {
                         phoneCallController.AddAction(UIAlertAction.Create(phone.Label + " - " + phone.Number, UIAlertActionStyle.Default, a => {
                             PhoneCall.CreateCallReservation(string.Empty, string.Empty, string.Empty, phone.Number);
+                            AddRecent(person.DisplayName, phoneNumbers.First().Number);
                         }));
                     }
                     PresentViewController(phoneCallController, true, null);
                     break;
             }
+        }
+
+        private void AddRecent(string title, string phoneNumber) {            
+            var ctrl = ParentViewController as MainTabBarController;
+            ctrl.Recents.Add(new Recent(title, phoneNumber, DateTime.Now));
         }
 
         void CheckResult(int contactsCount)

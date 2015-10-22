@@ -6,7 +6,7 @@ using System.Text;
 
 namespace FreedomVoice.iOS.Entities
 {
-    public class Recent
+    public class Recent : ICloneable
     {
         public string Title { get; set; }
         public string PhoneNumber { get; set; }
@@ -36,6 +36,11 @@ namespace FreedomVoice.iOS.Entities
             Title = title;
             PhoneNumber = phoneNumber;
             DialDate = dialDate;
+        }
+
+        public object Clone()
+        {
+            return MemberwiseClone();
         }
     }
 }
