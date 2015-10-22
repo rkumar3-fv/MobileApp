@@ -35,9 +35,9 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         private Button _buttonHash;
         private FloatingActionButton _buttonDial;
 
-        public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+        protected override View InitView()
         {
-            var view = inflater.Inflate(Resource.Layout.frag_keypad, container, false);
+            var view = Infantler.Inflate(Resource.Layout.frag_keypad, null, false);
             _idSpinner = view.FindViewById<Spinner>(Resource.Id.keypadFragment_idSpinner);
             _idSpinner.ItemSelected += (sender, args) =>
             {

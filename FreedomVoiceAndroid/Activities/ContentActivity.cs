@@ -30,7 +30,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         private ContentPager _viewPager;
         private Toolbar _toolbar;
         private TabLayout _tabLayout;
-        private Spinner _toolbarSpinner;
 
         protected override void OnCreate(Bundle bundle)
         {
@@ -39,7 +38,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             _tabLayout = FindViewById<TabLayout>(Resource.Id.contentActivity_tabs);
             _viewPager = FindViewById<ContentPager>(Resource.Id.contentActivity_contentPager);
             _toolbar = FindViewById<Toolbar>(Resource.Id.contentActivity_toolbar);
-            _toolbarSpinner = FindViewById<Spinner>(Resource.Id.contentActivity_toolbarSpinner);
             SetSupportActionBar(_toolbar);
             SupportActionBar.SetHomeAsUpIndicator(Resource.Drawable.ic_action_back);
             _pagerAdapter = new ContentPagerAdapter(SupportFragmentManager, this);
@@ -50,7 +48,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             if (_viewPager != null)
             {
                 _viewPager.AllowSwipe = false;
-                _viewPager.OffscreenPageLimit = 4;
+                _viewPager.OffscreenPageLimit = 1;
                 _pagerAdapter.AddFragment(recentsFragment, Resource.String.FragmentRecents_title, Resource.Drawable.ic_tab_history);
                 _pagerAdapter.AddFragment(contactsFragment, Resource.String.FragmentContacts_title, Resource.Drawable.ic_tab_contacts);
                 _pagerAdapter.AddFragment(keypadFragment, Resource.String.FragmentKeypad_title, Resource.Drawable.ic_tab_keypad);
@@ -96,11 +94,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             SupportActionBar.Title = _pagerAdapter.GetTabName(_viewPager.CurrentItem);
             SupportActionBar.SetDisplayHomeAsUpEnabled(false);
             SupportActionBar.SetHomeButtonEnabled(false);
-        }
-
-        public Spinner GetToolbarSpinner()
-        {
-            return _toolbarSpinner;
         }
 
         public override bool OnCreateOptionsMenu(IMenu menu)

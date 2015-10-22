@@ -17,9 +17,9 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         private Spinner _idSpinner;
         private RecyclerView _contactsView;
 
-        public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+        protected override View InitView()
         {
-            var view = inflater.Inflate(Resource.Layout.frag_contacts, container, false);
+            var view = Infantler.Inflate(Resource.Layout.frag_contacts, null, false);
             _idSpinner = view.FindViewById<Spinner>(Resource.Id.contatnsFragment_idSpinner);
             _idSpinner.ItemSelected += (sender, args) =>
             {

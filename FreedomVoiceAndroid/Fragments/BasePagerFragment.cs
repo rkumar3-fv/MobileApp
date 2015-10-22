@@ -2,6 +2,7 @@ using System;
 using Android.OS;
 using Android.Support.V4.App;
 using Android.Util;
+using Android.Views;
 using com.FreedomVoice.MobileApp.Android.Activities;
 using com.FreedomVoice.MobileApp.Android.Helpers;
 
@@ -14,6 +15,33 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
     {
         protected ActionsHelper Helper;
         protected ContentActivity ContentActivity => Activity as ContentActivity;
+
+        protected LayoutInflater Infantler;
+        protected WeakReference<View> RootView;
+
+        public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+        {
+            Infantler = inflater ?? LayoutInflater.From(ContentActivity);
+            View view;
+            if (RootView == null)
+                view = null;
+            else
+                RootView.TryGetTarget(out view);
+
+            if (view != null)
+            {
+                var parent = view.Parent;
+                (parent as ViewGroup)?.RemoveView(view);
+            }
+            else
+            {
+                view = InitView();
+                RootView = new WeakReference<View>(view);
+            }
+            return view;
+        }
+
+        protected abstract View InitView();
 
         public override void OnActivityCreated(Bundle savedInstanceState)
         {

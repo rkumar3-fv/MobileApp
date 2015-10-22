@@ -43,7 +43,12 @@
     <item name="displayOptions">showHome|showTitle</item>
     <item name="background">@color/colorPrimary</item>
     <item name="titleTextStyle">@style/Theme.MyAuthTheme.ActionBar.TitleTextStyle</item>
+    <item name="android:itemTextAppearance">@style/MenuTextAppearance</item>
+    <item name="android:actionOverflowButtonStyle">@style/CustomButtonOverflow</item>
+    <item name="actionOverflowButtonStyle">@style/CustomButtonOverflow</item>
     <item name="android:popupBackground">@color/colorTabIndicator</item>
+    <item name="android:dropDownListViewStyle">@style/PopupMenuListView</item>
+    <item name="dropDownListViewStyle">@style/PopupMenuListView</item>
   </style>
 
   <style name="CustomButtonOverflow" parent="@style/Widget.AppCompat.ActionButton.Overflow">

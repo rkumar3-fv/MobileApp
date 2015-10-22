@@ -1,3 +1,4 @@
+using System;
 using Android.OS;
 using Android.Support.V7.Widget;
 using Android.Support.V7.Widget.Helper;
@@ -19,9 +20,9 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         private RecyclerView _recentsView;
         private ItemTouchHelper _swipeTouchHelper;
 
-        public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+        protected override View InitView()
         {
-            var view = inflater.Inflate(Resource.Layout.frag_recents, container, false);
+            var view = Infantler.Inflate(Resource.Layout.frag_recents, null, false);
             _idSpinner = view.FindViewById<Spinner>(Resource.Id.recentsFragment_idSpinner);
             _idSpinner.ItemSelected += (sender, args) =>
             {

@@ -31,9 +31,9 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         private SwipeRefreshLayout _swipeRefresh;
         private ItemTouchHelper _swipeTouchHelper;
 
-        public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+        protected override View InitView()
         {
-            var view = inflater.Inflate(Resource.Layout.frag_messages, container, false);
+            var view = Infantler.Inflate(Resource.Layout.frag_messages, null, false);
             _swipeRefresh = view.FindViewById<SwipeRefreshLayout>(Resource.Id.messagesFragment_swipe);
             _swipeRefresh.SetOnRefreshListener(this);
             _swipeRefresh.SetColorSchemeResources(Resource.Color.colorPullRefreshFirst, Resource.Color.colorPullRefreshSecond, Resource.Color.colorPullRefreshThird);
