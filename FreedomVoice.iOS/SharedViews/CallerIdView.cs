@@ -30,7 +30,6 @@ namespace FreedomVoice.iOS.SharedViews
         void Initialize(IList<PresentationNumber> numbers)
         {
             var labelField = new UILabel(new CGRect(15, 0, 145, 44)) { Text = "Show as Caller ID:" };
-            
 
             _callerIdPickerModel = new CallerIdPickerViewModel(numbers);
             _callerIdPickerModel.ValueChanged += (s, e) => { SelectedPresentationNumber = _callerIdPickerModel.SelectedItem; };
@@ -47,7 +46,6 @@ namespace FreedomVoice.iOS.SharedViews
             {
                 Font = UIFont.SystemFontOfSize(18f, UIFontWeight.Semibold),
                 Frame = new CGRect(160, 0, 160, 44),
-                Enabled = false,
                 UserInteractionEnabled = true
             };
             callerIdTextField.TouchDown += SetPicker;
@@ -56,7 +54,7 @@ namespace FreedomVoice.iOS.SharedViews
             toolbar.SizeToFit();
 
             var doneButton = new UIBarButtonItem("Done", UIBarButtonItemStyle.Done, (s, e) => {
-                                                                 callerIdTextField.Text = SelectedPresentationNumber.FormattedPhoneNumber + " ⌵ ";
+                                                                 callerIdTextField.Text = SelectedPresentationNumber.FormattedPhoneNumber;
                                                                  callerIdTextField.ResignFirstResponder();
                                                              });
             toolbar.SetItems(new[] { doneButton }, true);

@@ -17,7 +17,8 @@ namespace FreedomVoice.iOS.ViewControllers
 
         public List<Recent> Recents { get; set; }
 
-        public MainTabBarController(IntPtr handle) : base(handle) {
+        public MainTabBarController(IntPtr handle) : base(handle)
+        {
             Recents = new List<Recent>();
         }
 
