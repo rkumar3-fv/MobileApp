@@ -33,6 +33,7 @@ namespace FreedomVoice.iOS.ViewControllers
             RecentsTableView.Source = _recentSource;
 
             _recentSource.OnRowSelected += TableSourceOnRowSelected;
+            _recentSource.OnRowDeleted += TableSourceOnRowDeleted;
         }
 
         private UIViewController MainTab => ParentViewController.ParentViewController;
@@ -81,6 +82,9 @@ namespace FreedomVoice.iOS.ViewControllers
 
             MainTab.Title = "Recents";
             MainTab.NavigationItem.SetLeftBarButtonItem(GetEditButton(), true);
+
+            _recentSource.SetRecents(GetRecentsOrdered());
+            RecentsTableView.ReloadData();
         }
 
         private void SetEditMode()
@@ -131,5 +135,19 @@ namespace FreedomVoice.iOS.ViewControllers
             RecentsTableView.EndUpdates();
             RecentsTableView.ReloadData();
         }
+
+        private void TableSourceOnRowDeleted(object sender, RecentsSource.RowSelectedEventArgs e)
+        {
+            e.TableView.DeselectRow(e.IndexPath, false);
+            var recent = GetRecentsOrdered()[e.IndexPath.Row];
+            if (recent == null) return;
+
+            RecentsTableView.BeginUpdates();
+            RemoveRecent(recent);
+            _recentSource.SetRecents(GetRecentsOrdered());
+            RecentsTableView.DeleteRows(new NSIndexPath[] { e.IndexPath }, UITableViewRowAnimation.Fade);
+            RecentsTableView.EndUpdates();                       
+        }
+
     }
 }

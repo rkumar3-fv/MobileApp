@@ -47,8 +47,7 @@ namespace FreedomVoice.iOS.TableViewSources
             switch (editingStyle)
             {
                 case UITableViewCellEditingStyle.Delete:                    
-                    _recents.RemoveAt(indexPath.Row);                    
-                    tableView.DeleteRows(new NSIndexPath[] { indexPath }, UITableViewRowAnimation.Fade);
+                    RowDeleted(tableView, indexPath);                                        
                     break;                    
                 case UITableViewCellEditingStyle.None:
                     Console.WriteLine("CommitEditingStyle:None called");
@@ -62,6 +61,7 @@ namespace FreedomVoice.iOS.TableViewSources
         }
 
         public event EventHandler<RowSelectedEventArgs> OnRowSelected;
+        public event EventHandler<RowSelectedEventArgs> OnRowDeleted;
         public class RowSelectedEventArgs : EventArgs
         {
             public UITableView TableView { get; private set; }
@@ -77,6 +77,12 @@ namespace FreedomVoice.iOS.TableViewSources
         public override void RowSelected(UITableView tableView, NSIndexPath indexPath)
         {
             OnRowSelected?.Invoke(this, new RowSelectedEventArgs(tableView, indexPath));
+        }        
+
+        private void RowDeleted(UITableView tableView, NSIndexPath indexPath)
+        {
+            OnRowDeleted?.Invoke(this, new RowSelectedEventArgs(tableView, indexPath));
         }
+        
     }
 }
