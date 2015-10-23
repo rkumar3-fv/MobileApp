@@ -18,6 +18,8 @@ namespace FreedomVoice.iOS.ViewControllers
         UILabel PhoneLabel;
         UIButton ClearPhone, KeypadDial;
 
+        public CallerIdView CallerIdView { get; private set; }
+
         private string PhoneNumber { get; set; } = string.Empty;
 
         public override void ViewDidLoad()
@@ -69,8 +71,8 @@ namespace FreedomVoice.iOS.ViewControllers
                 View.AddSubview(button);
             }
 
-            var callerIdView = new CallerIdView(new RectangleF(0, 65, 320, 44), MainTab.GetPresentationNumbers());
-            View.AddSubviews(callerIdView);
+            CallerIdView = new CallerIdView(new RectangleF(0, 65, 320, 44), MainTab.GetPresentationNumbers());
+            View.AddSubviews(CallerIdView);
         }
 
         void ClearPhone_TouchUpInside(object sender, EventArgs args)
@@ -105,6 +107,15 @@ namespace FreedomVoice.iOS.ViewControllers
         private void AddRecent()
         {            
             MainTab?.Recents.Add(new Recent(string.Empty, PhoneNumber, DateTime.Now));
+        }
+
+        public override void ViewWillAppear(bool animated)
+        {
+            base.ViewWillAppear(animated);
+
+            PresentationNumber selectedNumber = MainTab?.GetSelectedPresentationNumber();
+            if (selectedNumber != null)
+                CallerIdView.UpdatePickerData(selectedNumber);
         }
     }
 }

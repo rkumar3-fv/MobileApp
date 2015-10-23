@@ -42,11 +42,7 @@ namespace FreedomVoice.iOS.ViewModels
             _selectedIndex = (int)row;
             ValueChanged?.Invoke(this, new EventArgs());
         }
-
-        public int GetSelectedIndex()
-        {
-            return _selectedIndex;
-        }
+        
 
         public override nint GetComponentCount(UIPickerView picker)
         {

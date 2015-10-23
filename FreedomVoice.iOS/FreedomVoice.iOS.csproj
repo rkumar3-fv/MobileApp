@@ -87,6 +87,7 @@
   <ItemGroup>
     <Compile Include="Entities\ExtensionsWithCount.cs" />
     <Compile Include="Entities\PresentationNumber.cs" />
+    <Compile Include="Helpers\CallerIDEvent.cs" />
     <Compile Include="Services\BaseService.cs" />
     <Compile Include="Services\Responses\AccountsResponse.cs" />
     <Compile Include="Services\Responses\BaseResponse.cs" />

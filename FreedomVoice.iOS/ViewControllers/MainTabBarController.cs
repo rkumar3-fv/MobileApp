@@ -4,6 +4,7 @@ using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.Helpers;
 using UIKit;
 using FreedomVoice.iOS.SharedViews;
+using System.Linq;
 
 namespace FreedomVoice.iOS.ViewControllers
 {
@@ -49,6 +50,8 @@ namespace FreedomVoice.iOS.ViewControllers
             SelectedIndex = 2;  
             
             NavigationItem.SetRightBarButtonItem(Appearance.GetLogoutBarButton(this), true);
+
+            CallerIDEvent.CallerIDChanged += PresentationNumberChanged;
         }
         
 
@@ -72,9 +75,23 @@ namespace FreedomVoice.iOS.ViewControllers
 	        }
 	    }
 
+        private void PresentationNumberChanged(object sender, EventArgs args)
+        {
+            var selectedPresentationNumber = (args as CallerIDEventArgs).SelectedPresentationNumber;
+            foreach (var item in PresentationNumbers)
+            {
+                item.IsSelected = item == selectedPresentationNumber;
+            }
+        }
+
         public List<PresentationNumber> GetPresentationNumbers()
         {
             return PresentationNumbers;
+        }
+
+        public PresentationNumber GetSelectedPresentationNumber()
+        {
+            return PresentationNumbers.FirstOrDefault(a => a.IsSelected);
         }
     }
 }

@@ -15,7 +15,9 @@ namespace FreedomVoice.iOS.ViewControllers
         private string tempTtle = string.Empty;
         private UIBarButtonItem tempLeftButton = null;
         private UIBarButtonItem tempRightButton = null;
-        private RecentsSource _recentSource;        
+        private RecentsSource _recentSource;
+
+        public CallerIdView CallerIdView { get; private set; }
 
         public RecentsViewController (IntPtr handle) : base (handle) { }
 
@@ -23,11 +25,11 @@ namespace FreedomVoice.iOS.ViewControllers
         {
             base.ViewDidLoad();
 
-            var _callerIdView = new CallerIdView(new RectangleF(0, 65, 320, 44), (MainTab as MainTabBarController)?.GetPresentationNumbers());
+            CallerIdView = new CallerIdView(new RectangleF(0, 65, 320, 44), (MainTab as MainTabBarController)?.GetPresentationNumbers());
             var recentViewLine = new RecentViewLine(new RectangleF(0, 36, 320, 1));
-            View.AddSubviews(_callerIdView, recentViewLine);
+            View.AddSubviews(CallerIdView, recentViewLine);
 
-            RecentsTableView.TableHeaderView = _callerIdView;
+            RecentsTableView.TableHeaderView = CallerIdView;
 
             _recentSource = new RecentsSource(GetRecentsOrdered());
             RecentsTableView.Source = _recentSource;
@@ -84,7 +86,11 @@ namespace FreedomVoice.iOS.ViewControllers
             MainTab.NavigationItem.SetLeftBarButtonItem(GetEditButton(), true);
 
             _recentSource.SetRecents(GetRecentsOrdered());
-            RecentsTableView.ReloadData();            
+            RecentsTableView.ReloadData();
+
+            PresentationNumber selectedNumber = (MainTab as MainTabBarController)?.GetSelectedPresentationNumber();
+            if (selectedNumber != null)
+                CallerIdView.UpdatePickerData(selectedNumber);
         }
 
         private void SetEditMode()

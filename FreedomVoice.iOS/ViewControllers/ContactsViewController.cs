@@ -25,6 +25,8 @@ namespace FreedomVoice.iOS.ViewControllers
         private UISearchBar _contactsSearchBar;
         private UILabel _noResultsLabel;
 
+        public CallerIdView CallerIdView { get; private set; }
+
         public ContactsViewController(IntPtr handle) : base(handle) { }
 
         public override async void ViewDidLoad()
@@ -66,10 +68,10 @@ namespace FreedomVoice.iOS.ViewControllers
             _contactsSearchBar.TextChanged += SearchBarOnTextChanged;
             _contactsSearchBar.CancelButtonClicked += SearchBarOnCancelButtonClicked;
 
-            var callerIdView = new CallerIdView(new RectangleF(0, 44, 320, 44), MainTab?.GetPresentationNumbers());
+            CallerIdView = new CallerIdView(new RectangleF(0, 44, 320, 44), MainTab?.GetPresentationNumbers());
 
             var headerView = new UIView(new CGRect(0, 0, 320, 88));
-            headerView.AddSubviews(_contactsSearchBar, callerIdView);
+            headerView.AddSubviews(_contactsSearchBar, CallerIdView);
 
             _contactList = addressBook.ToList();
             _contactSource = new ContactSource { ContactsList = _contactList };
@@ -189,6 +191,15 @@ namespace FreedomVoice.iOS.ViewControllers
                 _noResultsLabel.Alpha = 0f;
                 ContactsTableView.SeparatorStyle = UITableViewCellSeparatorStyle.SingleLine;
             }
+        }
+
+        public override void ViewDidAppear(bool animated)
+        {
+            base.ViewDidAppear(animated);
+
+            PresentationNumber selectedNumber = (MainTab as MainTabBarController)?.GetSelectedPresentationNumber();
+            if (selectedNumber != null)
+                CallerIdView.UpdatePickerData(selectedNumber);
         }
     }
 }
