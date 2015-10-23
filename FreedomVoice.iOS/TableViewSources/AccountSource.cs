@@ -7,6 +7,7 @@ using FreedomVoice.iOS.TableViewCells;
 using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.ViewControllers;
 using UIKit;
+using FreedomVoice.iOS.ViewModels;
 
 namespace FreedomVoice.iOS.TableViewSources
 {
@@ -35,7 +36,7 @@ namespace FreedomVoice.iOS.TableViewSources
             return _accounts?.Count ?? 0;
         }
 
-        public override void RowSelected(UITableView tableView, NSIndexPath indexPath)
+        public async override void RowSelected(UITableView tableView, NSIndexPath indexPath)
         {
             tableView.DeselectRow(indexPath, false);
             var selectedAccount = _accounts[indexPath.Row];
@@ -64,6 +65,10 @@ namespace FreedomVoice.iOS.TableViewSources
 
             var tabBarController = AppDelegate.GetViewController<MainTabBarController>();
             tabBarController.SelectedAccount = selectedAccount;
+
+            var presentationNumbersViewModel = new PresentationNumbersViewModel(selectedAccount.PhoneNumber);
+            await presentationNumbersViewModel.GetPresentationNumbersAsync();
+            tabBarController.PresentationNumbers = presentationNumbersViewModel.PresentationNumbers;
 
             _navigationController.PushViewController(tabBarController, true);
         }

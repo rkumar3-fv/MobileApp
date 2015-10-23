@@ -66,7 +66,7 @@ namespace FreedomVoice.iOS.ViewControllers
             _contactsSearchBar.TextChanged += SearchBarOnTextChanged;
             _contactsSearchBar.CancelButtonClicked += SearchBarOnCancelButtonClicked;
 
-            var callerIdView = new CallerIdView(new RectangleF(0, 44, 320, 44), new List<PresentationNumber> { new PresentationNumber("1112223333"), new PresentationNumber("4445556666"), new PresentationNumber("7778889999") });
+            var callerIdView = new CallerIdView(new RectangleF(0, 44, 320, 44), MainTab?.GetPresentationNumbers());
 
             var headerView = new UIView(new CGRect(0, 0, 320, 88));
             headerView.AddSubviews(_contactsSearchBar, callerIdView);
@@ -168,6 +168,8 @@ namespace FreedomVoice.iOS.ViewControllers
                     break;
             }
         }
+
+        private MainTabBarController MainTab { get { return ParentViewController as MainTabBarController; } }
 
         private void AddRecent(string title, string phoneNumber)
         {

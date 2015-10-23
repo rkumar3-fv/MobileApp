@@ -69,7 +69,7 @@ namespace FreedomVoice.iOS.ViewControllers
                 View.AddSubview(button);
             }
 
-            var callerIdView = new CallerIdView(new RectangleF(0, 65, 320, 44), new List<PresentationNumber> { new PresentationNumber("1112223333"), new PresentationNumber("4445556666"), new PresentationNumber("7778889999") });
+            var callerIdView = new CallerIdView(new RectangleF(0, 65, 320, 44), MainTab.GetPresentationNumbers());
             View.AddSubviews(callerIdView);
         }
 
@@ -100,10 +100,11 @@ namespace FreedomVoice.iOS.ViewControllers
             //GAI.SharedInstance.DefaultTracker.Send(GAIDictionaryBuilder.CreateScreenView().Build());
         }
 
+        private MainTabBarController MainTab { get { return ParentViewController.ParentViewController as MainTabBarController; } }
+
         private void AddRecent()
-        {
-            var ctrl = ParentViewController.ParentViewController as MainTabBarController;
-            ctrl?.Recents.Add(new Recent(string.Empty, PhoneNumber, DateTime.Now));
+        {            
+            MainTab?.Recents.Add(new Recent(string.Empty, PhoneNumber, DateTime.Now));
         }
     }
 }

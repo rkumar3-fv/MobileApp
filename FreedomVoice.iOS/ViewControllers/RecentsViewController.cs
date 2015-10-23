@@ -15,7 +15,7 @@ namespace FreedomVoice.iOS.ViewControllers
         private string tempTtle = string.Empty;
         private UIBarButtonItem tempLeftButton = null;
         private UIBarButtonItem tempRightButton = null;
-        private RecentsSource _recentSource;
+        private RecentsSource _recentSource;        
 
         public RecentsViewController (IntPtr handle) : base (handle) { }
 
@@ -23,11 +23,11 @@ namespace FreedomVoice.iOS.ViewControllers
         {
             base.ViewDidLoad();
 
-            var callerIdView = new CallerIdView(new RectangleF(0, 65, 320, 44), new List<PresentationNumber> { new PresentationNumber("1112223333"), new PresentationNumber("4445556666"), new PresentationNumber("7778889999") });
+            var _callerIdView = new CallerIdView(new RectangleF(0, 65, 320, 44), (MainTab as MainTabBarController)?.GetPresentationNumbers());
             var recentViewLine = new RecentViewLine(new RectangleF(0, 36, 320, 1));
-            View.AddSubviews(callerIdView, recentViewLine);
+            View.AddSubviews(_callerIdView, recentViewLine);
 
-            RecentsTableView.TableHeaderView = callerIdView;
+            RecentsTableView.TableHeaderView = _callerIdView;
 
             _recentSource = new RecentsSource(GetRecentsOrdered());
             RecentsTableView.Source = _recentSource;
@@ -84,7 +84,7 @@ namespace FreedomVoice.iOS.ViewControllers
             MainTab.NavigationItem.SetLeftBarButtonItem(GetEditButton(), true);
 
             _recentSource.SetRecents(GetRecentsOrdered());
-            RecentsTableView.ReloadData();
+            RecentsTableView.ReloadData();            
         }
 
         private void SetEditMode()

@@ -17,7 +17,7 @@ namespace FreedomVoice.iOS.ViewControllers
         {
             base.ViewDidLoad();
 
-            NavigationItem.SetRightBarButtonItem(Appearance.GetLogoutBarButton(), true);
+            NavigationItem.SetRightBarButtonItem(Appearance.GetLogoutBarButton(this), true);
 
             UnderstandButton.Layer.CornerRadius = 5;
             UnderstandButton.ClipsToBounds = true;

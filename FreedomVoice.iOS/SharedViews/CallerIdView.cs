@@ -42,11 +42,14 @@ namespace FreedomVoice.iOS.SharedViews
                 Model = _callerIdPickerModel
             };
 
+            _pickerField.Select(_callerIdPickerModel.GetSelectedIndex(), 0, true);
+
             var callerIdTextField = new UITextField
             {
                 Font = UIFont.SystemFontOfSize(18f, UIFontWeight.Semibold),
                 Frame = new CGRect(160, 0, 160, 44),
-                UserInteractionEnabled = true
+                UserInteractionEnabled = true,
+                Text = _callerIdPickerModel.SelectedItem.FormattedPhoneNumber
             };
             callerIdTextField.TouchDown += SetPicker;
 

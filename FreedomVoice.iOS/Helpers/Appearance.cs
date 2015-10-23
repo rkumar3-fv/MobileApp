@@ -12,9 +12,14 @@ namespace FreedomVoice.iOS.Helpers
             return new UIBarButtonItem(title, UIBarButtonItemStyle.Plain, (s, args) => { controller.PopViewController(true); });
         }
 
-        public static UIBarButtonItem GetLogoutBarButton()
+        public static UIBarButtonItem GetLogoutBarButton(UIViewController ctrl)
         {
-            return new UIBarButtonItem("Logout", UIBarButtonItemStyle.Plain, (s, args) => { (UIApplication.SharedApplication.Delegate as AppDelegate).GoToLoginScreen(); });
+            return new UIBarButtonItem("Logout", UIBarButtonItemStyle.Plain, (s, args) => {
+                var alertController = UIAlertController.Create("Confirm logout?", "Your Recents list will be cleared.", UIAlertControllerStyle.Alert);
+                alertController.AddAction(UIAlertAction.Create("Cancel", UIAlertActionStyle.Default, a => {}));
+                alertController.AddAction(UIAlertAction.Create("Log Out", UIAlertActionStyle.Cancel, a => { (UIApplication.SharedApplication.Delegate as AppDelegate).GoToLoginScreen(); }));
+                ctrl.PresentViewController(alertController, true, null);
+            });
         }
 
         public static void AddLinearGradientToView(this UIView view, UIColor topColor, UIColor bottomColor)
