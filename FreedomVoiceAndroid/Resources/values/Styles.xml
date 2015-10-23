@@ -230,6 +230,13 @@
     <item name="android:lines">1</item>
   </style>
 
+  <!-- List item date text -->
+  <style name="ListItemDateText">
+    <item name="android:textColor">@color/messageIndicatorText</item>
+    <item name="android:textSize">@dimen/text_main</item>
+    <item name="android:lines">1</item>
+  </style>
+
   <!-- List item secondary text -->
   <style name="ListItemSecondaryText">
     <item name="android:textColor">@color/messageIndicatorText</item>

@@ -68,5 +68,21 @@ namespace FreedomVoice.Core.Utils
                 return $"{yesterdayLabel} {date.ToString("HH:mm tt")}";
             return date.ToString("MM/dd/hhhh HH:mm tt");
         }
+
+        /// <summary>
+        /// Date short formatter
+        /// </summary>
+        /// <param name="yesterdayLabel">label for "yesterday"</param>
+        /// <param name="date">date for formatting</param>
+        /// <returns>formatted date</returns>
+        public static string ToShortFormattedDate(string yesterdayLabel, DateTime date)
+        {
+            var current = DateTime.Now;
+            if ((date.DayOfYear == current.DayOfYear) && (date.Year == current.Year))
+                return date.ToString("HH:mm tt");
+            if ((date.DayOfYear == current.DayOfYear) && (date.Year == current.Year))
+                return yesterdayLabel;
+            return date.ToString("MM/dd/hh");
+        }
     }
 }

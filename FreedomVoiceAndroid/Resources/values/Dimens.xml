@@ -103,6 +103,11 @@
   <dimen name="fragment_keypad_backspace_margin">8dp</dimen>
   <dimen name="fragment_keypad_backspace_size">40dp</dimen>
   <dimen name="fragment_keypad_keyboard_padding">20dp</dimen>
+
+  <!-- Recents fragment -->
+  <dimen name="fragment_recent_additional_area_width">56dp</dimen>
+  <dimen name="fragment_recent_height">48dp</dimen>
+  <dimen name="fragment_recent_icon_size">24dp  </dimen>
   
   <!-- Dialogs -->
   <dimen name="dlg_elevation">24dp</dimen>

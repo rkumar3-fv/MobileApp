@@ -58,7 +58,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 _viewPager.PageSelected += ViewPagerOnPageSelected;
             }
             _tabLayout.SetupWithViewPager(_viewPager);
-            
         }
 
         protected override void OnResume()

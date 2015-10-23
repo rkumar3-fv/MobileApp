@@ -1,4 +1,3 @@
-using System;
 using Android.OS;
 using Android.Support.V7.Widget;
 using Android.Support.V7.Widget.Helper;
@@ -19,6 +18,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         private Spinner _idSpinner;
         private RecyclerView _recentsView;
         private ItemTouchHelper _swipeTouchHelper;
+        private RecentsRecyclerAdapter _adapter;
 
         protected override View InitView()
         {
@@ -37,6 +37,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             var swipeListener = new SwipeCallback(0, ItemTouchHelper.Left | ItemTouchHelper.Right, ContentActivity, Resource.Color.colorRemoveList, Resource.Drawable.ic_action_delete);
             swipeListener.SwipeEvent += OnSwipeEvent;
             _swipeTouchHelper = new ItemTouchHelper(swipeListener);
+            _swipeTouchHelper.AttachToRecyclerView(_recentsView);
             return view;
         }
 
@@ -45,12 +46,36 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             base.OnActivityCreated(savedInstanceState);
             var adapter = new CallerIdSpinnerAdapter(Activity, Helper.SelectedAccount.PresentationNumbers);
             _idSpinner.Adapter = adapter;
+
+            _adapter = new RecentsRecyclerAdapter(Helper.RecentsDictionary, ContentActivity);
+            _adapter.ItemClick += AdapterOnItemClick;
+            _adapter.AdditionalSectorClick += AdapterOnAdditionalSectorClick;
+            _recentsView.SetAdapter(_adapter);
         }
 
         public override void OnResume()
         {
             base.OnResume();
             _idSpinner.SetSelection(Helper.SelectedAccount.SelectedPresentationNumber);
+            _adapter.NotifyDataSetChanged();
+        }
+
+        /// <summary>
+        /// Opening additional info
+        /// </summary>
+        private void AdapterOnAdditionalSectorClick(object sender, long l)
+        {
+            Log.Debug(App.AppPackage, $"ADDITIONAL INFO ABOUT {DataFormatUtils.ToPhoneNumber(Helper.RecentsDictionary[l].PhoneNumber)}");
+            //TODO: when info content will be created
+        }
+
+        /// <summary>
+        /// Main item click - call again
+        /// </summary>
+        private void AdapterOnItemClick(object sender, long l)
+        {
+            Log.Debug(App.AppPackage, $"REDIAL TO {DataFormatUtils.ToPhoneNumber(Helper.RecentsDictionary[l].PhoneNumber)}");
+            Helper.Call(Helper.RecentsDictionary[l].PhoneNumber);
         }
 
         /// <summary>
@@ -59,12 +84,21 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         private void OnSwipeEvent(object sender, SwipeCallbackEventArgs args)
         {
             Log.Debug(App.AppPackage, $"SWIPED recent {args.ElementIndex}");
-            
+            _adapter.RemoveItem(args.ElementIndex);
         }
 
         protected override void OnHelperEvent(ActionsHelperEventArgs args)
         {
-            
+            foreach (var code in args.Codes)
+            {
+                switch (code)
+                {
+                    case ActionsHelperEventArgs.CallReservationOk:
+                    case ActionsHelperEventArgs.CallReservationFail:
+                        _adapter.NotifyAddItem();
+                        break;
+                }
+            }
         }
     }
 }

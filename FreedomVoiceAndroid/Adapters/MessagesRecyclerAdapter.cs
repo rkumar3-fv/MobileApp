@@ -90,7 +90,7 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
         /// Get messages item by position
         /// </summary>
         /// <param name="position">position number</param>
-        /// <returns>extension entity</returns>
+        /// <returns>message item entity</returns>
         public MessageItem GetContentItem(int position)
         {
             return (_currentContent.Count < position) ? null : _currentContent[position];

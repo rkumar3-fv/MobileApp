@@ -84,7 +84,13 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         /// <summary>
         /// Recents list
         /// </summary>
-        public Dictionary<long, Recent> RecentsDictionary { get; } 
+        public SortedDictionary<long, Recent> RecentsDictionary { get; }
+
+        public SortedDictionary<long, Recent> GetRecents()
+        {
+            Log.Debug(App.AppPackage, RecentsDictionary.Count.ToString());
+            return RecentsDictionary;
+        } 
 
         /// <summary>
         /// Event for activity or fragment handling
@@ -135,7 +141,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                 _preferencesHelper.SavePhoneNumber(PhoneNumber);
             }
             Log.Debug(App.AppPackage, "HELPER: " + ((PhoneNumber == null) ? "NO CELLULAR" : $" PHONE NUMBER IS {PhoneNumber}"));
-            RecentsDictionary = new Dictionary<long, Recent>();
+            RecentsDictionary = new SortedDictionary<long, Recent>(Comparer<long>.Create((x, y) => y.CompareTo(x)));
             ExtensionsList = new List<Extension>();
             SelectedExtension = -1;
             SelectedFolder = -1;
@@ -535,6 +541,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                             {
                                 var callReservation = (CallReservationRequest) _waitingRequestArray[response.RequestId];
                                 RecentsDictionary.Add(response.RequestId, new Recent(callReservation.DialingNumber, Recent.ResultFail));
+                                HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.CallReservationFail }));
                             }
                             break;
                         //Account not found error

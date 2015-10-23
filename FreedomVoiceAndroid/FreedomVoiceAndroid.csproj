@@ -63,7 +63,7 @@
     <AotAssemblies>False</AotAssemblies>
     <EnableLLVM>False</EnableLLVM>
     <AndroidEnableMultiDex>False</AndroidEnableMultiDex>
-    <EnableProguard>False</EnableProguard>
+    <EnableProguard>True</EnableProguard>
     <DevInstrumentationEnabled>False</DevInstrumentationEnabled>
   </PropertyGroup>
   <ItemGroup>
@@ -155,6 +155,7 @@
     <Compile Include="Adapters\DividerItemDecorator.cs" />
     <Compile Include="Adapters\MessagesRecyclerAdapter.cs" />
     <Compile Include="Adapters\AccountsRecyclerAdapter.cs" />
+    <Compile Include="Adapters\RecentsRecyclerAdapter.cs" />
     <Compile Include="Adapters\SnackbarCallback.cs" />
     <Compile Include="Adapters\SwipeCallback.cs" />
     <Compile Include="Adapters\SwipeCallbackEventArgs.cs" />
@@ -274,6 +275,9 @@
     <AndroidResource Include="Resources\layout\dlg_restore.axml">
       <SubType>AndroidResource</SubType>
     </AndroidResource>
+    <AndroidResource Include="Resources\layout\item_recent.axml">
+      <SubType>AndroidResource</SubType>
+    </AndroidResource>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Assets\" />
@@ -318,9 +322,6 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\values\Dimens.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\values-land\Dimens.xml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FreedomVoice.Core\FreedomVoice.Core.csproj">
@@ -866,7 +867,7 @@
     <AndroidResource Include="Resources\menu\menu_recents.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\values-mdpi\Dimens.xml" />
+    <AndroidResource Include="Resources\values-sw320dp-hdpi\Dimens.xml" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\menu\menu_contacts.xml" />
@@ -903,6 +904,21 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable-xxxhdpi\ic_action_more.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-hdpi\ic_action_info.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-mdpi\ic_action_info.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xhdpi\ic_action_info.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxhdpi\ic_action_info.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxxhdpi\ic_action_info.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
