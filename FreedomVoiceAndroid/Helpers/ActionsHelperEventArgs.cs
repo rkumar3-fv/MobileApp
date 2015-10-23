@@ -18,6 +18,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         public const int MsgMessagesUpdated = 33;
         public const int CallReservationOk = 41;        //CallReservation - phone
         public const int CallReservationFail = 42;      //CallReservation - BadRequest or empty
+        public const int ClearRecents = 43;             //ClearRecents
 
         public ActionsHelperEventArgs(long requestId, int[] codes)
         {
@@ -46,15 +47,14 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
-            return Equals((ActionsHelperEventArgs) obj);
+            return obj.GetType() == GetType() && Equals((ActionsHelperEventArgs) obj);
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                return (RequestId.GetHashCode()*397) ^ (Codes != null ? Codes.GetHashCode() : 0);
+                return (RequestId.GetHashCode()*397) ^ (Codes?.GetHashCode() ?? 0);
             }
         }
     }

@@ -97,6 +97,9 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                     case ActionsHelperEventArgs.CallReservationFail:
                         _adapter.NotifyAddItem();
                         break;
+                    case ActionsHelperEventArgs.ClearRecents:
+                        _adapter.NotifyClear();
+                        break;
                 }
             }
         }

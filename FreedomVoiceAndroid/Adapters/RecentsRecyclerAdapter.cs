@@ -75,6 +75,16 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
             NotifyItemInserted(0);
         }
 
+        public void NotifyClear()
+        {
+            if ((_currentContent == null)||(_currentContent.Count == 0)) return;
+            if (_currentContent.Count == 1)
+                NotifyItemRemoved(0);
+            for (var i = _currentContent.Count; i>=0; i--)
+                NotifyItemRemoved(i);
+            _currentContent.Clear();
+        }
+
         /// <summary>
         /// Get recent by position
         /// </summary>

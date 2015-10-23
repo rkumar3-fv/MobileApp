@@ -478,6 +478,14 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         }
 
         /// <summary>
+        /// ClearRecents
+        /// </summary>
+        public void ClearAllRecents()
+        {
+            HelperEvent?.Invoke(this, new ActionsHelperEventArgs(-1, new[] { ActionsHelperEventArgs.ClearRecents }));
+        }
+
+        /// <summary>
         /// Responses from ComService
         /// </summary>
         /// <param name="resultCode">result code</param>
@@ -723,6 +731,8 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             SelectedExtension = -1;
             SelectedFolder = -1;
             SelectedMessage = -1;
+            _successDial = -1;
+            RecentsDictionary.Clear();
             var intent = new Intent(_app, typeof(AuthActivity));
             HelperEvent?.Invoke(this, new ActionsHelperIntentArgs(id, intent));
         }

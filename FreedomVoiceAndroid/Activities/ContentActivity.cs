@@ -131,6 +131,9 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 case Resource.Id.menu_action_logout:
                     LogoutAction();
                     return true;
+                case Resource.Id.menu_action_clear:
+                    Helper.ClearAllRecents();
+                    return true;
                 default:
                     return base.OnOptionsItemSelected(item);
             }
