@@ -15,6 +15,8 @@ namespace FreedomVoice.iOS.ViewControllers
 	partial class KeypadViewController : UIViewController
     {
 		public KeypadViewController (IntPtr handle) : base (handle) { }
+        UILabel PhoneLabel;
+        UIButton ClearPhone, KeypadDial;
 
         private string PhoneNumber { get; set; } = string.Empty;
 
@@ -22,7 +24,20 @@ namespace FreedomVoice.iOS.ViewControllers
         {
             base.ViewDidLoad();
 
-            PhoneLabel.Font = UIFont.SystemFontOfSize(28, UIFontWeight.Thin);
+            PhoneLabel = new UILabel(new CGRect(12, 110, 250, 32)) {
+                Font = UIFont.SystemFontOfSize(28, UIFontWeight.Thin),
+                TextAlignment = UITextAlignment.Right
+            };
+
+            ClearPhone = new UIButton(new CGRect(260, 110, 46, 30));
+            ClearPhone.SetBackgroundImage(UIImage.FromFile("clearPhone.png"), UIControlState.Normal);
+            ClearPhone.TouchUpInside += ClearPhone_TouchUpInside;
+
+            KeypadDial = new UIButton(new CGRect(130, 450, 60, 60));
+            KeypadDial.SetBackgroundImage(UIImage.FromFile("dial.png"), UIControlState.Normal);
+            KeypadDial.TouchUpInside += KeypadDial_TouchUpInside;
+
+            View.AddSubviews(PhoneLabel, ClearPhone, KeypadDial);
 
             foreach (var item in DialData.Items)
             {
@@ -58,7 +73,7 @@ namespace FreedomVoice.iOS.ViewControllers
             View.AddSubviews(callerIdView);
         }
 
-        partial void ClearPhone_TouchUpInside(UIButton sender)
+        void ClearPhone_TouchUpInside(object sender, EventArgs args)
         {
             if (string.IsNullOrEmpty(PhoneNumber) || PhoneNumber.Length <= 1)
             {
@@ -72,7 +87,7 @@ namespace FreedomVoice.iOS.ViewControllers
             }
         }
 
-        partial void KeypadDial_TouchUpInside(UIButton sender)
+        void KeypadDial_TouchUpInside(object sender, EventArgs args)
         {
             AddRecent();            
         }

@@ -133,7 +133,6 @@ namespace FreedomVoice.iOS.ViewControllers
             _recentSource.SetRecents(GetRecentsOrdered());
             e.TableView.InsertRows(new[] { NSIndexPath.FromRowSection (e.TableView.NumberOfRowsInSection (0), 0) }, UITableViewRowAnimation.Fade);
             RecentsTableView.EndUpdates();
-            RecentsTableView.ReloadData();
         }
 
         private void TableSourceOnRowDeleted(object sender, RecentsSource.RowSelectedEventArgs e)
