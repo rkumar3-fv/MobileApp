@@ -150,6 +150,7 @@
     <Compile Include="Activities\VoiceMailActivity.cs" />
     <Compile Include="Activities\VoiceRecordActivity.cs" />
     <Compile Include="Adapters\CallerIdSpinnerAdapter.cs" />
+    <Compile Include="Adapters\ContactsRecyclerAdapter.cs" />
     <Compile Include="Adapters\ContentPager.cs" />
     <Compile Include="Adapters\ContentPagerAdapter.cs" />
     <Compile Include="Adapters\DividerItemDecorator.cs" />
@@ -276,6 +277,9 @@
       <SubType>AndroidResource</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\item_recent.axml">
+      <SubType>AndroidResource</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\item_contact.axml">
       <SubType>AndroidResource</SubType>
     </AndroidResource>
   </ItemGroup>
