@@ -31,11 +31,11 @@ namespace FreedomVoice.iOS.ViewControllers
                 TextAlignment = UITextAlignment.Right
             };
 
-            ClearPhone = new UIButton(new CGRect(260, 110, 46, 30));
-            ClearPhone.SetBackgroundImage(UIImage.FromFile("clearPhone.png"), UIControlState.Normal);
+            ClearPhone = new UIButton(new CGRect(260, 110, 40, 40));
+            ClearPhone.SetBackgroundImage(UIImage.FromFile("backspace.png"), UIControlState.Normal);
             ClearPhone.TouchUpInside += ClearPhone_TouchUpInside;
 
-            KeypadDial = new UIButton(new CGRect(130, 450, 60, 60));
+            KeypadDial = new UIButton(new CGRect(130, 450, 62, 62));
             KeypadDial.SetBackgroundImage(UIImage.FromFile("dial.png"), UIControlState.Normal);
             KeypadDial.TouchUpInside += KeypadDial_TouchUpInside;
 

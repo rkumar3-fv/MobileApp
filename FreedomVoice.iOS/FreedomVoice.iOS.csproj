@@ -212,6 +212,8 @@
     <BundleResource Include="Resources\clearPhone.png" />
     <Content Include="GoogleService-Info.plist" />
     <BundleResource Include="Resources\recent.png" />
+    <BundleResource Include="Resources\backspace%402x.png" />
+    <BundleResource Include="Resources\call%402x.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FreedomVoice.Core\FreedomVoice.Core.csproj">
