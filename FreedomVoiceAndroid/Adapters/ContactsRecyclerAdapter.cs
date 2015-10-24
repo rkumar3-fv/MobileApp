@@ -34,7 +34,7 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
             {
                 string[] projection = { ContactsContract.Contacts.InterfaceConsts.Id, ContactsContract.CommonDataKinds.Phone.Number };
                 var loader = new CursorLoader(_context, ContactsContract.CommonDataKinds.Phone.ContentUri, projection,
-                    $"contact_id={id}", null, null);
+                    "contact_id=?", new[] {id}, null);
                 var cursor = (ICursor)loader.LoadInBackground();
                 if (cursor != null)
                 {

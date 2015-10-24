@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Android.Database;
 using Android.OS;
@@ -46,8 +45,12 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             _idSpinner.Adapter = adapter;
 
             var uri = ContactsContract.Contacts.ContentUri;
-            string[] projection = { ContactsContract.Contacts.InterfaceConsts.Id, ContactsContract.Contacts.InterfaceConsts.DisplayName, ContactsContract.Contacts.InterfaceConsts.HasPhoneNumber };
-            var loader = new CursorLoader(ContentActivity, uri, projection, null, null, null);
+            string[] projection = { ContactsContract.Contacts.InterfaceConsts.Id, ContactsContract.Contacts.InterfaceConsts.DisplayName,
+                ContactsContract.Contacts.InterfaceConsts.HasPhoneNumber, ContactsContract.Contacts.InterfaceConsts.PhotoUri };
+            var selection = string.Format("(({0} IS NOT NULL) AND ({0} != '') AND ({1} = '1'))", 
+                ContactsContract.Contacts.InterfaceConsts.DisplayName, ContactsContract.Contacts.InterfaceConsts.InVisibleGroup);
+            var sortOrder = $"{ContactsContract.Contacts.InterfaceConsts.DisplayName} COLLATE LOCALIZED ASC";
+            var loader = new CursorLoader(ContentActivity, uri, projection, selection, null, sortOrder);
             var cursor = (ICursor)loader.LoadInBackground();
             _adapter = new ContactsRecyclerAdapter(ContentActivity, cursor);
             _adapter.ItemClick += AdapterOnItemClick;
