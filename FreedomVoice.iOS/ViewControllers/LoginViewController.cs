@@ -48,7 +48,7 @@ namespace FreedomVoice.iOS.ViewControllers
             UsernameTextField.Text = _loginViewModel.Username = "freedomvoice.user1.267055@gmail.com";
             PasswordTextField.Text = _loginViewModel.Password = "user1654654";
 
-            View.AddLinearGradientToView(new UIColor(0, 0.231f, 0.424f, 1), new UIColor(0.855f, 0.949f, 0.965f, 1));
+            View.AddLinearGradientToView(UIColor.FromRGB(0, 59, 108), UIColor.FromRGB(218, 242, 246));
 
             UsernameTextField.BorderStyle = PasswordTextField.BorderStyle = UITextBorderStyle.RoundedRect;
 
@@ -158,16 +158,17 @@ namespace FreedomVoice.iOS.ViewControllers
             _loginViewModel.OnBadRequestResponse -= OnLoginFailed;
         }
 
-        //protected override void OnKeyboardChanged(bool visible, nfloat height)
-        //{
-        //    //We "center" the popup when the keyboard appears/disappears
-        //    var frame = container.Frame;
+        protected override void OnKeyboardChanged(bool visible, nfloat height)
+        {
+            //We "center" the popup when the keyboard appears/disappears
+            var frame = View.Frame;
 
-        //    if (visible)
-        //        frame.Y -= height / 2f;
-        //    else
-        //        frame.Y += height / 2f;
-        //    container.Frame = frame;
-        //}
+            if (visible)
+                frame.Y -= height / 2f;
+            else
+                frame.Y += height / 2f;
+
+            View.Frame = frame;
+        }
     }
 }

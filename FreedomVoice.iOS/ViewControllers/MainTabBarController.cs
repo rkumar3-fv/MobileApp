@@ -38,8 +38,9 @@ namespace FreedomVoice.iOS.ViewControllers
             var keypadViewController = AppDelegate.GetViewController<KeypadViewController>();
 	        _keypadTab = new UINavigationController(keypadViewController) { TabBarItem = new UITabBarItem("Keypad", null, 2) };
 
-	        var messagesViewController = AppDelegate.GetViewController<MessagesViewController>();
-	        _messagesTab = new UINavigationController(messagesViewController) { TabBarItem = new UITabBarItem("Messages", null, 3) };
+	        var extensionsViewController = AppDelegate.GetViewController<ExtensionsViewController>();
+	        extensionsViewController.SelectedAccount = SelectedAccount;
+            _messagesTab = new UINavigationController(extensionsViewController) { TabBarItem = new UITabBarItem("Messages", null, 3) };
 
             ViewControllers = new[] { _recentsTab, _contactsTab, _keypadTab, _messagesTab };
 

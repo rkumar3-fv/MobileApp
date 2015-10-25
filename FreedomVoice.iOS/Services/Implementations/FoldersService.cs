@@ -4,23 +4,25 @@ using FreedomVoice.iOS.Services.Responses;
 
 namespace FreedomVoice.iOS.Services.Implementations
 {
-    public class ExtensionsService : BaseService, IExtensionsService
+    public class FoldersService : BaseService, IFoldersService
     {
         private string _systemNumber;
+        private int _mailboxNumber;
 
-        public void SetSystemNumber(string systemNumber)
+        public void SetParameters(string systemNumber, int mailboxNumber)
         {
             _systemNumber = systemNumber;
+            _mailboxNumber = mailboxNumber;
         }
 
         public async override Task<BaseResponse> ExecuteRequest()
         {
-            var asyncRes = await ApiHelper.GetMailboxesWithCounts(_systemNumber);
+            var asyncRes = await ApiHelper.GetFoldersWithCount(_systemNumber, _mailboxNumber);
             var errorResponse = CheckErrorResponse(asyncRes.Code);
             if (errorResponse != null)
                 return errorResponse;
 
-            return new ExtensionsWithCountResponse(asyncRes.Result);
+            return new FoldersWithCountResponse(asyncRes.Result);
         }
     }
 }

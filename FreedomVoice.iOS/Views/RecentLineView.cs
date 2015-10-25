@@ -1,18 +1,13 @@
 ﻿using CoreGraphics;
 using Foundation;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using UIKit;
 
-namespace FreedomVoice.iOS.SharedViews
+namespace FreedomVoice.iOS.Views
 {
-    [Register("RecentViewLine")]
-    public class RecentViewLine : UIView
+    [Register("RecentLineView")]
+    public class RecentLineView : UIView
     {
-        public RecentViewLine(CGRect rect) : base (rect)
-		{
-        }
+        public RecentLineView(CGRect rect) : base (rect) { }
 
         public override void Draw(CGRect rect)
         {
@@ -24,10 +19,7 @@ namespace FreedomVoice.iOS.SharedViews
                 UIColor.Gray.SetStroke();
                 UIColor.Clear.SetFill();
                 var path = new CGPath();
-                path.AddLines(new CGPoint[]{
-                    new CGPoint (0, 1),
-                    new CGPoint (320, 1)
-                });
+                path.AddLines(new[] { new CGPoint (0, 1), new CGPoint (320, 1) });
 
                 path.CloseSubpath();
 

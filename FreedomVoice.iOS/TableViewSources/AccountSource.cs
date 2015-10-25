@@ -40,16 +40,6 @@ namespace FreedomVoice.iOS.TableViewSources
             tableView.DeselectRow(indexPath, false);
             var selectedAccount = _accounts[indexPath.Row];
 
-            //TODO: Account not available
-            //if (AccountNotAvailable)
-            //{
-            //    var accountUnavailableController = AppDelegate.GetViewController<AccountUnavailableViewController>();
-            //    accountUnavailableController.SelectedAccount = selectedAccount;
-            //    _navigationController.PushViewController(accountUnavailableController, true);
-
-            //    return;
-            //}
-
             if (!UserDefault.DisclaimerWasShown)
             {
                 var emergencyDisclaimerController = AppDelegate.GetViewController<EmergencyDisclaimerViewController>();

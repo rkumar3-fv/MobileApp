@@ -85,9 +85,16 @@
     <CodesignKey>iPhone Distribution</CodesignKey>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Entities\ExtensionsWithCount.cs" />
+    <Compile Include="Entities\ExtensionWithCount.cs" />
+    <Compile Include="Entities\FolderWithCount.cs" />
+    <Compile Include="Entities\Message.cs" />
     <Compile Include="Entities\PresentationNumber.cs" />
+    <Compile Include="Utilities\NSDateDateTimeExtensions.cs" />
     <Compile Include="Services\BaseService.cs" />
+    <Compile Include="Services\IFoldersService.cs" />
+    <Compile Include="Services\IMessagesService.cs" />
+    <Compile Include="Services\Implementations\FoldersService.cs" />
+    <Compile Include="Services\Implementations\MessagesService.cs" />
     <Compile Include="Services\Responses\AccountsResponse.cs" />
     <Compile Include="Services\Responses\BaseResponse.cs" />
     <Compile Include="Services\Responses\ErrorResponse.cs" />
@@ -97,16 +104,24 @@
     <Compile Include="Services\IPresentationNumbersService.cs" />
     <Compile Include="Entities\Recent.cs" />
     <Compile Include="Helpers\PhoneAbilities.cs" />
+    <Compile Include="Services\Responses\FoldersWithCountResponse.cs" />
     <Compile Include="Services\Responses\ForgotPasswordResponse.cs" />
     <Compile Include="Services\Responses\LoginResponse.cs" />
-    <Compile Include="Services\Responses\MailboxesWithCountsResponse.cs" />
+    <Compile Include="Services\Responses\ExtensionsWithCountResponse.cs" />
+    <Compile Include="Services\Responses\MessagesResponse.cs" />
     <Compile Include="Services\Responses\PresentationNumbersResponse.cs" />
-    <Compile Include="SharedViews\CallerIdView.cs" />
-    <Compile Include="SharedViews\KeypadView.cs" />
-    <Compile Include="SharedViews\RecentViewLine.cs" />
+    <Compile Include="Views\Shared\CallerIdView.cs" />
+    <Compile Include="Views\KeypadView.cs" />
+    <Compile Include="Views\RecentViewLine.cs" />
     <Compile Include="TableViewCells\ContactCell.cs" />
+    <Compile Include="TableViewCells\ExtensionCell.cs" />
+    <Compile Include="TableViewCells\FolderCell.cs" />
+    <Compile Include="TableViewCells\MessageCell.cs" />
     <Compile Include="TableViewCells\RecentCell.cs" />
     <Compile Include="TableViewSources\ContactSource.cs" />
+    <Compile Include="TableViewSources\ExtensionsSource.cs" />
+    <Compile Include="TableViewSources\FoldersSource.cs" />
+    <Compile Include="TableViewSources\MessagesSource.cs" />
     <Compile Include="TableViewSources\RecentsSource.cs" />
     <Compile Include="ViewControllers\AccountsViewController.cs" />
     <Compile Include="ViewControllers\AccountsViewController.designer.cs">
@@ -130,9 +145,14 @@
     <Compile Include="Utilities\Theme.cs" />
     <Compile Include="Utilities\UIKitExtensions.cs" />
     <Compile Include="ViewControllers\BaseViewController.cs" />
+    <Compile Include="ViewControllers\ExtensionsViewController.cs" />
+    <Compile Include="ViewControllers\FoldersViewController.cs" />
+    <Compile Include="ViewControllers\MessageFoldersViewController.cs" />
     <Compile Include="ViewModels\AccountsViewModel.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="ViewModels\CallerIdPickerViewModel.cs" />
+    <Compile Include="ViewModels\ExtensionsViewModel.cs" />
+    <Compile Include="ViewModels\FoldersViewModel.cs" />
     <Compile Include="ViewModels\ForgotPasswordViewModel.cs" />
     <Compile Include="ViewModels\LoginViewModel.cs" />
     <Compile Include="ViewControllers\EmergencyDisclaimerViewController.cs" />
@@ -172,6 +192,7 @@
       <DependentUpon>LoginViewController.cs</DependentUpon>
     </Compile>
     <Compile Include="AppDelegate.cs" />
+    <Compile Include="ViewModels\MessagesViewModel.cs" />
     <Compile Include="ViewModels\PresentationNumbersViewModel.cs" />
     <None Include="Info.plist" />
     <Compile Include="ViewControllers\MainTabBarController.cs" />
@@ -219,10 +240,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <XamarinComponentReference Include="googleanalytics">
-      <Visible>False</Visible>
-      <Version>3.0.12</Version>
-    </XamarinComponentReference>
     <XamarinComponentReference Include="googleanalytics">
       <Visible>False</Visible>
       <Version>3.0.12</Version>

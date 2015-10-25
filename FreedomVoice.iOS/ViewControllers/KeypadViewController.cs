@@ -1,6 +1,5 @@
 using CoreGraphics;
 using FreedomVoice.iOS.Helpers;
-using FreedomVoice.iOS.SharedViews;
 using GoogleAnalytics.iOS;
 using MRoundedButton;
 using System;
@@ -8,6 +7,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using FreedomVoice.Core.Utils;
 using FreedomVoice.iOS.Entities;
+using FreedomVoice.iOS.Views.Shared;
 using UIKit;
 
 namespace FreedomVoice.iOS.ViewControllers

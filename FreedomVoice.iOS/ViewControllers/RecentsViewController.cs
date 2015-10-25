@@ -1,20 +1,21 @@
 using Foundation;
 using FreedomVoice.iOS.Entities;
-using FreedomVoice.iOS.SharedViews;
 using FreedomVoice.iOS.TableViewSources;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using FreedomVoice.iOS.Views;
+using FreedomVoice.iOS.Views.Shared;
 using UIKit;
 
 namespace FreedomVoice.iOS.ViewControllers
 {
 	partial class RecentsViewController : UIViewController
 	{        
-        private string tempTtle = string.Empty;
-        private UIBarButtonItem tempLeftButton = null;
-        private UIBarButtonItem tempRightButton = null;
+        private string _tempTtle = string.Empty;
+        private UIBarButtonItem _tempLeftButton;
+        private UIBarButtonItem _tempRightButton;
         private RecentsSource _recentSource;
 
         public RecentsViewController (IntPtr handle) : base (handle) { }
@@ -24,8 +25,8 @@ namespace FreedomVoice.iOS.ViewControllers
             base.ViewDidLoad();
 
             var callerIdView = new CallerIdView(new RectangleF(0, 65, 320, 44), new List<PresentationNumber> { new PresentationNumber("1112223333"), new PresentationNumber("4445556666"), new PresentationNumber("7778889999") });
-            var recentViewLine = new RecentViewLine(new RectangleF(0, 36, 320, 1));
-            View.AddSubviews(callerIdView, recentViewLine);
+            var recentLineView = new RecentLineView(new RectangleF(0, 36, 320, 1));
+            View.AddSubviews(callerIdView, recentLineView);
 
             RecentsTableView.TableHeaderView = callerIdView;
 
@@ -67,18 +68,18 @@ namespace FreedomVoice.iOS.ViewControllers
         {
             base.ViewDidDisappear(animated);
 
-            MainTab.Title = tempTtle;
-            MainTab.NavigationItem.SetLeftBarButtonItem(tempLeftButton, true);
-            MainTab.NavigationItem.SetRightBarButtonItem(tempRightButton, true);
+            MainTab.Title = _tempTtle;
+            MainTab.NavigationItem.SetLeftBarButtonItem(_tempLeftButton, true);
+            MainTab.NavigationItem.SetRightBarButtonItem(_tempRightButton, true);
         }
 
         public override void ViewDidAppear(bool animated)
         {
             base.ViewDidAppear(animated);
 
-            tempLeftButton = MainTab.NavigationItem.LeftBarButtonItem;
-            tempTtle = MainTab.Title;
-            tempRightButton = MainTab.NavigationItem.RightBarButtonItem;
+            _tempLeftButton = MainTab.NavigationItem.LeftBarButtonItem;
+            _tempTtle = MainTab.Title;
+            _tempRightButton = MainTab.NavigationItem.RightBarButtonItem;
 
             MainTab.Title = "Recents";
             MainTab.NavigationItem.SetLeftBarButtonItem(GetEditButton(), true);
@@ -98,7 +99,7 @@ namespace FreedomVoice.iOS.ViewControllers
         {
             RecentsTableView.SetEditing(false, true);
             MainTab.NavigationItem.SetLeftBarButtonItem(GetEditButton(), true);
-            MainTab.NavigationItem.SetRightBarButtonItem(tempRightButton, true);
+            MainTab.NavigationItem.SetRightBarButtonItem(_tempRightButton, true);
         }
 
         private UIBarButtonItem GetEditButton()
@@ -145,7 +146,7 @@ namespace FreedomVoice.iOS.ViewControllers
             RecentsTableView.BeginUpdates();
             RemoveRecent(recent);
             _recentSource.SetRecents(GetRecentsOrdered());
-            RecentsTableView.DeleteRows(new NSIndexPath[] { e.IndexPath }, UITableViewRowAnimation.Fade);
+            RecentsTableView.DeleteRows(new[] { e.IndexPath }, UITableViewRowAnimation.Fade);
             RecentsTableView.EndUpdates();                       
         }
 

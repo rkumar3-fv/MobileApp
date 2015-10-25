@@ -1,9 +1,9 @@
-﻿using Foundation;
-using System;
-using UIKit;
+﻿using System;
 using CoreGraphics;
+using Foundation;
+using UIKit;
 
-namespace FreedomVoice.iOS.SharedViews
+namespace FreedomVoice.iOS.Views
 {
     [Register("KeypadView")]
     public class KeypadView : UIView

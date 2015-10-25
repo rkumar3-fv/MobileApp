@@ -7,8 +7,8 @@ using CoreGraphics;
 using Foundation;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.Helpers;
-using FreedomVoice.iOS.SharedViews;
 using FreedomVoice.iOS.TableViewSources;
+using FreedomVoice.iOS.Views.Shared;
 using Xamarin.Contacts;
 
 namespace FreedomVoice.iOS.ViewControllers

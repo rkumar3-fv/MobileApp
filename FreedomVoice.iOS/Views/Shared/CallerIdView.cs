@@ -7,7 +7,7 @@ using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.ViewModels;
 using UIKit;
 
-namespace FreedomVoice.iOS.SharedViews
+namespace FreedomVoice.iOS.Views.Shared
 {
     [Register("CallerIdView")]
     public class CallerIdView : UIView

@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleDisplayName</key>
-	<string>FreedomVoice.iOS</string>
+	<string>FreedomVoice</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.your-company.FreedomVoice.iOS</string>
+	<string>com.your-company.FreedomVoice</string>
 	<key>CFBundleShortVersionString</key>
 	<string>1.0</string>
 	<key>CFBundleVersion</key>

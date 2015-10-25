@@ -2,16 +2,16 @@
 
 namespace FreedomVoice.iOS.Entities
 {
-    public class ExtensionsWithCount
+    public class ExtensionWithCount
     {
-        public ExtensionsWithCount(MailboxWithCount mailboxWithCount)
+        public ExtensionWithCount(MailboxWithCount mailboxWithCount)
         {
-            MailboxNumber = mailboxWithCount.MailboxNumber;
+            ExtensionNumber = mailboxWithCount.MailboxNumber;
             DisplayName = mailboxWithCount.DisplayName;
             UnreadMessagesCount = mailboxWithCount.UnreadMessages;
         }
 
-        public int MailboxNumber { get; set; }
+        public int ExtensionNumber { get; set; }
 
         public string DisplayName { get; set; }
 

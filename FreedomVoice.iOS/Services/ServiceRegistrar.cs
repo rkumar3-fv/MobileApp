@@ -18,6 +18,9 @@ namespace FreedomVoice.iOS.Services
             ServiceContainer.Register<IAccountsService>(() => new AccountsService());
             ServiceContainer.Register<IForgotPasswordService>(() => new ForgotPasswordService());
             ServiceContainer.Register<IPresentationNumbersService>(() => new PresentationNumbersService());
+            ServiceContainer.Register<IExtensionsService>(() => new ExtensionsService());
+            ServiceContainer.Register<IFoldersService>(() => new FoldersService());
+            ServiceContainer.Register<IMessagesService>(() => new MessagesService());
 
             ServiceContainer.Register<LoginViewModel>();
             ServiceContainer.Register<AccountsViewModel>();

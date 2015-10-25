@@ -4,20 +4,20 @@ using FreedomVoice.iOS.Entities;
 
 namespace FreedomVoice.iOS.Services.Responses
 {
-    public class MailboxesWithCountsResponse : BaseResponse
+    public class ExtensionsWithCountResponse : BaseResponse
     {
-        public List<ExtensionsWithCount> ExtensionsWithCount { get; }
+        public List<ExtensionWithCount> ExtensionsWithCount { get; }
 
         /// <summary>
         /// Response init for ExtensionsService
         /// </summary>
         /// <param name="mailboxesWithCount">Mailboxes With Count</param>
-        public MailboxesWithCountsResponse(IEnumerable<MailboxWithCount> mailboxesWithCount)
+        public ExtensionsWithCountResponse(IEnumerable<MailboxWithCount> mailboxesWithCount)
         {
-            ExtensionsWithCount = new List<ExtensionsWithCount>();
+            ExtensionsWithCount = new List<ExtensionWithCount>();
 
             foreach (var mailbox in mailboxesWithCount)
-                ExtensionsWithCount.Add(new ExtensionsWithCount(mailbox));
+                ExtensionsWithCount.Add(new ExtensionWithCount(mailbox));
         }
     }
 }
