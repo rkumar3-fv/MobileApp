@@ -871,7 +871,7 @@
     <AndroidResource Include="Resources\menu\menu_recents.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\values-w320dp-port\Dimens.xml" />
+    <AndroidResource Include="Resources\values-w320dp-hdpi\Dimens.xml" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\menu\menu_contacts.xml" />

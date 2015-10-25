@@ -5,7 +5,6 @@ using Android.Content;
 using Android.Gms.Analytics;
 using Android.Runtime;
 using Android.Telephony;
-using Android.Util;
 using com.FreedomVoice.MobileApp.Android.Helpers;
 using com.FreedomVoice.MobileApp.Android.Utils;
 
@@ -61,11 +60,7 @@ namespace com.FreedomVoice.MobileApp.Android
         {
             base.OnCreate();
             Helper = new ActionsHelper(this);
-            ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) =>
-            {
-                Log.Debug(AppPackage, $"Certificate error: {sslPolicyErrors}");
-                return true;
-            };
+            ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
             CallState = new CallStateHelper();
             CallState.CallEvent += CallStateOnCallEvent;
             var telManager = (TelephonyManager)GetSystemService(TelephonyService);

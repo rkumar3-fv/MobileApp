@@ -11,6 +11,12 @@ namespace FreedomVoice.Core.Utils
         private const string Phone3Regex = @"^\(?([0-9]{3})\)$";
         private const string Phone4Regex = @"^\(?([0-9]{3})\)?[-. ]?([0-9]{1,3})$";
         private const string Phone7Regex = @"^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{1,4})$";
+        private const string Phone11Regex= @"^([0-9]{1})[-. ]?\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$";
+
+        private const string PlusPhone4Regex = @"^([+]{1})?([0-9]{1})[-. ]?\(?([0-9]{1,3})\)$";
+        private const string PlusPhone7Regex = @"^([+]{1})?([0-9]{1})[-. ]?\(?([0-9]{3})\)?[-. ]?([0-9]{1,3})$";
+        private const string PlusPhone11Regex = @"^([+]{1})?([0-9]{1})[-. ]?\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{1,4})$";
+
         private const string PhoneExtRegex = @"^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})[x-. ]?([0-9]{3})$";
 
         /// <summary>
@@ -20,15 +26,33 @@ namespace FreedomVoice.Core.Utils
         /// <returns>formatted phone number</returns>
         public static string ToPhoneNumber(string unformatted)
         {
-            var phone7Regex = new Regex(Phone7Regex);
-            var phone4Regex = new Regex(Phone4Regex);
-            var phone3Regex = new Regex(Phone3Regex);
-            if (phone7Regex.IsMatch(unformatted))
-                return phone7Regex.Replace(unformatted, "($1) $2-$3");
-            if (phone4Regex.IsMatch(unformatted))
-                return phone4Regex.Replace(unformatted, "($1) $2");
-            if (phone3Regex.IsMatch(unformatted))
-                return phone3Regex.Replace(unformatted, "($1)");
+            if (unformatted.StartsWith("+"))
+            {
+                var phone11Regex = new Regex(PlusPhone11Regex);
+                var phone7Regex = new Regex(PlusPhone7Regex);
+                var phone4Regex = new Regex(PlusPhone4Regex);
+                if (phone11Regex.IsMatch(unformatted))
+                    return phone11Regex.Replace(unformatted, "$1$2 ($3) $4-$5");
+                if (phone7Regex.IsMatch(unformatted))
+                    return phone7Regex.Replace(unformatted, "$1$2 ($3) $4");
+                if (phone4Regex.IsMatch(unformatted))
+                    return phone4Regex.Replace(unformatted, "$1$2 ($3)");
+            }
+            else
+            {
+                var phone11Regex = new Regex(Phone11Regex);
+                var phone7Regex = new Regex(Phone7Regex);
+                var phone4Regex = new Regex(Phone4Regex);
+                var phone3Regex = new Regex(Phone3Regex);
+                if (phone11Regex.IsMatch(unformatted))
+                    return phone11Regex.Replace(unformatted, "$1 ($2) $3-$4");
+                if (phone7Regex.IsMatch(unformatted))
+                    return phone7Regex.Replace(unformatted, "($1) $2-$3");
+                if (phone4Regex.IsMatch(unformatted))
+                    return phone4Regex.Replace(unformatted, "($1) $2");
+                if (phone3Regex.IsMatch(unformatted))
+                    return phone3Regex.Replace(unformatted, "($1)");
+            }
             return unformatted;
         }
 
