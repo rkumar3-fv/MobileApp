@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.Helpers;
 using UIKit;
-using FreedomVoice.iOS.SharedViews;
 using System.Linq;
 
 namespace FreedomVoice.iOS.ViewControllers

@@ -111,9 +111,9 @@
     <Compile Include="Services\Responses\ExtensionsWithCountResponse.cs" />
     <Compile Include="Services\Responses\MessagesResponse.cs" />
     <Compile Include="Services\Responses\PresentationNumbersResponse.cs" />
+    <Compile Include="Views\RecentLineView.cs" />
     <Compile Include="Views\Shared\CallerIdView.cs" />
     <Compile Include="Views\KeypadView.cs" />
-    <Compile Include="Views\RecentViewLine.cs" />
     <Compile Include="TableViewCells\ContactCell.cs" />
     <Compile Include="TableViewCells\ExtensionCell.cs" />
     <Compile Include="TableViewCells\FolderCell.cs" />
