@@ -73,6 +73,11 @@
   <string name="ActivityRecord_title">Call Record</string>
   <string name="ActivityFax_title">Fax</string>
   <string name="ActivityFax_view">View Fax</string>
+  <string name="ActivityNumber_title">Your Phone Number</string>
+  <string name="ActivityNubmer_description">To make calls with this app, we require your device\'s phone number and you must enable the Caller ID feature. This information is not shared with any 3rd parties.</string>
+  <string name="ActivityNumber_hint">10 digit phone number</string>
+  <string name="ActivityNumber_applyButton">CONTINUE</string>
+  <string name="ActivityNumber_cancelButton">SKIP</string>
   <string name="Timestamp_yesterday">Yesterday</string>
   <string name="Snack_connectionLost">Connection lost. Try again later</string>
   <string name="Dlg_ok">OK</string>
@@ -84,4 +89,11 @@
   <string name="DlgCellular_content">Your device does not appear to support making cellular voice calls.</string>
   <string name="DlgRestore_title">Password reset email sent</string>
   <string name="DlgRestore_content">Please follow the instructions inside.</string>
+  <string name="DlgClear_content">Clear all recents?</string>
+  <string name="DlgClear_ok">CLEAR</string>
+  <string name="DlgNumbers_content">No phone numbers available for</string>
+  <string name="DlgNumbers_title">Selet number</string>
+  <string name="DlgAirplane_content">Airplane Mode must be turned off to make calls from the FreedomVoice app.</string>
+  <string name="DlgCallerId_content">Caller ID must be turned on for your device to make calls from the FreedomVoice app.</string>
+  <string name="Dlg_settings">SETTINGS</string>
 </resources>
