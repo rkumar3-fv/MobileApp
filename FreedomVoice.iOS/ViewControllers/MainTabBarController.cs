@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.Helpers;
 using UIKit;
+using FreedomVoice.iOS.SharedViews;
+using System.Linq;
 
 namespace FreedomVoice.iOS.ViewControllers
 {
@@ -15,7 +17,7 @@ namespace FreedomVoice.iOS.ViewControllers
 
         UIViewController _recentsTab, _contactsTab, _keypadTab, _messagesTab;
 
-        public List<Recent> Recents { get; set; }
+        public List<Recent> Recents { get; set; }        
 
         public MainTabBarController(IntPtr handle) : base(handle)
         {
@@ -46,10 +48,13 @@ namespace FreedomVoice.iOS.ViewControllers
 
             ViewControllerSelected += TabBarOnViewControllerSelected;
             NavigationItem.HidesBackButton = true;
-            SelectedIndex = 2;
+            SelectedIndex = 2;  
             
-            NavigationItem.SetRightBarButtonItem(Appearance.GetLogoutBarButton(), true);
+            NavigationItem.SetRightBarButtonItem(Appearance.GetLogoutBarButton(this), true);
+
+            CallerIDEvent.CallerIDChanged += PresentationNumberChanged;
         }
+        
 
 	    private void TabBarOnViewControllerSelected(object sender, EventArgs arg)
 	    {
@@ -70,5 +75,24 @@ namespace FreedomVoice.iOS.ViewControllers
                     break;
 	        }
 	    }
+
+        private void PresentationNumberChanged(object sender, EventArgs args)
+        {
+            var selectedPresentationNumber = (args as CallerIDEventArgs).SelectedPresentationNumber;
+            foreach (var item in PresentationNumbers)
+            {
+                item.IsSelected = item == selectedPresentationNumber;
+            }
+        }
+
+        public List<PresentationNumber> GetPresentationNumbers()
+        {
+            return PresentationNumbers;
+        }
+
+        public PresentationNumber GetSelectedPresentationNumber()
+        {
+            return PresentationNumbers.FirstOrDefault(a => a.IsSelected);
+        }
     }
 }

@@ -6,6 +6,7 @@ using Foundation;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.ViewModels;
 using UIKit;
+using FreedomVoice.iOS.Helpers;
 
 namespace FreedomVoice.iOS.Views.Shared
 {
@@ -16,6 +17,7 @@ namespace FreedomVoice.iOS.Views.Shared
 
         private CallerIdPickerViewModel _callerIdPickerModel;
         private UIPickerView _pickerField;
+        private UITextField _callerIdTextField;
 
         public CallerIdView(IList<PresentationNumber> numbers)
         {
@@ -31,8 +33,14 @@ namespace FreedomVoice.iOS.Views.Shared
         {
             var labelField = new UILabel(new CGRect(15, 0, 145, 44)) { Text = "Show as Caller ID:" };
 
+            if (SelectedPresentationNumber == null && numbers != null && numbers.Count > 0)
+                SelectedPresentationNumber = numbers[0];
+
             _callerIdPickerModel = new CallerIdPickerViewModel(numbers);
-            _callerIdPickerModel.ValueChanged += (s, e) => { SelectedPresentationNumber = _callerIdPickerModel.SelectedItem; };
+            _callerIdPickerModel.ValueChanged += (s, e) => {
+                SelectedPresentationNumber = _callerIdPickerModel.SelectedItem;
+                CallerIDEvent.OnCallerIDChangedEvent(new CallerIDEventArgs(SelectedPresentationNumber));
+            };
 
             _pickerField = new UIPickerView
             {
@@ -42,27 +50,40 @@ namespace FreedomVoice.iOS.Views.Shared
                 Model = _callerIdPickerModel
             };
 
-            var callerIdTextField = new UITextField
+            _pickerField.Select(_callerIdPickerModel.Items.IndexOf(SelectedPresentationNumber), 0, true);
+
+            _callerIdTextField = new UITextField
             {
                 Font = UIFont.SystemFontOfSize(18f, UIFontWeight.Semibold),
                 Frame = new CGRect(160, 0, 160, 44),
-                UserInteractionEnabled = true
+                UserInteractionEnabled = true,
+                Text = _callerIdPickerModel.SelectedItem.FormattedPhoneNumber
             };
-            callerIdTextField.TouchDown += SetPicker;
+            _callerIdTextField.TouchDown += SetPicker;
 
             var toolbar = new UIToolbar { BarStyle = UIBarStyle.Black, Translucent = true };
             toolbar.SizeToFit();
 
             var doneButton = new UIBarButtonItem("Done", UIBarButtonItemStyle.Done, (s, e) => {
-                                                                 callerIdTextField.Text = SelectedPresentationNumber.FormattedPhoneNumber;
-                                                                 callerIdTextField.ResignFirstResponder();
+                                                                 _callerIdTextField.Text = SelectedPresentationNumber.FormattedPhoneNumber;
+                                                                 _callerIdTextField.ResignFirstResponder();
                                                              });
             toolbar.SetItems(new[] { doneButton }, true);
 
-            callerIdTextField.InputView = _pickerField;
-            callerIdTextField.InputAccessoryView = toolbar;
+            _callerIdTextField.InputView = _pickerField;
+            _callerIdTextField.InputAccessoryView = toolbar;
 
-            AddSubviews(labelField, callerIdTextField);
+            AddSubviews(labelField, _callerIdTextField);            
+        }
+
+        public void UpdatePickerData(PresentationNumber SelectedPresentationNumber)
+        {
+            this.SelectedPresentationNumber = SelectedPresentationNumber;
+            if (SelectedPresentationNumber != null)
+            {
+                _pickerField.Select(_callerIdPickerModel.Items.IndexOf(SelectedPresentationNumber), 0, true);
+                _callerIdTextField.Text = SelectedPresentationNumber.FormattedPhoneNumber;
+            }
         }
 
         private void SetPicker(object sender, EventArgs e)

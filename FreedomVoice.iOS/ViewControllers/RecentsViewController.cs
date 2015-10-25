@@ -18,17 +18,19 @@ namespace FreedomVoice.iOS.ViewControllers
         private UIBarButtonItem _tempRightButton;
         private RecentsSource _recentSource;
 
+        public CallerIdView CallerIdView { get; private set; }
+
         public RecentsViewController (IntPtr handle) : base (handle) { }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
 
-            var callerIdView = new CallerIdView(new RectangleF(0, 65, 320, 44), new List<PresentationNumber> { new PresentationNumber("1112223333"), new PresentationNumber("4445556666"), new PresentationNumber("7778889999") });
-            var recentLineView = new RecentLineView(new RectangleF(0, 36, 320, 1));
-            View.AddSubviews(callerIdView, recentLineView);
+            CallerIdView = new CallerIdView(new RectangleF(0, 65, 320, 44), (MainTab as MainTabBarController)?.GetPresentationNumbers());
+            var recentViewLine = new RecentViewLine(new RectangleF(0, 36, 320, 1));
+            View.AddSubviews(CallerIdView, recentViewLine);
 
-            RecentsTableView.TableHeaderView = callerIdView;
+            RecentsTableView.TableHeaderView = CallerIdView;
 
             _recentSource = new RecentsSource(GetRecentsOrdered());
             RecentsTableView.Source = _recentSource;
@@ -86,6 +88,10 @@ namespace FreedomVoice.iOS.ViewControllers
 
             _recentSource.SetRecents(GetRecentsOrdered());
             RecentsTableView.ReloadData();
+
+            PresentationNumber selectedNumber = (MainTab as MainTabBarController)?.GetSelectedPresentationNumber();
+            if (selectedNumber != null)
+                CallerIdView.UpdatePickerData(selectedNumber);
         }
 
         private void SetEditMode()
@@ -134,7 +140,6 @@ namespace FreedomVoice.iOS.ViewControllers
             _recentSource.SetRecents(GetRecentsOrdered());
             e.TableView.InsertRows(new[] { NSIndexPath.FromRowSection (e.TableView.NumberOfRowsInSection (0), 0) }, UITableViewRowAnimation.Fade);
             RecentsTableView.EndUpdates();
-            RecentsTableView.ReloadData();
         }
 
         private void TableSourceOnRowDeleted(object sender, RecentsSource.RowSelectedEventArgs e)

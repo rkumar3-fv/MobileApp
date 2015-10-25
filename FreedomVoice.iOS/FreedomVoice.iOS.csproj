@@ -90,6 +90,7 @@
     <Compile Include="Entities\Message.cs" />
     <Compile Include="Entities\PresentationNumber.cs" />
     <Compile Include="Utilities\NSDateDateTimeExtensions.cs" />
+    <Compile Include="Helpers\CallerIDEvent.cs" />
     <Compile Include="Services\BaseService.cs" />
     <Compile Include="Services\IFoldersService.cs" />
     <Compile Include="Services\IMessagesService.cs" />
@@ -232,6 +233,8 @@
     <BundleResource Include="Resources\clearPhone.png" />
     <Content Include="GoogleService-Info.plist" />
     <BundleResource Include="Resources\recent.png" />
+    <BundleResource Include="Resources\backspace%402x.png" />
+    <BundleResource Include="Resources\call%402x.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FreedomVoice.Core\FreedomVoice.Core.csproj">

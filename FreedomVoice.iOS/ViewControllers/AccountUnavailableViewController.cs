@@ -19,7 +19,7 @@ namespace FreedomVoice.iOS.ViewControllers
             Title = SelectedAccount.FormattedPhoneNumber;
 
             NavigationItem.SetLeftBarButtonItem(Appearance.GetBackBarButton(NavigationController), true);
-            NavigationItem.SetRightBarButtonItem(Appearance.GetLogoutBarButton(), true);
+            NavigationItem.SetRightBarButtonItem(Appearance.GetLogoutBarButton(this), true);
 
             CallCustomerCareButton.Layer.CornerRadius = 5;
             CallCustomerCareButton.ClipsToBounds = true;

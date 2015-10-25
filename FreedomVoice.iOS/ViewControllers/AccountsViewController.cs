@@ -17,7 +17,7 @@ namespace FreedomVoice.iOS.ViewControllers
             base.ViewDidLoad();
 
             Title = "Select Account";
-            NavigationItem.SetRightBarButtonItem(Appearance.GetLogoutBarButton(), true);
+            NavigationItem.SetRightBarButtonItem(Appearance.GetLogoutBarButton(this), true);
 
             AccountsTableView.Source = new AccountSource(AccountsList, NavigationController);
         }
