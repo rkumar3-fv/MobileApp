@@ -1,10 +1,13 @@
 using System;
 using Android.OS;
 using Android.Support.V4.App;
+using Android.Telephony;
 using Android.Util;
 using Android.Views;
 using com.FreedomVoice.MobileApp.Android.Activities;
+using com.FreedomVoice.MobileApp.Android.Dialogs;
 using com.FreedomVoice.MobileApp.Android.Helpers;
+using FreedomVoice.Core.Utils;
 
 namespace com.FreedomVoice.MobileApp.Android.Fragments
 {
@@ -90,5 +93,20 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         /// </summary>
         /// <param name="args">Result args</param>
         protected abstract void OnHelperEvent(ActionsHelperEventArgs args);
+
+        protected void Call(string phone)
+        {
+            if ((Helper.PhoneNumber == null) || (Helper.PhoneNumber.Length == 0))
+            {
+                var noCellularDialog = new NoCellularDialogFragment();
+                noCellularDialog.Show(ContentActivity.SupportFragmentManager, GetString(Resource.String.DlgCellular_title));
+            }
+            else
+            {
+                var normalizedNumber = PhoneNumberUtils.NormalizeNumber(phone);
+                Log.Debug(App.AppPackage, $"DIAL TO {DataFormatUtils.ToPhoneNumber(phone)}");
+                Helper.Call(normalizedNumber);
+            }
+        }
     }
 }

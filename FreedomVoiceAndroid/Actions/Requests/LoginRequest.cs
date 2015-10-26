@@ -46,7 +46,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
             Log.Debug(App.AppPackage, $"{GetType().Name} ExequteRequest");
             var asyncRes = await ApiHelper.Login(_login, _password);
             Log.Debug(App.AppPackage, $"{GetType().Name} GetResponse {(asyncRes == null ? "NULL":"NOT NULL")}");
-            Log.Debug(App.AppPackage, $"{GetType().Name} {asyncRes.Code} {asyncRes.Result}");
+            if (asyncRes == null) return new ErrorResponse(Id, ErrorResponse.ErrorConnection);
             var errorResponse = CheckErrorResponse(Id, asyncRes.Code);
             if (errorResponse != null)
             {

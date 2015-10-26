@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Android.OS;
+using Android.Util;
 using com.FreedomVoice.MobileApp.Android.Actions.Responses;
 using FreedomVoice.Core;
 using Java.Interop;
@@ -35,6 +36,8 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
         public override async Task<BaseResponse> ExecuteRequest()
         {
             var asyncRes = await ApiHelper.PasswordReset(_email);
+            Log.Debug(App.AppPackage, $"{GetType().Name} GetResponse {(asyncRes == null ? "NULL" : "NOT NULL")}");
+            if (asyncRes == null) return new ErrorResponse(Id, ErrorResponse.ErrorConnection);
             var errorResponse = CheckErrorResponse(Id, asyncRes.Code);
             if (errorResponse != null)
                 return errorResponse;

@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Android.OS;
+using Android.Util;
 using com.FreedomVoice.MobileApp.Android.Actions.Responses;
 using com.FreedomVoice.MobileApp.Android.Entities;
 using FreedomVoice.Core;
@@ -39,6 +40,8 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
         public async override Task<BaseResponse> ExecuteRequest()
         {
             var asyncRes = await ApiHelper.GetMailboxesWithCounts(AccountName);
+            Log.Debug(App.AppPackage, $"{GetType().Name} GetResponse {(asyncRes == null ? "NULL" : "NOT NULL")}");
+            if (asyncRes == null) return new ErrorResponse(Id, ErrorResponse.ErrorConnection);
             var errorResponse = CheckErrorResponse(Id, asyncRes.Code);
             if (errorResponse != null)
                 return errorResponse;

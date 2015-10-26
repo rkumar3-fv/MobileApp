@@ -1,12 +1,10 @@
 using System;
 using Android.OS;
 using Android.Support.Design.Widget;
-using Android.Telephony;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Adapters;
-using com.FreedomVoice.MobileApp.Android.Dialogs;
 using com.FreedomVoice.MobileApp.Android.Helpers;
 using FreedomVoice.Core.Utils;
 
@@ -39,11 +37,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         {
             var view = Inflater.Inflate(Resource.Layout.frag_keypad, null, false);
             _idSpinner = view.FindViewById<Spinner>(Resource.Id.keypadFragment_idSpinner);
-            _idSpinner.ItemSelected += (sender, args) =>
-            {
-                Helper.SelectedAccount.SelectedPresentationNumber = args.Position;
-                Log.Debug(App.AppPackage, $"PRESENTATION NUMBER SET to {DataFormatUtils.ToPhoneNumber(Helper.SelectedAccount.PresentationNumber)}");
-            };
+            _idSpinner.ItemSelected += (sender, args) => Helper.SetPresentationNumber(args.Position);
             _dialEdit = view.FindViewById<EditText>(Resource.Id.keypadFragment_dialText);
             _dialEdit.KeyListener = null;
             _backspaceButton = view.FindViewById<ImageButton>(Resource.Id.keypadFragment_backspace);
@@ -89,7 +83,8 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         public override void OnResume()
         {
             base.OnResume();
-            _idSpinner.SetSelection(Helper.SelectedAccount.SelectedPresentationNumber);
+            if (_idSpinner.SelectedItemPosition != Helper.SelectedAccount.SelectedPresentationNumber)
+                _idSpinner.SetSelection(Helper.SelectedAccount.SelectedPresentationNumber);
         }
 
         /// <summary>
@@ -107,17 +102,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         /// </summary>
         private void ButtonDialOnClick(object sender, EventArgs e)
         {
-            if ((Helper.PhoneNumber == null)||(Helper.PhoneNumber.Length == 0))
-            {
-                var noCellularDialog = new NoCellularDialogFragment();
-                noCellularDialog.Show(ContentActivity.SupportFragmentManager, GetString(Resource.String.DlgCellular_title));
-            }
-            else
-            {
-                var normalizedNumber = PhoneNumberUtils.NormalizeNumber(_enteredNumber);
-                Log.Debug(App.AppPackage, $"KEYPAD: dial to {DataFormatUtils.ToPhoneNumber(normalizedNumber)}");
-                Helper.Call(normalizedNumber);
-            }
+            Call(_enteredNumber);
         }
 
         /// <summary>
@@ -164,7 +149,16 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
 
         protected override void OnHelperEvent(ActionsHelperEventArgs args)
         {
-            
+            foreach (var code in args.Codes)
+            {
+                switch (code)
+                {
+                    case ActionsHelperEventArgs.ChangePresentation:
+                        if (_idSpinner.SelectedItemPosition != Helper.SelectedAccount.SelectedPresentationNumber)
+                            _idSpinner.SetSelection(Helper.SelectedAccount.SelectedPresentationNumber);
+                        break;
+                }
+            }
         }
     }
 }

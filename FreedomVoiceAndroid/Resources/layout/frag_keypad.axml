@@ -288,19 +288,22 @@
                 android:textColor="@color/colorKeyOnKeyboardSecondary" />
         </GridLayout>
     </LinearLayout>
-    <RelativeLayout
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal">
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/keypadFragment_buttonDial"
             app:borderWidth="0dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/fragment_keypad_fab_margin"
+            android:layout_width="@dimen/fragment_keypad_key_size"
+            android:layout_height="@dimen/fragment_keypad_key_size"
             android:src="@drawable/ic_action_dial"
-            android:layout_centerInParent="true"
+            android:layout_gravity="center_horizontal"
             app:elevation="@dimen/fragment_keypad_fab_elevation"
             app:pressedTranslationZ="@dimen/fragment_keypad_fab_translation"
             app:backgroundTint="@color/colorFabPrimary"
             app:rippleColor="@color/colorFabPressed" />
-    </RelativeLayout>
+    </LinearLayout>
 </LinearLayout>

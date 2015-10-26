@@ -19,6 +19,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         public const int CallReservationOk = 41;        //CallReservation - phone
         public const int CallReservationFail = 42;      //CallReservation - BadRequest or empty
         public const int ClearRecents = 43;             //ClearRecents
+        public const int ChangePresentation = 44;       //Presentation number changed
 
         public ActionsHelperEventArgs(long requestId, int[] codes)
         {

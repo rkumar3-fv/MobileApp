@@ -49,6 +49,8 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
         {
             Log.Debug(App.AppPackage, $"REQUEST FOLDERS FOR x{ExtensionId}");
             var asyncRes = await ApiHelper.GetFoldersWithCount(AccountName, ExtensionId);
+            Log.Debug(App.AppPackage, $"{GetType().Name} GetResponse {(asyncRes == null ? "NULL" : "NOT NULL")}");
+            if (asyncRes == null) return new ErrorResponse(Id, ErrorResponse.ErrorConnection);
             var errorResponse = CheckErrorResponse(Id, asyncRes.Code);
             if (errorResponse != null)
                 return errorResponse;

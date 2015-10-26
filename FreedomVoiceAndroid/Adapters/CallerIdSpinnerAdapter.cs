@@ -55,7 +55,7 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
         /// <returns>Account</returns>
         public string GetPresentationNumber(int position)
         {
-            return _numbersList[position];
+            return _numbersList == null ? "" : _numbersList[position];
         }
 
         public override long GetItemId(int position)
@@ -77,7 +77,8 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
                 holder.SpinnerValue = view.FindViewById<TextView>(Resource.Id.itemSpinner_idText);
                 view.Tag = holder;
             }
-            holder.SpinnerValue.Text = DataFormatUtils.ToPhoneNumber(_numbersList[position]);
+            if (_numbersList != null)
+                holder.SpinnerValue.Text = DataFormatUtils.ToPhoneNumber(_numbersList[position]);
             return view;
         }
 
@@ -95,7 +96,8 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
                 holder.SpinnerValue = view.FindViewById<TextView>(Resource.Id.itemSpinnerDrop_idText);
                 view.Tag = holder;
             }
-            holder.SpinnerValue.Text = DataFormatUtils.ToPhoneNumber(_numbersList[position]);
+            if (_numbersList != null)
+                holder.SpinnerValue.Text = DataFormatUtils.ToPhoneNumber(_numbersList[position]);
             return view;
         }
 

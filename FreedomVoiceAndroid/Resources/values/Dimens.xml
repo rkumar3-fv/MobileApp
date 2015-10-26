@@ -99,7 +99,8 @@
   <dimen name="fragment_keypad_button_ripple">64dp</dimen>
   <dimen name="fragment_keypad_fab_elevation">6dp</dimen>
   <dimen name="fragment_keypad_fab_translation">12dp</dimen>
-  <dimen name="fragment_keypad_fab_ripple">48dp</dimen>
+  <dimen name="fragment_keypad_fab_ripple">64dp</dimen>
+  <dimen name="fragment_keypad_fab_margin">36dp</dimen>
   <dimen name="fragment_keypad_backspace_margin">8dp</dimen>
   <dimen name="fragment_keypad_backspace_size">40dp</dimen>
   <dimen name="fragment_keypad_keyboard_padding">20dp</dimen>
@@ -123,4 +124,7 @@
   <dimen name="dlg_padding">20dp</dimen>
   <dimen name="dlg_title_font">20sp</dimen>
   <dimen name="dlg_content_font">16sp</dimen>
+  <dimen name="dlg_numbers_element_height">48dp</dimen>
+  <dimen name="dlg_numbers_element_padding">8dp</dimen>
+  <dimen name="dlg_numbers_max_height">114dp</dimen>
 </resources>

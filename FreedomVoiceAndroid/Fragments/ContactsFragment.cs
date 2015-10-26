@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Android.Database;
 using Android.OS;
@@ -8,6 +9,7 @@ using Android.Util;
 using Android.Views;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Adapters;
+using com.FreedomVoice.MobileApp.Android.Dialogs;
 using com.FreedomVoice.MobileApp.Android.Helpers;
 using FreedomVoice.Core.Utils;
 
@@ -26,11 +28,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         {
             var view = Inflater.Inflate(Resource.Layout.frag_contacts, null, false);
             _idSpinner = view.FindViewById<Spinner>(Resource.Id.contatnsFragment_idSpinner);
-            _idSpinner.ItemSelected += (sender, args) =>
-            {
-                Helper.SelectedAccount.SelectedPresentationNumber = args.Position;
-                Log.Debug(App.AppPackage, $"PRESENTATION NUMBER SET to {DataFormatUtils.ToPhoneNumber(Helper.SelectedAccount.PresentationNumber)}");
-            };
+            _idSpinner.ItemSelected += (sender, args) => Helper.SetPresentationNumber(args.Position);
 
             _contactsView = view.FindViewById<RecyclerView>(Resource.Id.contactsFragment_recyclerView);
             _contactsView.SetLayoutManager(new LinearLayoutManager(Activity));
@@ -60,20 +58,50 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         public override void OnResume()
         {
             base.OnResume();
-            _idSpinner.SetSelection(Helper.SelectedAccount.SelectedPresentationNumber);
+            if (_idSpinner.SelectedItemPosition != Helper.SelectedAccount.SelectedPresentationNumber)
+                _idSpinner.SetSelection(Helper.SelectedAccount.SelectedPresentationNumber);
         }
 
         private void AdapterOnItemClick(object sender, List<string> list)
         {
-            foreach (var item in list)
+            foreach (var phone in list)
             {
-                Log.Debug(App.AppPackage, $"Phone: {item}");
+                Log.Debug(App.AppPackage, $"PHONE: {phone}");
             }
+            switch (list.Count)
+            {
+                case 0:
+                    var noPhonesDialog = new NoContactsDialogFragment();
+                    noPhonesDialog.Show(ContentActivity.SupportFragmentManager, GetString(Resource.String.DlgNumbers_content));
+                    break;
+                case 1:
+                    Call(list[0]);
+                    break;
+                default:
+                    var multiPhonesDialog = new MultiContactsDialogFragment(list, ContentActivity);
+                    multiPhonesDialog.PhoneClick += MultiPhonesDialogOnPhoneClick;
+                    multiPhonesDialog.Show(ContentActivity.SupportFragmentManager, GetString(Resource.String.DlgNumbers_title));
+                    break;
+            }
+        }
+
+        private void MultiPhonesDialogOnPhoneClick(object sender, string s)
+        {
+            Call(s);
         }
 
         protected override void OnHelperEvent(ActionsHelperEventArgs args)
         {
-            
+            foreach (var code in args.Codes)
+            {
+                switch (code)
+                {
+                    case ActionsHelperEventArgs.ChangePresentation:
+                        if (_idSpinner.SelectedItemPosition != Helper.SelectedAccount.SelectedPresentationNumber)
+                            _idSpinner.SetSelection(Helper.SelectedAccount.SelectedPresentationNumber);
+                        break;
+                }
+            }
         }
     }
 }

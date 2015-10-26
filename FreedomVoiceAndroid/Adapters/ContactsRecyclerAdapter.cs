@@ -34,7 +34,7 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
             {
                 string[] projection = { ContactsContract.Contacts.InterfaceConsts.Id, ContactsContract.CommonDataKinds.Phone.Number };
                 var loader = new CursorLoader(_context, ContactsContract.CommonDataKinds.Phone.ContentUri, projection,
-                    "contact_id=?", new[] {id}, null);
+                    $"contact_id={id}", null, null);
                 var cursor = (ICursor)loader.LoadInBackground();
                 if (cursor != null)
                 {
@@ -46,7 +46,8 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
                     cursor.Close();
                     ItemClick?.Invoke(this, phones);
                 }
-                ItemClick?.Invoke(this, new List<string>());
+                else
+                    ItemClick?.Invoke(this, new List<string>());
             }
         }
 
@@ -75,8 +76,23 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
             if (!Cursor.MoveToPosition(position))
                 return;
             var name = Cursor.GetString(Cursor.GetColumnIndex(ContactsContract.Contacts.InterfaceConsts.DisplayName));
-            if (name.Length > 0)
-                viewHolder.ContactLetter.Text = name.Substring(0, 1).ToUpper();
+            if (!Cursor.MoveToPrevious())
+            {
+                if (name.Length > 0)
+                    viewHolder.ContactLetter.Text = name.Substring(0, 1).ToUpper();
+                else
+                    viewHolder.ContactLetter.Text = "";
+            }
+            else
+            {
+                var prevName = Cursor.GetString(Cursor.GetColumnIndex(ContactsContract.Contacts.InterfaceConsts.DisplayName));
+                if ((name.Length > 0)&&(prevName.Length>0)&&((prevName.Substring(0,1).ToLowerInvariant()).Equals(name.Substring(0,1).ToLowerInvariant())))
+                    viewHolder.ContactLetter.Text = "";
+                else
+                    viewHolder.ContactLetter.Text = name.Substring(0, 1).ToUpper();
+                
+            }
+
             viewHolder.ContactText.Text = name;
         }
 

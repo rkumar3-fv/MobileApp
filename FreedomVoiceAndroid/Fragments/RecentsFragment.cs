@@ -24,11 +24,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         {
             var view = Inflater.Inflate(Resource.Layout.frag_recents, null, false);
             _idSpinner = view.FindViewById<Spinner>(Resource.Id.recentsFragment_idSpinner);
-            _idSpinner.ItemSelected += (sender, args) =>
-            {
-                Helper.SelectedAccount.SelectedPresentationNumber = args.Position;
-                Log.Debug(App.AppPackage, $"PRESENTATION NUMBER SET to {DataFormatUtils.ToPhoneNumber(Helper.SelectedAccount.PresentationNumber)}");
-            };
+            _idSpinner.ItemSelected += (sender, args) => Helper.SetPresentationNumber(args.Position);
 
             _recentsView = view.FindViewById<RecyclerView>(Resource.Id.recentsFragment_recyclerView);
             _recentsView.SetLayoutManager(new LinearLayoutManager(Activity));
@@ -56,7 +52,8 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         public override void OnResume()
         {
             base.OnResume();
-            _idSpinner.SetSelection(Helper.SelectedAccount.SelectedPresentationNumber);
+            if (_idSpinner.SelectedItemPosition != Helper.SelectedAccount.SelectedPresentationNumber)
+                _idSpinner.SetSelection(Helper.SelectedAccount.SelectedPresentationNumber);
             _adapter.NotifyDataSetChanged();
         }
 
@@ -74,8 +71,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         /// </summary>
         private void AdapterOnItemClick(object sender, long l)
         {
-            Log.Debug(App.AppPackage, $"REDIAL TO {DataFormatUtils.ToPhoneNumber(Helper.RecentsDictionary[l].PhoneNumber)}");
-            Helper.Call(Helper.RecentsDictionary[l].PhoneNumber);
+            Call(Helper.RecentsDictionary[l].PhoneNumber);
         }
 
         /// <summary>
@@ -96,6 +92,10 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                     case ActionsHelperEventArgs.CallReservationOk:
                     case ActionsHelperEventArgs.CallReservationFail:
                         _adapter.NotifyAddItem();
+                        break;
+                    case ActionsHelperEventArgs.ChangePresentation:
+                        if (_idSpinner.SelectedItemPosition != Helper.SelectedAccount.SelectedPresentationNumber)
+                            _idSpinner.SetSelection(Helper.SelectedAccount.SelectedPresentationNumber);
                         break;
                     case ActionsHelperEventArgs.ClearRecents:
                         _adapter.NotifyClear();

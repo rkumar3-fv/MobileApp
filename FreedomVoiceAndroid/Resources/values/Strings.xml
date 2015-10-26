@@ -91,7 +91,7 @@
   <string name="DlgRestore_content">Please follow the instructions inside.</string>
   <string name="DlgClear_content">Clear all recents?</string>
   <string name="DlgClear_ok">CLEAR</string>
-  <string name="DlgNumbers_content">No phone numbers available for</string>
+  <string name="DlgNumbers_content">No phone numbers available</string>
   <string name="DlgNumbers_title">Selet number</string>
   <string name="DlgAirplane_content">Airplane Mode must be turned off to make calls from the FreedomVoice app.</string>
   <string name="DlgCallerId_content">Caller ID must be turned on for your device to make calls from the FreedomVoice app.</string>

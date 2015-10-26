@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Android.OS;
+using Android.Util;
 using com.FreedomVoice.MobileApp.Android.Actions.Responses;
 using FreedomVoice.Core;
 using Java.Interop;
@@ -26,7 +27,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
         /// <summary>
         /// Real phone number (SIM)
         /// </summary>
-        public string RealSIMNumber { get; }
+        public string RealSimNumber { get; }
 
         /// <summary>
         /// Number for dialing
@@ -38,7 +39,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
         {
             Account = account;
             PresentationNumber = presentationNumber;
-            RealSIMNumber = simNumber;
+            RealSimNumber = simNumber;
             DialingNumber = dialingNumber;
         }
 
@@ -46,13 +47,15 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
         {
             Account = parcel.ReadString();
             PresentationNumber = parcel.ReadString();
-            RealSIMNumber = parcel.ReadString();
+            RealSimNumber = parcel.ReadString();
             DialingNumber = parcel.ReadString();
         }
 
         public override async Task<BaseResponse> ExecuteRequest()
         {
-            var asyncRes = await ApiHelper.CreateCallReservation(Account, RealSIMNumber, PresentationNumber, DialingNumber);
+            var asyncRes = await ApiHelper.CreateCallReservation(Account, RealSimNumber, PresentationNumber, DialingNumber);
+            Log.Debug(App.AppPackage, $"{GetType().Name} GetResponse {(asyncRes == null ? "NULL" : "NOT NULL")}");
+            if (asyncRes == null) return new ErrorResponse(Id, ErrorResponse.ErrorConnection);
             var errorResponse = CheckErrorResponse(Id, asyncRes.Code);
             if (errorResponse != null)
                 return errorResponse;
@@ -64,7 +67,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
             base.WriteToParcel(dest, flags);
             dest.WriteString(Account);
             dest.WriteString(PresentationNumber);
-            dest.WriteString(RealSIMNumber);
+            dest.WriteString(RealSimNumber);
             dest.WriteString(DialingNumber);
         }
 

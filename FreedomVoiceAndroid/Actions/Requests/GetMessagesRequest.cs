@@ -56,6 +56,8 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
         {
             Log.Debug(App.AppPackage, $"REQUEST MESSAGES FOR x{ExtensionId} from {Folder}");
             var asyncRes = await ApiHelper.GetMesages(AccountName, ExtensionId, Folder, 30, 1, false);
+            Log.Debug(App.AppPackage, $"{GetType().Name} GetResponse {(asyncRes == null ? "NULL" : "NOT NULL")}");
+            if (asyncRes == null) return new ErrorResponse(Id, ErrorResponse.ErrorConnection);
             var errorResponse = CheckErrorResponse(Id, asyncRes.Code);
             if (errorResponse != null)
                 return errorResponse;

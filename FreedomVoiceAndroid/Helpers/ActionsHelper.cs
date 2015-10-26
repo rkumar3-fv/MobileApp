@@ -11,6 +11,7 @@ using com.FreedomVoice.MobileApp.Android.Actions.Responses;
 using com.FreedomVoice.MobileApp.Android.Activities;
 using com.FreedomVoice.MobileApp.Android.Entities;
 using com.FreedomVoice.MobileApp.Android.Services;
+using FreedomVoice.Core.Utils;
 using Java.Util.Concurrent.Atomic;
 using Uri = Android.Net.Uri;
 
@@ -342,7 +343,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                 return request.Key;
             }
             Log.Debug(App.AppPackage, $"HELPER REQUEST: Call ID={requestId}");
-            Log.Debug(App.AppPackage, $"Call from {reserveCallRequest.Account} (shows as {reserveCallRequest.PresentationNumber}) to {reserveCallRequest.DialingNumber} using SIM {reserveCallRequest.RealSIMNumber}");
+            Log.Debug(App.AppPackage, $"Call from {reserveCallRequest.Account} (shows as {reserveCallRequest.PresentationNumber}) to {reserveCallRequest.DialingNumber} using SIM {reserveCallRequest.RealSimNumber}");
             PrepareIntent(requestId, reserveCallRequest);
             return requestId;
         }
@@ -483,6 +484,17 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         public void ClearAllRecents()
         {
             HelperEvent?.Invoke(this, new ActionsHelperEventArgs(-1, new[] { ActionsHelperEventArgs.ClearRecents }));
+        }
+
+        /// <summary>
+        /// Changing presentation number
+        /// </summary>
+        /// <param name="index">number index</param>
+        public void SetPresentationNumber(int index)
+        {
+            SelectedAccount.SelectedPresentationNumber = index;
+            Log.Debug(App.AppPackage, $"PRESENTATION NUMBER SET to {DataFormatUtils.ToPhoneNumber(SelectedAccount.PresentationNumber)}");
+            HelperEvent?.Invoke(this, new ActionsHelperEventArgs(-1, new[] { ActionsHelperEventArgs.ChangePresentation }));
         }
 
         /// <summary>

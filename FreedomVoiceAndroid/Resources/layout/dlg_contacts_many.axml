@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -14,14 +15,15 @@
             android:layout_height="wrap_content"
             style="@style/DlgTitleText"
             android:text="@string/DlgNumbers_title" />
-        <android.support.v7.widget.RecyclerView
+        <com.FreedomVoice.MobileApp.Android.Dialogs.DialogRecyclerView
             android:id="@+id/ManyContactsDlg_list"
             style="@style/ScrollTheme"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            app:maxHeight="@dimen/dlg_numbers_max_height"
             android:layout_marginTop="@dimen/dlg_padding"
-            android:paddingTop="@dimen/select_acc_activity_element_padding"
-            android:paddingBottom="@dimen/select_acc_activity_element_padding"
+            android:paddingTop="@dimen/dlg_numbers_element_padding"
+            android:paddingBottom="@dimen/dlg_numbers_element_padding"
             android:clipToPadding="false" />
     </LinearLayout>
     <LinearLayout
