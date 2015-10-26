@@ -164,6 +164,7 @@
     <Compile Include="Adapters\SwipeCallback.cs" />
     <Compile Include="Adapters\SwipeCallbackEventArgs.cs" />
     <Compile Include="Dialogs\BaseDialogFragment.cs" />
+    <Compile Include="Dialogs\ClearRecentsDialog.cs" />
     <Compile Include="Dialogs\DialogEventArgs.cs" />
     <Compile Include="Dialogs\DialogRecyclerView.cs" />
     <Compile Include="Dialogs\DialogResult.cs" />

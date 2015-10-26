@@ -58,7 +58,7 @@
         public async static Task<BaseResult<CreateCallReservationSetting>> CreateCallReservation(string systemPhoneNumber, string expectedCallerIdNumber, string presentationPhoneNumber, string destinationPhoneNumber)
         {
             var postdata = $"ExpectedCallerIdNumber={expectedCallerIdNumber}&PresentationPhoneNumber={presentationPhoneNumber}&DestinationPhoneNumber={destinationPhoneNumber}";
-
+            postdata = postdata.Replace("+", "%2B");
             return await MakeAsyncPostRequest<CreateCallReservationSetting>(
                 $"/api/v1/systems/{systemPhoneNumber}/createCallReservation",
                 postdata,
