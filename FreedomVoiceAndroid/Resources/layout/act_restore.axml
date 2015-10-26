@@ -23,14 +23,27 @@
         android:inputType="textEmailAddress"
         android:layout_below="@id/restoreActivity_infoText"
         android:layout_marginTop="@dimen/restore_activity_info_field_margin" />
-    <Button
-        android:id="@+id/restoreActivity_sendButton"
-        style="@style/AppButtonStyle"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/ActivityRestore_sendButton"
         android:layout_below="@id/restoreActivity_emailField"
-        android:layout_marginTop="@dimen/restore_activity_field_button_margin" />
+        android:layout_marginTop="@dimen/restore_activity_field_button_margin">
+        <Button
+            android:id="@+id/restoreActivity_sendButton"
+            style="@style/AppButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/ActivityRestore_sendButton" />
+        <ProgressBar
+            android:id="@+id/restoreActivity_progress"
+            style="@style/InButtonProgressBar"
+            android:visibility="invisible"
+            android:layout_width="@dimen/activity_progress"
+            android:layout_height="@dimen/activity_progress"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:elevation="@dimen/activity_button_elevation" />
+    </RelativeLayout>
     <TextView
         android:id="@+id/restoreActivity_resultText"
         style="@style/AuthErrorLabelText"

@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <resources>
+  <color name="colorTransparent">#00000000</color>
   <color name="colorActionBarText">#ffffff</color>
   <color name="colorPrimaryDark">#126ea5</color>
   <color name="colorPrimary">#1789ce</color>
@@ -13,7 +14,7 @@
   <color name="colorTabIndicatorInactive">#b3ffffff</color>
   <color name="colorFabPrimary">#85b640</color>
   <color name="colorFabPressed">#8bc34a</color>
-
+  <color name="colorButtonPressed">#ff9800</color>
   <color name="messageIndicator">#1a000000</color>
   <color name="messageIndicatorText">#8c000000</color>
   <color name="colorAuthHeader">#002f57</color>
@@ -27,4 +28,13 @@
   <color name="colorDivider">#26000000</color>
   <color name="colorKeyOnKeyboardMain">#038ac1</color>
   <color name="colorKeyOnKeyboardSecondary">#8c000000</color>
+  <color name="colorPullRefreshFirst">#f0aa1e</color>
+  <color name="colorPullRefreshSecond">#6bcbda</color>
+  <color name="colorPullRefreshThird">#5a6f8a</color>
+  <color name="colorDlgButton">#038ac1</color>
+  <color name="colorDlgTitle">#d9000000</color>
+  <color name="colorDlgContent">#8c000000</color>
+  <color name="colorRemoveList">#f04e3d</color>
+  <color name="colorUndoList">#85b640</color>
+  <color name="colorScroll">#665a6f8a</color>
 </resources>

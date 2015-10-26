@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Android.OS;
+using Android.Util;
 using com.FreedomVoice.MobileApp.Android.Actions.Responses;
 using FreedomVoice.Core;
 using Java.Interop;
@@ -10,7 +11,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
 {
     /// <summary>
     /// Login action
-    /// <see href="https://webservices.freedomvoice.com/FreedomAPI/FreedomAPI.asmx?op=Login">FreedomAPI - login</see>
+    /// <see href="https://api.freedomvoice.com/Help/Api/POST-api-v1-login">API - Login request</see>
     /// </summary>
     public class LoginRequest : BaseRequest, IEquatable<LoginRequest>
     {
@@ -42,10 +43,17 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
         /// <returns>LoginResponse or ErrorResponse</returns>
         public override async Task<BaseResponse> ExecuteRequest()
         {
+            Log.Debug(App.AppPackage, $"{GetType().Name} ExequteRequest");
             var asyncRes = await ApiHelper.Login(_login, _password);
+            Log.Debug(App.AppPackage, $"{GetType().Name} GetResponse {(asyncRes == null ? "NULL":"NOT NULL")}");
+            if (asyncRes == null) return new ErrorResponse(Id, ErrorResponse.ErrorConnection);
             var errorResponse = CheckErrorResponse(Id, asyncRes.Code);
             if (errorResponse != null)
+            {
+                Log.Debug(App.AppPackage, $"{GetType().Name} Error: {errorResponse.ErrorCode}");
                 return errorResponse;
+            }
+            Log.Debug(App.AppPackage, $"{GetType().Name} OK");
             return new LoginResponse(Id);
         }
 

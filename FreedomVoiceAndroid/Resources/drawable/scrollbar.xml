@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+  <item android:right="@dimen/activity_scroll_padding">
+    <shape android:shape="rectangle">
+      <solid android:color="@color/colorScroll" />
+      <padding android:right="@dimen/activity_scroll_padding" />
+      <size android:width="@dimen/activity_scroll_width" />
+    </shape>
+  </item>
+</layer-list>

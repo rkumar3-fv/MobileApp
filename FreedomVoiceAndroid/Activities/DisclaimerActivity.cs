@@ -1,6 +1,7 @@
 ﻿using System;
 using Android.App;
 using Android.Content;
+using Android.Content.PM;
 using Android.OS;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Helpers;
@@ -13,6 +14,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
     [Activity(
         Label = "@string/ActivityDisclaimer_title",
         Theme = "@style/AppThemeActionBar",
+        ScreenOrientation = ScreenOrientation.Portrait,
         NoHistory = true)]
     public class DisclaimerActivity : InfoActivity
     {

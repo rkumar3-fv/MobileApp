@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:elevation="@dimen/dlg_elevation">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/dlg_margin">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dlg_padding"
+            style="@style/DlgContentText"
+            android:text="@string/DlgNumbers_content" />
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/dlg_action_bar_height"
+        android:layout_gravity="right|center">
+        <Button
+            android:id="@+id/NoContactsDlg_ok"
+            style="@style/BorderlessDialogButtonStyle"
+            android:text="@string/Dlg_ok"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/dlg_action_bar_button"
+            android:layout_margin="@dimen/dlg_action_bar_padding" />
+    </LinearLayout>
+</LinearLayout>

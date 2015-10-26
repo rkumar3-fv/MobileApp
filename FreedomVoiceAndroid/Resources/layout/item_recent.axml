@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="@dimen/fragment_recent_height">
+    <LinearLayout
+        android:id="@+id/itemRecent_additionalArea"
+        android:layout_width="@dimen/fragment_recent_additional_area_width"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/fragment_recent_height"
+        android:layout_alignParentRight="true"
+        android:gravity="center_vertical"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?android:attr/selectableItemBackground">
+        <ImageView
+            android:src="@drawable/ic_action_info"
+            android:layout_height="@dimen/fragment_recent_icon_size"
+            android:layout_width="@dimen/fragment_recent_icon_size"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin" />
+    </LinearLayout>
+    <RelativeLayout
+        android:id="@+id/itemRecent_mainArea"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/fragment_recent_height"
+        android:layout_alignParentLeft="true"
+        android:layout_toLeftOf="@id/itemRecent_additionalArea"
+        android:gravity="center_vertical"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?android:attr/selectableItemBackground">
+        <TextView
+            android:id="@+id/itemRecent_date"
+            style="@style/ListItemDateText"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_alignParentRight="true" />
+        <TextView
+            android:id="@+id/itemRecent_phone"
+            style="@style/ListItemText"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_alignParentLeft="true"
+            android:layout_toLeftOf="@id/itemRecent_date" />
+    </RelativeLayout>
+</RelativeLayout>

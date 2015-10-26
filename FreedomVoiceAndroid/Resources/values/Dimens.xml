@@ -1,8 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <resources>
   <!-- Text-->
+  <dimen name="text_big">34sp</dimen>
   <dimen name="text_main">16sp</dimen>
   <dimen name="text_secondary">14sp</dimen>
+  <dimen name="text_small">12sp</dimen>
   <dimen name="text_tab">14sp</dimen>
   
   <!-- Toolbar -->
@@ -24,6 +26,9 @@
   <dimen name="activity_button_elevation">4dp</dimen>
   <dimen name="activity_button_size">36dp</dimen>
   <dimen name="activity_button_text">14sp</dimen>
+  <dimen name="activity_scroll_padding">4dp</dimen>
+  <dimen name="activity_scroll_width">4dp</dimen>
+  <dimen name="activity_progress">24dp</dimen>
   
   <!-- Auth Activity -->
   <dimen name="auth_activity_vertical_margin">8dp</dimen>
@@ -54,31 +59,72 @@
   <dimen name="select_acc_activity_element_height">48dp</dimen>
   <dimen name="select_acc_activity_element_padding">8dp</dimen>
   
+  <!-- Messages details activity -->
+  <dimen name="details_activity_image_height">200dp</dimen>
+  <dimen name="details_activity_number_margin">30dp</dimen>
+  <dimen name="details_activity_stamp_margin">20dp</dimen>
+  <dimen name="details_activity_actions_margin">10dp</dimen>
+  <dimen name="details_activity_actions_spacing">8dp</dimen>
+  <dimen name="details_activity_actions_height">36dp</dimen>
+  
   <!-- Content activity -->
   <dimen name="content_activity_tab_text_size">14sp</dimen>
-  <dimen name="content_activity_tab_elevation">3dp</dimen>
+  <dimen name="content_activity_tab_elevation">6dp</dimen>
   <dimen name="content_activity_tab_indicator_size">6dp</dimen>
   <dimen name="content_activity_tab_text_padding">8dp</dimen>
   <dimen name="content_activity_tab_icon_padding">4dp</dimen>
   <dimen name="content_activity_tab_height">74dp</dimen>
+  <dimen name="content_activity_id_elevation">4dp</dimen>
   
   <!-- Messages fragment -->
   <dimen name="fragment_msg_element_height">48dp</dimen>
+  <dimen name="fragment_msg_element_big_height">72dp</dimen>
   <dimen name="fragment_msg_element_padding">8dp</dimen>
   <dimen name="fragment_msg_ind_width">32dp</dimen>
   <dimen name="fragment_msg_ind_height">23dp</dimen>
   <dimen name="fragment_msg_ind_corner">2dp</dimen>
+  <dimen name="fragment_msg_text_padding">56dp</dimen>
   
-  <!-- Keyboard fragment -->
+  <!-- Keypad fragment -->
   <dimen name="fragment_keypad_spinner_size">56dp</dimen>
   <dimen name="fragment_keypad_number_size">65dp</dimen>
-  <dimen name="fragment_keypad_number_size">34sp</dimen>
+  <dimen name="fragment_keypad_number_text_size">34sp</dimen>
   <dimen name="fragment_keypad_key_text_size">36sp</dimen>
   <dimen name="fragment_keypad_key_small_text_size">12sp</dimen>
   <dimen name="fragment_keypad_key_size">64dp</dimen>
+  <dimen name="fragment_keypad_key_top_spacing">12dp</dimen>
   <dimen name="fragment_keypad_key_spacing">40dp</dimen>
+  <dimen name="fragment_keypad_backspace_spacing">48dp</dimen>
   <dimen name="fragment_keypad_bottom_margin">76dp</dimen>
+  <dimen name="fragment_keypad_button_ripple">64dp</dimen>
   <dimen name="fragment_keypad_fab_elevation">6dp</dimen>
   <dimen name="fragment_keypad_fab_translation">12dp</dimen>
-  <dimen name="fragment_keypad_fab_ripple">48dp</dimen>
+  <dimen name="fragment_keypad_fab_ripple">64dp</dimen>
+  <dimen name="fragment_keypad_fab_margin">36dp</dimen>
+  <dimen name="fragment_keypad_backspace_margin">8dp</dimen>
+  <dimen name="fragment_keypad_backspace_size">40dp</dimen>
+  <dimen name="fragment_keypad_keyboard_padding">20dp</dimen>
+
+  <!-- Recents fragment -->
+  <dimen name="fragment_recent_additional_area_width">56dp</dimen>
+  <dimen name="fragment_recent_height">48dp</dimen>
+  <dimen name="fragment_recent_icon_size">24dp</dimen>
+  
+  <!-- Contacts fragment -->
+  <dimen name="fragment_contacts_letter_width">56dp</dimen>
+  <dimen name="fragment_contacts_height">48dp</dimen>
+  
+  <!-- Dialogs -->
+  <dimen name="dlg_elevation">24dp</dimen>
+  <dimen name="dlg_action_bar_height">52dp</dimen>
+  <dimen name="dlg_action_bar_button">36dp</dimen>
+  <dimen name="dlg_action_bar_padding">8dp</dimen>
+  <dimen name="dlg_action_bar_font">14sp</dimen>
+  <dimen name="dlg_margin">24dp</dimen>
+  <dimen name="dlg_padding">20dp</dimen>
+  <dimen name="dlg_title_font">20sp</dimen>
+  <dimen name="dlg_content_font">16sp</dimen>
+  <dimen name="dlg_numbers_element_height">48dp</dimen>
+  <dimen name="dlg_numbers_element_padding">8dp</dimen>
+  <dimen name="dlg_numbers_max_height">114dp</dimen>
 </resources>

@@ -12,12 +12,13 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
     public abstract class BaseActivity : AppCompatActivity
     {
         public ActionsHelper Helper;
+        protected App Appl;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            var app = App.GetApplication(this);
-            Helper = app.Helper;
+            Appl = App.GetApplication(this);
+            Helper = Appl.Helper;
         }
 
         protected override void OnPause()

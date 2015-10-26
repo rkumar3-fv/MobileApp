@@ -6,8 +6,8 @@
     <shape android:shape="oval">
       <solid android:color="?android:colorAccent" />
       <size
-       android:width="@dimen/fragment_keypad_fab_ripple"
-        android:height="@dimen/fragment_keypad_fab_ripple"/>
+       android:width="@dimen/fragment_keypad_button_ripple"
+        android:height="@dimen/fragment_keypad_button_ripple"/>
     </shape>
   </item>
 </ripple>

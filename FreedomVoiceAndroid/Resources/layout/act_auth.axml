@@ -66,15 +66,28 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/auth_activity_error_message_spacing" />
-            <Button
-                android:id="@+id/authActivity_loginButton"
-                style="@style/AppButtonStyle"
+            <RelativeLayout
                 android:layout_centerHorizontal="true"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/authActivity_passwordField"
-                android:text="@string/ActivityAuth_authButton"
-                android:layout_marginTop="@dimen/auth_activity_password_button_spacing" />
+                android:layout_marginTop="@dimen/auth_activity_password_button_spacing">
+                <Button
+                    android:id="@+id/authActivity_loginButton"
+                    style="@style/AppButtonStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ActivityAuth_authButton" />
+                <ProgressBar
+                    android:id="@+id/authActivity_progress"
+                    style="@style/InButtonProgressBar"
+                    android:visibility="invisible"
+                    android:layout_width="@dimen/activity_progress"
+                    android:layout_height="@dimen/activity_progress"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:elevation="@dimen/activity_button_elevation" />
+            </RelativeLayout>
         </RelativeLayout>
         <Button
             android:id="@+id/authActivity_forgotButton"
@@ -93,6 +106,7 @@
                 android:layout_width="@dimen/logo_horizontal"
                 android:layout_height="@dimen/logo_vertical"
                 android:src="@drawable/logo_white"
+                android:scaleType="centerCrop"
                 android:layout_gravity="center" />
         </LinearLayout>
     </RelativeLayout>
