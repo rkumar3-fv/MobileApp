@@ -22,6 +22,11 @@
     <MtouchArch>i386</MtouchArch>
     <MtouchLink>None</MtouchLink>
     <MtouchDebug>true</MtouchDebug>
+    <CodesignKey>iPhone Developer</CodesignKey>
+    <CodesignProvision />
+    <CodesignEntitlements />
+    <CodesignResourceRules />
+    <CodesignExtraArgs />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
     <DebugType>none</DebugType>
@@ -46,6 +51,10 @@
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
     <CodesignKey>iPhone Developer</CodesignKey>
     <MtouchDebug>true</MtouchDebug>
+    <CodesignProvision>
+    </CodesignProvision>
+    <CodesignResourceRules />
+    <CodesignExtraArgs />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
     <DebugType>none</DebugType>
@@ -201,15 +210,9 @@
       <DependentUpon>MainTabBarController.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <InterfaceDefinition Include="MainStoryboard.storyboard" />
   </ItemGroup>
   <ItemGroup>
-    <InterfaceDefinition Include="MainStoryboard.storyboard">
-      <SubType>Designer</SubType>
-    </InterfaceDefinition>
-    <BundleResource Include="Resources\first.png" />
-    <BundleResource Include="Resources\first@2x.png" />
-    <BundleResource Include="Resources\second.png" />
-    <BundleResource Include="Resources\second@2x.png" />
     <BundleResource Include="Resources\Default-568h%402x.png" />
   </ItemGroup>
   <ItemGroup>
@@ -229,12 +232,43 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Entitlements.plist" />
-    <BundleResource Include="Resources\dial%402x.png" />
-    <BundleResource Include="Resources\clearPhone.png" />
     <Content Include="GoogleService-Info.plist" />
-    <BundleResource Include="Resources\recent.png" />
-    <BundleResource Include="Resources\backspace%402x.png" />
-    <BundleResource Include="Resources\call%402x.png" />
+    <BundleResource Include="Resources\keypad_call%402x.png" />
+    <BundleResource Include="Resources\Login-568h%402x.png" />
+    <BundleResource Include="Resources\contacts_access%402x.png" />
+    <BundleResource Include="Resources\dropdown_arrow%402x.png" />
+    <BundleResource Include="Resources\folder_new%402x.png" />
+    <BundleResource Include="Resources\folder_saved%402x.png" />
+    <BundleResource Include="Resources\folder_sent%402x.png" />
+    <BundleResource Include="Resources\folder_trash%402x.png" />
+    <BundleResource Include="Resources\keypad_asterisk%402x.png" />
+    <BundleResource Include="Resources\keypad_backspace%402x.png" />
+    <BundleResource Include="Resources\keypad_plus%402x.png" />
+    <BundleResource Include="Resources\keypad_sharp%402x.png" />
+    <BundleResource Include="Resources\logo_freedomvoice_grey%402x.png" />
+    <BundleResource Include="Resources\logo_freedomvoice_small_white%402x.png" />
+    <BundleResource Include="Resources\logo_freedomvoice_white%402x.png" />
+    <BundleResource Include="Resources\logout%402x.png" />
+    <BundleResource Include="Resources\messages_callrecord%402x.png" />
+    <BundleResource Include="Resources\messages_callrecord_active%402x.png" />
+    <BundleResource Include="Resources\messages_callrecord_unread%402x.png" />
+    <BundleResource Include="Resources\messages_fax%402x.png" />
+    <BundleResource Include="Resources\messages_fax_active%402x.png" />
+    <BundleResource Include="Resources\messages_fax_unread%402x.png" />
+    <BundleResource Include="Resources\messages_voicemail%402x.png" />
+    <BundleResource Include="Resources\messages_voicemail_active%402x.png" />
+    <BundleResource Include="Resources\messages_voicemail_unread%402x.png" />
+    <BundleResource Include="Resources\recents_info%402x.png" />
+    <BundleResource Include="Resources\tab_contacts%402x.png" />
+    <BundleResource Include="Resources\tab_contacts_active%402x.png" />
+    <BundleResource Include="Resources\tab_keypad%402x.png" />
+    <BundleResource Include="Resources\tab_keypad_active%402x.png" />
+    <BundleResource Include="Resources\tab_messages%402x.png" />
+    <BundleResource Include="Resources\tab_messages_active%402x.png" />
+    <BundleResource Include="Resources\tab_recents%402x.png" />
+    <BundleResource Include="Resources\tab_recents_active%402x.png" />
+    <BundleResource Include="Resources\warning%402x.png" />
+    <BundleResource Include="Resources\back%402x.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FreedomVoice.Core\FreedomVoice.Core.csproj">

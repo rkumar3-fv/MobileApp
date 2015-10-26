@@ -3,10 +3,10 @@ using FreedomVoice.iOS.Helpers;
 using GoogleAnalytics.iOS;
 using MRoundedButton;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using FreedomVoice.Core.Utils;
 using FreedomVoice.iOS.Entities;
+using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.Views.Shared;
 using UIKit;
 
@@ -15,8 +15,8 @@ namespace FreedomVoice.iOS.ViewControllers
 	partial class KeypadViewController : UIViewController
     {
 		public KeypadViewController (IntPtr handle) : base (handle) { }
-        UILabel PhoneLabel;
-        UIButton ClearPhone, KeypadDial;
+        UILabel _phoneLabel;
+        UIButton _clearPhone, _keypadDial;
 
         public CallerIdView CallerIdView { get; private set; }
 
@@ -26,27 +26,27 @@ namespace FreedomVoice.iOS.ViewControllers
         {
             base.ViewDidLoad();
 
-            PhoneLabel = new UILabel(new CGRect(12, 110, 250, 32)) {
+            _phoneLabel = new UILabel(new CGRect(12, 110, 250, 32)) {
                 Font = UIFont.SystemFontOfSize(28, UIFontWeight.Thin),
                 TextAlignment = UITextAlignment.Right
             };
 
-            ClearPhone = new UIButton(new CGRect(260, 110, 40, 40));
-            ClearPhone.SetBackgroundImage(UIImage.FromFile("backspace.png"), UIControlState.Normal);
-            ClearPhone.TouchUpInside += ClearPhone_TouchUpInside;
+            _clearPhone = new UIButton(new CGRect(260, 110, 40, 40));
+            _clearPhone.SetBackgroundImage(UIImage.FromFile("keypad_backspace.png"), UIControlState.Normal);
+            _clearPhone.TouchUpInside += ClearPhone_TouchUpInside;
 
-            KeypadDial = new UIButton(new CGRect(130, 450, 62, 62));
-            KeypadDial.SetBackgroundImage(UIImage.FromFile("dial.png"), UIControlState.Normal);
-            KeypadDial.TouchUpInside += KeypadDial_TouchUpInside;
+            _keypadDial = new UIButton(new CGRect(130, 450, 62, 62));
+            _keypadDial.SetBackgroundImage(UIImage.FromFile("keypad_call.png"), UIControlState.Normal);
+            _keypadDial.TouchUpInside += KeypadDial_TouchUpInside;
 
-            View.AddSubviews(PhoneLabel, ClearPhone, KeypadDial);
+            View.AddSubviews(_phoneLabel, _clearPhone, _keypadDial);
 
             foreach (var item in DialData.Items)
             {
                 var buttonRect = new CGRect(item.X, item.Y, item.Width, item.Height);
                 var button = new RoundedButton(buttonRect, RoundedButtonStyle.Subtitle, item.Text)
                 {
-                    BorderColor = UIColor.FromRGB(173, 184, 197),
+                    BorderColor = Theme.KeypadBorderColor,
                     TextLabel =
                     {
                         Text = item.Text,
@@ -60,12 +60,12 @@ namespace FreedomVoice.iOS.ViewControllers
                     CornerRadius = 30,
                     BorderWidth = 1,
                     ContentColor = UIColor.Black,
-                    ContentAnimateToColor = UIColor.FromRGB(173, 184, 197)
+                    ContentAnimateToColor = Theme.KeypadBorderColor
                 };
 
                 button.TouchUpInside += (sender, ea) => {
                     PhoneNumber += item.Text;
-                    PhoneLabel.Text = DataFormatUtils.ToPhoneNumber(PhoneNumber);
+                    _phoneLabel.Text = DataFormatUtils.ToPhoneNumber(PhoneNumber);
                 };
 
                 View.AddSubview(button);
@@ -80,12 +80,12 @@ namespace FreedomVoice.iOS.ViewControllers
             if (string.IsNullOrEmpty(PhoneNumber) || PhoneNumber.Length <= 1)
             {
                 PhoneNumber = string.Empty;
-                PhoneLabel.Text = string.Empty;
+                _phoneLabel.Text = string.Empty;
             }
             else
             {
                 PhoneNumber = PhoneNumber.Substring(0, PhoneNumber.Length - 1);
-                PhoneLabel.Text = DataFormatUtils.ToPhoneNumber(PhoneNumber);
+                _phoneLabel.Text = DataFormatUtils.ToPhoneNumber(PhoneNumber);
             }
         }
 
@@ -102,9 +102,9 @@ namespace FreedomVoice.iOS.ViewControllers
             //GAI.SharedInstance.DefaultTracker.Send(GAIDictionaryBuilder.CreateScreenView().Build());
         }
 
-        private MainTabBarController MainTab { get { return ParentViewController.ParentViewController as MainTabBarController; } }
+        private MainTabBarController MainTab => ParentViewController.ParentViewController as MainTabBarController;
 
-        private void AddRecent()
+	    private void AddRecent()
         {            
             MainTab?.Recents.Add(new Recent(string.Empty, PhoneNumber, DateTime.Now));
         }

@@ -1,7 +1,5 @@
 ﻿using FreedomVoice.iOS.Entities;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace FreedomVoice.iOS.Helpers
 {
@@ -12,8 +10,7 @@ namespace FreedomVoice.iOS.Helpers
         public static void OnCallerIDChangedEvent(CallerIDEventArgs args)
         {
             EventHandler evt = CallerIDChanged;
-            if (evt != null)
-                evt(null, args);
+            evt?.Invoke(null, args);
         }
     }
 
@@ -21,9 +18,9 @@ namespace FreedomVoice.iOS.Helpers
     {
         public PresentationNumber SelectedPresentationNumber { get; private set; }       
 
-        public CallerIDEventArgs(PresentationNumber SelectedPresentationNumber)
+        public CallerIDEventArgs(PresentationNumber selectedPresentationNumber)
         {
-            this.SelectedPresentationNumber = SelectedPresentationNumber;            
+            SelectedPresentationNumber = selectedPresentationNumber;            
         }
     }
 }

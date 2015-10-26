@@ -1,5 +1,4 @@
 using System;
-using CoreGraphics;
 using FreedomVoice.iOS.Helpers;
 using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.ViewModels;
@@ -96,7 +95,7 @@ namespace FreedomVoice.iOS.ViewControllers
                 return;
 
             PasswordValidationLabel.Hidden = false;
-            PasswordTextField.Layer.BorderColor = new CGColor(0.996f, 0.788f, 0.373f, 1);
+            PasswordTextField.Layer.BorderColor = Theme.InvalidTextFieldBorderColor.ToCGColor();
             PasswordTextField.BecomeFirstResponder();
         }
 
@@ -117,14 +116,14 @@ namespace FreedomVoice.iOS.ViewControllers
         private void OnLoginFailed(object sender, EventArgs args)
         {
             UsernameValidationLabel.Hidden = false;
-            UsernameTextField.Layer.BorderColor = new CGColor(0.996f, 0.788f, 0.373f, 1);
+            UsernameTextField.Layer.BorderColor = Theme.InvalidTextFieldBorderColor.ToCGColor();
             UsernameTextField.BecomeFirstResponder();
         }
 
         private void OnUsernameValidationFailed()
 	    {
             UsernameValidationLabel.Hidden = false;
-            UsernameTextField.Layer.BorderColor = new CGColor(0.996f, 0.788f, 0.373f, 1);
+            UsernameTextField.Layer.BorderColor = Theme.InvalidTextFieldBorderColor.ToCGColor();
             UsernameTextField.BecomeFirstResponder();
         }
 

@@ -30,18 +30,24 @@ namespace FreedomVoice.iOS.ViewControllers
             Title = SelectedAccount.FormattedPhoneNumber;
 
             var recentsViewController = AppDelegate.GetViewController<RecentsViewController>();
-	        _recentsTab = new UINavigationController(recentsViewController) { TabBarItem = new UITabBarItem(UITabBarSystemItem.Recents, 0) };            
+	        _recentsTab = new UINavigationController(recentsViewController) {
+	            TabBarItem = new UITabBarItem("Recents", UIImage.FromFile("tab_recents.png"), UIImage.FromFile("tab_recents_active.png")) { Tag = 0 }
+	        };
 
-            var contactsViewController = AppDelegate.GetViewController<ContactsViewController>();
+	        var contactsViewController = AppDelegate.GetViewController<ContactsViewController>();
             _contactsTab = contactsViewController;
-            _contactsTab.TabBarItem = new UITabBarItem(UITabBarSystemItem.Contacts, 1);
+            _contactsTab.TabBarItem = new UITabBarItem("Contacts", UIImage.FromFile("tab_contacts.png"), UIImage.FromFile("tab_contacts_active.png")) { Tag = 1 };
 
             var keypadViewController = AppDelegate.GetViewController<KeypadViewController>();
-	        _keypadTab = new UINavigationController(keypadViewController) { TabBarItem = new UITabBarItem("Keypad", null, 2) };
+	        _keypadTab = new UINavigationController(keypadViewController) {
+	            TabBarItem = new UITabBarItem("Keypad", UIImage.FromFile("tab_keypad.png"), UIImage.FromFile("tab_keypad_active.png")) { Tag = 2 }
+	        };
 
 	        var extensionsViewController = AppDelegate.GetViewController<ExtensionsViewController>();
 	        extensionsViewController.SelectedAccount = SelectedAccount;
-            _messagesTab = new UINavigationController(extensionsViewController) { TabBarItem = new UITabBarItem("Messages", null, 3) };
+            _messagesTab = new UINavigationController(extensionsViewController) {
+                TabBarItem = new UITabBarItem("Messages", UIImage.FromFile("tab_messages.png"), UIImage.FromFile("tab_messages_active.png")) { Tag = 3 }
+            };
 
             ViewControllers = new[] { _recentsTab, _contactsTab, _keypadTab, _messagesTab };
 
