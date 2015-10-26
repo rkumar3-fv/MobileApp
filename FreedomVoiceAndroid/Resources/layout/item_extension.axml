@@ -4,8 +4,6 @@
     android:layout_height="wrap_content"
     android:minHeight="@dimen/fragment_msg_element_height"
     android:gravity="center_vertical"
-    android:clickable="true"
-    android:focusable="true"
     android:background="?android:attr/selectableItemBackground">
     <LinearLayout
         android:id="@+id/itemExt_back"
@@ -13,8 +11,8 @@
         android:layout_height="@dimen/fragment_msg_ind_height"
         android:background="@drawable/message_indicator"
         android:visibility="invisible"
-        android:layout_marginEnd="@dimen/activity_horizontal_margin"
-        android:layout_alignParentEnd="true"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:layout_alignParentRight="true"
         android:layout_gravity="center_vertical">
         <TextView
             android:id="@+id/itemExt_info"
@@ -28,8 +26,8 @@
         style="@style/ListItemText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:layout_toLeftOf="@id/itemExt_back"
-        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
         android:layout_gravity="center_vertical" />
 </RelativeLayout>

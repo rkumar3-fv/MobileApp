@@ -1,13 +1,12 @@
 using Android.App;
 using Android.Content;
+using Android.Content.PM;
 using Android.OS;
-using Android.Support.V7.Internal.View;
 using Android.Support.V7.Widget;
 using Android.Util;
-using Android.Views;
+using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Adapters;
 using com.FreedomVoice.MobileApp.Android.Helpers;
-using com.FreedomVoice.MobileApp.Android.Utils;
 using FreedomVoice.Core.Utils;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
@@ -17,8 +16,9 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
     /// </summary>
     [Activity
         (Label = "@string/ActivitySelect_title",
+        ScreenOrientation = ScreenOrientation.Portrait,
         Theme = "@style/AppThemeActionBar")]
-    public class SelectAccountActivity : BaseActivity
+    public class SelectAccountActivity : LogoutActivity
     {
         private RecyclerView _selectView;
         private AccountsRecyclerAdapter _adapter;
@@ -43,31 +43,20 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         private void SelectViewOnClick(object sender, int position)
         {
             if (position >= Helper.AccountsList.Count) return;
-            Log.Debug(App.AppPackage, $"ACTIVITY {GetType().Name}: select account #{DataFormatUtils.ToPhoneNumber(_adapter.AccountName(position))}");
+            Log.Debug(App.AppPackage,
+                $"ACTIVITY {GetType().Name}: select account #{DataFormatUtils.ToPhoneNumber(_adapter.AccountName(position))}");
             Helper.SelectedAccount = Helper.AccountsList[position];
-            Helper.GetExtensions();
-            var intent = (Helper.IsFirstRun)? new Intent(this, typeof(DisclaimerActivity)): new Intent(this, typeof(ContentActivity));
+            Helper.GetPresentationNumbers();
+        }
+
+        protected override void OnResume()
+        {
+            base.OnResume();
+            if (Helper.SelectedAccount == null) return;
+            var intent = (Helper.IsFirstRun)
+                ? new Intent(this, typeof (DisclaimerActivity))
+                : new Intent(this, typeof (ContentActivity));
             StartActivity(intent);
-        }
-
-        public override bool OnCreateOptionsMenu(IMenu menu)
-        {
-            base.OnCreateOptionsMenu(menu);
-            var inflater = new SupportMenuInflater(this);
-            inflater.Inflate(Resource.Menu.menu_logout, menu);
-            return true;
-        }
-
-        public override bool OnOptionsItemSelected(IMenuItem item)
-        {
-            switch (item.ItemId)
-            {
-                case Resource.Id.menu_action_logout:
-                    Helper.Logout();
-                    return true;
-                default:
-                    return base.OnOptionsItemSelected(item);
-            }
         }
 
         public override void OnBackPressed()
@@ -77,7 +66,15 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
 
         protected override void OnHelperEvent(ActionsHelperEventArgs args)
         {
-            
+            foreach (var code in args.Codes)
+            {
+                switch (code)
+                {
+                    case ActionsHelperEventArgs.ConnectionLostError:
+                        Toast.MakeText(this, Resource.String.Snack_connectionLost, ToastLength.Long).Show();
+                        return;
+                }
+            }
         }
     }
 }

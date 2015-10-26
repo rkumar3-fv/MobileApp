@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:elevation="@dimen/dlg_elevation">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/dlg_margin">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/DlgTitleText"
+            android:text="@string/DlgNumbers_title" />
+        <com.FreedomVoice.MobileApp.Android.Dialogs.DialogRecyclerView
+            android:id="@+id/ManyContactsDlg_list"
+            style="@style/ScrollTheme"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:maxHeight="@dimen/dlg_numbers_max_height"
+            android:layout_marginTop="@dimen/dlg_padding"
+            android:paddingTop="@dimen/dlg_numbers_element_padding"
+            android:paddingBottom="@dimen/dlg_numbers_element_padding"
+            android:clipToPadding="false" />
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/dlg_action_bar_height"
+        android:layout_gravity="right|center">
+        <Button
+            android:id="@+id/ManyContactsDlg_cancel"
+            style="@style/BorderlessDialogButtonStyle"
+            android:text="@string/Dlg_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/dlg_action_bar_button"
+            android:layout_marginTop="@dimen/dlg_action_bar_padding"
+            android:layout_marginBottom="@dimen/dlg_action_bar_padding" />
+    </LinearLayout>
+</LinearLayout>

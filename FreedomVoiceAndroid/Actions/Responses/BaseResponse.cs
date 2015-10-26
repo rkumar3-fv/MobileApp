@@ -5,6 +5,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Responses
 {
     /// <summary>
     /// Abstract response action
+    /// <see href="https://api.freedomvoice.com/Help">FreedomVoice REST API</see>
     /// </summary>
     public abstract class BaseResponse : BaseAction, IEquatable<BaseResponse>
     {

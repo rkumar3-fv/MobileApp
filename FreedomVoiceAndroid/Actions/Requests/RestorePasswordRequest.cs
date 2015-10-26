@@ -1,7 +1,9 @@
 using System;
 using System.Threading.Tasks;
 using Android.OS;
+using Android.Util;
 using com.FreedomVoice.MobileApp.Android.Actions.Responses;
+using FreedomVoice.Core;
 using Java.Interop;
 using Object = Java.Lang.Object;
 
@@ -9,6 +11,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
 {
     /// <summary>
     /// Restore password action
+    /// <see href="https://api.freedomvoice.com/Help/Api/POST-api-v1-passwordReset">API - Restore password request</see>
     /// </summary>
     public class RestorePasswordRequest : BaseRequest, IEquatable<RestorePasswordRequest>
     {
@@ -19,7 +22,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
             _email = email;
         }
 
-        public RestorePasswordRequest(Parcel parcel) : base(parcel)
+        private RestorePasswordRequest(Parcel parcel) : base(parcel)
         {
             _email = parcel.ReadString();
         }
@@ -30,9 +33,15 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
             dest.WriteString(_email);
         }
 
-        public override Task<BaseResponse> ExecuteRequest()
+        public override async Task<BaseResponse> ExecuteRequest()
         {
-            throw new NotImplementedException();
+            var asyncRes = await ApiHelper.PasswordReset(_email);
+            Log.Debug(App.AppPackage, $"{GetType().Name} GetResponse {(asyncRes == null ? "NULL" : "NOT NULL")}");
+            if (asyncRes == null) return new ErrorResponse(Id, ErrorResponse.ErrorConnection);
+            var errorResponse = CheckErrorResponse(Id, asyncRes.Code);
+            if (errorResponse != null)
+                return errorResponse;
+            return new RestorePasswordResponse(Id);
         }
 
         [ExportField("CREATOR")]

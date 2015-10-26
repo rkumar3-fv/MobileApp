@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Android.OS;
 using Java.Interop;
@@ -9,12 +10,12 @@ namespace com.FreedomVoice.MobileApp.Android.Entities
     /// <summary>
     /// Extension entity
     /// </summary>
-    public class Extension : MessageItem
+    public class Extension : MessageItem, IEquatable<Extension>
     {
         /// <summary>
         /// Extension name
         /// </summary>
-        public string ExtensionName { get; set; }
+        public string ExtensionName { get; }
         
         /// <summary>
         /// Mails counter
@@ -39,6 +40,7 @@ namespace com.FreedomVoice.MobileApp.Android.Entities
         private Extension(Parcel parcel) : base (parcel)
         {
             ExtensionName = parcel.ReadString();
+            MailsCount = parcel.ReadInt();
             parcel.ReadList(Folders, ClassLoader.SystemClassLoader);
         }
 
@@ -46,6 +48,7 @@ namespace com.FreedomVoice.MobileApp.Android.Entities
         {
             base.WriteToParcel(dest, flags);
             dest.WriteString(ExtensionName);
+            dest.WriteInt(MailsCount);
             dest.WriteList(Folders);
         }
 
@@ -65,6 +68,30 @@ namespace com.FreedomVoice.MobileApp.Android.Entities
             public Object[] NewArray(int size)
             {
                 return new Object[size];
+            }
+        }
+
+        public bool Equals(Extension other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return base.Equals(other) && string.Equals(ExtensionName, other.ExtensionName) && MailsCount == other.MailsCount;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            return obj.GetType() == GetType() && Equals((Extension) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hashCode = base.GetHashCode();
+                hashCode = (hashCode*397) ^ (ExtensionName?.GetHashCode() ?? 0);
+                return hashCode;
             }
         }
     }
