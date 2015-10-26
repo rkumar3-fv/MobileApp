@@ -497,6 +497,12 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             HelperEvent?.Invoke(this, new ActionsHelperEventArgs(-1, new[] { ActionsHelperEventArgs.ChangePresentation }));
         }
 
+        public void SaveNewNumber(string number)
+        {
+            PhoneNumber = number;
+            _preferencesHelper.SavePhoneNumber(number);
+        }
+
         /// <summary>
         /// Responses from ComService
         /// </summary>
@@ -585,7 +591,15 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                 case "LoginResponse":
                     IsLoggedIn = true;
                     Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} successed: YOU ARE LOGGED IN");
-                    GetAccounts();
+                    if ((!IsFirstRun) || (PhoneNumber == null))
+                    {
+                        GetAccounts();
+                    }
+                    else
+                    {
+                        intent = new Intent(_app, typeof(SetNumberActivity));
+                        HelperEvent?.Invoke(this, new ActionsHelperIntentArgs(response.RequestId, intent));
+                    }
                     break;
 
                 // Restore password response

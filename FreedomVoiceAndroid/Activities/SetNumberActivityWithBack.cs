@@ -1,3 +1,4 @@
+using System;
 using Android.App;
 using Android.Content.PM;
 using Android.OS;
@@ -21,6 +22,17 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             SupportActionBar.SetHomeAsUpIndicator(Resource.Drawable.ic_action_back);
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
             SupportActionBar.SetHomeButtonEnabled(true);
+        }
+
+        protected new void ApplyButtonOnClick(object sender, EventArgs eventArgs)
+        {
+            if (SetupNumber())
+                BaseBackPressed();
+        }
+
+        protected new void SkipButtonOnClick(object sender, EventArgs eventArgs)
+        {
+            BaseBackPressed();
         }
 
         public override void OnBackPressed()

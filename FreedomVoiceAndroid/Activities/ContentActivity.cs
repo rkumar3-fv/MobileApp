@@ -1,4 +1,5 @@
 using Android.App;
+using Android.Content;
 using Android.Content.PM;
 using Android.Gms.Analytics;
 using Android.OS;
@@ -9,6 +10,7 @@ using Android.Support.V7.Internal.View;
 using Android.Views;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Adapters;
+using com.FreedomVoice.MobileApp.Android.Dialogs;
 using com.FreedomVoice.MobileApp.Android.Fragments;
 using com.FreedomVoice.MobileApp.Android.Helpers;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
@@ -127,6 +129,18 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 case global::Android.Resource.Id.Home:
                     Helper.GetPrevious();
                     SetToolbarContent();
+                    return true;
+                case Resource.Id.menu_action_phone:
+                    if (Helper.PhoneNumber == null)
+                    {
+                        var noCellularDialog = new NoCellularDialogFragment();
+                        noCellularDialog.Show(SupportFragmentManager, GetString(Resource.String.DlgCellular_title));
+                    }
+                    else
+                    {
+                        var intent = new Intent(this, typeof(SetNumberActivityWithBack));
+                        StartActivity(intent);
+                    }
                     return true;
                 case Resource.Id.menu_action_logout:
                     LogoutAction();

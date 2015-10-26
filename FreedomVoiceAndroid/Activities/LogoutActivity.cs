@@ -1,3 +1,4 @@
+using Android.Content;
 using Android.Gms.Analytics;
 using Android.Support.V7.Internal.View;
 using Android.Views;
@@ -26,6 +27,18 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         {
             switch (item.ItemId)
             {
+                case Resource.Id.menu_action_phone:
+                    if (Helper.PhoneNumber == null)
+                    {
+                        var noCellularDialog = new NoCellularDialogFragment();
+                        noCellularDialog.Show(SupportFragmentManager, GetString(Resource.String.DlgCellular_title));
+                    }
+                    else
+                    {
+                        var intent = new Intent(this, typeof(SetNumberActivityWithBack));
+                        StartActivity(intent);
+                    }
+                    return true;
                 case Resource.Id.menu_action_logout:
                     LogoutAction();
                     return true;
