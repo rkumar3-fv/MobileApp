@@ -24,7 +24,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
     {
         private void DebugOnly()
         {
-            //_emailText.Text = "freedomvoice.user2.267055@gmail.com";
+            _emailText.Text = "freedomvoice.user2.267055@gmail.com";
         }
 
         private Color _errorColor;
