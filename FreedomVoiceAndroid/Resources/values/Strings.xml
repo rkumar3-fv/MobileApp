@@ -78,6 +78,7 @@
   <string name="ActivityNumber_hint">10 digit phone number</string>
   <string name="ActivityNumber_applyButton">CONTINUE</string>
   <string name="ActivityNumber_cancelButton">SKIP</string>
+  <string name="ActivityNumber_error">Please enter correct number.</string>
   <string name="Timestamp_yesterday">Yesterday</string>
   <string name="Snack_connectionLost">Connection lost. Try again later</string>
   <string name="Dlg_ok">OK</string>

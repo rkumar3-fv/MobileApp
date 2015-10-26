@@ -1,6 +1,7 @@
 ﻿using System;
 using Android.App;
 using Android.Content;
+using Android.Content.PM;
 using Android.Gms.Analytics;
 using Android.Graphics;
 using Android.OS;
@@ -20,6 +21,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         MainLauncher = true,
         Label = "@string/ApplicationTitle",
         Icon = "@mipmap/ic_launcher",
+        ScreenOrientation = ScreenOrientation.Portrait,
         WindowSoftInputMode = SoftInput.AdjustResize,
         Theme = "@style/AuthAppTheme")]
     public class AuthActivity : BaseActivity

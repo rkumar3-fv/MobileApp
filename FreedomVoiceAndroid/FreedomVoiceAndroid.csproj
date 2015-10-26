@@ -146,6 +146,8 @@
     <Compile Include="Activities\LogoutActivity.cs" />
     <Compile Include="Activities\MessageDetailsActivity.cs" />
     <Compile Include="Activities\SelectAccountActivity.cs" />
+    <Compile Include="Activities\SetNumberActivity.cs" />
+    <Compile Include="Activities\SetNumberActivityWithBack.cs" />
     <Compile Include="Activities\SoundActivity.cs" />
     <Compile Include="Activities\VoiceMailActivity.cs" />
     <Compile Include="Activities\VoiceRecordActivity.cs" />
@@ -302,6 +304,9 @@
       <SubType>AndroidResource</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\item_phone.axml">
+      <SubType>AndroidResource</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\act_phone.axml">
       <SubType>AndroidResource</SubType>
     </AndroidResource>
   </ItemGroup>

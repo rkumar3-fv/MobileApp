@@ -1,12 +1,12 @@
 using Android.App;
 using Android.Content;
+using Android.Content.PM;
 using Android.OS;
 using Android.Support.V7.Widget;
 using Android.Util;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Adapters;
 using com.FreedomVoice.MobileApp.Android.Helpers;
-using com.FreedomVoice.MobileApp.Android.Utils;
 using FreedomVoice.Core.Utils;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
@@ -16,6 +16,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
     /// </summary>
     [Activity
         (Label = "@string/ActivitySelect_title",
+        ScreenOrientation = ScreenOrientation.Portrait,
         Theme = "@style/AppThemeActionBar")]
     public class SelectAccountActivity : LogoutActivity
     {
