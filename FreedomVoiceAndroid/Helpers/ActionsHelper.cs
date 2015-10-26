@@ -134,7 +134,8 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 
             PhoneNumber = _preferencesHelper.GetPhoneNumber();
             var telemanager = app.GetSystemService(Context.TelephonyService) as TelephonyManager;
-            if (telemanager?.Line1Number == null)
+
+            if ((telemanager?.Line1Number == null)||(telemanager.SimSerialNumber == null)||(telemanager.SimSerialNumber.Length==0))
                 PhoneNumber = null;
             else if ((PhoneNumber != telemanager.Line1Number) && (telemanager.Line1Number.Length > 1))
             {
