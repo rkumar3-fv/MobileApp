@@ -1,7 +1,9 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Android.OS;
+#if DEBUG
 using Android.Util;
+#endif
 using com.FreedomVoice.MobileApp.Android.Actions.Responses;
 using com.FreedomVoice.MobileApp.Android.Entities;
 using FreedomVoice.Core;
@@ -47,9 +49,13 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
 
         public async override Task<BaseResponse> ExecuteRequest()
         {
-            Log.Debug(App.AppPackage, $"REQUEST FOLDERS FOR x{ExtensionId}");
+#if DEBUG
+            Log.Debug(App.AppPackage, $"{GetType().Name} REQUESTS FOLDERS FOR x{ExtensionId}");
+#endif
             var asyncRes = await ApiHelper.GetFoldersWithCount(AccountName, ExtensionId);
+#if DEBUG
             Log.Debug(App.AppPackage, $"{GetType().Name} GetResponse {(asyncRes == null ? "NULL" : "NOT NULL")}");
+#endif
             if (asyncRes == null) return new ErrorResponse(Id, ErrorResponse.ErrorConnection);
             var errorResponse = CheckErrorResponse(Id, asyncRes.Code);
             if (errorResponse != null)

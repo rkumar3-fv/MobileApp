@@ -1,6 +1,8 @@
 using System.Threading.Tasks;
 using Android.OS;
+#if DEBUG
 using Android.Util;
+#endif
 using com.FreedomVoice.MobileApp.Android.Actions.Responses;
 using FreedomVoice.Core;
 using Java.Interop;
@@ -53,8 +55,13 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
 
         public override async Task<BaseResponse> ExecuteRequest()
         {
+#if DEBUG
+            Log.Debug(App.AppPackage, $"{GetType().Name} executes request");
+#endif
             var asyncRes = await ApiHelper.CreateCallReservation(Account, RealSimNumber, PresentationNumber, DialingNumber);
+#if DEBUG
             Log.Debug(App.AppPackage, $"{GetType().Name} GetResponse {(asyncRes == null ? "NULL" : "NOT NULL")}");
+#endif
             if (asyncRes == null) return new ErrorResponse(Id, ErrorResponse.ErrorConnection);
             var errorResponse = CheckErrorResponse(Id, asyncRes.Code);
             if (errorResponse != null)

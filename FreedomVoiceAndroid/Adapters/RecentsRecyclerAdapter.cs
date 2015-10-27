@@ -104,7 +104,6 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
             var viewHolder = holder as ViewHolder;
             var keys = _currentContent.Keys.ToList();
             if (viewHolder == null) return;
-            //viewHolder.DestinationNumberText.Text = DataFormatUtils.ToPhoneNumber(_currentContent[keys[position]].PhoneNumber);
             viewHolder.DestinationNumberText.Text = GetContactName(_currentContent[keys[position]].PhoneNumber);
             viewHolder.CallDateText.Text =
                 DataFormatUtils.ToShortFormattedDate(_context.GetString(Resource.String.Timestamp_yesterday),
