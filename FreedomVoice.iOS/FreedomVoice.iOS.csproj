@@ -127,6 +127,7 @@
     <Compile Include="Services\Responses\ExtensionsWithCountResponse.cs" />
     <Compile Include="Services\Responses\MessagesResponse.cs" />
     <Compile Include="Services\Responses\PresentationNumbersResponse.cs" />
+    <Compile Include="Views\AVPlayerView.cs" />
     <Compile Include="Views\RecentLineView.cs" />
     <Compile Include="Views\Shared\CallerIdView.cs" />
     <Compile Include="Views\KeypadView.cs" />
@@ -238,6 +239,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <BundleResource Include="Resources\btn_play%402x.png" />
+    <BundleResource Include="Resources\btn_pause%402x.png" />
+    <BundleResource Include="Resources\progress_bar_thumb%402x.png" />
     <Content Include="Settings.bundle\Root.plist">
       <SubType>Designer</SubType>
     </Content>
