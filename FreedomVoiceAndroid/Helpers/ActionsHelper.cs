@@ -6,6 +6,7 @@ using Android.Content;
 using Android.OS;
 using Android.Telephony;
 using Android.Util;
+using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Actions.Requests;
 using com.FreedomVoice.MobileApp.Android.Actions.Responses;
 using com.FreedomVoice.MobileApp.Android.Activities;
@@ -566,6 +567,8 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                             // Call reservation bad request
                             else if (_waitingRequestArray.ContainsKey(response.RequestId) && _waitingRequestArray[response.RequestId] is CallReservationRequest)
                             {
+                                //TODO: change to approved message
+                                Toast.MakeText(_app, Resource.String.Err_callFailed, ToastLength.Long).Show();
                                 var callReservation = (CallReservationRequest) _waitingRequestArray[response.RequestId];
                                 RecentsDictionary.Add(response.RequestId, new Recent(callReservation.DialingNumber, Recent.ResultFail));
                                 HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.CallReservationFail }));

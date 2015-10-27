@@ -26,8 +26,10 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         Theme = "@style/AppTheme",
         ScreenOrientation = ScreenOrientation.Portrait, 
         WindowSoftInputMode = SoftInput.StateHidden)]
-    public class ContentActivity : LogoutActivity
+    public class ContentActivity : OperationActivity
     {
+        private CoordinatorLayout _rootLayout;
+        private AppBarLayout _appBar;
         private ContentPagerAdapter _pagerAdapter;
         private ContentPager _viewPager;
         private Toolbar _toolbar;
@@ -37,6 +39,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         {
             base.OnCreate(bundle);
             SetContentView(Resource.Layout.act_content);
+            _rootLayout = FindViewById<CoordinatorLayout>(Resource.Id.contentActivity_rootBar);
+            _appBar = FindViewById<AppBarLayout>(Resource.Id.contentActivity_contentAppBar);
             _tabLayout = FindViewById<TabLayout>(Resource.Id.contentActivity_tabs);
             _viewPager = FindViewById<ContentPager>(Resource.Id.contentActivity_contentPager);
             _toolbar = FindViewById<Toolbar>(Resource.Id.contentActivity_toolbar);
@@ -87,6 +91,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                         Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].FolderName;
                     SupportActionBar.SetDisplayHomeAsUpEnabled(true);
                     SupportActionBar.SetHomeButtonEnabled(true);
+                    ExpandToolbar();
                     return;
                 }
                 else if (Helper.SelectedExtension != -1)
@@ -111,6 +116,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                     break;
                 case 2:
                     _toolbar.InflateMenu(Resource.Menu.menu_content);
+                    ExpandToolbar();
                     break;
             }
         }
@@ -153,6 +159,20 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 default:
                     return base.OnOptionsItemSelected(item);
             }
+        }
+
+        public void ExpandToolbar()
+        {
+            var param = (CoordinatorLayout.LayoutParams)_appBar.LayoutParameters;
+            var behavior = (AppBarLayout.Behavior) param.Behavior;
+            behavior?.OnNestedFling(_rootLayout, _appBar, null, 0, -10000, false);
+        }
+
+        public void CollapseToolbar()
+        {
+            var param = (CoordinatorLayout.LayoutParams)_appBar.LayoutParameters;
+            var behavior = (AppBarLayout.Behavior) param.Behavior;
+            behavior?.OnNestedFling(_rootLayout, _appBar, null, 0, 10000, false);
         }
 
         /// <summary>

@@ -12,7 +12,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
     /// <summary>
     /// Base message details activity
     /// </summary>
-    public abstract class MessageDetailsActivity : LogoutActivity
+    public abstract class MessageDetailsActivity : OperationActivity
     {
         protected Message Msg;
         protected TextView SenderText;

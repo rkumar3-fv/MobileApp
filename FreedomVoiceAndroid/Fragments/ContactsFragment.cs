@@ -74,7 +74,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                     noPhonesDialog.Show(ContentActivity.SupportFragmentManager, GetString(Resource.String.DlgNumbers_content));
                     break;
                 case 1:
-                    Call(list[0].PhoneNumber);
+                    ContentActivity.Call(list[0].PhoneNumber);
                     break;
                 default:
                     var multiPhonesDialog = new MultiContactsDialogFragment(list, ContentActivity);
@@ -86,7 +86,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
 
         private void MultiPhonesDialogOnPhoneClick(object sender, Phone phone)
         {
-            Call(phone.PhoneNumber);
+            ContentActivity.Call(phone.PhoneNumber);
         }
 
         protected override void OnHelperEvent(ActionsHelperEventArgs args)

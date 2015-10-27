@@ -97,4 +97,5 @@
   <string name="DlgAirplane_content">Airplane Mode must be turned off to make calls from the FreedomVoice app.</string>
   <string name="DlgCallerId_content">Caller ID must be turned on for your device to make calls from the FreedomVoice app.</string>
   <string name="Dlg_settings">SETTINGS</string>
+  <string name="Err_callFailed">Call reservation failed</string>
 </resources>

@@ -71,7 +71,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         /// </summary>
         private void AdapterOnItemClick(object sender, long l)
         {
-            Call(Helper.RecentsDictionary[l].PhoneNumber);
+            ContentActivity.Call(Helper.RecentsDictionary[l].PhoneNumber);
         }
 
         /// <summary>
