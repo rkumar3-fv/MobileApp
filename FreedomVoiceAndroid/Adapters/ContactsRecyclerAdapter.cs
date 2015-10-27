@@ -4,8 +4,10 @@ using Android.Content;
 using Android.Database;
 using Android.Provider;
 using Android.Support.V7.Widget;
+using Android.Telephony;
 using Android.Views;
 using Android.Widget;
+using com.FreedomVoice.MobileApp.Android.Entities;
 
 namespace com.FreedomVoice.MobileApp.Android.Adapters
 {
@@ -20,7 +22,7 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
         /// <summary>
         /// Item short click event
         /// </summary>
-        public event EventHandler<List<string>> ItemClick;
+        public event EventHandler<List<Phone>> ItemClick;
 
         private void OnClick(int position)
         {
@@ -29,25 +31,27 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
             var id = Cursor.GetString(Cursor.GetColumnIndex(ContactsContract.Contacts.InterfaceConsts.Id));
             var hasPhone = Cursor.GetString(Cursor.GetColumnIndex(ContactsContract.Contacts.InterfaceConsts.HasPhoneNumber));
             if (hasPhone.Equals("0"))
-                ItemClick?.Invoke(this, new List<string>());
+                ItemClick?.Invoke(this, new List<Phone>());
             else
             {
-                string[] projection = { ContactsContract.Contacts.InterfaceConsts.Id, ContactsContract.CommonDataKinds.Phone.Number };
+                string[] projection = { ContactsContract.Contacts.InterfaceConsts.Id, ContactsContract.CommonDataKinds.Phone.Number, "data2" };
                 var loader = new CursorLoader(_context, ContactsContract.CommonDataKinds.Phone.ContentUri, projection,
                     $"contact_id={id}", null, null);
                 var cursor = (ICursor)loader.LoadInBackground();
                 if (cursor != null)
                 {
-                    var phones = new List<string>();
+                    var phones = new List<Phone>();
                     while (cursor.MoveToNext())
                     {
-                        phones.Add(cursor.GetString(cursor.GetColumnIndex(projection[1])));
+                        var phone = PhoneNumberUtils.NormalizeNumber(cursor.GetString(cursor.GetColumnIndex(projection[1])));
+                        var type = Convert.ToInt32(cursor.GetString(cursor.GetColumnIndex(projection[2])));
+                        phones.Add(new Phone(phone, type));
                     }
                     cursor.Close();
                     ItemClick?.Invoke(this, phones);
                 }
                 else
-                    ItemClick?.Invoke(this, new List<string>());
+                    ItemClick?.Invoke(this, new List<Phone>());
             }
         }
 
