@@ -582,7 +582,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                         //Number on hold (payment required) error
                         case ErrorResponse.ErrorNotPaid:
                             SelectedAccount = null;
-                            intent = new Intent(_app, typeof(InactiveActivityWithBack));
+                            intent = AccountsList.Count > 1 ? new Intent(_app, typeof(InactiveActivityWithBack)) : new Intent(_app, typeof(InactiveActivity));
                             HelperEvent?.Invoke(this, new ActionsHelperIntentArgs(response.RequestId, intent));
                             break;
                     }

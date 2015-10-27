@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Android.OS;
+#if DEBUG
 using Android.Util;
+#endif
 using com.FreedomVoice.MobileApp.Android.Actions.Responses;
 using FreedomVoice.Core;
 using FreedomVoice.Core.Entities.Enums;
@@ -54,9 +56,13 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
 
         public async override Task<BaseResponse> ExecuteRequest()
         {
-            Log.Debug(App.AppPackage, $"REQUEST MESSAGES FOR x{ExtensionId} from {Folder}");
+#if DEBUG
+            Log.Debug(App.AppPackage, $"{GetType().Name} REQUESTS MESSAGES FOR x{ExtensionId} from {Folder}");
+#endif
             var asyncRes = await ApiHelper.GetMesages(AccountName, ExtensionId, Folder, 30, 1, false);
+#if DEBUG
             Log.Debug(App.AppPackage, $"{GetType().Name} GetResponse {(asyncRes == null ? "NULL" : "NOT NULL")}");
+#endif
             if (asyncRes == null) return new ErrorResponse(Id, ErrorResponse.ErrorConnection);
             var errorResponse = CheckErrorResponse(Id, asyncRes.Code);
             if (errorResponse != null)
