@@ -146,11 +146,21 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                     LogoutAction();
                     return true;
                 case Resource.Id.menu_action_clear:
-                    Helper.ClearAllRecents();
+                    var clearDialog = new ClearRecentsDialog();
+                    clearDialog.DialogEvent += ClearDialogEvent;
+                    clearDialog.Show(SupportFragmentManager, GetString(Resource.String.DlgLogout_title));
                     return true;
                 default:
                     return base.OnOptionsItemSelected(item);
             }
+        }
+
+        /// <summary>
+        /// Confirm recents clearing
+        /// </summary>
+        private void ClearDialogEvent(object sender, DialogEventArgs args)
+        {
+            Helper.ClearAllRecents();
         }
 
         public override void OnBackPressed()

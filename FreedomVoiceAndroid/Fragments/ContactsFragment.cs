@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Android.Database;
 using Android.OS;
@@ -10,8 +9,8 @@ using Android.Views;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Adapters;
 using com.FreedomVoice.MobileApp.Android.Dialogs;
+using com.FreedomVoice.MobileApp.Android.Entities;
 using com.FreedomVoice.MobileApp.Android.Helpers;
-using FreedomVoice.Core.Utils;
 
 namespace com.FreedomVoice.MobileApp.Android.Fragments
 {
@@ -62,11 +61,11 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                 _idSpinner.SetSelection(Helper.SelectedAccount.SelectedPresentationNumber);
         }
 
-        private void AdapterOnItemClick(object sender, List<string> list)
+        private void AdapterOnItemClick(object sender, List<Phone> list)
         {
             foreach (var phone in list)
             {
-                Log.Debug(App.AppPackage, $"PHONE: {phone}");
+                Log.Debug(App.AppPackage, $"{phone.PhoneNumber} - {phone.TypeCode}");
             }
             switch (list.Count)
             {
@@ -75,7 +74,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                     noPhonesDialog.Show(ContentActivity.SupportFragmentManager, GetString(Resource.String.DlgNumbers_content));
                     break;
                 case 1:
-                    Call(list[0]);
+                    Call(list[0].PhoneNumber);
                     break;
                 default:
                     var multiPhonesDialog = new MultiContactsDialogFragment(list, ContentActivity);
@@ -85,9 +84,9 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             }
         }
 
-        private void MultiPhonesDialogOnPhoneClick(object sender, string s)
+        private void MultiPhonesDialogOnPhoneClick(object sender, Phone phone)
         {
-            Call(s);
+            Call(phone.PhoneNumber);
         }
 
         protected override void OnHelperEvent(ActionsHelperEventArgs args)

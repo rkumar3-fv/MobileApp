@@ -22,10 +22,12 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         Theme = "@style/AppThemeActionBar")]
     public class RestoreActivity : BaseActivity
     {
+#if DEBUG
         private void DebugOnly()
         {
-            //_emailText.Text = "freedomvoice.user2.267055@gmail.com";
+            _emailText.Text = "freedomvoice.user2.267055@gmail.com";
         }
+#endif
 
         private Color _errorColor;
         private EditText _emailText;
@@ -51,11 +53,13 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             _errorColor = new Color(ContextCompat.GetColor(this, Resource.Color.textColorError));
         }
 
+#if DEBUG
         protected override void OnResume()
         {
             base.OnResume();
             DebugOnly();
         }
+#endif
 
         /// <summary>
         /// Restore button click action

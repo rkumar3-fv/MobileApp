@@ -6,7 +6,9 @@ using Android.Gms.Analytics;
 using Android.Graphics;
 using Android.OS;
 using Android.Support.V4.Content;
+#if DEBUG
 using Android.Util;
+#endif
 using Android.Views;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Helpers;
@@ -26,11 +28,13 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         Theme = "@style/AuthAppTheme")]
     public class AuthActivity : BaseActivity
     {
+#if DEBUG
         private void DebugOnly()
         {
-            //_loginText.Text = "freedomvoice.adm.267055@gmail.com";
-            //_passwordText.Text = "adm654654";
+            _loginText.Text = "freedomvoice.adm.267055@gmail.com";
+            _passwordText.Text = "adm654654";
         }
+#endif
 
         private Color _errorColor;
         private Button _authButton;
@@ -67,7 +71,9 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         protected override void OnResume()
         {
             base.OnResume();
+#if DEBUG
             DebugOnly();
+#endif
             if (Helper.IsLoggedIn)
                 Helper.GetAccounts();
             Appl.AnalyticsTracker.SetScreenName($"Activity {GetType().Name}");
@@ -123,7 +129,9 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         /// </summary>
         private void ForgotButtonOnClick(object sender, EventArgs e)
         {
+#if DEBUG
             Log.Debug(App.AppPackage, "RESTORE LAUNCHED");
+#endif
             var intent = new Intent(this, typeof(RestoreActivity));
             StartActivity(intent);
         }

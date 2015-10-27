@@ -32,7 +32,6 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
         /// <returns>null or ErrorResponse</returns>
         protected ErrorResponse CheckErrorResponse(long requestId, ErrorCodes code)
         {
-            if (code == null) return new ErrorResponse(requestId, ErrorResponse.ErrorConnection);
             switch (code)
             {
                 case ErrorCodes.BadRequest:
