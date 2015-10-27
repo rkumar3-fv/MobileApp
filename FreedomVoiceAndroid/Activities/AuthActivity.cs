@@ -28,8 +28,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
     {
         private void DebugOnly()
         {
-            //_loginText.Text = "freedomvoice.adm.267055@gmail.com";
-            //_passwordText.Text = "adm654654";
+            _loginText.Text = "freedomvoice.adm.267055@gmail.com";
+            _passwordText.Text = "adm654654";
         }
 
         private Color _errorColor;
