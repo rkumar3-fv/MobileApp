@@ -27,7 +27,8 @@
             android:layout_width="wrap_content"
             android:layout_height="@dimen/dlg_action_bar_button"
             android:layout_marginTop="@dimen/dlg_action_bar_padding"
-            android:layout_marginBottom="@dimen/dlg_action_bar_padding" />
+            android:layout_marginBottom="@dimen/dlg_action_bar_padding"
+            android:layout_marginLeft="@dimen/dlg_action_bar_padding" />
         <Button
             android:id="@+id/ClearDlg_ok"
             style="@style/BorderlessDialogButtonStyle"

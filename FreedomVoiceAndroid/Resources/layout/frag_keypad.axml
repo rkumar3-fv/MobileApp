@@ -20,13 +20,24 @@
             android:layout_height="wrap_content"
             android:text="@string/FragmentKeypad_callerId"
             android:layout_weight="1" />
-        <Spinner
-            android:id="@+id/keypadFragment_idSpinner"
-            android:layout_width="match_parent"
+        <RelativeLayout
             android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_width="match_parent"
             android:layout_height="@dimen/fragment_keypad_spinner_size"
-            android:layout_weight="1"
-            android:spinnerMode="dropdown" />
+            android:layout_weight="1">
+            <Spinner
+                android:id="@+id/keypadFragment_idSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/fragment_keypad_spinner_size"
+                android:spinnerMode="dropdown" />
+            <TextView
+                android:id="@+id/keypadFragment_singleId"
+                style="@style/CallerIdSpinnerText"
+                android:visibility="invisible"
+                android:layout_centerVertical="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </RelativeLayout>
     </LinearLayout>
     <FrameLayout
         android:layout_width="match_parent"

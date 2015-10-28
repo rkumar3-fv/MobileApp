@@ -70,7 +70,7 @@
   <!-- Content activity -->
   <dimen name="content_activity_tab_text_size">14sp</dimen>
   <dimen name="content_activity_tab_elevation">6dp</dimen>
-  <dimen name="content_activity_tab_indicator_size">6dp</dimen>
+  <dimen name="content_activity_tab_indicator_size">3dp</dimen>
   <dimen name="content_activity_tab_text_padding">8dp</dimen>
   <dimen name="content_activity_tab_icon_padding">4dp</dimen>
   <dimen name="content_activity_tab_height">74dp</dimen>
@@ -113,6 +113,7 @@
   <!-- Contacts fragment -->
   <dimen name="fragment_contacts_letter_width">56dp</dimen>
   <dimen name="fragment_contacts_height">48dp</dimen>
+  <dimen name="fragment_contacts_search_elevation">12dp</dimen>
   
   <!-- Dialogs -->
   <dimen name="dlg_elevation">24dp</dimen>
