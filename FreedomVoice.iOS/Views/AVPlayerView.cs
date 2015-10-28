@@ -35,7 +35,7 @@ namespace FreedomVoice.iOS.Views
             playBtnBg = UIImage.FromFile("btn_play.png");
             pauseBtnBg = UIImage.FromFile("btn_pause.png");
 
-            btnPlay = new UIButton(new CGRect(0, 7, 16, 16));
+            btnPlay = new UIButton(new CGRect(0, 0, 16, 16));
             btnPlay.SetImage(playBtnBg, UIControlState.Normal);
             btnPlay.TouchUpInside += BtnPlay_TouchUpInside;
 
@@ -57,12 +57,12 @@ namespace FreedomVoice.iOS.Views
                 StartPlayback();
             };
 
-            labelElapsed = new UILabel(new CGRect(20, 0, 40, 30)) { Text = "00:00", TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(12f)};
+            labelElapsed = new UILabel(new CGRect(25, 0, 32, 16)) { Text = "00:00", TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(11f)};
 
-            progressBar = new UISlider(new CGRect(65, 14, 190, 4)) { Value = (float)player.CurrentTime, MinValue = 0, MaxValue = (float)player.Duration };
+            progressBar = new UISlider(new CGRect(60, 6, 156, 4)) { Value = (float)player.CurrentTime, MinValue = 0, MaxValue = (float)player.Duration };
             progressBar.SetThumbImage(UIImage.FromFile("progress_bar_thumb.png"), UIControlState.Normal);            
             
-            labelRemaining = new UILabel(new CGRect(260, 0, 40, 30)) { Text= $"-{SecondsToFormattedString(player.Duration)}", TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(12f) };            
+            labelRemaining = new UILabel(new CGRect(225, 0, 37, 16)) { Text= $"-{SecondsToFormattedString(player.Duration)}", TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(11f) };            
 
             AddSubviews(btnPlay, labelElapsed, progressBar, labelRemaining);
         }
@@ -113,7 +113,7 @@ namespace FreedomVoice.iOS.Views
             progressBar.Value = (float)player.CurrentTime;
         }
 
-        private string SecondsToFormattedString(double seconds)
+        public static string SecondsToFormattedString(double seconds)
         {
             return TimeSpan.FromSeconds(seconds).ToString(@"mm\:ss");
         }

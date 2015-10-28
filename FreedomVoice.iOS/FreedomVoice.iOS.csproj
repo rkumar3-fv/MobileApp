@@ -251,6 +251,10 @@
     <BundleResource Include="Resources\callrecord_active%402x.png" />
     <BundleResource Include="Resources\voicemail_active%402x.png" />
     <BundleResource Include="Resources\fax_active%402x.png" />
+    <BundleResource Include="Resources\speaker%402x.png" />
+    <BundleResource Include="Resources\callback%402x.png" />
+    <BundleResource Include="Resources\delete%402x.png" />
+    <BundleResource Include="Resources\viewfax%402x.png" />
     <Content Include="Settings.bundle\Root.plist">
       <SubType>Designer</SubType>
     </Content>
