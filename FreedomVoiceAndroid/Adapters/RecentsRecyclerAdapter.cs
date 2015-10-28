@@ -5,10 +5,10 @@ using Android.Content;
 using Android.Database;
 using Android.Provider;
 using Android.Support.V7.Widget;
-using Android.Telephony;
 using Android.Views;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Entities;
+using com.FreedomVoice.MobileApp.Android.Utils;
 using FreedomVoice.Core.Utils;
 
 namespace com.FreedomVoice.MobileApp.Android.Adapters
@@ -20,6 +20,7 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
     {
         private readonly Context _context;
         private readonly SortedDictionary<long, Recent> _currentContent;
+        private readonly ContactsHelper _helper;
 
         /// <summary>
         /// Item short click event
@@ -47,6 +48,7 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
         {
             _context = context;
             _currentContent = currentContent;
+            _helper = ContactsHelper.Instance(_context);
         }
 
         /// <summary>
@@ -104,7 +106,7 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
             var viewHolder = holder as ViewHolder;
             var keys = _currentContent.Keys.ToList();
             if (viewHolder == null) return;
-            viewHolder.DestinationNumberText.Text = GetContactName(_currentContent[keys[position]].PhoneNumber);
+            viewHolder.DestinationNumberText.Text = _helper.GetName(_currentContent[keys[position]].PhoneNumber);
             viewHolder.CallDateText.Text =
                 DataFormatUtils.ToShortFormattedDate(_context.GetString(Resource.String.Timestamp_yesterday),
                     _currentContent[keys[position]].CallDate);
@@ -114,33 +116,6 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
         {
             var itemView = LayoutInflater.From(parent.Context).Inflate(Resource.Layout.item_recent, parent, false);
             return new ViewHolder(itemView, OnClick, OnAditionalClick);
-        }
-
-        private string GetContactName(string phone)
-        {
-            var uri = ContactsContract.Contacts.ContentUri;
-            string[] projection = { ContactsContract.Contacts.InterfaceConsts.Id, ContactsContract.CommonDataKinds.Phone.Number, "contact_id" };
-            var loader = new CursorLoader(_context, ContactsContract.CommonDataKinds.Phone.ContentUri, projection,
-                $"data1='{phone}'", null, null);
-            var cursorPhone = (ICursor)loader.LoadInBackground();
-            if (cursorPhone != null)
-            {
-                if (cursorPhone.MoveToFirst())
-                {
-                    projection = new [] { ContactsContract.Contacts.InterfaceConsts.Id, ContactsContract.Contacts.InterfaceConsts.DisplayName };
-                    loader = new CursorLoader(_context, uri, projection, $"_id={cursorPhone.GetLong(2)}", null, null);
-                    var cursorName = (ICursor)loader.LoadInBackground();
-                    if (cursorName != null)
-                    {
-                        if (cursorName.MoveToFirst())
-                            phone = cursorName.GetString(1);
-                        cursorName.Close();
-                        return phone;
-                    }
-                }
-                cursorPhone.Close();
-            }
-            return DataFormatUtils.ToPhoneNumber(phone);
         }
 
         /// <summary>
@@ -164,24 +139,14 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
             /// </summary>
             public TextView CallDateText { get; }
 
-            /// <summary>
-            /// Main clickable area
-            /// </summary>
-            private RelativeLayout _mainSectorLayout;
-
-            /// <summary>
-            /// Additional clickable area
-            /// </summary>
-            private LinearLayout _additionalSectorLayout;
-
             public ViewHolder(View itemView, Action<int> mainListener, Action<int> additionalListener) : base(itemView)
             {
                 DestinationNumberText = itemView.FindViewById<TextView>(Resource.Id.itemRecent_phone);
                 CallDateText = itemView.FindViewById<TextView>(Resource.Id.itemRecent_date);
-                _mainSectorLayout = itemView.FindViewById<RelativeLayout>(Resource.Id.itemRecent_mainArea);
-                _additionalSectorLayout = itemView.FindViewById<LinearLayout>(Resource.Id.itemRecent_additionalArea);
-                _mainSectorLayout.Click += (sender, e) => mainListener(AdapterPosition);
-                _additionalSectorLayout.Click += (sender, e) => additionalListener(AdapterPosition);
+                var mainSectorLayout = itemView.FindViewById<RelativeLayout>(Resource.Id.itemRecent_mainArea);
+                var additionalSectorLayout = itemView.FindViewById<LinearLayout>(Resource.Id.itemRecent_additionalArea);
+                mainSectorLayout.Click += (sender, e) => mainListener(AdapterPosition);
+                additionalSectorLayout.Click += (sender, e) => additionalListener(AdapterPosition);
             }
         }
     }

@@ -91,7 +91,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                         Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].FolderName;
                     SupportActionBar.SetDisplayHomeAsUpEnabled(true);
                     SupportActionBar.SetHomeButtonEnabled(true);
-                    ExpandToolbar();
+                    //ExpandToolbar();
                     return;
                 }
                 else if (Helper.SelectedExtension != -1)
@@ -116,7 +116,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                     break;
                 case 2:
                     _toolbar.InflateMenu(Resource.Menu.menu_content);
-                    ExpandToolbar();
+                    //ExpandToolbar();
                     break;
             }
         }

@@ -22,8 +22,6 @@
             android:layout_height="wrap_content"
             app:maxHeight="@dimen/dlg_numbers_max_height"
             android:layout_marginTop="@dimen/dlg_padding"
-            android:paddingTop="@dimen/dlg_numbers_element_padding"
-            android:paddingBottom="@dimen/dlg_numbers_element_padding"
             android:clipToPadding="false" />
     </LinearLayout>
     <LinearLayout

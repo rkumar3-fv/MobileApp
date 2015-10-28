@@ -1,12 +1,9 @@
 using Android.Content;
 using Android.Graphics;
 using Android.Graphics.Drawables;
-using Android.OS;
 using Android.Runtime;
 using Android.Support.V4.Content;
 using Android.Support.V7.Widget;
-using Android.Util;
-using Android.Widget;
 
 namespace com.FreedomVoice.MobileApp.Android.Adapters
 {

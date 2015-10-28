@@ -210,6 +210,7 @@
     <Compile Include="Services\ComServiceResultReceiver.cs" />
     <Compile Include="Services\IComServiceResultReceiver.cs" />
     <Compile Include="Utils\CallStateHelper.cs" />
+    <Compile Include="Utils\ContactsHelper.cs" />
     <Compile Include="Utils\DataValidationUtils.cs" />
     <Compile Include="Utils\DialingEventArgs.cs" />
   </ItemGroup>

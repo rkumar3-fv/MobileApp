@@ -4,6 +4,7 @@ using Android.Support.V7.Internal.View;
 using Android.Views;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Helpers;
+using com.FreedomVoice.MobileApp.Android.Utils;
 using FreedomVoice.Core.Utils;
 using Message = com.FreedomVoice.MobileApp.Android.Entities.Message;
 
@@ -14,6 +15,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
     /// </summary>
     public abstract class MessageDetailsActivity : OperationActivity
     {
+        private ContactsHelper _contactsHelper;
         protected Message Msg;
         protected TextView SenderText;
         protected TextView MessageDate;
@@ -23,6 +25,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
+            _contactsHelper = ContactsHelper.Instance(this);
             Msg = Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].MessagesList[Helper.SelectedMessage];
             SupportActionBar.SetHomeAsUpIndicator(Resource.Drawable.ic_action_back);
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
@@ -42,7 +45,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 OnBackPressed();
             if (!Msg.Equals(Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].MessagesList[Helper.SelectedMessage]))
                 OnBackPressed();
-            SenderText.Text = Msg.FromName.Length > 1 ? Msg.FromName : DataFormatUtils.ToPhoneNumber(Msg.FromNumber);
+            SenderText.Text = Msg.FromName.Length > 1 ? Msg.FromName : _contactsHelper.GetName(Msg.FromNumber);
             MessageDate.Text = DataFormatUtils.ToFormattedDate(GetString(Resource.String.Timestamp_yesterday), Msg.MessageDate);
         }
 
