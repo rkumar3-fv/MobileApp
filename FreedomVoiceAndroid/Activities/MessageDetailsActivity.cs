@@ -86,6 +86,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         /// </summary>
         protected override void OnHelperEvent(ActionsHelperEventArgs args)
         {
+            base.OnHelperEvent(args);
             foreach (var code in args.Codes)
             {
                 switch (code)

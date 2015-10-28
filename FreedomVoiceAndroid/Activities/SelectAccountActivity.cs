@@ -4,9 +4,7 @@ using Android.Content.PM;
 using Android.OS;
 using Android.Support.V7.Widget;
 using Android.Util;
-using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Adapters;
-using com.FreedomVoice.MobileApp.Android.Helpers;
 using FreedomVoice.Core.Utils;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
@@ -27,6 +25,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         {
             base.OnCreate(bundle);
             SetContentView(Resource.Layout.act_select);
+            RootLayout = FindViewById(Resource.Id.selectAccountActivity_root);
             _selectView = FindViewById<RecyclerView>(Resource.Id.selectAccountActivity_accountsList);
             _selectView.SetLayoutManager(new LinearLayoutManager(this));
             _selectView.AddItemDecoration(new DividerItemDecorator(this, Resource.Drawable.divider));
@@ -62,19 +61,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         public override void OnBackPressed()
         {
             MoveTaskToBack(true);
-        }
-
-        protected override void OnHelperEvent(ActionsHelperEventArgs args)
-        {
-            foreach (var code in args.Codes)
-            {
-                switch (code)
-                {
-                    case ActionsHelperEventArgs.ConnectionLostError:
-                        Toast.MakeText(this, Resource.String.Snack_connectionLost, ToastLength.Long).Show();
-                        return;
-                }
-            }
         }
     }
 }

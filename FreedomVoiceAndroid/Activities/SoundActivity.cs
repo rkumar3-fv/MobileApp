@@ -1,8 +1,5 @@
 using System;
-using Android.Telephony;
-using Android.Util;
 using Android.Widget;
-using com.FreedomVoice.MobileApp.Android.Dialogs;
 using FreedomVoice.Core.Utils;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities

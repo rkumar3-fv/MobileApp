@@ -97,6 +97,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                 {
                     case ActionsHelperEventArgs.CallReservationOk:
                     case ActionsHelperEventArgs.CallReservationFail:
+                    case ActionsHelperEventArgs.CallReservationWrong:
                         _adapter.NotifyAddItem();
                         break;
                     case ActionsHelperEventArgs.ChangePresentation:

@@ -1,5 +1,6 @@
 using System;
 using System.Net.Mail;
+using Android.Telephony;
 
 namespace com.FreedomVoice.MobileApp.Android.Utils
 {
@@ -23,6 +24,23 @@ namespace com.FreedomVoice.MobileApp.Android.Utils
             catch (FormatException)
             {
                 return false;
+            }
+        }
+
+        /// <summary>
+        /// Phone number checking
+        /// </summary>
+        /// <param name="phone">entered phone</param>
+        /// <returns>normalized phone or empty</returns>
+        public static string IsPhoneValid(string phone)
+        {
+            try
+            {
+                return PhoneNumberUtils.NormalizeNumber(phone);
+            }
+            catch (Exception)
+            {
+                return "";
             }
         }
     }

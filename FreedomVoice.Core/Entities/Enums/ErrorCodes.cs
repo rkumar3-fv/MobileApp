@@ -9,6 +9,7 @@
         Cancelled,
         Unknown,
         NotFound,
+        Forbidden, 
         PaymentRequired
     }
 }

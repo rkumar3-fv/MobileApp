@@ -1,15 +1,14 @@
-using System;
-using Android.Annotation;
 using Android.Content;
 using Android.OS;
 using Android.Provider;
+using Android.Support.Design.Widget;
 using Android.Telephony;
 #if DEBUG
 using Android.Util;
 using FreedomVoice.Core.Utils;
 #endif
 using com.FreedomVoice.MobileApp.Android.Dialogs;
-using Java.Lang;
+using com.FreedomVoice.MobileApp.Android.Helpers;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
 {
@@ -83,6 +82,23 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         private bool IsCallerIdHides()
         {
             return false;
+        }
+
+        protected override void OnHelperEvent(ActionsHelperEventArgs args)
+        {
+            base.OnHelperEvent(args);
+            foreach (var code in args.Codes)
+            {
+                switch (code)
+                {
+                    case ActionsHelperEventArgs.CallReservationFail:
+                        Snackbar.Make(RootLayout, Resource.String.Snack_callFailed, Snackbar.LengthLong).Show();
+                        break;
+                    case ActionsHelperEventArgs.CallReservationWrong:
+                        Snackbar.Make(RootLayout, Resource.String.Snack_callWrong, Snackbar.LengthLong).Show();
+                        break;
+                }
+            }
         }
     }
 }

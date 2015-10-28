@@ -20,7 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentLeft="true"
             android:layout_marginBottom="@dimen/details_activity_stamp_margin" />
         <TextView
             android:id="@+id/recordActivity_dateText"
@@ -53,7 +53,7 @@
             android:layout_marginTop="@dimen/details_activity_actions_margin"
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
             android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true" />
+            android:layout_alignParentLeft="true" />
         <Button
             android:id="@+id/recordActivity_callbackButton"
             style="@style/BorderlessMessagesButtonStyle"
@@ -64,7 +64,7 @@
             android:layout_marginTop="@dimen/details_activity_actions_margin"
             android:layout_marginLeft="@dimen/details_activity_actions_spacing"
             android:layout_alignParentTop="true"
-            android:layout_toEndOf="@id/recordActivity_speakerButton" />
+            android:layout_toRightOf="@id/recordActivity_speakerButton" />
         <ImageButton
             android:id="@+id/recordActivity_deleteButton"
             android:src="@drawable/ic_action_remove"
@@ -75,6 +75,6 @@
             android:layout_marginTop="@dimen/details_activity_actions_margin"
             android:layout_marginRight="@dimen/activity_horizontal_margin"
             android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true" />
+            android:layout_alignParentRight="true" />
     </RelativeLayout>
 </LinearLayout>

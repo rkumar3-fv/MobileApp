@@ -88,7 +88,7 @@
   <!-- Keypad fragment -->
   <dimen name="fragment_keypad_spinner_size">56dp</dimen>
   <dimen name="fragment_keypad_number_size">65dp</dimen>
-  <dimen name="fragment_keypad_number_text_size">32sp</dimen>
+  <dimen name="fragment_keypad_number_text_size">30sp</dimen>
   <dimen name="fragment_keypad_key_text_size">36sp</dimen>
   <dimen name="fragment_keypad_key_small_text_size">12sp</dimen>
   <dimen name="fragment_keypad_key_size">64dp</dimen>
