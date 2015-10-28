@@ -51,7 +51,7 @@ namespace com.FreedomVoice.MobileApp.Android.Entities
         /// <summary>
         /// Get presentation number
         /// </summary>
-        public string PresentationNumber => PresentationNumbers[_selectedNumber];
+        public string PresentationNumber => PresentationNumbers[SelectedPresentationNumber];
 
         public Account(string name, List<string> numbers)
         {
