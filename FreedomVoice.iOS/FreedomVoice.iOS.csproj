@@ -105,6 +105,7 @@
     <Compile Include="Entities\Message.cs" />
     <Compile Include="Entities\PresentationNumber.cs" />
     <Compile Include="Helpers\Settings.cs" />
+    <Compile Include="TableViewCells\ExpandedCell.cs" />
     <Compile Include="Utilities\NSDateDateTimeExtensions.cs" />
     <Compile Include="Helpers\CallerIDEvent.cs" />
     <Compile Include="Services\BaseService.cs" />
@@ -242,6 +243,15 @@
     <BundleResource Include="Resources\btn_play%402x.png" />
     <BundleResource Include="Resources\btn_pause%402x.png" />
     <BundleResource Include="Resources\progress_bar_thumb%402x.png" />
+    <BundleResource Include="Resources\voicemail_unread%402x.png" />
+    <BundleResource Include="Resources\callrecord%402x.png" />
+    <BundleResource Include="Resources\callrecord_unread%402x.png" />
+    <BundleResource Include="Resources\fax%402x.png" />
+    <BundleResource Include="Resources\fax_unread%402x.png" />
+    <BundleResource Include="Resources\voicemail%402x.png" />
+    <BundleResource Include="Resources\callrecord_active%402x.png" />
+    <BundleResource Include="Resources\voicemail_active%402x.png" />
+    <BundleResource Include="Resources\fax_active%402x.png" />
     <Content Include="Settings.bundle\Root.plist">
       <SubType>Designer</SubType>
     </Content>
