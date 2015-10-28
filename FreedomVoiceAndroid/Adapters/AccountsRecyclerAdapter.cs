@@ -4,7 +4,6 @@ using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Entities;
-using com.FreedomVoice.MobileApp.Android.Utils;
 using FreedomVoice.Core.Utils;
 
 namespace com.FreedomVoice.MobileApp.Android.Adapters
@@ -86,7 +85,7 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
             /// <summary>
             /// Account text field
             /// </summary>
-            public TextView AccountText { get; private set; }
+            public TextView AccountText { get; }
 
             public ViewHolder(View itemView, Action<int> listener ) : base(itemView)
             {

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/faxActivity_root"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/details_activity_image_height"
+        android:src="@drawable/logo_fax"
+        android:scaleType="centerCrop" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/details_activity_number_margin"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin">
+        <TextView
+            android:id="@+id/faxActivity_senderText"
+            style="@style/MsgDetailsSenderText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginBottom="@dimen/details_activity_stamp_margin" />
+        <TextView
+            android:id="@+id/faxActivity_dateText"
+            style="@style/MessagesCounterText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/faxActivity_senderText"
+            android:layout_alignParentLeft="true" />
+        <TextView
+            android:id="@+id/faxActivity_stampText"
+            style="@style/MessagesCounterText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/faxActivity_senderText"
+            android:layout_alignParentRight="true" />
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:background="@drawable/border"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="@dimen/details_activity_number_margin">
+        <Button
+            android:id="@+id/faxActivity_openFax"
+            style="@style/BorderlessMessagesButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/details_activity_actions_height"
+            android:drawableStart="@drawable/ic_action_view"
+            android:text="@string/ActivityFax_view"
+            android:layout_marginTop="@dimen/details_activity_actions_margin"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true" />
+        <ImageButton
+            android:id="@+id/faxActivity_deleteButton"
+            android:src="@drawable/ic_action_remove"
+            android:background="@drawable/ripple"
+            android:layout_width="@dimen/details_activity_actions_height"
+            android:layout_height="@dimen/details_activity_actions_height"
+            android:minHeight="@dimen/activity_button_size"
+            android:layout_marginTop="@dimen/details_activity_actions_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true" />
+    </RelativeLayout>
+</LinearLayout>

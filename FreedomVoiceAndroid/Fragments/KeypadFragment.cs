@@ -1,15 +1,11 @@
 using System;
-using System.Linq;
 using Android.OS;
 using Android.Support.Design.Widget;
-using Android.Telephony;
-using Android.Text;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Adapters;
 using com.FreedomVoice.MobileApp.Android.Helpers;
-using com.FreedomVoice.MobileApp.Android.Utils;
 using FreedomVoice.Core.Utils;
 
 namespace com.FreedomVoice.MobileApp.Android.Fragments
@@ -23,52 +19,49 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         private Spinner _idSpinner;
         private EditText _dialEdit;
         private ImageButton _backspaceButton;
-        private Button _buttonOne;
-        private Button _buttonTwo;
-        private Button _buttonThree;
-        private Button _buttonFour;
-        private Button _buttonFive;
-        private Button _buttonSix;
-        private Button _buttonSeven;
-        private Button _buttonEight;
-        private Button _buttonNine;
-        private Button _buttonZero;
+        private LinearLayout _buttonOne;
+        private LinearLayout _buttonTwo;
+        private LinearLayout _buttonThree;
+        private LinearLayout _buttonFour;
+        private LinearLayout _buttonFive;
+        private LinearLayout _buttonSix;
+        private LinearLayout _buttonSeven;
+        private LinearLayout _buttonEight;
+        private LinearLayout _buttonNine;
+        private LinearLayout _buttonZero;
         private Button _buttonStar;
         private Button _buttonHash;
         private FloatingActionButton _buttonDial;
 
-        public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+        protected override View InitView()
         {
-            var view = inflater.Inflate(Resource.Layout.frag_keypad, container, false);
+            var view = Inflater.Inflate(Resource.Layout.frag_keypad, null, false);
             _idSpinner = view.FindViewById<Spinner>(Resource.Id.keypadFragment_idSpinner);
-            _idSpinner.ItemSelected += (sender, args) =>
-            {
-                Helper.SelectedAccount = Helper.AccountsList[args.Position];
-                Log.Debug(App.AppPackage, $"ACCOUNT CHANGED to {DataFormatUtils.ToPhoneNumber(Helper.SelectedAccount.AccountName)}");
-            };
+            _idSpinner.ItemSelected += (sender, args) => Helper.SetPresentationNumber(args.Position);
             _dialEdit = view.FindViewById<EditText>(Resource.Id.keypadFragment_dialText);
+            _dialEdit.KeyListener = null;
             _backspaceButton = view.FindViewById<ImageButton>(Resource.Id.keypadFragment_backspace);
             _backspaceButton.Click += BackspaceButtonOnClick;
             _backspaceButton.LongClick += BackspaceButtonOnLongClick;
-            _buttonOne = view.FindViewById<Button>(Resource.Id.keypadFragment_buttonOne);
+            _buttonOne = view.FindViewById<LinearLayout>(Resource.Id.keypadFragment_buttonOne);
             _buttonOne.Click += (sender, e) => {ButtonDigitOnClick("1");};
-            _buttonTwo = view.FindViewById<Button>(Resource.Id.keypadFragment_buttonTwo);
+            _buttonTwo = view.FindViewById<LinearLayout>(Resource.Id.keypadFragment_buttonTwo);
             _buttonTwo.Click += (sender, e) => { ButtonDigitOnClick("2"); };
-            _buttonThree = view.FindViewById<Button>(Resource.Id.keypadFragment_buttonThree);
+            _buttonThree = view.FindViewById<LinearLayout>(Resource.Id.keypadFragment_buttonThree);
             _buttonThree.Click += (sender, e) => { ButtonDigitOnClick("3"); };
-            _buttonFour = view.FindViewById<Button>(Resource.Id.keypadFragment_buttonFour);
+            _buttonFour = view.FindViewById<LinearLayout>(Resource.Id.keypadFragment_buttonFour);
             _buttonFour.Click += (sender, e) => { ButtonDigitOnClick("4"); };
-            _buttonFive = view.FindViewById<Button>(Resource.Id.keypadFragment_buttonFive);
+            _buttonFive = view.FindViewById<LinearLayout>(Resource.Id.keypadFragment_buttonFive);
             _buttonFive.Click += (sender, e) => { ButtonDigitOnClick("5"); };
-            _buttonSix = view.FindViewById<Button>(Resource.Id.keypadFragment_buttonSix);
+            _buttonSix = view.FindViewById<LinearLayout>(Resource.Id.keypadFragment_buttonSix);
             _buttonSix.Click += (sender, e) => { ButtonDigitOnClick("6"); };
-            _buttonSeven = view.FindViewById<Button>(Resource.Id.keypadFragment_buttonSeven);
+            _buttonSeven = view.FindViewById<LinearLayout>(Resource.Id.keypadFragment_buttonSeven);
             _buttonSeven.Click += (sender, e) => { ButtonDigitOnClick("7"); };
-            _buttonEight = view.FindViewById<Button>(Resource.Id.keypadFragment_buttonEight);
+            _buttonEight = view.FindViewById<LinearLayout>(Resource.Id.keypadFragment_buttonEight);
             _buttonEight.Click += (sender, e) => { ButtonDigitOnClick("8"); };
-            _buttonNine = view.FindViewById<Button>(Resource.Id.keypadFragment_buttonNine);
+            _buttonNine = view.FindViewById<LinearLayout>(Resource.Id.keypadFragment_buttonNine);
             _buttonNine.Click += (sender, e) => { ButtonDigitOnClick("9"); };
-            _buttonZero = view.FindViewById<Button>(Resource.Id.keypadFragment_buttonZero);
+            _buttonZero = view.FindViewById<LinearLayout>(Resource.Id.keypadFragment_buttonZero);
             _buttonZero.Click += (sender, e) => { ButtonDigitOnClick("0"); };
             _buttonZero.LongClick += ButtonZeroOnLongClick;
             _buttonStar = view.FindViewById<Button>(Resource.Id.keypadFragment_buttonStar);
@@ -83,14 +76,15 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         public override void OnActivityCreated(Bundle savedInstanceState)
         {
             base.OnActivityCreated(savedInstanceState);
-            var adapter = new CallerIdSpinnerAdapter(Activity, Helper.AccountsList);
+            var adapter = new CallerIdSpinnerAdapter(Activity, Helper.SelectedAccount.PresentationNumbers);
             _idSpinner.Adapter = adapter;
         }
 
         public override void OnResume()
         {
             base.OnResume();
-            _idSpinner.SetSelection(Helper.AccountsList.IndexOf(Helper.SelectedAccount));
+            if (_idSpinner.SelectedItemPosition != Helper.SelectedAccount.SelectedPresentationNumber)
+                _idSpinner.SetSelection(Helper.SelectedAccount.SelectedPresentationNumber);
         }
 
         /// <summary>
@@ -108,9 +102,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         /// </summary>
         private void ButtonDialOnClick(object sender, EventArgs e)
         {
-            var normalizedNumber = PhoneNumberUtils.NormalizeNumber(_enteredNumber);
-            Log.Debug(App.AppPackage, $"KEYPAD: dial to {DataFormatUtils.ToPhoneNumber(normalizedNumber)}");
-            Helper.Call(normalizedNumber);
+            ContentActivity.Call(_enteredNumber);
         }
 
         /// <summary>
@@ -134,7 +126,10 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         /// </summary>
         private void ButtonZeroOnLongClick(object sender, View.LongClickEventArgs longClickEventArgs)
         {
-            Log.Debug(App.AppPackage, $"KEYPAD: + added");
+            if (_enteredNumber.Length != 0) return;
+            Log.Debug(App.AppPackage, "KEYPAD: + added");
+            _enteredNumber = _enteredNumber.Insert(_enteredNumber.Length, "+");
+            SetupNewText();
         }
 
         /// <summary>
@@ -154,7 +149,16 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
 
         protected override void OnHelperEvent(ActionsHelperEventArgs args)
         {
-            
+            foreach (var code in args.Codes)
+            {
+                switch (code)
+                {
+                    case ActionsHelperEventArgs.ChangePresentation:
+                        if (_idSpinner.SelectedItemPosition != Helper.SelectedAccount.SelectedPresentationNumber)
+                            _idSpinner.SetSelection(Helper.SelectedAccount.SelectedPresentationNumber);
+                        break;
+                }
+            }
         }
     }
 }

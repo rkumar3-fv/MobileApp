@@ -1,7 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
-
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/fragment_keypad_spinner_size"
+        android:gravity="center"
+        android:elevation="@dimen/content_activity_id_elevation"
+        android:background="@color/colorCallerId">
+        <TextView
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            style="@style/CallerIdSpinnerText"
+            android:layout_centerHorizontal="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/FragmentKeypad_callerId"
+            android:layout_weight="1" />
+        <Spinner
+            android:id="@+id/recentsFragment_idSpinner"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/fragment_keypad_spinner_size"
+            android:layout_weight="1"
+            android:spinnerMode="dropdown" />
+    </LinearLayout>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recentsFragment_recyclerView"
+        style="@style/ScrollTheme"
+        android:background="@drawable/border"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingTop="@dimen/fragment_msg_element_padding"
+        android:paddingBottom="@dimen/fragment_msg_element_padding"
+        android:clipToPadding="false" />
 </LinearLayout>

@@ -2,10 +2,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="fill_parent"
-    android:layout_height="@dimen/fragment_keypad_spinner_size">
+    android:layout_height="@dimen/fragment_keypad_spinner_size"
+    android:background="@color/colorCallerId">
     <TextView
         android:id="@+id/itemSpinner_idText"
         style="@style/CallerIdSpinnerText"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:layout_gravity="center_vertical"
         android:layout_height="wrap_content"
         android:layout_width="match_parent" />

@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/selectAccountActivity_root"
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
     <android.support.v7.widget.RecyclerView
         android:id="@+id/selectAccountActivity_accountsList"
+        style="@style/ScrollTheme"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="@dimen/select_acc_activity_element_padding"
+        android:paddingTop="@dimen/select_acc_activity_element_padding"
+        android:paddingBottom="@dimen/select_acc_activity_element_padding"
         android:clipToPadding="false" />
 </LinearLayout>

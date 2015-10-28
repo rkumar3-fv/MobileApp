@@ -106,6 +106,7 @@
     <Compile Include="ViewControllers\ExtensionsViewController.designer.cs">
       <DependentUpon>ExtensionsViewController.cs</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\Settings.cs" />
     <Compile Include="Utilities\NSDateDateTimeExtensions.cs" />
     <Compile Include="Helpers\CallerIDEvent.cs" />
     <Compile Include="Services\BaseService.cs" />
@@ -128,6 +129,7 @@
     <Compile Include="Services\Responses\ExtensionsWithCountResponse.cs" />
     <Compile Include="Services\Responses\MessagesResponse.cs" />
     <Compile Include="Services\Responses\PresentationNumbersResponse.cs" />
+    <Compile Include="Views\AVPlayerView.cs" />
     <Compile Include="Views\RecentLineView.cs" />
     <Compile Include="Views\Shared\CallerIdView.cs" />
     <Compile Include="Views\KeypadView.cs" />
@@ -236,6 +238,15 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <BundleResource Include="Resources\btn_play%402x.png" />
+    <BundleResource Include="Resources\btn_pause%402x.png" />
+    <BundleResource Include="Resources\progress_bar_thumb%402x.png" />
+    <Content Include="Settings.bundle\Root.plist">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Settings.bundle\en.lproj\Root.strings" />
+  </ItemGroup>
+  <ItemGroup>
     <Content Include="Entitlements.plist" />
     <Content Include="GoogleService-Info.plist" />
     <BundleResource Include="Resources\keypad_call%402x.png" />
@@ -283,16 +294,16 @@
   </ItemGroup>
   <ItemGroup>
     <XamarinComponentReference Include="googleanalytics">
-      <Visible>False</Visible>
       <Version>3.0.12</Version>
+      <Visible>False</Visible>
     </XamarinComponentReference>
     <XamarinComponentReference Include="mroundedbutton">
-      <Visible>False</Visible>
       <Version>1.1.2.0</Version>
+      <Visible>False</Visible>
     </XamarinComponentReference>
     <XamarinComponentReference Include="xamarin.mobile">
-      <Visible>False</Visible>
       <Version>0.7.7</Version>
+      <Visible>False</Visible>
     </XamarinComponentReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />

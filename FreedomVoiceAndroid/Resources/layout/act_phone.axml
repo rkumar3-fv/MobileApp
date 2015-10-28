@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/phoneActivity_root"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:layout_marginStart="@dimen/activity_horizontal_margin"
+    android:layout_marginEnd="@dimen/activity_horizontal_margin">
+    <TextView
+        android:id="@+id/phoneActivity_infoText"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:lines="4"
+        android:textSize="@dimen/text_secondary"
+        android:textColor="@color/textColorSecondary"
+        android:text="@string/ActivityNubmer_description"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="@dimen/restore_activity_info_label_margin" />
+    <EditText
+        android:id="@+id/phoneActivity_phoneField"
+        style="@style/RestoreEditTextStyle"
+        android:hint="@string/ActivityNumber_hint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="phone"
+        android:phoneNumber="true"
+        android:layout_below="@id/phoneActivity_infoText"
+        android:layout_marginTop="@dimen/restore_activity_info_field_margin" />
+    <Button
+        android:id="@+id/phoneActivity_applyButton"
+        style="@style/AppButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/phoneActivity_phoneField"
+        android:layout_marginTop="@dimen/restore_activity_field_button_margin"
+        android:text="@string/ActivityNumber_applyButton" />
+    <TextView
+        android:id="@+id/phoneActivity_resultText"
+        style="@style/AuthErrorLabelText"
+        android:text="@string/ActivityNumber_error"
+        android:visibility="invisible"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/phoneActivity_phoneField"
+        android:layout_marginTop="@dimen/auth_activity_error_message_spacing" />
+    <Button
+        android:id="@+id/phoneActivity_skipButton"
+        style="@style/BorderlessRestoreButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/ActivityNumber_cancelButton"
+        android:layout_alignParentBottom="true" />
+</RelativeLayout>

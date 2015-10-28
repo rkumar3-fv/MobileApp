@@ -8,7 +8,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
 {
     /// <summary>
     /// Abstract request action
-    /// <see href="https://webservices.freedomvoice.com/FreedomAPI/FreedomAPI.asmx">FreedomAPI</see>
+    /// <see href="https://api.freedomvoice.com/Help">FreedomVoice REST API</see>
     /// </summary>
     public abstract class BaseRequest : BaseAction, IEquatable<BaseRequest>
     {
@@ -42,6 +42,12 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
                     return new ErrorResponse(requestId, ErrorResponse.ErrorConnection);
                 case ErrorCodes.Unauthorized:
                     return new ErrorResponse(requestId, ErrorResponse.ErrorUnauthorized);
+                case ErrorCodes.NotFound:
+                    return new ErrorResponse(requestId, ErrorResponse.ErrorNotFound);
+                case ErrorCodes.PaymentRequired:
+                    return new ErrorResponse(requestId, ErrorResponse.ErrorNotPaid);
+                case ErrorCodes.Forbidden:
+                    return new ErrorResponse(requestId, ErrorResponse.Forbidden);
                 case ErrorCodes.Unknown:
                     return new ErrorResponse(requestId, ErrorResponse.ErrorUnknown);
                 default:

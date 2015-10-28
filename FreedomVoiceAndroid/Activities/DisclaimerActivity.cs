@@ -1,9 +1,9 @@
 ﻿using System;
 using Android.App;
 using Android.Content;
+using Android.Content.PM;
 using Android.OS;
 using Android.Widget;
-using com.FreedomVoice.MobileApp.Android.Helpers;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
 {
@@ -13,6 +13,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
     [Activity(
         Label = "@string/ActivityDisclaimer_title",
         Theme = "@style/AppThemeActionBar",
+        ScreenOrientation = ScreenOrientation.Portrait,
         NoHistory = true)]
     public class DisclaimerActivity : InfoActivity
     {
@@ -20,6 +21,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         {
             base.OnCreate(bundle);
             SetContentView(Resource.Layout.act_disclaimer);
+            RootLayout = FindViewById(Resource.Id.disclaimerActivity_root);
             ActionButton = FindViewById<Button>(Resource.Id.disclaimerActivity_agreeButton);
         }
 
@@ -31,11 +33,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             var intent = new Intent(this, typeof (ContentActivity));
             Helper.DisclaimerApplied();
             StartActivity(intent);
-        }
-
-        protected override void OnHelperEvent(ActionsHelperEventArgs args)
-        {
-
         }
     }
 }

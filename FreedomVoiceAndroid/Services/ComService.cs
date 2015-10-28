@@ -16,13 +16,13 @@ namespace com.FreedomVoice.MobileApp.Android.Services
     {
         public const string ExecuteAction = "ComServiceExecute";
         public const string CancelAction = "ComServiceCancel";
+        public const string CheckAction = "ComServiceCheck";
         public const string RequestTag = "ComServiceRequest";
         public const string RequestIdTag = "ComServiceRequestId";
 
         private ResultReceiver _receiver;
 
-        //TODO: convert to map
-        private readonly List<long> _activeActions = new List<long>(); 
+        private readonly Dictionary<long, Task> _activeActions = new Dictionary<long, Task>(); 
 
         public override IBinder OnBind(Intent intent)
         {
@@ -45,12 +45,13 @@ namespace com.FreedomVoice.MobileApp.Android.Services
             }
             else if (intent.Action == ExecuteAction)
             {
-                _activeActions.Add(intent.GetLongExtra(RequestIdTag, 0));
+                var id = intent.GetLongExtra(RequestIdTag, 0);
                 var request = intent.GetParcelableExtra(RequestTag) as BaseRequest;
                 if (request != null)
                 {
                     Log.Debug(App.AppPackage, "SERVICE REQUEST ID=" + request.Id);
-                    ExecuteRequest(request);
+                    var task = ExecuteRequest(request);
+                    _activeActions.Add(id, task);
                 }
             }
             return StartCommandResult.NotSticky;
@@ -66,6 +67,7 @@ namespace com.FreedomVoice.MobileApp.Android.Services
             var data = new Bundle();
             data.PutParcelable(ComServiceResultReceiver.ReceiverDataExtra, result);
             Log.Debug(App.AppPackage, "SERVICE RESPONSE ID=" + request.Id);
+            _activeActions.Remove(request.Id);
             _receiver.Send(Result.Ok, data);
         }
 

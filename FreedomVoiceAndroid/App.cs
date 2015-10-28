@@ -1,11 +1,13 @@
 using System;
+using System.Net;
 using Android.App;
 using Android.Content;
-using Android.Graphics;
+using Android.Gms.Analytics;
 using Android.Runtime;
+using Android.Telephony;
 using Android.Util;
-using Android.Views;
 using com.FreedomVoice.MobileApp.Android.Helpers;
+using com.FreedomVoice.MobileApp.Android.Utils;
 
 namespace com.FreedomVoice.MobileApp.Android
 {
@@ -20,6 +22,26 @@ namespace com.FreedomVoice.MobileApp.Android
     public class App : Application
     {
         public const string AppPackage = "com.FreedomVoice.MobileApp.Android";
+        private Tracker _tracker;
+
+        /// <summary>
+        /// Analytics tracker
+        /// </summary>
+        public Tracker AnalyticsTracker
+        {
+            get
+            {
+                if (_tracker != null) return _tracker;
+                var analytics = GoogleAnalytics.GetInstance(this);
+                _tracker = analytics.NewTracker("UA-69040520-1");
+                return _tracker;
+            }
+        }
+
+        /// <summary>
+        /// Call state helper
+        /// </summary>
+        public CallStateHelper CallState { get; private set; }
 
         /// <summary>
         /// Get app context
@@ -39,6 +61,23 @@ namespace com.FreedomVoice.MobileApp.Android
         {
             base.OnCreate();
             Helper = new ActionsHelper(this);
+            ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) =>
+            {
+                Log.Debug(AppPackage, sslPolicyErrors.ToString());
+                return true;
+            };
+            CallState = new CallStateHelper();
+            CallState.CallEvent += CallStateOnCallEvent;
+            var telManager = (TelephonyManager)GetSystemService(TelephonyService);
+            telManager.Listen(CallState, PhoneStateListenerFlags.CallState);
+        }
+
+        /// <summary>
+        /// Outgoing call finished event
+        /// </summary>
+        private void CallStateOnCallEvent(object sender, DialingEventArgs args)
+        {
+            Helper.MarkCallAsFinished();
         }
 
         /// <summary>

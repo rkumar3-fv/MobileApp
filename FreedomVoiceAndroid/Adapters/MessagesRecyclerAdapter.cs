@@ -1,9 +1,13 @@
+using System;
 using System.Collections.Generic;
 using Android.Content;
+using Android.Graphics;
+using Android.Support.V4.Content;
 using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Entities;
+using FreedomVoice.Core.Utils;
 
 namespace com.FreedomVoice.MobileApp.Android.Adapters
 {
@@ -18,6 +22,16 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
 
         private readonly Context _context;
         private List<MessageItem> _currentContent;
+
+        /// <summary>
+        /// Item short click event
+        /// </summary>
+        public event EventHandler<int> ItemClick;
+
+        private void OnClick(int position)
+        {
+            ItemClick?.Invoke(this, position);
+        }
 
         public MessagesRecyclerAdapter(Context context) : this (new List<MessageItem>(), context)
         {}
@@ -36,16 +50,47 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
             get { return _currentContent; }
             set
             {
+                if (_currentContent.Equals(value)) return;
                 _currentContent = value;
                 NotifyDataSetChanged();
             }
         }
 
         /// <summary>
+        /// Clean view content
+        /// </summary>
+        public void Clean()
+        {
+            _currentContent.Clear();
+            NotifyDataSetChanged();
+        }
+
+        /// <summary>
+        /// Remove item
+        /// </summary>
+        /// <param name="index">item index</param>
+        public void RemoveItem(int index)
+        {
+            _currentContent.RemoveAt(index);
+            NotifyItemRemoved(index);
+        }
+
+        /// <summary>
+        /// Insert item
+        /// </summary>
+        /// <param name="item">inserted item</param>
+        /// <param name="index">item index</param>
+        public void InsertItem(MessageItem item, int index)
+        {
+            _currentContent.Insert(index, item);
+            NotifyItemInserted(index);
+        }
+
+        /// <summary>
         /// Get messages item by position
         /// </summary>
         /// <param name="position">position number</param>
-        /// <returns>extension entity</returns>
+        /// <returns>message item entity</returns>
         public MessageItem GetContentItem(int position)
         {
             return (_currentContent.Count < position) ? null : _currentContent[position];
@@ -61,9 +106,16 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
                 if (viewHolder == null) return;
                 if (extension.ExtensionName.Length > 0)
                     viewHolder.ExtensionName.Text = $"{extension.Id} - {extension.ExtensionName}";
-                if (extension.MailsCount == 0) return;
-                viewHolder.ExtensionInfo.Text = extension.MailsCount.ToString();
-                viewHolder.InfoLayout.Visibility = ViewStates.Visible;
+                if (extension.MailsCount > 0)
+                {
+                    viewHolder.ExtensionInfo.Text = extension.MailsCount > 99 ? "99+" : extension.MailsCount.ToString();
+                    viewHolder.InfoLayout.Visibility = ViewStates.Visible;
+                }
+                else
+                {
+                    viewHolder.ExtensionInfo.Text = "";
+                    viewHolder.InfoLayout.Visibility = ViewStates.Invisible;
+                }
             }
             else if (contentItem is Folder)
             {
@@ -71,19 +123,70 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
                 var folder = contentItem as Folder;
                 if (viewHolder == null) return;
                 viewHolder.FoldersName.Text = folder.FolderName;
-                if (folder.MailsCount != 0)
-                    viewHolder.FoldersInfo.Text = folder.MailsCount.ToString();
-                //TODO: icons
+                if (folder.FolderName == _context.GetString(Resource.String.FragmentMessages_folderNew))
+                {
+                    viewHolder.FoldersIcon.SetImageResource(Resource.Drawable.ic_new_folder);
+                    if (folder.MailsCount > 0)
+                    {
+                        viewHolder.FoldersInfo.Text = folder.MailsCount > 99 ? "99+" : folder.MailsCount.ToString();
+                        viewHolder.InfoLayout.Visibility = ViewStates.Visible;
+                    }
+                    else
+                    {
+                        viewHolder.FoldersInfo.Text = "";
+                        viewHolder.InfoLayout.Visibility = ViewStates.Invisible;
+                    }
+                }
+                else if (folder.FolderName == _context.GetString(Resource.String.FragmentMessages_folderSent))
+                    viewHolder.FoldersIcon.SetImageResource(Resource.Drawable.ic_send_folder);
+                else if (folder.FolderName == _context.GetString(Resource.String.FragmentMessages_folderTrash))
+                    viewHolder.FoldersIcon.SetImageResource(Resource.Drawable.ic_trash_folder);
+                else if (folder.FolderName == _context.GetString(Resource.String.FragmentMessages_folderSaved))
+                    viewHolder.FoldersIcon.SetImageResource(Resource.Drawable.ic_save_folder);
+                else
+                    viewHolder.FoldersIcon.SetImageResource(Resource.Drawable.ic_other_folder);
             }
             else
             {
                 var viewHolder = holder as MessagesViewHolder;
                 var message = contentItem as Message;
                 if ((viewHolder == null)||(message == null)) return;
-                viewHolder.MessageDate.Text = message.MessageDate;
-                viewHolder.MessageStamp.Text = message.Length.ToString();
-                viewHolder.MessageFrom.Text = (message.FromName.Length > 0) ? message.FromName : message.FromNumber;
-                //TODO:icons
+                viewHolder.MessageDate.Text = DataFormatUtils.ToFormattedDate(_context.GetString(Resource.String.Timestamp_yesterday), message.MessageDate);
+                viewHolder.MessageFrom.Text = (message.FromName.Length > 1) ? message.FromName : DataFormatUtils.ToPhoneNumber(message.FromNumber);
+                switch (message.MessageType)
+                {
+                    case Message.TypeFax:
+                        viewHolder.MessageIcon.SetImageResource(message.Unread
+                            ? Resource.Drawable.ic_msg_fax_unread
+                            : Resource.Drawable.ic_msg_fax);
+                        viewHolder.MessageStamp.Text = message.Length == 1 ? 
+                            _context.GetString(Resource.String.FragmentMessages_onePage) : $"{message.Length} {_context.GetString(Resource.String.FragmentMessages_morePage)}";
+                        break;
+                    case Message.TypeRec:
+                        viewHolder.MessageIcon.SetImageResource(message.Unread
+                            ? Resource.Drawable.ic_msg_callrec_unread
+                            : Resource.Drawable.ic_msg_callrec);
+                        viewHolder.MessageStamp.Text = DataFormatUtils.ToDuration(message.Length);
+                        break;
+                    case Message.TypeVoice:
+                        viewHolder.MessageIcon.SetImageResource(message.Unread
+                            ? Resource.Drawable.ic_msg_voicemail_unread
+                            : Resource.Drawable.ic_msg_voicemail);
+                        viewHolder.MessageStamp.Text = DataFormatUtils.ToDuration(message.Length);
+                        break;
+                }
+                if (message.Unread)
+                {
+                    viewHolder.MessageFrom.SetTypeface(null, TypefaceStyle.Bold);
+                    viewHolder.MessageDate.SetTypeface(null, TypefaceStyle.Bold);
+                    viewHolder.MessageDate.SetTextColor(ContextCompat.GetColorStateList(_context, Resource.Color.textColorPrimary));
+                }
+                else
+                {
+                    viewHolder.MessageFrom.SetTypeface(null, TypefaceStyle.Normal);
+                    viewHolder.MessageDate.SetTypeface(null, TypefaceStyle.Normal);
+                    viewHolder.MessageDate.SetTextColor(ContextCompat.GetColorStateList(_context, Resource.Color.messageIndicatorText));
+                }
             }
         }
 
@@ -92,11 +195,11 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
             switch (viewType)
             {
                 case CodeExtension:
-                    return new ExtensionViewHolder(LayoutInflater.From(parent.Context).Inflate(Resource.Layout.item_extension, parent, false));
+                    return new ExtensionViewHolder(LayoutInflater.From(parent.Context).Inflate(Resource.Layout.item_extension, parent, false), OnClick);
                 case CodeFolder:
-                    return new FoldersViewHolder(LayoutInflater.From(parent.Context).Inflate(Resource.Layout.item_folder, parent, false));
+                    return new FoldersViewHolder(LayoutInflater.From(parent.Context).Inflate(Resource.Layout.item_folder, parent, false), OnClick);
                 default:
-                    return new MessagesViewHolder(LayoutInflater.From(parent.Context).Inflate(Resource.Layout.item_message, parent, false));
+                    return new MessagesViewHolder(LayoutInflater.From(parent.Context).Inflate(Resource.Layout.item_message, parent, false), OnClick);
             }
         }
 
@@ -119,6 +222,9 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
         /// </summary>
         private class ExtensionViewHolder : RecyclerView.ViewHolder
         {
+            /// <summary>
+            /// Colored layout for messages counter
+            /// </summary>
             public LinearLayout InfoLayout { get; }
 
             /// <summary>
@@ -131,11 +237,12 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
             /// </summary>
             public TextView ExtensionInfo { get; }
 
-            public ExtensionViewHolder(View itemView) : base(itemView)
+            public ExtensionViewHolder(View itemView, Action<int> listener) : base(itemView)
             {
                 ExtensionName = itemView.FindViewById<TextView>(Resource.Id.itemExt_title);
                 ExtensionInfo = itemView.FindViewById<TextView>(Resource.Id.itemExt_info);
                 InfoLayout = itemView.FindViewById<LinearLayout>(Resource.Id.itemExt_back);
+                itemView.Click += (sender, e) => listener(AdapterPosition);
             }
         }
 
@@ -144,6 +251,11 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
         /// </summary>
         private class FoldersViewHolder : RecyclerView.ViewHolder
         {
+            /// <summary>
+            /// Colored layout for messages counter
+            /// </summary>
+            public LinearLayout InfoLayout { get; }
+
             /// <summary>
             /// Folder icon
             /// </summary>
@@ -159,11 +271,13 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
             /// </summary>
             public TextView FoldersInfo { get; }
 
-            public FoldersViewHolder(View itemView) : base(itemView)
+            public FoldersViewHolder(View itemView, Action<int> listener) : base(itemView)
             {
                 FoldersIcon = itemView.FindViewById<ImageView>(Resource.Id.itemFolder_icon);
                 FoldersName = itemView.FindViewById<TextView>(Resource.Id.itemFolder_title);
                 FoldersInfo = itemView.FindViewById<TextView>(Resource.Id.itemFolder_info);
+                InfoLayout = itemView.FindViewById<LinearLayout>(Resource.Id.itemFolder_back);
+                itemView.Click += (sender, e) => listener(AdapterPosition);
             }
         }
 
@@ -192,12 +306,13 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
             /// </summary>
             public TextView MessageDate { get; }
 
-            public MessagesViewHolder(View itemView) : base(itemView)
+            public MessagesViewHolder(View itemView, Action<int> listener) : base(itemView)
             {
                 MessageIcon = itemView.FindViewById<ImageView>(Resource.Id.itemMessage_messageIcon);
                 MessageStamp = itemView.FindViewById<TextView>(Resource.Id.itemMessage_messageStamp);
                 MessageDate = itemView.FindViewById<TextView>(Resource.Id.itemMessage_messageDate);
                 MessageFrom = itemView.FindViewById<TextView>(Resource.Id.itemMessage_messageFrom);
+                itemView.Click += (sender, e) => listener(AdapterPosition);
             }
         }
     }

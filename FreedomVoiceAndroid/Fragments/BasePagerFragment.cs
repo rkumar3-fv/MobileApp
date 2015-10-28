@@ -2,6 +2,7 @@ using System;
 using Android.OS;
 using Android.Support.V4.App;
 using Android.Util;
+using Android.Views;
 using com.FreedomVoice.MobileApp.Android.Activities;
 using com.FreedomVoice.MobileApp.Android.Helpers;
 
@@ -13,6 +14,34 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
     public abstract class BasePagerFragment : Fragment
     {
         protected ActionsHelper Helper;
+        protected ContentActivity ContentActivity => Activity as ContentActivity;
+
+        protected LayoutInflater Inflater;
+        protected WeakReference<View> RootView;
+
+        public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+        {
+            Inflater = inflater ?? LayoutInflater.From(ContentActivity);
+            View view;
+            if (RootView == null)
+                view = null;
+            else
+                RootView.TryGetTarget(out view);
+
+            if (view != null)
+            {
+                var parent = view.Parent;
+                (parent as ViewGroup)?.RemoveView(view);
+            }
+            else
+            {
+                view = InitView();
+                RootView = new WeakReference<View>(view);
+            }
+            return view;
+        }
+
+        protected abstract View InitView();
 
         public override void OnActivityCreated(Bundle savedInstanceState)
         {
@@ -51,7 +80,9 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         /// <param name="args">Result args</param>
         private void OnHelperEvent(object sender, EventArgs args)
         {
-            
+            var eventArgs = args as ActionsHelperEventArgs;
+            if (eventArgs != null)
+                OnHelperEvent(eventArgs);
         }
 
         /// <summary>

@@ -27,8 +27,8 @@
         public async static Task<BaseResult<string>> Logout()
         {
             CookieContainer = null;
-
-            return new BaseResult<string> { Code = ErrorCodes.Ok, Result = "" };
+            var task = Task.Run(() => new BaseResult<string> { Code = ErrorCodes.Ok, Result = "" });
+            return await task;
         }
 
         public async static Task<BaseResult<string>> PasswordReset(string login)
@@ -57,8 +57,7 @@
 
         public async static Task<BaseResult<CreateCallReservationSetting>> CreateCallReservation(string systemPhoneNumber, string expectedCallerIdNumber, string presentationPhoneNumber, string destinationPhoneNumber)
         {
-            var postdata = $"ExpectedCallerIdNumber={expectedCallerIdNumber}&PresentationPhoneNumber={presentationPhoneNumber}&DestinationPhoneNumber={destinationPhoneNumber}";
-
+            var postdata = $"ExpectedCallerIdNumber={expectedCallerIdNumber.Replace("+", "%2B")}&PresentationPhoneNumber={presentationPhoneNumber}&DestinationPhoneNumber={destinationPhoneNumber.Replace("+", "%2B")}";
             return await MakeAsyncPostRequest<CreateCallReservationSetting>(
                 $"/api/v1/systems/{systemPhoneNumber}/createCallReservation",
                 postdata,
@@ -192,7 +191,7 @@
             BaseResult<Stream> retResult = null;
             using (ct.Register(request.Abort, false))
             {
-                Task<WebResponse> task = Task.Factory.FromAsync<WebResponse>(request.BeginGetResponse, request.EndGetResponse, null);
+                var task = Task.Factory.FromAsync<WebResponse>(request.BeginGetResponse, request.EndGetResponse, null);
 
                 try
                 {
@@ -216,6 +215,15 @@
                                     retResult = new BaseResult<Stream>
                                     {
                                         Code = ErrorCodes.Unauthorized,
+                                        Result = Stream.Null
+                                    };
+                                    break;
+                                }
+                            case HttpStatusCode.Forbidden:
+                                {
+                                    retResult = new BaseResult<Stream>
+                                    {
+                                        Code = ErrorCodes.Forbidden,
                                         Result = Stream.Null
                                     };
                                     break;
@@ -298,6 +306,15 @@
                                     };
                                     break;
                                 }
+                            case HttpStatusCode.Forbidden:
+                                {
+                                    retResult = new BaseResult<T>
+                                    {
+                                        Code = ErrorCodes.Forbidden,
+                                        Result = default(T)
+                                    };
+                                    break;
+                                }
                             case HttpStatusCode.BadRequest:
                                 {
                                     retResult = new BaseResult<T>
@@ -354,7 +371,7 @@
 
         private static string ReadStreamFromResponse(WebResponse response)
         {
-            using (Stream responseStream = response.GetResponseStream())
+            using (var responseStream = response.GetResponseStream())
             using (var sr = new StreamReader(responseStream))
             {
                 return sr.ReadToEnd();

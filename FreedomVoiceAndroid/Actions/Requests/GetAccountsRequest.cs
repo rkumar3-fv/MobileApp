@@ -1,5 +1,8 @@
 using System.Threading.Tasks;
 using Android.OS;
+#if DEBUG
+using Android.Util;
+#endif
 using com.FreedomVoice.MobileApp.Android.Actions.Responses;
 using FreedomVoice.Core;
 using Java.Interop;
@@ -9,6 +12,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
 {
     /// <summary>
     /// Accounts list request
+    /// <see href="https://api.freedomvoice.com/Help/Api/GET-api-v1-systems">API - Get accounts request</see>
     /// </summary>
     public class GetAccountsRequest : BaseRequest
     {
@@ -20,7 +24,14 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
 
         public async override Task<BaseResponse> ExecuteRequest()
         {
+#if DEBUG
+            Log.Debug(App.AppPackage, $"{GetType().Name} executes request");
+#endif
             var asyncRes = await ApiHelper.GetSystems();
+#if DEBUG
+            Log.Debug(App.AppPackage, $"{GetType().Name} GetResponse {(asyncRes == null ? "NULL" : "NOT NULL")}");
+#endif
+            if (asyncRes == null) return new ErrorResponse(Id, ErrorResponse.ErrorConnection);
             var errorResponse = CheckErrorResponse(Id, asyncRes.Code);
             if (errorResponse != null)
                 return errorResponse;

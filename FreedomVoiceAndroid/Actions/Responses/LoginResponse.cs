@@ -6,6 +6,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Responses
 {
     /// <summary>
     /// Successful login action response
+    /// <see href="https://api.freedomvoice.com/Help/Api/POST-api-v1-login">API - Login request</see>
     /// </summary>
     public class LoginResponse : BaseResponse
     {
