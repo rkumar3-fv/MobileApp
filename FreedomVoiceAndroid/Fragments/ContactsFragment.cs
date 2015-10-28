@@ -12,25 +12,22 @@ using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Adapters;
 using com.FreedomVoice.MobileApp.Android.Dialogs;
 using com.FreedomVoice.MobileApp.Android.Entities;
-using com.FreedomVoice.MobileApp.Android.Helpers;
 
 namespace com.FreedomVoice.MobileApp.Android.Fragments
 {
     /// <summary>
     /// Contacts tab
     /// </summary>
-    public class ContactsFragment : BasePagerFragment
+    public class ContactsFragment : CallerFragment
     {
-        private Spinner _idSpinner;
         private RecyclerView _contactsView;
         private ContactsRecyclerAdapter _adapter;
 
         protected override View InitView()
         {
             var view = Inflater.Inflate(Resource.Layout.frag_contacts, null, false);
-            _idSpinner = view.FindViewById<Spinner>(Resource.Id.contatnsFragment_idSpinner);
-            _idSpinner.ItemSelected += (sender, args) => Helper.SetPresentationNumber(args.Position);
-
+            IdSpinner = view.FindViewById<Spinner>(Resource.Id.contatnsFragment_idSpinner);
+            SingleId = view.FindViewById<TextView>(Resource.Id.contactsFragment_singleId);
             _contactsView = view.FindViewById<RecyclerView>(Resource.Id.contactsFragment_recyclerView);
             _contactsView.SetLayoutManager(new LinearLayoutManager(Activity));
             _contactsView.AddItemDecoration(new DividerItemDecorator(Activity, Resource.Drawable.divider));  
@@ -40,8 +37,6 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         public override void OnActivityCreated(Bundle savedInstanceState)
         {
             base.OnActivityCreated(savedInstanceState);
-            var adapter = new CallerIdSpinnerAdapter(Activity, Helper.SelectedAccount.PresentationNumbers);
-            _idSpinner.Adapter = adapter;
 
             var uri = ContactsContract.Contacts.ContentUri;
             string[] projection = { ContactsContract.Contacts.InterfaceConsts.Id, ContactsContract.Contacts.InterfaceConsts.DisplayName,
@@ -54,13 +49,6 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             _adapter = new ContactsRecyclerAdapter(ContentActivity, cursor);
             _adapter.ItemClick += AdapterOnItemClick;
             _contactsView.SetAdapter(_adapter);
-        }
-
-        public override void OnResume()
-        {
-            base.OnResume();
-            if (_idSpinner.SelectedItemPosition != Helper.SelectedAccount.SelectedPresentationNumber)
-                _idSpinner.SetSelection(Helper.SelectedAccount.SelectedPresentationNumber);
         }
 
         private void AdapterOnItemClick(object sender, List<Phone> list)
@@ -91,20 +79,6 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         private void MultiPhonesDialogOnPhoneClick(object sender, Phone phone)
         {
             ContentActivity.Call(phone.PhoneNumber);
-        }
-
-        protected override void OnHelperEvent(ActionsHelperEventArgs args)
-        {
-            foreach (var code in args.Codes)
-            {
-                switch (code)
-                {
-                    case ActionsHelperEventArgs.ChangePresentation:
-                        if (_idSpinner.SelectedItemPosition != Helper.SelectedAccount.SelectedPresentationNumber)
-                            _idSpinner.SetSelection(Helper.SelectedAccount.SelectedPresentationNumber);
-                        break;
-                }
-            }
         }
     }
 }

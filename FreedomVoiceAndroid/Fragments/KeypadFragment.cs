@@ -1,11 +1,10 @@
 using System;
-using Android.OS;
 using Android.Support.Design.Widget;
+#if DEBUG
 using Android.Util;
+#endif
 using Android.Views;
 using Android.Widget;
-using com.FreedomVoice.MobileApp.Android.Adapters;
-using com.FreedomVoice.MobileApp.Android.Helpers;
 using FreedomVoice.Core.Utils;
 
 namespace com.FreedomVoice.MobileApp.Android.Fragments
@@ -13,10 +12,9 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
     /// <summary>
     /// Dialing keypad tab
     /// </summary>
-    public class KeypadFragment : BasePagerFragment
+    public class KeypadFragment : CallerFragment
     {
         private string _enteredNumber="";
-        private Spinner _idSpinner;
         private EditText _dialEdit;
         private ImageButton _backspaceButton;
         private LinearLayout _buttonOne;
@@ -36,8 +34,8 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         protected override View InitView()
         {
             var view = Inflater.Inflate(Resource.Layout.frag_keypad, null, false);
-            _idSpinner = view.FindViewById<Spinner>(Resource.Id.keypadFragment_idSpinner);
-            _idSpinner.ItemSelected += (sender, args) => Helper.SetPresentationNumber(args.Position);
+            IdSpinner = view.FindViewById<Spinner>(Resource.Id.keypadFragment_idSpinner);
+            SingleId = view.FindViewById<TextView>(Resource.Id.keypadFragment_singleId);
             _dialEdit = view.FindViewById<EditText>(Resource.Id.keypadFragment_dialText);
             _dialEdit.KeyListener = null;
             _backspaceButton = view.FindViewById<ImageButton>(Resource.Id.keypadFragment_backspace);
@@ -73,26 +71,14 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             return view;
         }
 
-        public override void OnActivityCreated(Bundle savedInstanceState)
-        {
-            base.OnActivityCreated(savedInstanceState);
-            var adapter = new CallerIdSpinnerAdapter(Activity, Helper.SelectedAccount.PresentationNumbers);
-            _idSpinner.Adapter = adapter;
-        }
-
-        public override void OnResume()
-        {
-            base.OnResume();
-            if (_idSpinner.SelectedItemPosition != Helper.SelectedAccount.SelectedPresentationNumber)
-                _idSpinner.SetSelection(Helper.SelectedAccount.SelectedPresentationNumber);
-        }
-
         /// <summary>
         /// Digit button click event
         /// </summary>
         private void ButtonDigitOnClick(string s)
         {
+#if DEBUG
             Log.Debug(App.AppPackage, $"KEYPAD: add {s}");
+#endif
             _enteredNumber=_enteredNumber.Insert(_enteredNumber.Length, s);
             SetupNewText();
         }
@@ -113,12 +99,16 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             if (_enteredNumber.Length > 0)
             {
                 var newString = _enteredNumber.Substring(0, _enteredNumber.Length - 1);
+#if DEBUG
                 Log.Debug(App.AppPackage, $"KEYPAD: remove symbol {_enteredNumber.Substring(_enteredNumber.Length-1)}");
+#endif
                 _enteredNumber = newString;
                 SetupNewText();
             }
+#if DEBUG
             else
                 Log.Debug(App.AppPackage, $"KEYPAD: nothing to remove");
+#endif
         }
 
         /// <summary>
@@ -127,7 +117,9 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         private void ButtonZeroOnLongClick(object sender, View.LongClickEventArgs longClickEventArgs)
         {
             if (_enteredNumber.Length != 0) return;
+#if DEBUG
             Log.Debug(App.AppPackage, "KEYPAD: + added");
+#endif
             _enteredNumber = _enteredNumber.Insert(_enteredNumber.Length, "+");
             SetupNewText();
         }
@@ -137,7 +129,9 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         /// </summary>
         private void BackspaceButtonOnLongClick(object sender, View.LongClickEventArgs longClickEventArgs)
         {
+#if DEBUG
             Log.Debug(App.AppPackage, $"KEYPAD: clear phone");
+#endif
             _enteredNumber = "";
             SetupNewText();
         }
@@ -145,20 +139,6 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         private void SetupNewText()
         {
             _dialEdit.Text = DataFormatUtils.ToPhoneNumber(_enteredNumber);
-        }
-
-        protected override void OnHelperEvent(ActionsHelperEventArgs args)
-        {
-            foreach (var code in args.Codes)
-            {
-                switch (code)
-                {
-                    case ActionsHelperEventArgs.ChangePresentation:
-                        if (_idSpinner.SelectedItemPosition != Helper.SelectedAccount.SelectedPresentationNumber)
-                            _idSpinner.SetSelection(Helper.SelectedAccount.SelectedPresentationNumber);
-                        break;
-                }
-            }
         }
     }
 }

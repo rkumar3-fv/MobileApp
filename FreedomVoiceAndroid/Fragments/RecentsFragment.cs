@@ -15,9 +15,8 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
     /// <summary>
     /// Recents tab
     /// </summary>
-    public class RecentsFragment : BasePagerFragment
+    public class RecentsFragment : CallerFragment
     {
-        private Spinner _idSpinner;
         private RecyclerView _recentsView;
         private ItemTouchHelper _swipeTouchHelper;
         private RecentsRecyclerAdapter _adapter;
@@ -25,9 +24,8 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         protected override View InitView()
         {
             var view = Inflater.Inflate(Resource.Layout.frag_recents, null, false);
-            _idSpinner = view.FindViewById<Spinner>(Resource.Id.recentsFragment_idSpinner);
-            _idSpinner.ItemSelected += (sender, args) => Helper.SetPresentationNumber(args.Position);
-
+            IdSpinner = view.FindViewById<Spinner>(Resource.Id.recentsFragment_idSpinner);
+            SingleId = view.FindViewById<TextView>(Resource.Id.recentsFragment_singleId);
             _recentsView = view.FindViewById<RecyclerView>(Resource.Id.recentsFragment_recyclerView);
             _recentsView.SetLayoutManager(new LinearLayoutManager(Activity));
             _recentsView.AddItemDecoration(new DividerItemDecorator(Activity, Resource.Drawable.divider));
@@ -42,8 +40,6 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         public override void OnActivityCreated(Bundle savedInstanceState)
         {
             base.OnActivityCreated(savedInstanceState);
-            var adapter = new CallerIdSpinnerAdapter(Activity, Helper.SelectedAccount.PresentationNumbers);
-            _idSpinner.Adapter = adapter;
 
             _adapter = new RecentsRecyclerAdapter(Helper.RecentsDictionary, ContentActivity);
             _adapter.ItemClick += AdapterOnItemClick;
@@ -54,8 +50,6 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         public override void OnResume()
         {
             base.OnResume();
-            if (_idSpinner.SelectedItemPosition != Helper.SelectedAccount.SelectedPresentationNumber)
-                _idSpinner.SetSelection(Helper.SelectedAccount.SelectedPresentationNumber);
             _adapter.NotifyDataSetChanged();
         }
 
@@ -91,6 +85,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
 
         protected override void OnHelperEvent(ActionsHelperEventArgs args)
         {
+            base.OnHelperEvent(args);
             foreach (var code in args.Codes)
             {
                 switch (code)
@@ -99,10 +94,6 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                     case ActionsHelperEventArgs.CallReservationFail:
                     case ActionsHelperEventArgs.CallReservationWrong:
                         _adapter.NotifyAddItem();
-                        break;
-                    case ActionsHelperEventArgs.ChangePresentation:
-                        if (_idSpinner.SelectedItemPosition != Helper.SelectedAccount.SelectedPresentationNumber)
-                            _idSpinner.SetSelection(Helper.SelectedAccount.SelectedPresentationNumber);
                         break;
                     case ActionsHelperEventArgs.ClearRecents:
                         _adapter.NotifyClear();

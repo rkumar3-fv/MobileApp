@@ -179,7 +179,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         /// </summary>
         private void ClearDialogEvent(object sender, DialogEventArgs args)
         {
-            Helper.ClearAllRecents();
+            if (args.Result == DialogResult.Ok)
+                Helper.ClearAllRecents();
         }
 
         public override void OnBackPressed()
