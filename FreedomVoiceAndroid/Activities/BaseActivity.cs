@@ -1,7 +1,9 @@
 using System;
 using Android.OS;
+using Android.Support.Design.Widget;
 using Android.Support.V7.App;
 using Android.Util;
+using Android.Views;
 using com.FreedomVoice.MobileApp.Android.Helpers;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
@@ -13,6 +15,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
     {
         public ActionsHelper Helper;
         protected App Appl;
+        protected View RootLayout;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -57,6 +60,17 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         /// Helper event callback action
         /// </summary>
         /// <param name="args">Result args</param>
-        protected abstract void OnHelperEvent(ActionsHelperEventArgs args);
+        protected virtual void OnHelperEvent(ActionsHelperEventArgs args)
+        {
+            foreach (var code in args.Codes)
+            {
+                switch (code)
+                {
+                    case ActionsHelperEventArgs.ConnectionLostError:
+                        Snackbar.Make(RootLayout, Resource.String.Snack_connectionLost, Snackbar.LengthLong).Show();
+                        return;
+                }
+            }
+        }
     }
 }

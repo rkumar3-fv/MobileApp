@@ -1,8 +1,5 @@
 using System;
-using Android.Telephony;
-using Android.Util;
 using Android.Widget;
-using com.FreedomVoice.MobileApp.Android.Dialogs;
 using FreedomVoice.Core.Utils;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
@@ -41,17 +38,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         /// </summary>
         private void CallBackButtonOnClick(object sender, EventArgs eventArgs)
         {
-            if ((Helper.PhoneNumber == null) || (Helper.PhoneNumber.Length == 0))
-            {
-                var noCellularDialog = new NoCellularDialogFragment();
-                noCellularDialog.Show(SupportFragmentManager, GetString(Resource.String.DlgCellular_title));
-            }
-            else
-            {
-                var normalizedNumber = PhoneNumberUtils.NormalizeNumber(Msg.FromNumber);
-                Log.Debug(App.AppPackage, $"REDIAL: dial to {DataFormatUtils.ToPhoneNumber(normalizedNumber)}");
-                Helper.Call(normalizedNumber);
-            }
+            Call(Msg.FromNumber);
         }
     }
 }

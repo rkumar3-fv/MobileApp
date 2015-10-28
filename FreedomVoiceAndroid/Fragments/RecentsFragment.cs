@@ -1,7 +1,9 @@
 using Android.OS;
 using Android.Support.V7.Widget;
 using Android.Support.V7.Widget.Helper;
+#if DEBUG
 using Android.Util;
+#endif
 using Android.Views;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Adapters;
@@ -62,7 +64,9 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         /// </summary>
         private void AdapterOnAdditionalSectorClick(object sender, long l)
         {
+#if DEBUG
             Log.Debug(App.AppPackage, $"ADDITIONAL INFO ABOUT {DataFormatUtils.ToPhoneNumber(Helper.RecentsDictionary[l].PhoneNumber)}");
+#endif
             //TODO: when info content will be created
         }
 
@@ -71,7 +75,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         /// </summary>
         private void AdapterOnItemClick(object sender, long l)
         {
-            Call(Helper.RecentsDictionary[l].PhoneNumber);
+            ContentActivity.Call(Helper.RecentsDictionary[l].PhoneNumber);
         }
 
         /// <summary>
@@ -79,7 +83,9 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         /// </summary>
         private void OnSwipeEvent(object sender, SwipeCallbackEventArgs args)
         {
+#if DEBUG
             Log.Debug(App.AppPackage, $"SWIPED recent {args.ElementIndex}");
+#endif
             _adapter.RemoveItem(args.ElementIndex);
         }
 
@@ -91,6 +97,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                 {
                     case ActionsHelperEventArgs.CallReservationOk:
                     case ActionsHelperEventArgs.CallReservationFail:
+                    case ActionsHelperEventArgs.CallReservationWrong:
                         _adapter.NotifyAddItem();
                         break;
                     case ActionsHelperEventArgs.ChangePresentation:

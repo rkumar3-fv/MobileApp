@@ -22,6 +22,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             SupportActionBar.SetHomeAsUpIndicator(Resource.Drawable.ic_action_back);
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
             SupportActionBar.SetHomeButtonEnabled(true);
+            SkipButton.Visibility = ViewStates.Gone;
         }
 
         protected new void ApplyButtonOnClick(object sender, EventArgs eventArgs)

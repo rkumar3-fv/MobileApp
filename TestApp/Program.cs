@@ -48,6 +48,14 @@ namespace TestApp
             Console.WriteLine(@"Logout method: " + ApiHelper.Logout().Result.Code);
             Console.Write(Environment.NewLine);
 
+            var systemsUn = ApiHelper.GetSystems().Result;
+            Console.WriteLine($"Systems method unauthorized: {systemsUn.Code}\n");
+
+            var reserv = ApiHelper.CreateCallReservation("7607124648", "+18005551212", "7607124648", "8005556767").Result;
+            Console.WriteLine($"CallReservation method unauthorized: +18005551212 -> 8005556767 - {reserv.Code}");
+            Console.WriteLine($"Result: {((reserv.Result == null) ? ("NULL") : (reserv.Result.SwitchboardPhoneNumber))}");
+            Console.Write(Environment.NewLine);
+
             Console.WriteLine(@"Login method: " + ApiHelper.Login(_login, _passwd).Result.Code);
             Console.Write(Environment.NewLine);
 
@@ -147,7 +155,7 @@ namespace TestApp
             }
             Console.Write(Environment.NewLine);
 
-            var reserv = ApiHelper.CreateCallReservation("7607124648", "+18005551212", "7607124648", "8005556767").Result;
+            reserv = ApiHelper.CreateCallReservation("7607124648", "+18005551212", "7607124648", "8005556767").Result;
             Console.WriteLine($"CallReservation method: +18005551212 -> 8005556767 - {reserv.Code}");
             Console.WriteLine($"Result: {((reserv.Result == null) ? ("NULL") : (reserv.Result.SwitchboardPhoneNumber))}");
             Console.Write(Environment.NewLine);
@@ -172,18 +180,13 @@ namespace TestApp
             Console.WriteLine($"Result: {((reserv.Result == null) ? ("NULL") : (reserv.Result.SwitchboardPhoneNumber))}");
             Console.Write(Environment.NewLine);
 
-            /*reserv = ApiHelper.CreateCallReservation("7607124648", "8005551212", "7607124648", "+79213092113").Result;
-            Console.WriteLine($"CallReservation method: 8005551212 -> +79213092113 - {reserv.Code}");
-            Console.WriteLine($"Result: {((reserv.Result == null) ? ("NULL") : (reserv.Result.SwitchboardPhoneNumber))}");
-            Console.Write(Environment.NewLine);*/
-
             reserv = ApiHelper.CreateCallReservation("7607124648", "79119998877", "7607124648", "8005556767").Result;
             Console.WriteLine($"CallReservation method: 79119998877 -> 8005556767 - {reserv.Code}");
             Console.WriteLine($"Result: {((reserv.Result == null) ? ("NULL") : (reserv.Result.SwitchboardPhoneNumber))}");
             Console.Write(Environment.NewLine);
 
-            reserv = ApiHelper.CreateCallReservation("7607124648", "89119998877", "7607124648", "8005556767").Result;
-            Console.WriteLine($"CallReservation method: 89119998877 -> 8005556767 - {reserv.Code}");
+            reserv = ApiHelper.CreateCallReservation("7607124648", "8034445566", "7607124648", "+79213092113").Result;
+            Console.WriteLine($"CallReservation method: 8034445566 -> +79213092113 - {reserv.Code}");
             Console.WriteLine($"Result: {((reserv.Result == null) ? ("NULL") : (reserv.Result.SwitchboardPhoneNumber))}");
             Console.Write(Environment.NewLine);
 

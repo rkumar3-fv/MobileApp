@@ -102,7 +102,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         /// </summary>
         private void ButtonDialOnClick(object sender, EventArgs e)
         {
-            Call(_enteredNumber);
+            ContentActivity.Call(_enteredNumber);
         }
 
         /// <summary>

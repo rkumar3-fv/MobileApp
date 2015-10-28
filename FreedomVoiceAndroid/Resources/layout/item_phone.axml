@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:minHeight="@dimen/dlg_numbers_element_height"
@@ -13,13 +13,11 @@
         style="@style/ListItemText"
         android:layout_gravity="center_vertical"
         android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:layout_weight="1" />
+        android:layout_width="match_parent" />
     <TextView
         android:id="@+id/itemPhone_typeText"
-        style="@style/ListItemText"
+        style="@style/ListItemSecondaryText"
         android:layout_gravity="center_vertical"
         android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:layout_weight="1" />
+        android:layout_width="match_parent" />
 </LinearLayout>
