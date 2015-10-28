@@ -14,6 +14,7 @@
   <color name="colorTabIndicatorInactive">#b3ffffff</color>
   <color name="colorFabPrimary">#85b640</color>
   <color name="colorFabPressed">#8bc34a</color>
+  <color name="colorCallerId">#e6eaee</color>
   <color name="colorButtonPressed">#ff9800</color>
   <color name="messageIndicator">#1a000000</color>
   <color name="messageIndicatorText">#8c000000</color>

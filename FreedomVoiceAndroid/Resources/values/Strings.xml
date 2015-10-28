@@ -80,7 +80,7 @@
   <string name="ActivityNumber_cancelButton">SKIP</string>
   <string name="ActivityNumber_error">Please enter correct number.</string>
   <string name="Timestamp_yesterday">Yesterday</string>
-  <string name="Snack_connectionLost">Connection lost. Try again later</string>
+  <string name="Snack_connectionLost">No Internet Connection</string>
   <string name="Dlg_ok">OK</string>
   <string name="Dlg_cancel">CANCEL</string>
   <string name="DlgLogout_title">Confirm logout?</string>

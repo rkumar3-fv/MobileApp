@@ -1,3 +1,5 @@
+using System;
+using Android.Annotation;
 using Android.Content;
 using Android.OS;
 using Android.Provider;
@@ -7,6 +9,7 @@ using Android.Util;
 using FreedomVoice.Core.Utils;
 #endif
 using com.FreedomVoice.MobileApp.Android.Dialogs;
+using Java.Lang;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
 {
@@ -66,7 +69,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         /// <summary>
         /// Check is airplane mode ON
         /// </summary>
-        /// <returns></returns>
         private bool IsAirplaneModeOn()
         {
             if ((int)Build.VERSION.SdkInt < 17)

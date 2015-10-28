@@ -78,9 +78,6 @@ namespace com.FreedomVoice.MobileApp.Android
         private void CallStateOnCallEvent(object sender, DialingEventArgs args)
         {
             Helper.MarkCallAsFinished();
-            var intent = PackageManager.GetLaunchIntentForPackage(BaseContext.PackageName);
-            intent.AddFlags(ActivityFlags.ClearTop);
-            StartActivity(intent);
         }
 
         /// <summary>
