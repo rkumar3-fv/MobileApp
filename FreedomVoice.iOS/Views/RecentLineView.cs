@@ -15,7 +15,7 @@ namespace FreedomVoice.iOS.Views
             
             using (CGContext g = UIGraphics.GetCurrentContext())
             {
-                g.SetLineWidth(1);
+                g.SetLineWidth(0.5f);
                 UIColor.Gray.SetStroke();
                 UIColor.Clear.SetFill();
                 var path = new CGPath();

@@ -6,9 +6,23 @@ namespace FreedomVoice.iOS.Utilities
 {
     public static class Theme
     {
+        #region Backgrounds
+
+        /// <summary>
+        /// Background for Login page
+        /// </summary>
+        static readonly Lazy<UIColor> loginBackground = new Lazy<UIColor>(() => UIColor.FromPatternImage(LoginBackgroundImage));
+        public static UIColor LoginBackground => loginBackground.Value;
+
+        #endregion
+
         #region Images
 
-
+        /// <summary>
+        /// Login page background image
+        /// </summary>
+        static readonly Lazy<UIImage> loginBackgroundImage = new Lazy<UIImage>(() => UIImage.FromFile("Login-568h.png"));
+        public static UIImage LoginBackgroundImage => loginBackgroundImage.Value;
 
         #endregion
 
@@ -23,7 +37,7 @@ namespace FreedomVoice.iOS.Utilities
         /// <summary>
         /// Orange button color
         /// </summary>
-        static readonly Lazy<UIColor> buttonColor = new Lazy<UIColor>(() => UIColor.FromRGB(270, 170, 30));
+        static readonly Lazy<UIColor> buttonColor = new Lazy<UIColor>(() => UIColor.FromRGB(240, 170, 30));
         public static UIColor ButtonColor => buttonColor.Value;
 
         /// <summary>
@@ -47,7 +61,7 @@ namespace FreedomVoice.iOS.Utilities
         /// <summary>
         /// Login Page text fields text color
         /// </summary>
-        static readonly Lazy<UIColor> loginPageTextFieldTextColor = new Lazy<UIColor>(() => UIColor.White);
+        static readonly Lazy<UIColor> loginPageTextFieldTextColor = new Lazy<UIColor>(() => WhiteColor);
         public static UIColor LoginPageTextFieldTextColor => loginPageTextFieldTextColor.Value;
 
         /// <summary>
@@ -57,22 +71,10 @@ namespace FreedomVoice.iOS.Utilities
         public static UIColor InvalidTextFieldBorderColor => invalidTextFieldBorderColor.Value;
 
         /// <summary>
-        /// Label color
-        /// </summary>
-        static readonly Lazy<UIColor> labelColor = new Lazy<UIColor>(() => UIColor.Black);
-        public static UIColor LabelColor => labelColor.Value;
-
-        /// <summary>
         /// Invalid label color
         /// </summary>
         static readonly Lazy<UIColor> invalidLabelColor = new Lazy<UIColor>(() => DimOrangeColor);
         public static UIColor InvalidLabelColor => invalidLabelColor.Value;
-
-        /// <summary>
-        /// Gray label color
-        /// </summary>
-        static readonly Lazy<UIColor> grayLabelColor = new Lazy<UIColor>(() => UIColor.FromRGB(127, 127, 127));
-        public static UIColor GrayLabelColor => grayLabelColor.Value;
 
         /// <summary>
         /// Text fields border color
@@ -89,8 +91,26 @@ namespace FreedomVoice.iOS.Utilities
         /// <summary>
         /// Text fields text color
         /// </summary>
-        static readonly Lazy<UIColor> textFieldTextColor = new Lazy<UIColor>(() => UIColor.Black);
+        static readonly Lazy<UIColor> textFieldTextColor = new Lazy<UIColor>(() => BlackColor);
         public static UIColor TextFieldTextColor => textFieldTextColor.Value;
+
+        /// <summary>
+        /// Black color
+        /// </summary>
+        static readonly Lazy<UIColor> blackColor = new Lazy<UIColor>(() => UIColor.Black);
+        public static UIColor BlackColor => blackColor.Value;
+
+        /// <summary>
+        /// White color
+        /// </summary>
+        static readonly Lazy<UIColor> whiteColor = new Lazy<UIColor>(() => UIColor.White);
+        public static UIColor WhiteColor => whiteColor.Value;
+
+        /// <summary>
+        /// Gray color
+        /// </summary>
+        static readonly Lazy<UIColor> grayColor = new Lazy<UIColor>(() => UIColor.FromRGB(127, 127, 127));
+        public static UIColor GrayColor => grayColor.Value;
 
         /// <summary>
         /// Dim orange color
@@ -101,7 +121,7 @@ namespace FreedomVoice.iOS.Utilities
         /// <summary>
         /// Dark gray color
         /// </summary>
-        static readonly Lazy<UIColor> darkGrayColor = new Lazy<UIColor>(() => UIColor.FromRGB(0x73, 0x81, 0x82));
+        static readonly Lazy<UIColor> darkGrayColor = new Lazy<UIColor>(() => UIColor.FromRGB(73, 81, 82));
         public static UIColor DarkGrayColor => darkGrayColor.Value;
 
         /// <summary>
@@ -112,6 +132,8 @@ namespace FreedomVoice.iOS.Utilities
 
         #endregion
 
+        public static CGRect ScreenBounds => UIScreen.MainScreen.Bounds;
+
         /// <summary>
         /// Apply UIAppearance to this application, this is iOS's version of "styling"
         /// </summary>
@@ -121,9 +143,10 @@ namespace FreedomVoice.iOS.Utilities
 
             //UIToolbar.Appearance.SetBackgroundImage(BlueBar, UIToolbarPosition.Any, UIBarMetrics.Default);
 
-            UINavigationBar.Appearance.TintColor = UIColor.White;
-            UINavigationBar.Appearance.TitleTextAttributes = new UIStringAttributes { ForegroundColor = UIColor.White };
+            UINavigationBar.Appearance.TintColor = WhiteColor;
+            UINavigationBar.Appearance.TitleTextAttributes = new UIStringAttributes { ForegroundColor = WhiteColor };
             UINavigationBar.Appearance.BarTintColor = new UIColor(0.016f, 0.588f, 0.816f, 1);
+            //UINavigationBar.Appearance.SetBackgroundImage(new UIImage(), UIBarMetrics.Default);
         }
 
         const string FontName = "HelveticaNeue-Light";

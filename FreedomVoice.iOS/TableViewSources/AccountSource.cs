@@ -56,9 +56,11 @@ namespace FreedomVoice.iOS.TableViewSources
             var tabBarController = AppDelegate.GetViewController<MainTabBarController>();
             tabBarController.SelectedAccount = selectedAccount;
 
-            var presentationNumbersViewModel = new PresentationNumbersViewModel(selectedAccount.PhoneNumber);
+            var presentationNumbersViewModel = new PresentationNumbersViewModel(selectedAccount.PhoneNumber) { IsBusy = true };
             await presentationNumbersViewModel.GetPresentationNumbersAsync();
             tabBarController.PresentationNumbers = presentationNumbersViewModel.PresentationNumbers;
+
+            presentationNumbersViewModel.IsBusy = false;
 
             _navigationController.PushViewController(tabBarController, true);
         }

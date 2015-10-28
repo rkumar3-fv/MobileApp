@@ -26,16 +26,17 @@ namespace FreedomVoice.iOS.ViewControllers
         {
             base.ViewDidLoad();
 
-            _phoneLabel = new UILabel(new CGRect(12, 110, 250, 32)) {
-                Font = UIFont.SystemFontOfSize(28, UIFontWeight.Thin),
-                TextAlignment = UITextAlignment.Right
+            _phoneLabel = new UILabel(new CGRect(30, 105, 250, 52))
+            {
+                Font = UIFont.SystemFontOfSize(30, UIFontWeight.Thin),
+                TextAlignment = UITextAlignment.Center
             };
 
-            _clearPhone = new UIButton(new CGRect(260, 110, 40, 40));
+            _clearPhone = new UIButton(new CGRect(277, 110, 40, 40));
             _clearPhone.SetBackgroundImage(UIImage.FromFile("keypad_backspace.png"), UIControlState.Normal);
             _clearPhone.TouchUpInside += ClearPhone_TouchUpInside;
 
-            _keypadDial = new UIButton(new CGRect(130, 450, 62, 62));
+            _keypadDial = new UIButton(new CGRect(130, 440, 62, 62));
             _keypadDial.SetBackgroundImage(UIImage.FromFile("keypad_call.png"), UIControlState.Normal);
             _keypadDial.TouchUpInside += KeypadDial_TouchUpInside;
 
@@ -71,7 +72,7 @@ namespace FreedomVoice.iOS.ViewControllers
                 View.AddSubview(button);
             }
 
-            CallerIdView = new CallerIdView(new RectangleF(0, 65, 320, 44), MainTab.GetPresentationNumbers());
+            CallerIdView = new CallerIdView(new RectangleF(0, 65, 320, 40), MainTab.GetPresentationNumbers());
             View.AddSubviews(CallerIdView);
         }
 

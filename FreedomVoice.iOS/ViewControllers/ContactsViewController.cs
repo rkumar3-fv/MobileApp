@@ -68,9 +68,9 @@ namespace FreedomVoice.iOS.ViewControllers
             _contactsSearchBar.TextChanged += SearchBarOnTextChanged;
             _contactsSearchBar.CancelButtonClicked += SearchBarOnCancelButtonClicked;
 
-            CallerIdView = new CallerIdView(new RectangleF(0, 44, 320, 44), MainTab?.GetPresentationNumbers());
+            CallerIdView = new CallerIdView(new RectangleF(0, 44, 320, 40), MainTab?.GetPresentationNumbers());
 
-            var headerView = new UIView(new CGRect(0, 0, 320, 88));
+            var headerView = new UIView(new CGRect(0, 0, 320, 84));
             headerView.AddSubviews(_contactsSearchBar, CallerIdView);
 
             _contactList = addressBook.ToList();

@@ -1,5 +1,4 @@
 using System;
-using CoreGraphics;
 using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.ViewModels;
 using UIKit;
@@ -33,15 +32,22 @@ namespace FreedomVoice.iOS.ViewControllers
                 return false;
             };
 
-            EmailTextField.Text = _forgotPasswordViewModel.EMail = "freedomvoice.user1.267055@gmail.com";
+            EmailTextField.Text = _forgotPasswordViewModel.EMail = "freedomvoice.adm.267055@gmail.com";
 
+            //EmailTextField.BorderStyle = UITextBorderStyle.RoundedRect;
+
+            //SendButton.Layer.CornerRadius = 5;
+            //SendButton.ClipsToBounds = true;
+        }
+
+	    public override void ViewWillAppear(bool animated)
+	    {
             EmailTextField.BorderStyle = UITextBorderStyle.RoundedRect;
 
             SendButton.Layer.CornerRadius = 5;
-            SendButton.ClipsToBounds = true;
         }
 
-        private void OnIsBusyChanged(object sender, EventArgs e)
+	    private void OnIsBusyChanged(object sender, EventArgs e)
         {
             if (!IsViewLoaded)
                 return;
@@ -67,7 +73,7 @@ namespace FreedomVoice.iOS.ViewControllers
         private void OnEMailValidationFailed(object sender, EventArgs e)
         {
             EmailValidationLabel.Hidden = false;
-            EmailTextField.Layer.BorderColor = new CGColor(0.996f, 0.788f, 0.373f, 1);
+            EmailTextField.Layer.BorderColor = Theme.InvalidTextFieldBorderColor.ToCGColor();
             EmailTextField.BecomeFirstResponder();
         }
 
@@ -84,13 +90,13 @@ namespace FreedomVoice.iOS.ViewControllers
 	    private async void ProceedPasswordReset()
 	    {
             UIApplication.SharedApplication.NetworkActivityIndicatorVisible = true;
+            _forgotPasswordViewModel.IsBusy = true;
 
             EmailTextField.ResignFirstResponder();
 
-	        _forgotPasswordViewModel.IsBusy = true;
             await _forgotPasswordViewModel.ForgotPasswordAsync();
-            _forgotPasswordViewModel.IsBusy = false;
 
+            _forgotPasswordViewModel.IsBusy = false;
             UIApplication.SharedApplication.NetworkActivityIndicatorVisible = false;
         }
 

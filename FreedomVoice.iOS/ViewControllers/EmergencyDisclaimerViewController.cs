@@ -2,6 +2,7 @@ using System;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.Helpers;
 using FreedomVoice.iOS.Utilities;
+using FreedomVoice.iOS.ViewModels;
 using UIKit;
 
 namespace FreedomVoice.iOS.ViewControllers
@@ -23,12 +24,19 @@ namespace FreedomVoice.iOS.ViewControllers
             UnderstandButton.ClipsToBounds = true;
         }
 
-	    partial void UnderstandButton_TouchUpInside(UIButton sender)
+        async partial void UnderstandButton_TouchUpInside(UIButton sender)
 	    {
 	        UserDefault.DisclaimerWasShown = true;
 
             var tabBarController = AppDelegate.GetViewController<MainTabBarController>();
             tabBarController.SelectedAccount = SelectedAccount;
+
+            var presentationNumbersViewModel = new PresentationNumbersViewModel(SelectedAccount.PhoneNumber) { IsBusy = true };
+            await presentationNumbersViewModel.GetPresentationNumbersAsync();
+            tabBarController.PresentationNumbers = presentationNumbersViewModel.PresentationNumbers;
+
+            presentationNumbersViewModel.IsBusy = false;
+
             ParentController.PushViewController(tabBarController, true);
             Theme.TransitionController(ParentController);
         }
