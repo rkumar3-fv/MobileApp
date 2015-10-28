@@ -566,6 +566,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                             // Call reservation bad request
                             else if (_waitingRequestArray.ContainsKey(response.RequestId) && _waitingRequestArray[response.RequestId] is CallReservationRequest)
                             {
+                                Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} failed: BAD REQUEST");
                                 var callReservation = (CallReservationRequest) _waitingRequestArray[response.RequestId];
                                 RecentsDictionary.Add(response.RequestId, new Recent(callReservation.DialingNumber, Recent.ResultFail));
                                 HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.CallReservationFail }));
@@ -585,6 +586,16 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                             intent = AccountsList.Count > 1 ? new Intent(_app, typeof(InactiveActivityWithBack)) : new Intent(_app, typeof(InactiveActivity));
                             HelperEvent?.Invoke(this, new ActionsHelperIntentArgs(response.RequestId, intent));
                             break;
+                        case ErrorResponse.Forbidden:
+                            // Call reservation bad destination phone
+                            if (_waitingRequestArray.ContainsKey(response.RequestId) && _waitingRequestArray[response.RequestId] is CallReservationRequest)
+                            {
+                                Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} failed: FORBIDDEN");
+                                var callReservation = (CallReservationRequest)_waitingRequestArray[response.RequestId];
+                                RecentsDictionary.Add(response.RequestId, new Recent(callReservation.DialingNumber, Recent.ResultFail));
+                                HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.CallReservationWrong }));
+                            }
+                            break;
                     }
                     break;
 
@@ -592,15 +603,13 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                 case "LoginResponse":
                     IsLoggedIn = true;
                     Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} successed: YOU ARE LOGGED IN");
-                    if ((!IsFirstRun) || (PhoneNumber == null))
-                    {
-                        GetAccounts();
-                    }
-                    else
+                    if ((IsFirstRun) || (PhoneNumber == null))
                     {
                         intent = new Intent(_app, typeof(SetNumberActivity));
-                        HelperEvent?.Invoke(this, new ActionsHelperIntentArgs(response.RequestId, intent));
+                        HelperEvent?.Invoke(this, new ActionsHelperIntentArgs(response.RequestId, intent));          
                     }
+                    else
+                        GetAccounts();
                     break;
 
                 // Restore password response

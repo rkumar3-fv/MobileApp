@@ -40,9 +40,10 @@ namespace FreedomVoice.iOS.TableViewSources
                                         TimeStyle = NSDateFormatterStyle.Short
                                     };
 
-            var cell = tableView.DequeueReusableCell(FolderCell.FolderCellId) as FolderCell ?? new FolderCell();
+            var cell = tableView.DequeueReusableCell(MessageCell.MessageCellId) as MessageCell ?? new MessageCell();
             cell.TextLabel.Text = folder.Name;
             cell.DetailTextLabel.Text = dateFormatter.ToString(folder.ReceivedOn);
+            //cell.ImageView.Image = GetImageByFolderName(_messages[indexPath.Row].Name);
             cell.Accessory = UITableViewCellAccessory.None;
 
             return cell;

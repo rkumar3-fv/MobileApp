@@ -14,12 +14,15 @@ namespace FreedomVoice.iOS.ViewControllers
 
         public override void ViewDidLoad()
         {
-            base.ViewDidLoad();
-
             Title = "Select Account";
+
+            AccountsTableView.TableFooterView = new UIKit.UIView(CoreGraphics.CGRect.Empty);
+
             NavigationItem.SetRightBarButtonItem(Appearance.GetLogoutBarButton(this), true);
 
             AccountsTableView.Source = new AccountSource(AccountsList, NavigationController);
+
+            base.ViewDidLoad();
         }
     }
 }

@@ -9,13 +9,21 @@ using System;
 using System.CodeDom.Compiler;
 using UIKit;
 
-namespace FreedomVoice.iOS.Views
+namespace FreedomVoice.iOS.ViewControllers
 {
-	[Register ("KeypadView")]
-	partial class KeypadView
+	[Register ("FoldersViewController")]
+	partial class FoldersViewController
 	{
+		[Outlet]
+		[GeneratedCode ("iOS Designer", "1.0")]
+		UITableView FoldersTableView { get; set; }
+
 		void ReleaseDesignerOutlets ()
 		{
+			if (FoldersTableView != null) {
+				FoldersTableView.Dispose ();
+				FoldersTableView = null;
+			}
 		}
 	}
 }

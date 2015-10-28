@@ -7,7 +7,7 @@ using Android.Support.V4.Content;
 using Android.Views;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Dialogs;
-using com.FreedomVoice.MobileApp.Android.Helpers;
+using com.FreedomVoice.MobileApp.Android.Utils;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
 {
@@ -23,7 +23,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
     {
         private Color _errorColor;
         private Button _applyButton;
-        private Button _skipButton;
+        protected Button SkipButton;
         private EditText _phoneText;
         private TextView _phoneErrorText;
 
@@ -31,12 +31,13 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         {
             base.OnCreate(bundle);
             SetContentView(Resource.Layout.act_phone);
+            RootLayout = FindViewById(Resource.Id.phoneActivity_root);
             _phoneText = FindViewById<EditText>(Resource.Id.phoneActivity_phoneField);
             _applyButton = FindViewById<Button>(Resource.Id.phoneActivity_applyButton);
             _applyButton.Click += ApplyButtonOnClick;
-            _skipButton = FindViewById<Button>(Resource.Id.phoneActivity_skipButton);
+            SkipButton = FindViewById<Button>(Resource.Id.phoneActivity_skipButton);
             _phoneErrorText = FindViewById<TextView>(Resource.Id.phoneActivity_resultText);
-            _skipButton.Click += SkipButtonOnClick;
+            SkipButton.Click += SkipButtonOnClick;
             SupportActionBar.SetTitle(Resource.String.ActivityNumber_title);
 
             _errorColor = new Color(ContextCompat.GetColor(this, Resource.Color.textColorError));
@@ -59,12 +60,15 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         /// <returns></returns>
         protected bool SetupNumber()
         {
-            if (_phoneText.Text.Length == 10)
+            if ((_phoneText.Text.Length >9)&&(_phoneText.Text.Length<13))
             {
-                Helper.SaveNewNumber(_phoneText.Text);
-                _phoneText.Background.ClearColorFilter();
-                _phoneErrorText.Visibility = ViewStates.Invisible;
-                return true;
+                if (DataValidationUtils.IsPhoneValid(_phoneText.Text) != "")
+                {
+                    Helper.SaveNewNumber(_phoneText.Text);
+                    _phoneText.Background.ClearColorFilter();
+                    _phoneErrorText.Visibility = ViewStates.Invisible;
+                    return true;
+                }
             }
             _phoneText.Background.SetColorFilter(_errorColor, PorterDuff.Mode.SrcAtop);
             _phoneErrorText.Visibility = ViewStates.Visible;
@@ -106,11 +110,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         protected void BaseBackPressed()
         {
             base.OnBackPressed();
-        }
-
-        protected override void OnHelperEvent(ActionsHelperEventArgs args)
-        {
-
         }
     }
 }

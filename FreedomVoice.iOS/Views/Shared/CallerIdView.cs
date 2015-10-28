@@ -31,7 +31,7 @@ namespace FreedomVoice.iOS.Views.Shared
 
         void Initialize(IList<PresentationNumber> numbers)
         {
-            var labelField = new UILabel(new CGRect(15, 0, 145, 44)) { Text = "Show as Caller ID:" };
+            var labelField = new UILabel(new CGRect(15, 0, 145, 40)) { Text = "Show as Caller ID:", Font = UIFont.SystemFontOfSize(17f, UIFontWeight.Regular) };
 
             if (SelectedPresentationNumber == null && numbers != null && numbers.Count > 0)
                 SelectedPresentationNumber = numbers[0];
@@ -54,8 +54,8 @@ namespace FreedomVoice.iOS.Views.Shared
 
             _callerIdTextField = new UITextField
             {
-                Font = UIFont.SystemFontOfSize(18f, UIFontWeight.Semibold),
-                Frame = new CGRect(160, 0, 160, 44),
+                Font = UIFont.SystemFontOfSize(17f, UIFontWeight.Medium),
+                Frame = new CGRect(160, 0, 160, 40),
                 UserInteractionEnabled = true,
                 Text = _callerIdPickerModel.SelectedItem.FormattedPhoneNumber
             };

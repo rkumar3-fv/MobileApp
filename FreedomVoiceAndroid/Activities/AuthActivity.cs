@@ -49,6 +49,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         {
             base.OnCreate(bundle);
             SetContentView(Resource.Layout.act_auth);
+            RootLayout = FindViewById(Resource.Id.authActivity_root);
             _authButton = FindViewById<Button>(Resource.Id.authActivity_loginButton);
             _forgotButton = FindViewById<Button>(Resource.Id.authActivity_forgotButton);
             _loginText = FindViewById<EditText>(Resource.Id.authActivity_loginField);
@@ -142,6 +143,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         /// <param name="args">Result args</param>
         protected override void OnHelperEvent(ActionsHelperEventArgs args)
         {
+            base.OnHelperEvent(args);
             foreach (var code in args.Codes)
             {
                 if (_progressLogin.Visibility == ViewStates.Visible)
@@ -150,9 +152,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                     _authButton.Text = GetString(Resource.String.ActivityAuth_authButton);
                 switch (code)
                 {
-                    case ActionsHelperEventArgs.ConnectionLostError:
-                        Toast.MakeText(this, Resource.String.Snack_connectionLost, ToastLength.Long).Show();
-                        return;
                     case ActionsHelperEventArgs.AuthLoginError:
                         _loginText.Background.SetColorFilter(_errorColor, PorterDuff.Mode.SrcAtop);
                         _errorTextLogin.Text = GetString(Resource.String.ActivityAuth_incorrectLogin);

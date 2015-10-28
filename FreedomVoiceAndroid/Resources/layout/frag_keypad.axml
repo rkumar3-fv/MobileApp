@@ -9,10 +9,11 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="@dimen/fragment_keypad_spinner_size"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:layout_marginRight="@dimen/activity_horizontal_margin"
-        android:gravity="center">
+        android:gravity="center"
+        android:elevation="@dimen/content_activity_id_elevation"
+        android:background="@color/colorCallerId">
         <TextView
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
             style="@style/CallerIdSpinnerText"
             android:layout_centerHorizontal="true"
             android:layout_width="match_parent"
@@ -22,6 +23,7 @@
         <Spinner
             android:id="@+id/keypadFragment_idSpinner"
             android:layout_width="match_parent"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
             android:layout_height="@dimen/fragment_keypad_spinner_size"
             android:layout_weight="1"
             android:spinnerMode="dropdown" />
@@ -300,6 +302,7 @@
             android:layout_width="@dimen/fragment_keypad_key_size"
             android:layout_height="@dimen/fragment_keypad_key_size"
             android:src="@drawable/ic_action_dial"
+            android:scaleType="center"
             android:layout_gravity="center_horizontal"
             app:elevation="@dimen/fragment_keypad_fab_elevation"
             app:pressedTranslationZ="@dimen/fragment_keypad_fab_translation"

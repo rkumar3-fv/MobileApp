@@ -11,18 +11,18 @@ using UIKit;
 
 namespace FreedomVoice.iOS.ViewControllers
 {
-	[Register ("MessagesViewController")]
-	partial class MessagesViewController
+	[Register ("ExtensionsViewController")]
+	partial class ExtensionsViewController
 	{
 		[Outlet]
 		[GeneratedCode ("iOS Designer", "1.0")]
-		UITableView MessagesTableView { get; set; }
+		UITableView ExtensionsTableView { get; set; }
 
 		void ReleaseDesignerOutlets ()
 		{
-			if (MessagesTableView != null) {
-				MessagesTableView.Dispose ();
-				MessagesTableView = null;
+			if (ExtensionsTableView != null) {
+				ExtensionsTableView.Dispose ();
+				ExtensionsTableView = null;
 			}
 		}
 	}

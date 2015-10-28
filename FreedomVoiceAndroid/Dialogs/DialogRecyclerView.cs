@@ -7,9 +7,15 @@ namespace com.FreedomVoice.MobileApp.Android.Dialogs
 {
     public class DialogRecyclerView : RecyclerView
     {
+        private readonly int _size;
         private readonly int _maxHeight;
 
-        public DialogRecyclerView(Context context) : base (context)
+        public DialogRecyclerView(Context context, int size) : base(context)
+        {
+            _size = size;
+        }
+
+        public DialogRecyclerView(Context context) : this (context, 3)
         {}
 
         public DialogRecyclerView(Context context, IAttributeSet attrs) : base(context, attrs)

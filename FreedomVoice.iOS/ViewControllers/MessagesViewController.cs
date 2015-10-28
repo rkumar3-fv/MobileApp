@@ -1,6 +1,9 @@
 using System;
+using CoreGraphics;
 using FreedomVoice.iOS.Entities;
+using FreedomVoice.iOS.Helpers;
 using FreedomVoice.iOS.TableViewSources;
+using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.ViewModels;
 using UIKit;
 
@@ -12,20 +15,47 @@ namespace FreedomVoice.iOS.ViewControllers
         public ExtensionWithCount SelectedExtension { private get; set; }
         public FolderWithCount SelectedFolder { private get; set; }
 
+        LoadingOverlay _loadingOverlay;
+        MessagesViewModel _messagesViewModel;
+
         public MessagesViewController (IntPtr handle) : base (handle) { }
 
         public override async void ViewDidLoad()
         {
-            var MessagesTableView = new UITableView();
+            Title = SelectedFolder.DisplayName;
 
-            var messagesViewModel = new MessagesViewModel(SelectedAccount.PhoneNumber, SelectedExtension.ExtensionNumber, SelectedFolder.DisplayName);
-            await messagesViewModel.GetMessagesListAsync();
+            MessagesTableView.TableFooterView = new UIView(CGRect.Empty);
 
-            MessagesTableView.Source = new MessagesSource(messagesViewModel.MessagesList, SelectedExtension, SelectedAccount, SelectedFolder, NavigationController);
+            _messagesViewModel = new MessagesViewModel(SelectedAccount.PhoneNumber, SelectedExtension.ExtensionNumber, SelectedFolder.DisplayName);
+            _messagesViewModel.IsBusyChanged += OnIsBusyChanged;
+            _messagesViewModel.IsBusy = true;
+
+            await _messagesViewModel.GetMessagesListAsync();
+
+            MessagesTableView.Source = new MessagesSource(_messagesViewModel.MessagesList, SelectedExtension, SelectedAccount, SelectedFolder, NavigationController);
+            MessagesTableView.ReloadData();
+
+            _messagesViewModel.IsBusy = false;
 
             View.AddSubview(MessagesTableView);
 
             base.ViewDidLoad();
+        }
+
+        private void OnIsBusyChanged(object sender, EventArgs e)
+        {
+            if (!IsViewLoaded)
+                return;
+
+            if (_messagesViewModel.IsBusy)
+            {
+                _loadingOverlay = new LoadingOverlay(Theme.ScreenBounds);
+                View.Add(_loadingOverlay);
+            }
+            else
+            {
+                _loadingOverlay.Hide();
+            }
         }
     }
 }

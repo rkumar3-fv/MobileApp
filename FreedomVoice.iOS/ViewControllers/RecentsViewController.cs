@@ -26,8 +26,10 @@ namespace FreedomVoice.iOS.ViewControllers
         {
             base.ViewDidLoad();
 
-            CallerIdView = new CallerIdView(new RectangleF(0, 65, 320, 44), (MainTab as MainTabBarController)?.GetPresentationNumbers());
-            var recentLineView = new RecentLineView(new RectangleF(0, 36, 320, 1));
+            RecentsTableView.TableFooterView = new UIView(CoreGraphics.CGRect.Empty);
+
+            CallerIdView = new CallerIdView(new RectangleF(0, 65, 320, 40), (MainTab as MainTabBarController)?.GetPresentationNumbers());
+            var recentLineView = new RecentLineView(new RectangleF(0, 40, 320, 0.5f));
             View.AddSubviews(CallerIdView, recentLineView);
 
             RecentsTableView.TableHeaderView = CallerIdView;

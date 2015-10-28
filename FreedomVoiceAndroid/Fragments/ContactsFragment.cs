@@ -4,7 +4,9 @@ using Android.OS;
 using Android.Provider;
 using Android.Support.V4.Content;
 using Android.Support.V7.Widget;
+#if DEBUG
 using Android.Util;
+#endif
 using Android.Views;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Adapters;
@@ -63,10 +65,12 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
 
         private void AdapterOnItemClick(object sender, List<Phone> list)
         {
+#if DEBUG
             foreach (var phone in list)
             {
                 Log.Debug(App.AppPackage, $"{phone.PhoneNumber} - {phone.TypeCode}");
             }
+#endif
             switch (list.Count)
             {
                 case 0:
@@ -74,7 +78,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                     noPhonesDialog.Show(ContentActivity.SupportFragmentManager, GetString(Resource.String.DlgNumbers_content));
                     break;
                 case 1:
-                    Call(list[0].PhoneNumber);
+                    ContentActivity.Call(list[0].PhoneNumber);
                     break;
                 default:
                     var multiPhonesDialog = new MultiContactsDialogFragment(list, ContentActivity);
@@ -86,7 +90,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
 
         private void MultiPhonesDialogOnPhoneClick(object sender, Phone phone)
         {
-            Call(phone.PhoneNumber);
+            ContentActivity.Call(phone.PhoneNumber);
         }
 
         protected override void OnHelperEvent(ActionsHelperEventArgs args)

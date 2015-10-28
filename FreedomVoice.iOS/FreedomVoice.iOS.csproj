@@ -22,15 +22,11 @@
     <MtouchArch>i386</MtouchArch>
     <MtouchLink>None</MtouchLink>
     <MtouchDebug>true</MtouchDebug>
-    <CodesignKey>iPhone Developer</CodesignKey>
-    <CodesignProvision>
-    </CodesignProvision>
-    <CodesignEntitlements>
-    </CodesignEntitlements>
-    <CodesignResourceRules>
-    </CodesignResourceRules>
-    <CodesignExtraArgs>
-    </CodesignExtraArgs>
+    <CodesignKey>iPhone Developer: Александр Пятаков (TRSB9P63FJ)</CodesignKey>
+    <CodesignProvision>e4550f35-55a5-4b52-bf0d-0ebdf39f79ea</CodesignProvision>
+    <CodesignEntitlements />
+    <CodesignResourceRules />
+    <CodesignExtraArgs />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
     <DebugType>none</DebugType>
@@ -53,14 +49,11 @@
     <ConsolePause>false</ConsolePause>
     <MtouchArch>ARMv7, ARM64</MtouchArch>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
-    <CodesignKey>iPhone Developer</CodesignKey>
+    <CodesignKey>iPhone Developer: Александр Пятаков (TRSB9P63FJ)</CodesignKey>
     <MtouchDebug>true</MtouchDebug>
-    <CodesignProvision>
-    </CodesignProvision>
-    <CodesignResourceRules>
-    </CodesignResourceRules>
-    <CodesignExtraArgs>
-    </CodesignExtraArgs>
+    <CodesignProvision>e4550f35-55a5-4b52-bf0d-0ebdf39f79ea</CodesignProvision>
+    <CodesignResourceRules />
+    <CodesignExtraArgs />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
     <DebugType>none</DebugType>
@@ -104,6 +97,15 @@
     <Compile Include="Entities\FolderWithCount.cs" />
     <Compile Include="Entities\Message.cs" />
     <Compile Include="Entities\PresentationNumber.cs" />
+    <Compile Include="Helpers\LoadingOverlay.cs" />
+    <Compile Include="ViewControllers\FoldersViewController.cs" />
+    <Compile Include="ViewControllers\FoldersViewController.designer.cs">
+      <DependentUpon>FoldersViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ViewControllers\ExtensionsViewController.cs" />
+    <Compile Include="ViewControllers\ExtensionsViewController.designer.cs">
+      <DependentUpon>ExtensionsViewController.cs</DependentUpon>
+    </Compile>
     <Compile Include="Helpers\Settings.cs" />
     <Compile Include="TableViewCells\ExpandedCell.cs" />
     <Compile Include="Utilities\NSDateDateTimeExtensions.cs" />
@@ -164,9 +166,6 @@
     <Compile Include="Utilities\Theme.cs" />
     <Compile Include="Utilities\UIKitExtensions.cs" />
     <Compile Include="ViewControllers\BaseViewController.cs" />
-    <Compile Include="ViewControllers\ExtensionsViewController.cs" />
-    <Compile Include="ViewControllers\FoldersViewController.cs" />
-    <Compile Include="ViewControllers\MessageFoldersViewController.cs" />
     <Compile Include="ViewModels\AccountsViewModel.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="ViewModels\CallerIdPickerViewModel.cs" />
@@ -317,6 +316,5 @@
       <Visible>False</Visible>
     </XamarinComponentReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 </Project>

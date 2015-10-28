@@ -79,8 +79,6 @@
   <string name="ActivityNumber_applyButton">CONTINUE</string>
   <string name="ActivityNumber_cancelButton">SKIP</string>
   <string name="ActivityNumber_error">Please enter correct number.</string>
-  <string name="Timestamp_yesterday">Yesterday</string>
-  <string name="Snack_connectionLost">Connection lost. Try again later</string>
   <string name="Dlg_ok">OK</string>
   <string name="Dlg_cancel">CANCEL</string>
   <string name="DlgLogout_title">Confirm logout?</string>
@@ -97,4 +95,8 @@
   <string name="DlgAirplane_content">Airplane Mode must be turned off to make calls from the FreedomVoice app.</string>
   <string name="DlgCallerId_content">Caller ID must be turned on for your device to make calls from the FreedomVoice app.</string>
   <string name="Dlg_settings">SETTINGS</string>
+  <string name="Timestamp_yesterday">Yesterday</string>
+  <string name="Snack_connectionLost">No Internet Connection</string>
+  <string name="Snack_callFailed">Unsupported phone number</string>
+  <string name="Snack_callWrong">Destination number unsupported</string>
 </resources>

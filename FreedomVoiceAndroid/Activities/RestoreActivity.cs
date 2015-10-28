@@ -39,6 +39,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         {
             base.OnCreate(bundle);
             SetContentView(Resource.Layout.act_restore);
+            RootLayout = FindViewById(Resource.Id.restoreActivity_root);
             _emailText = FindViewById<EditText>(Resource.Id.restoreActivity_emailField);
             _restoreButton = FindViewById<Button>(Resource.Id.restoreActivity_sendButton);
             _resultLabel = FindViewById<TextView>(Resource.Id.restoreActivity_resultText);
@@ -102,6 +103,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
 
         protected override void OnHelperEvent(ActionsHelperEventArgs args)
         {
+            base.OnHelperEvent(args);
             foreach (var code in args.Codes)
             {
                 if (_progressSend.Visibility == ViewStates.Visible)
@@ -110,9 +112,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                     _restoreButton.Text = GetString(Resource.String.ActivityRestore_sendButton);
                 switch (code)
                 {
-                    case ActionsHelperEventArgs.ConnectionLostError:
-                        Toast.MakeText(this, Resource.String.Snack_connectionLost, ToastLength.Long).Show();
-                        return;
                     case ActionsHelperEventArgs.RestoreError:
                         _resultLabel.Text = GetString(Resource.String.ActivityRestore_badEmail);
                         return;

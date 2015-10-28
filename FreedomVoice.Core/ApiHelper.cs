@@ -219,6 +219,15 @@
                                     };
                                     break;
                                 }
+                            case HttpStatusCode.Forbidden:
+                                {
+                                    retResult = new BaseResult<Stream>
+                                    {
+                                        Code = ErrorCodes.Forbidden,
+                                        Result = Stream.Null
+                                    };
+                                    break;
+                                }
                             case HttpStatusCode.BadRequest:
                                 {
                                     retResult = new BaseResult<Stream>
@@ -293,6 +302,15 @@
                                     retResult = new BaseResult<T>
                                     {
                                         Code = ErrorCodes.Unauthorized,
+                                        Result = default(T)
+                                    };
+                                    break;
+                                }
+                            case HttpStatusCode.Forbidden:
+                                {
+                                    retResult = new BaseResult<T>
+                                    {
+                                        Code = ErrorCodes.Forbidden,
                                         Result = default(T)
                                     };
                                     break;

@@ -3,11 +3,12 @@ using Android.App;
 using Android.Content;
 using Android.Content.PM;
 using Android.OS;
+#if DEBUG
 using Android.Util;
+#endif
 using Android.Views;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Dialogs;
-using com.FreedomVoice.MobileApp.Android.Helpers;
 using Uri = Android.Net.Uri;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
@@ -25,8 +26,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         {
             base.OnCreate(bundle);
             SetContentView(Resource.Layout.act_inactive);
+            RootLayout = FindViewById(Resource.Id.inactiveActivity_root);
             ActionButton = FindViewById<Button>(Resource.Id.inactiveActivity_dialButton);
-
             SupportActionBar.SetTitle(Resource.String.ActivityInactive_title);
         }
 
@@ -65,7 +66,9 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             if (Helper.PhoneNumber != null)
             {
                 var callIntent = new Intent(Intent.ActionCall, Uri.Parse("tel:" + GetString(Resource.String.ActivityInactive_customerNumber)));
+#if DEBUG
                 Log.Debug(App.AppPackage, $"ACTIVITY {GetType().Name} CREATES CALL to {GetString(Resource.String.ActivityInactive_customerNumber)}");
+#endif
                 StartActivity(callIntent);
             }
             else
@@ -73,11 +76,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 var noCellularDialog = new NoCellularDialogFragment();
                 noCellularDialog.Show(SupportFragmentManager, GetString(Resource.String.DlgCellular_title));
             }
-        }
-
-        protected override void OnHelperEvent(ActionsHelperEventArgs args)
-        {
-            
         }
     }
 }

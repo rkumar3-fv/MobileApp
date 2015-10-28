@@ -21,6 +21,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         {
             base.OnCreate(bundle);
             SetContentView(Resource.Layout.act_fax);
+            RootLayout = FindViewById(Resource.Id.faxActivity_root);
             RemoveButton = FindViewById<ImageButton>(Resource.Id.faxActivity_deleteButton);
             SenderText = FindViewById<TextView>(Resource.Id.faxActivity_senderText);
             MessageDate = FindViewById<TextView>(Resource.Id.faxActivity_dateText);

@@ -32,6 +32,7 @@ namespace FreedomVoice.iOS.TableViewSources
             var cell = tableView.DequeueReusableCell(FolderCell.FolderCellId) as FolderCell ?? new FolderCell();
             cell.TextLabel.Text = folder.DisplayName;
             cell.DetailTextLabel.Text = folder.UnreadMessagesCount.ToString();
+            cell.ImageView.Image = GetImageByFolderName(folder.DisplayName);
             cell.Accessory = UITableViewCellAccessory.DisclosureIndicator;
 
             return cell;
@@ -53,6 +54,23 @@ namespace FreedomVoice.iOS.TableViewSources
             messagesController.SelectedFolder = selectedFolder;
 
             _navigationController.PushViewController(messagesController, true);
+        }
+
+        private UIImage GetImageByFolderName(string folderName)
+        {
+            switch (folderName)
+            {
+                case "New":
+                    return UIImage.FromFile("folder_new.png");
+                case "Saved":
+                    return UIImage.FromFile("folder_saved.png");
+                case "Trash":
+                    return UIImage.FromFile("folder_trash.png");
+                case "Sent":
+                    return UIImage.FromFile("folder_sent.png");
+                default:
+                    return UIImage.FromFile("folder_new.png");
+            }
         }
     }
 }

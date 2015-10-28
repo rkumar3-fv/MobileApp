@@ -5,7 +5,7 @@
 	<key>CFBundleDisplayName</key>
 	<string>FreedomVoice</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.FreedomVoice</string>
+	<string>com.freedomvoice</string>
 	<key>CFBundleShortVersionString</key>
 	<string>1.0</string>
 	<key>CFBundleVersion</key>
