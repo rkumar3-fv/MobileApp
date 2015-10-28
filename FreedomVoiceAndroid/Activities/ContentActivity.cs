@@ -8,9 +8,11 @@ using Android.Support.V4.Content;
 using Android.Support.V4.View;
 using Android.Support.V7.Internal.View;
 using Android.Views;
+using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Adapters;
 using com.FreedomVoice.MobileApp.Android.Dialogs;
 using com.FreedomVoice.MobileApp.Android.Fragments;
+using SearchView = Android.Support.V7.Widget.SearchView;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
@@ -33,12 +35,18 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         private Toolbar _toolbar;
         private TabLayout _tabLayout;
 
+        /// <summary>
+        /// Contacts search listener
+        /// </summary>
+        public SearchViewListener SearchListener { get; private set; }
+
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
             SetContentView(Resource.Layout.act_content);
             _rootLayout = FindViewById<CoordinatorLayout>(Resource.Id.contentActivity_rootBar);
             RootLayout = _rootLayout;
+            SearchListener = new SearchViewListener();
             _appBar = FindViewById<AppBarLayout>(Resource.Id.contentActivity_contentAppBar);
             _tabLayout = FindViewById<TabLayout>(Resource.Id.contentActivity_tabs);
             _viewPager = FindViewById<ContentPager>(Resource.Id.contentActivity_contentPager);
@@ -93,7 +101,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                     //ExpandToolbar();
                     return;
                 }
-                else if (Helper.SelectedExtension != -1)
+                if (Helper.SelectedExtension != -1)
                 {
                     SupportActionBar.Title =
                         $"{Helper.ExtensionsList[Helper.SelectedExtension].Id} - {Helper.ExtensionsList[Helper.SelectedExtension].ExtensionName}";
@@ -112,6 +120,13 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                     break;
                 case 1:
                     _toolbar.InflateMenu(Resource.Menu.menu_contacts);
+                    var menu = _toolbar.Menu;
+                    var searchView = (SearchView)MenuItemCompat.GetActionView(menu.FindItem(Resource.Id.menu_action_search));
+                    searchView.SetOnQueryTextListener(SearchListener);
+                    searchView.SetOnCloseListener(SearchListener);
+                    searchView.QueryHint = GetString(Resource.String.FragmentContacts_hint);
+                    var layout = (LinearLayout)searchView.GetChildAt(0);
+                    layout.Elevation = Resources.GetDimension(Resource.Dimension.fragment_contacts_search_elevation);
                     break;
                 case 2:
                     _toolbar.InflateMenu(Resource.Menu.menu_content);

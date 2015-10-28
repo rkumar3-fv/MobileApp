@@ -16,8 +16,10 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
     /// </summary>
     public class ContactsRecyclerAdapter : RecyclerView.Adapter
     {
+        private readonly DataSetObserver _observer;
+        private ICursor _oldCursor;
         private readonly Context _context;
-        private readonly int _id;
+        private int _id;
 
         /// <summary>
         /// Item short click event
@@ -60,11 +62,12 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
             _context = context;
             Cursor = cursor;
             _id = Cursor?.GetColumnIndex("_id") ?? -1;
-            DataSetObserver observer = new NotifyingDataSetObserver(this);
-            Cursor?.RegisterDataSetObserver(observer);
+            _observer = new NotifyingDataSetObserver(this);
+            Cursor?.RegisterDataSetObserver(_observer);
+            _oldCursor = null;
         }
 
-        public ICursor Cursor { get; }
+        public ICursor Cursor { get; private set; }
 
         public override long GetItemId(int position)
         {
@@ -82,10 +85,7 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
             var name = Cursor.GetString(Cursor.GetColumnIndex(ContactsContract.Contacts.InterfaceConsts.DisplayName));
             if (!Cursor.MoveToPrevious())
             {
-                if (name.Length > 0)
-                    viewHolder.ContactLetter.Text = name.Substring(0, 1).ToUpper();
-                else
-                    viewHolder.ContactLetter.Text = "";
+                viewHolder.ContactLetter.Text = name.Length > 0 ? name.Substring(0, 1).ToUpper() : "";
             }
             else
             {
@@ -94,10 +94,71 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
                     viewHolder.ContactLetter.Text = "";
                 else
                     viewHolder.ContactLetter.Text = name.Substring(0, 1).ToUpper();
-                
             }
-
             viewHolder.ContactText.Text = name;
+        }
+
+        /// <summary>
+        /// Changing one cursor to other
+        /// </summary>
+        /// <param name="cursor">new cursor</param>
+        public void ChangeCursor(ICursor cursor)
+        {
+            var old = SwapCursor(cursor);
+            old?.Close();
+        }
+
+        /// <summary>
+        /// Add cursor for search
+        /// </summary>
+        /// <param name="cursor">cursor for search</param>
+        public void AddSearchCursor(ICursor cursor)
+        {
+            if (_oldCursor == null)
+                _oldCursor = SwapCursor(cursor);
+            else
+                ChangeCursor(cursor);
+        }
+
+        /// <summary>
+        /// Restore old cursor
+        /// </summary>
+        public void RestoreCursor()
+        {
+            if (_oldCursor == null) return;
+            ChangeCursor(_oldCursor);
+            _oldCursor = null;
+        }
+
+        /// <summary>
+        /// Swap old and new cursor
+        /// </summary>
+        /// <param name="newCursor">new cursor</param>
+        /// <returns>old cursor</returns>
+        public ICursor SwapCursor(ICursor newCursor)
+        {
+            if (newCursor == Cursor)
+                return null;
+            var oldCursor = Cursor;
+            if (oldCursor != null && _observer != null)
+                oldCursor.UnregisterDataSetObserver(_observer);
+
+            Cursor = newCursor;
+            if (Cursor != null)
+            {
+                if (_observer != null)
+                {
+                    Cursor.RegisterDataSetObserver(_observer);
+                }
+                _id = newCursor?.GetColumnIndex("_id") ?? -1;
+                NotifyDataSetChanged();
+            }
+            else
+            {
+                _id = -1;
+                NotifyDataSetChanged();
+            }
+            return oldCursor;
         }
 
         public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)

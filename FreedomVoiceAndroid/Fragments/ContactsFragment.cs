@@ -51,6 +51,22 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             _contactsView.SetAdapter(_adapter);
         }
 
+        public override void OnResume()
+        {
+            base.OnResume();
+            ContentActivity.SearchListener.OnChange += SearchListenerOnChange;
+            ContentActivity.SearchListener.OnApply += SearchListenerOnApply;
+            ContentActivity.SearchListener.OnCancel += SearchListenerOnCancel;
+        }      
+
+        public override void OnPause()
+        {
+            base.OnPause();
+            ContentActivity.SearchListener.OnChange -= SearchListenerOnChange;
+            ContentActivity.SearchListener.OnApply -= SearchListenerOnApply;
+            ContentActivity.SearchListener.OnCancel -= SearchListenerOnCancel;
+        }
+
         private void AdapterOnItemClick(object sender, List<Phone> list)
         {
 #if DEBUG
@@ -79,6 +95,33 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         private void MultiPhonesDialogOnPhoneClick(object sender, Phone phone)
         {
             ContentActivity.Call(phone.PhoneNumber);
+        }
+
+        private void SearchListenerOnCancel(object sender, string s)
+        {
+            _adapter.RestoreCursor();
+        }
+
+        private void SearchListenerOnApply(object sender, string s)
+        {
+            _adapter.AddSearchCursor(Search(s));
+        }
+
+        private void SearchListenerOnChange(object sender, string s)
+        {
+            _adapter.AddSearchCursor(Search(s));
+        }
+
+        private ICursor Search(string query)
+        {
+            var uri = ContactsContract.Contacts.ContentUri;
+            string[] projection = { ContactsContract.Contacts.InterfaceConsts.Id, ContactsContract.Contacts.InterfaceConsts.DisplayName,
+                ContactsContract.Contacts.InterfaceConsts.HasPhoneNumber, ContactsContract.Contacts.InterfaceConsts.PhotoUri };
+            var selection = string.Format("(({0} IS NOT NULL) AND ({0} != '') AND ({1} = '1') AND ({0} like '%{2}%'))",
+                ContactsContract.Contacts.InterfaceConsts.DisplayName, ContactsContract.Contacts.InterfaceConsts.InVisibleGroup, query);
+            var sortOrder = $"{ContactsContract.Contacts.InterfaceConsts.DisplayName} COLLATE LOCALIZED ASC";
+            var loader = new CursorLoader(ContentActivity, uri, projection, selection, null, sortOrder);
+            return (ICursor)loader.LoadInBackground();
         }
     }
 }
