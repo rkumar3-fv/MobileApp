@@ -125,7 +125,7 @@ namespace FreedomVoice.iOS.TableViewCells
         {
             Callback = new UIButton(new CGRect(149, 97, 104, 29));
             Callback.SetTitle("Call Back", UIControlState.Normal);
-            Callback.SetTitleColor(UIColor.FromRGB(198,242,138), UIControlState.Normal);
+            Callback.SetTitleColor(UIColor.FromRGB(198, 242, 138), UIControlState.Normal);
             Callback.SetImage(UIImage.FromFile("call_back.png"), UIControlState.Normal);
             Callback.Layer.BorderColor = UIColor.FromRGBA(198, 242, 138, 110).CGColor;
             Callback.TouchDown += delegate (object sender, EventArgs e)
@@ -140,7 +140,7 @@ namespace FreedomVoice.iOS.TableViewCells
             ViewFax = new UIButton(new CGRect(43, 58, 98, 28));
             ViewFax.SetTitle("View Fax", UIControlState.Normal);            
             ViewFax.SetTitleColor(UIColor.FromRGB(198, 242, 138), UIControlState.Normal);
-            ViewFax.SetImage(UIImage.FromFile("viewfax.png"), UIControlState.Normal);            
+            ViewFax.SetImage(UIImage.FromFile("view_fax.png"), UIControlState.Normal);            
             ViewFax.Layer.BorderColor = UIColor.FromRGBA(198, 242, 138, 90).CGColor;
             ViewFax.TouchDown += delegate (object sender, EventArgs e)
             {

@@ -255,7 +255,6 @@
     <BundleResource Include="Resources\speaker%402x.png" />
     <BundleResource Include="Resources\callback%402x.png" />
     <BundleResource Include="Resources\delete%402x.png" />
-    <BundleResource Include="Resources\viewfax%402x.png" />
     <BundleResource Include="Resources\pause%402x.png" />
     <BundleResource Include="Resources\play%402x.png" />
     <BundleResource Include="Resources\scroller%402x.png" />

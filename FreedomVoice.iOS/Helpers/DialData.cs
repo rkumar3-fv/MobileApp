@@ -20,9 +20,9 @@ namespace FreedomVoice.iOS.Helpers
             new DialItem { Text = "7", X = X1, Y = Y3, DetailedText="PQRS" },
             new DialItem { Text = "8", X = X2, Y = Y3, DetailedText="TUV" },
             new DialItem { Text = "9", X = X3, Y = Y3, DetailedText="WXYZ" },
-            new DialItem { Text = "*", X = X1, Y = Y4 },
+            new DialItem { Text = "*", X = X1, Y = Y4, Image="keypad_asterisk.png" },
             new DialItem { Text = "0", X = X2, Y = Y4, DetailedText=PLUS },
-            new DialItem { Text = "#", X = X3, Y = Y4 }
+            new DialItem { Text = "#", X = X3, Y = Y4, Image="keypad_sharp.png" }
         };
     }
 
@@ -34,5 +34,7 @@ namespace FreedomVoice.iOS.Helpers
         public string DetailedText { get; set; }
         public nfloat Width { get; } = 60;
         public nfloat Height { get; } = 60;
+
+        public string Image { get; set; }
     }
 }

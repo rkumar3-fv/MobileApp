@@ -46,7 +46,7 @@ namespace FreedomVoice.iOS.ViewControllers
             foreach (var item in DialData.Items)
             {
                 var buttonRect = new CGRect(item.X, item.Y, item.Width, item.Height);
-                var button = new RoundedButton(buttonRect, RoundedButtonStyle.Subtitle, item.Text)
+                var button = new RoundedButton(buttonRect, string.IsNullOrEmpty(item.Image) ? RoundedButtonStyle.Subtitle : RoundedButtonStyle.CentralImage, item.Text)
                 {
                     BorderColor = Theme.KeypadBorderColor,
                     TextLabel =
@@ -64,6 +64,12 @@ namespace FreedomVoice.iOS.ViewControllers
                     ContentColor = UIColor.Black,
                     ContentAnimateToColor = Theme.KeypadBorderColor
                 };
+
+                if (!string.IsNullOrEmpty(item.Image))
+                {                    
+                    button.ImageView.Image = UIImage.FromFile(item.Image);
+                    button.ImageView.ContentMode = UIViewContentMode.Center;                    
+                }                   
 
                 button.TouchUpInside += (sender, ea) => {
                     PhoneNumber += item.Text;
@@ -85,7 +91,7 @@ namespace FreedomVoice.iOS.ViewControllers
 
         [Export("HandleLongPress:")]
         public void ButtonLongPressed(UILongPressGestureRecognizer recognizer)
-        {
+        {            
             if (string.IsNullOrEmpty(PhoneNumber))
             {
                 PhoneNumber += DialData.PLUS;
