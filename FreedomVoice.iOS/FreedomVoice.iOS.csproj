@@ -255,6 +255,11 @@
     <BundleResource Include="Resources\callback%402x.png" />
     <BundleResource Include="Resources\delete%402x.png" />
     <BundleResource Include="Resources\viewfax%402x.png" />
+    <BundleResource Include="Resources\pause%402x.png" />
+    <BundleResource Include="Resources\play%402x.png" />
+    <BundleResource Include="Resources\scroller%402x.png" />
+    <BundleResource Include="Resources\view_fax%402x.png" />
+    <BundleResource Include="Resources\call_back%402x.png" />
     <Content Include="Settings.bundle\Root.plist">
       <SubType>Designer</SubType>
     </Content>

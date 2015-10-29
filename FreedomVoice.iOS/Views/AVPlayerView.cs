@@ -32,10 +32,10 @@ namespace FreedomVoice.iOS.Views
             string filePath = Path.Combine(path, fileName);
             Console.WriteLine($"File {filePath} exists = {File.Exists(filePath)}");
 
-            playBtnBg = UIImage.FromFile("btn_play.png");
-            pauseBtnBg = UIImage.FromFile("btn_pause.png");
+            playBtnBg = UIImage.FromFile("play.png");
+            pauseBtnBg = UIImage.FromFile("pause.png");
 
-            btnPlay = new UIButton(new CGRect(0, 0, 16, 16));
+            btnPlay = new UIButton(new CGRect(0, 0, 15, 15));
             btnPlay.SetImage(playBtnBg, UIControlState.Normal);
             btnPlay.TouchUpInside += BtnPlay_TouchUpInside;
 
@@ -60,7 +60,7 @@ namespace FreedomVoice.iOS.Views
             labelElapsed = new UILabel(new CGRect(25, 0, 32, 16)) { Text = "00:00", TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(11f)};
 
             progressBar = new UISlider(new CGRect(60, 6, 156, 4)) { Value = (float)player.CurrentTime, MinValue = 0, MaxValue = (float)player.Duration };
-            progressBar.SetThumbImage(UIImage.FromFile("progress_bar_thumb.png"), UIControlState.Normal);            
+            progressBar.SetThumbImage(UIImage.FromFile("scroller.png"), UIControlState.Normal);            
             
             labelRemaining = new UILabel(new CGRect(225, 0, 37, 16)) { Text= $"-{SecondsToFormattedString(player.Duration)}", TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(11f) };            
 
