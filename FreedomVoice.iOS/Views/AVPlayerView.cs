@@ -58,11 +58,11 @@ namespace FreedomVoice.iOS.Views
 
             labelElapsed = new UILabel(new CGRect(25, 7, 37, 16)) { Text = "0:00"};
 
-            progressBar = new UISlider(new CGRect(60, 12, 156, 7)) { Value = (float)player.CurrentTime, MinValue = 0, MaxValue = (float)player.Duration };
-            progressBar.SetThumbImage(UIImage.FromFile("scroller.png"), UIControlState.Normal);
+            progressBar = new UISlider(new CGRect(50, 12, 176, 7)) { Value = (float)player.CurrentTime, MinValue = 0, MaxValue = (float)player.Duration };
+            progressBar.SetThumbImage(UIImage.FromFile("scroller.png"), UIControlState.Normal);            
             progressBar.SetMaxTrackImage(new UIImage(), UIControlState.Normal);
             progressBar.SetMinTrackImage(new UIImage(), UIControlState.Normal);
-            progressBar.ValueChanged += ProgressBar_ValueChanged;
+            progressBar.ValueChanged += ProgressBar_ValueChanged;            
 
             var sliderBg = new SliderBackgorund(new CGRect(60, 12, 156, 7));
             AddSubview(sliderBg);
