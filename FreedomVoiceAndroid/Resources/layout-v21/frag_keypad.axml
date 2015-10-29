@@ -27,8 +27,9 @@
             android:layout_weight="1">
             <Spinner
                 android:id="@+id/keypadFragment_idSpinner"
-                android:layout_width="match_parent"
+                android:layout_width="@dimen/fragment_keypad_spinner_width_collapsed"
                 android:layout_height="@dimen/fragment_keypad_spinner_size"
+                android:dropDownWidth="@dimen/fragment_keypad_spinner_width"
                 android:spinnerMode="dropdown" />
             <TextView
                 android:id="@+id/keypadFragment_singleId"

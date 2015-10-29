@@ -1,3 +1,4 @@
+using Android.Animation;
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
@@ -98,7 +99,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                         Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].FolderName;
                     SupportActionBar.SetDisplayHomeAsUpEnabled(true);
                     SupportActionBar.SetHomeButtonEnabled(true);
-                    //ExpandToolbar();
+                    ExpandToolbar();
                     return;
                 }
                 if (Helper.SelectedExtension != -1)
@@ -124,13 +125,13 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                     var searchView = (SearchView)MenuItemCompat.GetActionView(menu.FindItem(Resource.Id.menu_action_search));
                     searchView.SetOnQueryTextListener(SearchListener);
                     searchView.SetOnCloseListener(SearchListener);
-                    searchView.QueryHint = GetString(Resource.String.FragmentContacts_hint);
                     var layout = (LinearLayout)searchView.GetChildAt(0);
-                    layout.Elevation = Resources.GetDimension(Resource.Dimension.fragment_contacts_search_elevation);
+                    var innerLayout = (LinearLayout) layout.GetChildAt(2);
+                    innerLayout.Elevation = Resources.GetDimension(Resource.Dimension.fragment_contacts_search_elevation);
                     break;
                 case 2:
                     _toolbar.InflateMenu(Resource.Menu.menu_content);
-                    //ExpandToolbar();
+                    ExpandToolbar();
                     break;
             }
         }
