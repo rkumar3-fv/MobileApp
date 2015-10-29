@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Text;
 using UIKit;
 
 namespace FreedomVoice.iOS.Views
@@ -35,7 +34,7 @@ namespace FreedomVoice.iOS.Views
             playBtnBg = UIImage.FromFile("play.png");
             pauseBtnBg = UIImage.FromFile("pause.png");
 
-            btnPlay = new UIButton(new CGRect(0, 0, 15, 15));
+            btnPlay = new UIButton(new CGRect(0, 0, 30, 30));
             btnPlay.SetImage(playBtnBg, UIControlState.Normal);
             btnPlay.TouchUpInside += BtnPlay_TouchUpInside;
 
@@ -57,14 +56,34 @@ namespace FreedomVoice.iOS.Views
                 StartPlayback();
             };
 
-            labelElapsed = new UILabel(new CGRect(25, 0, 32, 16)) { Text = "00:00", TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(11f)};
+            labelElapsed = new UILabel(new CGRect(25, 7, 37, 16)) { Text = "0:00"};
 
-            progressBar = new UISlider(new CGRect(60, 6, 156, 4)) { Value = (float)player.CurrentTime, MinValue = 0, MaxValue = (float)player.Duration };
-            progressBar.SetThumbImage(UIImage.FromFile("scroller.png"), UIControlState.Normal);            
-            
-            labelRemaining = new UILabel(new CGRect(225, 0, 37, 16)) { Text= $"-{SecondsToFormattedString(player.Duration)}", TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(11f) };            
+            progressBar = new UISlider(new CGRect(60, 12, 156, 7)) { Value = (float)player.CurrentTime, MinValue = 0, MaxValue = (float)player.Duration };
+            progressBar.SetThumbImage(UIImage.FromFile("scroller.png"), UIControlState.Normal);
+            progressBar.SetMaxTrackImage(new UIImage(), UIControlState.Normal);
+            progressBar.SetMinTrackImage(new UIImage(), UIControlState.Normal);
+            progressBar.ValueChanged += ProgressBar_ValueChanged;
+
+            var sliderBg = new SliderBackgorund(new CGRect(60, 12, 156, 7));
+            AddSubview(sliderBg);
+
+
+            labelRemaining = new UILabel(new CGRect(225, 7, 37, 16)) { Text= $"-{SecondsToFormattedString(player.Duration)}" };            
+
+            foreach(var lbl in new List<UILabel>() {labelElapsed, labelRemaining })
+            {
+                lbl.TextColor = UIColor.White;
+                lbl.Font = UIFont.SystemFontOfSize(11f);
+                lbl.TextAlignment = UITextAlignment.Center;
+            }
 
             AddSubviews(btnPlay, labelElapsed, progressBar, labelRemaining);
+        }
+
+        private void ProgressBar_ValueChanged(object sender, EventArgs e)
+        {
+            player.CurrentTime = (sender as UISlider).Value;
+            UpdateCurrentTime();
         }
 
         public double Duration { get { return player.Duration; } }
@@ -115,6 +134,9 @@ namespace FreedomVoice.iOS.Views
 
         public static string SecondsToFormattedString(double seconds)
         {
+            if (seconds < 600)
+                return TimeSpan.FromSeconds(seconds).ToString(@"m\:ss");
+
             return TimeSpan.FromSeconds(seconds).ToString(@"mm\:ss");
         }
 

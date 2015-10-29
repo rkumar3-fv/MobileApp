@@ -85,7 +85,7 @@ namespace FreedomVoice.iOS.TableViewCells
         void SetLengthLabel(MessageType type, string formattedLength)
         {
             nfloat x = type == MessageType.Fax ? 257 : 275;
-            nfloat width = type == MessageType.Fax ? 49 : 32;
+            nfloat width = type == MessageType.Fax ? 49 : 35;
             Length = new UILabel(new CGRect(x, 29, width, 13)) { Text = formattedLength, TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(12f) };
             AddSubview(Length);
         }

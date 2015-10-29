@@ -51,7 +51,8 @@ namespace FreedomVoice.iOS.TableViewSources
 
             if (selectedRowIndex >= 0 && indexPath.Row == selectedRowIndex)
             {
-                var selectedMessage = _messages[indexPath.Row];                
+                var selectedMessage = _messages[indexPath.Row];
+                //selectedMessage.Type = GetRandomType();
                 selectedRowIndex = -1;
                 var expandedCell = tableView.DequeueReusableCell(RecentCell.RecentCellId) as ExpandedCell ?? new ExpandedCell(selectedMessage.Type);
                 expandedCell.UpdateCell(selectedMessage.Name, dateFormatter.ToString(selectedMessage.ReceivedOn), selectedMessage.Length, "sample.m4a");

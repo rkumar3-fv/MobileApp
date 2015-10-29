@@ -212,6 +212,7 @@
     <Compile Include="AppDelegate.cs" />
     <Compile Include="ViewModels\MessagesViewModel.cs" />
     <Compile Include="ViewModels\PresentationNumbersViewModel.cs" />
+    <Compile Include="Views\SliderBackgorund.cs" />
     <None Include="Info.plist" />
     <Compile Include="ViewControllers\MainTabBarController.cs" />
     <Compile Include="ViewControllers\MainTabBarController.designer.cs">
