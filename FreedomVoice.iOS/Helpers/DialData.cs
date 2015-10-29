@@ -7,6 +7,7 @@ namespace FreedomVoice.iOS.Helpers
     {
         private const int X1 = 50, X2 = 130, X3 = 205;
         private const int Y1 = 160, Y2 = 230, Y3 = 300, Y4 = 370;
+        public const string PLUS = "+";
 
         public static List<DialItem> Items => new List<DialItem>
         {
@@ -20,7 +21,7 @@ namespace FreedomVoice.iOS.Helpers
             new DialItem { Text = "8", X = X2, Y = Y3, DetailedText="TUV" },
             new DialItem { Text = "9", X = X3, Y = Y3, DetailedText="WXYZ" },
             new DialItem { Text = "*", X = X1, Y = Y4 },
-            new DialItem { Text = "0", X = X2, Y = Y4, DetailedText="+" },
+            new DialItem { Text = "0", X = X2, Y = Y4, DetailedText=PLUS },
             new DialItem { Text = "#", X = X3, Y = Y4 }
         };
     }

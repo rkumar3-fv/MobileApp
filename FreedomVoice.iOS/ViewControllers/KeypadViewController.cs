@@ -9,6 +9,7 @@ using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.Views.Shared;
 using UIKit;
+using Foundation;
 
 namespace FreedomVoice.iOS.ViewControllers
 {
@@ -69,11 +70,27 @@ namespace FreedomVoice.iOS.ViewControllers
                     _phoneLabel.Text = DataFormatUtils.ToPhoneNumber(PhoneNumber);
                 };
 
+                if (item.DetailedText == DialData.PLUS)
+                {
+                    var gr = new UILongPressGestureRecognizer(this, new ObjCRuntime.Selector("HandleLongPress:"));
+                    button.AddGestureRecognizer(gr);
+                }
+
                 View.AddSubview(button);
             }
 
             CallerIdView = new CallerIdView(new RectangleF(0, 65, 320, 40), MainTab.GetPresentationNumbers());
             View.AddSubviews(CallerIdView);
+        }
+
+        [Export("HandleLongPress:")]
+        public void ButtonLongPressed(UILongPressGestureRecognizer recognizer)
+        {
+            if (string.IsNullOrEmpty(PhoneNumber))
+            {
+                PhoneNumber += DialData.PLUS;
+                _phoneLabel.Text = DataFormatUtils.ToPhoneNumber(PhoneNumber);
+            }
         }
 
         void ClearPhone_TouchUpInside(object sender, EventArgs args)
