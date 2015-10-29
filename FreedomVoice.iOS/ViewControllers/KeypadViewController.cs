@@ -122,8 +122,8 @@ namespace FreedomVoice.iOS.ViewControllers
         {
             base.ViewDidAppear(animated);
 
-            //GAI.SharedInstance.DefaultTracker.Set(GAIConstants.ScreenName, "Keypad Screen");
-            //GAI.SharedInstance.DefaultTracker.Send(GAIDictionaryBuilder.CreateScreenView().Build());
+            GAI.SharedInstance.DefaultTracker.Set(GAIConstants.ScreenName, "Keypad Screen");
+            GAI.SharedInstance.DefaultTracker.Send(GAIDictionaryBuilder.CreateScreenView().Build());
         }
 
         private MainTabBarController MainTab => ParentViewController.ParentViewController as MainTabBarController;
