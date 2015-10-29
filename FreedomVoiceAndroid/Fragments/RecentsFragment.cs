@@ -1,3 +1,4 @@
+using System.Linq;
 using Android.OS;
 using Android.Support.V7.Widget;
 using Android.Support.V7.Widget.Helper;
@@ -20,9 +21,11 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         private RecyclerView _recentsView;
         private ItemTouchHelper _swipeTouchHelper;
         private RecentsRecyclerAdapter _adapter;
+        private int _lastClicked;
 
         protected override View InitView()
         {
+            _lastClicked = -1;
             var view = Inflater.Inflate(Resource.Layout.frag_recents, null, false);
             IdSpinner = view.FindViewById<Spinner>(Resource.Id.recentsFragment_idSpinner);
             SingleId = view.FindViewById<TextView>(Resource.Id.recentsFragment_singleId);
@@ -67,9 +70,11 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         /// <summary>
         /// Main item click - call again
         /// </summary>
-        private void AdapterOnItemClick(object sender, long l)
+        private void AdapterOnItemClick(object sender, int l)
         {
-            ContentActivity.Call(Helper.RecentsDictionary[l].PhoneNumber);
+            var keys = Helper.RecentsDictionary.Keys.ToList();
+            ContentActivity.Call(Helper.RecentsDictionary[keys[l]].PhoneNumber);
+            _lastClicked = l;
         }
 
         /// <summary>
@@ -93,7 +98,15 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                     case ActionsHelperEventArgs.CallReservationOk:
                     case ActionsHelperEventArgs.CallReservationFail:
                     case ActionsHelperEventArgs.CallReservationWrong:
-                        _adapter.NotifyAddItem();
+                        if (_adapter.ItemCount < Helper.RecentsDictionary.Count)
+                            _adapter.NotifyAddItem();
+                        else if (_lastClicked != -1)
+                        {
+                            _adapter.NotifyUpdateItem(_lastClicked);
+                            _lastClicked = -1;
+                        }
+                        else
+                            _adapter.NotifyDataSetChanged();
                         break;
                     case ActionsHelperEventArgs.ClearRecents:
                         _adapter.NotifyClear();

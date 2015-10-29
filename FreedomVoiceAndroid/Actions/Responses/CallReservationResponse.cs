@@ -23,7 +23,11 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Responses
         /// <param name="serviceNumber">Number for dialing</param>
         public CallReservationResponse(long requestId, string serviceNumber) : base(requestId)
         {
+#if DEBUG
+            ServiceNumber = $"+1{serviceNumber}";
+#else
             ServiceNumber = serviceNumber;
+#endif
         }
 
         public CallReservationResponse(Parcel parcel) : base(parcel)

@@ -31,6 +31,13 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             SupportActionBar.SetTitle(Resource.String.ActivityFax_title);
         }
 
+        protected override void OnStart()
+        {
+            base.OnStart();
+            if (Msg.Length < 1)
+                _openFaxButton.Activated = false;
+        }
+
         /// <summary>
         /// Open fax action
         /// </summary>

@@ -42,26 +42,33 @@ namespace com.FreedomVoice.MobileApp.Android.Utils
         /// </summary>
         /// <param name="normalizedPhone">normalized phone</param>
         /// <returns>Contact name</returns>
-        public string GetName(string normalizedPhone)
+        public bool GetName(string normalizedPhone, out string name)
         {
             if (_phonesCache.ContainsKey(normalizedPhone))
-                return _phonesCache[normalizedPhone];
+            {
+                name = _phonesCache[normalizedPhone];
+                return true;
+            }
 
             var uri = Uri.WithAppendedPath(ContactsContract.PhoneLookup.ContentFilterUri, Uri.Encode(normalizedPhone));
             string[] projection = { ContactsContract.Contacts.InterfaceConsts.DisplayName };
             var loader = new CursorLoader(_context, uri, projection, null, null, null);
             var cursor = (ICursor)loader.LoadInBackground();
-            if (cursor == null) return DataFormatUtils.ToPhoneNumber(normalizedPhone);
-            string name;
+            if (cursor == null)
+            {
+                name = DataFormatUtils.ToPhoneNumber(normalizedPhone);
+                return false;
+            }
             if (cursor.MoveToFirst())
             {
                 name = cursor.GetString(0);
                 AddToCache(normalizedPhone, name);
+                cursor.Close();
+                return true;
             }
-            else
-                name = DataFormatUtils.ToPhoneNumber(normalizedPhone);
+            name = DataFormatUtils.ToPhoneNumber(normalizedPhone);
             cursor.Close();
-            return name;
+            return false;
         }
 
         private void AddToCache(string phone, string name)

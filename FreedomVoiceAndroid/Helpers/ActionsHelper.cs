@@ -566,9 +566,10 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                             // Call reservation bad request
                             else if (_waitingRequestArray.ContainsKey(response.RequestId) && _waitingRequestArray[response.RequestId] is CallReservationRequest)
                             {
+#if DEBUG
                                 Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} failed: BAD REQUEST");
-                                var callReservation = (CallReservationRequest) _waitingRequestArray[response.RequestId];
-                                RecentsDictionary.Add(response.RequestId, new Recent(callReservation.DialingNumber, Recent.ResultFail));
+#endif
+                                SaveRecent(response, Recent.ResultFail);
                                 HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.CallReservationFail }));
                             }
                             break;
@@ -590,9 +591,10 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                             // Call reservation bad destination phone
                             if (_waitingRequestArray.ContainsKey(response.RequestId) && _waitingRequestArray[response.RequestId] is CallReservationRequest)
                             {
+#if DEBUG
                                 Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} failed: FORBIDDEN");
-                                var callReservation = (CallReservationRequest)_waitingRequestArray[response.RequestId];
-                                RecentsDictionary.Add(response.RequestId, new Recent(callReservation.DialingNumber, Recent.ResultFail));
+#endif
+                                SaveRecent(response, Recent.ResultFail);
                                 HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.CallReservationWrong }));
                             }
                             break;
@@ -716,18 +718,17 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                 case "CallReservationResponse":
                     Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} successed (Call reservation)");
                     var callResponse = (CallReservationResponse)response;
-                    var callRequest = (CallReservationRequest)_waitingRequestArray[response.RequestId];
                     if (callResponse.ServiceNumber.Length > 6)
                     {
                         var callIntent = new Intent(Intent.ActionCall, Uri.Parse("tel:" + callResponse.ServiceNumber));
                         Log.Debug(App.AppPackage, $"ACTIVITY {GetType().Name} CREATES CALL to {callResponse.ServiceNumber}");
-                        RecentsDictionary.Add(response.RequestId, new Recent(callRequest.DialingNumber, Recent.ResultOk));
+                        SaveRecent(response, Recent.ResultOk);
                         _successDial = response.RequestId;
                         HelperEvent?.Invoke(this, new ActionsHelperIntentArgs(response.RequestId, callIntent));
                     }
                     else
                     {
-                        RecentsDictionary.Add(response.RequestId, new Recent(callRequest.DialingNumber, Recent.ResultFail));
+                        SaveRecent(response, Recent.ResultFail);
                         HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.CallReservationFail }));
                     }
                     break;
@@ -771,6 +772,24 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             RecentsDictionary.Clear();
             var intent = new Intent(_app, typeof(AuthActivity));
             HelperEvent?.Invoke(this, new ActionsHelperIntentArgs(id, intent));
+        }
+
+        private void SaveRecent(BaseResponse response, int result)
+        {
+            var callReservation = (CallReservationRequest)_waitingRequestArray[response.RequestId];
+            var recent = new Recent(callReservation.DialingNumber, result);
+            var values = RecentsDictionary.Values.ToList();
+            var keys = RecentsDictionary.Keys.ToList();
+            long keyForRemove = -1;
+            for (var i = 0; i < values.Count; i++)
+            {
+                if (!values[i].Equals(recent)) continue;
+                keyForRemove = keys[i];
+                break;
+            }
+            if (keyForRemove != -1)
+                RecentsDictionary.Remove(keyForRemove);
+            RecentsDictionary.Add(response.RequestId, recent);
         }
     }
 }

@@ -1,8 +1,8 @@
-using Android.Animation;
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
 using Android.Gms.Analytics;
+using Android.Graphics;
 using Android.OS;
 using Android.Support.Design.Widget;
 using Android.Support.V4.Content;
@@ -29,6 +29,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         WindowSoftInputMode = SoftInput.StateHidden)]
     public class ContentActivity : OperationActivity
     {
+        private Color _whiteColor;
+        private Color _grayColor;
         private CoordinatorLayout _rootLayout;
         private AppBarLayout _appBar;
         private ContentPagerAdapter _pagerAdapter;
@@ -47,6 +49,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             SetContentView(Resource.Layout.act_content);
             _rootLayout = FindViewById<CoordinatorLayout>(Resource.Id.contentActivity_rootBar);
             RootLayout = _rootLayout;
+            _whiteColor = new Color(ContextCompat.GetColor(this, Resource.Color.colorActionBarText));
+            _grayColor = new Color(ContextCompat.GetColor(this, Resource.Color.colorTabIndicatorInactive));
             SearchListener = new SearchViewListener();
             _appBar = FindViewById<AppBarLayout>(Resource.Id.contentActivity_contentAppBar);
             _tabLayout = FindViewById<TabLayout>(Resource.Id.contentActivity_tabs);
@@ -83,6 +87,14 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         private void ViewPagerOnPageSelected(object sender, ViewPager.PageSelectedEventArgs pageSelectedEventArgs)
         {
             SetToolbarContent();
+            var menu = _toolbar.Menu;
+            var searchView = (SearchView)MenuItemCompat.GetActionView(menu.FindItem(Resource.Id.menu_action_search));
+            if (searchView != null)
+            {
+                if (!searchView.Iconified)
+                    searchView.Iconified = true;
+            }
+
             Appl.AnalyticsTracker.SetScreenName($"Activity {GetType().Name}, Screen {_pagerAdapter.GetItem(_viewPager.CurrentItem).GetType().Name}");
             Appl.AnalyticsTracker.Send(new HitBuilders.ScreenViewBuilder().Build());
         }
@@ -125,9 +137,9 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                     var searchView = (SearchView)MenuItemCompat.GetActionView(menu.FindItem(Resource.Id.menu_action_search));
                     searchView.SetOnQueryTextListener(SearchListener);
                     searchView.SetOnCloseListener(SearchListener);
-                    var layout = (LinearLayout)searchView.GetChildAt(0);
-                    var innerLayout = (LinearLayout) layout.GetChildAt(2);
-                    innerLayout.Elevation = Resources.GetDimension(Resource.Dimension.fragment_contacts_search_elevation);
+                    var editText = searchView.FindViewById<EditText>(Resource.Id.search_src_text);
+                    editText.SetTextColor(_whiteColor);
+                    editText.SetHintTextColor(_grayColor);
                     break;
                 case 2:
                     _toolbar.InflateMenu(Resource.Menu.menu_content);
