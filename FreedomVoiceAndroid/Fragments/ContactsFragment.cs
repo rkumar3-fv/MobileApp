@@ -56,7 +56,6 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             base.OnResume();
             ContentActivity.SearchListener.OnChange += SearchListenerOnChange;
             ContentActivity.SearchListener.OnApply += SearchListenerOnApply;
-            ContentActivity.SearchListener.OnCancel += SearchListenerOnCancel;
         }      
 
         public override void OnPause()
@@ -64,7 +63,6 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             base.OnPause();
             ContentActivity.SearchListener.OnChange -= SearchListenerOnChange;
             ContentActivity.SearchListener.OnApply -= SearchListenerOnApply;
-            ContentActivity.SearchListener.OnCancel -= SearchListenerOnCancel;
         }
 
         private void AdapterOnItemClick(object sender, Contact contact)

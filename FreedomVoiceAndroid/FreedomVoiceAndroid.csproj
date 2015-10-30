@@ -211,6 +211,8 @@
     <Compile Include="Helpers\ActionsHelperEventArgs.cs" />
     <Compile Include="Helpers\ActionsHelperIntentArgs.cs" />
     <Compile Include="Helpers\AppPreferencesHelper.cs" />
+    <Compile Include="Notifications\BaseNotification.cs" />
+    <Compile Include="Notifications\FaxUploadNotification.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\ComService.cs" />
@@ -331,7 +333,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Assets\" />
-    <Folder Include="Notifications\" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\mipmap-mdpi\ic_launcher.png" />

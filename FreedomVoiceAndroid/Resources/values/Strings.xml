@@ -100,4 +100,7 @@
   <string name="Snack_connectionLost">No Internet Connection</string>
   <string name="Snack_callFailed">Unsupported phone number</string>
   <string name="Snack_callWrong">Destination number unsupported</string>
+  <string name="Notif_downloadProgress">Fax downloading in progress</string>
+  <string name="Notif_downloadComplete">Fax downloading complete</string>
+  <string name="Notif_faxShow">Show fax</string>
 </resources>

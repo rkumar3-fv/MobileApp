@@ -54,6 +54,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             _whiteColor = new Color(ContextCompat.GetColor(this, Resource.Color.colorActionBarText));
             _grayColor = new Color(ContextCompat.GetColor(this, Resource.Color.colorTabIndicatorInactive));
             SearchListener = new SearchViewListener();
+            SearchListener.OnCollapse += (sender, b) => { };
+            SearchListener.OnExpand += (sender, b) => { };
             _appBar = FindViewById<AppBarLayout>(Resource.Id.contentActivity_contentAppBar);
             _tabLayout = FindViewById<TabLayout>(Resource.Id.contentActivity_tabs);
             _viewPager = FindViewById<ContentPager>(Resource.Id.contentActivity_contentPager);
@@ -128,11 +130,16 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                     _toolbar.InflateMenu(Resource.Menu.menu_contacts);
                     var menu = _toolbar.Menu;
                     var searchView = (SearchView)MenuItemCompat.GetActionView(menu.FindItem(Resource.Id.menu_action_search));
-                    searchView.SetOnQueryTextListener(SearchListener);
-                    searchView.SetOnCloseListener(SearchListener);
-                    var editText = searchView.FindViewById<EditText>(Resource.Id.search_src_text);
-                    editText.SetTextColor(_whiteColor);
-                    editText.SetHintTextColor(_grayColor);
+                    var menuItem = menu.FindItem(Resource.Id.menu_action_search);
+                    if ((menuItem != null) && (searchView != null))
+                    {
+                        MenuItemCompat.SetOnActionExpandListener(menuItem, SearchListener);
+                        MenuItemCompat.SetActionView(menuItem, searchView);
+                        searchView.SetOnQueryTextListener(SearchListener);
+                        var editText = searchView.FindViewById<EditText>(Resource.Id.search_src_text);
+                        editText.SetTextColor(_whiteColor);
+                        editText.SetHintTextColor(_grayColor);
+                    }
                     break;
                 case 2:
                     _toolbar.InflateMenu(Resource.Menu.menu_content);
