@@ -47,7 +47,7 @@ namespace FreedomVoice.iOS.ViewControllers
 
             View.Add(_noResultsLabel);
 
-            var addressBook = new Xamarin.Contacts.AddressBook();
+            var addressBook = new Xamarin.Contacts.AddressBook();            
             if (!await addressBook.RequestPermission())
             {
                 // We don't have the permission to access user's contacts: check if the READ_CONTACTS has been set
@@ -142,7 +142,7 @@ namespace FreedomVoice.iOS.ViewControllers
                 return;
             }
 
-            var person = _contactList.Where(c => c.DisplayName.StartsWith(_contactSource.Keys[e.IndexPath.Section], StringComparison.OrdinalIgnoreCase)).ToList()[e.IndexPath.Row];
+            var person = _contactList.Where(c => c.DisplayName.StartsWith(_contactSource.Keys[e.IndexPath.Section], StringComparison.OrdinalIgnoreCase)).ToList()[e.IndexPath.Row];            
 
             var phoneNumbers = person.Phones.ToList();
             switch (phoneNumbers.Count)
@@ -154,7 +154,7 @@ namespace FreedomVoice.iOS.ViewControllers
                     return;
                 case 1:
                     PhoneCall.CreateCallReservation(string.Empty, string.Empty, string.Empty, phoneNumbers.First().Number);
-                    AddRecent(person.DisplayName, phoneNumbers.First().Number);
+                    AddRecent(person.DisplayName, phoneNumbers.First().Number, person.Id);
                     break;
                 default:
                     var phoneCallController = UIAlertController.Create("Select number for " + person.DisplayName, null, UIAlertControllerStyle.ActionSheet);
@@ -162,7 +162,7 @@ namespace FreedomVoice.iOS.ViewControllers
                     {
                         phoneCallController.AddAction(UIAlertAction.Create(phone.Label + " - " + phone.Number, UIAlertActionStyle.Default, a => {
                             PhoneCall.CreateCallReservation(string.Empty, string.Empty, string.Empty, phone.Number);
-                            AddRecent(person.DisplayName, phoneNumbers.First().Number);
+                            AddRecent(person.DisplayName, phoneNumbers.First().Number, person.Id);
                         }));
                     }
                     phoneCallController.AddAction(UIAlertAction.Create("Cancel", UIAlertActionStyle.Cancel, null));
@@ -173,10 +173,10 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private MainTabBarController MainTab { get { return ParentViewController as MainTabBarController; } }
 
-        private void AddRecent(string title, string phoneNumber)
-        {
+        private void AddRecent(string title, string phoneNumber, string contactId)
+        {            
             var ctrl = ParentViewController as MainTabBarController;
-            ctrl?.Recents.Add(new Recent(title, phoneNumber, DateTime.Now));
+            ctrl?.Recents.Add(new Recent(title, phoneNumber, DateTime.Now, contactId));
         }
 
         void CheckResult(int contactsCount)
