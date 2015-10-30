@@ -5,7 +5,7 @@ using Android.Runtime;
 using Android.Support.V4.Content;
 using Android.Support.V7.Widget;
 
-namespace com.FreedomVoice.MobileApp.Android.Adapters
+namespace com.FreedomVoice.MobileApp.Android.CustomControls
 {
     /// <summary>
     /// Custom RecyclerView divider

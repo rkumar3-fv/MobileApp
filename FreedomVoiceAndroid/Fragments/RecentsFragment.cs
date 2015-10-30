@@ -1,5 +1,8 @@
 using System.Linq;
+using Android.Content;
+using Android.Net;
 using Android.OS;
+using Android.Provider;
 using Android.Support.V7.Widget;
 using Android.Support.V7.Widget.Helper;
 #if DEBUG
@@ -8,6 +11,9 @@ using Android.Util;
 using Android.Views;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Adapters;
+using com.FreedomVoice.MobileApp.Android.CustomControls;
+using com.FreedomVoice.MobileApp.Android.CustomControls.Callbacks;
+using com.FreedomVoice.MobileApp.Android.CustomControls.CustomEventArgs;
 using com.FreedomVoice.MobileApp.Android.Helpers;
 using FreedomVoice.Core.Utils;
 
@@ -59,12 +65,12 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         /// <summary>
         /// Opening additional info
         /// </summary>
-        private void AdapterOnAdditionalSectorClick(object sender, long l)
+        private void AdapterOnAdditionalSectorClick(object sender, string id)
         {
-#if DEBUG
-            Log.Debug(App.AppPackage, $"ADDITIONAL INFO ABOUT {DataFormatUtils.ToPhoneNumber(Helper.RecentsDictionary[l].PhoneNumber)}");
-#endif
-            //TODO: when info content will be created
+            var intent = new Intent(Intent.ActionView);
+            var uri = Uri.WithAppendedPath(ContactsContract.Contacts.ContentUri, id);
+            intent.SetData(uri);
+            ContentActivity.StartActivity(intent);
         }
 
         /// <summary>

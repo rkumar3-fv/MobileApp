@@ -1,11 +1,11 @@
+#if DEBUG
+#endif
 using System;
 using Android.Support.V7.Widget;
-#if DEBUG
 using Android.Util;
-#endif
 using Object = Java.Lang.Object;
 
-namespace com.FreedomVoice.MobileApp.Android.Adapters
+namespace com.FreedomVoice.MobileApp.Android.CustomControls.Callbacks
 {
     /// <summary>
     /// SearchView listener implementation

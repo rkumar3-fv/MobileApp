@@ -5,6 +5,7 @@ using Android.Content;
 using Android.Gms.Analytics;
 using Android.Runtime;
 using Android.Telephony;
+using com.FreedomVoice.MobileApp.Android.CustomControls.CustomEventArgs;
 #if DEBUG
 using Android.Util;
 #endif

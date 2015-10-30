@@ -2,12 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Android.Content;
+using Android.Database;
+using Android.Provider;
 using Android.Support.V7.Widget;
+using Android.Telephony;
 using Android.Views;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Entities;
 using com.FreedomVoice.MobileApp.Android.Utils;
 using FreedomVoice.Core.Utils;
+using Uri = Android.Net.Uri;
 
 namespace com.FreedomVoice.MobileApp.Android.Adapters
 {
@@ -28,7 +32,7 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
         /// <summary>
         /// Additional item sector short click
         /// </summary>
-        public event EventHandler<long> AdditionalSectorClick;
+        public event EventHandler<string> AdditionalSectorClick;
 
         private void OnClick(int position)
         {
@@ -38,7 +42,15 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
         private void OnAditionalClick(int position)
         {
             var keys = _currentContent.Keys.ToList();
-            AdditionalSectorClick?.Invoke(this, keys[position]);
+            var normalizedPhone = PhoneNumberUtils.NormalizeNumber(_currentContent[keys[position]].PhoneNumber);
+            var uri = Uri.WithAppendedPath(ContactsContract.PhoneLookup.ContentFilterUri, Uri.Encode(normalizedPhone));
+            string[] projection = { ContactsContract.Contacts.InterfaceConsts.Id };
+            var loader = new CursorLoader(_context, uri, projection, null, null, null);
+            var cursor = (ICursor)loader.LoadInBackground();
+            if (cursor == null) return;
+            if (cursor.MoveToFirst())
+                AdditionalSectorClick?.Invoke(this, cursor.GetString(0));
+            cursor.Close();
         }
 
         public RecentsRecyclerAdapter(SortedDictionary<long, Recent> currentContent, Context context)

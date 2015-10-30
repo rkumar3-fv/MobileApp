@@ -12,6 +12,7 @@ using Android.Util;
 using Android.Views;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Helpers;
+using com.FreedomVoice.MobileApp.Android.Utils;
 using Java.Util;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
@@ -93,7 +94,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         private void AuthButtonOnClick(object sender, EventArgs eventArgs)
         {
             HideErrors();
-            if (_loginText.Text.Length == 0)
+            if ((_loginText.Text.Length == 0)||(!DataValidationUtils.IsEmailValid(_loginText.Text)))
             {
                 _loginText.Background.SetColorFilter(_errorColor, PorterDuff.Mode.SrcAtop);
                 _errorTextLogin.Text = GetString(Resource.String.ActivityAuth_badLogin);
@@ -140,6 +141,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             Log.Debug(App.AppPackage, "RESTORE LAUNCHED");
 #endif
             var intent = new Intent(this, typeof(RestoreActivity));
+            if ((_loginText.Text.Length > 0) && (DataValidationUtils.IsEmailValid(_loginText.Text)))
+                intent.PutExtra(RestoreActivity.EmailField, _loginText.Text);
             StartActivity(intent);
         }
 

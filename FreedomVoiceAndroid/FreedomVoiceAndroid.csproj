@@ -162,23 +162,24 @@
     <Compile Include="Activities\VoiceRecordActivity.cs" />
     <Compile Include="Adapters\CallerIdSpinnerAdapter.cs" />
     <Compile Include="Adapters\ContactsRecyclerAdapter.cs" />
-    <Compile Include="Adapters\ContentPager.cs" />
     <Compile Include="Adapters\ContentPagerAdapter.cs" />
-    <Compile Include="Adapters\DividerItemDecorator.cs" />
     <Compile Include="Adapters\MessagesRecyclerAdapter.cs" />
     <Compile Include="Adapters\AccountsRecyclerAdapter.cs" />
     <Compile Include="Adapters\PhonesRecyclerAdapter.cs" />
     <Compile Include="Adapters\RecentsRecyclerAdapter.cs" />
-    <Compile Include="Adapters\SearchViewListener.cs" />
-    <Compile Include="Adapters\SnackbarCallback.cs" />
-    <Compile Include="Adapters\SwipeCallback.cs" />
-    <Compile Include="Adapters\SwipeCallbackEventArgs.cs" />
+    <Compile Include="CustomControls\Callbacks\SearchViewListener.cs" />
+    <Compile Include="CustomControls\Callbacks\SnackbarCallback.cs" />
+    <Compile Include="CustomControls\Callbacks\SwipeCallback.cs" />
+    <Compile Include="CustomControls\ContentPager.cs" />
+    <Compile Include="CustomControls\DialogRecyclerView.cs" />
+    <Compile Include="CustomControls\DividerItemDecorator.cs" />
+    <Compile Include="CustomControls\CustomEventArgs\DialingEventArgs.cs" />
+    <Compile Include="CustomControls\CustomEventArgs\SwipeCallbackEventArgs.cs" />
     <Compile Include="Dialogs\AirplaneDialogFragment.cs" />
     <Compile Include="Dialogs\BaseDialogFragment.cs" />
     <Compile Include="Dialogs\CallerIdDialogFragment.cs" />
-    <Compile Include="Dialogs\ClearRecentsDialog.cs" />
+    <Compile Include="Dialogs\ClearRecentsDialogFragment.cs" />
     <Compile Include="Dialogs\DialogEventArgs.cs" />
-    <Compile Include="Dialogs\DialogRecyclerView.cs" />
     <Compile Include="Dialogs\DialogResult.cs" />
     <Compile Include="Dialogs\LogoutDialogFragment.cs" />
     <Compile Include="Dialogs\MultiContactsDialogFragment.cs" />
@@ -186,6 +187,7 @@
     <Compile Include="Dialogs\NoContactsDialogFragment.cs" />
     <Compile Include="Dialogs\RestoreDialogFragment.cs" />
     <Compile Include="Entities\Account.cs" />
+    <Compile Include="Entities\Contact.cs" />
     <Compile Include="Entities\Entity.cs" />
     <Compile Include="Entities\Extension.cs" />
     <Compile Include="Entities\Folder.cs" />
@@ -213,11 +215,12 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\ComService.cs" />
     <Compile Include="Services\ComServiceResultReceiver.cs" />
+    <Compile Include="Services\FaxForegroundService.cs" />
     <Compile Include="Services\IComServiceResultReceiver.cs" />
+    <Compile Include="Services\MediaService.cs" />
     <Compile Include="Utils\CallStateHelper.cs" />
     <Compile Include="Utils\ContactsHelper.cs" />
     <Compile Include="Utils\DataValidationUtils.cs" />
-    <Compile Include="Utils\DialingEventArgs.cs" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\act_auth.axml" />
@@ -328,6 +331,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Assets\" />
+    <Folder Include="Notifications\" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\mipmap-mdpi\ic_launcher.png" />

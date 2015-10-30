@@ -24,16 +24,17 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
         /// <summary>
         /// Item short click event
         /// </summary>
-        public event EventHandler<List<Phone>> ItemClick;
+        public event EventHandler<Contact> ItemClick;
 
         private void OnClick(int position)
         {
             if (Cursor == null) return;
             if (!Cursor.MoveToPosition(position)) return;
             var id = Cursor.GetString(Cursor.GetColumnIndex(ContactsContract.Contacts.InterfaceConsts.Id));
+            var name = Cursor.GetString(Cursor.GetColumnIndex(ContactsContract.Contacts.InterfaceConsts.DisplayName));
             var hasPhone = Cursor.GetString(Cursor.GetColumnIndex(ContactsContract.Contacts.InterfaceConsts.HasPhoneNumber));
             if (hasPhone.Equals("0"))
-                ItemClick?.Invoke(this, new List<Phone>());
+                ItemClick?.Invoke(this, new Contact(name));
             else
             {
                 string[] projection = { ContactsContract.Contacts.InterfaceConsts.Id, ContactsContract.CommonDataKinds.Phone.Number, "data2" };
@@ -50,10 +51,10 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
                         phones.Add(new Phone(phone, type));
                     }
                     cursor.Close();
-                    ItemClick?.Invoke(this, phones);
+                    ItemClick?.Invoke(this, new Contact(name, phones));
                 }
                 else
-                    ItemClick?.Invoke(this, new List<Phone>());
+                    ItemClick?.Invoke(this, new Contact(name));
             }
         }
 

@@ -41,7 +41,7 @@ namespace com.FreedomVoice.MobileApp.Android.Utils
         /// Get contact name by phone
         /// </summary>
         /// <param name="normalizedPhone">normalized phone</param>
-        /// <returns>Contact name</returns>
+        /// <returns>Is in contacts</returns>
         public bool GetName(string normalizedPhone, out string name)
         {
             if (_phonesCache.ContainsKey(normalizedPhone))

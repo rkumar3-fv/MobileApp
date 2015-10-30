@@ -11,11 +11,15 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/dlg_margin">
         <TextView
+            android:id="@+id/ManyContactsDlg_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/DlgTitleText"
-            android:text="@string/DlgNumbers_title" />
-        <com.FreedomVoice.MobileApp.Android.Dialogs.DialogRecyclerView
+            android:maxLines="2"
+            android:singleLine="false"
+            android:ellipsize="end"
+            android:lines="2" />
+        <com.FreedomVoice.MobileApp.Android.CustomControls.DialogRecyclerView
             android:id="@+id/ManyContactsDlg_list"
             style="@style/ScrollTheme"
             android:layout_width="match_parent"

@@ -11,6 +11,8 @@ using Android.Support.V7.Internal.View;
 using Android.Views;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Adapters;
+using com.FreedomVoice.MobileApp.Android.CustomControls;
+using com.FreedomVoice.MobileApp.Android.CustomControls.Callbacks;
 using com.FreedomVoice.MobileApp.Android.Dialogs;
 using com.FreedomVoice.MobileApp.Android.Fragments;
 using SearchView = Android.Support.V7.Widget.SearchView;
@@ -170,7 +172,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                     LogoutAction();
                     return true;
                 case Resource.Id.menu_action_clear:
-                    var clearDialog = new ClearRecentsDialog();
+                    var clearDialog = new ClearRecentsDialogFragment();
                     clearDialog.DialogEvent += ClearDialogEvent;
                     clearDialog.Show(SupportFragmentManager, GetString(Resource.String.DlgLogout_title));
                     return true;
