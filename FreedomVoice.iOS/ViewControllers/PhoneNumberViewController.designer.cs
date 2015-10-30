@@ -11,8 +11,8 @@ using UIKit;
 
 namespace FreedomVoice.iOS.ViewControllers
 {
-	[Register ("ForgotPasswordViewController")]
-	partial class ForgotPasswordViewController
+	[Register ("PhoneNumberViewController")]
+	partial class PhoneNumberViewController
 	{
 		void ReleaseDesignerOutlets ()
 		{

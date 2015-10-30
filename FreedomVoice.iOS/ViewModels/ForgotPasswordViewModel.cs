@@ -42,6 +42,8 @@ namespace FreedomVoice.iOS.ViewModels
         /// <returns></returns>
         public async Task ForgotPasswordAsync()
         {
+            IsBusy = true;
+
             _service.SetRecoveryEmail(EMail);
 
             var requestResult = await _service.ExecuteRequest();
@@ -49,6 +51,8 @@ namespace FreedomVoice.iOS.ViewModels
                 ProceedErrorResponse(requestResult);
             else
                 ProceedSuccessResponse();
+
+            IsBusy = false;
         }
 
         /// <summary>

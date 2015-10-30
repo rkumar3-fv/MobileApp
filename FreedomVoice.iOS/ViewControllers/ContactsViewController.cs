@@ -160,7 +160,7 @@ namespace FreedomVoice.iOS.ViewControllers
                     var phoneCallController = UIAlertController.Create("Select number for " + person.DisplayName, null, UIAlertControllerStyle.ActionSheet);
                     foreach (var phone in phoneNumbers)
                     {
-                        phoneCallController.AddAction(UIAlertAction.Create(phone.Label + " - " + phone.Number, UIAlertActionStyle.Default, a => {
+                        phoneCallController.AddAction(UIAlertAction.Create(phone.Number + " - " + phone.Label, UIAlertActionStyle.Default, a => {
                             PhoneCall.CreateCallReservation(string.Empty, string.Empty, string.Empty, phone.Number);
                             AddRecent(person.DisplayName, phoneNumbers.First().Number);
                         }));
@@ -171,12 +171,11 @@ namespace FreedomVoice.iOS.ViewControllers
             }
         }
 
-        private MainTabBarController MainTab { get { return ParentViewController as MainTabBarController; } }
+        private MainTabBarController MainTab => ParentViewController as MainTabBarController;
 
         private void AddRecent(string title, string phoneNumber)
         {
-            var ctrl = ParentViewController as MainTabBarController;
-            ctrl?.Recents.Add(new Recent(title, phoneNumber, DateTime.Now));
+            MainTab.Recents.Add(new Recent(title, phoneNumber, DateTime.Now));
         }
 
         void CheckResult(int contactsCount)
@@ -193,13 +192,15 @@ namespace FreedomVoice.iOS.ViewControllers
             }
         }
 
-        public override void ViewDidAppear(bool animated)
+        public override void ViewWillAppear(bool animated)
         {
-            base.ViewDidAppear(animated);
+            MainTab.Title = "Contacts";
 
-            PresentationNumber selectedNumber = (MainTab as MainTabBarController)?.GetSelectedPresentationNumber();
+            PresentationNumber selectedNumber = MainTab?.GetSelectedPresentationNumber();
             if (selectedNumber != null)
                 CallerIdView.UpdatePickerData(selectedNumber);
+
+            base.ViewWillAppear(animated);
         }
     }
 }

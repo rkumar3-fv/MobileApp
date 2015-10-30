@@ -37,6 +37,8 @@ namespace FreedomVoice.iOS.Views.Shared
                 SelectedPresentationNumber = numbers[0];
 
             _callerIdPickerModel = new CallerIdPickerViewModel(numbers);
+            if (_callerIdPickerModel.Items.Count == 0) return;
+
             _callerIdPickerModel.ValueChanged += (s, e) => {
                 SelectedPresentationNumber = _callerIdPickerModel.SelectedItem;
                 CallerIDEvent.OnCallerIDChangedEvent(new CallerIDEventArgs(SelectedPresentationNumber));

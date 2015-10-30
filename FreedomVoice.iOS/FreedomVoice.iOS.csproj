@@ -98,6 +98,10 @@
     <Compile Include="Entities\Message.cs" />
     <Compile Include="Entities\PresentationNumber.cs" />
     <Compile Include="Helpers\LoadingOverlay.cs" />
+    <Compile Include="ViewControllers\PhoneNumberViewController.cs" />
+    <Compile Include="ViewControllers\PhoneNumberViewController.designer.cs">
+      <DependentUpon>PhoneNumberViewController.cs</DependentUpon>
+    </Compile>
     <Compile Include="ViewControllers\FoldersViewController.cs" />
     <Compile Include="ViewControllers\FoldersViewController.designer.cs">
       <DependentUpon>FoldersViewController.cs</DependentUpon>
@@ -241,6 +245,7 @@
     <BundleResource Include="Resources\btn_play%402x.png" />
     <BundleResource Include="Resources\btn_pause%402x.png" />
     <BundleResource Include="Resources\progress_bar_thumb%402x.png" />
+    <BundleResource Include="Resources\back_transparent%402x.png" />
     <Content Include="Settings.bundle\Root.plist">
       <SubType>Designer</SubType>
     </Content>

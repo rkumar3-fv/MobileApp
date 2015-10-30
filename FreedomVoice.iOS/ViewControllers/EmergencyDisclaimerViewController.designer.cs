@@ -14,28 +14,8 @@ namespace FreedomVoice.iOS.ViewControllers
 	[Register ("EmergencyDisclaimerViewController")]
 	partial class EmergencyDisclaimerViewController
 	{
-		[Outlet]
-		[GeneratedCode ("iOS Designer", "1.0")]
-		UILabel EmergencyDisclaimerLabel { get; set; }
-
-		[Outlet]
-		[GeneratedCode ("iOS Designer", "1.0")]
-		UIButton UnderstandButton { get; set; }
-
-		[Action ("UnderstandButton_TouchUpInside:")]
-		[GeneratedCode ("iOS Designer", "1.0")]
-		partial void UnderstandButton_TouchUpInside (UIButton sender);
-
 		void ReleaseDesignerOutlets ()
 		{
-			if (EmergencyDisclaimerLabel != null) {
-				EmergencyDisclaimerLabel.Dispose ();
-				EmergencyDisclaimerLabel = null;
-			}
-			if (UnderstandButton != null) {
-				UnderstandButton.Dispose ();
-				UnderstandButton = null;
-			}
 		}
 	}
 }

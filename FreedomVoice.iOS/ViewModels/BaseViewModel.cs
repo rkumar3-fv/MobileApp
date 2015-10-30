@@ -114,10 +114,14 @@ namespace FreedomVoice.iOS.ViewModels
         /// </summary>
         public event EventHandler OnBadRequestResponse;
 
+        public bool IsErrorResponseReceived;
+
         protected void ProceedErrorResponse(BaseResponse baseResponse)
         {
             var response = baseResponse as ErrorResponse;
             if (response == null) return;
+
+            IsErrorResponseReceived = true;
 
             switch (response.ErrorCode)
             {

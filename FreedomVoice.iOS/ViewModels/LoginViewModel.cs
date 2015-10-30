@@ -62,6 +62,8 @@ namespace FreedomVoice.iOS.ViewModels
         /// <returns></returns>
         public async Task LoginAsync()
         {
+            IsBusy = true;
+
             _service.SetCredentials(Username, Password);
 
             var requestResult = await _service.ExecuteRequest();
@@ -69,6 +71,8 @@ namespace FreedomVoice.iOS.ViewModels
                 ProceedErrorResponse(requestResult);
             else
                 ProceedSuccessResponse();
+
+            IsBusy = false;
         }
 
         /// <summary>

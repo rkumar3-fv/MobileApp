@@ -13,7 +13,6 @@ namespace FreedomVoice.iOS.ViewControllers
 {
 	partial class RecentsViewController : UIViewController
 	{        
-        private string _tempTtle = string.Empty;
         private UIBarButtonItem _tempLeftButton;
         private UIBarButtonItem _tempRightButton;
         private RecentsSource _recentSource;
@@ -68,21 +67,17 @@ namespace FreedomVoice.iOS.ViewControllers
             GetRecents().Remove(recent);
         }
 
-        public override void ViewDidDisappear(bool animated)
+        public override void ViewWillDisappear(bool animated)
         {
-            base.ViewDidDisappear(animated);
-
-            MainTab.Title = _tempTtle;
             MainTab.NavigationItem.SetLeftBarButtonItem(_tempLeftButton, true);
             MainTab.NavigationItem.SetRightBarButtonItem(_tempRightButton, true);
+
+            base.ViewWillDisappear(animated);
         }
 
-        public override void ViewDidAppear(bool animated)
+        public override void ViewWillAppear(bool animated)
         {
-            base.ViewDidAppear(animated);
-
             _tempLeftButton = MainTab.NavigationItem.LeftBarButtonItem;
-            _tempTtle = MainTab.Title;
             _tempRightButton = MainTab.NavigationItem.RightBarButtonItem;
 
             MainTab.Title = "Recents";
@@ -94,6 +89,8 @@ namespace FreedomVoice.iOS.ViewControllers
             PresentationNumber selectedNumber = (MainTab as MainTabBarController)?.GetSelectedPresentationNumber();
             if (selectedNumber != null)
                 CallerIdView.UpdatePickerData(selectedNumber);
+
+            base.ViewWillAppear(animated);
         }
 
         private void SetEditMode()
@@ -156,6 +153,5 @@ namespace FreedomVoice.iOS.ViewControllers
             RecentsTableView.DeleteRows(new[] { e.IndexPath }, UITableViewRowAnimation.Fade);
             RecentsTableView.EndUpdates();                       
         }
-
     }
 }

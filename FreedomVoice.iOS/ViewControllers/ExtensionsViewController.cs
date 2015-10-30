@@ -1,10 +1,8 @@
 using System;
+using System.Collections.Generic;
 using CoreGraphics;
 using FreedomVoice.iOS.Entities;
-using FreedomVoice.iOS.Helpers;
 using FreedomVoice.iOS.TableViewSources;
-using FreedomVoice.iOS.Utilities;
-using FreedomVoice.iOS.ViewModels;
 using UIKit;
 
 namespace FreedomVoice.iOS.ViewControllers
@@ -12,46 +10,28 @@ namespace FreedomVoice.iOS.ViewControllers
     partial class ExtensionsViewController : BaseViewController
     {
         public Account SelectedAccount { private get; set; }
-
-        LoadingOverlay _loadingOverlay;
-        ExtensionsViewModel _extensionsViewModel;
+        public List<ExtensionWithCount> ExtensionsList { private get; set; }
 
         public ExtensionsViewController(IntPtr handle) : base(handle) { }
 
-        public override async void ViewDidLoad()
+        private UIViewController MainTab => ParentViewController.ParentViewController;
+
+        public override void ViewDidLoad()
         {
             ExtensionsTableView.TableFooterView = new UIView(CGRect.Empty);
 
-            _extensionsViewModel = new ExtensionsViewModel(SelectedAccount.PhoneNumber);
-            _extensionsViewModel.IsBusyChanged += OnIsBusyChanged;
-            _extensionsViewModel.IsBusy = true;
-
-            await _extensionsViewModel.GetExtensionsListAsync();
-
-            ExtensionsTableView.Source = new ExtensionsSource(_extensionsViewModel.ExtensionsList, SelectedAccount, NavigationController);
-            ExtensionsTableView.ReloadData();
-
-            _extensionsViewModel.IsBusy = false;
+            ExtensionsTableView.Source = new ExtensionsSource(ExtensionsList, SelectedAccount, NavigationController);
 
             View.AddSubview(ExtensionsTableView);
 
             base.ViewDidLoad();
         }
 
-        private void OnIsBusyChanged(object sender, EventArgs e)
+        public override void ViewWillAppear(bool animated)
         {
-            if (!IsViewLoaded)
-                return;
+            MainTab.Title = SelectedAccount.FormattedPhoneNumber;
 
-            if (_extensionsViewModel.IsBusy)
-            {
-                _loadingOverlay = new LoadingOverlay(Theme.ScreenBounds);
-                View.Add(_loadingOverlay);
-            }
-            else
-            {
-                _loadingOverlay.Hide();
-            }
+            base.ViewWillAppear(animated);
         }
     }
 }

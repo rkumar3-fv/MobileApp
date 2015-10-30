@@ -77,30 +77,43 @@ namespace FreedomVoice.iOS
         {
             _accountsViewModel = ServiceContainer.Resolve<AccountsViewModel>();
             await _accountsViewModel.GetAccountsListAsync();
+            if (_accountsViewModel.IsErrorResponseReceived) return;
+
             await PrepareRootView(_accountsViewModel.AccountsList);
         }
 
         private async Task PrepareRootView(List<Account> accountsList)
         {
+            UINavigationController navigationController;
+
             if (accountsList.Count == 1)
             {
                 var account = accountsList.First();
 
-                var presentationNumbersViewModel = new PresentationNumbersViewModel(account.PhoneNumber);
-                await presentationNumbersViewModel.GetPresentationNumbersAsync();
+                if (!UserDefault.IsLaunchedBefore)
+                {
+                    var phoneNumberController = GetViewController<PhoneNumberViewController>();
+                    phoneNumberController.SelectedAccount = account;
+                    phoneNumberController.ParentController = Window.RootViewController;
 
-                var mainTabController = GetViewController<MainTabBarController>();
-                mainTabController.SelectedAccount = account;
-                mainTabController.PresentationNumbers = presentationNumbersViewModel.PresentationNumbers;
+                    navigationController = new UINavigationController(phoneNumberController);
+                    Theme.TransitionController(navigationController);
 
-                var navigationController = new UINavigationController(mainTabController);
-                Theme.TransitionController(navigationController);
+                    return;
+                }
+
+                var mainTabController = await GetMainTabBarController(account, Window.RootViewController);
+                if (mainTabController != null)
+                {
+                    navigationController = new UINavigationController(mainTabController);
+                    Theme.TransitionController(navigationController);
+                }
             }
             else
             {
                 var accountsController = GetViewController<AccountsViewController>();
                 accountsController.AccountsList = accountsList;
-                var navigationController = new UINavigationController(accountsController);
+                navigationController = new UINavigationController(accountsController);
                 Theme.TransitionController(navigationController);
             }
         }
@@ -108,7 +121,9 @@ namespace FreedomVoice.iOS
         private void SetLoginViewAsRootView()
         {
             var loginViewController = GetViewController<LoginViewController>();
+            loginViewController.OnLoginSuccess -= OnLoginSuccess;
             loginViewController.OnLoginSuccess += OnLoginSuccess;
+
             var navigationController = new UINavigationController(loginViewController);
             SetRootViewController(navigationController, false);
         }
@@ -116,7 +131,27 @@ namespace FreedomVoice.iOS
         private void SetAccountsViewAsRootView()
         {
             var accountsController = GetViewController<AccountsViewController>();
-            SetRootViewController(accountsController, false);
+
+            var navigationController = new UINavigationController(accountsController);
+            SetRootViewController(navigationController, false);
+        }
+
+        public static async Task<MainTabBarController> GetMainTabBarController(Account selectetdAccount, UIViewController viewController)
+        {
+            var extensionsViewModel = new ExtensionsViewModel(selectetdAccount, viewController as UINavigationController);
+            await extensionsViewModel.GetExtensionsListAsync();
+            if (extensionsViewModel.IsErrorResponseReceived) return null;
+
+            var presentationNumbersViewModel = new PresentationNumbersViewModel(selectetdAccount.PhoneNumber);
+            await presentationNumbersViewModel.GetPresentationNumbersAsync();
+            if (presentationNumbersViewModel.IsErrorResponseReceived) return null;
+
+            var mainTabController = GetViewController<MainTabBarController>();
+            mainTabController.SelectedAccount = selectetdAccount;
+            mainTabController.PresentationNumbers = presentationNumbersViewModel.PresentationNumbers;
+            mainTabController.ExtensionsList = extensionsViewModel.ExtensionsList;
+
+            return mainTabController;
         }
 
         // This method is invoked when the application is about to move from active to inactive state.
@@ -126,16 +161,10 @@ namespace FreedomVoice.iOS
         // This method should be used to release shared resources and it should store the application state.
         // If your application supports background exection this method is called instead of WillTerminate
         // when the user quits.
-        public override void DidEnterBackground(UIApplication application)
-        {
-            
-        }
+        public override void DidEnterBackground(UIApplication application) { }
 
         /// This method is called as part of the transiton from background to active state.
-        public override void WillEnterForeground(UIApplication application)
-        {
-            
-        }
+        public override void WillEnterForeground(UIApplication application) { }
 
         public IGAITracker Tracker;
         public static readonly string TrackingId = "UA-69040520-2";

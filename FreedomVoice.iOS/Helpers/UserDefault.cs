@@ -6,20 +6,20 @@ namespace FreedomVoice.iOS.Helpers
     {
         public static bool IsAuthenticated
         {
-            get { return NSUserDefaults.StandardUserDefaults.BoolForKey("IsAuthenticatedUser"); }
+            get { return NSUserDefaults.StandardUserDefaults.BoolForKey("IsAuthenticatedUserKey"); }
             set
             {
-                NSUserDefaults.StandardUserDefaults.SetBool(value, "IsAuthenticatedUser");
+                NSUserDefaults.StandardUserDefaults.SetBool(value, "IsAuthenticatedUserKey");
                 NSUserDefaults.StandardUserDefaults.Synchronize();
             }
         }
 
-        public static bool DisclaimerWasShown
+        public static bool IsLaunchedBefore
         {
-            get { return NSUserDefaults.StandardUserDefaults.BoolForKey("DisclaimerWasShown"); }
+            get { return NSUserDefaults.StandardUserDefaults.BoolForKey("IsLaunchedBeforeKey"); }
             set
             {
-                NSUserDefaults.StandardUserDefaults.SetBool(value, "DisclaimerWasShown");
+                NSUserDefaults.StandardUserDefaults.SetBool(value, "IsLaunchedBeforeKey");
                 NSUserDefaults.StandardUserDefaults.Synchronize();
             }
         }

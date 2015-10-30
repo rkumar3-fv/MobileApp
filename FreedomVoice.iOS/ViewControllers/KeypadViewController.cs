@@ -112,11 +112,13 @@ namespace FreedomVoice.iOS.ViewControllers
 
         public override void ViewWillAppear(bool animated)
         {
-            base.ViewWillAppear(animated);
+            MainTab.Title = "Keypad";
 
             PresentationNumber selectedNumber = MainTab?.GetSelectedPresentationNumber();
             if (selectedNumber != null)
                 CallerIdView.UpdatePickerData(selectedNumber);
+
+            base.ViewWillAppear(animated);
         }
     }
 }

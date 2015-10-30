@@ -22,8 +22,6 @@ namespace FreedomVoice.iOS.ViewControllers
 
         public override async void ViewDidLoad()
         {
-            Title = SelectedFolder.DisplayName;
-
             MessagesTableView.TableFooterView = new UIView(CGRect.Empty);
 
             _messagesViewModel = new MessagesViewModel(SelectedAccount.PhoneNumber, SelectedExtension.ExtensionNumber, SelectedFolder.DisplayName);
@@ -42,7 +40,14 @@ namespace FreedomVoice.iOS.ViewControllers
             base.ViewDidLoad();
         }
 
-        private void OnIsBusyChanged(object sender, EventArgs e)
+	    public override void ViewWillAppear(bool animated)
+	    {
+            NavigationItem.Title = SelectedFolder.DisplayName;
+
+            base.ViewWillAppear(animated);
+	    }
+
+	    private void OnIsBusyChanged(object sender, EventArgs e)
         {
             if (!IsViewLoaded)
                 return;

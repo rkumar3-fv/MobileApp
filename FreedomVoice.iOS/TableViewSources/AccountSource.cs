@@ -7,7 +7,6 @@ using FreedomVoice.iOS.TableViewCells;
 using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.ViewControllers;
 using UIKit;
-using FreedomVoice.iOS.ViewModels;
 
 namespace FreedomVoice.iOS.TableViewSources
 {
@@ -41,28 +40,21 @@ namespace FreedomVoice.iOS.TableViewSources
             tableView.DeselectRow(indexPath, false);
             var selectedAccount = _accounts[indexPath.Row];
 
-            if (!UserDefault.DisclaimerWasShown)
+            if (!UserDefault.IsLaunchedBefore)
             {
-                var emergencyDisclaimerController = AppDelegate.GetViewController<EmergencyDisclaimerViewController>();
-                emergencyDisclaimerController.SelectedAccount = selectedAccount;
-                emergencyDisclaimerController.ParentController = _navigationController;
+                var phoneNumberController = AppDelegate.GetViewController<PhoneNumberViewController>();
+                phoneNumberController.SelectedAccount = selectedAccount;
+                phoneNumberController.ParentController = _navigationController;
 
-                var navigationController = new UINavigationController(emergencyDisclaimerController);
+                var navigationController = new UINavigationController(phoneNumberController);
                 Theme.TransitionController(navigationController);
 
                 return;
             }
 
-            var tabBarController = AppDelegate.GetViewController<MainTabBarController>();
-            tabBarController.SelectedAccount = selectedAccount;
-
-            var presentationNumbersViewModel = new PresentationNumbersViewModel(selectedAccount.PhoneNumber) { IsBusy = true };
-            await presentationNumbersViewModel.GetPresentationNumbersAsync();
-            tabBarController.PresentationNumbers = presentationNumbersViewModel.PresentationNumbers;
-
-            presentationNumbersViewModel.IsBusy = false;
-
-            _navigationController.PushViewController(tabBarController, true);
+            var mainTabBarController = await AppDelegate.GetMainTabBarController(selectedAccount, _navigationController);
+            if (mainTabBarController != null)
+                _navigationController.PushViewController(mainTabBarController, true);
         }
     }
 }

@@ -21,8 +21,6 @@ namespace FreedomVoice.iOS.ViewControllers
 
         public override async void ViewDidLoad()
         {
-            //Title = SelectedExtension.ExtensionNumber.ToString();
-
             FoldersTableView.TableFooterView = new UIView(CGRect.Empty);
 
             _foldersViewModel = new FoldersViewModel(SelectedAccount.PhoneNumber, SelectedExtension.ExtensionNumber);
@@ -41,7 +39,14 @@ namespace FreedomVoice.iOS.ViewControllers
             base.ViewDidLoad();
         }
 
-        private void OnIsBusyChanged(object sender, EventArgs e)
+	    public override void ViewWillAppear(bool animated)
+	    {
+            NavigationItem.Title = SelectedExtension.ExtensionNumber.ToString();
+
+            base.ViewWillAppear(animated);
+	    }
+
+	    private void OnIsBusyChanged(object sender, EventArgs e)
         {
             if (!IsViewLoaded)
                 return;

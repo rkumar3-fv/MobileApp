@@ -31,8 +31,6 @@ namespace FreedomVoice.iOS.ViewModels
         /// <returns></returns>
         public async Task GetPresentationNumbersAsync()
         {
-            IsBusy = true;
-
             _service.SetSystemNumber(_systemPhoneNumber);
 
             var requestResult = await _service.ExecuteRequest();
@@ -44,8 +42,6 @@ namespace FreedomVoice.iOS.ViewModels
                 if (data != null)
                     PresentationNumbers = data.PresentationNumbers;
             }
-
-            IsBusy = false;
         }
     }
 }

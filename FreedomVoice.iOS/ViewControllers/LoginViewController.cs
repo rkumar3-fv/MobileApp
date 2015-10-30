@@ -11,8 +11,6 @@ namespace FreedomVoice.iOS.ViewControllers
     {
         #region Controls
 
-        public event EventHandler OnLoginSuccess;
-
 	    private UIImageView _logoImage;
 
         private UITextField _usernameTextField;
@@ -30,18 +28,19 @@ namespace FreedomVoice.iOS.ViewControllers
 
         #endregion
 
+        public event EventHandler OnLoginSuccess;
+
         readonly LoginViewModel _loginViewModel;
 
         public LoginViewController(IntPtr handle) : base(handle)
 	    {
             _loginViewModel = ServiceContainer.Resolve<LoginViewModel>();
-
             _loginViewModel.IsBusyChanged += OnIsBusyChanged;
         }
 
 	    public override void ViewDidLoad()
 	    {
-	        Title = "Login";
+	        NavigationItem.Title = "Login";
             View.BackgroundColor = Theme.LoginBackground;
 
             InitializeLogoImage();
@@ -55,19 +54,16 @@ namespace FreedomVoice.iOS.ViewControllers
 	        InitializeAuthorizationFailedLabel();
             InitializeForgotPasswordButton();
 
-            _loginViewModel.OnSuccessResponse += OnLoginSuccess;
-            _loginViewModel.OnUnauthorizedResponse += OnLoginFailed;
-            _loginViewModel.OnBadRequestResponse += OnLoginFailed;
+            UnsubscribeFromEvents();
+            SubscribeToEvents();
 
-	        RegisterForKeyboardNotifications();
-
-	        FillInLoginData();
+            FillInLoginData();
 
             base.ViewDidLoad();
         }
 
         /// <summary>
-        /// Only for test purposes
+        /// Only for test purposes, will be removed later
         /// </summary>
 	    private void FillInLoginData()
 	    {
@@ -78,22 +74,21 @@ namespace FreedomVoice.iOS.ViewControllers
         public override void ViewWillAppear(bool animated)
         {
             NavigationController.NavigationBar.Hidden = true;
-
             base.ViewWillAppear(animated);
         }
 
-        public override void ViewWillDisappear(bool animated)
-        {
-            base.ViewWillAppear(animated);
+	    public override void ViewWillDisappear(bool animated)
+	    {
+            base.ViewWillDisappear(animated);
             NavigationController.NavigationBar.Hidden = false;
         }
 
-        private void OnLoginButtonTouchUpInside()
+	    private void OnLoginButtonTouchUpInside(object sender, EventArgs args)
 	    {
             ProceedLogin();
         }
 
-        private void OnForgotPasswordTouchUpInside()
+        private void OnForgotPasswordTouchUpInside(object sender, EventArgs args)
         {
             _usernameValidationLabel.Hidden = true;
             _passwordValidationLabel.Hidden = true;
@@ -144,11 +139,9 @@ namespace FreedomVoice.iOS.ViewControllers
 	        if (_loginViewModel.IsValid)
 	        {
                 UIApplication.SharedApplication.NetworkActivityIndicatorVisible = true;
-                _loginViewModel.IsBusy = true;
 
                 await _loginViewModel.LoginAsync();
 
-                _loginViewModel.IsBusy = false;
                 UIApplication.SharedApplication.NetworkActivityIndicatorVisible = false;
             }
 	        else
@@ -171,30 +164,13 @@ namespace FreedomVoice.iOS.ViewControllers
             base.Dispose(disposing);
 
             _loginViewModel.IsBusyChanged -= OnIsBusyChanged;
-            _loginViewModel.OnSuccessResponse -= OnLoginSuccess;
-            _loginViewModel.OnUnauthorizedResponse -= OnLoginFailed;
-            _loginViewModel.OnBadRequestResponse -= OnLoginFailed;
+            UnsubscribeFromEvents();
         }
 
-        protected virtual void RegisterForKeyboardNotifications()
-        {
-            NSNotificationCenter.DefaultCenter.AddObserver(UIKeyboard.WillHideNotification, OnKeyboardNotification);
-            NSNotificationCenter.DefaultCenter.AddObserver(UIKeyboard.WillShowNotification, OnKeyboardNotification);
-        }
+        protected override bool HandlesKeyboardNotifications => true;
 
-        private void OnKeyboardNotification(NSNotification notification)
-        {
-            if (!IsViewLoaded) return;
-
-            var visible = notification.Name == UIKeyboard.WillShowNotification;
-
-            UIView.BeginAnimations("AnimateForKeyboard");
-            UIView.SetAnimationBeginsFromCurrentState(true);
-            UIView.SetAnimationDuration(UIKeyboard.AnimationDurationFromNotification(notification));
-            UIView.SetAnimationCurve((UIViewAnimationCurve)UIKeyboard.AnimationCurveFromNotification(notification));
-
-            var keyboardFrame = visible ? UIKeyboard.FrameEndFromNotification(notification) : UIKeyboard.FrameBeginFromNotification(notification);
-
+	    protected override void OnKeyboardChanged(bool visible, nfloat height)
+	    {
             AdjustLogoImage(visible);
             AdjustWelcomeLabel(visible);
             AdjustUsernameTextField(visible);
@@ -204,10 +180,26 @@ namespace FreedomVoice.iOS.ViewControllers
             AdjustLoginButton();
             AdjustActivityIndicator();
             AdjustAuthorizationFailedLabel();
-            AdjustForgotPasswordButton(keyboardFrame.Height, visible);
-
-            UIView.CommitAnimations();
+            AdjustForgotPasswordButton(height, visible);
         }
+
+        #region Events Subscription
+
+        private void UnsubscribeFromEvents()
+	    {
+            _loginViewModel.OnSuccessResponse -= OnLoginSuccess;
+            _loginViewModel.OnUnauthorizedResponse -= OnLoginFailed;
+            _loginViewModel.OnBadRequestResponse -= OnLoginFailed;
+        }
+
+        private void SubscribeToEvents()
+        {
+            _loginViewModel.OnSuccessResponse += OnLoginSuccess;
+            _loginViewModel.OnUnauthorizedResponse += OnLoginFailed;
+            _loginViewModel.OnBadRequestResponse += OnLoginFailed;
+        }
+
+        #endregion
 
         #region Fields Validation
 
@@ -263,7 +255,7 @@ namespace FreedomVoice.iOS.ViewControllers
 
         #endregion
 
-        #region Fields Initialization
+        #region Controls Initialization
 
         private void InitializeLogoImage()
 	    {
@@ -276,7 +268,7 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private void InitializeWelcomeLabel()
         {
-            var labelFrame = new CGRect(15, UIApplication.SharedApplication.StatusBarFrame.Height + 135, Theme.ScreenBounds.Width - 30, 30);
+            var labelFrame = new CGRect(15, UIApplication.SharedApplication.StatusBarFrame.Height + 136, Theme.ScreenBounds.Width - 30, 30);
             _welcomeLabel = new UILabel(labelFrame)
             {
                 Text = "Welcome",
@@ -384,7 +376,7 @@ namespace FreedomVoice.iOS.ViewControllers
             _loginButton.Center = new CGPoint(View.Center.X, _loginButton.Center.Y);
             _loginButton.SetTitle("Log in", UIControlState.Normal);
             _loginButton.SetTitleColor(Theme.WhiteColor, UIControlState.Normal);
-            _loginButton.TouchUpInside += (s, args) => { OnLoginButtonTouchUpInside(); };
+            _loginButton.TouchUpInside += OnLoginButtonTouchUpInside;
 
             View.AddSubview(_loginButton);
         }
@@ -426,14 +418,14 @@ namespace FreedomVoice.iOS.ViewControllers
             _forgotPasswordButton.Frame = new CGRect(0, Theme.ScreenBounds.Height - 35, 185, 13);
             _forgotPasswordButton.Font = UIFont.SystemFontOfSize(17, UIFontWeight.Thin);
             _forgotPasswordButton.Center = new CGPoint(View.Center.X, _forgotPasswordButton.Center.Y);
-            _forgotPasswordButton.TouchUpInside += (s, args) => { OnForgotPasswordTouchUpInside(); };
+            _forgotPasswordButton.TouchUpInside += OnForgotPasswordTouchUpInside;
 
             View.AddSubview(_forgotPasswordButton);
         }
 
         #endregion
 
-        #region Fields Adjust
+        #region Controls Adjust
 
         private void AdjustLogoImage(bool keyboardVisible = false)
         {
