@@ -57,7 +57,8 @@ namespace FreedomVoice.iOS.Views.Shared
                 Font = UIFont.SystemFontOfSize(17f, UIFontWeight.Medium),
                 Frame = new CGRect(160, 0, 160, 40),
                 UserInteractionEnabled = true,
-                Text = _callerIdPickerModel.SelectedItem.FormattedPhoneNumber
+                Text = _callerIdPickerModel.SelectedItem.FormattedPhoneNumber,
+                TintColor = UIColor.Clear
             };
             _callerIdTextField.TouchDown += SetPicker;
 
