@@ -10,6 +10,7 @@ using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.Views.Shared;
 using UIKit;
 using Foundation;
+using FreedomVoice.iOS.Views;
 
 namespace FreedomVoice.iOS.ViewControllers
 {
@@ -85,8 +86,9 @@ namespace FreedomVoice.iOS.ViewControllers
                 View.AddSubview(button);
             }
 
-            CallerIdView = new CallerIdView(new RectangleF(0, 65, 320, 40), MainTab.GetPresentationNumbers());
-            View.AddSubviews(CallerIdView);
+            var keypadLineView = new RecentLineView(new RectangleF(0, 104, 320, 0.5f));
+            CallerIdView = new CallerIdView(new RectangleF(0, 64, 320, 40), MainTab.GetPresentationNumbers());
+            View.AddSubviews(CallerIdView, keypadLineView);
         }
 
         [Export("HandleLongPress:")]

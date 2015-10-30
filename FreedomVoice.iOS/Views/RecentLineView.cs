@@ -7,7 +7,9 @@ namespace FreedomVoice.iOS.Views
     [Register("RecentLineView")]
     public class RecentLineView : UIView
     {
-        public RecentLineView(CGRect rect) : base (rect) { }
+        public RecentLineView(CGRect rect) : base (rect) {
+            BackgroundColor = UIColor.White;
+        }
 
         public override void Draw(CGRect rect)
         {
@@ -15,16 +17,11 @@ namespace FreedomVoice.iOS.Views
             
             using (CGContext g = UIGraphics.GetCurrentContext())
             {
-                g.SetLineWidth(0.5f);
-                UIColor.Gray.SetStroke();
-                UIColor.Clear.SetFill();
-                var path = new CGPath();
-                path.AddLines(new[] { new CGPoint (0, 1), new CGPoint (320, 1) });
-
-                path.CloseSubpath();
-
-                g.AddPath(path);
-                g.DrawPath(CGPathDrawingMode.Stroke);
+                g.SetLineWidth(1f);
+                g.MoveTo(0, 0);
+                g.SetStrokeColor(UIColor.FromRGB(200, 199, 204).CGColor);
+                g.AddLineToPoint(320, 0);
+                g.StrokePath();                
             }
         }
     }
