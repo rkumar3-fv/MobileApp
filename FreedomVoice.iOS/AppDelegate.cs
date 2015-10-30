@@ -20,6 +20,7 @@ namespace FreedomVoice.iOS
         public override UIWindow Window { get; set; }
 
         private static UIStoryboard MainStoryboard => UIStoryboard.FromName("MainStoryboard", NSBundle.MainBundle);
+        NSObject observer;
 
         public static T GetViewController<T>() where T : UIViewController
         {
@@ -54,6 +55,8 @@ namespace FreedomVoice.iOS
             Window.MakeKeyAndVisible();
 
             InitGA();
+
+            observer = NSNotificationCenter.DefaultCenter.AddObserver((NSString)"NSUserDefaultsDidChangeNotification", DefaultsChanged);
 
             return true;
         }
@@ -166,24 +169,29 @@ namespace FreedomVoice.iOS
         /// This method is called as part of the transiton from background to active state.
         public override void WillEnterForeground(UIApplication application) { }
 
+        public override void WillTerminate(UIApplication application)
+        {
+            base.WillTerminate(application);
+            if (observer != null)
+            {
+                NSNotificationCenter.DefaultCenter.RemoveObserver(observer);
+                observer = null;
+            }
+        }
+
         public IGAITracker Tracker;
-        public static readonly string TrackingId = "UA-69040520-2";
-        const string AllowTrackingKey = "AllowTracking";
+        public static readonly string TrackingId = "UA-69040520-2";        
 
         private void InitGA()
-        {            
-            var optionsDict = NSDictionary.FromObjectAndKey(new NSString("YES"), new NSString(AllowTrackingKey));
-            NSUserDefaults.StandardUserDefaults.RegisterDefaults(optionsDict);
-            GAI.SharedInstance.OptOut = !NSUserDefaults.StandardUserDefaults.BoolForKey(AllowTrackingKey);
-            GAI.SharedInstance.DispatchInterval = 5;
-                        
+        {
+            GAI.SharedInstance.DispatchInterval = 20;                        
             GAI.SharedInstance.TrackUncaughtExceptions = true;                        
             Tracker = GAI.SharedInstance.GetTracker(TrackingId);            
         }
 
-        public override void OnActivated(UIApplication application)
+        void DefaultsChanged(NSNotification obj)
         {
-            GAI.SharedInstance.OptOut = !NSUserDefaults.StandardUserDefaults.BoolForKey(AllowTrackingKey);
+            Settings.UpdateFromPreferences();
         }
     }
 }

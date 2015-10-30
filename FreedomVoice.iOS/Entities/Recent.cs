@@ -9,6 +9,7 @@ namespace FreedomVoice.iOS.Entities
         public string Title { get; set; }
         public string PhoneNumber { get; set; }
         public DateTime DialDate { get; set; }
+        public string ContactId { get; set; }
 
         public string FormatedDialDate
         {
@@ -34,11 +35,12 @@ namespace FreedomVoice.iOS.Entities
             }
         }
 
-        public Recent(string title, string phoneNumber, DateTime dialDate)
+        public Recent(string title, string phoneNumber, DateTime dialDate, string contactId="")
         {
             Title = title;
             PhoneNumber = phoneNumber;
             DialDate = dialDate;
+            ContactId = contactId;
         }
 
         public object Clone()

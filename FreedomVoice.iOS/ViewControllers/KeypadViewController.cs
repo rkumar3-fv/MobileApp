@@ -9,6 +9,7 @@ using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.Views.Shared;
 using UIKit;
+using Foundation;
 
 namespace FreedomVoice.iOS.ViewControllers
 {
@@ -45,7 +46,7 @@ namespace FreedomVoice.iOS.ViewControllers
             foreach (var item in DialData.Items)
             {
                 var buttonRect = new CGRect(item.X, item.Y, item.Width, item.Height);
-                var button = new RoundedButton(buttonRect, RoundedButtonStyle.Subtitle, item.Text)
+                var button = new RoundedButton(buttonRect, string.IsNullOrEmpty(item.Image) ? RoundedButtonStyle.Subtitle : RoundedButtonStyle.CentralImage, item.Text)
                 {
                     BorderColor = Theme.KeypadBorderColor,
                     TextLabel =
@@ -64,16 +65,38 @@ namespace FreedomVoice.iOS.ViewControllers
                     ContentAnimateToColor = Theme.KeypadBorderColor
                 };
 
+                if (!string.IsNullOrEmpty(item.Image))
+                {                    
+                    button.ImageView.Image = UIImage.FromFile(item.Image);
+                    button.ImageView.ContentMode = UIViewContentMode.Center;                    
+                }                   
+
                 button.TouchUpInside += (sender, ea) => {
                     PhoneNumber += item.Text;
                     _phoneLabel.Text = DataFormatUtils.ToPhoneNumber(PhoneNumber);
                 };
+
+                if (item.DetailedText == DialData.PLUS)
+                {
+                    var gr = new UILongPressGestureRecognizer(this, new ObjCRuntime.Selector("HandleLongPress:"));
+                    button.AddGestureRecognizer(gr);
+                }
 
                 View.AddSubview(button);
             }
 
             CallerIdView = new CallerIdView(new RectangleF(0, 65, 320, 40), MainTab.GetPresentationNumbers());
             View.AddSubviews(CallerIdView);
+        }
+
+        [Export("HandleLongPress:")]
+        public void ButtonLongPressed(UILongPressGestureRecognizer recognizer)
+        {            
+            if (string.IsNullOrEmpty(PhoneNumber))
+            {
+                PhoneNumber += DialData.PLUS;
+                _phoneLabel.Text = DataFormatUtils.ToPhoneNumber(PhoneNumber);
+            }
         }
 
         void ClearPhone_TouchUpInside(object sender, EventArgs args)
@@ -99,8 +122,8 @@ namespace FreedomVoice.iOS.ViewControllers
         {
             base.ViewDidAppear(animated);
 
-            //GAI.SharedInstance.DefaultTracker.Set(GAIConstants.ScreenName, "Keypad Screen");
-            //GAI.SharedInstance.DefaultTracker.Send(GAIDictionaryBuilder.CreateScreenView().Build());
+            GAI.SharedInstance.DefaultTracker.Set(GAIConstants.ScreenName, "Keypad Screen");
+            GAI.SharedInstance.DefaultTracker.Send(GAIDictionaryBuilder.CreateScreenView().Build());
         }
 
         private MainTabBarController MainTab => ParentViewController.ParentViewController as MainTabBarController;

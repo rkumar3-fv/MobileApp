@@ -8,9 +8,10 @@
     <item name="colorAccent">@color/colorBaseControls</item>
     <item name="colorControlActivated">@color/colorActivatedControls</item>
     <item name="colorControlNormal">@color/colorBaseControls</item>
-    <item name="android:dropDownListViewStyle">@style/PopupMenuListView</item>
-    <item name="dropDownListViewStyle">@style/PopupMenuListView</item>
-    <item name="actionBarDivider">@null</item>
+    <item name="android:actionBarStyle">@style/ActionBarTheme</item>
+    <item name="actionBarStyle">@style/ActionBarTheme</item>
+    <item name="searchViewStyle">@style/AppSearchViewStyle</item>
+    <item name="android:searchViewStyle">@style/AppSearchViewStyle</item>
   </style>
 
   <!-- AuthActivity w/o action bar theme -->
@@ -66,6 +67,16 @@
   <style name="Theme.MyAuthTheme.ActionBar.TitleTextStyle" parent="android:style/TextAppearance.Holo.Widget.ActionBar.Title">
     <item name="android:textColor">@color/colorActionBarText</item>
     <item name="android:textSize">@dimen/toolbar_text</item>
+  </style>
+
+  <!-- SearchView style-->
+  <style name="AppSearchViewStyle" parent="Widget.AppCompat.SearchView">
+    <item name="queryBackground">@color/colorTabIndicator</item>
+    <item name="submitBackground">@color/colorTabIndicator</item>
+    <item name="closeIcon">@drawable/ic_action_close</item>
+    <item name="searchIcon">@drawable/ic_action_search</item>
+    <item name="goIcon">@drawable/ic_action_search</item>
+    <!--<item name="voiceIcon"></item>-->
   </style>
   
   <!-- Scrollbar style -->

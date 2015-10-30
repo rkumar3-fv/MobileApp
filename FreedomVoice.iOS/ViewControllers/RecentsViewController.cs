@@ -8,6 +8,8 @@ using System.Linq;
 using FreedomVoice.iOS.Views;
 using FreedomVoice.iOS.Views.Shared;
 using UIKit;
+using Xamarin.Contacts;
+using System.Text.RegularExpressions;
 
 namespace FreedomVoice.iOS.ViewControllers
 {
@@ -17,11 +19,14 @@ namespace FreedomVoice.iOS.ViewControllers
         private UIBarButtonItem _tempRightButton;
         private RecentsSource _recentSource;
 
+        private List<Contact> _contactList;
+
+
         public CallerIdView CallerIdView { get; private set; }
 
         public RecentsViewController (IntPtr handle) : base (handle) { }
 
-        public override void ViewDidLoad()
+        public override async void ViewDidLoad()
         {
             base.ViewDidLoad();
 
@@ -38,6 +43,27 @@ namespace FreedomVoice.iOS.ViewControllers
 
             _recentSource.OnRowSelected += TableSourceOnRowSelected;
             _recentSource.OnRowDeleted += TableSourceOnRowDeleted;
+
+            var addressBook = new Xamarin.Contacts.AddressBook();
+            if (!await addressBook.RequestPermission())
+            {                
+                new UIAlertView("Permission denied", "User has denied this app access to their contacts", null, "Close").Show();
+                return;
+            }
+
+            _contactList = addressBook.ToList();
+        }
+
+        private Contact FindContactByNumber(string number)
+        {
+            try
+            {
+                List<Contact> res = _contactList?.Where(c => c.Phones.Any(p => Regex.Replace(p.Number, @"[^\d]", "") == Regex.Replace(number, @"[^\d]", ""))).ToList();
+                return res?.First();
+            }
+            catch { }
+
+            return null;
         }
 
         private UIViewController MainTab => ParentViewController.ParentViewController;
@@ -45,6 +71,24 @@ namespace FreedomVoice.iOS.ViewControllers
 	    private List<Recent> GetRecentsOrdered()
         {            
             return GetRecents().OrderByDescending(o => o.DialDate).ToList();
+        }
+
+        private List<Recent> GetRecentsUpdatedAndOrdered()
+        {
+            List<Recent> res = GetRecentsOrdered();
+
+            foreach(var item in res)
+            {
+                if (!string.IsNullOrEmpty(item.ContactId))
+                    continue;
+                Contact findContact = FindContactByNumber(item.PhoneNumber);
+                if (findContact != null)
+                {
+                    item.Title = findContact.DisplayName;
+                    item.ContactId = findContact.Id;
+                }
+            }
+            return res;
         }
 
         private List<Recent> GetRecents()
@@ -83,7 +127,7 @@ namespace FreedomVoice.iOS.ViewControllers
             MainTab.Title = "Recents";
             MainTab.NavigationItem.SetLeftBarButtonItem(GetEditButton(), true);
 
-            _recentSource.SetRecents(GetRecentsOrdered());
+            _recentSource.SetRecents(GetRecentsUpdatedAndOrdered());
             RecentsTableView.ReloadData();
 
             PresentationNumber selectedNumber = (MainTab as MainTabBarController)?.GetSelectedPresentationNumber();
@@ -129,7 +173,7 @@ namespace FreedomVoice.iOS.ViewControllers
         private void TableSourceOnRowSelected(object sender, RecentsSource.RowSelectedEventArgs e)
         {
             e.TableView.DeselectRow(e.IndexPath, false);
-            var recent = GetRecentsOrdered()[e.IndexPath.Row];
+            var recent = GetRecentsOrdered()[e.IndexPath.Row];            
             if (recent == null) return;
 
             RecentsTableView.BeginUpdates();
@@ -139,6 +183,7 @@ namespace FreedomVoice.iOS.ViewControllers
             _recentSource.SetRecents(GetRecentsOrdered());
             e.TableView.InsertRows(new[] { NSIndexPath.FromRowSection (e.TableView.NumberOfRowsInSection (0), 0) }, UITableViewRowAnimation.Fade);
             RecentsTableView.EndUpdates();
+            RecentsTableView.ReloadRows(e.TableView.IndexPathsForVisibleRows, UITableViewRowAnimation.None);
         }
 
         private void TableSourceOnRowDeleted(object sender, RecentsSource.RowSelectedEventArgs e)

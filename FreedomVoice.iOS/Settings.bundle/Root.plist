@@ -12,7 +12,9 @@
         <key>Title</key>
         <string>Your Phone Number</string>
         <key>Type</key>
-        <string>PSTitleValueSpecifier</string>
+        <string>PSTextFieldSpecifier</string>        
+        <key>KeyboardType</key>
+        <string>NumberPad</string>
       </dict>
     </array>
     <key>StringsTable</key>
