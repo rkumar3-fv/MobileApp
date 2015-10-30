@@ -67,6 +67,12 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             Appl.AnalyticsTracker.SetAppVersion($"{pInfo.VersionCode} ({pInfo.VersionName})");
             Appl.AnalyticsTracker.SetLanguage(Locale.Default.Language);
             Appl.AnalyticsTracker.SetScreenResolution(Resources.DisplayMetrics.WidthPixels, Resources.DisplayMetrics.HeightPixels);
+
+#if TRACE
+#if !DEBUG
+            HockeyApp.UpdateManager.Register(this, App.HockeyAppKey);
+#endif
+#endif
         }
 
         protected override void OnResume()

@@ -83,18 +83,9 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             base.OnResume();
             SetToolbarContent();
         }
-
         private void ViewPagerOnPageSelected(object sender, ViewPager.PageSelectedEventArgs pageSelectedEventArgs)
         {
             SetToolbarContent();
-            var menu = _toolbar.Menu;
-            var searchView = (SearchView)MenuItemCompat.GetActionView(menu.FindItem(Resource.Id.menu_action_search));
-            if (searchView != null)
-            {
-                if (!searchView.Iconified)
-                    searchView.Iconified = true;
-            }
-
             Appl.AnalyticsTracker.SetScreenName($"Activity {GetType().Name}, Screen {_pagerAdapter.GetItem(_viewPager.CurrentItem).GetType().Name}");
             Appl.AnalyticsTracker.Send(new HitBuilders.ScreenViewBuilder().Build());
         }

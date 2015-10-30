@@ -130,8 +130,9 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             _receiver.SetListener(this);
             _preferencesHelper = AppPreferencesHelper.Instance(_app);
             IsFirstRun = _preferencesHelper.IsFirstRun();
+#if DEBUG
             Log.Debug(App.AppPackage, "HELPER: " + (IsFirstRun ? "First run" : "Not first run"));
-
+#endif
             PhoneNumber = _preferencesHelper.GetPhoneNumber();
             var telemanager = app.GetSystemService(Context.TelephonyService) as TelephonyManager;
 
@@ -142,7 +143,9 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                 PhoneNumber = telemanager.Line1Number;
                 _preferencesHelper.SavePhoneNumber(PhoneNumber);
             }
+#if DEBUG
             Log.Debug(App.AppPackage, "HELPER: " + ((PhoneNumber == null) ? "NO CELLULAR" : $" PHONE NUMBER IS {PhoneNumber}"));
+#endif
             RecentsDictionary = new SortedDictionary<long, Recent>(Comparer<long>.Create((x, y) => y.CompareTo(x)));
             ExtensionsList = new List<Extension>();
             SelectedExtension = -1;
@@ -179,12 +182,16 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             var loginRequest = new LoginRequest(requestId, login, password);
             foreach (var request in _waitingRequestArray.Where(response => response.Value is LoginRequest).Where(request => ((LoginRequest)(request.Value)).Equals(loginRequest)))
             {
+#if DEBUG
                 Log.Debug(App.AppPackage, "HELPER REQUEST: Duplicate Authorize request. Execute ID=" + request.Key);
+#endif
                 return request.Key;
             }
             _userLogin = login;
-            _userPassword = password;   
+            _userPassword = password;
+#if DEBUG
             Log.Debug(App.AppPackage, "HELPER REQUEST: Authorize ID="+requestId);
+#endif
             PrepareIntent(requestId, loginRequest);
             return requestId;
         }
@@ -199,10 +206,14 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             var logoutRequest = new LogoutRequest(requestId);
             foreach (var request in _waitingRequestArray.Where(response => response.Value is LogoutRequest).Where(request => ((LogoutRequest)(request.Value)).Equals(logoutRequest)))
             {
+#if DEBUG
                 Log.Debug(App.AppPackage, "HELPER REQUEST: Duplicate Logout request. Execute ID=" + request.Key);
+#endif
                 return request.Key;
             }
+#if DEBUG
             Log.Debug(App.AppPackage, "HELPER REQUEST: Logout ID=" + requestId);
+#endif
             PrepareIntent(requestId, logoutRequest);
             return requestId;
         }
@@ -218,10 +229,14 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             var restoreRequest = new RestorePasswordRequest(requestId, email);
             foreach (var request in _waitingRequestArray.Where(response => response.Value is RestorePasswordRequest).Where(request => ((RestorePasswordRequest)(request.Value)).Equals(restoreRequest)))
             {
+#if DEBUG
                 Log.Debug(App.AppPackage, "HELPER REQUEST: Duplicate RestorePassword request. Execute ID=" + request.Key);
+#endif
                 return request.Key;
             }
+#if DEBUG
             Log.Debug(App.AppPackage, "HELPER REQUEST: RestorePassword ID=" + requestId);
+#endif
             PrepareIntent(requestId, restoreRequest);
             return requestId;
         }
@@ -236,10 +251,14 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             var getAccsRequest = new GetAccountsRequest(requestId);
             foreach (var request in _waitingRequestArray.Where(response => response.Value is GetAccountsRequest).Where(request => ((GetAccountsRequest)(request.Value)).Equals(getAccsRequest)))
             {
+#if DEBUG
                 Log.Debug(App.AppPackage, "HELPER REQUEST: Duplicate GetAccounts request. Execute ID=" + request.Key);
+#endif
                 return request.Key;
             }
+#if DEBUG
             Log.Debug(App.AppPackage, "HELPER REQUEST: GetAccounts ID=" + requestId);
+#endif
             PrepareIntent(requestId, getAccsRequest);  
             return requestId;
         }
@@ -254,10 +273,14 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             var getPresNumbersRequest = new GetPresentationNumbersRequest(requestId, SelectedAccount.AccountName);
             foreach (var request in _waitingRequestArray.Where(response => response.Value is GetPresentationNumbersRequest).Where(request => ((GetPresentationNumbersRequest)(request.Value)).Equals(getPresNumbersRequest)))
             {
+#if DEBUG
                 Log.Debug(App.AppPackage, "HELPER REQUEST: Duplicate GetPresentationNumbers request. Execute ID=" + request.Key);
+#endif
                 return request.Key;
             }
+#if DEBUG
             Log.Debug(App.AppPackage, "HELPER REQUEST: GetPresentationNumbers ID=" + requestId);
+#endif
             PrepareIntent(requestId, getPresNumbersRequest);
             return requestId;
         }
@@ -283,10 +306,14 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             var getExtRequest = new GetExtensionsRequest(requestId, SelectedAccount.AccountName);
             foreach (var request in _waitingRequestArray.Where(response => response.Value is GetExtensionsRequest).Where(request => ((GetExtensionsRequest)(request.Value)).Equals(getExtRequest)))
             {
+#if DEBUG
                 Log.Debug(App.AppPackage, "HELPER REQUEST: Duplicate ForceLoadExtensions request. Execute ID=" + request.Key);
+#endif
                 return request.Key;
             }
+#if DEBUG
             Log.Debug(App.AppPackage, "HELPER REQUEST: ForceLoadExtensions ID=" + requestId);
+#endif
             PrepareIntent(requestId, getExtRequest);
             return requestId;
         }
@@ -418,12 +445,13 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         private void PrepareIntent(long requestId, BaseRequest request)
         {
             var intent = new Intent(_app, typeof(ComService));
-            intent.SetAction(ComService.ExecuteAction);
             intent.PutExtra(ComService.RequestIdTag, requestId);
             intent.PutExtra(ComServiceResultReceiver.ReceiverTag, _receiver);
             intent.PutExtra(ComService.RequestTag, request);
             _waitingRequestArray.Add(requestId, request);
+#if DEBUG
             Log.Debug(App.AppPackage, "HELPER INTENT CREATED: request ID="+requestId);
+#endif
             _app.StartService(intent);
         }
 
@@ -494,7 +522,9 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         public void SetPresentationNumber(int index)
         {
             SelectedAccount.SelectedPresentationNumber = index;
+#if DEBUG
             Log.Debug(App.AppPackage, $"PRESENTATION NUMBER SET to {DataFormatUtils.ToPhoneNumber(SelectedAccount.PresentationNumber)}");
+#endif
             HelperEvent?.Invoke(this, new ActionsHelperEventArgs(-1, new[] { ActionsHelperEventArgs.ChangePresentation }));
         }
 
@@ -526,10 +556,15 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             var type = response.GetType().Name;
             Intent intent;
             if (!_waitingRequestArray.ContainsKey(response.RequestId))
+#if DEBUG
             {
+
                 Log.Debug(App.AppPackage, $"HELPER EXECUTOR: NOT WAITED response for request with ID={response.RequestId}, Type is {type}");
                 return;
             }
+#else
+                return;
+#endif
             Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId}, Type is {type}");
             switch (type)
             {
@@ -774,6 +809,11 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             HelperEvent?.Invoke(this, new ActionsHelperIntentArgs(id, intent));
         }
 
+        /// <summary>
+        /// Recents saving
+        /// </summary>
+        /// <param name="response">response from server</param>
+        /// <param name="result">success or failure</param>
         private void SaveRecent(BaseResponse response, int result)
         {
             var callReservation = (CallReservationRequest)_waitingRequestArray[response.RequestId];
