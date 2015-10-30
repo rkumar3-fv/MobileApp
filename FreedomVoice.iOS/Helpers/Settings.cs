@@ -20,8 +20,6 @@ namespace FreedomVoice.iOS.Helpers
         public static void UpdateFromPreferences()
         {            
             AccountPhoneNumber = NSUserDefaults.StandardUserDefaults.StringForKey(accountPhoneNumberKey);
-
-            Console.WriteLine("Settings.SetupByPreferences(); " + AccountPhoneNumber);
         }
     }
 }

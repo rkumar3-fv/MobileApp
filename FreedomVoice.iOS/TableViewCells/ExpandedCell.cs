@@ -15,7 +15,7 @@ namespace FreedomVoice.iOS.TableViewCells
         UIImageView Icon;
         UILabel Title, Date, Length;
         AVPlayerView Player;
-        UIButton Callback, Delete, Speaker, ViewFax;
+        UIButton Callback, DeleteBtn, Speaker, ViewFax;
         MessageType type;
         
 
@@ -93,9 +93,9 @@ namespace FreedomVoice.iOS.TableViewCells
         void AddDeleteButton(MessageType type)
         {
             nfloat y = type == MessageType.Fax ? 60 : 99;
-            Delete = new UIButton(new CGRect(285, y, 25, 25));
-            Delete.SetBackgroundImage(UIImage.FromFile("delete.png"), UIControlState.Normal);
-            AddSubview(Delete);
+            DeleteBtn = new UIButton(new CGRect(285, y, 25, 25));
+            DeleteBtn.SetBackgroundImage(UIImage.FromFile("delete.png"), UIControlState.Normal);
+            AddSubview(DeleteBtn);
         }
 
         private void BackgroundColorAnimate(UIButton btn, UIColor tapColor)
