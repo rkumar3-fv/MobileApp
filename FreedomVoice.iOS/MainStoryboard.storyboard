@@ -98,7 +98,7 @@
                         <viewControllerLayoutGuide type="top" id="2441"/>
                         <viewControllerLayoutGuide type="bottom" id="2442"/>
                     </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="2451" customClass="KeypadView">
+                    <view key="view" contentMode="scaleToFill" id="2451">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
@@ -383,6 +383,23 @@
         <image name="btn_play.png" width="31" height="32"/>
         <image name="progress_bar_thumb.png" width="7" height="30"/>
         <image name="back_transparent.png" width="24" height="42"/>
+        <image name="call_back.png" width="36" height="36"/>
+        <image name="callback.png" width="207" height="56"/>
+        <image name="callrecord.png" width="50" height="50"/>
+        <image name="callrecord_active.png" width="50" height="50"/>
+        <image name="callrecord_unread.png" width="50" height="50"/>
+        <image name="delete.png" width="50" height="50"/>
+        <image name="fax.png" width="50" height="50"/>
+        <image name="fax_active.png" width="50" height="50"/>
+        <image name="fax_unread.png" width="50" height="50"/>
+        <image name="pause.png" width="60" height="60"/>
+        <image name="play.png" width="60" height="60"/>
+        <image name="scroller.png" width="46" height="46"/>
+        <image name="speaker.png" width="36" height="36"/>
+        <image name="view_fax.png" width="36" height="36"/>
+        <image name="voicemail.png" width="50" height="50"/>
+        <image name="voicemail_active.png" width="50" height="50"/>
+        <image name="voicemail_unread.png" width="50" height="50"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>

@@ -27,11 +27,12 @@ namespace FreedomVoice.iOS.Views.Shared
         public CallerIdView(RectangleF bounds, IList<PresentationNumber> numbers) : base(bounds)
         {
             Initialize(numbers);
+            AddSubview(new UIImageView(new CGRect(278, 16, 10, 7)) { Image = UIImage.FromFile("dropdown_arrow.png") });
         }
 
         void Initialize(IList<PresentationNumber> numbers)
         {
-            var labelField = new UILabel(new CGRect(15, 0, 145, 40)) { Text = "Show as Caller ID:", Font = UIFont.SystemFontOfSize(17f, UIFontWeight.Regular) };
+            var labelField = new UILabel(new CGRect(15, 0, 145, 40)) { Text = "Show as Caller ID:", Font = UIFont.SystemFontOfSize(16f, UIFontWeight.Regular) };
 
             if (SelectedPresentationNumber == null && numbers != null && numbers.Count > 0)
                 SelectedPresentationNumber = numbers[0];
@@ -56,8 +57,8 @@ namespace FreedomVoice.iOS.Views.Shared
 
             _callerIdTextField = new UITextField
             {
-                Font = UIFont.SystemFontOfSize(17f, UIFontWeight.Medium),
-                Frame = new CGRect(160, 0, 160, 40),
+                Font = UIFont.SystemFontOfSize(16f, UIFontWeight.Medium),
+                Frame = new CGRect(150, 0, 160, 40),
                 UserInteractionEnabled = true,
                 Text = _callerIdPickerModel.SelectedItem.FormattedPhoneNumber,
                 TintColor = UIColor.Clear

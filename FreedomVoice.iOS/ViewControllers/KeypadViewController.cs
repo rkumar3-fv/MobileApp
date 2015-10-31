@@ -7,6 +7,7 @@ using System.Drawing;
 using FreedomVoice.Core.Utils;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.Utilities;
+using FreedomVoice.iOS.Views;
 using FreedomVoice.iOS.Views.Shared;
 using UIKit;
 using Foundation;
@@ -32,7 +33,9 @@ namespace FreedomVoice.iOS.ViewControllers
 
         public override void ViewDidLoad()
         {
-            CallerIdView = new CallerIdView(new RectangleF(0, 65, 320, 40), MainTabBarInstance.GetPresentationNumbers());
+            CallerIdView = new CallerIdView(new RectangleF(0, 64, 320, 40), MainTabBarInstance.GetPresentationNumbers());
+
+            var keypadLineView = new RecentLineView(new RectangleF(0, 104, 320, 0.5f));
 
             _phoneLabel = new UILabel(new CGRect(30, 105, 250, 52))
             {
@@ -48,7 +51,7 @@ namespace FreedomVoice.iOS.ViewControllers
             _keypadDial.SetBackgroundImage(UIImage.FromFile("keypad_call.png"), UIControlState.Normal);
             _keypadDial.TouchUpInside += OnKeypadDialTouchUpInside;
 
-            View.AddSubviews(CallerIdView, _phoneLabel, _clearPhone, _keypadDial);
+            View.AddSubviews(CallerIdView, keypadLineView, _phoneLabel, _clearPhone, _keypadDial);
 
             foreach (var item in DialData.Items)
             {
