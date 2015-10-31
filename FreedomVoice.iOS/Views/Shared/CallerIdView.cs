@@ -13,36 +13,32 @@ namespace FreedomVoice.iOS.Views.Shared
     [Register("CallerIdView")]
     public class CallerIdView : UIView
     {
-        public PresentationNumber SelectedPresentationNumber;
+        private PresentationNumber _selectedPresentationNumber;
 
         private CallerIdPickerViewModel _callerIdPickerModel;
         private UIPickerView _pickerField;
         private UITextField _callerIdTextField;
 
-        public CallerIdView(IList<PresentationNumber> numbers)
-        {
-            Initialize(numbers);
-        }
-
         public CallerIdView(RectangleF bounds, IList<PresentationNumber> numbers) : base(bounds)
         {
             Initialize(numbers);
-            AddSubview(new UIImageView(new CGRect(278, 16, 10, 7)) { Image = UIImage.FromFile("dropdown_arrow.png") });
         }
 
         void Initialize(IList<PresentationNumber> numbers)
         {
+            var dropdownImage = new UIImageView(new CGRect(278, 16, 10, 7)) { Image = UIImage.FromFile("dropdown_arrow.png") };
+
             var labelField = new UILabel(new CGRect(15, 0, 145, 40)) { Text = "Show as Caller ID:", Font = UIFont.SystemFontOfSize(16f, UIFontWeight.Regular) };
 
-            if (SelectedPresentationNumber == null && numbers != null && numbers.Count > 0)
-                SelectedPresentationNumber = numbers[0];
+            if (_selectedPresentationNumber == null && numbers != null && numbers.Count > 0)
+                _selectedPresentationNumber = numbers[0];
 
             _callerIdPickerModel = new CallerIdPickerViewModel(numbers);
             if (_callerIdPickerModel.Items.Count == 0) return;
 
             _callerIdPickerModel.ValueChanged += (s, e) => {
-                SelectedPresentationNumber = _callerIdPickerModel.SelectedItem;
-                CallerIDEvent.OnCallerIDChangedEvent(new CallerIDEventArgs(SelectedPresentationNumber));
+                _selectedPresentationNumber = _callerIdPickerModel.SelectedItem;
+                CallerIDEvent.OnCallerIDChangedEvent(new CallerIDEventArgs(_selectedPresentationNumber));
             };
 
             _pickerField = new UIPickerView
@@ -53,7 +49,7 @@ namespace FreedomVoice.iOS.Views.Shared
                 Model = _callerIdPickerModel
             };
 
-            _pickerField.Select(_callerIdPickerModel.Items.IndexOf(SelectedPresentationNumber), 0, true);
+            _pickerField.Select(_callerIdPickerModel.Items.IndexOf(_selectedPresentationNumber), 0, true);
 
             _callerIdTextField = new UITextField
             {
@@ -69,7 +65,7 @@ namespace FreedomVoice.iOS.Views.Shared
             toolbar.SizeToFit();
 
             var doneButton = new UIBarButtonItem("Done", UIBarButtonItemStyle.Done, (s, e) => {
-                                                                 _callerIdTextField.Text = SelectedPresentationNumber.FormattedPhoneNumber;
+                                                                 _callerIdTextField.Text = _selectedPresentationNumber.FormattedPhoneNumber;
                                                                  _callerIdTextField.ResignFirstResponder();
                                                              });
             toolbar.SetItems(new[] { doneButton }, true);
@@ -77,23 +73,22 @@ namespace FreedomVoice.iOS.Views.Shared
             _callerIdTextField.InputView = _pickerField;
             _callerIdTextField.InputAccessoryView = toolbar;
 
-            AddSubviews(labelField, _callerIdTextField);            
+            AddSubviews(labelField, _callerIdTextField, dropdownImage);
         }
 
-        public void UpdatePickerData(PresentationNumber SelectedPresentationNumber)
+        public void UpdatePickerData(PresentationNumber selectedPresentationNumber)
         {
-            this.SelectedPresentationNumber = SelectedPresentationNumber;
-            if (SelectedPresentationNumber != null)
-            {
-                _pickerField.Select(_callerIdPickerModel.Items.IndexOf(SelectedPresentationNumber), 0, true);
-                _callerIdTextField.Text = SelectedPresentationNumber.FormattedPhoneNumber;
-            }
+            _selectedPresentationNumber = selectedPresentationNumber;
+            if (selectedPresentationNumber == null) return;
+
+            _pickerField.Select(_callerIdPickerModel.Items.IndexOf(selectedPresentationNumber), 0, true);
+            _callerIdTextField.Text = selectedPresentationNumber.FormattedPhoneNumber;
         }
 
         private void SetPicker(object sender, EventArgs e)
         {
-            if (SelectedPresentationNumber != null)
-                _pickerField.Select(_callerIdPickerModel.Items.IndexOf(SelectedPresentationNumber), 0, true);
+            if (_selectedPresentationNumber != null)
+                _pickerField.Select(_callerIdPickerModel.Items.IndexOf(_selectedPresentationNumber), 0, true);
         }
     }
 }
