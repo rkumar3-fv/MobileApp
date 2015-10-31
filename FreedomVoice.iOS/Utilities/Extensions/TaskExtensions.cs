@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace FreedomVoice.iOS.Utilities
+namespace FreedomVoice.iOS.Utilities.Extensions
 {
     /// <summary>
     /// Class containing helper extension methods

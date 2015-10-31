@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using Foundation;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.TableViewCells;
-using FreedomVoice.iOS.ViewControllers;
 using UIKit;
 using FreedomVoice.Core.Entities.Enums;
+using FreedomVoice.iOS.Helpers;
 
 namespace FreedomVoice.iOS.TableViewSources
 {
@@ -18,8 +18,8 @@ namespace FreedomVoice.iOS.TableViewSources
         private readonly FolderWithCount _selectedFolder;
 
         private readonly UINavigationController _navigationController;
-        private int selectedRowIndex = -1;
-        private int selectedRowForHeight = -1;
+        private int _selectedRowIndex = -1;
+        private int _selectedRowForHeight = -1;
 
         public MessagesSource(List<Message> messages, ExtensionWithCount selectedExtension, Account selectedAccount, FolderWithCount folder, UINavigationController navigationController)
         {
@@ -32,40 +32,24 @@ namespace FreedomVoice.iOS.TableViewSources
             _navigationController = navigationController;
         }
 
-        MessageType GetRandomType()
-        {
-            Array values = Enum.GetValues(typeof(MessageType));
-            Random random = new Random();
-            return (MessageType)values.GetValue(random.Next(values.Length));
-        }
-
         public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
         {
+            var selectedMessage = _messages[indexPath.Row];
 
-            var dateFormatter = new NSDateFormatter
+            if (_selectedRowIndex >= 0 && indexPath.Row == _selectedRowIndex)
             {
-                DoesRelativeDateFormatting = true,
-                DateStyle = NSDateFormatterStyle.Short,
-                TimeStyle = NSDateFormatterStyle.Short
-            };
-
-            if (selectedRowIndex >= 0 && indexPath.Row == selectedRowIndex)
-            {
-                var selectedMessage = _messages[indexPath.Row];
-                //selectedMessage.Type = GetRandomType();
-                selectedRowIndex = -1;
+                _selectedRowIndex = -1;
                 var expandedCell = tableView.DequeueReusableCell(RecentCell.RecentCellId) as ExpandedCell ?? new ExpandedCell(selectedMessage.Type);
-                expandedCell.UpdateCell(selectedMessage.Name, dateFormatter.ToString(selectedMessage.ReceivedOn), selectedMessage.Length, "sample.m4a");
+                expandedCell.UpdateCell(selectedMessage.Name, Formatting.DateTimeFormat(selectedMessage.ReceivedOn), selectedMessage.Length, "sample.m4a");
+
                 return expandedCell;
             }
 
-            var folder = _messages[indexPath.Row];
-            
-
             var cell = tableView.DequeueReusableCell(MessageCell.MessageCellId) as MessageCell ?? new MessageCell();
-            cell.TextLabel.Text = folder.Name;
-            cell.DetailTextLabel.Text = dateFormatter.ToString(folder.ReceivedOn);
-            //cell.ImageView.Image = GetImageByFolderName(_messages[indexPath.Row].Name);
+            cell.TextLabel.Text = selectedMessage.Name;
+            cell.TextLabel.Font = UIFont.SystemFontOfSize(17, selectedMessage.Unread ? UIFontWeight.Bold : UIFontWeight.Regular);
+            cell.DetailTextLabel.Text = Formatting.DateTimeFormat(selectedMessage.ReceivedOn);
+            cell.ImageView.Image = Appearance.GetMessageImage(selectedMessage.Type, selectedMessage.Unread, false);
             cell.Accessory = UITableViewCellAccessory.None;
 
             return cell;
@@ -78,8 +62,9 @@ namespace FreedomVoice.iOS.TableViewSources
 
         public override void RowSelected(UITableView tableView, NSIndexPath indexPath)
         {
-            selectedRowForHeight = selectedRowIndex = indexPath.Row;
             var selectedMessage = _messages[indexPath.Row];
+
+            _selectedRowForHeight = _selectedRowIndex = indexPath.Row;
             tableView.ReloadRows(tableView.IndexPathsForVisibleRows, UITableViewRowAnimation.Fade);
         }
 
@@ -87,10 +72,10 @@ namespace FreedomVoice.iOS.TableViewSources
         {
             var selectedMessage = _messages[indexPath.Row];
 
-            if (selectedRowForHeight >= 0 && indexPath.Row == selectedRowForHeight)
+            if (_selectedRowForHeight >= 0 && indexPath.Row == _selectedRowForHeight)
                 return selectedMessage.Type == MessageType.Fax ? 100 : 138;
 
-            return 40;
+            return 48;
         }
     }
 }

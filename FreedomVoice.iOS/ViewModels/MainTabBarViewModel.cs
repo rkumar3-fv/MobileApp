@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FreedomVoice.iOS.Entities;
-using FreedomVoice.iOS.Helpers;
 using FreedomVoice.iOS.Services;
 using FreedomVoice.iOS.Services.Responses;
 using FreedomVoice.iOS.Utilities;
@@ -11,29 +10,31 @@ using UIKit;
 
 namespace FreedomVoice.iOS.ViewModels
 {
-    public class ExtensionsViewModel : BaseViewModel
+    public class MainTabBarViewModel : BaseViewModel
     {
-        private readonly IExtensionsService _service;
-        private readonly Account _selectedAccount;
-        private readonly UINavigationController _viewController;
+        private readonly IExtensionsService _extensionsService;
+        private readonly IPresentationNumbersService _presentationNumbersService;
 
-        private LoadingOverlay _loadingOverlay;
+        private readonly Account _selectedAccount;
+        private readonly UIViewController _viewController;
 
         public List<ExtensionWithCount> ExtensionsList { get; private set; }
+        public List<PresentationNumber> PresentationNumbers { get; private set; }
 
         /// <summary>
         /// Constructor, requires an IService
         /// </summary>
-        public ExtensionsViewModel(Account selectedAccount, UINavigationController viewController)
+        public MainTabBarViewModel(Account selectedAccount, UIViewController viewController)
         {
             ExtensionsList = new List<ExtensionWithCount>();
 
-            _service = ServiceContainer.Resolve<IExtensionsService>();
+            _extensionsService = ServiceContainer.Resolve<IExtensionsService>();
+            _presentationNumbersService = ServiceContainer.Resolve<IPresentationNumbersService>();
 
             _selectedAccount = selectedAccount;
             _viewController = viewController;
+            ViewController = viewController;
 
-            IsBusyChanged += OnIsBusyChanged;
             OnPaymentRequiredResponse += OnAccountPaymentRequired;
         }
 
@@ -45,16 +46,38 @@ namespace FreedomVoice.iOS.ViewModels
         {
             IsBusy = true;
 
-            _service.SetSystemNumber(_selectedAccount.PhoneNumber);
+            _extensionsService.SetSystemNumber(_selectedAccount.PhoneNumber);
 
-            var requestResult = await _service.ExecuteRequest();
+            var requestResult = await _extensionsService.ExecuteRequest();
             if (requestResult is ErrorResponse)
+            {
                 ProceedErrorResponse(requestResult);
+                IsBusy = false;
+            }
             else
             {
                 var data = requestResult as ExtensionsWithCountResponse;
                 if (data != null)
                     ExtensionsList = data.ExtensionsWithCount;
+            }
+        }
+
+        /// <summary>
+        /// Performs an asynchronous request of presentation phones
+        /// </summary>
+        /// <returns></returns>
+        public async Task GetPresentationNumbersAsync()
+        {
+            _presentationNumbersService.SetSystemNumber(_selectedAccount.PhoneNumber);
+
+            var requestResult = await _presentationNumbersService.ExecuteRequest();
+            if (requestResult is ErrorResponse)
+                ProceedErrorResponse(requestResult);
+            else
+            {
+                var data = requestResult as PresentationNumbersResponse;
+                if (data != null)
+                    PresentationNumbers = data.PresentationNumbers;
             }
 
             IsBusy = false;
@@ -64,26 +87,10 @@ namespace FreedomVoice.iOS.ViewModels
         {
             var accountUnavailableController = AppDelegate.GetViewController<AccountUnavailableViewController>();
             accountUnavailableController.SelectedAccount = _selectedAccount;
-            accountUnavailableController.ParentController = _viewController;
+            accountUnavailableController.ParentController = _viewController as UINavigationController;
 
             var navigationController = new UINavigationController(accountUnavailableController);
             Theme.TransitionController(navigationController);
-        }
-
-        private void OnIsBusyChanged(object sender, EventArgs e)
-        {
-            if (!_viewController.IsViewLoaded)
-                return;
-
-            if (IsBusy)
-            {
-                _loadingOverlay = new LoadingOverlay(Theme.ScreenBounds);
-                _viewController.View.Add(_loadingOverlay);
-            }
-            else
-            {
-                _loadingOverlay.Hide();
-            }
         }
     }
 }

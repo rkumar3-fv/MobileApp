@@ -20,14 +20,14 @@ namespace FreedomVoice.iOS
         public override UIWindow Window { get; set; }
 
         private static UIStoryboard MainStoryboard => UIStoryboard.FromName("MainStoryboard", NSBundle.MainBundle);
-        NSObject observer;
+        private NSObject _observer;
 
         public static T GetViewController<T>() where T : UIViewController
         {
             return (T)MainStoryboard.InstantiateViewController(typeof(T).Name);
         }
 
-        public void SetRootViewController(UIViewController rootViewController, bool animate)
+        private void SetRootViewController(UIViewController rootViewController, bool animate)
         {
             Window.RootViewController = rootViewController;
 
@@ -56,7 +56,7 @@ namespace FreedomVoice.iOS
 
             InitGA();
 
-            observer = NSNotificationCenter.DefaultCenter.AddObserver((NSString)"NSUserDefaultsDidChangeNotification", DefaultsChanged);
+            _observer = NSNotificationCenter.DefaultCenter.AddObserver((NSString)"NSUserDefaultsDidChangeNotification", DefaultsChanged);
 
             return true;
         }
@@ -78,9 +78,12 @@ namespace FreedomVoice.iOS
 
         private async Task ProceedGetAccountsList()
         {
-            _accountsViewModel = ServiceContainer.Resolve<AccountsViewModel>();
+            _accountsViewModel = new AccountsViewModel(Window.RootViewController);
+
             await _accountsViewModel.GetAccountsListAsync();
-            if (_accountsViewModel.IsErrorResponseReceived) return;
+
+            if (_accountsViewModel.IsErrorResponseReceived)
+                return;
 
             await PrepareRootView(_accountsViewModel.AccountsList);
         }
@@ -141,18 +144,17 @@ namespace FreedomVoice.iOS
 
         public static async Task<MainTabBarController> GetMainTabBarController(Account selectetdAccount, UIViewController viewController)
         {
-            var extensionsViewModel = new ExtensionsViewModel(selectetdAccount, viewController as UINavigationController);
-            await extensionsViewModel.GetExtensionsListAsync();
-            if (extensionsViewModel.IsErrorResponseReceived) return null;
+            var mainTabBarViewModel = new MainTabBarViewModel(selectetdAccount, viewController);
+            await mainTabBarViewModel.GetExtensionsListAsync();
+            if (mainTabBarViewModel.IsErrorResponseReceived) return null;
 
-            var presentationNumbersViewModel = new PresentationNumbersViewModel(selectetdAccount.PhoneNumber);
-            await presentationNumbersViewModel.GetPresentationNumbersAsync();
-            if (presentationNumbersViewModel.IsErrorResponseReceived) return null;
+            await mainTabBarViewModel.GetPresentationNumbersAsync();
+            if (mainTabBarViewModel.IsErrorResponseReceived) return null;
 
             var mainTabController = GetViewController<MainTabBarController>();
             mainTabController.SelectedAccount = selectetdAccount;
-            mainTabController.PresentationNumbers = presentationNumbersViewModel.PresentationNumbers;
-            mainTabController.ExtensionsList = extensionsViewModel.ExtensionsList;
+            mainTabController.PresentationNumbers = mainTabBarViewModel.PresentationNumbers;
+            mainTabController.ExtensionsList = mainTabBarViewModel.ExtensionsList;
 
             return mainTabController;
         }
@@ -172,15 +174,14 @@ namespace FreedomVoice.iOS
         public override void WillTerminate(UIApplication application)
         {
             base.WillTerminate(application);
-            if (observer != null)
-            {
-                NSNotificationCenter.DefaultCenter.RemoveObserver(observer);
-                observer = null;
-            }
+            if (_observer == null) return;
+
+            NSNotificationCenter.DefaultCenter.RemoveObserver(_observer);
+            _observer = null;
         }
 
         public IGAITracker Tracker;
-        public static readonly string TrackingId = "UA-69040520-2";        
+        public const string TrackingId = "UA-69040520-2";
 
         private void InitGA()
         {
@@ -189,9 +190,9 @@ namespace FreedomVoice.iOS
             Tracker = GAI.SharedInstance.GetTracker(TrackingId);            
         }
 
-        void DefaultsChanged(NSNotification obj)
+        private static void DefaultsChanged(NSNotification obj)
         {
-            Settings.UpdateFromPreferences();
+            UserDefault.UpdateFromPreferences();
         }
     }
 }

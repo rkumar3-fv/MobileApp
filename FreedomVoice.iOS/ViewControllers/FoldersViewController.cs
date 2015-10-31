@@ -3,7 +3,6 @@ using CoreGraphics;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.Helpers;
 using FreedomVoice.iOS.TableViewSources;
-using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.ViewModels;
 using UIKit;
 
@@ -14,8 +13,7 @@ namespace FreedomVoice.iOS.ViewControllers
 		public Account SelectedAccount { private get; set; }
         public ExtensionWithCount SelectedExtension { private get; set; }
 
-        LoadingOverlay _loadingOverlay;
-        FoldersViewModel _foldersViewModel;
+        private FoldersViewModel _foldersViewModel;
 
         public FoldersViewController(IntPtr handle) : base(handle) { }
 
@@ -23,43 +21,25 @@ namespace FreedomVoice.iOS.ViewControllers
         {
             FoldersTableView.TableFooterView = new UIView(CGRect.Empty);
 
-            _foldersViewModel = new FoldersViewModel(SelectedAccount.PhoneNumber, SelectedExtension.ExtensionNumber);
-            _foldersViewModel.IsBusyChanged += OnIsBusyChanged;
-            _foldersViewModel.IsBusy = true;
+            _foldersViewModel = new FoldersViewModel(SelectedAccount.PhoneNumber, SelectedExtension.ExtensionNumber, NavigationController);
 
             await _foldersViewModel.GetFoldersListAsync();
 
             FoldersTableView.Source = new FoldersSource(_foldersViewModel.FoldersList, SelectedExtension, SelectedAccount, NavigationController);
             FoldersTableView.ReloadData();
 
-            _foldersViewModel.IsBusy = false;
-
             View.AddSubview(FoldersTableView);
+
+            NavigationItem.SetLeftBarButtonItems(Appearance.GetBackButtonWithArrow(NavigationController, false, "Extensions"), false);
 
             base.ViewDidLoad();
         }
 
 	    public override void ViewWillAppear(bool animated)
 	    {
-            NavigationItem.Title = SelectedExtension.ExtensionNumber.ToString();
+            NavigationItem.Title = "x" + SelectedExtension.ExtensionNumber;
 
             base.ViewWillAppear(animated);
 	    }
-
-	    private void OnIsBusyChanged(object sender, EventArgs e)
-        {
-            if (!IsViewLoaded)
-                return;
-
-            if (_foldersViewModel.IsBusy)
-            {
-                _loadingOverlay = new LoadingOverlay(Theme.ScreenBounds);
-                View.Add(_loadingOverlay);
-            }
-            else
-            {
-                _loadingOverlay.Hide();
-            }
-        }
     }
 }

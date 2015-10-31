@@ -44,7 +44,7 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private void OnContinueButtonTouchUpInside(object sender, EventArgs args)
         {
-            Settings.SaveAccountPhoneNumber(_phoneNumberTextField.Text);
+            UserDefault.SaveAccountPhoneNumber(_phoneNumberTextField.Text);
 
             MoveToEmergencyDisclaimerViewController();
         }

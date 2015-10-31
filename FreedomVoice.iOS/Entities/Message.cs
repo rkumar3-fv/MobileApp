@@ -1,6 +1,6 @@
 ﻿using Foundation;
 using FreedomVoice.Core.Entities.Enums;
-using FreedomVoice.iOS.Utilities;
+using FreedomVoice.iOS.Utilities.Extensions;
 
 namespace FreedomVoice.iOS.Entities
 {

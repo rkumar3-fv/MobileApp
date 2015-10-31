@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using FreedomVoice.iOS.Helpers;
 using FreedomVoice.iOS.Services;
 using FreedomVoice.iOS.Services.Responses;
+using FreedomVoice.iOS.Utilities;
 using UIKit;
 
 namespace FreedomVoice.iOS.ViewModels
 {
     public class BaseViewModel : PropertyChangedBase
     {
+        protected UIViewController ViewController { private get; set; }
+
         /// <summary>
         /// Event for when IsBusy changes
         /// </summary>
@@ -72,7 +76,7 @@ namespace FreedomVoice.iOS.ViewModels
         /// <summary>
         /// Value inidicating if a spinner should be shown
         /// </summary>
-        public bool IsBusy
+        protected bool IsBusy
         {
             get { return _isBusy; }
             set
@@ -91,7 +95,12 @@ namespace FreedomVoice.iOS.ViewModels
         /// </summary>
         private void OnIsBusyChanged()
         {
-            IsBusyChanged?.Invoke(this, EventArgs.Empty);
+            ViewController.View.UserInteractionEnabled = !IsBusy;
+
+            if (IsBusyChanged == null)
+                BaseOnIsBusyChanged();
+            else
+                IsBusyChanged.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -145,6 +154,21 @@ namespace FreedomVoice.iOS.ViewModels
         protected void ProceedSuccessResponse()
         {
             OnSuccessResponse?.Invoke(null, EventArgs.Empty);
+        }
+
+        private LoadingOverlay _loadingOverlay;
+        private void BaseOnIsBusyChanged()
+        {
+            if (!ViewController.IsViewLoaded)
+                return;
+
+            if (IsBusy)
+            {
+                _loadingOverlay = new LoadingOverlay(Theme.ScreenBounds);
+                ViewController.View.Add(_loadingOverlay);
+            }
+            else
+                _loadingOverlay.Hide();
         }
     }
 }

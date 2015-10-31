@@ -7,11 +7,6 @@ namespace FreedomVoice.iOS.ViewControllers
     public class BaseViewController : UIViewController
     {
         /// <summary>
-        /// Constructor for use when controller is not in a storyboard
-        /// </summary>
-        public BaseViewController() { }
-
-        /// <summary>
         /// Required constructor for Storyboard to work
         /// </summary>
         /// <param name='handle'>

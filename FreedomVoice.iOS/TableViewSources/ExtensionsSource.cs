@@ -49,7 +49,7 @@ namespace FreedomVoice.iOS.TableViewSources
             foldersController.SelectedAccount = _selectedAccount;
             foldersController.SelectedExtension = selectedExtension;
 
-            _navigationController.PushViewController(foldersController, true);
+            _navigationController.PushViewController(foldersController, false);
         }
     }
 }

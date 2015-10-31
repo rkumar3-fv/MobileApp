@@ -17,11 +17,14 @@ namespace FreedomVoice.iOS.ViewControllers
 
         UIViewController _recentsTab, _contactsTab, _keypadTab, _messagesTab;
 
-        public List<Recent> Recents { get; set; }        
+        public List<Recent> Recents { get; private set; }
+
+	    public static MainTabBarController Instance;
 
         public MainTabBarController(IntPtr handle) : base(handle)
         {
             Recents = new List<Recent>();
+            Instance = this;
         }
 
 	    public override void ViewDidLoad()

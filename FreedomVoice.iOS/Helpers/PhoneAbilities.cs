@@ -127,15 +127,17 @@ namespace FreedomVoice.iOS.Helpers
 
         public static bool IsCellularEnabled()
         {            
-            var url = NSUrl.FromString("tel://15415551234");
+            var url = NSUrl.FromString("tel://");
             return UIApplication.SharedApplication.OpenUrl(url);
         }
     }
 
     public static class PhoneCall
     {
-        public static void CreateCallReservation(string systemPhoneNumber, string expectedCallerIdNumber, string presentationPhoneNumber, string destinationPhoneNumber)
+        public static void CreateCallReservation(string systemPhoneNumber, string presentationPhoneNumber, string destinationPhoneNumber)
         {
+            var expectedCallerIdNumber = UserDefault.AccountPhoneNumber;
+
             //TODO: Clear all symbols except numbers
             var phoneNumber = NSUrl.FromString("tel://" + Regex.Replace(destinationPhoneNumber.Replace(" ", ""), @"[^\d]", ""));
             UIApplication.SharedApplication.OpenUrl(phoneNumber);

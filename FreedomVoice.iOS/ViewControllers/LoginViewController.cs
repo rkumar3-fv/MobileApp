@@ -2,6 +2,7 @@ using System;
 using CoreGraphics;
 using Foundation;
 using FreedomVoice.iOS.Utilities;
+using FreedomVoice.iOS.Utilities.Extensions;
 using FreedomVoice.iOS.ViewModels;
 using UIKit;
 
@@ -30,17 +31,13 @@ namespace FreedomVoice.iOS.ViewControllers
 
         public event EventHandler OnLoginSuccess;
 
-        readonly LoginViewModel _loginViewModel;
+        private LoginViewModel _loginViewModel;
 
-        public LoginViewController(IntPtr handle) : base(handle)
-	    {
-            _loginViewModel = ServiceContainer.Resolve<LoginViewModel>();
-            _loginViewModel.IsBusyChanged += OnIsBusyChanged;
-        }
+        public LoginViewController(IntPtr handle) : base(handle) { }
 
 	    public override void ViewDidLoad()
 	    {
-	        NavigationItem.Title = "Login";
+            NavigationItem.Title = "Login";
             View.BackgroundColor = Theme.LoginBackground;
 
             InitializeLogoImage();
@@ -54,6 +51,8 @@ namespace FreedomVoice.iOS.ViewControllers
 	        InitializeAuthorizationFailedLabel();
             InitializeForgotPasswordButton();
 
+            InitializeViewModel();
+
             UnsubscribeFromEvents();
             SubscribeToEvents();
 
@@ -62,7 +61,7 @@ namespace FreedomVoice.iOS.ViewControllers
             base.ViewDidLoad();
         }
 
-        /// <summary>
+	    /// <summary>
         /// Only for test purposes, will be removed later
         /// </summary>
 	    private void FillInLoginData()
@@ -83,7 +82,12 @@ namespace FreedomVoice.iOS.ViewControllers
             NavigationController.NavigationBar.Hidden = false;
         }
 
-	    private void OnLoginButtonTouchUpInside(object sender, EventArgs args)
+        private void InitializeViewModel()
+        {
+            _loginViewModel = new LoginViewModel(NavigationController, _activityIndicator);
+        }
+
+        private void OnLoginButtonTouchUpInside(object sender, EventArgs args)
 	    {
             ProceedLogin();
         }
@@ -99,20 +103,6 @@ namespace FreedomVoice.iOS.ViewControllers
 
             var forgotPasswordController = AppDelegate.GetViewController<ForgotPasswordViewController>();
             NavigationController.PushViewController(forgotPasswordController, true);
-        }
-
-        private void OnIsBusyChanged(object sender, EventArgs e)
-        {
-            if (!IsViewLoaded)
-                return;
-
-            View.UserInteractionEnabled = !_loginViewModel.IsBusy;
-            _loginButton.Hidden = _loginViewModel.IsBusy;
-
-            if (_loginViewModel.IsBusy)
-                _activityIndicator.StartAnimating();
-            else
-                _activityIndicator.StopAnimating();
         }
 
 	    private bool OnUsernameReturn(UITextField textField)
@@ -139,6 +129,7 @@ namespace FreedomVoice.iOS.ViewControllers
 	        if (_loginViewModel.IsValid)
 	        {
                 UIApplication.SharedApplication.NetworkActivityIndicatorVisible = true;
+                _loginButton.Hidden = true;
 
                 await _loginViewModel.LoginAsync();
 
@@ -154,6 +145,7 @@ namespace FreedomVoice.iOS.ViewControllers
         private void OnLoginFailed(object sender, EventArgs args)
         {
             _authorizationFailedLabel.Hidden = false;
+            _loginButton.Hidden = false;
 
             OnUsernameValidationFailed();
             OnPasswordValidationFailed();
@@ -163,7 +155,6 @@ namespace FreedomVoice.iOS.ViewControllers
         {
             base.Dispose(disposing);
 
-            _loginViewModel.IsBusyChanged -= OnIsBusyChanged;
             UnsubscribeFromEvents();
         }
 

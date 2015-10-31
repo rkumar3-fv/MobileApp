@@ -1,5 +1,6 @@
 ﻿using System;
 using CoreGraphics;
+using FreedomVoice.Core.Entities.Enums;
 using FreedomVoice.iOS.Utilities;
 using UIKit;
 
@@ -49,6 +50,33 @@ namespace FreedomVoice.iOS.Helpers
         public static UIBarButtonItem GetSkipBarButton(EventHandler handler)
         {
             return new UIBarButtonItem("Skip", UIBarButtonItemStyle.Plain, handler);
+        }
+
+        public static UIImageView GetMessageImageView(MessageType messageType, bool unread, bool active)
+        {
+            var messageImageView = new UIImageView(new CGRect(12, 15, 25, 25))
+            {
+                Image = GetMessageImage(messageType, unread, active)
+            };
+
+            return messageImageView;
+        }
+
+        public static UIImage GetMessageImage(MessageType messageType, bool unread, bool active)
+        {
+            var imagePostfix = active ? "_active" : unread ? "_unread" : string.Empty;
+
+            switch (messageType)
+            {
+                case MessageType.Recording:
+                    return UIImage.FromFile($"callrecord{imagePostfix}.png");
+                case MessageType.Fax:
+                    return UIImage.FromFile($"fax{imagePostfix}.png");
+                case MessageType.Voicemail:
+                    return UIImage.FromFile($"voicemail{imagePostfix}.png");
+                default:
+                    return null;
+            }
         }
     }
 }

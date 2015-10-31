@@ -53,10 +53,10 @@ namespace FreedomVoice.iOS.TableViewSources
             messagesController.SelectedExtension = _selectedExtension;
             messagesController.SelectedFolder = selectedFolder;
 
-            _navigationController.PushViewController(messagesController, true);
+            _navigationController.PushViewController(messagesController, false);
         }
 
-        private UIImage GetImageByFolderName(string folderName)
+        private static UIImage GetImageByFolderName(string folderName)
         {
             switch (folderName)
             {

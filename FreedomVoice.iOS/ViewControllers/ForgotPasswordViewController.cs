@@ -2,6 +2,7 @@ using System;
 using CoreGraphics;
 using Foundation;
 using FreedomVoice.iOS.Utilities;
+using FreedomVoice.iOS.Utilities.Extensions;
 using FreedomVoice.iOS.ViewModels;
 using UIKit;
 
@@ -22,13 +23,9 @@ namespace FreedomVoice.iOS.ViewControllers
 
         #endregion
 
-        readonly ForgotPasswordViewModel _forgotPasswordViewModel;
+        private ForgotPasswordViewModel _forgotPasswordViewModel;
 
-        public ForgotPasswordViewController(IntPtr handle) : base(handle)
-	    {
-            _forgotPasswordViewModel = ServiceContainer.Resolve<ForgotPasswordViewModel>();
-            _forgotPasswordViewModel.IsBusyChanged += OnIsBusyChanged;
-        }
+        public ForgotPasswordViewController(IntPtr handle) : base(handle) { }
 
         public override void ViewDidLoad()
         {
@@ -38,6 +35,8 @@ namespace FreedomVoice.iOS.ViewControllers
             InitializeSendRecoveryButton();
             InitializeActivityIndicator();
 
+            InitializeViewModel();
+
             UnsubscribeFromEvents();
             SubscribeToEvents();
 
@@ -46,7 +45,7 @@ namespace FreedomVoice.iOS.ViewControllers
             base.ViewDidLoad();
         }
 
-        /// <summary>
+	    /// <summary>
         /// Only for test purposes, will be removed later
         /// </summary>
 	    private void FillInLoginData()
@@ -54,23 +53,14 @@ namespace FreedomVoice.iOS.ViewControllers
             _emailTextField.Text = _forgotPasswordViewModel.EMail = "freedomvoice.adm.267055@gmail.com";
         }
 
+        private void InitializeViewModel()
+        {
+            _forgotPasswordViewModel = new ForgotPasswordViewModel(NavigationController, _activityIndicator);
+        }
+
         private void OnSendButtonTouchUpInside(object sender, EventArgs args)
         {
             ProceedPasswordReset();
-        }
-
-        private void OnIsBusyChanged(object sender, EventArgs e)
-        {
-            if (!IsViewLoaded)
-                return;
-
-            View.UserInteractionEnabled = !_forgotPasswordViewModel.IsBusy;
-            _sendRecoveryButton.Hidden = _forgotPasswordViewModel.IsBusy;
-
-            if (_forgotPasswordViewModel.IsBusy)
-                _activityIndicator.StartAnimating();
-            else
-                _activityIndicator.StopAnimating();
         }
 
         private bool OnEMailReturn(UITextField textField)
@@ -88,6 +78,7 @@ namespace FreedomVoice.iOS.ViewControllers
             if (_forgotPasswordViewModel.IsValid)
             {
                 UIApplication.SharedApplication.NetworkActivityIndicatorVisible = true;
+                _sendRecoveryButton.Hidden = true;
 
                 await _forgotPasswordViewModel.ForgotPasswordAsync();
 
@@ -106,6 +97,7 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private void OnForgotPasswordFailed(object sender, EventArgs args)
         {
+            _sendRecoveryButton.Hidden = false;
             OnEMailValidationFailed();
         }
 
@@ -118,7 +110,6 @@ namespace FreedomVoice.iOS.ViewControllers
         {
             base.Dispose(disposing);
 
-            _forgotPasswordViewModel.IsBusyChanged -= OnIsBusyChanged;
             UnsubscribeFromEvents();
         }
 
