@@ -1,25 +1,37 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using FreedomVoice.iOS.Helpers;
 using FreedomVoice.iOS.Services;
 using FreedomVoice.iOS.Services.Responses;
 using FreedomVoice.iOS.Utilities;
+using UIKit;
 
 namespace FreedomVoice.iOS.ViewModels
 {
     public class ForgotPasswordViewModel : BaseViewModel
     {
-        readonly IForgotPasswordService _service;
+        private readonly IForgotPasswordService _service;
 
-        string _email;
+        private string _email;
+
+        private readonly UIActivityIndicatorView _activityIndicator;
+        private readonly UIViewController _viewController;
 
         public const string EMailError = "Error message for email";
 
         /// <summary>
         /// Constructor, requires an IService
         /// </summary>
-        public ForgotPasswordViewModel()
+        public ForgotPasswordViewModel(UIViewController viewController, UIActivityIndicatorView activityIndicator)
         {
             _service = ServiceContainer.Resolve<IForgotPasswordService>();
+
+            ViewController = viewController;
+
+            _viewController = viewController;
+            _activityIndicator = activityIndicator;
+
+            IsBusyChanged += OnIsBusyChanged;
         }
 
         /// <summary>
@@ -42,6 +54,8 @@ namespace FreedomVoice.iOS.ViewModels
         /// <returns></returns>
         public async Task ForgotPasswordAsync()
         {
+            IsBusy = true;
+
             _service.SetRecoveryEmail(EMail);
 
             var requestResult = await _service.ExecuteRequest();
@@ -49,6 +63,8 @@ namespace FreedomVoice.iOS.ViewModels
                 ProceedErrorResponse(requestResult);
             else
                 ProceedSuccessResponse();
+
+            IsBusy = false;
         }
 
         /// <summary>
@@ -59,6 +75,17 @@ namespace FreedomVoice.iOS.ViewModels
             ValidateProperty(() => !Validation.IsValidEmail(EMail), EMailError);
 
             base.Validate();
+        }
+
+        private void OnIsBusyChanged(object sender, EventArgs e)
+        {
+            if (!_viewController.IsViewLoaded)
+                return;
+
+            if (IsBusy)
+                _activityIndicator.StartAnimating();
+            else
+                _activityIndicator.StopAnimating();
         }
     }
 }

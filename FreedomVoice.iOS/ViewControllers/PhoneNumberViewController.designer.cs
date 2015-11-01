@@ -9,10 +9,10 @@ using System;
 using System.CodeDom.Compiler;
 using UIKit;
 
-namespace FreedomVoice.iOS.SharedViews
+namespace FreedomVoice.iOS.ViewControllers
 {
-	[Register ("KeypadView")]
-	partial class KeypadView
+	[Register ("PhoneNumberViewController")]
+	partial class PhoneNumberViewController
 	{
 		void ReleaseDesignerOutlets ()
 		{

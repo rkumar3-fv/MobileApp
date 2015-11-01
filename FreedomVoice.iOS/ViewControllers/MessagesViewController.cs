@@ -1,5 +1,7 @@
 using System;
+using CoreGraphics;
 using FreedomVoice.iOS.Entities;
+using FreedomVoice.iOS.Helpers;
 using FreedomVoice.iOS.TableViewSources;
 using FreedomVoice.iOS.ViewModels;
 using UIKit;
@@ -12,20 +14,33 @@ namespace FreedomVoice.iOS.ViewControllers
         public ExtensionWithCount SelectedExtension { private get; set; }
         public FolderWithCount SelectedFolder { private get; set; }
 
+        private MessagesViewModel _messagesViewModel;
+
         public MessagesViewController (IntPtr handle) : base (handle) { }
 
         public override async void ViewDidLoad()
         {
-            var MessagesTableView = new UITableView();
+            MessagesTableView.TableFooterView = new UIView(CGRect.Empty);
 
-            var messagesViewModel = new MessagesViewModel(SelectedAccount.PhoneNumber, SelectedExtension.ExtensionNumber, SelectedFolder.DisplayName);
-            await messagesViewModel.GetMessagesListAsync();
+            _messagesViewModel = new MessagesViewModel(SelectedAccount.PhoneNumber, SelectedExtension.ExtensionNumber, SelectedFolder.DisplayName, NavigationController);
 
-            MessagesTableView.Source = new MessagesSource(messagesViewModel.MessagesList, SelectedExtension, SelectedAccount, SelectedFolder, NavigationController);
+            await _messagesViewModel.GetMessagesListAsync();
+
+            MessagesTableView.Source = new MessagesSource(_messagesViewModel.MessagesList, SelectedExtension, SelectedAccount, SelectedFolder, NavigationController);
+            MessagesTableView.ReloadData();
 
             View.AddSubview(MessagesTableView);
 
+            NavigationItem.SetLeftBarButtonItems(Appearance.GetBackButtonWithArrow(NavigationController, false, "x" + SelectedExtension.ExtensionNumber), false);
+
             base.ViewDidLoad();
         }
+
+	    public override void ViewWillAppear(bool animated)
+	    {
+            NavigationItem.Title = SelectedFolder.DisplayName;
+
+            base.ViewWillAppear(animated);
+	    }
     }
 }

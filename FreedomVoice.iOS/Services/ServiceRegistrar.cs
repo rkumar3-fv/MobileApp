@@ -1,6 +1,5 @@
 ﻿using FreedomVoice.iOS.Services.Implementations;
 using FreedomVoice.iOS.Utilities;
-using FreedomVoice.iOS.ViewModels;
 
 namespace FreedomVoice.iOS.Services
 {
@@ -21,10 +20,6 @@ namespace FreedomVoice.iOS.Services
             ServiceContainer.Register<IExtensionsService>(() => new ExtensionsService());
             ServiceContainer.Register<IFoldersService>(() => new FoldersService());
             ServiceContainer.Register<IMessagesService>(() => new MessagesService());
-
-            ServiceContainer.Register<LoginViewModel>();
-            ServiceContainer.Register<AccountsViewModel>();
-            ServiceContainer.Register<ForgotPasswordViewModel>();
         }
     }
 }

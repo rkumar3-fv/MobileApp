@@ -4,25 +4,28 @@ using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.Services;
 using FreedomVoice.iOS.Services.Responses;
 using FreedomVoice.iOS.Utilities;
+using UIKit;
 
 namespace FreedomVoice.iOS.ViewModels
 {
     public class FoldersViewModel : BaseViewModel
     {
-        readonly IFoldersService _service;
+        private readonly IFoldersService _service;
         private readonly string _systemPhoneNumber;
         private readonly int _mailboxNumber;
-
+        
         public List<FolderWithCount> FoldersList { get; private set; }
 
         /// <summary>
         /// Constructor, requires an IService
         /// </summary>
-        public FoldersViewModel(string systemPhoneNumber, int mailboxNumber)
+        public FoldersViewModel(string systemPhoneNumber, int mailboxNumber, UIViewController viewController)
         {
             FoldersList = new List<FolderWithCount>();
 
             _service = ServiceContainer.Resolve<IFoldersService>();
+
+            ViewController = viewController;
 
             _systemPhoneNumber = systemPhoneNumber;
             _mailboxNumber = mailboxNumber;

@@ -1,7 +1,7 @@
 ﻿using System;
 using Foundation;
 
-namespace FreedomVoice.iOS.Utilities
+namespace FreedomVoice.iOS.Utilities.Extensions
 {
     public static class NSDateDateTimeExtensions
     {

@@ -8,26 +8,37 @@ using System.Linq;
 using FreedomVoice.iOS.Views;
 using FreedomVoice.iOS.Views.Shared;
 using UIKit;
+using Xamarin.Contacts;
+using System.Text.RegularExpressions;
 
 namespace FreedomVoice.iOS.ViewControllers
 {
-	partial class RecentsViewController : UIViewController
+    //TODO: Clean class from commented code
+    partial class RecentsViewController : UIViewController
 	{        
-        private string _tempTtle = string.Empty;
         private UIBarButtonItem _tempLeftButton;
         private UIBarButtonItem _tempRightButton;
         private RecentsSource _recentSource;
 
-        public CallerIdView CallerIdView { get; private set; }
+        private List<Contact> _contactList;
+
+	    private CallerIdView CallerIdView { get; set; }
+
+        //private UIViewController MainTab => ParentViewController.ParentViewController;
+        private static MainTabBarController MainTabBarInstance => MainTabBarController.Instance;
 
         public RecentsViewController (IntPtr handle) : base (handle) { }
 
-        public override void ViewDidLoad()
+        public override async void ViewDidLoad()
         {
             base.ViewDidLoad();
 
-            CallerIdView = new CallerIdView(new RectangleF(0, 65, 320, 44), (MainTab as MainTabBarController)?.GetPresentationNumbers());
-            var recentLineView = new RecentLineView(new RectangleF(0, 36, 320, 1));
+            RecentsTableView.TableFooterView = new UIView(CoreGraphics.CGRect.Empty);
+
+            //CallerIdView = new CallerIdView(new RectangleF(0, 65, 320, 40), (MainTab as MainTabBarController)?.GetPresentationNumbers());
+            CallerIdView = new CallerIdView(new RectangleF(0, 65, 320, 40), MainTabBarInstance.GetPresentationNumbers());
+
+            var recentLineView = new RecentLineView(new RectangleF(0, 40, 320, 0.5f));
             View.AddSubviews(CallerIdView, recentLineView);
 
             RecentsTableView.TableHeaderView = CallerIdView;
@@ -37,75 +48,124 @@ namespace FreedomVoice.iOS.ViewControllers
 
             _recentSource.OnRowSelected += TableSourceOnRowSelected;
             _recentSource.OnRowDeleted += TableSourceOnRowDeleted;
+
+            var addressBook = new Xamarin.Contacts.AddressBook();
+            if (!await addressBook.RequestPermission())
+            {                
+                new UIAlertView("Permission denied", "User has denied this app access to their contacts", null, "Close").Show();
+                return;
+            }
+
+            _contactList = addressBook.ToList();
         }
 
-        private UIViewController MainTab => ParentViewController.ParentViewController;
+        private Contact FindContactByNumber(string number)
+        {
+            //try
+            //{
+            //    List<Contact> res = _contactList?.Where(c => c.Phones.Any(p => Regex.Replace(p.Number, @"[^\d]", "") == Regex.Replace(number, @"[^\d]", ""))).ToList();
+            //    return res?.First();
+            //}
+            //catch { }
 
-	    private List<Recent> GetRecentsOrdered()
+            //return null;
+
+            return _contactList?.FirstOrDefault(c => c.Phones.Any(p => Regex.Replace(p.Number, @"[^\d]", "") == Regex.Replace(number, @"[^\d]", "")));
+        }
+
+	    private static List<Recent> GetRecentsOrdered()
         {            
             return GetRecents().OrderByDescending(o => o.DialDate).ToList();
         }
 
-        private List<Recent> GetRecents()
-        {         
-            return (MainTab as MainTabBarController)?.Recents;
-        }   
-        
-        private void AddRecent(Recent recent)
+        private List<Recent> GetRecentsUpdatedAndOrdered()
         {
-            (MainTab as MainTabBarController)?.Recents.Add(recent);
+            List<Recent> res = GetRecentsOrdered();
+
+            foreach(var item in res)
+            {
+                if (!string.IsNullOrEmpty(item.ContactId))
+                    continue;
+
+                Contact findContact = FindContactByNumber(item.PhoneNumber);
+                if (findContact == null) continue;
+
+                item.Title = findContact.DisplayName;
+                item.ContactId = findContact.Id;
+            }
+            return res;
         }
 
-	    private void ClearRecent()
+        private static List<Recent> GetRecents()
+        {         
+            //return (MainTab as MainTabBarController)?.Recents;
+            return MainTabBarInstance.Recents;
+        }   
+        
+        private static void AddRecent(Recent recent)
+        {
+            MainTabBarInstance.Recents.Add(recent);
+        }
+
+	    private static void ClearRecent()
         {
             GetRecents().Clear();
         }
 
-        private void RemoveRecent(Recent recent)
+        private static void RemoveRecent(Recent recent)
         {
             GetRecents().Remove(recent);
         }
 
-        public override void ViewDidDisappear(bool animated)
+        public override void ViewWillDisappear(bool animated)
         {
-            base.ViewDidDisappear(animated);
+            //MainTab.NavigationItem.SetLeftBarButtonItem(_tempLeftButton, true);
+            //MainTab.NavigationItem.SetRightBarButtonItem(_tempRightButton, true);
+            MainTabBarInstance.NavigationItem.SetLeftBarButtonItem(_tempLeftButton, true);
+            MainTabBarInstance.NavigationItem.SetRightBarButtonItem(_tempRightButton, true);
 
-            MainTab.Title = _tempTtle;
-            MainTab.NavigationItem.SetLeftBarButtonItem(_tempLeftButton, true);
-            MainTab.NavigationItem.SetRightBarButtonItem(_tempRightButton, true);
+            base.ViewWillDisappear(animated);
         }
 
-        public override void ViewDidAppear(bool animated)
+        public override void ViewWillAppear(bool animated)
         {
-            base.ViewDidAppear(animated);
+            //_tempLeftButton = MainTab.NavigationItem.LeftBarButtonItem;
+            //_tempRightButton = MainTab.NavigationItem.RightBarButtonItem;
+            _tempLeftButton = MainTabBarInstance.NavigationItem.LeftBarButtonItem;
+            _tempRightButton = MainTabBarInstance.NavigationItem.RightBarButtonItem;
 
-            _tempLeftButton = MainTab.NavigationItem.LeftBarButtonItem;
-            _tempTtle = MainTab.Title;
-            _tempRightButton = MainTab.NavigationItem.RightBarButtonItem;
+            //MainTab.Title = "Recents";
+            //MainTab.NavigationItem.SetLeftBarButtonItem(GetEditButton(), true);
+            MainTabBarInstance.Title = "Recents";
+            MainTabBarInstance.NavigationItem.SetLeftBarButtonItem(GetEditButton(), true);
 
-            MainTab.Title = "Recents";
-            MainTab.NavigationItem.SetLeftBarButtonItem(GetEditButton(), true);
-
-            _recentSource.SetRecents(GetRecentsOrdered());
+            _recentSource.SetRecents(GetRecentsUpdatedAndOrdered());
             RecentsTableView.ReloadData();
 
-            PresentationNumber selectedNumber = (MainTab as MainTabBarController)?.GetSelectedPresentationNumber();
+            //PresentationNumber selectedNumber = (MainTab as MainTabBarController)?.GetSelectedPresentationNumber();
+            PresentationNumber selectedNumber = MainTabBarInstance.GetSelectedPresentationNumber();
             if (selectedNumber != null)
                 CallerIdView.UpdatePickerData(selectedNumber);
+
+            base.ViewWillAppear(animated);
         }
 
         private void SetEditMode()
         {
             RecentsTableView.SetEditing(true, true);
-            MainTab.NavigationItem.SetRightBarButtonItem(new UIBarButtonItem("Done", UIBarButtonItemStyle.Plain, (s, args) => { RecentsTableView.ReloadData(); ReturnToRecentsView(); }), true);
-            MainTab.NavigationItem.SetLeftBarButtonItem(new UIBarButtonItem("Clear", UIBarButtonItemStyle.Plain, (s, args) => { ClearAll(); }), true);
+            //MainTab.NavigationItem.SetRightBarButtonItem(new UIBarButtonItem("Done", UIBarButtonItemStyle.Plain, (s, args) => { RecentsTableView.ReloadData(); ReturnToRecentsView(); }), true);
+            //MainTab.NavigationItem.SetLeftBarButtonItem(new UIBarButtonItem("Clear", UIBarButtonItemStyle.Plain, (s, args) => { ClearAll(); }), true);
+            MainTabBarInstance.NavigationItem.SetRightBarButtonItem(new UIBarButtonItem("Done", UIBarButtonItemStyle.Plain, (s, args) => { RecentsTableView.ReloadData(); ReturnToRecentsView(); }), true);
+            MainTabBarInstance.NavigationItem.SetLeftBarButtonItem(new UIBarButtonItem("Clear", UIBarButtonItemStyle.Plain, (s, args) => { ClearAll(); }), true);
         }
 
         private void ReturnToRecentsView()
         {
             RecentsTableView.SetEditing(false, true);
-            MainTab.NavigationItem.SetLeftBarButtonItem(GetEditButton(), true);
-            MainTab.NavigationItem.SetRightBarButtonItem(_tempRightButton, true);
+            //MainTab.NavigationItem.SetLeftBarButtonItem(GetEditButton(), true);
+            //MainTab.NavigationItem.SetRightBarButtonItem(_tempRightButton, true);
+            MainTabBarInstance.NavigationItem.SetLeftBarButtonItem(GetEditButton(), true);
+            MainTabBarInstance.NavigationItem.SetRightBarButtonItem(_tempRightButton, true);
         }
 
         private UIBarButtonItem GetEditButton()
@@ -130,30 +190,38 @@ namespace FreedomVoice.iOS.ViewControllers
         private void TableSourceOnRowSelected(object sender, RecentsSource.RowSelectedEventArgs e)
         {
             e.TableView.DeselectRow(e.IndexPath, false);
+
             var recent = GetRecentsOrdered()[e.IndexPath.Row];
             if (recent == null) return;
 
             RecentsTableView.BeginUpdates();
+
             var newRecent = (Recent)recent.Clone();
-            newRecent.DialDate = DateTime.Now;                                
+            newRecent.DialDate = DateTime.Now;
             AddRecent(newRecent);
+
             _recentSource.SetRecents(GetRecentsOrdered());
             e.TableView.InsertRows(new[] { NSIndexPath.FromRowSection (e.TableView.NumberOfRowsInSection (0), 0) }, UITableViewRowAnimation.Fade);
+
             RecentsTableView.EndUpdates();
+            RecentsTableView.ReloadRows(e.TableView.IndexPathsForVisibleRows, UITableViewRowAnimation.None);
         }
 
         private void TableSourceOnRowDeleted(object sender, RecentsSource.RowSelectedEventArgs e)
         {
             e.TableView.DeselectRow(e.IndexPath, false);
+
             var recent = GetRecentsOrdered()[e.IndexPath.Row];
             if (recent == null) return;
 
             RecentsTableView.BeginUpdates();
+
             RemoveRecent(recent);
+
             _recentSource.SetRecents(GetRecentsOrdered());
+
             RecentsTableView.DeleteRows(new[] { e.IndexPath }, UITableViewRowAnimation.Fade);
             RecentsTableView.EndUpdates();                       
         }
-
     }
 }

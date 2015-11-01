@@ -28,10 +28,10 @@ namespace FreedomVoice.iOS.ViewModels
 
         public override UIView GetView(UIPickerView pickerView, nint row, nint component, UIView view)
         {
-            return new UILabel(new RectangleF(0, 0, 160f, 44f))
+            return new UILabel(new RectangleF(0, 0, 160, 40))
             {
                 TextColor = UIColor.Black,
-                Font = UIFont.SystemFontOfSize(18f),
+                Font = UIFont.SystemFontOfSize(18),
                 TextAlignment = UITextAlignment.Center,
                 Text = GetTitleForItem(Items[(int)row])
             };
@@ -42,7 +42,6 @@ namespace FreedomVoice.iOS.ViewModels
             _selectedIndex = (int)row;
             ValueChanged?.Invoke(this, new EventArgs());
         }
-        
 
         public override nint GetComponentCount(UIPickerView picker)
         {

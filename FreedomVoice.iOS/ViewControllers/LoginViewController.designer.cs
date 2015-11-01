@@ -14,80 +14,8 @@ namespace FreedomVoice.iOS.ViewControllers
 	[Register ("LoginViewController")]
 	partial class LoginViewController
 	{
-		[Outlet]
-		[GeneratedCode ("iOS Designer", "1.0")]
-		UIActivityIndicatorView ActivityIndicator { get; set; }
-
-		[Outlet]
-		[GeneratedCode ("iOS Designer", "1.0")]
-		UIButton ForgotPasswordButton { get; set; }
-
-		[Outlet]
-		[GeneratedCode ("iOS Designer", "1.0")]
-		UIButton LoginButton { get; set; }
-
-		[Outlet]
-		[GeneratedCode ("iOS Designer", "1.0")]
-		UITextField PasswordTextField { get; set; }
-
-		[Outlet]
-		[GeneratedCode ("iOS Designer", "1.0")]
-		UILabel PasswordValidationLabel { get; set; }
-
-		[Outlet]
-		[GeneratedCode ("iOS Designer", "1.0")]
-		UITextField UsernameTextField { get; set; }
-
-		[Outlet]
-		[GeneratedCode ("iOS Designer", "1.0")]
-		UILabel UsernameValidationLabel { get; set; }
-
-		[Outlet]
-		[GeneratedCode ("iOS Designer", "1.0")]
-		UILabel WelcomeLabel { get; set; }
-
-		[Action ("ForgotPassword_TouchUpInside:")]
-		[GeneratedCode ("iOS Designer", "1.0")]
-		partial void ForgotPassword_TouchUpInside (UIButton sender);
-
-		[Action ("LoginButton_TouchUpInside:")]
-		[GeneratedCode ("iOS Designer", "1.0")]
-		partial void LoginButton_TouchUpInside (UIButton sender);
-
 		void ReleaseDesignerOutlets ()
 		{
-			if (ActivityIndicator != null) {
-				ActivityIndicator.Dispose ();
-				ActivityIndicator = null;
-			}
-			if (ForgotPasswordButton != null) {
-				ForgotPasswordButton.Dispose ();
-				ForgotPasswordButton = null;
-			}
-			if (LoginButton != null) {
-				LoginButton.Dispose ();
-				LoginButton = null;
-			}
-			if (PasswordTextField != null) {
-				PasswordTextField.Dispose ();
-				PasswordTextField = null;
-			}
-			if (PasswordValidationLabel != null) {
-				PasswordValidationLabel.Dispose ();
-				PasswordValidationLabel = null;
-			}
-			if (UsernameTextField != null) {
-				UsernameTextField.Dispose ();
-				UsernameTextField = null;
-			}
-			if (UsernameValidationLabel != null) {
-				UsernameValidationLabel.Dispose ();
-				UsernameValidationLabel = null;
-			}
-			if (WelcomeLabel != null) {
-				WelcomeLabel.Dispose ();
-				WelcomeLabel = null;
-			}
 		}
 	}
 }

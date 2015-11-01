@@ -2,7 +2,7 @@
 using Foundation;
 using UIKit;
 
-namespace FreedomVoice.iOS.Utilities
+namespace FreedomVoice.iOS.Utilities.Extensions
 {
     public static class UIKitExtensions
     {

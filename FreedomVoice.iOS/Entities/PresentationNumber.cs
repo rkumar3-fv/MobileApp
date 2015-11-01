@@ -7,10 +7,10 @@
             PhoneNumber = phoneNumber;
         }
 
-        public string PhoneNumber { get; set; }
+        public string PhoneNumber { get; }
 
         public string FormattedPhoneNumber => $"({PhoneNumber.Substring(0, 3)}) {PhoneNumber.Substring(3, 3)}-{PhoneNumber.Substring(6, 4)}";
 
-        public bool IsSelected { get; set; } = false;
+        public bool IsSelected { get; set; }
     }
 }

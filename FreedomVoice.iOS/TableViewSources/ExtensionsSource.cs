@@ -45,11 +45,11 @@ namespace FreedomVoice.iOS.TableViewSources
             tableView.DeselectRow(indexPath, false);
             var selectedExtension = _extensions[indexPath.Row];
 
-            var foldersController = AppDelegate.GetViewController<MessageFoldersViewController>();
+            var foldersController = AppDelegate.GetViewController<FoldersViewController>();
             foldersController.SelectedAccount = _selectedAccount;
             foldersController.SelectedExtension = selectedExtension;
 
-            _navigationController.PushViewController(foldersController, true);
+            _navigationController.PushViewController(foldersController, false);
         }
     }
 }

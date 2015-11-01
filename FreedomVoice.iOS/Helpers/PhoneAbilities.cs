@@ -2,6 +2,7 @@
 using Foundation;
 using System;
 using System.Net;
+using System.Text.RegularExpressions;
 using SystemConfiguration;
 using UIKit;
 
@@ -125,19 +126,20 @@ namespace FreedomVoice.iOS.Helpers
         }
 
         public static bool IsCellularEnabled()
-        {
-            var url = new NSUrl("tel:");
-
+        {            
+            var url = NSUrl.FromString("tel://");
             return UIApplication.SharedApplication.OpenUrl(url);
         }
     }
 
     public static class PhoneCall
     {
-        public static void CreateCallReservation(string systemPhoneNumber, string expectedCallerIdNumber, string presentationPhoneNumber, string destinationPhoneNumber)
+        public static void CreateCallReservation(string systemPhoneNumber, string presentationPhoneNumber, string destinationPhoneNumber)
         {
+            var expectedCallerIdNumber = UserDefault.AccountPhoneNumber;
+
             //TODO: Clear all symbols except numbers
-            var phoneNumber = new NSUrl("tel:" + destinationPhoneNumber);
+            var phoneNumber = NSUrl.FromString("tel://" + Regex.Replace(destinationPhoneNumber.Replace(" ", ""), @"[^\d]", ""));
             UIApplication.SharedApplication.OpenUrl(phoneNumber);
         }
     }

@@ -4,18 +4,22 @@ using FreedomVoice.iOS.Helpers;
 using FreedomVoice.iOS.Services;
 using FreedomVoice.iOS.Services.Responses;
 using FreedomVoice.iOS.Utilities;
+using UIKit;
 
 namespace FreedomVoice.iOS.ViewModels
 {
     public class LoginViewModel : BaseViewModel
     {
-        readonly ILoginService _service;
+        private readonly ILoginService _service;
 
-        string _username;
-        string _password;
+        private string _username;
+        private string _password;
 
         public const string UsernameError = "Error message for username";
         public const string PasswordError = "Error message for password";
+
+        private readonly UIActivityIndicatorView _activityIndicator;
+        private readonly UIViewController _viewController;
 
         readonly TimeSpan _autoLogoutTime = TimeSpan.FromMinutes(2);
         DateTime _dateInactive = DateTime.Now;
@@ -23,9 +27,16 @@ namespace FreedomVoice.iOS.ViewModels
         /// <summary>
         /// Constructor, requires an IService
         /// </summary>
-        public LoginViewModel()
+        public LoginViewModel(UIViewController viewController, UIActivityIndicatorView activityIndicator)
         {
             _service = ServiceContainer.Resolve<ILoginService>();
+
+            ViewController = viewController;
+
+            _viewController = viewController;
+            _activityIndicator = activityIndicator;
+
+            IsBusyChanged += OnIsBusyChanged;
         }
 
         /// <summary>
@@ -62,6 +73,8 @@ namespace FreedomVoice.iOS.ViewModels
         /// <returns></returns>
         public async Task LoginAsync()
         {
+            IsBusy = true;
+
             _service.SetCredentials(Username, Password);
 
             var requestResult = await _service.ExecuteRequest();
@@ -69,6 +82,8 @@ namespace FreedomVoice.iOS.ViewModels
                 ProceedErrorResponse(requestResult);
             else
                 ProceedSuccessResponse();
+
+            IsBusy = false;
         }
 
         /// <summary>
@@ -93,6 +108,17 @@ namespace FreedomVoice.iOS.ViewModels
             ValidateProperty(() => !Validation.IsValidPassword(Password), PasswordError);
 
             base.Validate();
+        }
+
+        private void OnIsBusyChanged(object sender, EventArgs e)
+        {
+            if (!_viewController.IsViewLoaded)
+                return;
+
+            if (IsBusy)
+                _activityIndicator.StartAnimating();
+            else
+                _activityIndicator.StopAnimating();
         }
     }
 }

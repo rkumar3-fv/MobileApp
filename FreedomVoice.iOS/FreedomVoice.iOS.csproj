@@ -22,8 +22,8 @@
     <MtouchArch>i386</MtouchArch>
     <MtouchLink>None</MtouchLink>
     <MtouchDebug>true</MtouchDebug>
-    <CodesignKey>iPhone Developer</CodesignKey>
-    <CodesignProvision />
+    <CodesignKey>iPhone Developer: Александр Пятаков (TRSB9P63FJ)</CodesignKey>
+    <CodesignProvision>e4550f35-55a5-4b52-bf0d-0ebdf39f79ea</CodesignProvision>
     <CodesignEntitlements />
     <CodesignResourceRules />
     <CodesignExtraArgs />
@@ -49,10 +49,9 @@
     <ConsolePause>false</ConsolePause>
     <MtouchArch>ARMv7, ARM64</MtouchArch>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
-    <CodesignKey>iPhone Developer</CodesignKey>
+    <CodesignKey>iPhone Developer: Александр Пятаков (TRSB9P63FJ)</CodesignKey>
     <MtouchDebug>true</MtouchDebug>
-    <CodesignProvision>
-    </CodesignProvision>
+    <CodesignProvision>e4550f35-55a5-4b52-bf0d-0ebdf39f79ea</CodesignProvision>
     <CodesignResourceRules />
     <CodesignExtraArgs />
   </PropertyGroup>
@@ -98,7 +97,22 @@
     <Compile Include="Entities\FolderWithCount.cs" />
     <Compile Include="Entities\Message.cs" />
     <Compile Include="Entities\PresentationNumber.cs" />
-    <Compile Include="Utilities\NSDateDateTimeExtensions.cs" />
+    <Compile Include="Helpers\Formatting.cs" />
+    <Compile Include="Helpers\LoadingOverlay.cs" />
+    <Compile Include="ViewControllers\PhoneNumberViewController.cs" />
+    <Compile Include="ViewControllers\PhoneNumberViewController.designer.cs">
+      <DependentUpon>PhoneNumberViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ViewControllers\FoldersViewController.cs" />
+    <Compile Include="ViewControllers\FoldersViewController.designer.cs">
+      <DependentUpon>FoldersViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ViewControllers\ExtensionsViewController.cs" />
+    <Compile Include="ViewControllers\ExtensionsViewController.designer.cs">
+      <DependentUpon>ExtensionsViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TableViewCells\ExpandedCell.cs" />
+    <Compile Include="Utilities\Extensions\NSDateDateTimeExtensions.cs" />
     <Compile Include="Helpers\CallerIDEvent.cs" />
     <Compile Include="Services\BaseService.cs" />
     <Compile Include="Services\IFoldersService.cs" />
@@ -120,9 +134,9 @@
     <Compile Include="Services\Responses\ExtensionsWithCountResponse.cs" />
     <Compile Include="Services\Responses\MessagesResponse.cs" />
     <Compile Include="Services\Responses\PresentationNumbersResponse.cs" />
+    <Compile Include="Views\AVPlayerView.cs" />
     <Compile Include="Views\RecentLineView.cs" />
     <Compile Include="Views\Shared\CallerIdView.cs" />
-    <Compile Include="Views\KeypadView.cs" />
     <Compile Include="TableViewCells\ContactCell.cs" />
     <Compile Include="TableViewCells\ExtensionCell.cs" />
     <Compile Include="TableViewCells\FolderCell.cs" />
@@ -151,17 +165,14 @@
     <Compile Include="Utilities\ServiceContainer.cs" />
     <Compile Include="Services\ServiceRegistrar.cs" />
     <Compile Include="Utilities\SynchronizeInvoke.cs" />
-    <Compile Include="Utilities\TaskExtensions.cs" />
+    <Compile Include="Utilities\Extensions\TaskExtensions.cs" />
     <Compile Include="Utilities\Theme.cs" />
-    <Compile Include="Utilities\UIKitExtensions.cs" />
+    <Compile Include="Utilities\Extensions\UIKitExtensions.cs" />
     <Compile Include="ViewControllers\BaseViewController.cs" />
-    <Compile Include="ViewControllers\ExtensionsViewController.cs" />
-    <Compile Include="ViewControllers\FoldersViewController.cs" />
-    <Compile Include="ViewControllers\MessageFoldersViewController.cs" />
     <Compile Include="ViewModels\AccountsViewModel.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="ViewModels\CallerIdPickerViewModel.cs" />
-    <Compile Include="ViewModels\ExtensionsViewModel.cs" />
+    <Compile Include="ViewModels\MainTabBarViewModel.cs" />
     <Compile Include="ViewModels\FoldersViewModel.cs" />
     <Compile Include="ViewModels\ForgotPasswordViewModel.cs" />
     <Compile Include="ViewModels\LoginViewModel.cs" />
@@ -203,7 +214,7 @@
     </Compile>
     <Compile Include="AppDelegate.cs" />
     <Compile Include="ViewModels\MessagesViewModel.cs" />
-    <Compile Include="ViewModels\PresentationNumbersViewModel.cs" />
+    <Compile Include="Views\SliderBackgorund.cs" />
     <None Include="Info.plist" />
     <Compile Include="ViewControllers\MainTabBarController.cs" />
     <Compile Include="ViewControllers\MainTabBarController.designer.cs">
@@ -229,6 +240,33 @@
     <Reference Include="Xamarin.Mobile">
       <HintPath>..\Components\xamarin.mobile-0.7.7\lib\ios-unified\Xamarin.Mobile.dll</HintPath>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\btn_play%402x.png" />
+    <BundleResource Include="Resources\btn_pause%402x.png" />
+    <BundleResource Include="Resources\progress_bar_thumb%402x.png" />
+    <BundleResource Include="Resources\back_transparent%402x.png" />
+    <BundleResource Include="Resources\voicemail_unread%402x.png" />
+    <BundleResource Include="Resources\callrecord%402x.png" />
+    <BundleResource Include="Resources\callrecord_unread%402x.png" />
+    <BundleResource Include="Resources\fax%402x.png" />
+    <BundleResource Include="Resources\fax_unread%402x.png" />
+    <BundleResource Include="Resources\voicemail%402x.png" />
+    <BundleResource Include="Resources\callrecord_active%402x.png" />
+    <BundleResource Include="Resources\voicemail_active%402x.png" />
+    <BundleResource Include="Resources\fax_active%402x.png" />
+    <BundleResource Include="Resources\speaker%402x.png" />
+    <BundleResource Include="Resources\callback%402x.png" />
+    <BundleResource Include="Resources\delete%402x.png" />
+    <BundleResource Include="Resources\pause%402x.png" />
+    <BundleResource Include="Resources\play%402x.png" />
+    <BundleResource Include="Resources\scroller%402x.png" />
+    <BundleResource Include="Resources\view_fax%402x.png" />
+    <BundleResource Include="Resources\call_back%402x.png" />
+    <Content Include="Settings.bundle\Root.plist">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Settings.bundle\en.lproj\Root.strings" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Entitlements.plist" />
@@ -278,23 +316,17 @@
   </ItemGroup>
   <ItemGroup>
     <XamarinComponentReference Include="googleanalytics">
-      <Visible>False</Visible>
       <Version>3.0.12</Version>
+      <Visible>False</Visible>
     </XamarinComponentReference>
     <XamarinComponentReference Include="mroundedbutton">
-      <Visible>False</Visible>
       <Version>1.1.2.0</Version>
+      <Visible>False</Visible>
     </XamarinComponentReference>
     <XamarinComponentReference Include="xamarin.mobile">
-      <Visible>False</Visible>
       <Version>0.7.7</Version>
+      <Visible>False</Visible>
     </XamarinComponentReference>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\FreedomVoice.Core\FreedomVoice.Core.csproj">
-      <Project>{f4fc9f9f-082c-4f29-977a-da7ec449ba56}</Project>
-      <Name>FreedomVoice.Core</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 </Project>

@@ -21,7 +21,7 @@ namespace FreedomVoice.iOS.Services.Implementations
 
         public async override Task<BaseResponse> ExecuteRequest()
         {
-            var asyncRes = await ApiHelper.GetMesages(_systemNumber, _mailboxNumber, _folderName, PageSize, 1, true);
+            var asyncRes = await ApiHelper.GetMesages(_systemNumber, _mailboxNumber, _folderName, PageSize, 1, false);
             var errorResponse = CheckErrorResponse(asyncRes.Code);
             if (errorResponse != null)
                 return errorResponse;

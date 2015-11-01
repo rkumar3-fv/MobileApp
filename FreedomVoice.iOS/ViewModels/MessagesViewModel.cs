@@ -4,6 +4,7 @@ using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.Services;
 using FreedomVoice.iOS.Services.Responses;
 using FreedomVoice.iOS.Utilities;
+using UIKit;
 
 namespace FreedomVoice.iOS.ViewModels
 {
@@ -19,11 +20,13 @@ namespace FreedomVoice.iOS.ViewModels
         /// <summary>
         /// Constructor, requires an IService
         /// </summary>
-        public MessagesViewModel(string systemPhoneNumber, int mailboxNumber, string folderName)
+        public MessagesViewModel(string systemPhoneNumber, int mailboxNumber, string folderName, UIViewController viewController)
         {
             MessagesList = new List<Message>();
 
             _service = ServiceContainer.Resolve<IMessagesService>();
+
+            ViewController = viewController;
 
             _systemPhoneNumber = systemPhoneNumber;
             _mailboxNumber = mailboxNumber;
