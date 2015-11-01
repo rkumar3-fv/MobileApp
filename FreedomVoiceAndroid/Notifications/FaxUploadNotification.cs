@@ -1,5 +1,6 @@
 using Android.App;
 using Android.Content;
+using Android.Graphics;
 
 namespace com.FreedomVoice.MobileApp.Android.Notifications
 {
@@ -31,16 +32,16 @@ namespace com.FreedomVoice.MobileApp.Android.Notifications
         /// <summary>
         /// Show new fax downloading notification
         /// </summary>
-        /// <param name="title">Message title</param>
-        public override void ShowNotification(string title)
+        /// <param name="content">Message content</param>
+        public override void ShowNotification(string content)
         {
             AppNotification.SetAutoCancel(false);
             AppNotification.SetOngoing(true);
             AppNotification.SetProgress(100, 0, false);
-            AppNotification.SetContentText(AppContext.GetString(Resource.String.Notif_downloadProgress));
-            //AppNotification.SetSmallIcon(Resource.Drawable.);
-            //AppNotification.SetLargeIcon(BitmapFactory.DecodeResource(Resource.Drawable.));
-            base.ShowNotification(title);
+            AppNotification.SetContentTitle(AppContext.GetString(Resource.String.Notif_fax));
+            AppNotification.SetSmallIcon(Resource.Drawable.ic_status_download);
+            AppNotification.SetLargeIcon(BitmapFactory.DecodeResource(AppContext.Resources, Resource.Drawable.ic_notification_download));
+            base.ShowNotification(content);
         }
 
         /// <summary>
@@ -65,9 +66,6 @@ namespace com.FreedomVoice.MobileApp.Android.Notifications
             var resultPendingIntent = stackBuilder.GetPendingIntent(0, PendingIntentFlags.UpdateCurrent);
 
             AppNotification.SetOngoing(false);
-            AppNotification.SetContentText(AppContext.GetString(Resource.String.Notif_downloadComplete));
-            //AppNotification.SetSmallIcon(Resource.Drawable.);
-            //AppNotification.SetLargeIcon(BitmapFactory.DecodeResource(Resource.Drawable.));
             AppNotification.SetProgress(0, 0, false);
             AppNotification.SetAutoCancel(true);
             AppNotification.SetContentIntent(resultPendingIntent);

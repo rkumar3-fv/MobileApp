@@ -56,6 +56,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             base.OnResume();
             ContentActivity.SearchListener.OnChange += SearchListenerOnChange;
             ContentActivity.SearchListener.OnApply += SearchListenerOnApply;
+            ContentActivity.SearchListener.OnCollapse += SearchListenerOnCancel;
         }      
 
         public override void OnPause()
@@ -63,6 +64,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             base.OnPause();
             ContentActivity.SearchListener.OnChange -= SearchListenerOnChange;
             ContentActivity.SearchListener.OnApply -= SearchListenerOnApply;
+            ContentActivity.SearchListener.OnCollapse -= SearchListenerOnCancel;
         }
 
         private void AdapterOnItemClick(object sender, Contact contact)
@@ -95,7 +97,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             ContentActivity.Call(phone.PhoneNumber);
         }
 
-        private void SearchListenerOnCancel(object sender, string s)
+        private void SearchListenerOnCancel(object sender, bool b)
         {
             _adapter.RestoreCursor();
         }
@@ -121,5 +123,6 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             var loader = new CursorLoader(ContentActivity, uri, projection, selection, null, sortOrder);
             return (ICursor)loader.LoadInBackground();
         }
+
     }
 }

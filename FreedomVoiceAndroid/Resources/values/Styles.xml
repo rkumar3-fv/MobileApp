@@ -96,6 +96,7 @@
     <item name="android:singleLine">true</item>
     <item name="android:maxLines">1</item>
     <item name="android:scrollHorizontally">true</item>
+    <item name="android:fontFamily">sans-serif</item>
     <item name="android:maxHeight">@dimen/auth_activity_field_height_max</item>
   </style>
 
@@ -107,6 +108,7 @@
     <item name="android:textColorHint">@color/colorBlackFieldsHint</item>
     <item name="android:singleLine">true</item>
     <item name="android:maxLines">1</item>
+    <item name="android:fontFamily">sans-serif</item>
     <item name="android:scrollHorizontally">true</item>
     <item name="android:maxHeight">@dimen/auth_activity_field_height_max</item>
   </style>

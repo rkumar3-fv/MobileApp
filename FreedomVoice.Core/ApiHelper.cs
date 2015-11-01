@@ -137,7 +137,7 @@
                 token);
         }
 
-        private static HttpWebRequest GetRequest(string url, string method, string contentType)
+        public static HttpWebRequest GetRequest(string url, string method, string contentType)
         {
             var request = (HttpWebRequest)WebRequest.Create(WebResources.AppUrl + url);
             request.ContentType = contentType;

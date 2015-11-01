@@ -42,6 +42,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         private Button _forgotButton;
         private EditText _loginText;
         private EditText _passwordText;
+        private TextView _errorText;
         private TextView _errorTextLogin;
         private TextView _errorTextPassword;
         private ProgressBar _progressLogin;
@@ -56,9 +57,12 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             _loginText = FindViewById<EditText>(Resource.Id.authActivity_loginField);
             _passwordText = FindViewById<EditText>(Resource.Id.authActivity_passwordField);
             _errorTextLogin = FindViewById<TextView>(Resource.Id.authActivity_loginError);
-            _errorTextPassword = FindViewById<TextView>(Resource.Id.authActivity_errorText);
+            _errorTextPassword = FindViewById<TextView>(Resource.Id.authActivity_passwordError);
+            _errorText = FindViewById<TextView>(Resource.Id.authActivity_errorText);
             _progressLogin = FindViewById<ProgressBar>(Resource.Id.authActivity_progress);
 
+            _loginText.FocusChange += FieldOnFocusChange;
+            _passwordText.FocusChange += FieldOnFocusChange;
             _authButton.Click += AuthButtonOnClick;
             _forgotButton.Click += ForgotButtonOnClick;
             _errorColor = new Color(ContextCompat.GetColor(this, Resource.Color.textColorError));
@@ -74,6 +78,13 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             HockeyApp.UpdateManager.Register(this, App.HockeyAppKey);
 #endif
 #endif
+        }
+
+        private void FieldOnFocusChange(object sender, View.FocusChangeEventArgs focusChangeEventArgs)
+        {
+            if ((sender != _loginText) && (sender != _passwordText)) return;
+            if (focusChangeEventArgs.HasFocus)
+                HideErrors();
         }
 
         protected override void OnResume()
@@ -97,13 +108,13 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             if ((_loginText.Text.Length == 0)||(!DataValidationUtils.IsEmailValid(_loginText.Text)))
             {
                 _loginText.Background.SetColorFilter(_errorColor, PorterDuff.Mode.SrcAtop);
-                _errorTextLogin.Text = GetString(Resource.String.ActivityAuth_badLogin);
+                _errorTextLogin.Visibility = ViewStates.Visible;
                 return;
             }
             if (_passwordText.Text.Length == 0)
             {
                 _passwordText.Background.SetColorFilter(_errorColor, PorterDuff.Mode.SrcAtop);
-                _errorTextPassword.Text = GetString(Resource.String.ActivityAuth_badPassword);
+                _errorTextPassword.Visibility = ViewStates.Visible;
                 return;
             }
             var res = Helper.Authorize(_loginText.Text, _passwordText.Text);
@@ -120,16 +131,18 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
 
         private void HideErrors()
         {
-            if (_errorTextLogin.Text.Length > 0)
+            if (_errorTextLogin.Visibility == ViewStates.Visible)
             {
                 _loginText.Background.ClearColorFilter();
-                _errorTextLogin.Text = "";
+                _errorTextLogin.Visibility = ViewStates.Invisible;
             }
-            if (_errorTextPassword.Text.Length > 0)
+            if (_errorTextPassword.Visibility == ViewStates.Visible)
             {
                 _passwordText.Background.ClearColorFilter();
-                _errorTextPassword.Text = "";
+                _errorTextPassword.Visibility = ViewStates.Invisible;
             }
+            if (_errorText.Visibility == ViewStates.Visible)
+                _errorText.Visibility = ViewStates.Invisible;
         }
 
         /// <summary>
@@ -162,12 +175,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 switch (code)
                 {
                     case ActionsHelperEventArgs.AuthLoginError:
-                        _loginText.Background.SetColorFilter(_errorColor, PorterDuff.Mode.SrcAtop);
-                        _errorTextLogin.Text = GetString(Resource.String.ActivityAuth_incorrectLogin);
-                        return;
                     case ActionsHelperEventArgs.AuthPasswdError:
-                        _passwordText.Background.SetColorFilter(_errorColor, PorterDuff.Mode.SrcAtop);
-                        _errorTextPassword.Text = GetString(Resource.String.ActivityAuth_incorrectPassword);
+                        _errorText.Visibility = ViewStates.Visible;
                         return;
                 }
             }

@@ -94,7 +94,8 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
                     message.ReceivedOn,
                     type,
                     message.Unread,
-                    message.Length));
+                    message.Length,
+                    $"/api/v1/systems/{AccountName}/mailboxes/{ExtensionId}/folders/{Folder}/messages/{message.Id}/media/{message.Type}"));
             }
             return new GetMessagesResponse(Id, resList);
         }

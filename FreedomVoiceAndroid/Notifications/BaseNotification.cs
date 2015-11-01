@@ -27,9 +27,9 @@ namespace com.FreedomVoice.MobileApp.Android.Notifications
         /// <summary>
         /// Show notification
         /// </summary>
-        public virtual void ShowNotification(string title)
+        public virtual void ShowNotification(string content)
         {
-            AppNotification.SetContentTitle(title);
+            AppNotification.SetContentText(content);
             NotificationManager.Notify(NotificationCode(), AppNotification.Build());
         }
 

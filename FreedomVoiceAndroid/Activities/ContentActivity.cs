@@ -1,9 +1,11 @@
+using Android.Animation;
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
 using Android.Gms.Analytics;
 using Android.Graphics;
 using Android.OS;
+using Android.Runtime;
 using Android.Support.Design.Widget;
 using Android.Support.V4.Content;
 using Android.Support.V4.View;
@@ -15,6 +17,7 @@ using com.FreedomVoice.MobileApp.Android.CustomControls;
 using com.FreedomVoice.MobileApp.Android.CustomControls.Callbacks;
 using com.FreedomVoice.MobileApp.Android.Dialogs;
 using com.FreedomVoice.MobileApp.Android.Fragments;
+using Java.Lang;
 using SearchView = Android.Support.V7.Widget.SearchView;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 
@@ -39,6 +42,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         private ContentPager _viewPager;
         private Toolbar _toolbar;
         private TabLayout _tabLayout;
+        private AnimatorListener _animatorListener;
 
         /// <summary>
         /// Contacts search listener
@@ -54,8 +58,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             _whiteColor = new Color(ContextCompat.GetColor(this, Resource.Color.colorActionBarText));
             _grayColor = new Color(ContextCompat.GetColor(this, Resource.Color.colorTabIndicatorInactive));
             SearchListener = new SearchViewListener();
-            SearchListener.OnCollapse += (sender, b) => { };
-            SearchListener.OnExpand += (sender, b) => { };
+            SearchListener.OnCollapse += SearchListenerOnCollapse;
+            SearchListener.OnExpand += SearchListenerOnExpand;
             _appBar = FindViewById<AppBarLayout>(Resource.Id.contentActivity_contentAppBar);
             _tabLayout = FindViewById<TabLayout>(Resource.Id.contentActivity_tabs);
             _viewPager = FindViewById<ContentPager>(Resource.Id.contentActivity_contentPager);
@@ -80,6 +84,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 _viewPager.PageSelected += ViewPagerOnPageSelected;
             }
             _tabLayout.SetupWithViewPager(_viewPager);
+            _animatorListener = new AnimatorListener(_appBar, _toolbar, _tabLayout, _viewPager);
         }
 
         protected override void OnResume()
@@ -129,7 +134,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 case 1:
                     _toolbar.InflateMenu(Resource.Menu.menu_contacts);
                     var menu = _toolbar.Menu;
-                    var searchView = (SearchView)MenuItemCompat.GetActionView(menu.FindItem(Resource.Id.menu_action_search));
+                    var searchView = MenuItemCompat.GetActionView(menu.FindItem(Resource.Id.menu_action_search)).JavaCast<SearchView>();
                     var menuItem = menu.FindItem(Resource.Id.menu_action_search);
                     if ((menuItem != null) && (searchView != null))
                     {
@@ -188,17 +193,23 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             }
         }
 
+        /// <summary>
+        /// Expand scrollable toolbar
+        /// </summary>
         public void ExpandToolbar()
         {
-            var param = (CoordinatorLayout.LayoutParams)_appBar.LayoutParameters;
-            var behavior = (AppBarLayout.Behavior) param.Behavior;
+            var param = _appBar.LayoutParameters.JavaCast<CoordinatorLayout.LayoutParams>();
+            var behavior = param.Behavior.JavaCast<AppBarLayout.Behavior>();
             behavior?.OnNestedFling(_rootLayout, _appBar, null, 0, -10000, false);
         }
 
+        /// <summary>
+        /// Collapse scrollable toolbar
+        /// </summary>
         public void CollapseToolbar()
         {
-            var param = (CoordinatorLayout.LayoutParams)_appBar.LayoutParameters;
-            var behavior = (AppBarLayout.Behavior) param.Behavior;
+            var param = _appBar.LayoutParameters.JavaCast<CoordinatorLayout.LayoutParams>();
+            var behavior = param.Behavior.JavaCast<AppBarLayout.Behavior>();
             behavior?.OnNestedFling(_rootLayout, _appBar, null, 0, 10000, false);
         }
 
@@ -211,9 +222,72 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 Helper.ClearAllRecents();
         }
 
+        /// <summary>
+        /// Search bar opening event
+        /// </summary>
+        private void SearchListenerOnExpand(object sender, bool b)
+        {
+            SupportActionBar.SetDisplayHomeAsUpEnabled(true);
+            SupportActionBar.SetHomeButtonEnabled(true);
+            var param = _toolbar.LayoutParameters.JavaCast<AppBarLayout.LayoutParams>();
+            param.ScrollFlags = AppBarLayout.LayoutParams.ScrollFlagExitUntilCollapsed;
+            //var animator = ValueAnimator.OfFloat(_tabLayout.Height, 0);
+            //animator.SetDuration(1000);
+            //animator.AddUpdateListener(_animatorListener);
+            //animator.Start();
+            _tabLayout.Visibility = ViewStates.Gone;
+        }
+
+        /// <summary>
+        /// Search bar closing
+        /// </summary>
+        private void SearchListenerOnCollapse(object sender, bool b)
+        {
+            SupportActionBar.SetDisplayHomeAsUpEnabled(false);
+            SupportActionBar.SetHomeButtonEnabled(false);
+            var param = _toolbar.LayoutParameters.JavaCast<AppBarLayout.LayoutParams>();
+            param.ScrollFlags = AppBarLayout.LayoutParams.ScrollFlagScroll | AppBarLayout.LayoutParams.ScrollFlagEnterAlways;
+            //var animator = ValueAnimator.OfFloat(0, _tabLayout.Height);
+            //animator.SetDuration(1000);
+            //animator.AddUpdateListener(_animatorListener);
+            //animator.Start();
+            _tabLayout.Visibility = ViewStates.Visible;
+        }
+
         public override void OnBackPressed()
         {
+            var menu = _toolbar.Menu;
+            if (menu != null)
+            {
+                var searchView = MenuItemCompat.GetActionView(menu.FindItem(Resource.Id.menu_action_search)).JavaCast<SearchView>();
+                if ((searchView != null) && (!searchView.Iconified))
+                {
+                    searchView.Iconified = true;
+                    return;
+                }
+            }
             MoveTaskToBack(true);
+        }
+
+        private class AnimatorListener : Object, ValueAnimator.IAnimatorUpdateListener
+        {
+            private readonly AppBarLayout _appBar;
+            private readonly Toolbar _toolbar;
+            private readonly TabLayout _tabLayout;
+            private readonly ViewPager _viewPager;
+
+            public AnimatorListener(AppBarLayout appBar, Toolbar toolbar, TabLayout tabLayout, ViewPager viewPager)
+            {
+                _appBar = appBar;
+                _toolbar = toolbar;
+                _tabLayout = tabLayout;
+                _viewPager = viewPager;
+            }
+
+            public void OnAnimationUpdate(ValueAnimator animation)
+            {
+                
+            }
         }
     }
 }
