@@ -9,6 +9,7 @@ using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.Helpers;
 using FreedomVoice.iOS.TableViewSources;
 using FreedomVoice.iOS.Utilities;
+using FreedomVoice.iOS.Views;
 using FreedomVoice.iOS.Views.Shared;
 using Xamarin.Contacts;
 
@@ -26,20 +27,31 @@ namespace FreedomVoice.iOS.ViewControllers
         private UISearchBar _contactsSearchBar;
         private UILabel _noResultsLabel;
 
+        private bool _havePermissions;
+
         private CallerIdView CallerIdView { get; set; }
 
         private static MainTabBarController MainTabBarInstance => MainTabBarController.Instance;
-        
-        public ContactsViewController(IntPtr handle) : base(handle) { }
+
+        public ContactsViewController(IntPtr handle) : base(handle)
+        {
+            _contactList = new List<Contact>();
+            _filteredContactList = new List<Contact>();
+        }
 
         public override async void ViewDidLoad()
         {
             base.ViewDidLoad();
 
-            const int containerWidth = 80;
-            const int containerHeight = 20;
+            var addressBook = new Xamarin.Contacts.AddressBook();
+            _havePermissions = await addressBook.RequestPermission();
+            if (!_havePermissions)
+            {
+                View.AddSubview(new NoAccessToContacts(Theme.ScreenBounds));
+                return;
+            }
 
-            var frame = new CGRect(View.Frame.Width / 2 - containerWidth / 2, View.Frame.Height / 2 - containerHeight / 2, containerWidth, containerHeight);
+            var frame = new CGRect(View.Frame.Width / 2 - 80 / 2, View.Frame.Height / 2 - 20 / 2, 80, 20);
             _noResultsLabel = new UILabel(frame)
             {
                 Text = "No Result",
@@ -49,14 +61,6 @@ namespace FreedomVoice.iOS.ViewControllers
             };
 
             View.Add(_noResultsLabel);
-
-            var addressBook = new Xamarin.Contacts.AddressBook();            
-            if (!await addressBook.RequestPermission())
-            {
-                // We don't have the permission to access user's contacts: check if the READ_CONTACTS has been set
-                new UIAlertView("Permission denied", "User has denied this app access to their contacts", null, "Close").Show();
-                return;
-            }
 
             _contactsSearchBar = new UISearchBar(new CGRect(0, 0, View.Frame.Width, 44))
             {
@@ -76,9 +80,9 @@ namespace FreedomVoice.iOS.ViewControllers
             _contactsSearchBar.TextChanged += SearchBarOnTextChanged;
             _contactsSearchBar.CancelButtonClicked += SearchBarOnCancelButtonClicked;
 
-            CallerIdView = new CallerIdView(new RectangleF(0, 44, (float)View.Frame.Width, 40), MainTabBarInstance.GetPresentationNumbers());
+            CallerIdView = new CallerIdView(new RectangleF(0, (float)(_contactsSearchBar.Frame.Y + _contactsSearchBar.Frame.Height), (float)View.Frame.Width, 40), MainTabBarInstance.GetPresentationNumbers());
 
-            var headerView = new UIView(new CGRect(0, 0, View.Frame.Width, 84));
+            var headerView = new UIView(new CGRect(0, 0, View.Frame.Width, _contactsSearchBar.Frame.Height + CallerIdView.Frame.Height));
             headerView.AddSubviews(_contactsSearchBar, CallerIdView);
 
             _contactList = addressBook.ToList();
@@ -198,7 +202,7 @@ namespace FreedomVoice.iOS.ViewControllers
             MainTabBarInstance.Title = "Contacts";
 
             PresentationNumber selectedNumber = MainTabBarInstance.GetSelectedPresentationNumber();
-            if (selectedNumber != null)
+            if (selectedNumber != null && _havePermissions)
                 CallerIdView.UpdatePickerData(selectedNumber);
 
             base.ViewWillAppear(animated);

@@ -132,6 +132,9 @@ namespace FreedomVoice.iOS.Helpers
         public static async void CreateCallReservation(string systemNumber, string presentationNumber, string destinationNumberFormatted, UIViewController viewController)
         {
             var expectedCallerIdNumber = UserDefault.AccountPhoneNumber;
+
+            //TODO: Add alert if AccountPhoneNumber is empty
+
             var destinationNumber = Regex.Replace(destinationNumberFormatted.Replace(" ", ""), @"[^\d]", "");
 
             var callReservationViewModel = new CallReservationViewModel(systemNumber, expectedCallerIdNumber, presentationNumber, destinationNumber, viewController);
@@ -141,7 +144,7 @@ namespace FreedomVoice.iOS.Helpers
 
             var switchboardNumber = callReservationViewModel.Reservation.SwitchboardNumber;
 
-            var phoneNumber = NSUrl.FromString("tel:" + switchboardNumber);
+            var phoneNumber = NSUrl.FromString("tel:" + "+1" + switchboardNumber);
             if (!UIApplication.SharedApplication.OpenUrl(phoneNumber))
             {
                 var alertController = UIAlertController.Create(null, "Your device does not appear to support making cellular voice calls.", UIAlertControllerStyle.Alert);

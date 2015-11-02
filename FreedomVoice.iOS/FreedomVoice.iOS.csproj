@@ -140,6 +140,7 @@
     <Compile Include="Services\Responses\PresentationNumbersResponse.cs" />
     <Compile Include="ViewModels\CallReservationViewModel.cs" />
     <Compile Include="Views\AVPlayerView.cs" />
+    <Compile Include="Views\NoAccessToContacts.cs" />
     <Compile Include="Views\RecentLineView.cs" />
     <Compile Include="Views\Shared\CallerIdView.cs" />
     <Compile Include="TableViewCells\ContactCell.cs" />

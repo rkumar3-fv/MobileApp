@@ -21,6 +21,7 @@ namespace FreedomVoice.iOS.Services
             ServiceContainer.Register<IFoldersService>(() => new FoldersService());
             ServiceContainer.Register<IMessagesService>(() => new MessagesService());
             ServiceContainer.Register<ICallReservationService>(() => new CallReservationService());
+            ServiceContainer.Register<IMediaService>(() => new MediaService());
         }
     }
 }
