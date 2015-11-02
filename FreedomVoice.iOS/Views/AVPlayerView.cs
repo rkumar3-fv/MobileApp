@@ -59,7 +59,8 @@ namespace FreedomVoice.iOS.Views
                 _player.EndInterruption += StartPlayback;
             } catch (Exception)
             {
-                Console.WriteLine("Media doesn't exist");
+                Console.WriteLine($"Media doesn't exist. Filename: {fileName}");
+                return;
             }
 
             _labelElapsed = new UILabel(new CGRect(25, 7, 37, 16)) { Text = "0:00" };
