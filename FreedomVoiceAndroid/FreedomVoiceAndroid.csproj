@@ -210,7 +210,10 @@
     <Compile Include="Helpers\ActionsHelper.cs" />
     <Compile Include="Helpers\ActionsHelperEventArgs.cs" />
     <Compile Include="Helpers\ActionsHelperIntentArgs.cs" />
+    <Compile Include="Helpers\AppHelper.cs" />
     <Compile Include="Helpers\AppPreferencesHelper.cs" />
+    <Compile Include="Helpers\FaxForegroundBinder.cs" />
+    <Compile Include="Helpers\AttachmentsHelper.cs" />
     <Compile Include="Notifications\BaseNotification.cs" />
     <Compile Include="Notifications\FaxUploadNotification.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
@@ -1054,7 +1057,6 @@
     <XamarinComponentReference Include="hockeyappandroid">
       <Visible>False</Visible>
       <Version>3.6.2.0</Version>
-      <InstallationInProgress>True</InstallationInProgress>
     </XamarinComponentReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />

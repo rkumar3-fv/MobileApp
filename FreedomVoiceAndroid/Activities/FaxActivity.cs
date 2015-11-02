@@ -3,6 +3,7 @@ using Android.App;
 using Android.Content.PM;
 using Android.OS;
 using Android.Widget;
+using com.FreedomVoice.MobileApp.Android.Helpers;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
 {
@@ -43,7 +44,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         /// </summary>
         private void OpenFaxButtonOnClick(object sender, EventArgs eventArgs)
         {
-            
+            AppHelper.Instance(this).AttachmentsHelper.LoadAttachment(Msg.AttachUrl);
         }
 
         protected override void OnResume()

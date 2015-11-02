@@ -16,7 +16,6 @@ namespace com.FreedomVoice.MobileApp.Android.Services
     [Service (Exported = false)]
     public class ComService : Service
     {
-        public const string CheckAction = "ComServiceCheck";
         public const string RequestTag = "ComServiceRequest";
         public const string RequestIdTag = "ComServiceRequestId";
 

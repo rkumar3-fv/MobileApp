@@ -23,13 +23,18 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         Theme = "@style/AppThemeActionBar")]
     public class InactiveActivity : InfoActivity
     {
+        public const string InactiveAccontTag = "InactiveTag";
+
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
+            var extra = Intent.GetStringExtra(InactiveAccontTag);
             SetContentView(Resource.Layout.act_inactive);
             RootLayout = FindViewById(Resource.Id.inactiveActivity_root);
             ActionButton = FindViewById<Button>(Resource.Id.inactiveActivity_dialButton);
-            if (Helper.SelectedAccount != null)
+            if (extra != null)
+                SupportActionBar.Title = DataFormatUtils.ToPhoneNumber(extra);
+            else if (Helper.SelectedAccount != null)
                 SupportActionBar.Title = DataFormatUtils.ToPhoneNumber(Helper.SelectedAccount.AccountName);
             else
                 SupportActionBar.SetTitle(Resource.String.ActivityInactive_title);

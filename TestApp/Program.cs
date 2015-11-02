@@ -127,10 +127,11 @@ namespace TestApp
             }
             Console.Write(Environment.NewLine);
 
-            Console.WriteLine(@"Get Media method: ");
+            
             if (File.Exists($"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\\{"file80.pdf"}"))
                 File.Delete($"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\\{"file80.pdf"}");
-            var resFile = ApiHelper.GetMedia("7607124648", 80, "New", "I161223944", MediaType.Pdf, CancellationToken.None).Result;
+            var resFile = ApiHelper.GetMedia("7607124648", 80, "New", "I161578702", MediaType.Pdf, CancellationToken.None).Result;
+            Console.WriteLine($"Get Media method: {resFile.Code}");
             using (var ms = new MemoryStream())
             {
                 resFile.Result.CopyTo(ms);
@@ -208,11 +209,12 @@ namespace TestApp
             //Console.Write(@"Messages delete method: " + ApiHelper.DeleteMessages("7607124648", 802, new List<string> { "I160057839" }));
             Console.Write(Environment.NewLine);
 
-            Console.WriteLine(@"Media method: ");
+            
             if (File.Exists($"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\\{"file.pdf"}"))
                 File.Delete($"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\\{"file.pdf"}");
-            var res = ApiHelper.GetMedia("7607124648", 80, "New", "I161141228", MediaType.Pdf, CancellationToken.None).Result;
-             using (var ms = new MemoryStream())
+            var res = ApiHelper.GetMedia("7607124648", 80, "New", "I161625181", MediaType.Pdf, CancellationToken.None).Result;
+            Console.WriteLine($"Media method: {res.Code}");
+            using (var ms = new MemoryStream())
              {
                  res.Result.CopyTo(ms);
                  var bytes = ms.ToArray();

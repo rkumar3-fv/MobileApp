@@ -38,6 +38,7 @@ namespace com.FreedomVoice.MobileApp.Android
 #endif
 
         private Tracker _tracker;
+        private AppHelper _helper;
 
         /// <summary>
         /// Analytics tracker
@@ -92,7 +93,7 @@ namespace com.FreedomVoice.MobileApp.Android
 #endif
 #endif
 
-            Helper = new ActionsHelper(this);
+            _helper = AppHelper.Instance(this);
 #if DEBUG
             ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) =>
             {
@@ -113,12 +114,7 @@ namespace com.FreedomVoice.MobileApp.Android
         /// </summary>
         private void CallStateOnCallEvent(object sender, DialingEventArgs args)
         {
-            Helper.MarkCallAsFinished();
+            _helper.ActionsHelper.MarkCallAsFinished();
         }
-
-        /// <summary>
-        /// Application actions helper
-        /// </summary>
-        public ActionsHelper Helper { get; private set; }
     }
 }

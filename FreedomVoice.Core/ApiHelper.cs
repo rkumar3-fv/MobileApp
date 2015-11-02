@@ -137,7 +137,7 @@
                 token);
         }
 
-        public static HttpWebRequest GetRequest(string url, string method, string contentType)
+        private static HttpWebRequest GetRequest(string url, string method, string contentType)
         {
             var request = (HttpWebRequest)WebRequest.Create(WebResources.AppUrl + url);
             request.ContentType = contentType;
@@ -178,14 +178,14 @@
             return await res;
         }
 
-        private static async Task<BaseResult<T>> MakeAsyncGetRequest<T>(string url, string contentType, CancellationToken cts)
+        public static async Task<BaseResult<T>> MakeAsyncGetRequest<T>(string url, string contentType, CancellationToken cts)
         {
             var request = GetRequest(url, "GET", contentType);
 
             return await GetResponce<T>(request, cts);
         }
 
-        private static async Task<BaseResult<Stream>> MakeAsyncFileDownload(string url, string contentType, CancellationToken ct)
+        public static async Task<BaseResult<Stream>> MakeAsyncFileDownload(string url, string contentType, CancellationToken ct)
         {
             var request = GetRequest(url, "GET", contentType);
             BaseResult<Stream> retResult = null;
