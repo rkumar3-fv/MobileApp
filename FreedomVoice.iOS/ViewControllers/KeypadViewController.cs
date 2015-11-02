@@ -138,7 +138,9 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private void OnKeypadDialTouchUpInside(object sender, EventArgs args)
         {
-            AddRecent();            
+            AddRecent();
+            var selectedCallerId = MainTabBarInstance.GetSelectedPresentationNumber().PhoneNumber;
+            PhoneCall.CreateCallReservation(MainTabBarInstance.SelectedAccount.PhoneNumber, selectedCallerId, PhoneNumber, NavigationController);
         }
         
 	    private void AddRecent()

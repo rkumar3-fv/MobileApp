@@ -10,6 +10,7 @@ using FreedomVoice.iOS.Views.Shared;
 using UIKit;
 using Xamarin.Contacts;
 using System.Text.RegularExpressions;
+using FreedomVoice.iOS.Helpers;
 
 namespace FreedomVoice.iOS.ViewControllers
 {
@@ -192,6 +193,9 @@ namespace FreedomVoice.iOS.ViewControllers
 
             RecentsTableView.EndUpdates();
             RecentsTableView.ReloadRows(e.TableView.IndexPathsForVisibleRows, UITableViewRowAnimation.None);
+
+            var selectedCallerId = MainTabBarInstance.GetSelectedPresentationNumber().PhoneNumber;
+            PhoneCall.CreateCallReservation(MainTabBarInstance.SelectedAccount.PhoneNumber, selectedCallerId, newRecent.PhoneNumber, NavigationController);
         }
 
         private void TableSourceOnRowDeleted(object sender, RecentsSource.RowSelectedEventArgs e)
