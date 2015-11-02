@@ -44,7 +44,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         /// </summary>
         private void OpenFaxButtonOnClick(object sender, EventArgs eventArgs)
         {
-            AppHelper.Instance(this).AttachmentsHelper.LoadAttachment(Msg.AttachUrl);
+            AttachmentId = AppHelper.Instance(this).AttachmentsHelper.LoadFaxAttachment(Msg);
         }
 
         protected override void OnResume()

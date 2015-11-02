@@ -1,5 +1,6 @@
 using Android.Content;
 using Android.Support.V4.App;
+using Java.Interop;
 
 namespace com.FreedomVoice.MobileApp.Android.Notifications
 {
@@ -15,7 +16,7 @@ namespace com.FreedomVoice.MobileApp.Android.Notifications
         protected BaseNotification(Context context)
         {
             AppContext = context;
-            NotificationManager = (NotificationManagerCompat)AppContext.GetSystemService(Context.NotificationService);
+            NotificationManager = NotificationManagerCompat.From(context);
             AppNotification = new NotificationCompat.Builder(AppContext);
         }
 

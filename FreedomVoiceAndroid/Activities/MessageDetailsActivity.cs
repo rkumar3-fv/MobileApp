@@ -21,6 +21,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         protected TextView MessageDate;
         protected TextView MessageStamp;
         protected ImageButton RemoveButton;
+        protected long AttachmentId;
 
         protected override void OnCreate(Bundle bundle)
         {
