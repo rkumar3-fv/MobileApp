@@ -51,11 +51,16 @@ namespace FreedomVoice.iOS.Views
             _playButton.SetImage(_playButtonImage, UIControlState.Normal);
             _playButton.TouchUpInside += OnPlayButtonTouchUpInside;
 
-            _player = AVAudioPlayer.FromUrl(new NSUrl(filePath, false));
-            _player.FinishedPlaying += OnPlayerFinishedPlaying;
-            _player.DecoderError += OnPlayerDecoderError;
-            _player.BeginInterruption += UpdateViewForPlayerState;
-            _player.EndInterruption += StartPlayback;
+            try {
+                _player = AVAudioPlayer.FromUrl(new NSUrl(filePath, false));
+                _player.FinishedPlaying += OnPlayerFinishedPlaying;
+                _player.DecoderError += OnPlayerDecoderError;
+                _player.BeginInterruption += UpdateViewForPlayerState;
+                _player.EndInterruption += StartPlayback;
+            } catch (Exception)
+            {
+                Console.WriteLine("Media doesn't exist");
+            }
 
             _labelElapsed = new UILabel(new CGRect(25, 7, 37, 16)) { Text = "0:00" };
 
