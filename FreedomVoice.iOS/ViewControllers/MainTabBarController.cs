@@ -109,6 +109,9 @@ namespace FreedomVoice.iOS.ViewControllers
 
         public PresentationNumber GetSelectedPresentationNumber()
         {
+            if (PresentationNumbers.FirstOrDefault(a => a.IsSelected) == null && PresentationNumbers.Count > 0)
+                PresentationNumbers[0].IsSelected = true;
+
             return PresentationNumbers.FirstOrDefault(a => a.IsSelected);
         }
     }

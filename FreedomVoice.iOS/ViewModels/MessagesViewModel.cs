@@ -38,11 +38,11 @@ namespace FreedomVoice.iOS.ViewModels
         /// Performs an asynchronous Messages request
         /// </summary>
         /// <returns></returns>
-        public async Task GetMessagesListAsync()
+        public async Task GetMessagesListAsync(int messageCount)
         {
             IsBusy = true;
 
-            var requestResult = await _service.ExecuteRequest(_systemPhoneNumber, _mailboxNumber, _folderName);
+            var requestResult = await _service.ExecuteRequest(_systemPhoneNumber, _mailboxNumber, _folderName, messageCount);
             if (requestResult is ErrorResponse)
                 ProceedErrorResponse(requestResult);
             else

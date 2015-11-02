@@ -54,7 +54,7 @@ namespace FreedomVoice.iOS.Helpers
 
         public static UIImageView GetMessageImageView(MessageType messageType, bool unread, bool active)
         {
-            var messageImageView = new UIImageView(new CGRect(12, 15, 25, 25))
+            var messageImageView = new UIImageView(new CGRect(15, 15, 25, 25))
             {
                 Image = GetMessageImage(messageType, unread, active)
             };
