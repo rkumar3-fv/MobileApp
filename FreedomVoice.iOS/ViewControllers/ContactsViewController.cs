@@ -51,13 +51,15 @@ namespace FreedomVoice.iOS.ViewControllers
                 return;
             }
 
-            var frame = new CGRect(View.Frame.Width / 2 - 80 / 2, View.Frame.Height / 2 - 20 / 2, 80, 20);
+            var frame = new CGRect(15, 0, Theme.ScreenBounds.Width - 30, 30);
             _noResultsLabel = new UILabel(frame)
             {
                 Text = "No Result",
-                MinimumFontSize = 38,
+                Font = UIFont.SystemFontOfSize(28),
                 TextColor = Theme.GrayColor,
-                Alpha = 0
+                TextAlignment = UITextAlignment.Center,
+                Center = View.Center,
+                Hidden = true
             };
 
             View.Add(_noResultsLabel);
@@ -187,12 +189,12 @@ namespace FreedomVoice.iOS.ViewControllers
         {
             if (contactsCount == 0)
             {
-                _noResultsLabel.Alpha = 1;
+                _noResultsLabel.Hidden = false;
                 ContactsTableView.SeparatorStyle = UITableViewCellSeparatorStyle.None;
             }
             else
             {
-                _noResultsLabel.Alpha = 0;
+                _noResultsLabel.Hidden = true;
                 ContactsTableView.SeparatorStyle = UITableViewCellSeparatorStyle.SingleLine;
             }
         }

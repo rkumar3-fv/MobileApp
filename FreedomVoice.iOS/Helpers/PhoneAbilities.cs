@@ -133,7 +133,15 @@ namespace FreedomVoice.iOS.Helpers
         {
             var expectedCallerIdNumber = UserDefault.AccountPhoneNumber;
 
-            //TODO: Add alert if AccountPhoneNumber is empty
+            if (string.IsNullOrEmpty(expectedCallerIdNumber))
+            {
+                var alertController = UIAlertController.Create(null, "To make calls with this app, please enter your device's phone number.", UIAlertControllerStyle.Alert);
+                alertController.AddAction(UIAlertAction.Create("Settings", UIAlertActionStyle.Default, a => UIApplication.SharedApplication.OpenUrl(new NSUrl(UIApplication.OpenSettingsUrlString))));
+                alertController.AddAction(UIAlertAction.Create("Cancel", UIAlertActionStyle.Cancel, null));
+                viewController.PresentViewController(alertController, true, null);
+
+                return;
+            }
 
             var destinationNumber = Regex.Replace(destinationNumberFormatted.Replace(" ", ""), @"[^\d]", "");
 
