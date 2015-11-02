@@ -56,8 +56,8 @@ namespace FreedomVoice.iOS.TableViewCells
             var faxMessageType = _type == MessageType.Fax;
 
             _icon = Helpers.Appearance.GetMessageImageView(_type, false, true);
-            _title = new UILabel(new CGRect(46, 10, 270, 15)) { Text = title, TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(17) };
-            _date = new UILabel(new CGRect(46, 29, 110, 11)) { Text = date, TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(12) };
+            _title = new UILabel(new CGRect(55, 10, 270, 19)) { Text = title, TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(17) };
+            _date = new UILabel(new CGRect(55, 29, 110, 11)) { Text = date, TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(12) };
 
             _length = GetFormattedLength(length, faxMessageType);
 
@@ -109,7 +109,7 @@ namespace FreedomVoice.iOS.TableViewCells
 
         private UIButton GetSpeakerButton()
         {
-            _speakerButton = new UIButton(new CGRect(43, 97, 98, 29));
+            _speakerButton = new UIButton(new CGRect(52, 97, 98, 29));
             _speakerButton.SetTitle("Speaker", UIControlState.Normal);
             _speakerButton.SetTitleColor(UIColor.FromRGB(119, 229, 246), UIControlState.Normal);
             _speakerButton.SetImage(UIImage.FromFile("speaker.png"), UIControlState.Normal);            
@@ -121,7 +121,7 @@ namespace FreedomVoice.iOS.TableViewCells
 
         private UIButton GetFaxButton()
         {
-            _viewFaxButton = new UIButton(new CGRect(43, 58, 98, 28));
+            _viewFaxButton = new UIButton(new CGRect(52, 58, 98, 28));
             _viewFaxButton.SetTitle("View Fax", UIControlState.Normal);
             _viewFaxButton.SetTitleColor(UIColor.FromRGB(198, 242, 138), UIControlState.Normal);
             _viewFaxButton.SetImage(UIImage.FromFile("view_fax.png"), UIControlState.Normal);
@@ -133,7 +133,7 @@ namespace FreedomVoice.iOS.TableViewCells
 
         private UIButton GetCallBackButton()
         {
-            _callBackButton = new UIButton(new CGRect(149, 97, 104, 29));
+            _callBackButton = new UIButton(new CGRect(158, 97, 104, 29));
             _callBackButton.SetTitle("Call Back", UIControlState.Normal);
             _callBackButton.SetTitleColor(UIColor.FromRGB(198, 242, 138), UIControlState.Normal);
             _callBackButton.SetImage(UIImage.FromFile("call_back.png"), UIControlState.Normal);
