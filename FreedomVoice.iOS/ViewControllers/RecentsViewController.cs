@@ -156,7 +156,7 @@ namespace FreedomVoice.iOS.ViewControllers
         private void ClearAll()
         {
             var alertController = UIAlertController.Create(null, null, UIAlertControllerStyle.ActionSheet);
-            alertController.AddAction(UIAlertAction.Create("Clear All Recents", UIAlertActionStyle.Default, a => {
+            alertController.AddAction(UIAlertAction.Create("Clear All Recents", UIAlertActionStyle.Destructive, a => {
                 ReturnToRecentsView();
                 ClearRecent();
                 _recentSource.SetRecents(GetRecentsOrdered());

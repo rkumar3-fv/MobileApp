@@ -142,6 +142,7 @@
     <Compile Include="Services\Responses\MessagesResponse.cs" />
     <Compile Include="Services\Responses\PresentationNumbersResponse.cs" />
     <Compile Include="ViewModels\CallReservationViewModel.cs" />
+    <Compile Include="ViewModels\ExpandedCellViewModel.cs" />
     <Compile Include="Views\AVPlayerView.cs" />
     <Compile Include="Views\NoAccessToContacts.cs" />
     <Compile Include="Views\RecentLineView.cs" />
