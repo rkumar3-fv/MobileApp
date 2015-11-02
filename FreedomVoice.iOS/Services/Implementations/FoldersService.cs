@@ -6,18 +6,9 @@ namespace FreedomVoice.iOS.Services.Implementations
 {
     public class FoldersService : BaseService, IFoldersService
     {
-        private string _systemNumber;
-        private int _mailboxNumber;
-
-        public void SetParameters(string systemNumber, int mailboxNumber)
+        public async Task<BaseResponse> ExecuteRequest(string systemNumber, int mailboxNumber)
         {
-            _systemNumber = systemNumber;
-            _mailboxNumber = mailboxNumber;
-        }
-
-        public async override Task<BaseResponse> ExecuteRequest()
-        {
-            var asyncRes = await ApiHelper.GetFoldersWithCount(_systemNumber, _mailboxNumber);
+            var asyncRes = await ApiHelper.GetFoldersWithCount(systemNumber, mailboxNumber);
             var errorResponse = CheckErrorResponse(asyncRes.Code);
             if (errorResponse != null)
                 return errorResponse;

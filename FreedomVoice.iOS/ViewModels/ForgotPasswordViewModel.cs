@@ -56,9 +56,7 @@ namespace FreedomVoice.iOS.ViewModels
         {
             IsBusy = true;
 
-            _service.SetRecoveryEmail(EMail);
-
-            var requestResult = await _service.ExecuteRequest();
+            var requestResult = await _service.ExecuteRequest(EMail);
             if (requestResult is ErrorResponse)
                 ProceedErrorResponse(requestResult);
             else

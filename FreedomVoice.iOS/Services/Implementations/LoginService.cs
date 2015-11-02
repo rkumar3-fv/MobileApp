@@ -6,18 +6,9 @@ namespace FreedomVoice.iOS.Services.Implementations
 {
     public class LoginService : BaseService, ILoginService
     {
-        private string _userName;
-        private string _password;
-
-        public void SetCredentials(string userName, string password)
+        public async Task<BaseResponse> ExecuteRequest(string userName, string password)
         {
-            _userName = userName;
-            _password = password;
-        }
-
-        public async override Task<BaseResponse> ExecuteRequest()
-        {
-            var asyncRes = await ApiHelper.Login(_userName, _password);
+            var asyncRes = await ApiHelper.Login(userName, password);
             var errorResponse = CheckErrorResponse(asyncRes.Code);
             if (errorResponse != null)
                 return errorResponse;

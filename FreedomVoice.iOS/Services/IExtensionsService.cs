@@ -5,11 +5,9 @@ namespace FreedomVoice.iOS.Services
 {
     public interface IExtensionsService
     {
-        void SetSystemNumber(string systemNumber);
-
         /// <summary>
         /// Asynchronous retrieving of mailboxes
         /// </summary>
-        Task<BaseResponse> ExecuteRequest();
+        Task<BaseResponse> ExecuteRequest(string systemNumber);
     }
 }

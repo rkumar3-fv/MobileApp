@@ -39,9 +39,7 @@ namespace FreedomVoice.iOS.ViewModels
         {
             IsBusy = true;
 
-            _service.SetParameters(_systemPhoneNumber, _mailboxNumber);
-
-            var requestResult = await _service.ExecuteRequest();
+            var requestResult = await _service.ExecuteRequest(_systemPhoneNumber, _mailboxNumber);
             if (requestResult is ErrorResponse)
                 ProceedErrorResponse(requestResult);
             else

@@ -156,6 +156,8 @@ namespace FreedomVoice.iOS.ViewModels
             OnSuccessResponse?.Invoke(null, EventArgs.Empty);
         }
 
+        public string LoadingMessage { private get; set; }
+
         private LoadingOverlay _loadingOverlay;
         private void BaseOnIsBusyChanged()
         {
@@ -164,7 +166,7 @@ namespace FreedomVoice.iOS.ViewModels
 
             if (IsBusy)
             {
-                _loadingOverlay = new LoadingOverlay(Theme.ScreenBounds);
+                _loadingOverlay = string.IsNullOrEmpty(LoadingMessage) ? new LoadingOverlay(Theme.ScreenBounds) : new LoadingOverlay(Theme.ScreenBounds, LoadingMessage);
                 ViewController.View.Add(_loadingOverlay);
             }
             else

@@ -7,6 +7,7 @@ using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.ViewModels;
 using UIKit;
 using FreedomVoice.iOS.Helpers;
+using FreedomVoice.iOS.Utilities;
 
 namespace FreedomVoice.iOS.Views.Shared
 {
@@ -26,9 +27,7 @@ namespace FreedomVoice.iOS.Views.Shared
 
         void Initialize(IList<PresentationNumber> numbers)
         {
-            var dropdownImage = new UIImageView(new CGRect(278, 16, 10, 7)) { Image = UIImage.FromFile("dropdown_arrow.png") };
-
-            var labelField = new UILabel(new CGRect(15, 0, 145, 40)) { Text = "Show as Caller ID:", Font = UIFont.SystemFontOfSize(16f, UIFontWeight.Regular) };
+            var labelField = new UILabel(new CGRect(15, 0, Theme.ScreenBounds.Width / 2 - 15, 40)) { Text = "Show as Caller ID:", Font = UIFont.SystemFontOfSize(17, UIFontWeight.Regular) };
 
             if (_selectedPresentationNumber == null && numbers != null && numbers.Count > 0)
                 _selectedPresentationNumber = numbers[0];
@@ -53,13 +52,15 @@ namespace FreedomVoice.iOS.Views.Shared
 
             _callerIdTextField = new UITextField
             {
-                Font = UIFont.SystemFontOfSize(16f, UIFontWeight.Medium),
-                Frame = new CGRect(150, 0, 160, 40),
+                Font = UIFont.SystemFontOfSize(17, UIFontWeight.Medium),
+                Frame = new CGRect(labelField.Frame.X + labelField.Frame.Width, 0, Theme.ScreenBounds.Width / 2, 40),
                 UserInteractionEnabled = true,
                 Text = _callerIdPickerModel.SelectedItem.FormattedPhoneNumber,
                 TintColor = UIColor.Clear
             };
             _callerIdTextField.TouchDown += SetPicker;
+
+            var dropdownImage = new UIImageView(new CGRect(295, 16, 10, 7)) { Image = UIImage.FromFile("dropdown_arrow.png") };
 
             var toolbar = new UIToolbar { BarStyle = UIBarStyle.Black, Translucent = true };
             toolbar.SizeToFit();

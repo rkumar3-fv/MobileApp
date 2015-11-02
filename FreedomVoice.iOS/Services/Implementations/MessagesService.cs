@@ -8,20 +8,9 @@ namespace FreedomVoice.iOS.Services.Implementations
     {
         private const int PageSize = 30;
 
-        private string _systemNumber;
-        private int _mailboxNumber;
-        private string _folderName;
-
-        public void SetParameters(string systemNumber, int mailboxNumber, string folderName)
+        public async Task<BaseResponse> ExecuteRequest(string systemNumber, int mailboxNumber, string folderName)
         {
-            _systemNumber = systemNumber;
-            _mailboxNumber = mailboxNumber;
-            _folderName = folderName;
-        }
-
-        public async override Task<BaseResponse> ExecuteRequest()
-        {
-            var asyncRes = await ApiHelper.GetMesages(_systemNumber, _mailboxNumber, _folderName, PageSize, 1, false);
+            var asyncRes = await ApiHelper.GetMesages(systemNumber, mailboxNumber, folderName, PageSize, 1, false);
             var errorResponse = CheckErrorResponse(asyncRes.Code);
             if (errorResponse != null)
                 return errorResponse;

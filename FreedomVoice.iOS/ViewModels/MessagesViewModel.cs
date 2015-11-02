@@ -10,7 +10,8 @@ namespace FreedomVoice.iOS.ViewModels
 {
     public class MessagesViewModel : BaseViewModel
     {
-        readonly IMessagesService _service;
+        private readonly IMessagesService _service;
+
         private readonly string _systemPhoneNumber;
         private readonly int _mailboxNumber;
         private readonly string _folderName;
@@ -41,9 +42,7 @@ namespace FreedomVoice.iOS.ViewModels
         {
             IsBusy = true;
 
-            _service.SetParameters(_systemPhoneNumber, _mailboxNumber, _folderName);
-
-            var requestResult = await _service.ExecuteRequest();
+            var requestResult = await _service.ExecuteRequest(_systemPhoneNumber, _mailboxNumber, _folderName);
             if (requestResult is ErrorResponse)
                 ProceedErrorResponse(requestResult);
             else

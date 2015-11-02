@@ -5,11 +5,9 @@ namespace FreedomVoice.iOS.Services
 {
     public interface ILoginService
     {
-        void SetCredentials(string userName, string password);
-
         /// <summary>
         /// Asynchronous login
         /// </summary>
-        Task<BaseResponse> ExecuteRequest();
+        Task<BaseResponse> ExecuteRequest(string userName, string password);
     }
 }

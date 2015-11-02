@@ -14,7 +14,6 @@ using Foundation;
 
 namespace FreedomVoice.iOS.ViewControllers
 {
-    //TODO: Clean class from commented code
     partial class KeypadViewController : UIViewController
     {
         private UILabel _phoneLabel;
@@ -26,16 +25,15 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private CallerIdView CallerIdView { get; set; }
 
-        //private MainTabBarController MainTab => ParentViewController.ParentViewController as MainTabBarController;
         private static MainTabBarController MainTabBarInstance => MainTabBarController.Instance;
 
         public KeypadViewController(IntPtr handle) : base(handle) { }
 
         public override void ViewDidLoad()
         {
-            CallerIdView = new CallerIdView(new RectangleF(0, 64, 320, 40), MainTabBarInstance.GetPresentationNumbers());
+            CallerIdView = new CallerIdView(new RectangleF(0, 64, (float)View.Frame.Width, 40), MainTabBarInstance.GetPresentationNumbers());
 
-            var keypadLineView = new RecentLineView(new RectangleF(0, 104, 320, 0.5f));
+            var keypadLineView = new RecentLineView(new RectangleF(0, 104, (float)View.Frame.Width, 0.5f));
 
             _phoneLabel = new UILabel(new CGRect(30, 105, 250, 52))
             {

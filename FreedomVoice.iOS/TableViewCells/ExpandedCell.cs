@@ -45,7 +45,7 @@ namespace FreedomVoice.iOS.TableViewCells
             var gradientLayer = new CAGradientLayer
             {
                 Frame = new CGRect(Bounds.X, Bounds.Y, Bounds.Width, bgHeight),
-                Colors = new[] {UIColor.FromRGB(51, 71, 98).CGColor, UIColor.FromRGB(98, 120, 149).CGColor}
+                Colors = new[] { UIColor.FromRGB(51, 71, 98).CGColor, UIColor.FromRGB(98, 120, 149).CGColor }
             };
             Layer.AddSublayer(gradientLayer);
         }
@@ -63,6 +63,7 @@ namespace FreedomVoice.iOS.TableViewCells
 
             _deleteButton = new UIButton(new CGRect(285, faxMessageType ? 60 : 99, 25, 25));
             _deleteButton.SetBackgroundImage(UIImage.FromFile("delete.png"), UIControlState.Normal);
+            _deleteButton.TouchDown += OnDeleteButtonTouchDown;
 
             selectedViews.AddRange(new List<UIView> { _icon, _title, _date, _length, _deleteButton });
 
@@ -77,6 +78,17 @@ namespace FreedomVoice.iOS.TableViewCells
             AddSubviews(selectedViews.ToArray());
 
             InitCommonStyles();
+        }
+
+        private void InitCommonStyles()
+        {
+            foreach (var btn in new List<UIButton> { _callBackButton, _viewFaxButton, _speakerButton }.Where(btn => btn != null))
+            {
+                btn.Font = UIFont.SystemFontOfSize(14);
+                btn.ClipsToBounds = true;
+                btn.Layer.CornerRadius = 5;
+                btn.Layer.BorderWidth = 1;
+            }
         }
 
         private static UILabel GetFormattedLength(double length, bool faxMessageType)
@@ -102,7 +114,7 @@ namespace FreedomVoice.iOS.TableViewCells
             _speakerButton.SetTitleColor(UIColor.FromRGB(119, 229, 246), UIControlState.Normal);
             _speakerButton.SetImage(UIImage.FromFile("speaker.png"), UIControlState.Normal);            
             _speakerButton.Layer.BorderColor = UIColor.FromRGBA(119, 229, 246, 110).CGColor;            
-            _speakerButton.TouchDown += delegate { BackgroundColorAnimate(_speakerButton, UIColor.FromRGBA(119, 229, 246, 127)); };
+            _speakerButton.TouchDown += OnSpeakerButtonTouchDown;
             
             return _speakerButton;
         }
@@ -114,7 +126,7 @@ namespace FreedomVoice.iOS.TableViewCells
             _viewFaxButton.SetTitleColor(UIColor.FromRGB(198, 242, 138), UIControlState.Normal);
             _viewFaxButton.SetImage(UIImage.FromFile("view_fax.png"), UIControlState.Normal);
             _viewFaxButton.Layer.BorderColor = UIColor.FromRGBA(198, 242, 138, 90).CGColor;
-            _viewFaxButton.TouchDown += delegate { BackgroundColorAnimate(_viewFaxButton, UIColor.FromRGBA(198, 242, 138, 127)); };
+            _viewFaxButton.TouchDown += OnFaxButtonTouchDown;
 
             return _viewFaxButton;
         }
@@ -126,20 +138,29 @@ namespace FreedomVoice.iOS.TableViewCells
             _callBackButton.SetTitleColor(UIColor.FromRGB(198, 242, 138), UIControlState.Normal);
             _callBackButton.SetImage(UIImage.FromFile("call_back.png"), UIControlState.Normal);
             _callBackButton.Layer.BorderColor = UIColor.FromRGBA(198, 242, 138, 110).CGColor;
-            _callBackButton.TouchDown += delegate { BackgroundColorAnimate(_callBackButton, UIColor.FromRGBA(198, 242, 138, 127)); };
+            _callBackButton.TouchDown += OnCallBackButtonTouchDown;
 
             return _callBackButton;
         }
 
-        private void InitCommonStyles()
+        private async void OnSpeakerButtonTouchDown(object sender, EventArgs args)
         {
-            foreach (var btn in new List<UIButton> { _callBackButton, _viewFaxButton, _speakerButton }.Where(btn => btn != null))
-            {
-                btn.Font = UIFont.SystemFontOfSize(14);
-                btn.ClipsToBounds = true;
-                btn.Layer.CornerRadius = 5;
-                btn.Layer.BorderWidth = 1;
-            }
+            BackgroundColorAnimate(_speakerButton, UIColor.FromRGBA(119, 229, 246, 127));
+        }
+
+        private async void OnFaxButtonTouchDown(object sender, EventArgs args)
+        {
+            BackgroundColorAnimate(_viewFaxButton, UIColor.FromRGBA(198, 242, 138, 127));
+        }
+
+        private async void OnCallBackButtonTouchDown(object sender, EventArgs args)
+        {
+            BackgroundColorAnimate(_callBackButton, UIColor.FromRGBA(198, 242, 138, 127));
+        }
+
+        private async void OnDeleteButtonTouchDown(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
         }
     }
 }

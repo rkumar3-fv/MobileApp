@@ -9,7 +9,7 @@ namespace FreedomVoice.iOS.ViewControllers
 {
 	public partial class MainTabBarController : UITabBarController
 	{
-        public Account SelectedAccount { private get; set; }
+        public Account SelectedAccount { get; set; }
         public List<PresentationNumber> PresentationNumbers { private get; set; }
 	    public List<ExtensionWithCount> ExtensionsList { private get; set; }
 

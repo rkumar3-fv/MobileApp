@@ -75,9 +75,7 @@ namespace FreedomVoice.iOS.ViewModels
         {
             IsBusy = true;
 
-            _service.SetCredentials(Username, Password);
-
-            var requestResult = await _service.ExecuteRequest();
+            var requestResult = await _service.ExecuteRequest(Username, Password);
             if (requestResult is ErrorResponse)
                 ProceedErrorResponse(requestResult);
             else

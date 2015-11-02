@@ -46,9 +46,7 @@ namespace FreedomVoice.iOS.ViewModels
         {
             IsBusy = true;
 
-            _extensionsService.SetSystemNumber(_selectedAccount.PhoneNumber);
-
-            var requestResult = await _extensionsService.ExecuteRequest();
+            var requestResult = await _extensionsService.ExecuteRequest(_selectedAccount.PhoneNumber);
             if (requestResult is ErrorResponse)
             {
                 ProceedErrorResponse(requestResult);
@@ -68,9 +66,7 @@ namespace FreedomVoice.iOS.ViewModels
         /// <returns></returns>
         public async Task GetPresentationNumbersAsync()
         {
-            _presentationNumbersService.SetSystemNumber(_selectedAccount.PhoneNumber);
-
-            var requestResult = await _presentationNumbersService.ExecuteRequest();
+            var requestResult = await _presentationNumbersService.ExecuteRequest(_selectedAccount.PhoneNumber);
             if (requestResult is ErrorResponse)
                 ProceedErrorResponse(requestResult);
             else

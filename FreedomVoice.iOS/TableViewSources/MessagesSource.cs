@@ -18,6 +18,7 @@ namespace FreedomVoice.iOS.TableViewSources
         private readonly FolderWithCount _selectedFolder;
 
         private readonly UINavigationController _navigationController;
+
         private int _selectedRowIndex = -1;
         private int _selectedRowForHeight = -1;
 
@@ -62,8 +63,6 @@ namespace FreedomVoice.iOS.TableViewSources
 
         public override void RowSelected(UITableView tableView, NSIndexPath indexPath)
         {
-            var selectedMessage = _messages[indexPath.Row];
-
             _selectedRowForHeight = _selectedRowIndex = indexPath.Row;
             tableView.ReloadRows(tableView.IndexPathsForVisibleRows, UITableViewRowAnimation.Fade);
         }
