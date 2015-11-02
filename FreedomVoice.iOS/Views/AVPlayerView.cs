@@ -3,9 +3,13 @@ using CoreGraphics;
 using Foundation;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using FreedomVoice.iOS.Helpers;
 using UIKit;
+using System.Threading;
+using FreedomVoice.iOS.Utilities;
+using FreedomVoice.iOS.Services;
+using FreedomVoice.iOS.Services.Responses;
+using FreedomVoice.iOS.ViewControllers;
 
 namespace FreedomVoice.iOS.Views
 {
@@ -30,18 +34,22 @@ namespace FreedomVoice.iOS.Views
 
         #endregion
 
-        public AVPlayerView(CGRect bounds, string fileName) : base(bounds)
+        private string _systemPhoneNumber;
+        private int _mailboxNumber;
+        private string _folderName;
+        private string _messageId;
+
+        public AVPlayerView(CGRect bounds, double duration, string systemPhoneNumber, int mailboxNumber, string folderName, string messageId) : base(bounds)
         {
-            Initialize(fileName);
+            Initialize(duration);
+            _systemPhoneNumber = systemPhoneNumber;
+            _mailboxNumber = mailboxNumber;
+            _folderName = folderName;
+            _messageId = messageId;
         }
 
-        private void Initialize(string fileName)
+        private void Initialize(double duration)
         {
-            var path = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
-            var filePath = Path.Combine(path, fileName);
-
-            Console.WriteLine($"File {filePath} exists = {File.Exists(filePath)}");
-
             var sliderBackground = new SliderBackgorund(new CGRect(60, 12, 156, 7));
 
             _playButtonImage = UIImage.FromFile("play.png");
@@ -51,27 +59,15 @@ namespace FreedomVoice.iOS.Views
             _playButton.SetImage(_playButtonImage, UIControlState.Normal);
             _playButton.TouchUpInside += OnPlayButtonTouchUpInside;
 
-            try {
-                _player = AVAudioPlayer.FromUrl(new NSUrl(filePath, false));
-                _player.FinishedPlaying += OnPlayerFinishedPlaying;
-                _player.DecoderError += OnPlayerDecoderError;
-                _player.BeginInterruption += UpdateViewForPlayerState;
-                _player.EndInterruption += StartPlayback;
-            } catch (Exception)
-            {
-                Console.WriteLine($"Media doesn't exist. Filename: {fileName}");
-                return;
-            }
-
             _labelElapsed = new UILabel(new CGRect(25, 7, 37, 16)) { Text = "0:00" };
 
-            _progressBar = new UISlider(new CGRect(50, 12, 176, 7)) { Value = (float)_player.CurrentTime, MinValue = 0, MaxValue = (float)_player.Duration };
+            _progressBar = new UISlider(new CGRect(50, 12, 176, 7)) { Value = 0, MinValue = 0, MaxValue = (float)duration };
             _progressBar.SetThumbImage(UIImage.FromFile("scroller.png"), UIControlState.Normal);
             _progressBar.SetMaxTrackImage(new UIImage(), UIControlState.Normal);
             _progressBar.SetMinTrackImage(new UIImage(), UIControlState.Normal);
             _progressBar.ValueChanged += OnProgressBarValueChanged;
 
-            _labelRemaining = new UILabel(new CGRect(225, 7, 37, 16)) { Text = $"-{Formatting.SecondsToFormattedString(_player.Duration)}" };
+            _labelRemaining = new UILabel(new CGRect(225, 7, 37, 16)) { Text = $"-{Formatting.SecondsToFormattedString(duration)}" };
 
             foreach (var lbl in new List<UILabel> { _labelElapsed, _labelRemaining })
             {
@@ -114,12 +110,30 @@ namespace FreedomVoice.iOS.Views
                 Console.WriteLine($"Could not play the file {_player.Url}");
         }
 
+        private LoadingOverlay _loadingOverlay;
+
         private void OnPlayButtonTouchUpInside(object sender, EventArgs e)
         {
-            if (_player.Playing)
+            if (_player != null && _player.Playing)
                 PausePlayback(sender, e);
-            else
-                StartPlayback(sender, e);
+            else if (_player == null)                              
+                InitPlayer(sender, e);            
+            else            
+                StartPlayback(sender, e);            
+        }
+
+        private async void InitPlayer(object sender, EventArgs e) {
+            _loadingOverlay = new LoadingOverlay(Theme.ScreenBounds, "Loading Data...");
+            MainTabBarController.Instance.View.Add(_loadingOverlay);
+            var _service = ServiceContainer.Resolve<IMediaService>();
+            var response = await _service.ExecuteRequest(_systemPhoneNumber, _mailboxNumber, _folderName, _messageId, Core.Entities.Enums.MediaType.Wav, CancellationToken.None) as MediaResponse;
+            _loadingOverlay.Hide();
+            _player = AVAudioPlayer.FromUrl(new NSUrl(response.FilePath, false));
+            _player.FinishedPlaying += OnPlayerFinishedPlaying;
+            _player.DecoderError += OnPlayerDecoderError;
+            _player.BeginInterruption += UpdateViewForPlayerState;
+            _player.EndInterruption += StartPlayback;
+            StartPlayback(sender, e);
         }
 
         private void UpdateViewForPlayerState(object sender, EventArgs e)
@@ -129,10 +143,9 @@ namespace FreedomVoice.iOS.Views
             _updateTimer?.Invalidate();
 
             if (_player.Playing)
-            {
-                //TODO: Do we really need a timer with 0.01 interval?
+            {                
                 _playButton.SetImage(_pauseButtonImage, UIControlState.Normal);
-                _updateTimer = NSTimer.CreateRepeatingScheduledTimer(TimeSpan.FromSeconds(0.01), delegate { UpdateCurrentTime(); });
+                _updateTimer = NSTimer.CreateRepeatingScheduledTimer(TimeSpan.FromSeconds(0.5), delegate { UpdateCurrentTime(); });
             }
             else
             {

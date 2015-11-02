@@ -50,7 +50,7 @@ namespace FreedomVoice.iOS.TableViewCells
             Layer.AddSublayer(gradientLayer);
         }
 
-        public void UpdateCell(string title, string date, double length, string resourceFileName)
+        public void UpdateCell(string title, string date, double length, string systemPhoneNumber, int mailboxNumber, string folderName, string messageId)
         {
             var selectedViews = new List<UIView>();
             var faxMessageType = _type == MessageType.Fax;
@@ -71,7 +71,7 @@ namespace FreedomVoice.iOS.TableViewCells
                 selectedViews.Add(GetFaxButton());
             else
             {
-                _player = new AVPlayerView(new CGRect(46, 54, 256, 23), resourceFileName);
+                _player = new AVPlayerView(new CGRect(46, 54, 256, 23), length, systemPhoneNumber, mailboxNumber, folderName, messageId);
                 selectedViews.AddRange(new List<UIView> { _player, GetSpeakerButton(), GetCallBackButton() });
             }
 

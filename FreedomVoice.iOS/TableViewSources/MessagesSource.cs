@@ -35,13 +35,14 @@ namespace FreedomVoice.iOS.TableViewSources
 
         public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
         {
-            var selectedMessage = _messages[indexPath.Row];
+            var selectedMessage = _messages[indexPath.Row];            
 
             if (_selectedRowIndex >= 0 && indexPath.Row == _selectedRowIndex)
             {
                 _selectedRowIndex = -1;
                 var expandedCell = tableView.DequeueReusableCell(RecentCell.RecentCellId) as ExpandedCell ?? new ExpandedCell(selectedMessage.Type);
-                expandedCell.UpdateCell(selectedMessage.Name, Formatting.DateTimeFormat(selectedMessage.ReceivedOn), selectedMessage.Length, "sample.m4a");
+                expandedCell.UpdateCell(selectedMessage.Name, Formatting.DateTimeFormat(selectedMessage.ReceivedOn), selectedMessage.Length, 
+                        _selectedAccount.PhoneNumber, selectedMessage.Mailbox, selectedMessage.Folder, selectedMessage.Id);
 
                 return expandedCell;
             }
