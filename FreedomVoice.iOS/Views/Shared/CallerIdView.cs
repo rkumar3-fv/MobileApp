@@ -62,16 +62,23 @@ namespace FreedomVoice.iOS.Views.Shared
 
             var dropdownImage = new UIImageView(new CGRect(295, 16, 10, 7)) { Image = UIImage.FromFile("dropdown_arrow.png") };
 
-            var toolbar = new UIToolbar { BarStyle = UIBarStyle.Black, Translucent = true };
+            var toolbar = new UIToolbar { BarStyle = UIBarStyle.Black, Translucent = true, BarTintColor = Theme.BarBackgroundColor };
             toolbar.SizeToFit();
 
-            var doneButton = new UIBarButtonItem("Done", UIBarButtonItemStyle.Done, (s, e) => {
-                                                                 _callerIdTextField.Text = _selectedPresentationNumber.FormattedPhoneNumber;
-                                                                 _callerIdTextField.ResignFirstResponder();
-                                                             });
+            var actionLabel = new UILabel(new CGRect(0, 15, 160, 15)) { Font = UIFont.SystemFontOfSize(17, UIFontWeight.Medium), Text = "Show as Caller ID", TextAlignment = UITextAlignment.Center };
+            actionLabel.Center = new CGPoint(Center.X, actionLabel.Center.Y);
+            toolbar.AddSubview(actionLabel);
+
+            var doneButton = new UIBarButtonItem("Done", UIBarButtonItemStyle.Done, (s, e) =>
+            {
+                _callerIdTextField.Text = _selectedPresentationNumber.FormattedPhoneNumber;
+                _callerIdTextField.ResignFirstResponder();
+            }) { TintColor = Theme.BlueColor };
+
             toolbar.SetItems(new[] { doneButton }, true);
 
             _callerIdTextField.InputView = _pickerField;
+            _callerIdTextField.InputView.BackgroundColor = UIColor.White;
             _callerIdTextField.InputAccessoryView = toolbar;
 
             AddSubviews(labelField, _callerIdTextField, dropdownImage);
