@@ -24,7 +24,7 @@ namespace FreedomVoice.iOS.ViewControllers
 
             _messagesViewModel = new MessagesViewModel(SelectedAccount.PhoneNumber, SelectedExtension.ExtensionNumber, SelectedFolder.DisplayName, NavigationController);
 
-            await _messagesViewModel.GetMessagesListAsync();
+            await _messagesViewModel.GetMessagesListAsync(SelectedFolder.MessageCount);
 
             MessagesTableView.Source = new MessagesSource(_messagesViewModel.MessagesList, SelectedExtension, SelectedAccount, SelectedFolder, NavigationController);
             MessagesTableView.ReloadData();
