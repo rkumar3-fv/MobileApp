@@ -43,9 +43,10 @@ namespace FreedomVoice.iOS.TableViewSources
                 _selectedRowIndex = -1;
                 var expandedCell = tableView.DequeueReusableCell(RecentCell.RecentCellId) as ExpandedCell ?? new ExpandedCell(selectedMessage.Type);
                 expandedCell.UpdateCell(selectedMessage.Name, Formatting.DateTimeFormat(selectedMessage.ReceivedOn), selectedMessage.Length, 
-                        _selectedAccount.PhoneNumber, selectedMessage.Mailbox, selectedMessage.Folder, selectedMessage.Id, selectedMessage.SourceNumber);
+                        _selectedAccount.PhoneNumber, selectedMessage.Mailbox, selectedMessage.Folder, selectedMessage.Id, selectedMessage.SourceNumber, _navigationController);
 
-                expandedCell.OnCallbackClick += (sender, args) => { RowCallbackClick(tableView, indexPath, args.SourceNumber); };
+                expandedCell.OnCallbackClick += (sender, args) => { RowCallbackClick(tableView, indexPath); };
+                expandedCell.OnViewFaxClick += (sender, args) => { RowViewFaxClick(args.FilePath); };
 
                 return expandedCell;
             }
@@ -82,25 +83,19 @@ namespace FreedomVoice.iOS.TableViewSources
         }
 
 
-        public event EventHandler<CallBackClickEventArgs> OnRowCallbackClick;
+        public event EventHandler<ExpandedCellButtonClickEventArgs> OnRowCallbackClick;
+        public event EventHandler<ExpandedCellButtonClickEventArgs> OnRowViewFaxClick;
 
-        public class CallBackClickEventArgs : EventArgs
-        {
-            public UITableView TableView { get; private set; }
-            public NSIndexPath IndexPath { get; private set; }
-            public string SourceNumber { get; private set; }
-
-            public CallBackClickEventArgs(UITableView tableView, NSIndexPath indexPath, string SourceNumber)
-            {
-                TableView = tableView;
-                IndexPath = indexPath;
-                this.SourceNumber = SourceNumber;
-            }
+        private void RowViewFaxClick(string filePath)
+        {            
+            OnRowViewFaxClick?.Invoke(this, new ExpandedCellButtonClickEventArgs(filePath));
         }
 
-        private void RowCallbackClick(UITableView tableView, NSIndexPath indexPath, string SourceNumber)
+        private void RowCallbackClick(UITableView tableView, NSIndexPath indexPath)
         {
-            OnRowCallbackClick?.Invoke(this, new CallBackClickEventArgs(tableView, indexPath, SourceNumber));
+            var selectedMessage = _messages[indexPath.Row];
+
+            OnRowCallbackClick?.Invoke(this, new ExpandedCellButtonClickEventArgs(selectedMessage));
         }
     }
 }

@@ -98,6 +98,7 @@
     <Compile Include="Entities\FolderWithCount.cs" />
     <Compile Include="Entities\Message.cs" />
     <Compile Include="Entities\PresentationNumber.cs" />
+    <Compile Include="Helpers\ExpandedCellButtonClickEventArgs.cs" />
     <Compile Include="Helpers\Formatting.cs" />
     <Compile Include="Helpers\LoadingOverlay.cs" />
     <Compile Include="Services\IMediaService.cs" />

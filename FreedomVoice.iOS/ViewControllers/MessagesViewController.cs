@@ -7,6 +7,8 @@ using FreedomVoice.iOS.TableViewSources;
 using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.ViewModels;
 using UIKit;
+using Foundation;
+using WatchKit;
 
 namespace FreedomVoice.iOS.ViewControllers
 {
@@ -51,6 +53,7 @@ namespace FreedomVoice.iOS.ViewControllers
 
             var source = new MessagesSource(_messagesList, SelectedExtension, SelectedAccount, SelectedFolder, NavigationController);
             source.OnRowCallbackClick += Source_OnRowCallbackClick;
+            source.OnRowViewFaxClick += Source_OnRowViewFaxClick;
             MessagesTableView.Source = source;
 
             MessagesTableView.ReloadData();
@@ -62,10 +65,39 @@ namespace FreedomVoice.iOS.ViewControllers
             base.ViewDidLoad();
         }
 
-        private void Source_OnRowCallbackClick(object sender, MessagesSource.CallBackClickEventArgs e)
+        private void Source_OnRowViewFaxClick(object sender, ExpandedCellButtonClickEventArgs e)
         {
+            var barTintColor = MainTabBarInstance.NavigationController.NavigationBar.BarTintColor;
+            var leftBarButtonItems = MainTabBarInstance.NavigationItem.LeftBarButtonItems;
+            var rightBarButtonItem = MainTabBarInstance.NavigationItem.RightBarButtonItem;
+            var title = MainTabBarInstance.Title;
+
+            var webView = new UIWebView(new CGRect(0, 60, View.Frame.Width, View.Frame.Height));
+            MainTabBarInstance.View.AddSubview(webView);
+            MainTabBarInstance.TabBar.Hidden = true;
+            MainTabBarInstance.NavigationController.NavigationBar.BarTintColor = UIColor.FromRGBA(35, 53, 77, 155);
+            webView.LoadRequest(new NSUrlRequest(new NSUrl(e.FilePath, false)));
+            webView.ScalesPageToFit = true;
+            MainTabBarInstance.Title = "Fax";
+
+            var backBtn = Appearance.GetBackButtonWithArrow(this,  () => {
+                MainTabBarInstance.NavigationController.NavigationBar.BarTintColor = barTintColor;
+                MainTabBarInstance.TabBar.Hidden = false;
+                webView.Hidden = true;
+                MainTabBarInstance.Title = title;
+                MainTabBarInstance.NavigationItem.SetLeftBarButtonItems(leftBarButtonItems, true);
+                MainTabBarInstance.NavigationItem.SetRightBarButtonItem(rightBarButtonItem, true);
+            });
+
+
+            MainTabBarInstance.NavigationItem.SetLeftBarButtonItems(backBtn, true);
+            MainTabBarInstance.NavigationItem.RightBarButtonItem = null;
+        }
+
+        private void Source_OnRowCallbackClick(object sender, ExpandedCellButtonClickEventArgs e)
+        {            
             var selectedCallerId = MainTabBarInstance.GetSelectedPresentationNumber().PhoneNumber;
-            PhoneCall.CreateCallReservation(MainTabBarInstance.SelectedAccount.PhoneNumber, selectedCallerId, e.SourceNumber, NavigationController);
+            PhoneCall.CreateCallReservation(MainTabBarInstance.SelectedAccount.PhoneNumber, selectedCallerId, e.SelectedMessage.SourceNumber, NavigationController);
         }
 
         public override void ViewWillAppear(bool animated)

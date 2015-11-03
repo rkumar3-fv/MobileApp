@@ -78,5 +78,27 @@ namespace FreedomVoice.iOS.Helpers
                     return null;
             }
         }
+
+        public static UIBarButtonItem[] GetBackButtonWithArrow(UIViewController controller, Action onTouchInside = null)
+        {
+            var negativeSpacer = new UIBarButtonItem(UIBarButtonSystemItem.FixedSpace) { Width = -8 };
+
+            var buttonImage = UIImage.FromFile("back.png");
+            var highlightedButtonImage = UIImage.FromFile("back_transparent.png");
+            var button = new UIButton(UIButtonType.Custom)
+            {
+                Frame = new CGRect(0, 0, 95, 33),
+                HorizontalAlignment = UIControlContentHorizontalAlignment.Left,
+                TitleEdgeInsets = new UIEdgeInsets(0, 5, 0, 0)
+            };
+            button.SetImage(buttonImage, UIControlState.Normal);
+            button.SetImage(highlightedButtonImage, UIControlState.Highlighted);
+            button.SetTitle("Back", UIControlState.Normal);
+            button.SetTitleColor(UIColor.FromRGBA(255, 255, 255, 51), UIControlState.Highlighted);            
+            button.TouchUpInside += (s, args) => { onTouchInside.Invoke(); };
+            
+
+            return new[] { negativeSpacer, new UIBarButtonItem(button) };
+        }
     }
 }

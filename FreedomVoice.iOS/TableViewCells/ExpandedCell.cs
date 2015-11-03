@@ -8,6 +8,9 @@ using System.Collections.Generic;
 using System.Linq;
 using FreedomVoice.iOS.Helpers;
 using UIKit;
+using FreedomVoice.iOS.ViewModels;
+using System.Threading.Tasks;
+using FreedomVoice.iOS.TableViewSources;
 
 namespace FreedomVoice.iOS.TableViewCells
 {
@@ -19,7 +22,7 @@ namespace FreedomVoice.iOS.TableViewCells
 
         private UILabel _title;
         private UILabel _date;
-        private UILabel _length;
+        private UILabel _lengthLbl;
 
         private AVPlayerView _player;
 
@@ -28,17 +31,26 @@ namespace FreedomVoice.iOS.TableViewCells
         private UIButton _speakerButton;
         private UIButton _viewFaxButton;
 
-        private string _sourceNumber;
+        private UINavigationController _navigationController;
 
+        private string _sourceNumber;        
         #endregion
 
-        private readonly MessageType _type;
+        private readonly MessageType _type;        
 
         private static readonly NSString ExpandedCellId = new NSString("ExpandedCell");
+
+        private string _systemPhoneNumber;
+        private int _mailboxNumber;
+        private string _folderName;
+        private string _messageId;
+        private double _length;
+        ExpandedCellViewModel _viewModel;
+
         public ExpandedCell(MessageType type) : base (UITableViewCellStyle.Default, ExpandedCellId)
         {
             _type = type;
-            SetBackground();            
+            SetBackground();
         }
 
         private void SetBackground()
@@ -52,9 +64,16 @@ namespace FreedomVoice.iOS.TableViewCells
             Layer.AddSublayer(gradientLayer);
         }
 
-        public void UpdateCell(string title, string date, double length, string systemPhoneNumber, int mailboxNumber, string folderName, string messageId, string sourceNumber)
+        public void UpdateCell(string title, string date, double length, string systemPhoneNumber, int mailboxNumber, string folderName, string messageId, string sourceNumber, UINavigationController navigationController)
         {
             _sourceNumber = sourceNumber;
+            _systemPhoneNumber = systemPhoneNumber;
+            _mailboxNumber = mailboxNumber;
+            _folderName = folderName;
+            _messageId = messageId;
+            _navigationController = navigationController;
+            _length = length;
+
             var selectedViews = new List<UIView>();
             var faxMessageType = _type == MessageType.Fax;
 
@@ -62,19 +81,19 @@ namespace FreedomVoice.iOS.TableViewCells
             _title = new UILabel(new CGRect(55, 10, 270, 19)) { Text = title, TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(17) };
             _date = new UILabel(new CGRect(55, 29, 110, 11)) { Text = date, TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(12) };
 
-            _length = GetFormattedLength(length, faxMessageType);
+            _lengthLbl = GetFormattedLength(length, faxMessageType);
 
             _deleteButton = new UIButton(new CGRect(285, faxMessageType ? 60 : 99, 25, 25));
             _deleteButton.SetBackgroundImage(UIImage.FromFile("delete.png"), UIControlState.Normal);
             _deleteButton.TouchDown += OnDeleteButtonTouchDown;
 
-            selectedViews.AddRange(new List<UIView> { _icon, _title, _date, _length, _deleteButton });
+            selectedViews.AddRange(new List<UIView> { _icon, _title, _date, _lengthLbl, _deleteButton });
 
             if (faxMessageType)
                 selectedViews.Add(GetFaxButton());
             else
             {
-                _player = new AVPlayerView(new CGRect(46, 54, 256, 23), length, systemPhoneNumber, mailboxNumber, folderName, messageId);
+                _player = new AVPlayerView(new CGRect(46, 54, 256, 23), this);
                 selectedViews.AddRange(new List<UIView> { _player, GetSpeakerButton(), GetCallBackButton() });
             }
 
@@ -146,37 +165,43 @@ namespace FreedomVoice.iOS.TableViewCells
             return _callBackButton;
         }
 
-        private async void OnSpeakerButtonTouchDown(object sender, EventArgs args)
+        private void OnSpeakerButtonTouchDown(object sender, EventArgs args)
         {
             BackgroundColorAnimate(_speakerButton, UIColor.FromRGBA(119, 229, 246, 127));
         }
 
-        private async void OnFaxButtonTouchDown(object sender, EventArgs args)
+        public async Task<string> GetMediaPath(MediaType mediaType)
         {
-            BackgroundColorAnimate(_viewFaxButton, UIColor.FromRGBA(198, 242, 138, 127));
+            _viewModel = new ExpandedCellViewModel(_systemPhoneNumber, _mailboxNumber, _folderName, _messageId, mediaType, _navigationController);
+            await _viewModel.GetMediaAsync();
+            return _viewModel.FilePath;         
+
         }
 
-        private async void OnCallBackButtonTouchDown(object sender, EventArgs args)
+        private async void OnFaxButtonTouchDown(object sender, EventArgs args)
+        {            
+            string filePath = await GetMediaPath(MediaType.Pdf);
+            OnViewFaxClick(this, new ExpandedCellButtonClickEventArgs(filePath));
+        }
+
+        private void OnCallBackButtonTouchDown(object sender, EventArgs args)
         {
             BackgroundColorAnimate(_callBackButton, UIColor.FromRGBA(198, 242, 138, 127));
-            OnCallbackClick?.Invoke(this, new CallbackClickEventArgs(_sourceNumber));
+            OnCallbackClick?.Invoke(this, new ExpandedCellButtonClickEventArgs());
         }
 
-        private async void OnDeleteButtonTouchDown(object sender, EventArgs e)
+        private void OnDeleteButtonTouchDown(object sender, EventArgs e)
         {
             throw new NotImplementedException();
         }
 
-        public event EventHandler<CallbackClickEventArgs> OnCallbackClick;
+        public event EventHandler<ExpandedCellButtonClickEventArgs> OnCallbackClick;
+        public event EventHandler<ExpandedCellButtonClickEventArgs> OnViewFaxClick;
 
-        public class CallbackClickEventArgs : EventArgs
+
+        public double GetDuration()
         {
-            public string SourceNumber { get; private set; }
-
-            public CallbackClickEventArgs(string sourceNumber)
-            {
-                SourceNumber = sourceNumber;
-            }
+            return _length;
         }
     }
 }
