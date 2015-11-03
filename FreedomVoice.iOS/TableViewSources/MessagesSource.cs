@@ -48,6 +48,7 @@ namespace FreedomVoice.iOS.TableViewSources
 
                 expandedCell.OnCallbackClick += (sender, args) => { RowCallbackClick(tableView, indexPath); };
                 expandedCell.OnViewFaxClick += (sender, args) => { RowViewFaxClick(args.FilePath); };
+                expandedCell.OnRowDeleteMessageClick += (sender, args) => { RowDeleteMessageClick(tableView, indexPath); };
 
                 return expandedCell;
             }
@@ -94,6 +95,7 @@ namespace FreedomVoice.iOS.TableViewSources
 
         public event EventHandler<ExpandedCellButtonClickEventArgs> OnRowCallbackClick;
         public event EventHandler<ExpandedCellButtonClickEventArgs> OnRowViewFaxClick;
+        public event EventHandler<ExpandedCellButtonClickEventArgs> OnRowDeleteMessageClick;
 
         private void RowViewFaxClick(string filePath)
         {
@@ -105,6 +107,11 @@ namespace FreedomVoice.iOS.TableViewSources
             var selectedMessage = _messages[indexPath.Row];
 
             OnRowCallbackClick?.Invoke(this, new ExpandedCellButtonClickEventArgs(selectedMessage));
+        }
+
+        private void RowDeleteMessageClick(UITableView tableView, NSIndexPath indexPath)
+        {
+            OnRowDeleteMessageClick?.Invoke(this, new ExpandedCellButtonClickEventArgs(tableView, indexPath));
         }
     }
 }

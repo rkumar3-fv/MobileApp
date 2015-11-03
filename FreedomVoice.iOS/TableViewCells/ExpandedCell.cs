@@ -180,11 +180,12 @@ namespace FreedomVoice.iOS.TableViewCells
 
         private void OnDeleteButtonTouchDown(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            OnRowDeleteMessageClick?.Invoke(this, new ExpandedCellButtonClickEventArgs());
         }
 
         public event EventHandler<ExpandedCellButtonClickEventArgs> OnCallbackClick;
         public event EventHandler<ExpandedCellButtonClickEventArgs> OnViewFaxClick;
+        public event EventHandler<ExpandedCellButtonClickEventArgs> OnRowDeleteMessageClick;
 
 
         public double GetDuration()

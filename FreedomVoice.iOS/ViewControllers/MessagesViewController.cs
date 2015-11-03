@@ -54,6 +54,7 @@ namespace FreedomVoice.iOS.ViewControllers
             var source = new MessagesSource(_messagesList, SelectedExtension, SelectedAccount, SelectedFolder, NavigationController);
             source.OnRowCallbackClick += Source_OnRowCallbackClick;
             source.OnRowViewFaxClick += Source_OnRowViewFaxClick;
+            source.OnRowDeleteMessageClick += Source_OnRowDeleteMessageClick;
             MessagesTableView.Source = source;
 
             MessagesTableView.ReloadData();
@@ -63,6 +64,25 @@ namespace FreedomVoice.iOS.ViewControllers
             CheckIfTableEmpty(MessagesCount);
 
             base.ViewDidLoad();
+        }
+
+        private void Source_OnRowDeleteMessageClick(object sender, ExpandedCellButtonClickEventArgs e)
+        {
+            var selectedMessage = _messagesList[e.IndexPath.Row];
+            if (selectedMessage == null) return;
+
+            if (selectedMessage.Folder == "Trash")
+            {
+
+            }
+            else
+            {
+                e.TableView.DeselectRow(e.IndexPath, false);
+                MessagesTableView.BeginUpdates();
+                _messagesList.Remove(selectedMessage);
+                MessagesTableView.DeleteRows(new[] { e.IndexPath }, UITableViewRowAnimation.Fade);
+                MessagesTableView.EndUpdates();
+            }
         }
 
         private void Source_OnRowViewFaxClick(object sender, ExpandedCellButtonClickEventArgs e)

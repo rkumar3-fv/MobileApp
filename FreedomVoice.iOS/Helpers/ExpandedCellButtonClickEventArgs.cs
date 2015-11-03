@@ -1,5 +1,7 @@
-﻿using FreedomVoice.iOS.Entities;
+﻿using Foundation;
+using FreedomVoice.iOS.Entities;
 using System;
+using UIKit;
 
 namespace FreedomVoice.iOS.Helpers
 {
@@ -9,6 +11,9 @@ namespace FreedomVoice.iOS.Helpers
         public Message SelectedMessage { get; private set; }
         public string FilePath { get; set; } = string.Empty;
 
+        public UITableView TableView;
+        public NSIndexPath IndexPath;
+
         public ExpandedCellButtonClickEventArgs(Message selectedMessage)
         {
             SelectedMessage = selectedMessage;
@@ -17,6 +22,12 @@ namespace FreedomVoice.iOS.Helpers
         public ExpandedCellButtonClickEventArgs()
         {
 
+        }
+
+        public ExpandedCellButtonClickEventArgs(UITableView tableView, NSIndexPath indexPath)
+        {
+            TableView = tableView;
+            IndexPath = indexPath;
         }
 
         public ExpandedCellButtonClickEventArgs(string filePath)
