@@ -6,6 +6,7 @@ using FreedomVoice.iOS.Views;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.Helpers;
 using UIKit;
 
@@ -32,18 +33,18 @@ namespace FreedomVoice.iOS.TableViewCells
 
         #endregion
 
-        private readonly MessageType _type;
+        private readonly Message _message;
 
         private static readonly NSString ExpandedCellId = new NSString("ExpandedCell");
-        public ExpandedCell(MessageType type) : base (UITableViewCellStyle.Default, ExpandedCellId)
+        public ExpandedCell(Message message) : base (UITableViewCellStyle.Default, ExpandedCellId)
         {
-            _type = type;
-            SetBackground();            
+            _message = message;
+            SetBackground();
         }
 
         private void SetBackground()
         {
-            nfloat bgHeight = _type == MessageType.Fax ? 100 : 138;
+            nfloat bgHeight = _message.Type == MessageType.Fax ? 100 : 138;
             var gradientLayer = new CAGradientLayer
             {
                 Frame = new CGRect(Bounds.X, Bounds.Y, Bounds.Width, bgHeight),
@@ -52,17 +53,18 @@ namespace FreedomVoice.iOS.TableViewCells
             Layer.AddSublayer(gradientLayer);
         }
 
-        public void UpdateCell(string title, string date, double length, string systemPhoneNumber, int mailboxNumber, string folderName, string messageId, string sourceNumber)
+        public void UpdateCell(string systemPhoneNumber)
         {
-            _sourceNumber = sourceNumber;
+            _sourceNumber = _message.SourceNumber;
+
             var selectedViews = new List<UIView>();
-            var faxMessageType = _type == MessageType.Fax;
+            var faxMessageType = _message.Type == MessageType.Fax;
 
-            _icon = Helpers.Appearance.GetMessageImageView(_type, false, true);
-            _title = new UILabel(new CGRect(55, 10, 270, 19)) { Text = title, TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(17) };
-            _date = new UILabel(new CGRect(55, 29, 110, 11)) { Text = date, TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(12) };
+            _icon = Helpers.Appearance.GetMessageImageView(_message.Type, false, true);
+            _title = new UILabel(new CGRect(55, 10, 270, 19)) { Text = _message.Name, TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(17) };
+            _date = new UILabel(new CGRect(55, 29, 110, 11)) { Text = Formatting.DateTimeFormat(_message.ReceivedOn), TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(12) };
 
-            _length = GetFormattedLength(length, faxMessageType);
+            _length = GetFormattedLength(_message.Length, faxMessageType);
 
             _deleteButton = new UIButton(new CGRect(285, faxMessageType ? 60 : 99, 25, 25));
             _deleteButton.SetBackgroundImage(UIImage.FromFile("delete.png"), UIControlState.Normal);
@@ -74,7 +76,7 @@ namespace FreedomVoice.iOS.TableViewCells
                 selectedViews.Add(GetFaxButton());
             else
             {
-                _player = new AVPlayerView(new CGRect(46, 54, 256, 23), length, systemPhoneNumber, mailboxNumber, folderName, messageId);
+                _player = new AVPlayerView(new CGRect(46, 54, 256, 23), _message.Length, systemPhoneNumber, _message.Mailbox, _message.Folder, _message.Id);
                 selectedViews.AddRange(new List<UIView> { _player, GetSpeakerButton(), GetCallBackButton() });
             }
 

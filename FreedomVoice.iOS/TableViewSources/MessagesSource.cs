@@ -19,8 +19,8 @@ namespace FreedomVoice.iOS.TableViewSources
 
         private readonly UINavigationController _navigationController;
 
+        private NSIndexPath _selectedRowIndexPath;
         private int _selectedRowIndex = -1;
-        private int _selectedRowForHeight = -1;
 
         public MessagesSource(List<Message> messages, ExtensionWithCount selectedExtension, Account selectedAccount, FolderWithCount folder, UINavigationController navigationController)
         {
@@ -36,26 +36,28 @@ namespace FreedomVoice.iOS.TableViewSources
         public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
         {
             var selectedMessage = _messages[indexPath.Row];
-            
 
-            if (_selectedRowIndex >= 0 && indexPath.Row == _selectedRowIndex)
+            if (indexPath.Row == _selectedRowIndex)
             {
-                _selectedRowIndex = -1;
-                var expandedCell = tableView.DequeueReusableCell(RecentCell.RecentCellId) as ExpandedCell ?? new ExpandedCell(selectedMessage.Type);
-                expandedCell.UpdateCell(selectedMessage.Name, Formatting.DateTimeFormat(selectedMessage.ReceivedOn), selectedMessage.Length, 
-                        _selectedAccount.PhoneNumber, selectedMessage.Mailbox, selectedMessage.Folder, selectedMessage.Id, selectedMessage.SourceNumber);
+                var expandedCell = tableView.DequeueReusableCell(RecentCell.RecentCellId) as ExpandedCell;
+                if (expandedCell != null) return expandedCell;
+
+                expandedCell = new ExpandedCell(selectedMessage);
+                expandedCell.UpdateCell(_selectedAccount.PhoneNumber);
 
                 expandedCell.OnCallbackClick += (sender, args) => { RowCallbackClick(tableView, indexPath, args.SourceNumber); };
 
                 return expandedCell;
             }
 
-            var cell = tableView.DequeueReusableCell(MessageCell.MessageCellId) as MessageCell ?? new MessageCell();
+            var cell = tableView.DequeueReusableCell(MessageCell.MessageCellId) as MessageCell;
+            if (cell != null) return cell;
+
+            cell = new MessageCell { Accessory = UITableViewCellAccessory.None };
             cell.TextLabel.Text = selectedMessage.Name;
             cell.TextLabel.Font = UIFont.SystemFontOfSize(17, selectedMessage.Unread ? UIFontWeight.Bold : UIFontWeight.Regular);
             cell.DetailTextLabel.Text = Formatting.DateTimeFormat(selectedMessage.ReceivedOn);
             cell.ImageView.Image = Appearance.GetMessageImage(selectedMessage.Type, selectedMessage.Unread, false);
-            cell.Accessory = UITableViewCellAccessory.None;
 
             return cell;
         }
@@ -67,20 +69,25 @@ namespace FreedomVoice.iOS.TableViewSources
 
         public override void RowSelected(UITableView tableView, NSIndexPath indexPath)
         {
-            _selectedRowForHeight = _selectedRowIndex = indexPath.Row;
-            tableView.ReloadRows(tableView.IndexPathsForVisibleRows, UITableViewRowAnimation.Fade);
+            var previousSelectedRow = _selectedRowIndexPath;
+            _selectedRowIndexPath = indexPath;
+
+            _selectedRowIndex = indexPath.Row;
+
+            var indexes = new List<NSIndexPath>();
+            if (previousSelectedRow != null)
+                indexes.Add(previousSelectedRow);
+
+            indexes.Add(indexPath);
+            tableView.ReloadRows(indexes.ToArray(), UITableViewRowAnimation.Fade);
         }
 
         public override nfloat GetHeightForRow(UITableView tableView, NSIndexPath indexPath)
         {
             var selectedMessage = _messages[indexPath.Row];
 
-            if (_selectedRowForHeight >= 0 && indexPath.Row == _selectedRowForHeight)
-                return selectedMessage.Type == MessageType.Fax ? 100 : 138;
-
-            return 48;
+            return indexPath.Row == _selectedRowIndex ? (selectedMessage.Type == MessageType.Fax ? 100 : 138) : 48;
         }
-
 
         public event EventHandler<CallBackClickEventArgs> OnRowCallbackClick;
 
@@ -90,17 +97,17 @@ namespace FreedomVoice.iOS.TableViewSources
             public NSIndexPath IndexPath { get; private set; }
             public string SourceNumber { get; private set; }
 
-            public CallBackClickEventArgs(UITableView tableView, NSIndexPath indexPath, string SourceNumber)
+            public CallBackClickEventArgs(UITableView tableView, NSIndexPath indexPath, string sourceNumber)
             {
                 TableView = tableView;
                 IndexPath = indexPath;
-                this.SourceNumber = SourceNumber;
+                SourceNumber = sourceNumber;
             }
         }
 
-        private void RowCallbackClick(UITableView tableView, NSIndexPath indexPath, string SourceNumber)
+        private void RowCallbackClick(UITableView tableView, NSIndexPath indexPath, string sourceNumber)
         {
-            OnRowCallbackClick?.Invoke(this, new CallBackClickEventArgs(tableView, indexPath, SourceNumber));
+            OnRowCallbackClick?.Invoke(this, new CallBackClickEventArgs(tableView, indexPath, sourceNumber));
         }
     }
 }
