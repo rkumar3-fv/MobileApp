@@ -81,6 +81,7 @@ namespace FreedomVoice.iOS.ViewControllers
             _contactsSearchBar.ShouldEndEditing += SearchBarOnShouldEndEditing;
             _contactsSearchBar.TextChanged += SearchBarOnTextChanged;
             _contactsSearchBar.CancelButtonClicked += SearchBarOnCancelButtonClicked;
+            _contactsSearchBar.SearchButtonClicked += _contactsSearchBar_SearchButtonClicked;
 
             CallerIdView = new CallerIdView(new RectangleF(0, (float)(_contactsSearchBar.Frame.Y + _contactsSearchBar.Frame.Height), (float)View.Frame.Width, 40), MainTabBarInstance.GetPresentationNumbers());
 
@@ -98,6 +99,11 @@ namespace FreedomVoice.iOS.ViewControllers
             ContactsTableView.SectionIndexColor = Theme.BlueColor;
 
             CheckResult(ContactsCount);
+        }
+
+        private void _contactsSearchBar_SearchButtonClicked(object sender, EventArgs e)
+        {
+            _contactsSearchBar.ResignFirstResponder();
         }
 
         private void SearchBarOnTextChanged(object sender, UISearchBarTextChangedEventArgs e)
