@@ -42,7 +42,7 @@ namespace FreedomVoice.iOS.TableViewSources
             
         }
 
-        public override void CommitEditingStyle(UITableView tableView, UITableViewCellEditingStyle editingStyle, Foundation.NSIndexPath indexPath)
+        public override void CommitEditingStyle(UITableView tableView, UITableViewCellEditingStyle editingStyle, NSIndexPath indexPath)
         {
             switch (editingStyle)
             {

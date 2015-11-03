@@ -28,6 +28,8 @@ namespace FreedomVoice.iOS.TableViewCells
         private UIButton _speakerButton;
         private UIButton _viewFaxButton;
 
+        private string _sourceNumber;
+
         #endregion
 
         private readonly MessageType _type;
@@ -50,8 +52,9 @@ namespace FreedomVoice.iOS.TableViewCells
             Layer.AddSublayer(gradientLayer);
         }
 
-        public void UpdateCell(string title, string date, double length, string systemPhoneNumber, int mailboxNumber, string folderName, string messageId)
+        public void UpdateCell(string title, string date, double length, string systemPhoneNumber, int mailboxNumber, string folderName, string messageId, string sourceNumber)
         {
+            _sourceNumber = sourceNumber;
             var selectedViews = new List<UIView>();
             var faxMessageType = _type == MessageType.Fax;
 
@@ -156,11 +159,24 @@ namespace FreedomVoice.iOS.TableViewCells
         private async void OnCallBackButtonTouchDown(object sender, EventArgs args)
         {
             BackgroundColorAnimate(_callBackButton, UIColor.FromRGBA(198, 242, 138, 127));
+            OnCallbackClick?.Invoke(this, new CallbackClickEventArgs(_sourceNumber));
         }
 
         private async void OnDeleteButtonTouchDown(object sender, EventArgs e)
         {
             throw new NotImplementedException();
+        }
+
+        public event EventHandler<CallbackClickEventArgs> OnCallbackClick;
+
+        public class CallbackClickEventArgs : EventArgs
+        {
+            public string SourceNumber { get; private set; }
+
+            public CallbackClickEventArgs(string sourceNumber)
+            {
+                SourceNumber = sourceNumber;
+            }
         }
     }
 }

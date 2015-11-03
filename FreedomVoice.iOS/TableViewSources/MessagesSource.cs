@@ -35,14 +35,17 @@ namespace FreedomVoice.iOS.TableViewSources
 
         public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
         {
-            var selectedMessage = _messages[indexPath.Row];            
+            var selectedMessage = _messages[indexPath.Row];
+            
 
             if (_selectedRowIndex >= 0 && indexPath.Row == _selectedRowIndex)
             {
                 _selectedRowIndex = -1;
                 var expandedCell = tableView.DequeueReusableCell(RecentCell.RecentCellId) as ExpandedCell ?? new ExpandedCell(selectedMessage.Type);
                 expandedCell.UpdateCell(selectedMessage.Name, Formatting.DateTimeFormat(selectedMessage.ReceivedOn), selectedMessage.Length, 
-                        _selectedAccount.PhoneNumber, selectedMessage.Mailbox, selectedMessage.Folder, selectedMessage.Id);
+                        _selectedAccount.PhoneNumber, selectedMessage.Mailbox, selectedMessage.Folder, selectedMessage.Id, selectedMessage.SourceNumber);
+
+                expandedCell.OnCallbackClick += (sender, args) => { RowCallbackClick(tableView, indexPath, args.SourceNumber); };
 
                 return expandedCell;
             }
@@ -76,6 +79,28 @@ namespace FreedomVoice.iOS.TableViewSources
                 return selectedMessage.Type == MessageType.Fax ? 100 : 138;
 
             return 48;
+        }
+
+
+        public event EventHandler<CallBackClickEventArgs> OnRowCallbackClick;
+
+        public class CallBackClickEventArgs : EventArgs
+        {
+            public UITableView TableView { get; private set; }
+            public NSIndexPath IndexPath { get; private set; }
+            public string SourceNumber { get; private set; }
+
+            public CallBackClickEventArgs(UITableView tableView, NSIndexPath indexPath, string SourceNumber)
+            {
+                TableView = tableView;
+                IndexPath = indexPath;
+                this.SourceNumber = SourceNumber;
+            }
+        }
+
+        private void RowCallbackClick(UITableView tableView, NSIndexPath indexPath, string SourceNumber)
+        {
+            OnRowCallbackClick?.Invoke(this, new CallBackClickEventArgs(tableView, indexPath, SourceNumber));
         }
     }
 }
