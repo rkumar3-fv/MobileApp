@@ -22,6 +22,7 @@ namespace FreedomVoice.iOS.ViewControllers
 	    private int MessagesCount => _messagesList.Count;
 
         private UILabel _noMessagesLabel;
+        private static MainTabBarController MainTabBarInstance => MainTabBarController.Instance;
 
         public MessagesViewController (IntPtr handle) : base (handle) { }
 
@@ -48,7 +49,10 @@ namespace FreedomVoice.iOS.ViewControllers
 
             _messagesList = _messagesViewModel.MessagesList;
 
-            MessagesTableView.Source = new MessagesSource(_messagesList, SelectedExtension, SelectedAccount, SelectedFolder, NavigationController);
+            var source = new MessagesSource(_messagesList, SelectedExtension, SelectedAccount, SelectedFolder, NavigationController);
+            source.OnRowCallbackClick += Source_OnRowCallbackClick;
+            MessagesTableView.Source = source;
+
             MessagesTableView.ReloadData();
 
             NavigationItem.SetLeftBarButtonItems(Appearance.GetBackButtonWithArrow(NavigationController, false, "x" + SelectedExtension.ExtensionNumber), false);
@@ -58,7 +62,13 @@ namespace FreedomVoice.iOS.ViewControllers
             base.ViewDidLoad();
         }
 
-	    public override void ViewWillAppear(bool animated)
+        private void Source_OnRowCallbackClick(object sender, MessagesSource.CallBackClickEventArgs e)
+        {
+            var selectedCallerId = MainTabBarInstance.GetSelectedPresentationNumber().PhoneNumber;
+            PhoneCall.CreateCallReservation(MainTabBarInstance.SelectedAccount.PhoneNumber, selectedCallerId, e.SourceNumber, NavigationController);
+        }
+
+        public override void ViewWillAppear(bool animated)
 	    {
             NavigationItem.Title = SelectedFolder.DisplayName;
 
