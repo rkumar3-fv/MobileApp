@@ -1,9 +1,11 @@
 using System;
 using Android.App;
+using Android.Content;
 using Android.Content.PM;
 using Android.OS;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Helpers;
+using Uri = Android.Net.Uri;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
 {
@@ -47,11 +49,31 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             AttachmentId = AppHelper.Instance(this).AttachmentsHelper.LoadFaxAttachment(Msg);
         }
 
+        private void AttachmentsHelperOnFinishLoading(object sender, AttachmentHelperEventArgs<string> args)
+        {
+            if (args.Id == Msg.Id)
+            {
+                var intent = new Intent(Intent.ActionView);
+                var file = new Java.IO.File(args.Result);
+                file.SetReadable(true);
+                intent.SetDataAndType(Uri.FromFile(file), "application/pdf");
+                intent.SetFlags(ActivityFlags.NoHistory);
+                StartActivityForResult(intent, 1);
+            }
+        }
+
         protected override void OnResume()
         {
             base.OnResume();
             _openFaxButton.Activated = Msg.Length != 0;
             MessageStamp.Text = Msg.Length == 1 ? GetString(Resource.String.FragmentMessages_onePage) : $"{Msg.Length} {GetString(Resource.String.FragmentMessages_morePage)}";
+            AppHelper.Instance(this).AttachmentsHelper.OnFinish += AttachmentsHelperOnFinishLoading;
+        }
+
+        protected override void OnPause()
+        {
+            base.OnPause();
+            AppHelper.Instance(this).AttachmentsHelper.OnFinish -= AttachmentsHelperOnFinishLoading;
         }
     }
 }

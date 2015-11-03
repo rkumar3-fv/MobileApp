@@ -54,6 +54,7 @@ namespace com.FreedomVoice.MobileApp.Android.Utils
             string[] projection = { ContactsContract.Contacts.InterfaceConsts.DisplayName };
             var loader = new CursorLoader(_context, uri, projection, null, null, null);
             var cursor = (ICursor)loader.LoadInBackground();
+            
             if (cursor == null)
             {
                 name = DataFormatUtils.ToPhoneNumber(normalizedPhone);

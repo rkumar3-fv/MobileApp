@@ -113,7 +113,7 @@ namespace com.FreedomVoice.MobileApp.Android.Services
             {
                 res.Result.CopyTo(ms);
                 var bytes = ms.ToArray();
-                using (var file = new FileStream($"{root}\\{path}.pdf", FileMode.Create, FileAccess.Write))
+                using (var file = new FileStream($"{root}{path}.pdf", FileMode.Create, FileAccess.Write))
                 {
                     ms.Read(bytes, 0, (int)ms.Length);
                     file.Write(bytes, 0, bytes.Length);

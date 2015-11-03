@@ -33,10 +33,9 @@ namespace com.FreedomVoice.MobileApp.Android.Dialogs
             var view = inflater.Inflate(Resource.Layout.dlg_contacts_many, container, false);
             CancelButton = view.FindViewById<Button>(Resource.Id.ManyContactsDlg_cancel);
             _titleView = view.FindViewById<TextView>(Resource.Id.ManyContactsDlg_title);
-            _titleView.Text = $"{GetString(Resource.String.DlgNumbers_title)} {_contact.Name}.";
+            _titleView.Text = $"{GetString(Resource.String.DlgNumbers_title)} {_contact.Name}";
             _phonesView = view.FindViewById<RecyclerView>(Resource.Id.ManyContactsDlg_list);
             _phonesView.SetLayoutManager(new LinearLayoutManager(_context));
-            _phonesView.AddItemDecoration(new DividerItemDecorator(Activity, Resource.Drawable.divider));
             return view;
         }
 

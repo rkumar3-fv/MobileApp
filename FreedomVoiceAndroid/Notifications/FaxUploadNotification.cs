@@ -1,6 +1,8 @@
+using System;
 using Android.App;
 using Android.Content;
 using Android.Graphics;
+using FreedomVoice.Core.Utils;
 
 namespace com.FreedomVoice.MobileApp.Android.Notifications
 {
@@ -38,6 +40,7 @@ namespace com.FreedomVoice.MobileApp.Android.Notifications
             AppNotification.SetAutoCancel(false);
             AppNotification.SetOngoing(true);
             AppNotification.SetProgress(100, 0, false);
+            AppNotification.SetCategory(Notification.CategoryProgress);
             AppNotification.SetContentTitle(AppContext.GetString(Resource.String.Notif_fax));
             AppNotification.SetSmallIcon(Resource.Drawable.ic_status_download);
             AppNotification.SetLargeIcon(BitmapFactory.DecodeResource(AppContext.Resources, Resource.Drawable.ic_notification_download));
@@ -64,11 +67,12 @@ namespace com.FreedomVoice.MobileApp.Android.Notifications
             var stackBuilder = TaskStackBuilder.Create(AppContext);
             stackBuilder.AddNextIntent(intent);
             var resultPendingIntent = stackBuilder.GetPendingIntent(0, PendingIntentFlags.UpdateCurrent);
-
+            AppNotification.SetCategory(Notification.CategoryTransport);
             AppNotification.SetOngoing(false);
             AppNotification.SetProgress(0, 0, false);
             AppNotification.SetAutoCancel(true);
             AppNotification.SetContentIntent(resultPendingIntent);
+            AppNotification.SetContentInfo(DataFormatUtils.ToShortFormattedDate(AppContext.GetString(Resource.String.Timestamp_yesterday),DateTime.Now));
             NotificationManager.Notify(NotificationCode(), AppNotification.Build());
         }
 

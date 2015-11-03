@@ -22,7 +22,7 @@ namespace com.FreedomVoice.MobileApp.Android.Dialogs
         {
             var view = inflater.Inflate(Resource.Layout.dlg_contacts_no, container, false);
             _content = view.FindViewById<TextView>(Resource.Id.NoContactsDlg_content);
-            _content.Text = $"{GetString(Resource.String.DlgNumbers_content)} {_contact.Name}.";
+            _content.Text = $"{GetString(Resource.String.DlgNumbers_content)} {_contact.Name}";
             OkButton = view.FindViewById<Button>(Resource.Id.NoContactsDlg_ok);
             return view;
         }

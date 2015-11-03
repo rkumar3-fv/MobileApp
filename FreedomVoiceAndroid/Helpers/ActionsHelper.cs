@@ -704,7 +704,13 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                         // One or more presentation numbers
                         default:
                             SelectedAccount.PresentationNumbers = numbResponse.NumbersList;
-                            intent = IsFirstRun ? new Intent(_app, typeof(DisclaimerActivity)) : new Intent(_app, typeof(ContentActivity));
+                            if (IsFirstRun)
+                                intent = new Intent(_app, typeof (DisclaimerActivity));
+                            else
+                            {
+                                intent = new Intent(_app, typeof(ContentActivity));
+                                intent.AddFlags(ActivityFlags.ClearTop);
+                            }
                             ForceLoadExtensions();
                             break;
                     }

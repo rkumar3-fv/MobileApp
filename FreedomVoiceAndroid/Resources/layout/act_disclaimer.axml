@@ -23,7 +23,8 @@
             android:textSize="@dimen/text_secondary"
             android:textColor="@color/textColorSecondary"
             android:text="@string/ActivityDisclaimer_info"
-            android:layout_marginTop="@dimen/disclaimer_activity_text_margin" />
+            android:layout_marginTop="@dimen/disclaimer_activity_text_margin"
+            android:gravity="center_horizontal" />
         <Button
             android:id="@+id/disclaimerActivity_agreeButton"
             style="@style/AppButtonStyle"

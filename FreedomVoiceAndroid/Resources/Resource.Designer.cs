@@ -1748,11 +1748,17 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f0b00bf
 			public const int dlg_margin = 2131427519;
 			
+			// aapt resource value: 0x7f0b00c6
+			public const int dlg_min_width = 2131427526;
+			
 			// aapt resource value: 0x7f0b00c3
 			public const int dlg_numbers_element_height = 2131427523;
 			
 			// aapt resource value: 0x7f0b00c4
 			public const int dlg_numbers_max_height = 2131427524;
+			
+			// aapt resource value: 0x7f0b00c5
+			public const int dlg_numbers_text_margin = 2131427525;
 			
 			// aapt resource value: 0x7f0b00c0
 			public const int dlg_padding = 2131427520;

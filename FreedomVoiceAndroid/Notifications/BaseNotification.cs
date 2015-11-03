@@ -1,6 +1,5 @@
 using Android.Content;
 using Android.Support.V4.App;
-using Java.Interop;
 
 namespace com.FreedomVoice.MobileApp.Android.Notifications
 {

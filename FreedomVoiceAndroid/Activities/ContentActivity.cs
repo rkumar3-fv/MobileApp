@@ -257,10 +257,12 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         public override void OnBackPressed()
         {
             var menu = _toolbar.Menu;
-            if (menu != null)
+            var item = menu?.FindItem(Resource.Id.menu_action_search);
+            if (item != null)
             {
-                var searchView = MenuItemCompat.GetActionView(menu.FindItem(Resource.Id.menu_action_search)).JavaCast<SearchView>();
-                if ((searchView != null) && (!searchView.Iconified))
+                var view = MenuItemCompat.GetActionView(item);
+                var searchView = view?.JavaCast<SearchView>();
+                if (searchView != null && (!searchView.Iconified))
                 {
                     searchView.Iconified = true;
                     return;

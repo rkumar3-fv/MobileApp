@@ -5,7 +5,7 @@ using Android.OS;
 using Android.Util;
 using com.FreedomVoice.MobileApp.Android.Notifications;
 using com.FreedomVoice.MobileApp.Android.Services;
-using FreedomVoice.Core.Utils;
+using com.FreedomVoice.MobileApp.Android.Utils;
 using Message = com.FreedomVoice.MobileApp.Android.Entities.Message;
 using Uri = Android.Net.Uri;
 
@@ -44,6 +44,13 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         {
             if (_cacheDictionary.ContainsKey(msg.Id))
             {
+#if DEBUG
+                var files = Directory.GetFiles("/storage/emulated/0/Android/data/com.FreedomVoice.MobileApp.Android/files/");
+                foreach (var file in files)
+                {
+                    Log.Debug(App.AppPackage, "IN DIRECTORY: " + file);
+                }
+#endif
                 if (File.Exists(_cacheDictionary[msg.Id]))
                 {
 #if DEBUG
@@ -102,10 +109,12 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 
         private void FaxServiceOnStartEvent(object sender, AttachmentHelperEventArgs<string> args)
         {
+            string result;
+            //var res = ContactsHelper.Instance(_context).GetName(args.Result, out result);
 #if DEBUG
-            Log.Debug(App.AppPackage, "START LOADING ATTACHMENT FROM: " + args.Result);
+            Log.Debug(App.AppPackage, $"START LOADING ATTACHMENT FROM: {args.Result}");
 #endif
-            _faxNotification.ShowNotification(DataFormatUtils.ToPhoneNumber(args.Result));
+            _faxNotification.ShowNotification(args.Result);
         }
 
         private void FaxServiceOnProgressEvent(object sender, AttachmentHelperEventArgs<int> progress)
