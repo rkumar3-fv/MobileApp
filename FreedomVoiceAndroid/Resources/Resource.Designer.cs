@@ -3676,17 +3676,23 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f07003d
 			public const int MenuItem_search = 2131165245;
 			
-			// aapt resource value: 0x7f07009b
-			public const int Notif_fax = 2131165339;
-			
-			// aapt resource value: 0x7f07009e
-			public const int Notif_faxShow = 2131165342;
+			// aapt resource value: 0x7f0700a0
+			public const int Notif_faxShow = 2131165344;
 			
 			// aapt resource value: 0x7f07009d
-			public const int Notif_record = 2131165341;
+			public const int Notif_fax_fail = 2131165341;
+			
+			// aapt resource value: 0x7f07009b
+			public const int Notif_fax_progress = 2131165339;
 			
 			// aapt resource value: 0x7f07009c
-			public const int Notif_voicemail = 2131165340;
+			public const int Notif_fax_success = 2131165340;
+			
+			// aapt resource value: 0x7f07009f
+			public const int Notif_record = 2131165343;
+			
+			// aapt resource value: 0x7f07009e
+			public const int Notif_voicemail = 2131165342;
 			
 			// aapt resource value: 0x7f070099
 			public const int Snack_callFailed = 2131165337;

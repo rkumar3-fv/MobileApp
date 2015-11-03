@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using Android.Content;
@@ -5,7 +6,6 @@ using Android.OS;
 using Android.Util;
 using com.FreedomVoice.MobileApp.Android.Notifications;
 using com.FreedomVoice.MobileApp.Android.Services;
-using com.FreedomVoice.MobileApp.Android.Utils;
 using Message = com.FreedomVoice.MobileApp.Android.Entities.Message;
 using Uri = Android.Net.Uri;
 
@@ -13,9 +13,9 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 {
     public delegate void SuccessEventHandler(object sender, AttachmentHelperEventArgs<string> args);
 
-    public delegate void ProgressEventHandler(object sender, AttachmentHelperEventArgs<int> args);
-
     public delegate void StartLoadingEventHandler(object sender, AttachmentHelperEventArgs<string> args);
+
+    public delegate void StopLoadingEventHandler(object sender, AttachmentHelperEventArgs<bool> args);
 
     /// <summary>
     /// Attachments managment
@@ -29,8 +29,8 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         private readonly List<int> _waitingList;
         private readonly FaxUploadNotification _faxNotification;
 
-        public event ProgressEventHandler OnProgress;
-        public event SuccessEventHandler OnFinish; 
+        public event SuccessEventHandler OnFinish;
+        public event StopLoadingEventHandler FailLoadingEvent;
 
         public AttachmentsHelper(Context context)
         {
@@ -76,9 +76,9 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 #if DEBUG
             Log.Debug(App.AppPackage, "HELPER SERVICE LAUNCHED: request ID=" + msg.Id);
 #endif
-            _context.StartService(intent);
             if (!_isBound)
-                _context.BindService(new Intent(_context, typeof (FaxForegroundService)), this, Bind.Important);
+                _context.BindService(new Intent(_context, typeof(FaxForegroundService)), this, Bind.AutoCreate);
+            _context.StartService(intent);
             return msg.Id;
         }
 
@@ -91,9 +91,9 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             if (serviceBinder == null) return;
             _faxService = serviceBinder.Service;
             _isBound = true;
-            _faxService.ProgressEvent += FaxServiceOnProgressEvent;
             _faxService.SuccessEvent += FaxServiceOnSuccessEvent;
             _faxService.StartEvent += FaxServiceOnStartEvent;
+            _faxService.FailEvent += FaxServiceOnFailEvent;
         }
 
         public void OnServiceDisconnected(ComponentName name)
@@ -101,7 +101,6 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 #if DEBUG
             Log.Debug(App.AppPackage, "SERVICE UNBINDED");
 #endif
-            _faxService.ProgressEvent -= FaxServiceOnProgressEvent;
             _faxService.SuccessEvent -= FaxServiceOnSuccessEvent;
             _faxService.StartEvent -= FaxServiceOnStartEvent;
             _isBound = false;
@@ -117,13 +116,14 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             _faxNotification.ShowNotification(args.Result);
         }
 
-        private void FaxServiceOnProgressEvent(object sender, AttachmentHelperEventArgs<int> progress)
+        private void FaxServiceOnFailEvent(object sender, AttachmentHelperEventArgs<bool> args)
         {
-#if DEBUG
-            Log.Debug(App.AppPackage, "LOADING PROGRESS: " + progress.Result);
-#endif
-            _faxNotification.UpdateProgress(progress.Result);
-            OnProgress?.Invoke(this, new AttachmentHelperEventArgs<int>(progress.Id, progress.Result));
+            if (args.Result)
+                _faxNotification.HideNotification();
+            else
+                _faxNotification.FailLoading();
+            _waitingList.Remove(args.Id);
+            FailLoadingEvent?.Invoke(this, args);
         }
 
         private void FaxServiceOnSuccessEvent(object sender, AttachmentHelperEventArgs<string> success)
