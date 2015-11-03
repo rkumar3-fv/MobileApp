@@ -1,11 +1,9 @@
-using System;
-
-namespace com.FreedomVoice.MobileApp.Android.Adapters
+namespace com.FreedomVoice.MobileApp.Android.CustomControls.CustomEventArgs
 {
     /// <summary>
     /// RecyclerView swipe event arguments
     /// </summary>
-    public class SwipeCallbackEventArgs : EventArgs
+    public class SwipeCallbackEventArgs : System.EventArgs
     {
         /// <summary>
         /// Swipe direction

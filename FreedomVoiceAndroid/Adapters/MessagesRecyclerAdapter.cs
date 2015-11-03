@@ -7,6 +7,7 @@ using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Entities;
+using com.FreedomVoice.MobileApp.Android.Utils;
 using FreedomVoice.Core.Utils;
 
 namespace com.FreedomVoice.MobileApp.Android.Adapters
@@ -152,7 +153,14 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
                 var message = contentItem as Message;
                 if ((viewHolder == null)||(message == null)) return;
                 viewHolder.MessageDate.Text = DataFormatUtils.ToFormattedDate(_context.GetString(Resource.String.Timestamp_yesterday), message.MessageDate);
-                viewHolder.MessageFrom.Text = (message.FromName.Length > 1) ? message.FromName : DataFormatUtils.ToPhoneNumber(message.FromNumber);
+                if (message.FromName.Length > 1)
+                    viewHolder.MessageFrom.Text = message.FromName;
+                else
+                {
+                    string text;
+                    ContactsHelper.Instance(_context).GetName(message.FromNumber, out text);
+                    viewHolder.MessageFrom.Text = text;
+                }
                 switch (message.MessageType)
                 {
                     case Message.TypeFax:

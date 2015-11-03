@@ -21,6 +21,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         protected TextView MessageDate;
         protected TextView MessageStamp;
         protected ImageButton RemoveButton;
+        protected long AttachmentId;
 
         protected override void OnCreate(Bundle bundle)
         {
@@ -45,7 +46,9 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 OnBackPressed();
             if (!Msg.Equals(Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].MessagesList[Helper.SelectedMessage]))
                 OnBackPressed();
-            SenderText.Text = Msg.FromName.Length > 1 ? Msg.FromName : _contactsHelper.GetName(Msg.FromNumber);
+            string text;
+            _contactsHelper.GetName(Msg.FromNumber, out text);
+            SenderText.Text = Msg.FromName.Length > 1 ? Msg.FromName : text;
             MessageDate.Text = DataFormatUtils.ToFormattedDate(GetString(Resource.String.Timestamp_yesterday), Msg.MessageDate);
         }
 

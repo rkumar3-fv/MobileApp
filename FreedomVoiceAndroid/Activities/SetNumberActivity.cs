@@ -3,8 +3,10 @@ using Android.App;
 using Android.Content.PM;
 using Android.Graphics;
 using Android.OS;
+using Android.Runtime;
 using Android.Support.V4.Content;
 using Android.Views;
+using Android.Views.InputMethods;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Dialogs;
 using com.FreedomVoice.MobileApp.Android.Utils;
@@ -41,6 +43,14 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             SupportActionBar.SetTitle(Resource.String.ActivityNumber_title);
 
             _errorColor = new Color(ContextCompat.GetColor(this, Resource.Color.textColorError));
+        }
+
+        protected override void OnPause()
+        {
+            base.OnPause();
+            if (RootLayout == null) return;
+            var imm = GetSystemService(InputMethodService).JavaCast<InputMethodManager>();
+            imm.HideSoftInputFromWindow(RootLayout.WindowToken, 0);
         }
 
         protected void SkipButtonOnClick(object sender, EventArgs eventArgs)

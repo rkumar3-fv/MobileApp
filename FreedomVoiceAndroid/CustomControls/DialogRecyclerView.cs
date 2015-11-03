@@ -3,7 +3,7 @@ using Android.Support.V7.Widget;
 using Android.Util;
 using Java.Lang;
 
-namespace com.FreedomVoice.MobileApp.Android.Dialogs
+namespace com.FreedomVoice.MobileApp.Android.CustomControls
 {
     public class DialogRecyclerView : RecyclerView
     {

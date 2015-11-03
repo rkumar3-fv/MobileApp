@@ -15,7 +15,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
     public class KeypadFragment : CallerFragment
     {
         private string _enteredNumber="";
-        private EditText _dialEdit;
+        private TextView _dialEdit;
         private ImageButton _backspaceButton;
         private LinearLayout _buttonOne;
         private LinearLayout _buttonTwo;
@@ -36,8 +36,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             var view = Inflater.Inflate(Resource.Layout.frag_keypad, null, false);
             IdSpinner = view.FindViewById<Spinner>(Resource.Id.keypadFragment_idSpinner);
             SingleId = view.FindViewById<TextView>(Resource.Id.keypadFragment_singleId);
-            _dialEdit = view.FindViewById<EditText>(Resource.Id.keypadFragment_dialText);
-            _dialEdit.KeyListener = null;
+            _dialEdit = view.FindViewById<TextView>(Resource.Id.keypadFragment_dialText);
             _backspaceButton = view.FindViewById<ImageButton>(Resource.Id.keypadFragment_backspace);
             _backspaceButton.Click += BackspaceButtonOnClick;
             _backspaceButton.LongClick += BackspaceButtonOnLongClick;

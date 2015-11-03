@@ -90,7 +90,7 @@ namespace FreedomVoice.Core.Utils
                 return date.ToString("HH:mm tt");
             if ((date.DayOfYear == current.DayOfYear) && (date.Year == current.Year))
                 return $"{yesterdayLabel} {date.ToString("HH:mm tt")}";
-            return date.ToString("MM/dd/hhhh HH:mm tt");
+            return date.ToString("MM/dd/yyyy HH:mm tt");
         }
 
         /// <summary>
@@ -106,7 +106,7 @@ namespace FreedomVoice.Core.Utils
                 return date.ToString("HH:mm tt");
             if ((date.DayOfYear == current.DayOfYear) && (date.Year == current.Year))
                 return yesterdayLabel;
-            return date.ToString("MM/dd/hh");
+            return date.ToString("MM/dd/yy");
         }
     }
 }

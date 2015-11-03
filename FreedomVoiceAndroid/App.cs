@@ -5,7 +5,15 @@ using Android.Content;
 using Android.Gms.Analytics;
 using Android.Runtime;
 using Android.Telephony;
+using com.FreedomVoice.MobileApp.Android.CustomControls.CustomEventArgs;
+#if DEBUG
 using Android.Util;
+#endif
+#if TRACE
+#if !DEBUG
+using System.Threading.Tasks;
+#endif
+#endif
 using com.FreedomVoice.MobileApp.Android.Helpers;
 using com.FreedomVoice.MobileApp.Android.Utils;
 
@@ -22,7 +30,15 @@ namespace com.FreedomVoice.MobileApp.Android
     public class App : Application
     {
         public const string AppPackage = "com.FreedomVoice.MobileApp.Android";
+        private const string Analytics = "UA-69040520-1";
+#if TRACE
+#if !DEBUG
+        public const string HockeyAppKey = "4f540a867b134c62b99fba824046466c";
+#endif
+#endif
+
         private Tracker _tracker;
+        private AppHelper _helper;
 
         /// <summary>
         /// Analytics tracker
@@ -33,7 +49,7 @@ namespace com.FreedomVoice.MobileApp.Android
             {
                 if (_tracker != null) return _tracker;
                 var analytics = GoogleAnalytics.GetInstance(this);
-                _tracker = analytics.NewTracker("UA-69040520-1");
+                _tracker = analytics.NewTracker(Analytics);
                 return _tracker;
             }
         }
@@ -60,12 +76,33 @@ namespace com.FreedomVoice.MobileApp.Android
         public override void OnCreate()
         {
             base.OnCreate();
-            Helper = new ActionsHelper(this);
+
+#if TRACE
+#if !DEBUG
+            HockeyApp.CrashManager.Register(this, HockeyAppKey);
+            HockeyApp.TraceWriter.Initialize();
+            AndroidEnvironment.UnhandledExceptionRaiser += (sender, args) =>
+            {
+                HockeyApp.TraceWriter.WriteTrace(args.Exception);
+                args.Handled = true;
+            };
+            AppDomain.CurrentDomain.UnhandledException +=
+                (sender, args) => HockeyApp.TraceWriter.WriteTrace(args.ExceptionObject);
+            TaskScheduler.UnobservedTaskException +=
+                (sender, args) => HockeyApp.TraceWriter.WriteTrace(args.Exception);
+#endif
+#endif
+
+            _helper = AppHelper.Instance(this);
+#if DEBUG
             ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) =>
             {
                 Log.Debug(AppPackage, sslPolicyErrors.ToString());
                 return true;
             };
+#else
+            ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
+#endif
             CallState = new CallStateHelper();
             CallState.CallEvent += CallStateOnCallEvent;
             var telManager = (TelephonyManager)GetSystemService(TelephonyService);
@@ -77,12 +114,7 @@ namespace com.FreedomVoice.MobileApp.Android
         /// </summary>
         private void CallStateOnCallEvent(object sender, DialingEventArgs args)
         {
-            Helper.MarkCallAsFinished();
+            _helper.ActionsHelper.MarkCallAsFinished();
         }
-
-        /// <summary>
-        /// Application actions helper
-        /// </summary>
-        public ActionsHelper Helper { get; private set; }
     }
 }

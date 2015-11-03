@@ -4,7 +4,7 @@ using Android.Widget;
 
 namespace com.FreedomVoice.MobileApp.Android.Dialogs
 {
-    public class ClearRecentsDialog : BaseDialogFragment
+    public class ClearRecentsDialogFragment : BaseDialogFragment
     {
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {

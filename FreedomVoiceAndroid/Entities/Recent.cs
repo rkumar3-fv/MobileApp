@@ -5,7 +5,7 @@ namespace com.FreedomVoice.MobileApp.Android.Entities
     /// <summary>
     /// Recent entity
     /// </summary>
-    public class Recent
+    public class Recent : IEquatable<Recent>
     {
         /// <summary>
         /// CallReservation - OK
@@ -57,6 +57,24 @@ namespace com.FreedomVoice.MobileApp.Android.Entities
         {
             if (CallResult == 1)
                 CallLength = Convert.ToInt32((DateTime.Now - CallDate).TotalMilliseconds);
+        }
+
+        public bool Equals(Recent other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            return ReferenceEquals(this, other) || string.Equals(PhoneNumber, other.PhoneNumber);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            return obj.GetType() == GetType() && Equals((Recent) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return PhoneNumber?.GetHashCode() ?? 0;
         }
     }
 }

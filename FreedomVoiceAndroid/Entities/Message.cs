@@ -46,7 +46,12 @@ namespace com.FreedomVoice.MobileApp.Android.Entities
         /// </summary>
         public int Length { get; }
 
-        public Message(int id, string name, string fromName, string fromNumber, DateTime date, int type, bool unread, int length) : base(id)
+        /// <summary>
+        /// Link to the media content
+        /// </summary>
+        public string AttachUrl { get; }
+
+        public Message(int id, string name, string fromName, string fromNumber, DateTime date, int type, bool unread, int length, string attach) : base(id)
         {
             Name = name;
             FromName = fromName;
@@ -55,6 +60,7 @@ namespace com.FreedomVoice.MobileApp.Android.Entities
             MessageType = type;
             Unread = unread;
             Length = length;
+            AttachUrl = attach;
         }
 
         private Message(Parcel parcel) : base (parcel)
@@ -66,6 +72,7 @@ namespace com.FreedomVoice.MobileApp.Android.Entities
             MessageType = parcel.ReadInt();
             Unread = (parcel.ReadByte() == 1);
             Length = parcel.ReadInt();
+            AttachUrl = parcel.ReadString();
         }
 
         public override void WriteToParcel(Parcel dest, ParcelableWriteFlags flags)
@@ -78,6 +85,7 @@ namespace com.FreedomVoice.MobileApp.Android.Entities
             dest.WriteInt(MessageType);
             dest.WriteByte(Unread?(sbyte)1:(sbyte)0);
             dest.WriteInt(Length);
+            dest.WriteString(AttachUrl);
         }
 
         [ExportField("CREATOR")]

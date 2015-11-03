@@ -38,4 +38,5 @@
   <color name="colorRemoveList">#f04e3d</color>
   <color name="colorUndoList">#85b640</color>
   <color name="colorScroll">#665a6f8a</color>
+  <color name="colorSpinnerSelector">#8c000000</color>
 </resources>

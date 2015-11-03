@@ -3,8 +3,9 @@ using Android.Graphics;
 using Android.Support.V4.Content;
 using Android.Support.V7.Widget;
 using Android.Support.V7.Widget.Helper;
+using com.FreedomVoice.MobileApp.Android.CustomControls.CustomEventArgs;
 
-namespace com.FreedomVoice.MobileApp.Android.Adapters
+namespace com.FreedomVoice.MobileApp.Android.CustomControls.Callbacks
 {
     public delegate void SwipeCallbackEvent(object sender, SwipeCallbackEventArgs args);
 

@@ -87,6 +87,9 @@
   
   <!-- Keypad fragment -->
   <dimen name="fragment_keypad_spinner_size">56dp</dimen>
+  <dimen name="fragment_keypad_spinner_width">168dp</dimen>
+  <dimen name="fragment_keypad_spinner_width_collapsed">156dp</dimen>
+  <dimen name="fragment_keypad_spinner_height">48dp</dimen>
   <dimen name="fragment_keypad_number_size">65dp</dimen>
   <dimen name="fragment_keypad_number_text_size">30sp</dimen>
   <dimen name="fragment_keypad_key_text_size">36sp</dimen>
@@ -114,6 +117,7 @@
   <dimen name="fragment_contacts_letter_width">56dp</dimen>
   <dimen name="fragment_contacts_height">48dp</dimen>
   <dimen name="fragment_contacts_search_elevation">12dp</dimen>
+  <dimen name="fragment_contacts_search_height">48dp</dimen>
   
   <!-- Dialogs -->
   <dimen name="dlg_elevation">24dp</dimen>
@@ -125,6 +129,8 @@
   <dimen name="dlg_padding">20dp</dimen>
   <dimen name="dlg_title_font">20sp</dimen>
   <dimen name="dlg_content_font">16sp</dimen>
-  <dimen name="dlg_numbers_element_height">48dp</dimen>
-  <dimen name="dlg_numbers_max_height">147dp</dimen>
+  <dimen name="dlg_numbers_element_height">60dp</dimen>
+  <dimen name="dlg_numbers_max_height">160dp</dimen>
+  <dimen name="dlg_numbers_text_margin">10dp</dimen>
+  <dimen name="dlg_min_width">280dp</dimen>
 </resources>
