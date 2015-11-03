@@ -31,6 +31,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         protected override void ActionButtonOnClick(object sender, EventArgs eventArgs)
         {
             var intent = new Intent(this, typeof (ContentActivity));
+            intent.AddFlags(ActivityFlags.ClearTop);
             Helper.DisclaimerApplied();
             StartActivity(intent);
         }

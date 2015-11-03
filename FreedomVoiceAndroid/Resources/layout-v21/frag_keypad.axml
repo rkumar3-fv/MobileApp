@@ -27,8 +27,9 @@
             android:layout_weight="1">
             <Spinner
                 android:id="@+id/keypadFragment_idSpinner"
-                android:layout_width="match_parent"
+                android:layout_width="@dimen/fragment_keypad_spinner_width_collapsed"
                 android:layout_height="@dimen/fragment_keypad_spinner_size"
+                android:dropDownWidth="@dimen/fragment_keypad_spinner_width"
                 android:spinnerMode="dropdown" />
             <TextView
                 android:id="@+id/keypadFragment_singleId"
@@ -43,18 +44,14 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/fragment_keypad_number_size"
         android:background="@drawable/border">
-        <EditText
+        <TextView
             android:theme="@style/BorderlessEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="phone"
             android:id="@+id/keypadFragment_dialText"
             android:layout_gravity="left|center_vertical"
-            android:phoneNumber="true"
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
-            android:layout_marginRight="@dimen/fragment_keypad_backspace_spacing"
-            android:clickable="false"
-            android:editable="false" />
+            android:layout_marginRight="@dimen/fragment_keypad_backspace_spacing" />
         <ImageButton
             android:id="@+id/keypadFragment_backspace"
             android:layout_width="@dimen/fragment_keypad_backspace_size"

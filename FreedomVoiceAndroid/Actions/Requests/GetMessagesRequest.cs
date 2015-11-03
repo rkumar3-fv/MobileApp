@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Android.Graphics.Pdf;
 using Android.OS;
 #if DEBUG
 using Android.Util;
@@ -71,17 +72,21 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
             var resList = new List<Message>();
             foreach (var message in listMsg)
             {
+                var content="";
                 int type;
                 switch (message.Type)
                 {
                     case MessageType.Fax:
                         type = Message.TypeFax;
+                        content = "Pdf";
                         break;
                     case MessageType.Recording:
                         type = Message.TypeRec;
+                        content = "wav";
                         break;
                     case MessageType.Voicemail:
                         type = Message.TypeVoice;
+                        content = "wav";
                         break;
                     default:
                         type = -1;
@@ -94,7 +99,8 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
                     message.ReceivedOn,
                     type,
                     message.Unread,
-                    message.Length));
+                    message.Length,
+                    $"/api/v1/systems/{AccountName}/mailboxes/{ExtensionId}/folders/{Folder}/messages/{message.Id}/media/{content}"));
             }
             return new GetMessagesResponse(Id, resList);
         }

@@ -21,7 +21,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         {
             base.OnCreate(savedInstanceState);
             Appl = App.GetApplication(this);
-            Helper = Appl.Helper;
+            Helper = AppHelper.Instance(this).ActionsHelper;
         }
 
         protected override void OnPause()

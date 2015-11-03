@@ -6,6 +6,7 @@ using FreedomVoice.iOS.Views;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.Helpers;
 using UIKit;
 using FreedomVoice.iOS.ViewModels;
@@ -30,32 +31,26 @@ namespace FreedomVoice.iOS.TableViewCells
         private UIButton _deleteButton;
         private UIButton _speakerButton;
         private UIButton _viewFaxButton;
-
-        private UINavigationController _navigationController;
-
-        private string _sourceNumber;        
         #endregion
 
-        private readonly MessageType _type;        
+        private string _systemPhoneNumber;
+        private readonly Message _message;
+        private UINavigationController _navigationController;
 
         private static readonly NSString ExpandedCellId = new NSString("ExpandedCell");
 
-        private string _systemPhoneNumber;
-        private int _mailboxNumber;
-        private string _folderName;
-        private string _messageId;
-        private double _length;
+        
         ExpandedCellViewModel _viewModel;
 
-        public ExpandedCell(MessageType type) : base (UITableViewCellStyle.Default, ExpandedCellId)
+        public ExpandedCell(Message message) : base (UITableViewCellStyle.Default, ExpandedCellId)
         {
-            _type = type;
-            SetBackground();
+            _message = message;
+            SetBackground();            
         }
 
         private void SetBackground()
         {
-            nfloat bgHeight = _type == MessageType.Fax ? 100 : 138;
+            nfloat bgHeight = _message.Type == MessageType.Fax ? 100 : 138;
             var gradientLayer = new CAGradientLayer
             {
                 Frame = new CGRect(Bounds.X, Bounds.Y, Bounds.Width, bgHeight),
@@ -64,24 +59,18 @@ namespace FreedomVoice.iOS.TableViewCells
             Layer.AddSublayer(gradientLayer);
         }
 
-        public void UpdateCell(string title, string date, double length, string systemPhoneNumber, int mailboxNumber, string folderName, string messageId, string sourceNumber, UINavigationController navigationController)
+        public void UpdateCell(string systemPhoneNumber, UINavigationController navigationController)
         {
-            _sourceNumber = sourceNumber;
             _systemPhoneNumber = systemPhoneNumber;
-            _mailboxNumber = mailboxNumber;
-            _folderName = folderName;
-            _messageId = messageId;
             _navigationController = navigationController;
-            _length = length;
-
             var selectedViews = new List<UIView>();
-            var faxMessageType = _type == MessageType.Fax;
+            var faxMessageType = _message.Type == MessageType.Fax;
 
-            _icon = Helpers.Appearance.GetMessageImageView(_type, false, true);
-            _title = new UILabel(new CGRect(55, 10, 270, 19)) { Text = title, TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(17) };
-            _date = new UILabel(new CGRect(55, 29, 110, 11)) { Text = date, TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(12) };
+            _icon = Helpers.Appearance.GetMessageImageView(_message.Type, false, true);
+            _title = new UILabel(new CGRect(55, 10, 270, 19)) { Text = _message.Name, TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(17) };
+            _date = new UILabel(new CGRect(55, 29, 110, 11)) { Text = Formatting.DateTimeFormat(_message.ReceivedOn), TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(12) };
 
-            _lengthLbl = GetFormattedLength(length, faxMessageType);
+            _lengthLbl = GetFormattedLength(_message.Length, faxMessageType);
 
             _deleteButton = new UIButton(new CGRect(285, faxMessageType ? 60 : 99, 25, 25));
             _deleteButton.SetBackgroundImage(UIImage.FromFile("delete.png"), UIControlState.Normal);
@@ -172,14 +161,13 @@ namespace FreedomVoice.iOS.TableViewCells
 
         public async Task<string> GetMediaPath(MediaType mediaType)
         {
-            _viewModel = new ExpandedCellViewModel(_systemPhoneNumber, _mailboxNumber, _folderName, _messageId, mediaType, _navigationController);
+            _viewModel = new ExpandedCellViewModel(_systemPhoneNumber, _message.Mailbox, _message.Folder, _message.Id, mediaType, _navigationController);
             await _viewModel.GetMediaAsync();
             return _viewModel.FilePath;         
-
         }
 
         private async void OnFaxButtonTouchDown(object sender, EventArgs args)
-        {            
+        {
             string filePath = await GetMediaPath(MediaType.Pdf);
             OnViewFaxClick(this, new ExpandedCellButtonClickEventArgs(filePath));
         }
@@ -200,8 +188,8 @@ namespace FreedomVoice.iOS.TableViewCells
 
 
         public double GetDuration()
-        {
-            return _length;
+            {
+            return _message.Length;
         }
     }
 }

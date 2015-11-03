@@ -9,6 +9,7 @@ using Android.Util;
 using Android.Views;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Dialogs;
+using FreedomVoice.Core.Utils;
 using Uri = Android.Net.Uri;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
@@ -22,13 +23,21 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         Theme = "@style/AppThemeActionBar")]
     public class InactiveActivity : InfoActivity
     {
+        public const string InactiveAccontTag = "InactiveTag";
+
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
+            var extra = Intent.GetStringExtra(InactiveAccontTag);
             SetContentView(Resource.Layout.act_inactive);
             RootLayout = FindViewById(Resource.Id.inactiveActivity_root);
             ActionButton = FindViewById<Button>(Resource.Id.inactiveActivity_dialButton);
-            SupportActionBar.SetTitle(Resource.String.ActivityInactive_title);
+            if (extra != null)
+                SupportActionBar.Title = DataFormatUtils.ToPhoneNumber(extra);
+            else if (Helper.SelectedAccount != null)
+                SupportActionBar.Title = DataFormatUtils.ToPhoneNumber(Helper.SelectedAccount.AccountName);
+            else
+                SupportActionBar.SetTitle(Resource.String.ActivityInactive_title);
         }
 
         public override bool OnOptionsItemSelected(IMenuItem item)

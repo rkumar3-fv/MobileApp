@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Android.Database;
 using Android.OS;
 using Android.Provider;
@@ -10,6 +9,7 @@ using Android.Util;
 using Android.Views;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Adapters;
+using com.FreedomVoice.MobileApp.Android.CustomControls;
 using com.FreedomVoice.MobileApp.Android.Dialogs;
 using com.FreedomVoice.MobileApp.Android.Entities;
 
@@ -56,7 +56,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             base.OnResume();
             ContentActivity.SearchListener.OnChange += SearchListenerOnChange;
             ContentActivity.SearchListener.OnApply += SearchListenerOnApply;
-            ContentActivity.SearchListener.OnCancel += SearchListenerOnCancel;
+            ContentActivity.SearchListener.OnCollapse += SearchListenerOnCancel;
         }      
 
         public override void OnPause()
@@ -64,28 +64,28 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             base.OnPause();
             ContentActivity.SearchListener.OnChange -= SearchListenerOnChange;
             ContentActivity.SearchListener.OnApply -= SearchListenerOnApply;
-            ContentActivity.SearchListener.OnCancel -= SearchListenerOnCancel;
+            ContentActivity.SearchListener.OnCollapse -= SearchListenerOnCancel;
         }
 
-        private void AdapterOnItemClick(object sender, List<Phone> list)
+        private void AdapterOnItemClick(object sender, Contact contact)
         {
 #if DEBUG
-            foreach (var phone in list)
+            foreach (var phone in contact.PhonesList)
             {
                 Log.Debug(App.AppPackage, $"{phone.PhoneNumber} - {phone.TypeCode}");
             }
 #endif
-            switch (list.Count)
+            switch (contact.PhonesList.Count)
             {
                 case 0:
-                    var noPhonesDialog = new NoContactsDialogFragment();
+                    var noPhonesDialog = new NoContactsDialogFragment(contact);
                     noPhonesDialog.Show(ContentActivity.SupportFragmentManager, GetString(Resource.String.DlgNumbers_content));
                     break;
                 case 1:
-                    ContentActivity.Call(list[0].PhoneNumber);
+                    ContentActivity.Call(contact.PhonesList[0].PhoneNumber);
                     break;
                 default:
-                    var multiPhonesDialog = new MultiContactsDialogFragment(list, ContentActivity);
+                    var multiPhonesDialog = new MultiContactsDialogFragment(contact, ContentActivity);
                     multiPhonesDialog.PhoneClick += MultiPhonesDialogOnPhoneClick;
                     multiPhonesDialog.Show(ContentActivity.SupportFragmentManager, GetString(Resource.String.DlgNumbers_title));
                     break;
@@ -97,7 +97,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             ContentActivity.Call(phone.PhoneNumber);
         }
 
-        private void SearchListenerOnCancel(object sender, string s)
+        private void SearchListenerOnCancel(object sender, bool b)
         {
             _adapter.RestoreCursor();
         }
@@ -123,5 +123,6 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             var loader = new CursorLoader(ContentActivity, uri, projection, selection, null, sortOrder);
             return (ICursor)loader.LoadInBackground();
         }
+
     }
 }

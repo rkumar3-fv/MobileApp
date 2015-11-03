@@ -1,6 +1,6 @@
 using System;
 
-namespace com.FreedomVoice.MobileApp.Android.Utils
+namespace com.FreedomVoice.MobileApp.Android.CustomControls.CustomEventArgs
 {
     /// <summary>
     /// Dialing event arguments

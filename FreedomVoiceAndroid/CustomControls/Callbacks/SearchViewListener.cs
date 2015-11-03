@@ -1,16 +1,16 @@
 using System;
+using Android.Support.V4.View;
 using Android.Support.V7.Widget;
-#if DEBUG
 using Android.Util;
-#endif
+using Android.Views;
 using Object = Java.Lang.Object;
 
-namespace com.FreedomVoice.MobileApp.Android.Adapters
+namespace com.FreedomVoice.MobileApp.Android.CustomControls.Callbacks
 {
     /// <summary>
     /// SearchView listener implementation
     /// </summary>
-    public class SearchViewListener : Object, SearchView.IOnQueryTextListener, SearchView.IOnCloseListener
+    public class SearchViewListener : Object, SearchView.IOnQueryTextListener, MenuItemCompat.IOnActionExpandListener
     {
         public string QueryString { get; private set; }
 
@@ -24,10 +24,9 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
         /// </summary>
         public event EventHandler<string> OnApply;
 
-        /// <summary>
-        /// Cancel query event
-        /// </summary>
-        public event EventHandler<string> OnCancel; 
+        public event EventHandler<bool> OnCollapse;
+
+        public event EventHandler<bool> OnExpand;
              
         public bool OnQueryTextChange(string newText)
         {
@@ -49,13 +48,16 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
             return false;
         }
 
-        public bool OnClose()
+        public bool OnMenuItemActionCollapse(IMenuItem item)
         {
-#if DEBUG
-            Log.Debug(App.AppPackage, $"Contacts CLOSE with DATA: {QueryString}");
-#endif
-            OnCancel?.Invoke(this, QueryString);
-            return false;
+            OnCollapse?.Invoke(this, true);
+            return true;
+        }
+
+        public bool OnMenuItemActionExpand(IMenuItem item)
+        {
+            OnExpand?.Invoke(this, true);
+            return true;
         }
     }
 }

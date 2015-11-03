@@ -25,7 +25,7 @@
             android:fitsSystemWindows="true"
             app:tabMode="fixed" />
     </android.support.design.widget.AppBarLayout>
-    <com.FreedomVoice.MobileApp.Android.Adapters.ContentPager
+    <com.FreedomVoice.MobileApp.Android.CustomControls.ContentPager
         android:id="@+id/contentActivity_contentPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

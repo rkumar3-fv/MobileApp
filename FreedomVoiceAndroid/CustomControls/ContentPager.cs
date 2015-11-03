@@ -5,7 +5,7 @@ using Android.Support.V4.View;
 using Android.Util;
 using Android.Views;
 
-namespace com.FreedomVoice.MobileApp.Android.Adapters
+namespace com.FreedomVoice.MobileApp.Android.CustomControls
 {
     public class ContentPager : ViewPager
     {

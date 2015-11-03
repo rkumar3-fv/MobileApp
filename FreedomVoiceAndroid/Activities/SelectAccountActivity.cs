@@ -3,8 +3,11 @@ using Android.Content;
 using Android.Content.PM;
 using Android.OS;
 using Android.Support.V7.Widget;
+#if DEBUG
 using Android.Util;
+#endif
 using com.FreedomVoice.MobileApp.Android.Adapters;
+using com.FreedomVoice.MobileApp.Android.CustomControls;
 using FreedomVoice.Core.Utils;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
@@ -42,8 +45,9 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         private void SelectViewOnClick(object sender, int position)
         {
             if (position >= Helper.AccountsList.Count) return;
-            Log.Debug(App.AppPackage,
-                $"ACTIVITY {GetType().Name}: select account #{DataFormatUtils.ToPhoneNumber(_adapter.AccountName(position))}");
+#if DEBUG
+            Log.Debug(App.AppPackage, $"ACTIVITY {GetType().Name}: select account #{DataFormatUtils.ToPhoneNumber(_adapter.AccountName(position))}");
+#endif
             Helper.SelectedAccount = Helper.AccountsList[position];
             Helper.GetPresentationNumbers();
         }
