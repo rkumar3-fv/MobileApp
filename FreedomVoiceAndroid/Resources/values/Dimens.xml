@@ -55,6 +55,12 @@
   <dimen name="inactive_activity_button_margin">57dp</dimen>
   <dimen name="inactive_activity_text_margin">43dp</dimen>
   
+  <!-- Phone activity -->
+  <dimen name="phone_activity_field_margin">30dp</dimen>
+  <dimen name="phone_activity_code_size">30dp</dimen>
+  <dimen name="phone_activity_button_margin">14dp</dimen>
+  <dimen name="phone_activity_skip_margin">24dp</dimen>
+  
   <!-- Select account activity -->
   <dimen name="select_acc_activity_element_height">48dp</dimen>
   <dimen name="select_acc_activity_element_padding">8dp</dimen>

@@ -15,23 +15,36 @@
         android:text="@string/ActivityNubmer_description"
         android:layout_alignParentTop="true"
         android:layout_marginTop="@dimen/restore_activity_info_label_margin" />
-    <EditText
-        android:id="@+id/phoneActivity_phoneField"
-        style="@style/RestoreEditTextStyle"
-        android:hint="@string/ActivityNumber_hint"
+    <LinearLayout
+        android:id="@+id/phoneActivity_phoneArea"
+        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="phone"
-        android:phoneNumber="true"
         android:layout_below="@id/phoneActivity_infoText"
-        android:layout_marginTop="@dimen/restore_activity_info_field_margin" />
+        android:layout_marginTop="@dimen/phone_activity_field_margin">
+        <TextView
+            android:layout_width="@dimen/phone_activity_code_size"
+            android:layout_height="wrap_content"
+            android:text="@string/ActivityNumber_code"
+            android:textSize="@dimen/text_secondary"
+            android:textColor="@color/textColorSecondary"
+            android:gravity="center_vertical" />
+        <EditText
+            android:id="@+id/phoneActivity_phoneField"
+            style="@style/RestoreEditTextStyle"
+            android:hint="@string/ActivityNumber_hint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="phone"
+            android:phoneNumber="true" />
+    </LinearLayout>
     <Button
         android:id="@+id/phoneActivity_applyButton"
         style="@style/AppButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/phoneActivity_phoneField"
-        android:layout_marginTop="@dimen/restore_activity_field_button_margin"
+        android:layout_below="@id/phoneActivity_phoneArea"
+        android:layout_marginTop="@dimen/phone_activity_button_margin"
         android:text="@string/ActivityNumber_applyButton" />
     <TextView
         android:id="@+id/phoneActivity_resultText"
@@ -48,5 +61,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/ActivityNumber_cancelButton"
-        android:layout_alignParentBottom="true" />
+        android:layout_marginTop="@dimen/phone_activity_skip_margin"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@id/phoneActivity_applyButton" />
 </RelativeLayout>
