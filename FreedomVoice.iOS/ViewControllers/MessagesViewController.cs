@@ -64,8 +64,6 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private void Source_OnRowCallbackClick(object sender, MessagesSource.CallBackClickEventArgs e)
         {
-            Console.WriteLine($"SourceNumber: {e.SourceNumber}");
-
             var selectedCallerId = MainTabBarInstance.GetSelectedPresentationNumber().PhoneNumber;
             PhoneCall.CreateCallReservation(MainTabBarInstance.SelectedAccount.PhoneNumber, selectedCallerId, e.SourceNumber, NavigationController);
         }
