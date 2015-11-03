@@ -27,10 +27,11 @@ namespace FreedomVoice.iOS.TableViewSources
         {
             var extension = _extensions[indexPath.Row];
 
-            var cell = tableView.DequeueReusableCell(ExtensionCell.ExtensionCellId) as ExtensionCell ?? new ExtensionCell();
-            cell.TextLabel.Text = extension.ExtensionNumber + " - " + extension.DisplayName;
-            cell.DetailTextLabel.Text = extension.UnreadMessagesCount.ToString();
-            cell.Accessory = UITableViewCellAccessory.DisclosureIndicator;
+            var cell = tableView.DequeueReusableCell(ExtensionCell.ExtensionCellId) as ExtensionCell;
+            if (cell != null) return cell;
+
+            cell = new ExtensionCell();
+            cell.UpdateCell(extension);
 
             return cell;
         }
