@@ -181,11 +181,11 @@ namespace FreedomVoice.iOS.TableViewCells
 
         private void OnDeleteButtonTouchDown(object sender, EventArgs e)
         {
-            var alertController = UIAlertController.Create(null, null, UIAlertControllerStyle.Alert);
-            alertController.AddAction(UIAlertAction.Create("Delete", UIAlertActionStyle.Destructive, a => {
+            var alertController = UIAlertController.Create("Confirm deletion", "Delete this message?", UIAlertControllerStyle.Alert);
+            alertController.AddAction(UIAlertAction.Create("Delete", UIAlertActionStyle.Default, a => {
                 OnRowDeleteMessageClick?.Invoke(this, new ExpandedCellButtonClickEventArgs());
             }));
-            alertController.AddAction(UIAlertAction.Create("Cancel", UIAlertActionStyle.Cancel, a => { }));
+            alertController.AddAction(UIAlertAction.Create("Don't delete", UIAlertActionStyle.Cancel, a => { }));
 
             _navigationController.PresentViewController(alertController, true, null);
         }
