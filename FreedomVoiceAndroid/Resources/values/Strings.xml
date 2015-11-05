@@ -105,4 +105,5 @@
   <string name="Notif_voicemail">Voicemail Playback</string>
   <string name="Notif_record">Call Record Playback</string>
   <string name="Notif_faxShow">Show fax</string>
+  <string name="Extra_pdfReaderPath">com.google.android.apps.pdfviewer</string>
 </resources>

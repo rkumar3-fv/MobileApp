@@ -7,6 +7,7 @@
   <color name="colorBaseControls">#00838f</color>
   <color name="colorActivatedControls">#00bcd4</color>
   <color name="colorBackground">#ffffff</color>
+  <color name="colorBackgroundProgress">#33000000</color>
   <color name="textColorPrimary">#212121</color>
   <color name="textColorSecondary">#d9000000</color>
   <color name="textColorNewMessages">#0097a7</color>
@@ -15,12 +16,13 @@
   <color name="colorFabPrimary">#85b640</color>
   <color name="colorFabPressed">#8bc34a</color>
   <color name="colorCallerId">#e6eaee</color>
-  <color name="colorButtonPressed">#ff9800</color>
   <color name="messageIndicator">#1a000000</color>
   <color name="messageIndicatorText">#8c000000</color>
   <color name="colorAuthHeader">#002f57</color>
   <color name="textForgotPassword">#03678f</color>
   <color name="colorButton">#f0aa1e</color>
+  <color name="colorButtonPressed">#ff9800</color>
+  <color name="colorWhiteButtonPressed">#5a6f8a</color>
   <color name="colorFieldsActive">#ffffff</color>
   <color name="colorFieldsNormal">#59ffffff</color>
   <color name="colorFieldsHint">#80ffffff</color>
@@ -39,4 +41,6 @@
   <color name="colorUndoList">#85b640</color>
   <color name="colorScroll">#665a6f8a</color>
   <color name="colorSpinnerSelector">#8c000000</color>
+  <color name="colorProgressWhite">#ffffffff</color>
+  <color name="colorProgressBlue">#ff038ac1</color>
 </resources>

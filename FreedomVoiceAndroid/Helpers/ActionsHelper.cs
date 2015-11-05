@@ -140,7 +140,12 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                 PhoneNumber = null;
             else if ((PhoneNumber != telemanager.Line1Number) && (telemanager.Line1Number.Length > 1))
             {
-                PhoneNumber = telemanager.Line1Number;
+                if ((telemanager.Line1Number.StartsWith("1")) && (telemanager.Line1Number.Length == 11))
+                    PhoneNumber = telemanager.Line1Number.Substring(1);
+                else if ((telemanager.Line1Number.StartsWith("+1")) && (telemanager.Line1Number.Length == 12))
+                    PhoneNumber = telemanager.Line1Number.Substring(2);
+                else
+                    PhoneNumber = telemanager.Line1Number;
                 _preferencesHelper.SavePhoneNumber(PhoneNumber);
             }
 #if DEBUG

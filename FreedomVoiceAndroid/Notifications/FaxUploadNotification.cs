@@ -1,8 +1,6 @@
-using System;
 using Android.App;
 using Android.Content;
 using Android.Graphics;
-using FreedomVoice.Core.Utils;
 
 namespace com.FreedomVoice.MobileApp.Android.Notifications
 {
@@ -42,8 +40,7 @@ namespace com.FreedomVoice.MobileApp.Android.Notifications
             AppNotification.SetProgress(100, 100, true);
             AppNotification.SetCategory(Notification.CategoryProgress);
             AppNotification.SetContentTitle(AppContext.GetString(Resource.String.Notif_fax_progress));
-            AppNotification.SetSmallIcon(Resource.Drawable.ic_status_download);
-            AppNotification.SetLargeIcon(BitmapFactory.DecodeResource(AppContext.Resources, Resource.Drawable.ic_notification_download));
+            AppNotification.SetSmallIcon(Resource.Drawable.ic_notification_download);
             base.ShowNotification(content);
         }
 
@@ -56,6 +53,7 @@ namespace com.FreedomVoice.MobileApp.Android.Notifications
             AppNotification.SetProgress(0, 0, false);
             AppNotification.SetAutoCancel(true);
             AppNotification.SetContentTitle(AppContext.GetString(Resource.String.Notif_fax_fail));
+            AppNotification.SetSmallIcon(Resource.Drawable.ic_action_close);
             NotificationManager.Notify(NotificationCode(), AppNotification.Build());
         }
 
@@ -70,6 +68,7 @@ namespace com.FreedomVoice.MobileApp.Android.Notifications
             var resultPendingIntent = stackBuilder.GetPendingIntent(0, PendingIntentFlags.UpdateCurrent);
             AppNotification.SetContentTitle(AppContext.GetString(Resource.String.Notif_fax_success));
             AppNotification.SetCategory(Notification.CategoryTransport);
+            AppNotification.SetSmallIcon(Resource.Drawable.ic_notification_fax);
             AppNotification.SetOngoing(false);
             AppNotification.SetProgress(0, 0, false);
             AppNotification.SetAutoCancel(true);
