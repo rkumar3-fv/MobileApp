@@ -104,7 +104,7 @@ namespace FreedomVoice.iOS.TableViewCells
         private static UILabel GetFormattedLength(double length, bool faxMessageType)
         {
             var formattedLength = faxMessageType ? Formatting.PagesToFormattedString(length) : Formatting.SecondsToFormattedString(length);
-            return new UILabel(new CGRect(faxMessageType ? 257 : 275, 29, 49, 13))
+            return new UILabel(new CGRect(faxMessageType ? 257 : 275, 29, 50, 13))
             {
                 Text = formattedLength,
                 TextColor = UIColor.White,
@@ -181,7 +181,13 @@ namespace FreedomVoice.iOS.TableViewCells
 
         private void OnDeleteButtonTouchDown(object sender, EventArgs e)
         {
-            OnRowDeleteMessageClick?.Invoke(this, new ExpandedCellButtonClickEventArgs());
+            var alertController = UIAlertController.Create(null, null, UIAlertControllerStyle.Alert);
+            alertController.AddAction(UIAlertAction.Create("Delete", UIAlertActionStyle.Destructive, a => {
+                OnRowDeleteMessageClick?.Invoke(this, new ExpandedCellButtonClickEventArgs());
+            }));
+            alertController.AddAction(UIAlertAction.Create("Cancel", UIAlertActionStyle.Cancel, a => { }));
+
+            _navigationController.PresentViewController(alertController, true, null);
         }
 
         public event EventHandler<ExpandedCellButtonClickEventArgs> OnCallbackClick;

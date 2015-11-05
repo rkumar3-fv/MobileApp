@@ -120,5 +120,20 @@ namespace FreedomVoice.iOS.TableViewSources
             _messages.Remove(selectedMessage);
             OnRowDeleteMessageClick?.Invoke(this, new ExpandedCellButtonClickEventArgs(tableView, indexPath));
         }
+
+        public override void CommitEditingStyle(UITableView tableView, UITableViewCellEditingStyle editingStyle, NSIndexPath indexPath)
+        {
+            switch (editingStyle)
+            {
+                case UITableViewCellEditingStyle.Delete:
+                    RowDeleteMessageClick(tableView, indexPath);
+                    break;
+            }
+        }
+
+        public override bool CanEditRow(UITableView tableView, NSIndexPath indexPath)
+        {
+            return true;
+        }
     }
 }
