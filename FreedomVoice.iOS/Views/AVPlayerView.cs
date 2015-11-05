@@ -6,10 +6,6 @@ using System.Collections.Generic;
 using FreedomVoice.iOS.Helpers;
 using UIKit;
 using FreedomVoice.iOS.TableViewCells;
-using FreedomVoice.iOS.ViewControllers;
-using FreedomVoice.iOS.Utilities;
-using FreedomVoice.iOS.Services.Responses;
-using FreedomVoice.iOS.Services;
 
 namespace FreedomVoice.iOS.Views
 {
@@ -31,14 +27,15 @@ namespace FreedomVoice.iOS.Views
 
         private UIImage _playButtonImage;
         private UIImage _pauseButtonImage;
-        private ExpandedCell _sourceCell;
 
         #endregion
 
-        public AVPlayerView(CGRect bounds,  ExpandedCell sourceCell) : base(bounds)
+        private readonly ExpandedCell _sourceCell;
+
+        public AVPlayerView(CGRect bounds, ExpandedCell sourceCell) : base(bounds)
         {
             _sourceCell = sourceCell;
-            Initialize();                  
+            Initialize();
         }
 
         private void Initialize()
@@ -107,19 +104,22 @@ namespace FreedomVoice.iOS.Views
         {
             if (_player != null && _player.Playing)
                 PausePlayback(sender, e);
-            else if (_player == null)                              
-                InitPlayer(sender, e);            
-            else            
-                StartPlayback(sender, e);            
+            else if (_player == null)
+                InitPlayer(sender, e);
+            else
+                StartPlayback(sender, e);
         }
 
-        private async void InitPlayer(object sender, EventArgs e) {            
+        private async void InitPlayer(object sender, EventArgs e)
+        {
             var filePath = await _sourceCell.GetMediaPath(Core.Entities.Enums.MediaType.Wav);
+
             _player = AVAudioPlayer.FromUrl(new NSUrl(filePath, false));
             _player.FinishedPlaying += OnPlayerFinishedPlaying;
             _player.DecoderError += OnPlayerDecoderError;
             _player.BeginInterruption += UpdateViewForPlayerState;
             _player.EndInterruption += StartPlayback;
+
             StartPlayback(sender, e);
         }
 
@@ -130,7 +130,7 @@ namespace FreedomVoice.iOS.Views
             _updateTimer?.Invalidate();
 
             if (_player.Playing)
-            {                
+            {
                 _playButton.SetImage(_pauseButtonImage, UIControlState.Normal);
                 _updateTimer = NSTimer.CreateRepeatingScheduledTimer(TimeSpan.FromSeconds(0.5), delegate { UpdateCurrentTime(); });
             }

@@ -11,7 +11,6 @@ using FreedomVoice.iOS.Helpers;
 using UIKit;
 using FreedomVoice.iOS.ViewModels;
 using System.Threading.Tasks;
-using FreedomVoice.iOS.TableViewSources;
 
 namespace FreedomVoice.iOS.TableViewCells
 {
@@ -23,7 +22,7 @@ namespace FreedomVoice.iOS.TableViewCells
 
         private UILabel _title;
         private UILabel _date;
-        private UILabel _lengthLbl;
+        private UILabel _length;
 
         private AVPlayerView _player;
 
@@ -31,17 +30,16 @@ namespace FreedomVoice.iOS.TableViewCells
         private UIButton _deleteButton;
         private UIButton _speakerButton;
         private UIButton _viewFaxButton;
+
         #endregion
 
-        private string _systemPhoneNumber;
         private readonly Message _message;
+
+        private string _systemPhoneNumber;
+        
         private UINavigationController _navigationController;
 
         private static readonly NSString ExpandedCellId = new NSString("ExpandedCell");
-
-        
-        ExpandedCellViewModel _viewModel;
-
         public ExpandedCell(Message message) : base (UITableViewCellStyle.Default, ExpandedCellId)
         {
             _message = message;
@@ -63,6 +61,7 @@ namespace FreedomVoice.iOS.TableViewCells
         {
             _systemPhoneNumber = systemPhoneNumber;
             _navigationController = navigationController;
+
             var selectedViews = new List<UIView>();
             var faxMessageType = _message.Type == MessageType.Fax;
 
@@ -70,13 +69,13 @@ namespace FreedomVoice.iOS.TableViewCells
             _title = new UILabel(new CGRect(55, 10, 270, 19)) { Text = _message.Name, TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(17) };
             _date = new UILabel(new CGRect(55, 29, 110, 11)) { Text = Formatting.DateTimeFormat(_message.ReceivedOn), TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(12) };
 
-            _lengthLbl = GetFormattedLength(_message.Length, faxMessageType);
+            _length = GetFormattedLength(_message.Length, faxMessageType);
 
             _deleteButton = new UIButton(new CGRect(285, faxMessageType ? 60 : 99, 25, 25));
             _deleteButton.SetBackgroundImage(UIImage.FromFile("delete.png"), UIControlState.Normal);
             _deleteButton.TouchDown += OnDeleteButtonTouchDown;
 
-            selectedViews.AddRange(new List<UIView> { _icon, _title, _date, _lengthLbl, _deleteButton });
+            selectedViews.AddRange(new List<UIView> { _icon, _title, _date, _length, _deleteButton });
 
             if (faxMessageType)
                 selectedViews.Add(GetFaxButton());
@@ -161,15 +160,17 @@ namespace FreedomVoice.iOS.TableViewCells
 
         public async Task<string> GetMediaPath(MediaType mediaType)
         {
-            _viewModel = new ExpandedCellViewModel(_systemPhoneNumber, _message.Mailbox, _message.Folder, _message.Id, mediaType, _navigationController);
-            await _viewModel.GetMediaAsync();
-            return _viewModel.FilePath;         
+            var viewModel = new MediaViewModel(_systemPhoneNumber, _message.Mailbox, _message.Folder, _message.Id, mediaType, _navigationController);
+
+            await viewModel.GetMediaAsync();
+
+            return viewModel.FilePath;         
         }
 
         private async void OnFaxButtonTouchDown(object sender, EventArgs args)
         {
-            string filePath = await GetMediaPath(MediaType.Pdf);
-            OnViewFaxClick(this, new ExpandedCellButtonClickEventArgs(filePath));
+            var filePath = await GetMediaPath(MediaType.Pdf);
+            OnViewFaxClick?.Invoke(this, new ExpandedCellButtonClickEventArgs(filePath));
         }
 
         private void OnCallBackButtonTouchDown(object sender, EventArgs args)
@@ -187,9 +188,8 @@ namespace FreedomVoice.iOS.TableViewCells
         public event EventHandler<ExpandedCellButtonClickEventArgs> OnViewFaxClick;
         public event EventHandler<ExpandedCellButtonClickEventArgs> OnRowDeleteMessageClick;
 
-
         public double GetDuration()
-            {
+        {
             return _message.Length;
         }
     }

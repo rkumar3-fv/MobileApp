@@ -1,6 +1,5 @@
-﻿using System.Threading;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using FreedomVoice.Core.Entities.Enums;
 using FreedomVoice.iOS.Services;
 using FreedomVoice.iOS.Services.Responses;
 using FreedomVoice.iOS.Utilities;
@@ -10,50 +9,71 @@ namespace FreedomVoice.iOS.ViewModels
 {
     public class ExpandedCellViewModel : BaseViewModel
     {
-        private readonly IMediaService _service;
+        private readonly IMessageOperationsService _service;
 
         private readonly string _systemPhoneNumber;
         private readonly int _mailboxNumber;
-        private readonly string _folderName;
         private readonly string _messageId;
-        private readonly MediaType _mediaType;
 
-        public string FilePath { get; private set; }
+        private static string DestinationFolder => "Trash";
+
+        public string Result { private set; get; }
 
         /// <summary>
         /// Constructor, requires an IService
         /// </summary>
-        public ExpandedCellViewModel(string systemPhoneNumber, int mailboxNumber, string folderName, string messageId, MediaType mediaType, UIViewController viewController)
+        public ExpandedCellViewModel(string systemPhoneNumber, int mailboxNumber, string messageId, UIViewController viewController)
         {
-            _service = ServiceContainer.Resolve<IMediaService>();
-
-            LoadingMessage = "Downloading file...";
+            _service = ServiceContainer.Resolve<IMessageOperationsService>();
 
             ViewController = viewController;
 
             _systemPhoneNumber = systemPhoneNumber;
             _mailboxNumber = mailboxNumber;
-            _folderName = folderName;
             _messageId = messageId;
-            _mediaType = mediaType;
         }
 
         /// <summary>
-        /// Performs an asynchronous Media request
+        /// Asynchronously move messages to Trash folder
         /// </summary>
         /// <returns></returns>
-        public async Task GetMediaAsync()
+        public async Task MoveMessageToTrashAsync()
         {
+            LoadingMessage = "Performing operation...";
+
             IsBusy = true;
 
-            var requestResult = await _service.ExecuteRequest(_systemPhoneNumber, _mailboxNumber, _folderName, _messageId, _mediaType, CancellationToken.None);
+            var requestResult = await _service.ExecuteMoveRequest(_systemPhoneNumber, _mailboxNumber, DestinationFolder, new List<string> { _messageId });
             if (requestResult is ErrorResponse)
                 ProceedErrorResponse(requestResult);
             else
             {
-                var data = requestResult as MediaResponse;
+                var data = requestResult as MessageOperationsResponse;
                 if (data != null)
-                    FilePath = data.FilePath;
+                    Result = data.Result;
+            }
+
+            IsBusy = false;
+        }
+
+        /// <summary>
+        /// Asynchronously delete messages
+        /// </summary>
+        /// <returns></returns>
+        public async Task DeleteMessageAsync()
+        {
+            LoadingMessage = "Performing operation...";
+
+            IsBusy = true;
+
+            var requestResult = await _service.ExecuteDeleteRequest(_systemPhoneNumber, _mailboxNumber, new List<string> { _messageId });
+            if (requestResult is ErrorResponse)
+                ProceedErrorResponse(requestResult);
+            else
+            {
+                var data = requestResult as MessageOperationsResponse;
+                if (data != null)
+                    Result = data.Result;
             }
 
             IsBusy = false;

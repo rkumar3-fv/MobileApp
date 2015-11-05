@@ -8,7 +8,6 @@ using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.ViewModels;
 using UIKit;
 using Foundation;
-using WatchKit;
 
 namespace FreedomVoice.iOS.ViewControllers
 {
@@ -51,10 +50,10 @@ namespace FreedomVoice.iOS.ViewControllers
 
             _messagesList = _messagesViewModel.MessagesList;
 
-            var source = new MessagesSource(_messagesList, SelectedExtension, SelectedAccount, SelectedFolder, NavigationController);
-            source.OnRowCallbackClick += Source_OnRowCallbackClick;
-            source.OnRowViewFaxClick += Source_OnRowViewFaxClick;
-            source.OnRowDeleteMessageClick += Source_OnRowDeleteMessageClick;
+            var source = new MessagesSource(_messagesList, SelectedAccount, NavigationController);
+            source.OnRowCallbackClick += OnSourceRowCallbackClick;
+            source.OnRowViewFaxClick += OnSourceRowViewFaxClick;
+            source.OnRowDeleteMessageClick += OnSourceRowDeleteMessageClick;
             MessagesTableView.Source = source;
 
             MessagesTableView.ReloadData();
@@ -66,7 +65,7 @@ namespace FreedomVoice.iOS.ViewControllers
             base.ViewDidLoad();
         }
 
-        private void Source_OnRowDeleteMessageClick(object sender, ExpandedCellButtonClickEventArgs e)
+        private void OnSourceRowDeleteMessageClick(object sender, ExpandedCellButtonClickEventArgs e)
         {
             var selectedMessage = _messagesList[e.IndexPath.Row];
             if (selectedMessage == null) return;
@@ -85,7 +84,7 @@ namespace FreedomVoice.iOS.ViewControllers
             }
         }
 
-        private void Source_OnRowViewFaxClick(object sender, ExpandedCellButtonClickEventArgs e)
+        private void OnSourceRowViewFaxClick(object sender, ExpandedCellButtonClickEventArgs e)
         {
             var barTintColor = MainTabBarInstance.NavigationController.NavigationBar.BarTintColor;
             var leftBarButtonItems = MainTabBarInstance.NavigationItem.LeftBarButtonItems;
@@ -114,7 +113,7 @@ namespace FreedomVoice.iOS.ViewControllers
             MainTabBarInstance.NavigationItem.RightBarButtonItem = null;
         }
 
-        private void Source_OnRowCallbackClick(object sender, ExpandedCellButtonClickEventArgs e)
+        private void OnSourceRowCallbackClick(object sender, ExpandedCellButtonClickEventArgs e)
         {            
             var selectedCallerId = MainTabBarInstance.GetSelectedPresentationNumber().PhoneNumber;
             PhoneCall.CreateCallReservation(MainTabBarInstance.SelectedAccount.PhoneNumber, selectedCallerId, e.SelectedMessage.SourceNumber, NavigationController);

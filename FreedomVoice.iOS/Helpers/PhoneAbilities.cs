@@ -150,6 +150,8 @@ namespace FreedomVoice.iOS.Helpers
 
             if (callReservationViewModel.IsErrorResponseReceived) return;
 
+            //TODO: Add "Call failed" alert
+
             var switchboardNumber = callReservationViewModel.Reservation.SwitchboardNumber;
 
             var phoneNumber = NSUrl.FromString("tel:" + "+1" + switchboardNumber);

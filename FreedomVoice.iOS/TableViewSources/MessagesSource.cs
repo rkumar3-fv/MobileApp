@@ -14,29 +14,23 @@ namespace FreedomVoice.iOS.TableViewSources
         private readonly List<Message> _messages;
 
         private readonly Account _selectedAccount;
-        private readonly ExtensionWithCount _selectedExtension;
-        private readonly FolderWithCount _selectedFolder;
 
         private readonly UINavigationController _navigationController;
 
         private NSIndexPath _selectedRowIndexPath;
         private int _selectedRowIndex = -1;
 
-        public MessagesSource(List<Message> messages, ExtensionWithCount selectedExtension, Account selectedAccount, FolderWithCount folder, UINavigationController navigationController)
+        public MessagesSource(List<Message> messages, Account selectedAccount, UINavigationController navigationController)
         {
             _messages = messages;
-
-            _selectedExtension = selectedExtension;
             _selectedAccount = selectedAccount;
-            _selectedFolder = folder;
 
             _navigationController = navigationController;
         }
 
         public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
         {
-            var selectedMessage = _messages[indexPath.Row];            
-            
+            var selectedMessage = _messages[indexPath.Row];
 
             if (indexPath.Row == _selectedRowIndex)
             {
@@ -92,7 +86,6 @@ namespace FreedomVoice.iOS.TableViewSources
             return indexPath.Row == _selectedRowIndex ? (selectedMessage.Type == MessageType.Fax ? 100 : 138) : 48;
         }
 
-
         public event EventHandler<ExpandedCellButtonClickEventArgs> OnRowCallbackClick;
         public event EventHandler<ExpandedCellButtonClickEventArgs> OnRowViewFaxClick;
         public event EventHandler<ExpandedCellButtonClickEventArgs> OnRowDeleteMessageClick;
@@ -103,7 +96,7 @@ namespace FreedomVoice.iOS.TableViewSources
         }
 
         private void RowCallbackClick(UITableView tableView, NSIndexPath indexPath)
-            {
+        {
             var selectedMessage = _messages[indexPath.Row];
 
             OnRowCallbackClick?.Invoke(this, new ExpandedCellButtonClickEventArgs(selectedMessage));
