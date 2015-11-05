@@ -213,15 +213,15 @@
     <Compile Include="Helpers\AppHelper.cs" />
     <Compile Include="Helpers\AppPreferencesHelper.cs" />
     <Compile Include="Helpers\AttachmentHelperEventArgs.cs" />
-    <Compile Include="Helpers\FaxForegroundBinder.cs" />
+    <Compile Include="Helpers\AttachmentsDownloadBinder.cs" />
     <Compile Include="Helpers\AttachmentsHelper.cs" />
     <Compile Include="Notifications\BaseNotification.cs" />
-    <Compile Include="Notifications\FaxUploadNotification.cs" />
+    <Compile Include="Notifications\FaxDownloadNotification.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\ComService.cs" />
     <Compile Include="Services\ComServiceResultReceiver.cs" />
-    <Compile Include="Services\FaxForegroundService.cs" />
+    <Compile Include="Services\AttachmentsDownloadService.cs" />
     <Compile Include="Services\IComServiceResultReceiver.cs" />
     <Compile Include="Services\MediaService.cs" />
     <Compile Include="Utils\CallStateHelper.cs" />
@@ -332,6 +332,9 @@
       <SubType>AndroidResource</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\act_phone.axml">
+      <SubType>AndroidResource</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\dlg_logout_short.axml">
       <SubType>AndroidResource</SubType>
     </AndroidResource>
   </ItemGroup>
@@ -1050,6 +1053,9 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable-hdpi\ic_notification_fax.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\progress_horizontal.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

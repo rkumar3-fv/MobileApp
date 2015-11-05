@@ -56,10 +56,11 @@
   <dimen name="inactive_activity_text_margin">43dp</dimen>
   
   <!-- Phone activity -->
-  <dimen name="phone_activity_field_margin">30dp</dimen>
+  <dimen name="phone_activity_field_margin">13dp</dimen>
   <dimen name="phone_activity_code_size">30dp</dimen>
-  <dimen name="phone_activity_button_margin">14dp</dimen>
-  <dimen name="phone_activity_skip_margin">24dp</dimen>
+  <dimen name="phone_activity_button_margin">20dp</dimen>
+  <dimen name="phone_activity_skip_margin">19dp</dimen>
+  <dimen name="phone_activity_error_margin">1dp</dimen>
   
   <!-- Select account activity -->
   <dimen name="select_acc_activity_progress_size">65dp</dimen>
@@ -73,6 +74,13 @@
   <dimen name="details_activity_actions_margin">10dp</dimen>
   <dimen name="details_activity_actions_spacing">8dp</dimen>
   <dimen name="details_activity_actions_height">36dp</dimen>
+  <dimen name="details_activity_progress_size">3dp</dimen>
+  <dimen name="details_play_button_size">36dp</dimen>
+  <dimen name="details_play_margin">9dp</dimen>
+  <dimen name="details_player_margin">7dp</dimen>
+  <dimen name="details_player_time_margin">5dp</dimen>
+  <dimen name="details_player_time_begin_size">36dp</dimen>
+  <dimen name="details_player_time_end_size">40dp</dimen>
   
   <!-- Content activity -->
   <dimen name="content_activity_tab_text_size">14sp</dimen>

@@ -26,7 +26,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             SkipButton.Visibility = ViewStates.Gone;
         }
 
-        protected new void ApplyButtonOnClick(object sender, EventArgs eventArgs)
+        protected override void ApplyButtonOnClick(object sender, EventArgs eventArgs)
         {
             if (SetupNumber())
                 BaseBackPressed();

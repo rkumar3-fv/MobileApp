@@ -45,7 +45,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             switch (item.ItemId)
             {
                 case Resource.Id.menu_action_logout:
-                    var logoutDialog = new LogoutDialogFragment();
+                    var logoutDialog = new LogoutDialogFragment(false);
                     logoutDialog.DialogEvent += OnDialogEvent;
                     logoutDialog.Show(SupportFragmentManager, GetString(Resource.String.DlgLogout_title));
                     return true;

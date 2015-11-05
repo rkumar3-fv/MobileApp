@@ -3,13 +3,13 @@ using com.FreedomVoice.MobileApp.Android.Services;
 
 namespace com.FreedomVoice.MobileApp.Android.Helpers
 {
-    public class FaxForegroundBinder : Binder
+    public class AttachmentsDownloadBinder : Binder
     {
-        public FaxForegroundBinder(FaxForegroundService service)
+        public AttachmentsDownloadBinder(AttachmentsDownloadService service)
         {
             Service = service;
         }
 
-        public FaxForegroundService Service { get; }
+        public AttachmentsDownloadService Service { get; }
     }
 }

@@ -11,9 +11,18 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/details_activity_number_margin"
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:layout_marginRight="@dimen/activity_horizontal_margin">
+        <ProgressBar
+            android:id="@+id/recordActivity_progress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:progressDrawable="@drawable/progress_horizontal"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:visibility="invisible" />
         <TextView
             android:id="@+id/recordActivity_senderText"
             style="@style/MsgDetailsSenderText"
@@ -21,6 +30,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
+            android:layout_marginTop="@dimen/details_activity_number_margin"
             android:layout_marginBottom="@dimen/details_activity_stamp_margin" />
         <TextView
             android:id="@+id/recordActivity_dateText"
@@ -36,6 +46,42 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/recordActivity_senderText"
             android:layout_alignParentLeft="true" />
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/details_play_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="@dimen/details_activity_number_margin">
+        <ImageButton
+            android:id="@+id/recordActivity_playerButton"
+            android:src="@drawable/ic_action_play"
+            android:background="@android:color/transparent"
+            android:layout_width="@dimen/details_play_button_size"
+            android:layout_height="@dimen/details_play_button_size"
+            android:minHeight="@dimen/details_play_button_size"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true" />
+        <TextView
+            android:id="@+id/recordActivity_playerStartText"
+            android:text="00:00"
+            style="@style/MessagesCounterText"
+            android:layout_width="@dimen/details_player_time_begin_size"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/recordActivity_playerButton"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/details_player_margin"
+            android:layout_marginRight="@dimen/details_player_time_margin" />
+        <TextView
+            android:id="@+id/recordActivity_playerEndText"
+            android:text="-00:00"
+            style="@style/MessagesCounterText"
+            android:layout_width="@dimen/details_player_time_end_size"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/details_player_time_margin" />
     </RelativeLayout>
     <RelativeLayout
         android:layout_width="wrap_content"

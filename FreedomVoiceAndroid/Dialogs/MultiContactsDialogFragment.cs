@@ -5,7 +5,6 @@ using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Adapters;
-using com.FreedomVoice.MobileApp.Android.CustomControls;
 using com.FreedomVoice.MobileApp.Android.Entities;
 
 namespace com.FreedomVoice.MobileApp.Android.Dialogs

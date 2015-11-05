@@ -21,8 +21,7 @@
   <color name="colorAuthHeader">#002f57</color>
   <color name="textForgotPassword">#03678f</color>
   <color name="colorButton">#f0aa1e</color>
-  <color name="colorButtonPressed">#ff9800</color>
-  <color name="colorWhiteButtonPressed">#5a6f8a</color>
+  <color name="colorButtonPressed">#d6971a</color>
   <color name="colorFieldsActive">#ffffff</color>
   <color name="colorFieldsNormal">#59ffffff</color>
   <color name="colorFieldsHint">#80ffffff</color>
@@ -43,4 +42,6 @@
   <color name="colorSpinnerSelector">#8c000000</color>
   <color name="colorProgressWhite">#ffffffff</color>
   <color name="colorProgressBlue">#ff038ac1</color>
+  <color name="colorButtonWhite">#1a5a6f8a</color>
+  <color name="colorButtonWhitePressed">#335a6f8a</color>
 </resources>

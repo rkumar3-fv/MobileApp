@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Android.App;
@@ -18,7 +19,7 @@ namespace com.FreedomVoice.MobileApp.Android.Services
     /// Used in foreground mode
     /// </summary>
     [Service(Exported = false)]
-    public class FaxForegroundService : Service
+    public class AttachmentsDownloadService : Service
     {
         public const string ActionTag = "ExtraAction";
         public const string ActionIdTag = "ActionIdTag";
@@ -46,7 +47,7 @@ namespace com.FreedomVoice.MobileApp.Android.Services
 
         public override IBinder OnBind(Intent intent)
         {
-            var binder = new FaxForegroundBinder(this);
+            var binder = new AttachmentsDownloadBinder(this);
             return binder;
         }
 
@@ -102,11 +103,12 @@ namespace com.FreedomVoice.MobileApp.Android.Services
             if (!Directory.Exists(root))
                 Directory.CreateDirectory(root);
             var path = Path.GetRandomFileName();
-            StartEvent?.Invoke(this, new AttachmentHelperEventArgs<string>(id, name));
+            var lastPart = url.Split('/').Last().ToLower();
+            StartEvent?.Invoke(this, new AttachmentHelperEventArgs<string>(id, lastPart, name));
             var res = ApiHelper.MakeAsyncFileDownload(url, "application/json", token).Result;
             if (res.Code != ErrorCodes.Ok)
             {
-                FailEvent?.Invoke(this, new AttachmentHelperEventArgs<bool>(id, res.Code == ErrorCodes.Cancelled));
+                FailEvent?.Invoke(this, new AttachmentHelperEventArgs<bool>(id, lastPart, res.Code == ErrorCodes.Cancelled));
                 _isInWork = false;
                 return;
             }
@@ -114,7 +116,7 @@ namespace com.FreedomVoice.MobileApp.Android.Services
             {
                 res.Result.CopyTo(ms);
                 var bytes = ms.ToArray();
-                using (var file = new FileStream($"{root}{path}.pdf", FileMode.Create, FileAccess.Write))
+                using (var file = new FileStream($"{root}{path}.{lastPart}", FileMode.Create, FileAccess.Write))
                 {
                     ms.Read(bytes, 0, (int)ms.Length);
                     file.Write(bytes, 0, bytes.Length);
@@ -122,7 +124,7 @@ namespace com.FreedomVoice.MobileApp.Android.Services
                 }
             }
             _isInWork = false;
-            SuccessEvent?.Invoke(this, new AttachmentHelperEventArgs<string>(id, $"{root}{path}.pdf"));
+            SuccessEvent?.Invoke(this, new AttachmentHelperEventArgs<string>(id, lastPart, $"{root}{path}.{lastPart}"));
         }
 
         public override void OnDestroy()

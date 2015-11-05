@@ -1,32 +1,31 @@
 using Android.App;
 using Android.Content;
-using Android.Graphics;
 
 namespace com.FreedomVoice.MobileApp.Android.Notifications
 {
     /// <summary>
     /// Single instance fax notification
     /// </summary>
-    public class FaxUploadNotification: BaseNotification
+    public class FaxDownloadNotification: BaseNotification
     {
-        private static volatile FaxUploadNotification _instance;
+        private static volatile FaxDownloadNotification _instance;
         private static readonly object Locker = new object();
 
         /// <summary>
         /// Get fax uploading notification instance
         /// </summary>
-        public static FaxUploadNotification Instance(Context context)
+        public static FaxDownloadNotification Instance(Context context)
         {
             if (_instance != null) return _instance;
             lock (Locker)
             {
                 if (_instance == null)
-                    _instance = new FaxUploadNotification(context);
+                    _instance = new FaxDownloadNotification(context);
             }
             return _instance;
         }
 
-        private FaxUploadNotification(Context context) : base(context)
+        private FaxDownloadNotification(Context context) : base(context)
         {}
 
         /// <summary>

@@ -21,6 +21,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         protected TextView MessageDate;
         protected TextView MessageStamp;
         protected ImageButton RemoveButton;
+        protected ProgressBar Progress;
         protected long AttachmentId;
 
         protected override void OnCreate(Bundle bundle)
@@ -50,6 +51,35 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             _contactsHelper.GetName(Msg.FromNumber, out text);
             SenderText.Text = Msg.FromName.Length > 1 ? Msg.FromName : text;
             MessageDate.Text = DataFormatUtils.ToFormattedDate(GetString(Resource.String.Timestamp_yesterday), Msg.MessageDate);
+            AppHelper.Instance(this).AttachmentsHelper.OnFinish += AttachmentsHelperOnFinishLoading;
+            AppHelper.Instance(this).AttachmentsHelper.StartLoadingEvent += AttachmentsHelperOnStartLoadingEvent;
+            AppHelper.Instance(this).AttachmentsHelper.FailLoadingEvent += AttachmentsHelperOnFailLoadingEvent;
+        }
+
+        protected override void OnPause()
+        {
+            base.OnPause();
+            AppHelper.Instance(this).AttachmentsHelper.OnFinish -= AttachmentsHelperOnFinishLoading;
+            AppHelper.Instance(this).AttachmentsHelper.StartLoadingEvent -= AttachmentsHelperOnStartLoadingEvent;
+            AppHelper.Instance(this).AttachmentsHelper.FailLoadingEvent -= AttachmentsHelperOnFailLoadingEvent;
+        }
+
+        protected virtual void AttachmentsHelperOnFinishLoading(object sender, AttachmentHelperEventArgs<string> args)
+        {
+            if (Progress.Visibility == ViewStates.Visible)
+                Progress.Visibility = ViewStates.Invisible;
+        }
+
+        protected virtual void AttachmentsHelperOnStartLoadingEvent(object sender, AttachmentHelperEventArgs<string> args)
+        {
+            if (Progress.Visibility == ViewStates.Invisible)
+                Progress.Visibility = ViewStates.Visible;
+        }
+
+        protected virtual void AttachmentsHelperOnFailLoadingEvent(object sender, AttachmentHelperEventArgs<bool> args)
+        {
+            if (Progress.Visibility == ViewStates.Visible)
+                Progress.Visibility = ViewStates.Invisible;
         }
 
         /// <summary>

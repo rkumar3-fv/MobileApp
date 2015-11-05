@@ -1,6 +1,6 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Android.Content;
 using Android.OS;
 using Android.Util;
@@ -24,23 +24,24 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
     {
         private readonly Context _context;
         private bool _isBound;
-        private FaxForegroundService _faxService;
+        private AttachmentsDownloadService _attachmentsService;
         private readonly Dictionary<int, string> _cacheDictionary;
         private readonly List<int> _waitingList;
-        private readonly FaxUploadNotification _faxNotification;
+        private readonly FaxDownloadNotification _faxNotification;
 
         public event SuccessEventHandler OnFinish;
         public event StopLoadingEventHandler FailLoadingEvent;
+        public event StartLoadingEventHandler StartLoadingEvent;
 
         public AttachmentsHelper(Context context)
         {
             _context = context;
             _cacheDictionary = new Dictionary<int, string>();
             _waitingList = new List<int>();
-            _faxNotification = FaxUploadNotification.Instance(_context);
+            _faxNotification = FaxDownloadNotification.Instance(_context);
         }
 
-        public long LoadFaxAttachment(Message msg)
+        public long LoadAttachment(Message msg)
         {
             if (_cacheDictionary.ContainsKey(msg.Id))
             {
@@ -56,8 +57,8 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 #if DEBUG
                     Log.Debug(App.AppPackage, "FILE ALREADY DOWNLOADED: " + _cacheDictionary[msg.Id]);
 #endif
-                    OnFinish?.Invoke(this, new AttachmentHelperEventArgs<string>(msg.Id, _cacheDictionary[msg.Id]));
-                    return 0;
+                    OnFinish?.Invoke(this, new AttachmentHelperEventArgs<string>(msg.Id, msg.AttachUrl.Split('/').Last().ToLower(), _cacheDictionary[msg.Id]));
+                    return msg.Id;
                 }
             }
             if (_waitingList.Contains(msg.Id))
@@ -65,19 +66,20 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 #if DEBUG
                 Log.Debug(App.AppPackage, "FILE ALREADY DOWNLOADING: " +msg.Id);
 #endif
+                StartLoadingEvent?.Invoke(this, new AttachmentHelperEventArgs<string>(msg.Id, msg.AttachUrl.Split('/').Last().ToLower(), _cacheDictionary[msg.Id]));
                 return msg.Id;
             }
             _waitingList.Add(msg.Id);
-            var intent = new Intent(_context, typeof(FaxForegroundService));
-            intent.SetAction(FaxForegroundService.ActionExecuteTag);
-            intent.PutExtra(FaxForegroundService.ActionIdTag, msg.Id);
-            intent.PutExtra(FaxForegroundService.ActionNameTag, msg.FromNumber);
-            intent.PutExtra(FaxForegroundService.ActionTag, msg.AttachUrl);
+            var intent = new Intent(_context, typeof(AttachmentsDownloadService));
+            intent.SetAction(AttachmentsDownloadService.ActionExecuteTag);
+            intent.PutExtra(AttachmentsDownloadService.ActionIdTag, msg.Id);
+            intent.PutExtra(AttachmentsDownloadService.ActionNameTag, msg.FromNumber);
+            intent.PutExtra(AttachmentsDownloadService.ActionTag, msg.AttachUrl);
 #if DEBUG
             Log.Debug(App.AppPackage, "HELPER SERVICE LAUNCHED: request ID=" + msg.Id);
 #endif
             if (!_isBound)
-                _context.BindService(new Intent(_context, typeof(FaxForegroundService)), this, Bind.AutoCreate);
+                _context.BindService(new Intent(_context, typeof(AttachmentsDownloadService)), this, Bind.AutoCreate);
             _context.StartService(intent);
             return msg.Id;
         }
@@ -87,13 +89,13 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 #if DEBUG
             Log.Debug(App.AppPackage, "SERVICE BINDED");
 #endif
-            var serviceBinder = service as FaxForegroundBinder;
+            var serviceBinder = service as AttachmentsDownloadBinder;
             if (serviceBinder == null) return;
-            _faxService = serviceBinder.Service;
+            _attachmentsService = serviceBinder.Service;
             _isBound = true;
-            _faxService.SuccessEvent += FaxServiceOnSuccessEvent;
-            _faxService.StartEvent += FaxServiceOnStartEvent;
-            _faxService.FailEvent += FaxServiceOnFailEvent;
+            _attachmentsService.SuccessEvent += AttachmentsServiceOnSuccessEvent;
+            _attachmentsService.StartEvent += AttachmentsServiceOnStartEvent;
+            _attachmentsService.FailEvent += AttachmentsServiceOnFailEvent;
         }
 
         public void OnServiceDisconnected(ComponentName name)
@@ -101,22 +103,23 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 #if DEBUG
             Log.Debug(App.AppPackage, "SERVICE UNBINDED");
 #endif
-            _faxService.SuccessEvent -= FaxServiceOnSuccessEvent;
-            _faxService.StartEvent -= FaxServiceOnStartEvent;
+            _attachmentsService.SuccessEvent -= AttachmentsServiceOnSuccessEvent;
+            _attachmentsService.StartEvent -= AttachmentsServiceOnStartEvent;
             _isBound = false;
         }
 
-        private void FaxServiceOnStartEvent(object sender, AttachmentHelperEventArgs<string> args)
+        private void AttachmentsServiceOnStartEvent(object sender, AttachmentHelperEventArgs<string> args)
         {
             string result;
             //var res = ContactsHelper.Instance(_context).GetName(args.Result, out result);
 #if DEBUG
             Log.Debug(App.AppPackage, $"START LOADING ATTACHMENT FROM: {args.Result}");
 #endif
+            StartLoadingEvent?.Invoke(this, args);
             _faxNotification.ShowNotification(args.Result);
         }
 
-        private void FaxServiceOnFailEvent(object sender, AttachmentHelperEventArgs<bool> args)
+        private void AttachmentsServiceOnFailEvent(object sender, AttachmentHelperEventArgs<bool> args)
         {
             if (args.Result)
                 _faxNotification.HideNotification();
@@ -126,7 +129,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             FailLoadingEvent?.Invoke(this, args);
         }
 
-        private void FaxServiceOnSuccessEvent(object sender, AttachmentHelperEventArgs<string> success)
+        private void AttachmentsServiceOnSuccessEvent(object sender, AttachmentHelperEventArgs<string> success)
         {
 #if DEBUG
             Log.Debug(App.AppPackage, "LOADING FINISHED: file path is " + success.Result);
@@ -145,7 +148,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             else
             {
                 _faxNotification.HideNotification();
-                OnFinish.Invoke(this, new AttachmentHelperEventArgs<string>(success.Id, success.Result));
+                OnFinish.Invoke(this, success);
             }
         }
     }

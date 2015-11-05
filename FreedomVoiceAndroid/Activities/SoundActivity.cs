@@ -1,5 +1,6 @@
 using System;
 using Android.Widget;
+using com.FreedomVoice.MobileApp.Android.Helpers;
 using FreedomVoice.Core.Utils;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
@@ -9,6 +10,9 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
     /// </summary>
     public abstract class SoundActivity : MessageDetailsActivity
     {
+        protected ImageButton PlayerButton;
+        protected TextView StarTextView;
+        protected TextView EndTextView;
         protected Button SpeakerButton;
         protected Button CallBackButton;
 
@@ -39,6 +43,22 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         private void CallBackButtonOnClick(object sender, EventArgs eventArgs)
         {
             Call(Msg.FromNumber);
+        }
+
+        protected override void AttachmentsHelperOnStartLoadingEvent(object sender, AttachmentHelperEventArgs<string> args)
+        {
+            if (Msg.Id != args.Id) return;
+            base.AttachmentsHelperOnStartLoadingEvent(sender, args);
+            if (PlayerButton.Activated)
+                PlayerButton.Activated = false;
+        }
+
+        protected override void AttachmentsHelperOnFailLoadingEvent(object sender, AttachmentHelperEventArgs<bool> args)
+        {
+            if (Msg.Id != args.Id) return;
+            base.AttachmentsHelperOnFailLoadingEvent(sender, args);
+            if (!PlayerButton.Activated)
+                PlayerButton.Activated = true;
         }
     }
 }

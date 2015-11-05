@@ -39,6 +39,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             SetContentView(Resource.Layout.act_phone);
             RootLayout = FindViewById(Resource.Id.phoneActivity_root);
             _phoneText = FindViewById<EditText>(Resource.Id.phoneActivity_phoneField);
+            _phoneText.FocusChange += PhoneTextOnFocusChange;
             _applyProgressBar = FindViewById<ProgressBar>(Resource.Id.phoneActivity_applyProgress);
             _skipProgressBar = FindViewById<ProgressBar>(Resource.Id.phoneActivity_skipProgress);
             _applyButton = FindViewById<Button>(Resource.Id.phoneActivity_applyButton);
@@ -57,6 +58,13 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             _skipProgressBar.ProgressDrawable?.SetColorFilter(skipBarColor, PorterDuff.Mode.SrcIn);
         }
 
+        private void PhoneTextOnFocusChange(object sender, View.FocusChangeEventArgs focusChangeEventArgs)
+        {
+            if (!focusChangeEventArgs.HasFocus) return;
+            _phoneText.Background.ClearColorFilter();
+            _phoneErrorText.Visibility = ViewStates.Invisible;
+        }
+
         protected override void OnPause()
         {
             base.OnPause();
@@ -67,7 +75,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
 
         protected void SkipButtonOnClick(object sender, EventArgs eventArgs)
         {
-            
+            _phoneText.Background.ClearColorFilter();
+            _phoneErrorText.Visibility = ViewStates.Invisible;
             if (_skipProgressBar.Visibility == ViewStates.Invisible)
                 _skipProgressBar.Visibility = ViewStates.Visible;
             if (SkipButton.Text.Length != 0)
@@ -75,8 +84,10 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             Helper.GetAccounts();
         }
 
-        protected void ApplyButtonOnClick(object sender, EventArgs eventArgs)
+        protected virtual void ApplyButtonOnClick(object sender, EventArgs eventArgs)
         {
+            _phoneText.Background.ClearColorFilter();
+            _phoneErrorText.Visibility = ViewStates.Invisible;
             if (!SetupNumber()) return;
             if (_applyProgressBar.Visibility == ViewStates.Invisible)
                 _applyProgressBar.Visibility = ViewStates.Visible;
@@ -116,7 +127,12 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             switch (item.ItemId)
             {
                 case Resource.Id.menu_action_logout:
-                    var logoutDialog = new LogoutDialogFragment();
+                    bool hasRecents;
+                    if ((Helper.RecentsDictionary == null) || (Helper.RecentsDictionary.Count == 0))
+                        hasRecents = true;
+                    else
+                        hasRecents = false;
+                    var logoutDialog = new LogoutDialogFragment(hasRecents);
                     logoutDialog.DialogEvent += OnDialogEvent;
                     logoutDialog.Show(SupportFragmentManager, GetString(Resource.String.DlgLogout_title));
                     return true;
