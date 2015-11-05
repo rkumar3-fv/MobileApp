@@ -58,7 +58,23 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 file.SetReadable(true);
                 intent.SetDataAndType(Uri.FromFile(file), "application/pdf");
                 intent.SetFlags(ActivityFlags.NoHistory);
-                StartActivityForResult(intent, 1);
+                try
+                {
+                    StartActivityForResult(intent, 1);
+                }
+                catch (ActivityNotFoundException)
+                {
+                    try
+                    {
+                        StartActivity(new Intent(Intent.ActionView, Uri.Parse("market://details?id=" + GetString(Resource.String.Extra_pdfReaderPath))));
+                    }
+                    catch (ActivityNotFoundException)
+                    {
+                        StartActivity(new Intent(Intent.ActionView, Uri.Parse("http://play.google.com/store/apps/details?id=" + GetString(Resource.String.Extra_pdfReaderPath))));
+                        throw;
+                    }
+                    throw;
+                }
             }
         }
 

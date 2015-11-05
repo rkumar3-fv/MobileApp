@@ -36,7 +36,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             _passwordText.Text = "adm654654";
         }
 #endif
-
         private Color _errorColor;
         private Button _authButton;
         private Button _forgotButton;
@@ -66,6 +65,9 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             _authButton.Click += AuthButtonOnClick;
             _forgotButton.Click += ForgotButtonOnClick;
             _errorColor = new Color(ContextCompat.GetColor(this, Resource.Color.textColorError));
+            var progressColor = new Color(ContextCompat.GetColor(this, Resource.Color.colorProgressWhite));
+            _progressLogin.IndeterminateDrawable?.SetColorFilter(progressColor, PorterDuff.Mode.SrcIn);
+            _progressLogin.ProgressDrawable?.SetColorFilter(progressColor, PorterDuff.Mode.SrcIn);
 
             var pInfo = PackageManager.GetPackageInfo(PackageName, 0);
             Appl.AnalyticsTracker.SetAppName(GetString(Resource.String.ApplicationName));

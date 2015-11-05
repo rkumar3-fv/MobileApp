@@ -35,5 +35,10 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             Helper.DisclaimerApplied();
             StartActivity(intent);
         }
+
+        public override void OnBackPressed()
+        {
+            MoveTaskToBack(true);
+        }
     }
 }
