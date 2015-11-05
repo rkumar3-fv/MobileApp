@@ -67,7 +67,7 @@ namespace FreedomVoice.iOS.TableViewCells
 
             _icon = Helpers.Appearance.GetMessageImageView(_message.Type, false, true);
             _title = new UILabel(new CGRect(55, 10, 270, 19)) { Text = _message.Name, TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(17) };
-            _date = new UILabel(new CGRect(55, 29, 110, 11)) { Text = Formatting.DateTimeFormat(_message.ReceivedOn), TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(12) };
+            _date = new UILabel(new CGRect(55, 29, 120, 11)) { Text = Formatting.DateTimeFormat(_message.ReceivedOn), TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(12) };
 
             _length = GetFormattedLength(_message.Length, faxMessageType);
 
@@ -104,7 +104,7 @@ namespace FreedomVoice.iOS.TableViewCells
         private static UILabel GetFormattedLength(double length, bool faxMessageType)
         {
             var formattedLength = faxMessageType ? Formatting.PagesToFormattedString(length) : Formatting.SecondsToFormattedString(length);
-            return new UILabel(new CGRect(faxMessageType ? 257 : 275, 29, faxMessageType ? 49 : 35, 13))
+            return new UILabel(new CGRect(faxMessageType ? 257 : 275, 29, 49, 13))
             {
                 Text = formattedLength,
                 TextColor = UIColor.White,

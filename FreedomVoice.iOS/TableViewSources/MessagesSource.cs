@@ -6,6 +6,7 @@ using FreedomVoice.iOS.TableViewCells;
 using UIKit;
 using FreedomVoice.Core.Entities.Enums;
 using FreedomVoice.iOS.Helpers;
+using FreedomVoice.iOS.ViewModels;
 
 namespace FreedomVoice.iOS.TableViewSources
 {
@@ -102,8 +103,21 @@ namespace FreedomVoice.iOS.TableViewSources
             OnRowCallbackClick?.Invoke(this, new ExpandedCellButtonClickEventArgs(selectedMessage));
         }
 
-        private void RowDeleteMessageClick(UITableView tableView, NSIndexPath indexPath)
+        private async void RowDeleteMessageClick(UITableView tableView, NSIndexPath indexPath)
         {
+            _selectedRowIndex = -1;
+            _selectedRowIndexPath = null;
+            var selectedMessage = _messages[indexPath.Row];
+            if (selectedMessage == null) return;
+
+            var model = new ExpandedCellViewModel(_selectedAccount.PhoneNumber, selectedMessage.Mailbox, selectedMessage.Id, _navigationController);
+
+            if (selectedMessage.Folder == "Trash")            
+                await model.DeleteMessageAsync();            
+            else            
+                await model.MoveMessageToTrashAsync();            
+
+            _messages.Remove(selectedMessage);
             OnRowDeleteMessageClick?.Invoke(this, new ExpandedCellButtonClickEventArgs(tableView, indexPath));
         }
     }
