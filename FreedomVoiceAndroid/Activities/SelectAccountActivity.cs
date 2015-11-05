@@ -1,13 +1,18 @@
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
+using Android.Graphics;
 using Android.OS;
+using Android.Support.V4.Content;
 using Android.Support.V7.Widget;
+using Android.Views;
+using Android.Widget;
 #if DEBUG
 using Android.Util;
 #endif
 using com.FreedomVoice.MobileApp.Android.Adapters;
 using com.FreedomVoice.MobileApp.Android.CustomControls;
+using com.FreedomVoice.MobileApp.Android.Helpers;
 using FreedomVoice.Core.Utils;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
@@ -21,6 +26,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         Theme = "@style/AppThemeActionBar")]
     public class SelectAccountActivity : LogoutActivity
     {
+        private RelativeLayout _progressLayout;
+        private ProgressBar _progressBar;
         private RecyclerView _selectView;
         private AccountsRecyclerAdapter _adapter;
 
@@ -29,6 +36,11 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             base.OnCreate(bundle);
             SetContentView(Resource.Layout.act_select);
             RootLayout = FindViewById(Resource.Id.selectAccountActivity_root);
+            _progressLayout = FindViewById<RelativeLayout>(Resource.Id.selectAccountActivity_progressLayout);
+            _progressBar = FindViewById<ProgressBar>(Resource.Id.selectAccountActivity_progress);
+            var progressColor = new Color(ContextCompat.GetColor(this, Resource.Color.colorProgressBlue));
+            _progressBar.IndeterminateDrawable?.SetColorFilter(progressColor, PorterDuff.Mode.SrcIn);
+            _progressBar.ProgressDrawable?.SetColorFilter(progressColor, PorterDuff.Mode.SrcIn);
             _selectView = FindViewById<RecyclerView>(Resource.Id.selectAccountActivity_accountsList);
             _selectView.SetLayoutManager(new LinearLayoutManager(this));
             _selectView.AddItemDecoration(new DividerItemDecorator(this, Resource.Drawable.divider));
@@ -48,6 +60,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
 #if DEBUG
             Log.Debug(App.AppPackage, $"ACTIVITY {GetType().Name}: select account #{DataFormatUtils.ToPhoneNumber(_adapter.AccountName(position))}");
 #endif
+            if (_progressLayout.Visibility == ViewStates.Gone)
+                _progressLayout.Visibility = ViewStates.Visible;
             Helper.SelectedAccount = Helper.AccountsList[position];
             Helper.GetPresentationNumbers();
         }
@@ -65,6 +79,13 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         public override void OnBackPressed()
         {
             MoveTaskToBack(true);
+        }
+
+        protected override void OnHelperEvent(ActionsHelperEventArgs args)
+        {
+            base.OnHelperEvent(args);
+            if (_progressLayout.Visibility == ViewStates.Visible)
+                _progressLayout.Visibility = ViewStates.Gone;
         }
     }
 }

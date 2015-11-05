@@ -13,7 +13,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         Label = "@string/ActivityNumber_title",
         ScreenOrientation = ScreenOrientation.Portrait,
         WindowSoftInputMode = SoftInput.AdjustResize,
-        Theme = "@style/AppThemeActionBar")]
+        Theme = "@style/AppThemeActionBar",
+        NoHistory = true)]
     public class SetNumberActivityWithBack : SetNumberActivity
     {
         protected override void OnCreate(Bundle bundle)
