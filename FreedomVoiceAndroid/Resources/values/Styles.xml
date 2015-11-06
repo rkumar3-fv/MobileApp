@@ -29,8 +29,8 @@
     <item name="colorPrimary">@color/colorPrimary</item>
     <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
     <item name="android:windowBackground">@color/colorBackground</item>
-    <item name="colorAccent">@color/colorBaseControls</item>
-    <item name="colorControlActivated">@color/colorDivider</item>
+    <item name="colorAccent">@color/colorFieldsNormal</item>
+    <item name="colorControlActivated">@color/colorFieldsActive</item>
     <item name="colorControlNormal">@color/colorDivider</item>
     <item name="android:actionBarStyle">@style/ActionBarTheme</item>
     <item name="actionBarStyle">@style/ActionBarTheme</item>
@@ -75,7 +75,7 @@
   <style name="PopupMenuListView" parent="@style/Widget.AppCompat.ListView.DropDown">
     <!--<item name="android:divider">@color/colorDivider</item>
     <item name="android:dividerHeight">@dimen/activity_element_divider</item>-->
-    <item name="android:background">@color/colorTabIndicator</item>
+    <item name="android:background">@color/colorBackground</item>
     <item name="android:colorBackground">@color/colorTransparent</item>
     <item name="android:popupBackground">@color/colorTransparent</item>
   </style>
@@ -114,6 +114,7 @@
     <item name="android:scrollHorizontally">true</item>
     <item name="android:fontFamily">sans-serif</item>
     <item name="android:maxHeight">@dimen/auth_activity_field_height_max</item>
+    <item name="android:textCursorDrawable">@drawable/cursor_white</item>
   </style>
 
   <!-- RestoreActivity edit fields style -->
@@ -122,11 +123,14 @@
     <item name="android:textSize">@dimen/auth_activity_edit_text_size</item>
     <item name="android:textColor">@color/textColorSecondary</item>
     <item name="android:textColorHint">@color/colorBlackFieldsHint</item>
+    <item name="colorAccent">@color/colorBaseControls</item>
+    <item name="colorControlActivated">@color/colorDivider</item>
     <item name="android:singleLine">true</item>
     <item name="android:maxLines">1</item>
     <item name="android:fontFamily">sans-serif</item>
     <item name="android:scrollHorizontally">true</item>
     <item name="android:maxHeight">@dimen/auth_activity_field_height_max</item>
+    <item name="android:textCursorDrawable">@drawable/cursor_black</item>
   </style>
   
   <!-- Borderless restore button style -->
@@ -202,22 +206,23 @@
 
   <!-- In-button progress bars -->
   <style name="InButtonProgressBar" parent="Widget.AppCompat.ProgressBar">
-    <item name="colorAccent">@color/colorProgressWhite</item>
-    <item name="android:colorAccent">@color/colorProgressWhite</item>
-    <item name="colorControlActivated">@color/colorProgressWhite</item>
-    <item name="android:colorControlActivated">@color/colorProgressWhite</item>
     <item name="android:indeterminate">true</item>
     <item name="android:indeterminateTint">@color/colorProgressWhite</item>
     <item name="android:indeterminateTintMode">src_in</item>
   </style>
 
   <style name="InWhiteButtonProgressBar" parent="Widget.AppCompat.ProgressBar">
-    <item name="colorAccent">@color/colorProgressBlue</item>
-    <item name="android:colorAccent">@color/colorProgressBlue</item>
-    <item name="colorControlActivated">@color/colorProgressBlue</item>
-    <item name="android:colorControlActivated">@color/colorProgressBlue</item>
     <item name="android:indeterminate">true</item>
     <item name="android:indeterminateTint">@color/colorProgressBlue</item>
+    <item name="android:indeterminateTintMode">src_in</item>
+  </style>
+  
+  <style name="OrangeHorizontalProgressBar" parent="Widget.AppCompat.ProgressBar.Horizontal">
+    <item name="android:indeterminate">true</item>
+    <item name="android:minHeight">@dimen/details_activity_progress_size</item>
+    <item name="android:maxHeight">@dimen/details_activity_progress_size</item>
+    <item name="android:progressDrawable">@color/colorProgressBackground</item>
+    <item name="android:indeterminateTint">@color/colorProgressOrange</item>
     <item name="android:indeterminateTintMode">src_in</item>
   </style>
   

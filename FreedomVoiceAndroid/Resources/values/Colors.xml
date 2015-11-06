@@ -42,6 +42,8 @@
   <color name="colorSpinnerSelector">#8c000000</color>
   <color name="colorProgressWhite">#ffffffff</color>
   <color name="colorProgressBlue">#ff038ac1</color>
+  <color name="colorProgressOrange">#fff0aa1e</color>
+  <color name="colorProgressBackground">#66f0aa1e</color>
   <color name="colorButtonWhite">#1a5a6f8a</color>
   <color name="colorButtonWhitePressed">#335a6f8a</color>
 </resources>

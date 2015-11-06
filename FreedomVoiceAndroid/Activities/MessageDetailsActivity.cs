@@ -1,5 +1,7 @@
 using System;
+using Android.Graphics;
 using Android.OS;
+using Android.Support.V4.Content;
 using Android.Support.V7.Internal.View;
 using Android.Views;
 using Android.Widget;
@@ -23,6 +25,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         protected ImageButton RemoveButton;
         protected ProgressBar Progress;
         protected long AttachmentId;
+        private Color _lightProgress;
+        private Color _darkProgress;
 
         protected override void OnCreate(Bundle bundle)
         {
@@ -32,12 +36,18 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             SupportActionBar.SetHomeAsUpIndicator(Resource.Drawable.ic_action_back);
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
             SupportActionBar.SetHomeButtonEnabled(true);
+
+            _lightProgress = new Color(ContextCompat.GetColor(this, Resource.Color.colorProgressBackground));
+            _darkProgress = new Color(ContextCompat.GetColor(this, Resource.Color.colorProgressOrange));
         }
 
         protected override void OnStart()
         {
             base.OnStart();
             RemoveButton.Click += RemoveButtonOnClick;
+            
+            Progress.IndeterminateDrawable?.SetColorFilter(_darkProgress, PorterDuff.Mode.SrcIn);
+            Progress.ProgressDrawable?.SetColorFilter(_lightProgress, PorterDuff.Mode.SrcIn);
         }
 
         protected override void OnResume()

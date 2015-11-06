@@ -66,7 +66,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 #if DEBUG
                 Log.Debug(App.AppPackage, "FILE ALREADY DOWNLOADING: " +msg.Id);
 #endif
-                StartLoadingEvent?.Invoke(this, new AttachmentHelperEventArgs<string>(msg.Id, msg.AttachUrl.Split('/').Last().ToLower(), _cacheDictionary[msg.Id]));
+                StartLoadingEvent?.Invoke(this, new AttachmentHelperEventArgs<string>(msg.Id, msg.AttachUrl.Split('/').Last().ToLower(), msg.FromNumber));
                 return msg.Id;
             }
             _waitingList.Add(msg.Id);
@@ -110,13 +110,13 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 
         private void AttachmentsServiceOnStartEvent(object sender, AttachmentHelperEventArgs<string> args)
         {
-            string result;
+            //string result;
             //var res = ContactsHelper.Instance(_context).GetName(args.Result, out result);
 #if DEBUG
             Log.Debug(App.AppPackage, $"START LOADING ATTACHMENT FROM: {args.Result}");
 #endif
-            StartLoadingEvent?.Invoke(this, args);
             _faxNotification.ShowNotification(args.Result);
+            StartLoadingEvent?.Invoke(this, args);
         }
 
         private void AttachmentsServiceOnFailEvent(object sender, AttachmentHelperEventArgs<bool> args)

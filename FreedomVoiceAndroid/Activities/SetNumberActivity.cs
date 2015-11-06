@@ -21,8 +21,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         Label = "@string/ActivityNumber_title",
         ScreenOrientation = ScreenOrientation.Portrait,
         WindowSoftInputMode = SoftInput.AdjustResize,
-        Theme = "@style/AppThemeActionBar",
-        NoHistory = true)]
+        Theme = "@style/AppThemeActionBar")]
     public class SetNumberActivity : LogoutActivity
     {
         private Color _errorColor;

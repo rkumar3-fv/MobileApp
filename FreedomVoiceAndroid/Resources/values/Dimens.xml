@@ -29,6 +29,7 @@
   <dimen name="activity_scroll_padding">4dp</dimen>
   <dimen name="activity_scroll_width">4dp</dimen>
   <dimen name="activity_progress">24dp</dimen>
+  <dimen name="activity_cursor_size">1dp</dimen>
   
   <!-- Auth Activity -->
   <dimen name="auth_activity_vertical_margin">8dp</dimen>
@@ -69,12 +70,12 @@
   
   <!-- Messages details activity -->
   <dimen name="details_activity_image_height">200dp</dimen>
-  <dimen name="details_activity_number_margin">30dp</dimen>
+  <dimen name="details_activity_number_margin">26dp</dimen>
   <dimen name="details_activity_stamp_margin">20dp</dimen>
   <dimen name="details_activity_actions_margin">10dp</dimen>
   <dimen name="details_activity_actions_spacing">8dp</dimen>
   <dimen name="details_activity_actions_height">36dp</dimen>
-  <dimen name="details_activity_progress_size">3dp</dimen>
+  <dimen name="details_activity_progress_size">4dp</dimen>
   <dimen name="details_play_button_size">36dp</dimen>
   <dimen name="details_play_margin">9dp</dimen>
   <dimen name="details_player_margin">7dp</dimen>
