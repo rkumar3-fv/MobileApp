@@ -103,25 +103,13 @@ namespace FreedomVoice.iOS.ViewModels
                 IsBusyChanged.Invoke(this, EventArgs.Empty);
         }
 
-        /// <summary>
-        /// Event for successfull response
-        /// </summary>
         public event EventHandler OnSuccessResponse;
-
-        /// <summary>
-        /// Event for unauthorized response
-        /// </summary>
         public event EventHandler OnUnauthorizedResponse;
-
-        /// <summary>
-        /// Event for payment required response
-        /// </summary>
         public event EventHandler OnPaymentRequiredResponse;
-
-        /// <summary>
-        /// Event for payment required response
-        /// </summary>
         public event EventHandler OnBadRequestResponse;
+        public event EventHandler OnNotFoundResponse;
+        public event EventHandler OnCanceledResponse;
+        public event EventHandler OnForbiddenResponse;
 
         public bool IsErrorResponseReceived;
 
@@ -134,7 +122,7 @@ namespace FreedomVoice.iOS.ViewModels
 
             switch (response.ErrorCode)
             {
-                case ErrorResponse.PaymentRequired:
+                case ErrorResponse.ErrorPaymentRequired:
                     OnPaymentRequiredResponse?.Invoke(null, EventArgs.Empty);
                     return;
                 case ErrorResponse.ErrorConnection:
@@ -146,10 +134,19 @@ namespace FreedomVoice.iOS.ViewModels
                 case ErrorResponse.ErrorBadRequest:
                     OnBadRequestResponse?.Invoke(null, EventArgs.Empty);
                     return;
+                case ErrorResponse.ErrorNotFound:
+                    OnNotFoundResponse?.Invoke(null, EventArgs.Empty);
+                    return;
+                case ErrorResponse.ErrorCancelled:
+                    OnCanceledResponse?.Invoke(null, EventArgs.Empty);
+                    return;
+                case ErrorResponse.Forbidden:
+                    OnForbiddenResponse?.Invoke(null, EventArgs.Empty);
+                    return;
                 case ErrorResponse.ErrorUnknown:
                     return;
             }
-        }
+    }
 
         protected void ProceedSuccessResponse()
         {

@@ -17,8 +17,12 @@ namespace FreedomVoice.iOS.Services
                     return new ErrorResponse(ErrorResponse.ErrorConnection);
                 case ErrorCodes.Unauthorized:
                     return new ErrorResponse(ErrorResponse.ErrorUnauthorized);
+                case ErrorCodes.NotFound:
+                    return new ErrorResponse(ErrorResponse.ErrorNotFound);
                 case ErrorCodes.PaymentRequired:
-                    return new ErrorResponse(ErrorResponse.PaymentRequired);
+                    return new ErrorResponse(ErrorResponse.ErrorPaymentRequired);
+                case ErrorCodes.Forbidden:
+                    return new ErrorResponse(ErrorResponse.Forbidden);
                 case ErrorCodes.Unknown:
                     return new ErrorResponse(ErrorResponse.ErrorUnknown);
                 default:
