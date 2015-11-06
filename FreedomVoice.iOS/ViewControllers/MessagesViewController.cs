@@ -7,7 +7,6 @@ using FreedomVoice.iOS.TableViewSources;
 using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.ViewModels;
 using UIKit;
-using Foundation;
 
 namespace FreedomVoice.iOS.ViewControllers
 {
@@ -58,8 +57,6 @@ namespace FreedomVoice.iOS.ViewControllers
 
             MessagesTableView.ReloadData();
 
-            NavigationItem.SetLeftBarButtonItems(Appearance.GetBackButtonWithArrow(NavigationController, false, "x" + SelectedExtension.ExtensionNumber), false);
-
             CheckIfTableEmpty(MessagesCount);
 
             base.ViewDidLoad();
@@ -84,33 +81,15 @@ namespace FreedomVoice.iOS.ViewControllers
             }
         }
 
-        private void OnSourceRowViewFaxClick(object sender, ExpandedCellButtonClickEventArgs e)
+        private async void OnSourceRowViewFaxClick(object sender, ExpandedCellButtonClickEventArgs e)
         {
-            var barTintColor = MainTabBarInstance.NavigationController.NavigationBar.BarTintColor;
-            var leftBarButtonItems = MainTabBarInstance.NavigationItem.LeftBarButtonItems;
-            var rightBarButtonItem = MainTabBarInstance.NavigationItem.RightBarButtonItem;
-            var title = MainTabBarInstance.Title;
+            var faxViewController = AppDelegate.GetViewController<FaxViewController>();
+            faxViewController.FilePath = e.FilePath;
+            faxViewController.SelectedFolderTitle = SelectedFolder.DisplayName;
+            faxViewController.OnBackButtonClicked += async (s, args) => await DismissViewControllerAsync(true);
 
-            var webView = new UIWebView(new CGRect(0, 60, View.Frame.Width, View.Frame.Height));
-            MainTabBarInstance.View.AddSubview(webView);
-            MainTabBarInstance.TabBar.Hidden = true;
-            MainTabBarInstance.NavigationController.NavigationBar.BarTintColor = UIColor.FromRGBA(35, 53, 77, 155);
-            webView.LoadRequest(new NSUrlRequest(new NSUrl(e.FilePath, false)));
-            webView.ScalesPageToFit = true;
-            MainTabBarInstance.Title = "Fax";
-
-            var backBtn = Appearance.GetBackButtonWithArrow(this,  () => {
-                MainTabBarInstance.NavigationController.NavigationBar.BarTintColor = barTintColor;
-                MainTabBarInstance.TabBar.Hidden = false;
-                webView.Hidden = true;
-                MainTabBarInstance.Title = title;
-                MainTabBarInstance.NavigationItem.SetLeftBarButtonItems(leftBarButtonItems, true);
-                MainTabBarInstance.NavigationItem.SetRightBarButtonItem(rightBarButtonItem, true);
-            });
-
-
-            MainTabBarInstance.NavigationItem.SetLeftBarButtonItems(backBtn, true);
-            MainTabBarInstance.NavigationItem.RightBarButtonItem = null;
+            var navigationController = new UINavigationController(faxViewController);
+            await PresentViewControllerAsync(navigationController, true);
         }
 
         private void OnSourceRowCallbackClick(object sender, ExpandedCellButtonClickEventArgs e)
@@ -122,6 +101,8 @@ namespace FreedomVoice.iOS.ViewControllers
         public override void ViewWillAppear(bool animated)
 	    {
             NavigationItem.Title = SelectedFolder.DisplayName;
+            NavigationItem.SetLeftBarButtonItems(Appearance.GetBarButtonWithArrow((s, args) => NavigationController.PopViewController(true), "x" + SelectedExtension.ExtensionNumber), false);
+            NavigationItem.SetRightBarButtonItem(Appearance.GetLogoutBarButton(this), false);
 
             base.ViewWillAppear(animated);
 	    }

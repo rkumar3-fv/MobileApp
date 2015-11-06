@@ -41,8 +41,6 @@ namespace FreedomVoice.iOS.ViewControllers
 
         public override async void ViewDidLoad()
         {
-            base.ViewDidLoad();
-
             var addressBook = new Xamarin.Contacts.AddressBook();
             _havePermissions = await addressBook.RequestPermission();
             if (!_havePermissions)
@@ -99,6 +97,8 @@ namespace FreedomVoice.iOS.ViewControllers
             ContactsTableView.SectionIndexColor = Theme.BlueColor;
 
             CheckResult(ContactsCount);
+
+            base.ViewDidLoad();
         }
 
         private void _contactsSearchBar_SearchButtonClicked(object sender, EventArgs e)
@@ -207,7 +207,9 @@ namespace FreedomVoice.iOS.ViewControllers
 
         public override void ViewWillAppear(bool animated)
         {
-            MainTabBarInstance.Title = "Contacts";
+            Title = "Contacts";
+
+            NavigationItem.SetRightBarButtonItem(Appearance.GetLogoutBarButton(this), false);
 
             PresentationNumber selectedNumber = MainTabBarInstance.GetSelectedPresentationNumber();
             if (selectedNumber != null && _havePermissions)

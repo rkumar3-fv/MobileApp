@@ -37,7 +37,7 @@ namespace FreedomVoice.iOS.ViewControllers
             InitializePlusOneLabel();
             InitializeContinueButton();
 
-            NavigationItem.SetRightBarButtonItem(Appearance.GetSkipBarButton(OnSkipButtonTouchUpInside), false);
+            NavigationItem.SetRightBarButtonItem(Appearance.GetPlainBarButton("Skip", OnSkipButtonTouchUpInside), false);
 
             base.ViewDidLoad();
 	    }

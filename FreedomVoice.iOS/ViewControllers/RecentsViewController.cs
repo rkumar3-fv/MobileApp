@@ -10,19 +10,18 @@ using FreedomVoice.iOS.Views.Shared;
 using UIKit;
 using Xamarin.Contacts;
 using System.Text.RegularExpressions;
+using CoreGraphics;
 using FreedomVoice.iOS.Helpers;
 
 namespace FreedomVoice.iOS.ViewControllers
 {
     partial class RecentsViewController : UIViewController
 	{        
-        private UIBarButtonItem _tempLeftButton;
-        private UIBarButtonItem _tempRightButton;
         private RecentsSource _recentSource;
 
         private List<Contact> _contactList;
 
-	    private CallerIdView CallerIdView { get; set; }
+        private CallerIdView CallerIdView { get; set; }
 
         private static MainTabBarController MainTabBarInstance => MainTabBarController.Instance;
 
@@ -30,13 +29,11 @@ namespace FreedomVoice.iOS.ViewControllers
 
         public override async void ViewDidLoad()
         {
-            base.ViewDidLoad();
-
-            RecentsTableView.TableFooterView = new UIView(CoreGraphics.CGRect.Empty);
+            RecentsTableView.TableFooterView = new UIView(CGRect.Empty);
 
             CallerIdView = new CallerIdView(new RectangleF(0, 0, (float)View.Frame.Width, 40), MainTabBarInstance.GetPresentationNumbers());
 
-            var recentLineView = new RecentLineView(new RectangleF(0, (float)CallerIdView.Frame.Height, (float)View.Frame.Width, 0.5f));
+            var recentLineView = new RecentLineView(new RectangleF(0, (float)(CallerIdView.Frame.Y + CallerIdView.Frame.Height), (float)View.Frame.Width, 0.5f));
             View.AddSubviews(CallerIdView, recentLineView);
 
             RecentsTableView.TableHeaderView = CallerIdView;
@@ -56,6 +53,8 @@ namespace FreedomVoice.iOS.ViewControllers
             }
 
             _contactList = addressBook.ToList();
+
+            base.ViewDidLoad();
         }
 
         private Contact FindContactByNumber(string number)
@@ -65,7 +64,7 @@ namespace FreedomVoice.iOS.ViewControllers
 
 	    private static List<Recent> GetRecentsOrdered()
         {            
-            return GetRecents().OrderByDescending(o => o.DialDate).ToList();
+            return MainTabBarInstance.Recents.OrderByDescending(o => o.DialDate).ToList();
         }
 
         private List<Recent> GetRecentsUpdatedAndOrdered()
@@ -85,11 +84,6 @@ namespace FreedomVoice.iOS.ViewControllers
             }
             return res;
         }
-
-        private static List<Recent> GetRecents()
-        {
-            return MainTabBarInstance.Recents;
-        }
         
         private static void AddRecent(Recent recent)
         {
@@ -98,29 +92,19 @@ namespace FreedomVoice.iOS.ViewControllers
 
 	    private static void ClearRecent()
         {
-            GetRecents().Clear();
+            MainTabBarInstance.Recents.Clear();
         }
 
         private static void RemoveRecent(Recent recent)
         {
-            GetRecents().Remove(recent);
-        }
-
-        public override void ViewWillDisappear(bool animated)
-        {
-            MainTabBarInstance.NavigationItem.SetLeftBarButtonItem(_tempLeftButton, true);
-            MainTabBarInstance.NavigationItem.SetRightBarButtonItem(_tempRightButton, true);
-
-            base.ViewWillDisappear(animated);
+            MainTabBarInstance.Recents.Remove(recent);
         }
 
         public override void ViewWillAppear(bool animated)
         {
-            _tempLeftButton = MainTabBarInstance.NavigationItem.LeftBarButtonItem;
-            _tempRightButton = MainTabBarInstance.NavigationItem.RightBarButtonItem;
-
-            MainTabBarInstance.Title = "Recents";
-            MainTabBarInstance.NavigationItem.SetLeftBarButtonItem(GetEditButton(), true);
+            NavigationItem.Title = "Recents";
+            NavigationItem.SetLeftBarButtonItem(GetEditButton(), true);
+            NavigationItem.SetRightBarButtonItem(Appearance.GetLogoutBarButton(this), false);
 
             _recentSource.SetRecents(GetRecentsUpdatedAndOrdered());
             RecentsTableView.ReloadData();
@@ -136,16 +120,16 @@ namespace FreedomVoice.iOS.ViewControllers
         {
             RecentsTableView.SetEditing(true, true);
 
-            MainTabBarInstance.NavigationItem.SetRightBarButtonItem(new UIBarButtonItem("Done", UIBarButtonItemStyle.Plain, (s, args) => { RecentsTableView.ReloadData(); ReturnToRecentsView(); }), true);
-            MainTabBarInstance.NavigationItem.SetLeftBarButtonItem(new UIBarButtonItem("Clear", UIBarButtonItemStyle.Plain, (s, args) => { ClearAll(); }), true);
+            NavigationItem.SetRightBarButtonItem(new UIBarButtonItem("Done", UIBarButtonItemStyle.Plain, (s, args) => { RecentsTableView.ReloadData(); ReturnToRecentsView(); }), true);
+            NavigationItem.SetLeftBarButtonItem(new UIBarButtonItem("Clear", UIBarButtonItemStyle.Plain, (s, args) => { ClearAll(); }), true);
         }
 
         private void ReturnToRecentsView()
         {
             RecentsTableView.SetEditing(false, true);
 
-            MainTabBarInstance.NavigationItem.SetLeftBarButtonItem(GetEditButton(), true);
-            MainTabBarInstance.NavigationItem.SetRightBarButtonItem(_tempRightButton, true);
+            NavigationItem.SetLeftBarButtonItem(GetEditButton(), true);
+            NavigationItem.SetRightBarButtonItem(Appearance.GetLogoutBarButton(this), false);
         }
 
         private UIBarButtonItem GetEditButton()
@@ -181,7 +165,7 @@ namespace FreedomVoice.iOS.ViewControllers
             AddRecent(newRecent);
 
             _recentSource.SetRecents(GetRecentsOrdered());
-            e.TableView.InsertRows(new[] { NSIndexPath.FromRowSection (e.TableView.NumberOfRowsInSection (0), 0) }, UITableViewRowAnimation.Fade);
+            e.TableView.InsertRows(new[] { NSIndexPath.FromRowSection (e.TableView.NumberOfRowsInSection(0), 0) }, UITableViewRowAnimation.Fade);
 
             RecentsTableView.EndUpdates();
             RecentsTableView.ReloadRows(e.TableView.IndexPathsForVisibleRows, UITableViewRowAnimation.None);

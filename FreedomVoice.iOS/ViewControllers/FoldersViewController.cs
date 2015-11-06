@@ -30,14 +30,14 @@ namespace FreedomVoice.iOS.ViewControllers
 
             View.AddSubview(FoldersTableView);
 
-            NavigationItem.SetLeftBarButtonItems(Appearance.GetBackButtonWithArrow(NavigationController, false, "Extensions"), false);
-
             base.ViewDidLoad();
         }
 
 	    public override void ViewWillAppear(bool animated)
 	    {
             NavigationItem.Title = "x" + SelectedExtension.ExtensionNumber;
+            NavigationItem.SetLeftBarButtonItems(Appearance.GetBarButtonWithArrow((s, args) => NavigationController.PopViewController(true), "Extensions", true), false);
+            NavigationItem.SetRightBarButtonItem(Appearance.GetLogoutBarButton(this), false);
 
             base.ViewWillAppear(animated);
 	    }

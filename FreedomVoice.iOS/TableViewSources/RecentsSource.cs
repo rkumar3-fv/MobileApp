@@ -26,8 +26,10 @@ namespace FreedomVoice.iOS.TableViewSources
             var recent = _recents[indexPath.Row];
             
             var cell = tableView.DequeueReusableCell(RecentCell.RecentCellId) as RecentCell ?? new RecentCell();
-            cell.UpdateCell(recent.TitleOrNumber, recent.FormatedDialDate/*, recent.HasIcon*/);
-            cell.Accessory = !string.IsNullOrEmpty(recent.Title) ? UITableViewCellAccessory.DetailButton : UITableViewCellAccessory.None;
+            cell.PhoneTitle.Text = recent.TitleOrNumber;
+            cell.DialDate.Text = recent.FormatedDialDate;
+
+            cell.Accessory = string.IsNullOrEmpty(recent.Title) ? UITableViewCellAccessory.None : UITableViewCellAccessory.DetailButton;
 
             return cell;
         }
