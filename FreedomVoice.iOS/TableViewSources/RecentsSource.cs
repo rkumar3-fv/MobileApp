@@ -39,7 +39,8 @@ namespace FreedomVoice.iOS.TableViewSources
 
         public override void AccessoryButtonTapped(UITableView tableView, NSIndexPath indexPath)
         {
-            
+            var recent = _recents[indexPath.Row];
+            OnRecentInfoClicked?.Invoke(recent);
         }
 
         public override void CommitEditingStyle(UITableView tableView, UITableViewCellEditingStyle editingStyle, NSIndexPath indexPath)
@@ -59,6 +60,8 @@ namespace FreedomVoice.iOS.TableViewSources
         {
             return true;
         }
+
+        public Action<Recent> OnRecentInfoClicked;
 
         public event EventHandler<RowSelectedEventArgs> OnRowSelected;
         public event EventHandler<RowSelectedEventArgs> OnRowDeleted;
