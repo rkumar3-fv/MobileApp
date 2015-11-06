@@ -29,11 +29,13 @@ namespace FreedomVoice.iOS.TableViewSources
         {
             var folder = _folders[indexPath.Row];
 
-            var cell = tableView.DequeueReusableCell(FolderCell.FolderCellId) as FolderCell;
-            if (cell != null) return cell;
+            var cell = tableView.DequeueReusableCell(FolderCell.FolderCellId) as FolderCell ?? new FolderCell { Accessory = UITableViewCellAccessory.DisclosureIndicator };
 
-            cell = new FolderCell();
-            cell.UpdateCell(folder);
+            cell.TextLabel.Text = folder.DisplayName;
+            cell.ImageView.Image = FolderCell.GetImageByFolderName(folder.DisplayName);
+
+            var unreadedMessagesCount = folder.UnreadMessagesCount;
+            cell.NewMessagesCountLabel.Text = unreadedMessagesCount < 100 ? unreadedMessagesCount.ToString() : "99+";
 
             return cell;
         }

@@ -13,7 +13,7 @@ namespace FreedomVoice.iOS.ViewControllers
         public List<PresentationNumber> PresentationNumbers { private get; set; }
 	    public List<ExtensionWithCount> ExtensionsList { private get; set; }
 
-	    private bool IsRootController => NavigationController.ViewControllers.Length == 1;
+	    public bool IsRootController => NavigationController.ViewControllers.Length == 1;
 
         UIViewController _recentsTab, _contactsTab, _keypadTab, _messagesTab;
 
@@ -29,77 +29,33 @@ namespace FreedomVoice.iOS.ViewControllers
 
 	    public override void ViewDidLoad()
 	    {
-	        base.ViewDidLoad();
-
             var recentsViewController = AppDelegate.GetViewController<RecentsViewController>();
-	        var recentsTabBarImage = UIImage.FromFile("tab_recents.png")?.ImageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal);
-            var recentsTabBarImageSelected = UIImage.FromFile("tab_recents_active.png")?.ImageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal);
-	        _recentsTab = new UINavigationController(recentsViewController);
-	        _recentsTab.TabBarItem = new UITabBarItem("Recents", recentsTabBarImage, recentsTabBarImageSelected) { Tag = 0 };
+            _recentsTab = GetTabBarItem(recentsViewController, "Recents");
 
             var contactsViewController = AppDelegate.GetViewController<ContactsViewController>();
-            var contactsTabBarImage = UIImage.FromFile("tab_contacts.png")?.ImageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal);
-            var contactsTabBarImageSelected = UIImage.FromFile("tab_contacts_active.png")?.ImageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal);
-            _contactsTab = contactsViewController;
-            _contactsTab.TabBarItem = new UITabBarItem("Contacts", contactsTabBarImage, contactsTabBarImageSelected) { Tag = 1 };
+            _contactsTab = GetTabBarItem(contactsViewController, "Contacts");
 
             var keypadViewController = AppDelegate.GetViewController<KeypadViewController>();
-            var keypadTabBarImage = UIImage.FromFile("tab_keypad.png")?.ImageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal);
-            var keypadTabBarImageSelected = UIImage.FromFile("tab_keypad_active.png")?.ImageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal);
-	        _keypadTab = new UINavigationController(keypadViewController);
-            _keypadTab.TabBarItem = new UITabBarItem("Keypad", keypadTabBarImage, keypadTabBarImageSelected) { Tag = 2 };
+            _keypadTab = GetTabBarItem(keypadViewController, "Keypad");
 
 	        var extensionsViewController = AppDelegate.GetViewController<ExtensionsViewController>();
 	        extensionsViewController.SelectedAccount = SelectedAccount;
 	        extensionsViewController.ExtensionsList = ExtensionsList;
-            var messagesTabBarImage = UIImage.FromFile("tab_messages.png")?.ImageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal);
-            var messagesTabBarImageSelected = UIImage.FromFile("tab_messages_active.png")?.ImageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal);
-	        _messagesTab = new UINavigationController(extensionsViewController);
-	        _messagesTab.TabBarItem = new UITabBarItem("Messages", messagesTabBarImage, messagesTabBarImageSelected) { Tag = 3 };
+            _messagesTab = GetTabBarItem(extensionsViewController, "Messages");
 
-            ViewControllers = new[] { _recentsTab, _contactsTab, _keypadTab, _messagesTab };
+	        ViewControllers = new[] { _recentsTab, _contactsTab, _keypadTab, _messagesTab };
 
-            ViewControllerSelected += TabBarOnViewControllerSelected;
-            NavigationItem.HidesBackButton = true;
             SelectedIndex = 2;  
-            
-            NavigationItem.SetRightBarButtonItem(Appearance.GetLogoutBarButton(this), true);
 
             CallerIDEvent.CallerIDChanged += PresentationNumberChanged;
+
+            base.ViewDidLoad();
         }
 
-	    private void TabBarOnViewControllerSelected(object sender, EventArgs arg)
+	    public override void ViewWillAppear(bool animated)
 	    {
-            NavigationItem.SetLeftBarButtonItem(null, false);
-	        NavigationItem.SetLeftBarButtonItems(new UIBarButtonItem[] { }, false);
-
-            switch (TabBar.SelectedItem.Tag)
-	        {
-                case 0:
-                    NavigationItem.SetLeftBarButtonItem(Appearance.GetBackButton(NavigationController, "Edit"), true);
-                    NavigationItem.SetHidesBackButton(false, false);
-                    break;
-                case 3:
-	                if (IsRootController) NavigationItem.SetHidesBackButton(true, false);
-	                else
-	                {
-                        NavigationItem.SetLeftBarButtonItems(Appearance.GetBackButtonWithArrow(NavigationController, false, "Accounts"), true);
-                        NavigationItem.SetHidesBackButton(false, false);
-                    }
-                    break;
-	            default:
-                    NavigationItem.SetHidesBackButton(true, false);
-                    break;
-	        }
-	    }
-
-        private void PresentationNumberChanged(object sender, EventArgs args)
-        {
-            var selectedPresentationNumber = (args as CallerIDEventArgs)?.SelectedPresentationNumber;
-            foreach (var item in PresentationNumbers)
-            {
-                item.IsSelected = item == selectedPresentationNumber;
-            }
+            NavigationController.NavigationBarHidden = true;
+            base.ViewWillAppear(animated);
         }
 
         public List<PresentationNumber> GetPresentationNumbers()
@@ -113,6 +69,20 @@ namespace FreedomVoice.iOS.ViewControllers
                 PresentationNumbers[0].IsSelected = true;
 
             return PresentationNumbers.FirstOrDefault(a => a.IsSelected);
+        }
+
+        private static UIViewController GetTabBarItem(UIViewController viewController, string tabTitle)
+        {
+            var tabImage = UIImage.FromFile($"tab_{tabTitle.ToLower()}.png")?.ImageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal);
+            var tabImageSelected = UIImage.FromFile($"tab_{tabTitle.ToLower()}_active.png")?.ImageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal);
+            return new UINavigationController(viewController) { TabBarItem = new UITabBarItem(tabTitle, tabImage, tabImageSelected) };
+        }
+
+        private void PresentationNumberChanged(object sender, EventArgs args)
+        {
+            var selectedPresentationNumber = (args as CallerIDEventArgs)?.SelectedPresentationNumber;
+            foreach (var item in PresentationNumbers)
+                item.IsSelected = item == selectedPresentationNumber;
         }
     }
 }

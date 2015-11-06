@@ -159,12 +159,9 @@ namespace FreedomVoice.iOS.Utilities
         {
             UIActivityIndicatorView.Appearance.Color = IndicatorColor;
 
-            //UIToolbar.Appearance.SetBackgroundImage(BlueBar, UIToolbarPosition.Any, UIBarMetrics.Default);
-
             UINavigationBar.Appearance.TintColor = WhiteColor;
-            UINavigationBar.Appearance.TitleTextAttributes = new UIStringAttributes { ForegroundColor = WhiteColor };
-            UINavigationBar.Appearance.BarTintColor = new UIColor(0.016f, 0.588f, 0.816f, 1);
-            //UINavigationBar.Appearance.SetBackgroundImage(new UIImage(), UIBarMetrics.Default);
+            UINavigationBar.Appearance.SetTitleTextAttributes(new UITextAttributes { TextColor = WhiteColor });
+            UINavigationBar.Appearance.BarTintColor = UIColor.FromPatternImage(UIImage.FromFile("navbar.png"));
         }
 
         const string FontName = "HelveticaNeue-Light";

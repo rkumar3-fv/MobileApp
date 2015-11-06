@@ -98,6 +98,10 @@
     <Compile Include="Entities\FolderWithCount.cs" />
     <Compile Include="Entities\Message.cs" />
     <Compile Include="Entities\PresentationNumber.cs" />
+    <Compile Include="ViewControllers\FaxViewController.cs" />
+    <Compile Include="ViewControllers\FaxViewController.designer.cs">
+      <DependentUpon>FaxViewController.cs</DependentUpon>
+    </Compile>
     <Compile Include="Helpers\ExpandedCellButtonClickEventArgs.cs" />
     <Compile Include="Helpers\Formatting.cs" />
     <Compile Include="Helpers\LoadingOverlay.cs" />
@@ -195,7 +199,7 @@
     <Compile Include="ViewControllers\EmergencyDisclaimerViewController.designer.cs">
       <DependentUpon>EmergencyDisclaimerViewController.cs</DependentUpon>
     </Compile>
-    <Compile Include="Helpers\DialData.cs" />
+    <Compile Include="Helpers\KeypadDial.cs" />
     <Compile Include="ViewControllers\AccountUnavailableViewController.cs" />
     <Compile Include="ViewControllers\AccountUnavailableViewController.designer.cs">
       <DependentUpon>AccountUnavailableViewController.cs</DependentUpon>
@@ -280,6 +284,7 @@
     <BundleResource Include="Resources\scroller%402x.png" />
     <BundleResource Include="Resources\view_fax%402x.png" />
     <BundleResource Include="Resources\call_back%402x.png" />
+    <BundleResource Include="Resources\navbar%402x.png" />
     <Content Include="Settings.bundle\Root.plist">
       <SubType>Designer</SubType>
     </Content>

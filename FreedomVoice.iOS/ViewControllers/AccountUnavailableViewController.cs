@@ -30,7 +30,7 @@ namespace FreedomVoice.iOS.ViewControllers
             InitializeCallCustomerCareButton();
 
             if (ParentController?.TopViewController is AccountsViewController)
-                NavigationItem.SetLeftBarButtonItems(Appearance.GetBackButtonWithArrow(ParentController, true, "Accounts"), true);
+                NavigationItem.SetLeftBarButtonItems(Appearance.GetBarButtonWithArrow((s, args) => Theme.TransitionController(ParentController), "Accounts"), true);
 
             NavigationItem.SetRightBarButtonItem(Appearance.GetLogoutBarButton(this), true);
 

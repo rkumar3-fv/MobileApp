@@ -1,6 +1,5 @@
 ﻿using CoreGraphics;
 using Foundation;
-using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.Utilities;
 using UIKit;
 
@@ -8,34 +7,26 @@ namespace FreedomVoice.iOS.TableViewCells
 {
     public class FolderCell : UITableViewCell
     {
+        public UILabel NewMessagesCountLabel { get; }
+
         public static readonly NSString FolderCellId = new NSString("FolderCell");
-
-        public FolderCell() : base(UITableViewCellStyle.Default, FolderCellId) { }
-
-        public void UpdateCell(FolderWithCount folder)
+        public FolderCell() : base(UITableViewCellStyle.Default, FolderCellId)
         {
-            Accessory = UITableViewCellAccessory.DisclosureIndicator;
-            TextLabel.Text = folder.DisplayName;
-            ImageView.Image = GetImageByFolderName(folder.DisplayName);
-
-            var unreadedMessagesCount = folder.UnreadMessagesCount;
-
-            var details = new UILabel(new CGRect(Theme.ScreenBounds.Width - 69, 13, 30, 19))
+            NewMessagesCountLabel = new UILabel(new CGRect(Theme.ScreenBounds.Width - 69, 13, 30, 19))
             {
-                Text = unreadedMessagesCount < 100 ? unreadedMessagesCount.ToString() : "99+",
                 TextColor = UIColor.Black,
                 Font = UIFont.SystemFontOfSize(12),
                 TextAlignment = UITextAlignment.Center,
                 ClipsToBounds = true
             };
-            details.Layer.BackgroundColor = UIColor.FromRGBA(0, 0, 0, 25).CGColor;
-            details.Layer.CornerRadius = 3;
-            details.Center = new CGPoint(details.Center.X, Center.Y);
 
-            AddSubview(details);
+            NewMessagesCountLabel.Layer.BackgroundColor = UIColor.FromRGBA(0, 0, 0, 25).CGColor;
+            NewMessagesCountLabel.Layer.CornerRadius = 3;
+
+            Add(NewMessagesCountLabel);
         }
 
-        private static UIImage GetImageByFolderName(string folderName)
+        public static UIImage GetImageByFolderName(string folderName)
         {
             switch (folderName)
             {

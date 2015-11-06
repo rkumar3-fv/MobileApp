@@ -1,19 +1,18 @@
 ﻿using System;
 using CoreGraphics;
 using FreedomVoice.Core.Entities.Enums;
-using FreedomVoice.iOS.Utilities;
 using UIKit;
 
 namespace FreedomVoice.iOS.Helpers
 {
     public static class Appearance
     {
-        public static UIBarButtonItem GetBackButton(UINavigationController controller, string title = "Back")
+        public static UIBarButtonItem GetPlainBarButton(string title, EventHandler handler)
         {
-            return new UIBarButtonItem(title, UIBarButtonItemStyle.Plain, (s, args) => { controller.PopViewController(true); });
+            return new UIBarButtonItem(title, UIBarButtonItemStyle.Plain, handler);
         }
 
-        public static UIBarButtonItem[] GetBackButtonWithArrow(UIViewController controller, bool isModalController, string title = "Back")
+        public static UIBarButtonItem[] GetBarButtonWithArrow(EventHandler handler, string title, bool isWideLabel = false)
         {
             var negativeSpacer = new UIBarButtonItem(UIBarButtonSystemItem.FixedSpace) { Width = -8 };
 
@@ -21,7 +20,7 @@ namespace FreedomVoice.iOS.Helpers
             var highlightedButtonImage = UIImage.FromFile("back_transparent.png");
             var button = new UIButton(UIButtonType.Custom)
             {
-                Frame = new CGRect(0, 0, 95, 33),
+                Frame = new CGRect(0, 0, isWideLabel ? 105 : 93, 33),
                 HorizontalAlignment = UIControlContentHorizontalAlignment.Left,
                 TitleEdgeInsets = new UIEdgeInsets(0, 5, 0, 0)
             };
@@ -29,10 +28,7 @@ namespace FreedomVoice.iOS.Helpers
             button.SetImage(highlightedButtonImage, UIControlState.Highlighted); 
             button.SetTitle(title, UIControlState.Normal);
             button.SetTitleColor(UIColor.FromRGBA(255, 255, 255, 51), UIControlState.Highlighted);
-            if (isModalController)
-                button.TouchUpInside += (s, args) => { Theme.TransitionController(controller); };
-            else
-                button.TouchUpInside += (s, args) => { (controller as UINavigationController)?.PopViewController(true); };
+            button.TouchUpInside += handler;
 
             return new[] { negativeSpacer, new UIBarButtonItem(button) };
         }
@@ -47,19 +43,9 @@ namespace FreedomVoice.iOS.Helpers
             });
         }
 
-        public static UIBarButtonItem GetSkipBarButton(EventHandler handler)
-        {
-            return new UIBarButtonItem("Skip", UIBarButtonItemStyle.Plain, handler);
-        }
-
         public static UIImageView GetMessageImageView(MessageType messageType, bool unread, bool active)
         {
-            var messageImageView = new UIImageView(new CGRect(15, 15, 25, 25))
-            {
-                Image = GetMessageImage(messageType, unread, active)
-            };
-
-            return messageImageView;
+            return new UIImageView(new CGRect(15, 15, 25, 25)) { Image = GetMessageImage(messageType, unread, active) };
         }
 
         public static UIImage GetMessageImage(MessageType messageType, bool unread, bool active)
@@ -77,28 +63,6 @@ namespace FreedomVoice.iOS.Helpers
                 default:
                     return null;
             }
-        }
-
-        public static UIBarButtonItem[] GetBackButtonWithArrow(UIViewController controller, Action onTouchInside = null)
-        {
-            var negativeSpacer = new UIBarButtonItem(UIBarButtonSystemItem.FixedSpace) { Width = -8 };
-
-            var buttonImage = UIImage.FromFile("back.png");
-            var highlightedButtonImage = UIImage.FromFile("back_transparent.png");
-            var button = new UIButton(UIButtonType.Custom)
-            {
-                Frame = new CGRect(0, 0, 95, 33),
-                HorizontalAlignment = UIControlContentHorizontalAlignment.Left,
-                TitleEdgeInsets = new UIEdgeInsets(0, 5, 0, 0)
-            };
-            button.SetImage(buttonImage, UIControlState.Normal);
-            button.SetImage(highlightedButtonImage, UIControlState.Highlighted);
-            button.SetTitle("Back", UIControlState.Normal);
-            button.SetTitleColor(UIColor.FromRGBA(255, 255, 255, 51), UIControlState.Highlighted);            
-            button.TouchUpInside += (s, args) => { onTouchInside.Invoke(); };
-            
-
-            return new[] { negativeSpacer, new UIBarButtonItem(button) };
         }
     }
 }
