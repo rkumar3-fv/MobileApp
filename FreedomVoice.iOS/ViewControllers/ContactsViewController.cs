@@ -9,12 +9,12 @@ using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.Helpers;
 using FreedomVoice.iOS.TableViewSources;
 using FreedomVoice.iOS.Utilities;
+using FreedomVoice.iOS.Views;
 using FreedomVoice.iOS.Views.Shared;
 using Xamarin.Contacts;
 
 namespace FreedomVoice.iOS.ViewControllers
 {
-    //TODO: Clean class from commented code
     partial class ContactsViewController : UIViewController
     {
         private List<Contact> _contactList;
@@ -27,56 +27,65 @@ namespace FreedomVoice.iOS.ViewControllers
         private UISearchBar _contactsSearchBar;
         private UILabel _noResultsLabel;
 
+        private bool _havePermissions;
+
         private CallerIdView CallerIdView { get; set; }
 
-        //private MainTabBarController MainTab => ParentViewController as MainTabBarController;
         private static MainTabBarController MainTabBarInstance => MainTabBarController.Instance;
-        
-        public ContactsViewController(IntPtr handle) : base(handle) { }
+
+        public ContactsViewController(IntPtr handle) : base(handle)
+        {
+            _contactList = new List<Contact>();
+            _filteredContactList = new List<Contact>();
+        }
 
         public override async void ViewDidLoad()
         {
             base.ViewDidLoad();
 
-            const int containerWidth = 80;
-            const int containerHeight = 20;
+            var addressBook = new Xamarin.Contacts.AddressBook();
+            _havePermissions = await addressBook.RequestPermission();
+            if (!_havePermissions)
+            {
+                View.AddSubview(new NoAccessToContacts(Theme.ScreenBounds));
+                return;
+            }
 
-            var frame = new CGRect(View.Frame.Width / 2 - containerWidth / 2, View.Frame.Height / 2 - containerHeight / 2, containerWidth, containerHeight);
+            var frame = new CGRect(15, 0, Theme.ScreenBounds.Width - 30, 30);
             _noResultsLabel = new UILabel(frame)
             {
                 Text = "No Result",
-                MinimumFontSize = 38,
+                Font = UIFont.SystemFontOfSize(28),
                 TextColor = Theme.GrayColor,
-                Alpha = 0
+                TextAlignment = UITextAlignment.Center,
+                Center = View.Center,
+                Hidden = true
             };
 
             View.Add(_noResultsLabel);
 
-            var addressBook = new Xamarin.Contacts.AddressBook();            
-            if (!await addressBook.RequestPermission())
-            {
-                // We don't have the permission to access user's contacts: check if the READ_CONTACTS has been set
-                new UIAlertView("Permission denied", "User has denied this app access to their contacts", null, "Close").Show();
-                return;
-            }
-
-            _contactsSearchBar = new UISearchBar(new CGRect(0, 0, 320, 44))
+            _contactsSearchBar = new UISearchBar(new CGRect(0, 0, View.Frame.Width, 44))
             {
                 Placeholder = "Search",
                 AutocapitalizationType = UITextAutocapitalizationType.None,
                 SpellCheckingType = UITextSpellCheckingType.No,
-                AutocorrectionType = UITextAutocorrectionType.No
+                AutocorrectionType = UITextAutocorrectionType.No,
+                BarTintColor = Theme.BarBackgroundColor
             };
+
+            var contactsSearchBarCancelButton = UIBarButtonItem.AppearanceWhenContainedIn(typeof(UISearchBar));
+            var textAttributes = new UITextAttributes { Font = UIFont.SystemFontOfSize(17, UIFontWeight.Medium), TextColor = Theme.BarButtonColor };
+            contactsSearchBarCancelButton.SetTitleTextAttributes(textAttributes, UIControlState.Normal);
 
             _contactsSearchBar.ShouldBeginEditing += SearchBarOnShouldBeginEditing;
             _contactsSearchBar.ShouldEndEditing += SearchBarOnShouldEndEditing;
             _contactsSearchBar.TextChanged += SearchBarOnTextChanged;
             _contactsSearchBar.CancelButtonClicked += SearchBarOnCancelButtonClicked;
+            _contactsSearchBar.SearchButtonClicked += _contactsSearchBar_SearchButtonClicked;
 
-            //CallerIdView = new CallerIdView(new RectangleF(0, 44, 320, 40), MainTab?.GetPresentationNumbers());
-            CallerIdView = new CallerIdView(new RectangleF(0, 44, 320, 40), MainTabBarInstance.GetPresentationNumbers());
+            CallerIdView = new CallerIdView(new RectangleF(0, (float)(_contactsSearchBar.Frame.Y + _contactsSearchBar.Frame.Height), (float)View.Frame.Width, 40), MainTabBarInstance.GetPresentationNumbers());
 
-            var headerView = new UIView(new CGRect(0, 0, 320, 84));
+            var headerView = new UIView(new CGRect(0, 0, View.Frame.Width, _contactsSearchBar.Frame.Height + CallerIdView.Frame.Height));
             headerView.AddSubviews(_contactsSearchBar, CallerIdView);
 
             _contactList = addressBook.ToList();
@@ -85,9 +94,16 @@ namespace FreedomVoice.iOS.ViewControllers
 
             ContactsTableView.Source = _contactSource;
             ContactsTableView.TableHeaderView = headerView;
+
             ContactsTableView.SectionIndexBackgroundColor = UIColor.Clear;
+            ContactsTableView.SectionIndexColor = Theme.BlueColor;
 
             CheckResult(ContactsCount);
+        }
+
+        private void _contactsSearchBar_SearchButtonClicked(object sender, EventArgs e)
+        {
+            _contactsSearchBar.ResignFirstResponder();
         }
 
         private void SearchBarOnTextChanged(object sender, UISearchBarTextChangedEventArgs e)
@@ -99,7 +115,7 @@ namespace FreedomVoice.iOS.ViewControllers
             CheckResult(FilteredContactsCount);
         }
 
-        void SearchBarOnCancelButtonClicked(object sender, EventArgs args)
+        private void SearchBarOnCancelButtonClicked(object sender, EventArgs args)
         {
             _contactsSearchBar.Text = string.Empty;
             _contactsSearchBar.ResignFirstResponder();
@@ -111,14 +127,12 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private bool SearchBarOnShouldEndEditing(UISearchBar searchBar)
         {
-            NavigationController.SetNavigationBarHidden(false, true);
             _contactsSearchBar.ShowsCancelButton = false;
             return true;
         }
 
         private bool SearchBarOnShouldBeginEditing(UISearchBar searchBar)
         {
-            NavigationController.SetNavigationBarHidden(true, true);
             _contactsSearchBar.ShowsCancelButton = true;
             return true;
         }
@@ -140,15 +154,6 @@ namespace FreedomVoice.iOS.ViewControllers
                 return;
             }
 
-            if (!PhoneCapability.IsCellularEnabled())
-            {
-                var alertController = UIAlertController.Create(null, "Your device does not appear to support making cellular voice calls.", UIAlertControllerStyle.Alert);
-                alertController.AddAction(UIAlertAction.Create("Ok", UIAlertActionStyle.Cancel, null));
-                PresentViewController(alertController, true, null);
-                return;
-            }
-
-            //var selectedCallerId = MainTab?.GetSelectedPresentationNumber()?.PhoneNumber;
             var selectedCallerId = MainTabBarInstance.GetSelectedPresentationNumber().PhoneNumber;
 
             var person = _contactList.Where(c => c.DisplayName.StartsWith(_contactSource.Keys[e.IndexPath.Section], StringComparison.OrdinalIgnoreCase)).ToList()[e.IndexPath.Row];
@@ -162,7 +167,7 @@ namespace FreedomVoice.iOS.ViewControllers
                     PresentViewController(alertController, true, null);
                     return;
                 case 1:
-                    PhoneCall.CreateCallReservation(string.Empty, selectedCallerId, phoneNumbers.First().Number);
+                    PhoneCall.CreateCallReservation(MainTabBarInstance.SelectedAccount.PhoneNumber, selectedCallerId, phoneNumbers.First().Number, NavigationController);
                     AddRecent(person.DisplayName, phoneNumbers.First().Number, person.Id);
                     break;
                 default:
@@ -171,7 +176,7 @@ namespace FreedomVoice.iOS.ViewControllers
                     foreach (var phone in phoneNumbers)
                     {
                         phoneCallController.AddAction(UIAlertAction.Create(phone.Number + " \u2013 " + phone.Label, UIAlertActionStyle.Default, a => {
-                            PhoneCall.CreateCallReservation(string.Empty, selectedCallerId, phone.Number);
+                            PhoneCall.CreateCallReservation(MainTabBarInstance.SelectedAccount.PhoneNumber, selectedCallerId, phone.Number, NavigationController);
                             AddRecent(person.DisplayName, phone.Number, person.Id);
                         }));
                     }
@@ -181,34 +186,31 @@ namespace FreedomVoice.iOS.ViewControllers
             }
         }
 
-        private void AddRecent(string title, string phoneNumber, string contactId)
+        private static void AddRecent(string title, string phoneNumber, string contactId)
         {
-            //MainTab.Recents.Add(new Recent(title, phoneNumber, DateTime.Now, contactId));
             MainTabBarInstance.Recents.Add(new Recent(title, phoneNumber, DateTime.Now, contactId));
         }
 
-        void CheckResult(int contactsCount)
+        private void CheckResult(int contactsCount)
         {
             if (contactsCount == 0)
             {
-                _noResultsLabel.Alpha = 1f;
+                _noResultsLabel.Hidden = false;
                 ContactsTableView.SeparatorStyle = UITableViewCellSeparatorStyle.None;
             }
             else
             {
-                _noResultsLabel.Alpha = 0f;
+                _noResultsLabel.Hidden = true;
                 ContactsTableView.SeparatorStyle = UITableViewCellSeparatorStyle.SingleLine;
             }
         }
 
         public override void ViewWillAppear(bool animated)
         {
-            //MainTab.Title = "Contacts";
             MainTabBarInstance.Title = "Contacts";
 
-            //PresentationNumber selectedNumber = MainTab?.GetSelectedPresentationNumber();
             PresentationNumber selectedNumber = MainTabBarInstance.GetSelectedPresentationNumber();
-            if (selectedNumber != null)
+            if (selectedNumber != null && _havePermissions)
                 CallerIdView.UpdatePickerData(selectedNumber);
 
             base.ViewWillAppear(animated);

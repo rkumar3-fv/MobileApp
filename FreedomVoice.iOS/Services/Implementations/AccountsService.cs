@@ -6,7 +6,7 @@ namespace FreedomVoice.iOS.Services.Implementations
 {
     public class AccountsService : BaseService, IAccountsService
     {
-        public async override Task<BaseResponse> ExecuteRequest()
+        public async Task<BaseResponse> ExecuteRequest()
         {
             var asyncRes = await ApiHelper.GetSystems();
             var errorResponse = CheckErrorResponse(asyncRes.Code);

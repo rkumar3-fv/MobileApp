@@ -4,6 +4,7 @@ using System;
 using System.Net;
 using System.Text.RegularExpressions;
 using SystemConfiguration;
+using FreedomVoice.iOS.ViewModels;
 using UIKit;
 
 namespace FreedomVoice.iOS.Helpers
@@ -124,23 +125,42 @@ namespace FreedomVoice.iOS.Helpers
         {
             return InternetConnectionStatus() == NetworkStatus.NotReachable;
         }
-
-        public static bool IsCellularEnabled()
-        {            
-            var url = NSUrl.FromString("tel://");
-            return UIApplication.SharedApplication.OpenUrl(url);
-        }
     }
 
     public static class PhoneCall
     {
-        public static void CreateCallReservation(string systemPhoneNumber, string presentationPhoneNumber, string destinationPhoneNumber)
+        public static async void CreateCallReservation(string systemNumber, string presentationNumber, string destinationNumberFormatted, UIViewController viewController)
         {
             var expectedCallerIdNumber = UserDefault.AccountPhoneNumber;
 
-            //TODO: Clear all symbols except numbers
-            var phoneNumber = NSUrl.FromString("tel://" + Regex.Replace(destinationPhoneNumber.Replace(" ", ""), @"[^\d]", ""));
-            UIApplication.SharedApplication.OpenUrl(phoneNumber);
+            if (string.IsNullOrEmpty(expectedCallerIdNumber))
+            {
+                var alertController = UIAlertController.Create(null, "To make calls with this app, please enter your device's phone number.", UIAlertControllerStyle.Alert);
+                alertController.AddAction(UIAlertAction.Create("Settings", UIAlertActionStyle.Default, a => UIApplication.SharedApplication.OpenUrl(new NSUrl(UIApplication.OpenSettingsUrlString))));
+                alertController.AddAction(UIAlertAction.Create("Cancel", UIAlertActionStyle.Cancel, null));
+                viewController.PresentViewController(alertController, true, null);
+
+                return;
+            }
+
+            var destinationNumber = Regex.Replace(destinationNumberFormatted.Replace(" ", ""), @"[^\d]", "");
+
+            var callReservationViewModel = new CallReservationViewModel(systemNumber, expectedCallerIdNumber, presentationNumber, destinationNumber, viewController);
+            await callReservationViewModel.CreateCallReservationAsync();
+
+            if (callReservationViewModel.IsErrorResponseReceived) return;
+
+            //TODO: Add "Call failed" alert
+
+            var switchboardNumber = callReservationViewModel.Reservation.SwitchboardNumber;
+
+            var phoneNumber = NSUrl.FromString("tel:" + "+1" + switchboardNumber);
+            if (!UIApplication.SharedApplication.OpenUrl(phoneNumber))
+            {
+                var alertController = UIAlertController.Create(null, "Your device does not appear to support making cellular voice calls.", UIAlertControllerStyle.Alert);
+                alertController.AddAction(UIAlertAction.Create("Ok", UIAlertActionStyle.Cancel, null));
+                viewController.PresentViewController(alertController, true, null);
+            }
         }
     }
 }

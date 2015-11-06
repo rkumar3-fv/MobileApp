@@ -6,16 +6,9 @@ namespace FreedomVoice.iOS.Services.Implementations
 {
     public class ForgotPasswordService : BaseService, IForgotPasswordService
     {
-        private string _recoveryEMail;
-
-        public void SetRecoveryEmail(string email)
+        public async Task<BaseResponse> ExecuteRequest(string recoveryEMail)
         {
-            _recoveryEMail = email;
-        }
-
-        public async override Task<BaseResponse> ExecuteRequest()
-        {
-            var asyncRes = await ApiHelper.PasswordReset(_recoveryEMail);
+            var asyncRes = await ApiHelper.PasswordReset(recoveryEMail);
             var errorResponse = CheckErrorResponse(asyncRes.Code);
             if (errorResponse != null)
                 return errorResponse;

@@ -6,7 +6,7 @@ namespace FreedomVoice.iOS.Helpers
 {
     public sealed class LoadingOverlay : UIView
     {
-        public LoadingOverlay(CGRect frame) : base(frame)
+        public LoadingOverlay(CGRect frame, string loadingText = "Loading Data...") : base(frame)
         {
             // configurable bits
             BackgroundColor = UIColor.Black;
@@ -34,7 +34,7 @@ namespace FreedomVoice.iOS.Helpers
             {
                 BackgroundColor = UIColor.Clear,
                 TextColor = UIColor.White,
-                Text = "Loading Data...",
+                Text = loadingText,
                 TextAlignment = UITextAlignment.Center,
                 AutoresizingMask = UIViewAutoresizing.All
             };

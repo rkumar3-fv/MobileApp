@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using FreedomVoice.Core.Entities.Enums;
+﻿using FreedomVoice.Core.Entities.Enums;
 using FreedomVoice.iOS.Services.Responses;
 
 namespace FreedomVoice.iOS.Services
@@ -26,11 +25,5 @@ namespace FreedomVoice.iOS.Services
                     return null;
             }
         }
-
-        /// <summary>
-        /// Execute request
-        /// </summary>
-        /// <returns>Request Successfull Response or Error Response</returns>
-        public abstract Task<BaseResponse> ExecuteRequest();
     }
 }

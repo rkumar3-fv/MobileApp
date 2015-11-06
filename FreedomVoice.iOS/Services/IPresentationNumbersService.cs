@@ -5,11 +5,9 @@ namespace FreedomVoice.iOS.Services
 {
     public interface IPresentationNumbersService
     {
-        void SetSystemNumber(string systemNumber);
-
         /// <summary>
         /// Asynchronous retrieving of presentation phone numbers
         /// </summary>
-        Task<BaseResponse> ExecuteRequest();
+        Task<BaseResponse> ExecuteRequest(string systemNumber);
     }
 }

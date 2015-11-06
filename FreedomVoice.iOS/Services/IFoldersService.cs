@@ -5,11 +5,9 @@ namespace FreedomVoice.iOS.Services
 {
     public interface IFoldersService
     {
-        void SetParameters(string systemNumber, int mailboxNumber);
-
         /// <summary>
         /// Asynchronous retrieving of folders with count
         /// </summary>
-        Task<BaseResponse> ExecuteRequest();
+        Task<BaseResponse> ExecuteRequest(string systemNumber, int mailboxNumber);
     }
 }

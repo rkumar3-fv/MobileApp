@@ -9,7 +9,7 @@ namespace FreedomVoice.iOS.ViewControllers
 {
 	public partial class MainTabBarController : UITabBarController
 	{
-        public Account SelectedAccount { private get; set; }
+        public Account SelectedAccount { get; set; }
         public List<PresentationNumber> PresentationNumbers { private get; set; }
 	    public List<ExtensionWithCount> ExtensionsList { private get; set; }
 
@@ -109,6 +109,9 @@ namespace FreedomVoice.iOS.ViewControllers
 
         public PresentationNumber GetSelectedPresentationNumber()
         {
+            if (PresentationNumbers.FirstOrDefault(a => a.IsSelected) == null && PresentationNumbers.Count > 0)
+                PresentationNumbers[0].IsSelected = true;
+
             return PresentationNumbers.FirstOrDefault(a => a.IsSelected);
         }
     }

@@ -41,6 +41,12 @@ namespace FreedomVoice.iOS.Utilities
         public static UIColor ButtonColor => buttonColor.Value;
 
         /// <summary>
+        /// Blue button color
+        /// </summary>
+        static readonly Lazy<UIColor> barButtonColor = new Lazy<UIColor>(() => BlueColor);
+        public static UIColor BarButtonColor => barButtonColor.Value;
+
+        /// <summary>
         /// Orange button color
         /// </summary>
         static readonly Lazy<UIColor> forgotPasswordButtonColor = new Lazy<UIColor>(() => UIColor.FromRGB(3, 103, 143));
@@ -95,6 +101,12 @@ namespace FreedomVoice.iOS.Utilities
         public static UIColor TextFieldTextColor => textFieldTextColor.Value;
 
         /// <summary>
+        /// Background for SearchBar and PickerView Toolbar
+        /// </summary>
+        static readonly Lazy<UIColor> barBackgroundColor = new Lazy<UIColor>(() => UIColor.FromRGB(230, 234, 238));
+        public static UIColor BarBackgroundColor => barBackgroundColor.Value;
+
+        /// <summary>
         /// Black color
         /// </summary>
         static readonly Lazy<UIColor> blackColor = new Lazy<UIColor>(() => UIColor.Black);
@@ -111,6 +123,12 @@ namespace FreedomVoice.iOS.Utilities
         /// </summary>
         static readonly Lazy<UIColor> grayColor = new Lazy<UIColor>(() => UIColor.FromRGB(127, 127, 127));
         public static UIColor GrayColor => grayColor.Value;
+
+        /// <summary>
+        /// Blue color
+        /// </summary>
+        static readonly Lazy<UIColor> blueColor = new Lazy<UIColor>(() => UIColor.FromRGB(3, 138, 193));
+        public static UIColor BlueColor => blueColor.Value;
 
         /// <summary>
         /// Dim orange color

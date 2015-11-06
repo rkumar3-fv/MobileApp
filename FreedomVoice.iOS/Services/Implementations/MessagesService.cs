@@ -1,6 +1,8 @@
 ﻿using System.Threading.Tasks;
 using FreedomVoice.Core;
 using FreedomVoice.iOS.Services.Responses;
+using System.Collections.Generic;
+using FreedomVoice.Core.Entities;
 
 namespace FreedomVoice.iOS.Services.Implementations
 {
@@ -8,25 +10,21 @@ namespace FreedomVoice.iOS.Services.Implementations
     {
         private const int PageSize = 30;
 
-        private string _systemNumber;
-        private int _mailboxNumber;
-        private string _folderName;
+        public async Task<BaseResponse> ExecuteRequest(string systemNumber, int mailboxNumber, string folderName, int messageCount)
+        {            
+            int pagesTotal = (messageCount + PageSize - 1) / PageSize;            
+            List<Message> result = new List<Message>();
+            for (int i = 0; i < pagesTotal; i++)
+            {
+                var asyncRes = await ApiHelper.GetMesages(systemNumber, mailboxNumber, folderName, PageSize, i + 1, false);
+                var errorResponse = CheckErrorResponse(asyncRes.Code);
+                if (errorResponse != null)
+                    return errorResponse;
 
-        public void SetParameters(string systemNumber, int mailboxNumber, string folderName)
-        {
-            _systemNumber = systemNumber;
-            _mailboxNumber = mailboxNumber;
-            _folderName = folderName;
-        }
+                result.AddRange(asyncRes.Result);
+            }
 
-        public async override Task<BaseResponse> ExecuteRequest()
-        {
-            var asyncRes = await ApiHelper.GetMesages(_systemNumber, _mailboxNumber, _folderName, PageSize, 1, false);
-            var errorResponse = CheckErrorResponse(asyncRes.Code);
-            if (errorResponse != null)
-                return errorResponse;
-
-            return new MessagesResponse(asyncRes.Result);
+            return new MessagesResponse(result);
         }
     }
 }
