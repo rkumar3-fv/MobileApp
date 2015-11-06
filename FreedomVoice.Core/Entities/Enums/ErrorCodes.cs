@@ -10,6 +10,7 @@
         Unknown,
         NotFound,
         Forbidden, 
-        PaymentRequired
+        PaymentRequired,
+        InternalServerError
     }
 }

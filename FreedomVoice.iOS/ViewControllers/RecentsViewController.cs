@@ -12,6 +12,10 @@ using Xamarin.Contacts;
 using System.Text.RegularExpressions;
 using CoreGraphics;
 using FreedomVoice.iOS.Helpers;
+using AddressBook;
+using AddressBookUI;
+using Contacts;
+using ContactsUI;
 
 namespace FreedomVoice.iOS.ViewControllers
 {
@@ -43,6 +47,10 @@ namespace FreedomVoice.iOS.ViewControllers
 
             _recentSource.OnRowSelected += TableSourceOnRowSelected;
             _recentSource.OnRowDeleted += TableSourceOnRowDeleted;
+            if (UIDevice.CurrentDevice.CheckSystemVersion(9, 0))            
+                _recentSource.OnRecentInfoClicked += IOS9TableSourceOnRecentInfoClicked;
+            else
+                _recentSource.OnRecentInfoClicked += IOS8TableSourceOnRecentInfoClicked;
 
             var addressBook = new Xamarin.Contacts.AddressBook();
             if (!await addressBook.RequestPermission())
@@ -55,6 +63,53 @@ namespace FreedomVoice.iOS.ViewControllers
             _contactList = addressBook.ToList();
 
             base.ViewDidLoad();
+        }
+
+        private void IOS9TableSourceOnRecentInfoClicked(Recent recent)
+        {
+            NSError error;
+            var store = new CNContactStore();
+            CNContact contact = null;
+            CNContactFetchRequest request = new CNContactFetchRequest(CNContactKey.PhoneNumbers);
+            store.EnumerateContacts(request, out error, (item, cursor) => {
+                if (item.PhoneNumbers.Any(p=> Regex.Replace(p.Value.StringValue, @"[^\d]", "") == Regex.Replace(recent.PhoneNumber, @"[^\d]", "")))                
+                    contact = item;
+            });
+
+            if (contact != null)
+            {
+                CNContactFetchRequest keysToFetch = new CNContactFetchRequest(CNContactViewController.DescriptorForRequiredKeys);
+
+                var fetchKeys = new NSArray[] { keysToFetch.KeysToFetch };
+                contact = store.GetUnifiedContact(contact.Identifier, fetchKeys, out error);
+
+                try {                    
+                    var view = CNContactViewController.FromContact(contact);
+                    //PresentViewController(view, true, null);
+                    NavigationController.PushViewController(view, true);
+                } catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                }
+            }                
+        }
+
+        private void IOS8TableSourceOnRecentInfoClicked(Recent recent)
+        {
+            NSError error;
+            var addressBook = ABAddressBook.Create(out error);
+            var person = addressBook.GetPerson(Int32.Parse(recent.ContactId));
+
+            if (person == null)
+                return;
+
+            var pvc = new ABPersonViewController()
+            {
+                DisplayedPerson = person,
+                AllowsEditing = false
+            };
+
+            NavigationController.PushViewController(pvc, true);
         }
 
         private Contact FindContactByNumber(string number)

@@ -6,6 +6,7 @@ using FreedomVoice.iOS.TableViewCells;
 using UIKit;
 using FreedomVoice.Core.Entities.Enums;
 using FreedomVoice.iOS.Helpers;
+using FreedomVoice.iOS.ViewModels;
 
 namespace FreedomVoice.iOS.TableViewSources
 {
@@ -19,6 +20,7 @@ namespace FreedomVoice.iOS.TableViewSources
 
         private NSIndexPath _selectedRowIndexPath;
         private int _selectedRowIndex = -1;
+        private int _selectedRowIndexForHeight = -1;
 
         public MessagesSource(List<Message> messages, Account selectedAccount, UINavigationController navigationController)
         {
@@ -67,21 +69,20 @@ namespace FreedomVoice.iOS.TableViewSources
             var previousSelectedRow = _selectedRowIndexPath;
             _selectedRowIndexPath = indexPath;
 
-            _selectedRowIndex = indexPath.Row;
+            _selectedRowIndex = _selectedRowIndexForHeight = indexPath.Row;
 
             var indexes = new List<NSIndexPath>();
-            if (previousSelectedRow != null)
+            if (previousSelectedRow != null && tableView.CellAt(previousSelectedRow) != null)
                 indexes.Add(previousSelectedRow);
 
             indexes.Add(indexPath);
-            tableView.ReloadRows(indexes.ToArray(), UITableViewRowAnimation.Fade);
+            tableView.ReloadRows(indexes.ToArray(), UITableViewRowAnimation.Fade);            
         }
 
         public override nfloat GetHeightForRow(UITableView tableView, NSIndexPath indexPath)
         {
             var selectedMessage = _messages[indexPath.Row];
-
-            return indexPath.Row == _selectedRowIndex ? (selectedMessage.Type == MessageType.Fax ? 100 : 138) : 48;
+            return indexPath.Row == _selectedRowIndexForHeight ? (selectedMessage.Type == MessageType.Fax ? 100 : 138) : 48;
         }
 
         public event EventHandler<ExpandedCellButtonClickEventArgs> OnRowCallbackClick;
@@ -96,13 +97,42 @@ namespace FreedomVoice.iOS.TableViewSources
         private void RowCallbackClick(UITableView tableView, NSIndexPath indexPath)
         {
             var selectedMessage = _messages[indexPath.Row];
-
             OnRowCallbackClick?.Invoke(this, new ExpandedCellButtonClickEventArgs(selectedMessage));
         }
 
-        private void RowDeleteMessageClick(UITableView tableView, NSIndexPath indexPath)
-        {
+        private async void RowDeleteMessageClick(UITableView tableView, NSIndexPath indexPath)
+        {            
+            if (tableView.CellAt(indexPath) is ExpandedCell)
+            {                
+                _selectedRowIndex = _selectedRowIndexForHeight = -1;
+                _selectedRowIndexPath = null;
+            }
+            var selectedMessage = _messages[indexPath.Row];
+            if (selectedMessage == null) return;
+
+            var model = new ExpandedCellViewModel(_selectedAccount.PhoneNumber, selectedMessage.Mailbox, selectedMessage.Id, _navigationController);
+            if (selectedMessage.Folder == "Trash")
+                await model.DeleteMessageAsync();
+            else
+                await model.MoveMessageToTrashAsync();
+
+            _messages.Remove(selectedMessage);
             OnRowDeleteMessageClick?.Invoke(this, new ExpandedCellButtonClickEventArgs(tableView, indexPath));
+        }
+
+        public override void CommitEditingStyle(UITableView tableView, UITableViewCellEditingStyle editingStyle, NSIndexPath indexPath)
+        {
+            switch (editingStyle)
+            {
+                case UITableViewCellEditingStyle.Delete:                    
+                    RowDeleteMessageClick(tableView, indexPath);                    
+                    break;                    
+            }
+        }
+
+        public override bool CanEditRow(UITableView tableView, NSIndexPath indexPath)
+        {
+            return true;
         }
     }
 }

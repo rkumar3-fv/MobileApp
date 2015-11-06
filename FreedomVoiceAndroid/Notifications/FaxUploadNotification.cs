@@ -1,8 +1,6 @@
-using System;
 using Android.App;
 using Android.Content;
 using Android.Graphics;
-using FreedomVoice.Core.Utils;
 
 namespace com.FreedomVoice.MobileApp.Android.Notifications
 {
@@ -39,22 +37,23 @@ namespace com.FreedomVoice.MobileApp.Android.Notifications
         {
             AppNotification.SetAutoCancel(false);
             AppNotification.SetOngoing(true);
-            AppNotification.SetProgress(100, 0, false);
+            AppNotification.SetProgress(100, 100, true);
             AppNotification.SetCategory(Notification.CategoryProgress);
-            AppNotification.SetContentTitle(AppContext.GetString(Resource.String.Notif_fax));
-            AppNotification.SetSmallIcon(Resource.Drawable.ic_status_download);
-            AppNotification.SetLargeIcon(BitmapFactory.DecodeResource(AppContext.Resources, Resource.Drawable.ic_notification_download));
+            AppNotification.SetContentTitle(AppContext.GetString(Resource.String.Notif_fax_progress));
+            AppNotification.SetSmallIcon(Resource.Drawable.ic_notification_download);
             base.ShowNotification(content);
         }
 
         /// <summary>
-        /// Update fax downloading progress
+        /// Update fax fail progress
         /// </summary>
-        /// <param name="progress">progress value in percentages</param>
-        public void UpdateProgress(int progress)
+        public void FailLoading()
         {
-            if (progress > 100) return;
-            AppNotification.SetProgress(100, progress, false);
+            AppNotification.SetOngoing(false);
+            AppNotification.SetProgress(0, 0, false);
+            AppNotification.SetAutoCancel(true);
+            AppNotification.SetContentTitle(AppContext.GetString(Resource.String.Notif_fax_fail));
+            AppNotification.SetSmallIcon(Resource.Drawable.ic_action_close);
             NotificationManager.Notify(NotificationCode(), AppNotification.Build());
         }
 
@@ -67,12 +66,13 @@ namespace com.FreedomVoice.MobileApp.Android.Notifications
             var stackBuilder = TaskStackBuilder.Create(AppContext);
             stackBuilder.AddNextIntent(intent);
             var resultPendingIntent = stackBuilder.GetPendingIntent(0, PendingIntentFlags.UpdateCurrent);
+            AppNotification.SetContentTitle(AppContext.GetString(Resource.String.Notif_fax_success));
             AppNotification.SetCategory(Notification.CategoryTransport);
+            AppNotification.SetSmallIcon(Resource.Drawable.ic_notification_fax);
             AppNotification.SetOngoing(false);
             AppNotification.SetProgress(0, 0, false);
             AppNotification.SetAutoCancel(true);
             AppNotification.SetContentIntent(resultPendingIntent);
-            AppNotification.SetContentInfo(DataFormatUtils.ToShortFormattedDate(AppContext.GetString(Resource.String.Timestamp_yesterday),DateTime.Now));
             NotificationManager.Notify(NotificationCode(), AppNotification.Build());
         }
 

@@ -63,22 +63,11 @@ namespace FreedomVoice.iOS.ViewControllers
         }
 
         private void OnSourceRowDeleteMessageClick(object sender, ExpandedCellButtonClickEventArgs e)
-        {
-            var selectedMessage = _messagesList[e.IndexPath.Row];
-            if (selectedMessage == null) return;
-
-            if (selectedMessage.Folder == "Trash")
-            {
-
-            }
-            else
-            {
-                e.TableView.DeselectRow(e.IndexPath, false);
-                MessagesTableView.BeginUpdates();
-                _messagesList.Remove(selectedMessage);
-                MessagesTableView.DeleteRows(new[] { e.IndexPath }, UITableViewRowAnimation.Fade);
-                MessagesTableView.EndUpdates();
-            }
+        {            
+            e.TableView.DeselectRow(e.IndexPath, false);
+            MessagesTableView.BeginUpdates();                
+            MessagesTableView.DeleteRows(new[] { e.IndexPath }, UITableViewRowAnimation.Fade);
+            MessagesTableView.EndUpdates();            
         }
 
         private async void OnSourceRowViewFaxClick(object sender, ExpandedCellButtonClickEventArgs e)

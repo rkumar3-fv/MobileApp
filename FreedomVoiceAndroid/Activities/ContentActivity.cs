@@ -43,6 +43,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         private Toolbar _toolbar;
         private TabLayout _tabLayout;
         private AnimatorListener _animatorListener;
+        private string _request;
 
         /// <summary>
         /// Contacts search listener
@@ -91,7 +92,45 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         {
             base.OnResume();
             SetToolbarContent();
+            if (_request != null)
+            {
+                var menu = _toolbar.Menu;
+                var item = menu?.FindItem(Resource.Id.menu_action_search);
+                if (item != null)
+                {
+                    var view = MenuItemCompat.GetActionView(item);
+                    var searchView = view?.JavaCast<SearchView>();
+                    if (searchView != null)
+                    {
+                        item.ExpandActionView();
+                        searchView.SetQuery(_request, false);
+                        return;
+                    }
+                }
+            }
+            var param = _toolbar.LayoutParameters.JavaCast<AppBarLayout.LayoutParams>();
+            param.ScrollFlags = AppBarLayout.LayoutParams.ScrollFlagScroll | AppBarLayout.LayoutParams.ScrollFlagEnterAlways;
+            _tabLayout.Visibility = ViewStates.Visible;
         }
+
+        protected override void OnPause()
+        {
+            base.OnPause();
+            var menu = _toolbar.Menu;
+            var item = menu?.FindItem(Resource.Id.menu_action_search);
+            if (item != null)
+            {
+                var view = MenuItemCompat.GetActionView(item);
+                var searchView = view?.JavaCast<SearchView>();
+                if ((searchView != null) && (!searchView.Iconified))
+                {
+                    _request = searchView.Query;
+                    return;
+                }
+            }
+            _request = null;
+        }
+
         private void ViewPagerOnPageSelected(object sender, ViewPager.PageSelectedEventArgs pageSelectedEventArgs)
         {
             SetToolbarContent();
@@ -262,7 +301,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             {
                 var view = MenuItemCompat.GetActionView(item);
                 var searchView = view?.JavaCast<SearchView>();
-                if (searchView != null && (!searchView.Iconified))
+                if ((searchView != null) && (!searchView.Iconified))
                 {
                     searchView.Iconified = true;
                     return;

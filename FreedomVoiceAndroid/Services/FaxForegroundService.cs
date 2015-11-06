@@ -30,9 +30,9 @@ namespace com.FreedomVoice.MobileApp.Android.Services
         private ConcurrentQueue<Tuple<int, string, string>> _downloadingUrls;
         private ConcurrentDictionary<int, CancellationToken> _cancellationTokens;
 
-        public event ProgressEventHandler ProgressEvent;
         public event SuccessEventHandler SuccessEvent;
         public event StartLoadingEventHandler StartEvent;
+        public event StopLoadingEventHandler FailEvent; 
 
         public override void OnCreate()
         {
@@ -102,13 +102,14 @@ namespace com.FreedomVoice.MobileApp.Android.Services
             if (!Directory.Exists(root))
                 Directory.CreateDirectory(root);
             var path = Path.GetRandomFileName();
+            StartEvent?.Invoke(this, new AttachmentHelperEventArgs<string>(id, name));
             var res = ApiHelper.MakeAsyncFileDownload(url, "application/json", token).Result;
             if (res.Code != ErrorCodes.Ok)
             {
+                FailEvent?.Invoke(this, new AttachmentHelperEventArgs<bool>(id, res.Code == ErrorCodes.Cancelled));
                 _isInWork = false;
                 return;
             }
-            StartEvent?.Invoke(this, new AttachmentHelperEventArgs<string>(id, name));
             using (var ms = new MemoryStream())
             {
                 res.Result.CopyTo(ms);
