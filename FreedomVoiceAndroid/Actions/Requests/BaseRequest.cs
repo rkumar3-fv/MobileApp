@@ -34,6 +34,8 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
         {
             switch (code)
             {
+                case ErrorCodes.Ok:
+                    return null;
                 case ErrorCodes.BadRequest:
                     return new ErrorResponse(requestId, ErrorResponse.ErrorBadRequest);
                 case ErrorCodes.Cancelled:
@@ -48,10 +50,10 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
                     return new ErrorResponse(requestId, ErrorResponse.ErrorNotPaid);
                 case ErrorCodes.Forbidden:
                     return new ErrorResponse(requestId, ErrorResponse.Forbidden);
-                case ErrorCodes.Unknown:
-                    return new ErrorResponse(requestId, ErrorResponse.ErrorUnknown);
+                case ErrorCodes.InternalServerError:
+                    return new ErrorResponse(requestId, ErrorResponse.ErrorInternal);
                 default:
-                    return null;
+                    return new ErrorResponse(requestId, ErrorResponse.ErrorUnknown);
             }
         }
 
