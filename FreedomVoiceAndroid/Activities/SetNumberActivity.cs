@@ -103,9 +103,10 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         {
 #if DEBUG
             if ((_phoneText.Text.Length >9)&&(_phoneText.Text.Length<13))
+
 #else
-            int phoneInt;
-            if ((_phoneText.Text.Length == 10)&&(int.TryParse(_phoneText.Text, out phoneInt)))
+            long phoneDigit;
+            if ((_phoneText.Text.Length == 10) && (long.TryParse(_phoneText.Text, out phoneDigit)))
 #endif
             {
                 if (DataValidationUtils.IsPhoneValid(_phoneText.Text) != "")

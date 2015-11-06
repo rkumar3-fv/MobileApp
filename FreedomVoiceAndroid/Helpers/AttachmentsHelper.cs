@@ -67,27 +67,22 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                     return msg.Id;
                 }
             }
-            Intent intent;
+            var intent = new Intent(_context, typeof(AttachmentsDownloadService));
+            intent.PutExtra(AttachmentsServiceResultReceiver.ReceiverTag, _receiver);
             if (_waitingList.Contains(msg.Id))
             {
 #if DEBUG
                 Log.Debug(App.AppPackage, "FILE ALREADY DOWNLOADING: " +msg.Id);
 #endif
-                intent = new Intent(_context, typeof(AttachmentsDownloadService));
                 intent.SetAction(AttachmentsDownloadService.ActionStatusTag);
-                _context.StartService(intent);
-                StartLoadingEvent?.Invoke(this, new AttachmentHelperEventArgs<string>(msg.Id, msg.AttachUrl.Split('/').Last().ToLower(), msg.FromNumber));
-                return msg.Id;
             }
-            _waitingList.Add(msg.Id);
-            _faxNotification.ShowNotification(DataFormatUtils.ToPhoneNumber(msg.FromNumber));
-            intent = new Intent(_context, typeof(AttachmentsDownloadService));
-            intent.SetAction(AttachmentsDownloadService.ActionStartTag);
-            intent.PutExtra(AttachmentsDownloadService.ActionIdTag, msg.Id);
-            intent.PutExtra(AttachmentsDownloadService.ActionMsgTag, msg);
-#if DEBUG
-            Log.Debug(App.AppPackage, "HELPER SERVICE LAUNCHED: request ID=" + msg.Id);
-#endif
+            else
+            {
+                _waitingList.Add(msg.Id);
+                intent.SetAction(AttachmentsDownloadService.ActionStartTag);
+                intent.PutExtra(AttachmentsDownloadService.ActionIdTag, msg.Id);
+                intent.PutExtra(AttachmentsDownloadService.ActionMsgTag, msg);
+            }
             _context.StartService(intent);
             return msg.Id;
         }

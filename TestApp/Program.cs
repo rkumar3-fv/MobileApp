@@ -236,7 +236,7 @@ namespace TestApp
             }
             Console.WriteLine(Environment.NewLine);
 
-            Stopwatch sw1 = new Stopwatch();
+            var sw1 = new Stopwatch();
             sw1.Start();
             var b = ApiHelper.GetMedia("7607124648", 80, "New", "I161954426", MediaType.Pdf, CancellationToken.None)
                 .Result;
@@ -245,7 +245,7 @@ namespace TestApp
             Console.WriteLine(Process.GetCurrentProcess().WorkingSet64 / 1024);
 
 
-            Stopwatch sw2 = new Stopwatch();
+            var sw2 = new Stopwatch();
             sw2.Start();
             var a = ApiHelper.GetMedia("7607124648", 80, "New", "I161578702", MediaType.Pdf, CancellationToken.None)
                .Result;

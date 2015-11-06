@@ -121,6 +121,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Actions\BaseAction.cs" />
+    <Compile Include="Actions\Reports\BaseReport.cs" />
+    <Compile Include="Actions\Reports\ErrorReport.cs" />
+    <Compile Include="Actions\Reports\ProgressReport.cs" />
+    <Compile Include="Actions\Reports\SuccessReport.cs" />
     <Compile Include="Actions\Requests\BaseRequest.cs" />
     <Compile Include="Actions\Requests\CallReservationRequest.cs" />
     <Compile Include="Actions\Requests\DeleteMessageRequest.cs" />
