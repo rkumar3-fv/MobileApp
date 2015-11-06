@@ -255,6 +255,15 @@
                                     };
                                     break;
                                 }
+                            case HttpStatusCode.InternalServerError:
+                                {
+                                    retResult = new BaseResult<Stream>
+                                    {
+                                        Code = ErrorCodes.InternalServerError,
+                                        Result = Stream.Null
+                                    };
+                                    break;
+                                }
                         }
                     }
 
@@ -338,6 +347,15 @@
                                     retResult = new BaseResult<T>
                                     {
                                         Code = ErrorCodes.PaymentRequired,
+                                        Result = default(T)
+                                    };
+                                    break;
+                                }
+                            case HttpStatusCode.InternalServerError:
+                                {
+                                    retResult = new BaseResult<T>
+                                    {
+                                        Code = ErrorCodes.InternalServerError,
                                         Result = default(T)
                                     };
                                     break;
