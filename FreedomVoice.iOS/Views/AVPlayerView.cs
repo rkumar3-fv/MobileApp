@@ -32,6 +32,9 @@ namespace FreedomVoice.iOS.Views
 
         private readonly ExpandedCell _sourceCell;
 
+        AVAudioSession session;
+        private bool IsSpeakerSource = false;
+
         public AVPlayerView(CGRect bounds, ExpandedCell sourceCell) : base(bounds)
         {
             _sourceCell = sourceCell;
@@ -40,6 +43,8 @@ namespace FreedomVoice.iOS.Views
 
         private void Initialize()
         {
+            session = AVAudioSession.SharedInstance();
+
             var sliderBackground = new SliderBackgorund(new CGRect(60, 12, 156, 7));
 
             _playButtonImage = UIImage.FromFile("play.png");
@@ -152,6 +157,21 @@ namespace FreedomVoice.iOS.Views
         {
             _player.Pause();
             UpdateViewForPlayerState(sender, e);
+        }
+
+        public void ToggleSoundOutput()
+        {
+            NSError error;
+            if (IsSpeakerSource)
+            {
+                session.OverrideOutputAudioPort(AVAudioSessionPortOverride.None, out error);
+                IsSpeakerSource = false;
+            }
+            else
+            {
+                session.OverrideOutputAudioPort(AVAudioSessionPortOverride.Speaker, out error);
+                IsSpeakerSource = true;
+            }
         }
     }
 }

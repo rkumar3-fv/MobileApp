@@ -156,6 +156,7 @@ namespace FreedomVoice.iOS.TableViewCells
         private void OnSpeakerButtonTouchDown(object sender, EventArgs args)
         {
             BackgroundColorAnimate(_speakerButton, UIColor.FromRGBA(119, 229, 246, 127));
+            _player?.ToggleSoundOutput();
         }
 
         public async Task<string> GetMediaPath(MediaType mediaType)
