@@ -47,7 +47,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         {
             base.OnActivityCreated(savedInstanceState);
             var app = App.GetApplication(Activity as BaseActivity);
-            Helper = app.Helper;
+            Helper = AppHelper.Instance(ContentActivity).ActionsHelper;
         }
 
         public override void OnPause()

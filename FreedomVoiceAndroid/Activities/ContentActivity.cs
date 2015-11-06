@@ -1,8 +1,11 @@
+using Android.Animation;
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
 using Android.Gms.Analytics;
+using Android.Graphics;
 using Android.OS;
+using Android.Runtime;
 using Android.Support.Design.Widget;
 using Android.Support.V4.Content;
 using Android.Support.V4.View;
@@ -10,8 +13,11 @@ using Android.Support.V7.Internal.View;
 using Android.Views;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Adapters;
+using com.FreedomVoice.MobileApp.Android.CustomControls;
+using com.FreedomVoice.MobileApp.Android.CustomControls.Callbacks;
 using com.FreedomVoice.MobileApp.Android.Dialogs;
 using com.FreedomVoice.MobileApp.Android.Fragments;
+using Java.Lang;
 using SearchView = Android.Support.V7.Widget.SearchView;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 
@@ -28,12 +34,16 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         WindowSoftInputMode = SoftInput.StateHidden)]
     public class ContentActivity : OperationActivity
     {
+        private Color _whiteColor;
+        private Color _grayColor;
         private CoordinatorLayout _rootLayout;
         private AppBarLayout _appBar;
         private ContentPagerAdapter _pagerAdapter;
         private ContentPager _viewPager;
         private Toolbar _toolbar;
         private TabLayout _tabLayout;
+        private AnimatorListener _animatorListener;
+        private string _request;
 
         /// <summary>
         /// Contacts search listener
@@ -46,7 +56,11 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             SetContentView(Resource.Layout.act_content);
             _rootLayout = FindViewById<CoordinatorLayout>(Resource.Id.contentActivity_rootBar);
             RootLayout = _rootLayout;
+            _whiteColor = new Color(ContextCompat.GetColor(this, Resource.Color.colorActionBarText));
+            _grayColor = new Color(ContextCompat.GetColor(this, Resource.Color.colorTabIndicatorInactive));
             SearchListener = new SearchViewListener();
+            SearchListener.OnCollapse += SearchListenerOnCollapse;
+            SearchListener.OnExpand += SearchListenerOnExpand;
             _appBar = FindViewById<AppBarLayout>(Resource.Id.contentActivity_contentAppBar);
             _tabLayout = FindViewById<TabLayout>(Resource.Id.contentActivity_tabs);
             _viewPager = FindViewById<ContentPager>(Resource.Id.contentActivity_contentPager);
@@ -71,12 +85,50 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 _viewPager.PageSelected += ViewPagerOnPageSelected;
             }
             _tabLayout.SetupWithViewPager(_viewPager);
+            _animatorListener = new AnimatorListener(_appBar, _toolbar, _tabLayout, _viewPager);
         }
 
         protected override void OnResume()
         {
             base.OnResume();
             SetToolbarContent();
+            if (_request != null)
+            {
+                var menu = _toolbar.Menu;
+                var item = menu?.FindItem(Resource.Id.menu_action_search);
+                if (item != null)
+                {
+                    var view = MenuItemCompat.GetActionView(item);
+                    var searchView = view?.JavaCast<SearchView>();
+                    if (searchView != null)
+                    {
+                        item.ExpandActionView();
+                        searchView.SetQuery(_request, false);
+                        return;
+                    }
+                }
+            }
+            var param = _toolbar.LayoutParameters.JavaCast<AppBarLayout.LayoutParams>();
+            param.ScrollFlags = AppBarLayout.LayoutParams.ScrollFlagScroll | AppBarLayout.LayoutParams.ScrollFlagEnterAlways;
+            _tabLayout.Visibility = ViewStates.Visible;
+        }
+
+        protected override void OnPause()
+        {
+            base.OnPause();
+            var menu = _toolbar.Menu;
+            var item = menu?.FindItem(Resource.Id.menu_action_search);
+            if (item != null)
+            {
+                var view = MenuItemCompat.GetActionView(item);
+                var searchView = view?.JavaCast<SearchView>();
+                if ((searchView != null) && (!searchView.Iconified))
+                {
+                    _request = searchView.Query;
+                    return;
+                }
+            }
+            _request = null;
         }
 
         private void ViewPagerOnPageSelected(object sender, ViewPager.PageSelectedEventArgs pageSelectedEventArgs)
@@ -98,7 +150,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                         Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].FolderName;
                     SupportActionBar.SetDisplayHomeAsUpEnabled(true);
                     SupportActionBar.SetHomeButtonEnabled(true);
-                    //ExpandToolbar();
+                    ExpandToolbar();
                     return;
                 }
                 if (Helper.SelectedExtension != -1)
@@ -121,16 +173,21 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 case 1:
                     _toolbar.InflateMenu(Resource.Menu.menu_contacts);
                     var menu = _toolbar.Menu;
-                    var searchView = (SearchView)MenuItemCompat.GetActionView(menu.FindItem(Resource.Id.menu_action_search));
-                    searchView.SetOnQueryTextListener(SearchListener);
-                    searchView.SetOnCloseListener(SearchListener);
-                    searchView.QueryHint = GetString(Resource.String.FragmentContacts_hint);
-                    var layout = (LinearLayout)searchView.GetChildAt(0);
-                    layout.Elevation = Resources.GetDimension(Resource.Dimension.fragment_contacts_search_elevation);
+                    var searchView = MenuItemCompat.GetActionView(menu.FindItem(Resource.Id.menu_action_search)).JavaCast<SearchView>();
+                    var menuItem = menu.FindItem(Resource.Id.menu_action_search);
+                    if ((menuItem != null) && (searchView != null))
+                    {
+                        MenuItemCompat.SetOnActionExpandListener(menuItem, SearchListener);
+                        MenuItemCompat.SetActionView(menuItem, searchView);
+                        searchView.SetOnQueryTextListener(SearchListener);
+                        var editText = searchView.FindViewById<EditText>(Resource.Id.search_src_text);
+                        editText.SetTextColor(_whiteColor);
+                        editText.SetHintTextColor(_grayColor);
+                    }
                     break;
                 case 2:
                     _toolbar.InflateMenu(Resource.Menu.menu_content);
-                    //ExpandToolbar();
+                    ExpandToolbar();
                     break;
             }
         }
@@ -166,7 +223,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                     LogoutAction();
                     return true;
                 case Resource.Id.menu_action_clear:
-                    var clearDialog = new ClearRecentsDialog();
+                    var clearDialog = new ClearRecentsDialogFragment();
                     clearDialog.DialogEvent += ClearDialogEvent;
                     clearDialog.Show(SupportFragmentManager, GetString(Resource.String.DlgLogout_title));
                     return true;
@@ -175,17 +232,23 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             }
         }
 
+        /// <summary>
+        /// Expand scrollable toolbar
+        /// </summary>
         public void ExpandToolbar()
         {
-            var param = (CoordinatorLayout.LayoutParams)_appBar.LayoutParameters;
-            var behavior = (AppBarLayout.Behavior) param.Behavior;
+            var param = _appBar.LayoutParameters.JavaCast<CoordinatorLayout.LayoutParams>();
+            var behavior = param.Behavior.JavaCast<AppBarLayout.Behavior>();
             behavior?.OnNestedFling(_rootLayout, _appBar, null, 0, -10000, false);
         }
 
+        /// <summary>
+        /// Collapse scrollable toolbar
+        /// </summary>
         public void CollapseToolbar()
         {
-            var param = (CoordinatorLayout.LayoutParams)_appBar.LayoutParameters;
-            var behavior = (AppBarLayout.Behavior) param.Behavior;
+            var param = _appBar.LayoutParameters.JavaCast<CoordinatorLayout.LayoutParams>();
+            var behavior = param.Behavior.JavaCast<AppBarLayout.Behavior>();
             behavior?.OnNestedFling(_rootLayout, _appBar, null, 0, 10000, false);
         }
 
@@ -198,9 +261,74 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 Helper.ClearAllRecents();
         }
 
+        /// <summary>
+        /// Search bar opening event
+        /// </summary>
+        private void SearchListenerOnExpand(object sender, bool b)
+        {
+            SupportActionBar.SetDisplayHomeAsUpEnabled(true);
+            SupportActionBar.SetHomeButtonEnabled(true);
+            var param = _toolbar.LayoutParameters.JavaCast<AppBarLayout.LayoutParams>();
+            param.ScrollFlags = AppBarLayout.LayoutParams.ScrollFlagExitUntilCollapsed;
+            //var animator = ValueAnimator.OfFloat(_tabLayout.Height, 0);
+            //animator.SetDuration(1000);
+            //animator.AddUpdateListener(_animatorListener);
+            //animator.Start();
+            _tabLayout.Visibility = ViewStates.Gone;
+        }
+
+        /// <summary>
+        /// Search bar closing
+        /// </summary>
+        private void SearchListenerOnCollapse(object sender, bool b)
+        {
+            SupportActionBar.SetDisplayHomeAsUpEnabled(false);
+            SupportActionBar.SetHomeButtonEnabled(false);
+            var param = _toolbar.LayoutParameters.JavaCast<AppBarLayout.LayoutParams>();
+            param.ScrollFlags = AppBarLayout.LayoutParams.ScrollFlagScroll | AppBarLayout.LayoutParams.ScrollFlagEnterAlways;
+            //var animator = ValueAnimator.OfFloat(0, _tabLayout.Height);
+            //animator.SetDuration(1000);
+            //animator.AddUpdateListener(_animatorListener);
+            //animator.Start();
+            _tabLayout.Visibility = ViewStates.Visible;
+        }
+
         public override void OnBackPressed()
         {
+            var menu = _toolbar.Menu;
+            var item = menu?.FindItem(Resource.Id.menu_action_search);
+            if (item != null)
+            {
+                var view = MenuItemCompat.GetActionView(item);
+                var searchView = view?.JavaCast<SearchView>();
+                if ((searchView != null) && (!searchView.Iconified))
+                {
+                    searchView.Iconified = true;
+                    return;
+                }
+            }
             MoveTaskToBack(true);
+        }
+
+        private class AnimatorListener : Object, ValueAnimator.IAnimatorUpdateListener
+        {
+            private readonly AppBarLayout _appBar;
+            private readonly Toolbar _toolbar;
+            private readonly TabLayout _tabLayout;
+            private readonly ViewPager _viewPager;
+
+            public AnimatorListener(AppBarLayout appBar, Toolbar toolbar, TabLayout tabLayout, ViewPager viewPager)
+            {
+                _appBar = appBar;
+                _toolbar = toolbar;
+                _tabLayout = tabLayout;
+                _viewPager = viewPager;
+            }
+
+            public void OnAnimationUpdate(ValueAnimator animation)
+            {
+                
+            }
         }
     }
 }

@@ -2,12 +2,12 @@
 <resources>
   <!-- Activity w/o action bar theme -->
   <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-    <item name="colorPrimary">@color/colorTabIndicator</item>
+    <item name="colorPrimary">@color/colorPrimary</item>
     <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
     <item name="android:windowBackground">@color/colorBackground</item>
     <item name="colorAccent">@color/colorBaseControls</item>
-    <item name="colorControlActivated">@color/colorActivatedControls</item>
-    <item name="colorControlNormal">@color/colorBaseControls</item>
+    <item name="colorControlActivated">@color/colorSpinnerSelector</item>
+    <item name="colorControlNormal">@color/colorSpinnerSelector</item>
     <item name="android:actionBarStyle">@style/ActionBarTheme</item>
     <item name="actionBarStyle">@style/ActionBarTheme</item>
     <item name="searchViewStyle">@style/AppSearchViewStyle</item>
@@ -36,9 +36,24 @@
     <item name="actionBarStyle">@style/ActionBarTheme</item>
   </style>
 
+  <!-- Content toolbar theme -->
+  <style name="ToolbarTheme" parent="@style/Widget.AppCompat.Light.ActionBar">
+    <item name="android:background">@color/colorPrimary</item>
+    <item name="android:colorBackground">@color/colorBackground</item>
+    <item name="android:displayOptions">showHome|showTitle</item>
+    <item name="displayOptions">showHome|showTitle</item>
+    <item name="background">@color/colorPrimary</item>
+    <item name="android:itemTextAppearance">@style/MenuTextAppearance</item>
+    <item name="titleTextStyle">@style/Theme.MyAuthTheme.ActionBar.TitleTextStyle</item>
+    <item name="android:actionOverflowButtonStyle">@style/CustomButtonOverflow</item>
+    <item name="actionOverflowButtonStyle">@style/CustomButtonOverflow</item>
+    <item name="android:popupBackground">@color/colorTabIndicator</item>
+    <item name="android:dropDownListViewStyle">@style/PopupMenuListView</item>
+    <item name="dropDownListViewStyle">@style/PopupMenuListView</item>
+  </style>
+
   <!-- ActionBar theme -->
-  <style name="ActionBarTheme" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
-    <item name="android:icon">@drawable/ic_launcher</item>
+  <style name="ActionBarTheme" parent="@style/Widget.AppCompat.Light.ActionBar">
     <item name="android:background">@color/colorPrimary</item>
     <item name="android:displayOptions">showHome|showTitle</item>
     <item name="displayOptions">showHome|showTitle</item>
@@ -58,9 +73,11 @@
 
   <!-- OverFlow menu Styles -->
   <style name="PopupMenuListView" parent="@style/Widget.AppCompat.ListView.DropDown">
-    <item name="android:divider">@color/colorDivider</item>
-    <item name="android:dividerHeight">@dimen/activity_element_divider</item>
+    <!--<item name="android:divider">@color/colorDivider</item>
+    <item name="android:dividerHeight">@dimen/activity_element_divider</item>-->
     <item name="android:background">@color/colorTabIndicator</item>
+    <item name="android:colorBackground">@color/colorTransparent</item>
+    <item name="android:popupBackground">@color/colorTransparent</item>
   </style>
 
   <!-- ActionBar title style -->
@@ -71,8 +88,7 @@
 
   <!-- SearchView style-->
   <style name="AppSearchViewStyle" parent="Widget.AppCompat.SearchView">
-    <item name="queryBackground">@color/colorTabIndicator</item>
-    <item name="submitBackground">@color/colorTabIndicator</item>
+    <item name="queryHint">@string/FragmentContacts_hint</item>
     <item name="closeIcon">@drawable/ic_action_close</item>
     <item name="searchIcon">@drawable/ic_action_search</item>
     <item name="goIcon">@drawable/ic_action_search</item>
@@ -96,6 +112,7 @@
     <item name="android:singleLine">true</item>
     <item name="android:maxLines">1</item>
     <item name="android:scrollHorizontally">true</item>
+    <item name="android:fontFamily">sans-serif</item>
     <item name="android:maxHeight">@dimen/auth_activity_field_height_max</item>
   </style>
 
@@ -107,6 +124,7 @@
     <item name="android:textColorHint">@color/colorBlackFieldsHint</item>
     <item name="android:singleLine">true</item>
     <item name="android:maxLines">1</item>
+    <item name="android:fontFamily">sans-serif</item>
     <item name="android:scrollHorizontally">true</item>
     <item name="android:maxHeight">@dimen/auth_activity_field_height_max</item>
   </style>
@@ -141,12 +159,22 @@
     <item name="android:minHeight">@dimen/dlg_action_bar_button</item>
   </style>
   
-  <!-- AppButtonStyle -->
+  <!-- AppButtonStyles -->
   <style name="AppButtonStyle" parent="Widget.AppCompat.Button">
     <item name="android:background">@drawable/button_selector</item>
     <item name="android:elevation">@dimen/activity_button_elevation</item>
     <item name="android:textSize">@dimen/activity_button_text</item>
     <item name="android:textColor">@color/colorActionBarText</item>
+    <item name="android:textAlignment">center</item>
+    <item name="android:minHeight">@dimen/activity_button_size</item>
+    <item name="android:textAllCaps">true</item>
+  </style>
+
+  <style name="WhiteAppButtonStyle" parent="Widget.AppCompat.Button">
+    <item name="android:background">@drawable/button_selector_white</item>
+    <item name="android:elevation">@dimen/activity_button_elevation</item>
+    <item name="android:textSize">@dimen/activity_button_text</item>
+    <item name="android:textColor">@color/colorDlgButton</item>
     <item name="android:textAlignment">center</item>
     <item name="android:minHeight">@dimen/activity_button_size</item>
     <item name="android:textAllCaps">true</item>
@@ -158,15 +186,12 @@
     <item name="background">@android:color/transparent</item>
     <item name="android:textColor">@color/textColorSecondary</item>
     <item name="android:textSize">@dimen/fragment_keypad_number_text_size</item>
-    <item name="android:cursorVisible">false</item>
-    <item name="android:focusable">false</item>
-    <item name="android:editable">false</item>
     <item name="colorControlNormal">@android:color/transparent</item>
     <item name="colorAccent">@android:color/transparent</item>
     <item name="colorControlActivated">@android:color/transparent</item>
-    <item name="android:singleLine">true</item>
-    <item name="android:maxLines">1</item>
+    <item name="android:lines">1</item>
     <item name="android:scrollHorizontally">true</item>
+    <item name="android:fontFamily">sans-serif-light</item>
   </style>
   
   <!-- Numeric keyboard style -->
@@ -175,31 +200,30 @@
     <item name="android:textColor">@color/colorKeyOnKeyboardMain</item>
   </style>
 
-  <!-- In-button progress bar -->
+  <!-- In-button progress bars -->
   <style name="InButtonProgressBar" parent="Widget.AppCompat.ProgressBar">
+    <item name="colorAccent">@color/colorProgressWhite</item>
+    <item name="android:colorAccent">@color/colorProgressWhite</item>
+    <item name="colorControlActivated">@color/colorProgressWhite</item>
+    <item name="android:colorControlActivated">@color/colorProgressWhite</item>
     <item name="android:indeterminate">true</item>
-    <item name="android:indeterminateTint">@color/colorBackground</item>
+    <item name="android:indeterminateTint">@color/colorProgressWhite</item>
+    <item name="android:indeterminateTintMode">src_in</item>
+  </style>
+
+  <style name="InWhiteButtonProgressBar" parent="Widget.AppCompat.ProgressBar">
+    <item name="colorAccent">@color/colorProgressBlue</item>
+    <item name="android:colorAccent">@color/colorProgressBlue</item>
+    <item name="colorControlActivated">@color/colorProgressBlue</item>
+    <item name="android:colorControlActivated">@color/colorProgressBlue</item>
+    <item name="android:indeterminate">true</item>
+    <item name="android:indeterminateTint">@color/colorProgressBlue</item>
     <item name="android:indeterminateTintMode">src_in</item>
   </style>
   
-  <!-- Content toolbar theme -->
-  <style name="ToolbarTheme" parent="@style/Widget.AppCompat.Light.ActionBar">
-    <item name="android:background">@color/colorPrimary</item>
-    <item name="android:displayOptions">showHome|showTitle</item>
-    <item name="displayOptions">showHome|showTitle</item>
-    <item name="background">@color/colorPrimary</item>
-    <item name="android:itemTextAppearance">@style/MenuTextAppearance</item>
-    <item name="titleTextStyle">@style/Theme.MyAuthTheme.ActionBar.TitleTextStyle</item>
-    <item name="android:actionOverflowButtonStyle">@style/CustomButtonOverflow</item>
-    <item name="actionOverflowButtonStyle">@style/CustomButtonOverflow</item>
-    <item name="android:popupBackground">@color/colorTabIndicator</item>
-    <item name="android:dropDownListViewStyle">@style/PopupMenuListView</item>
-    <item name="dropDownListViewStyle">@style/PopupMenuListView</item>
-  </style>
-
   <style name="MenuTextAppearance">
     <item name="android:textColor">@color/textColorPrimary</item>
-    <item name="android:background">@color/colorTabIndicator</item>
+    <item name="android:background">@color/colorTransparent</item>
   </style>
 
   <!-- Tab theme -->
@@ -286,12 +310,14 @@
   <style name="KeyButtonTextMainStyle">
     <item name="android:textSize">@dimen/fragment_keypad_key_text_size</item>
     <item name="android:textColor">@color/colorKeyOnKeyboardMain</item>
+    <item name="android:fontFamily">sans-serif-light</item>
   </style>
   
   <!-- Numeric keyboard secondary text style -->
   <style name="KeyButtonTextSecondaryStyle">
     <item name="android:textSize">@dimen/fragment_keypad_key_small_text_size</item>
     <item name="android:textColor">@color/colorKeyOnKeyboardSecondary</item>
+    <item name="android:fontFamily">sans-serif-light</item>
   </style>
   
   <!-- Message recipient text style -->

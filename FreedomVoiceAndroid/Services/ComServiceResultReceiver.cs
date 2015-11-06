@@ -6,7 +6,6 @@ namespace com.FreedomVoice.MobileApp.Android.Services
     {
         public const string ReceiverTag = "ComServiceResultReceiver";
         public const string ReceiverDataExtra = "ComServiceResultReceiverExtra";
-
         private IComServiceResultReceiver _receiver;
 
         /// <summary>

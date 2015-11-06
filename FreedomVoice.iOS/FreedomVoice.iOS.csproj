@@ -98,11 +98,18 @@
     <Compile Include="Entities\FolderWithCount.cs" />
     <Compile Include="Entities\Message.cs" />
     <Compile Include="Entities\PresentationNumber.cs" />
+    <Compile Include="Helpers\ExpandedCellButtonClickEventArgs.cs" />
     <Compile Include="Helpers\Formatting.cs" />
     <Compile Include="Helpers\LoadingOverlay.cs" />
+    <Compile Include="Services\IMediaService.cs" />
+    <Compile Include="Services\IMessageOperationsService.cs" />
     <Compile Include="Services\Implementations\CallReservationService.cs" />
     <Compile Include="Services\ICallReservationService.cs.cs" />
+    <Compile Include="Services\Implementations\MediaService.cs" />
+    <Compile Include="Services\Implementations\MessageOperationsService.cs" />
     <Compile Include="Services\Responses\CallReservationResponse.cs" />
+    <Compile Include="Services\Responses\MediaResponse.cs" />
+    <Compile Include="Services\Responses\MessageOperationsResponse.cs" />
     <Compile Include="ViewControllers\PhoneNumberViewController.cs" />
     <Compile Include="ViewControllers\PhoneNumberViewController.designer.cs">
       <DependentUpon>PhoneNumberViewController.cs</DependentUpon>
@@ -139,7 +146,10 @@
     <Compile Include="Services\Responses\MessagesResponse.cs" />
     <Compile Include="Services\Responses\PresentationNumbersResponse.cs" />
     <Compile Include="ViewModels\CallReservationViewModel.cs" />
+    <Compile Include="ViewModels\ExpandedCellViewModel.cs" />
+    <Compile Include="ViewModels\MediaViewModel.cs" />
     <Compile Include="Views\AVPlayerView.cs" />
+    <Compile Include="Views\NoAccessToContacts.cs" />
     <Compile Include="Views\RecentLineView.cs" />
     <Compile Include="Views\Shared\CallerIdView.cs" />
     <Compile Include="TableViewCells\ContactCell.cs" />

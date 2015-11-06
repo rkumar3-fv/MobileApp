@@ -55,7 +55,14 @@
   <dimen name="inactive_activity_button_margin">57dp</dimen>
   <dimen name="inactive_activity_text_margin">43dp</dimen>
   
+  <!-- Phone activity -->
+  <dimen name="phone_activity_field_margin">30dp</dimen>
+  <dimen name="phone_activity_code_size">30dp</dimen>
+  <dimen name="phone_activity_button_margin">14dp</dimen>
+  <dimen name="phone_activity_skip_margin">24dp</dimen>
+  
   <!-- Select account activity -->
+  <dimen name="select_acc_activity_progress_size">65dp</dimen>
   <dimen name="select_acc_activity_element_height">48dp</dimen>
   <dimen name="select_acc_activity_element_padding">8dp</dimen>
   
@@ -87,6 +94,9 @@
   
   <!-- Keypad fragment -->
   <dimen name="fragment_keypad_spinner_size">56dp</dimen>
+  <dimen name="fragment_keypad_spinner_width">168dp</dimen>
+  <dimen name="fragment_keypad_spinner_width_collapsed">156dp</dimen>
+  <dimen name="fragment_keypad_spinner_height">48dp</dimen>
   <dimen name="fragment_keypad_number_size">65dp</dimen>
   <dimen name="fragment_keypad_number_text_size">30sp</dimen>
   <dimen name="fragment_keypad_key_text_size">36sp</dimen>
@@ -114,6 +124,7 @@
   <dimen name="fragment_contacts_letter_width">56dp</dimen>
   <dimen name="fragment_contacts_height">48dp</dimen>
   <dimen name="fragment_contacts_search_elevation">12dp</dimen>
+  <dimen name="fragment_contacts_search_height">48dp</dimen>
   
   <!-- Dialogs -->
   <dimen name="dlg_elevation">24dp</dimen>
@@ -125,6 +136,8 @@
   <dimen name="dlg_padding">20dp</dimen>
   <dimen name="dlg_title_font">20sp</dimen>
   <dimen name="dlg_content_font">16sp</dimen>
-  <dimen name="dlg_numbers_element_height">48dp</dimen>
-  <dimen name="dlg_numbers_max_height">147dp</dimen>
+  <dimen name="dlg_numbers_element_height">60dp</dimen>
+  <dimen name="dlg_numbers_max_height">160dp</dimen>
+  <dimen name="dlg_numbers_text_margin">10dp</dimen>
+  <dimen name="dlg_min_width">280dp</dimen>
 </resources>

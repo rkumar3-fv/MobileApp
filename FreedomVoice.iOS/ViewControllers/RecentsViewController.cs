@@ -10,6 +10,7 @@ using FreedomVoice.iOS.Views.Shared;
 using UIKit;
 using Xamarin.Contacts;
 using System.Text.RegularExpressions;
+using FreedomVoice.iOS.Helpers;
 
 namespace FreedomVoice.iOS.ViewControllers
 {
@@ -33,9 +34,9 @@ namespace FreedomVoice.iOS.ViewControllers
 
             RecentsTableView.TableFooterView = new UIView(CoreGraphics.CGRect.Empty);
 
-            CallerIdView = new CallerIdView(new RectangleF(0, 65, (float)View.Frame.Width, 40), MainTabBarInstance.GetPresentationNumbers());
+            CallerIdView = new CallerIdView(new RectangleF(0, 0, (float)View.Frame.Width, 40), MainTabBarInstance.GetPresentationNumbers());
 
-            var recentLineView = new RecentLineView(new RectangleF(0, 40, (float)View.Frame.Width, 0.5f));
+            var recentLineView = new RecentLineView(new RectangleF(0, (float)CallerIdView.Frame.Height, (float)View.Frame.Width, 0.5f));
             View.AddSubviews(CallerIdView, recentLineView);
 
             RecentsTableView.TableHeaderView = CallerIdView;
@@ -48,7 +49,8 @@ namespace FreedomVoice.iOS.ViewControllers
 
             var addressBook = new Xamarin.Contacts.AddressBook();
             if (!await addressBook.RequestPermission())
-            {                
+            {
+                //TODO: Do we need this alert?
                 new UIAlertView("Permission denied", "User has denied this app access to their contacts", null, "Close").Show();
                 return;
             }
@@ -58,15 +60,6 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private Contact FindContactByNumber(string number)
         {
-            //try
-            //{
-            //    List<Contact> res = _contactList?.Where(c => c.Phones.Any(p => Regex.Replace(p.Number, @"[^\d]", "") == Regex.Replace(number, @"[^\d]", ""))).ToList();
-            //    return res?.First();
-            //}
-            //catch { }
-
-            //return null;
-
             return _contactList?.FirstOrDefault(c => c.Phones.Any(p => Regex.Replace(p.Number, @"[^\d]", "") == Regex.Replace(number, @"[^\d]", "")));
         }
 
@@ -163,7 +156,7 @@ namespace FreedomVoice.iOS.ViewControllers
         private void ClearAll()
         {
             var alertController = UIAlertController.Create(null, null, UIAlertControllerStyle.ActionSheet);
-            alertController.AddAction(UIAlertAction.Create("Clear All Recents", UIAlertActionStyle.Default, a => {
+            alertController.AddAction(UIAlertAction.Create("Clear All Recents", UIAlertActionStyle.Destructive, a => {
                 ReturnToRecentsView();
                 ClearRecent();
                 _recentSource.SetRecents(GetRecentsOrdered());
@@ -192,6 +185,9 @@ namespace FreedomVoice.iOS.ViewControllers
 
             RecentsTableView.EndUpdates();
             RecentsTableView.ReloadRows(e.TableView.IndexPathsForVisibleRows, UITableViewRowAnimation.None);
+
+            var selectedCallerId = MainTabBarInstance.GetSelectedPresentationNumber().PhoneNumber;
+            PhoneCall.CreateCallReservation(MainTabBarInstance.SelectedAccount.PhoneNumber, selectedCallerId, newRecent.PhoneNumber, NavigationController);
         }
 
         private void TableSourceOnRowDeleted(object sender, RecentsSource.RowSelectedEventArgs e)

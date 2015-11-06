@@ -8,6 +8,6 @@ namespace FreedomVoice.iOS.Services
         /// <summary>
         /// Asynchronous retrieving of messages
         /// </summary>
-        Task<BaseResponse> ExecuteRequest(string systemNumber, int mailboxNumber, string folderName);
+        Task<BaseResponse> ExecuteRequest(string systemNumber, int mailboxNumber, string folderName, int messageCount);
     }
 }

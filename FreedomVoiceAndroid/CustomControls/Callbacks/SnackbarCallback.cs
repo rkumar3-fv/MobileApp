@@ -1,7 +1,7 @@
 using System;
 using Android.Support.Design.Widget;
 
-namespace com.FreedomVoice.MobileApp.Android.Adapters
+namespace com.FreedomVoice.MobileApp.Android.CustomControls.Callbacks
 {
     public delegate void SnackbarCallbackEvent(object sender, EventArgs args);
 

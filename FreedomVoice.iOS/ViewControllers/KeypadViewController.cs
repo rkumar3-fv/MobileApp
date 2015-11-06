@@ -31,9 +31,9 @@ namespace FreedomVoice.iOS.ViewControllers
 
         public override void ViewDidLoad()
         {
-            CallerIdView = new CallerIdView(new RectangleF(0, 64, (float)View.Frame.Width, 40), MainTabBarInstance.GetPresentationNumbers());
+            CallerIdView = new CallerIdView(new RectangleF(0, (float)(UIApplication.SharedApplication.StatusBarFrame.Height + NavigationController.NavigationBar.Frame.Size.Height), (float)View.Frame.Width, 40), MainTabBarInstance.GetPresentationNumbers());
 
-            var keypadLineView = new RecentLineView(new RectangleF(0, 104, (float)View.Frame.Width, 0.5f));
+            var keypadLineView = new RecentLineView(new RectangleF(0, (float)(CallerIdView.Frame.Y + CallerIdView.Frame.Height), (float)View.Frame.Width, 0.5f));
 
             _phoneLabel = new UILabel(new CGRect(30, 105, 250, 52))
             {
@@ -138,7 +138,9 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private void OnKeypadDialTouchUpInside(object sender, EventArgs args)
         {
-            AddRecent();            
+            AddRecent();
+            var selectedCallerId = MainTabBarInstance.GetSelectedPresentationNumber().PhoneNumber;
+            PhoneCall.CreateCallReservation(MainTabBarInstance.SelectedAccount.PhoneNumber, selectedCallerId, PhoneNumber, NavigationController);
         }
         
 	    private void AddRecent()

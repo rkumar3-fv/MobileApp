@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
+    android:layout_width="@dimen/fragment_keypad_spinner_width"
+    android:layout_height="@dimen/fragment_keypad_spinner_height"
     android:background="?android:attr/selectableItemBackground"
-    android:gravity="center_vertical"
-    android:layout_marginLeft="@dimen/activity_horizontal_margin">
+    android:gravity="center_vertical">
     <TextView
         android:id="@+id/itemSpinnerDrop_idText"
         style="@style/CallerIdSpinnerText"
         android:layout_gravity="center_vertical"
-        android:gravity="center"
-        android:layout_height="@dimen/fragment_keypad_spinner_size"
+        android:gravity="center_vertical"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_height="@dimen/fragment_keypad_spinner_height"
         android:layout_width="match_parent" />
 </LinearLayout>

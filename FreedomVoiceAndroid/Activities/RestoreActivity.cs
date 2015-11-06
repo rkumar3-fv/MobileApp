@@ -22,13 +22,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         Theme = "@style/AppThemeActionBar")]
     public class RestoreActivity : BaseActivity
     {
-#if DEBUG
-        private void DebugOnly()
-        {
-            _emailText.Text = "freedomvoice.user2.267055@gmail.com";
-        }
-#endif
-
+        public const string EmailField = "EMailField";
         private Color _errorColor;
         private EditText _emailText;
         private Button _restoreButton;
@@ -38,9 +32,11 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
+            var eMail = Intent.GetStringExtra(EmailField) ?? "";
             SetContentView(Resource.Layout.act_restore);
             RootLayout = FindViewById(Resource.Id.restoreActivity_root);
             _emailText = FindViewById<EditText>(Resource.Id.restoreActivity_emailField);
+            _emailText.Text = eMail;
             _restoreButton = FindViewById<Button>(Resource.Id.restoreActivity_sendButton);
             _resultLabel = FindViewById<TextView>(Resource.Id.restoreActivity_resultText);
             _progressSend = FindViewById<ProgressBar>(Resource.Id.restoreActivity_progress);
@@ -52,15 +48,10 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             SupportActionBar.SetHomeButtonEnabled(true);
 
             _errorColor = new Color(ContextCompat.GetColor(this, Resource.Color.textColorError));
+            var progressColor = new Color(ContextCompat.GetColor(this, Resource.Color.colorProgressWhite));
+            _progressSend.IndeterminateDrawable?.SetColorFilter(progressColor, PorterDuff.Mode.SrcIn);
+            _progressSend.ProgressDrawable?.SetColorFilter(progressColor, PorterDuff.Mode.SrcIn);
         }
-
-#if DEBUG
-        protected override void OnResume()
-        {
-            base.OnResume();
-            DebugOnly();
-        }
-#endif
 
         /// <summary>
         /// Restore button click action
@@ -82,11 +73,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 }
             _resultLabel.Text = GetString(Resource.String.ActivityRestore_badEmail);
             _emailText.Background.SetColorFilter(_errorColor, PorterDuff.Mode.SrcAtop);
-        }
-
-        public override bool OnCreateOptionsMenu(IMenu menu)
-        {
-            return true;
         }
 
         public override bool OnOptionsItemSelected(IMenuItem item)

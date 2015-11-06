@@ -3,6 +3,9 @@ using Android.Content;
 
 namespace com.FreedomVoice.MobileApp.Android.Helpers
 {
+    /// <summary>
+    /// Action helper response wiht intent
+    /// </summary>
     public class ActionsHelperIntentArgs : EventArgs, IEquatable<ActionsHelperIntentArgs>
     {
         public ActionsHelperIntentArgs(long requestId, Intent intent)

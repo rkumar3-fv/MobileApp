@@ -25,8 +25,9 @@ namespace FreedomVoice.iOS.ViewModels
         {
             _service = ServiceContainer.Resolve<ICallReservationService>();
 
-            ViewController = viewController;
             LoadingMessage = "Creating Call Reservation...";
+
+            ViewController = viewController;
 
             _systemNumber = systemNumber;
             _callerIdNumber = callerIdNumber;

@@ -5,11 +5,13 @@ using Android.Content;
 using Android.Database;
 using Android.Provider;
 using Android.Support.V7.Widget;
+using Android.Telephony;
 using Android.Views;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Entities;
 using com.FreedomVoice.MobileApp.Android.Utils;
 using FreedomVoice.Core.Utils;
+using Uri = Android.Net.Uri;
 
 namespace com.FreedomVoice.MobileApp.Android.Adapters
 {
@@ -25,23 +27,30 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
         /// <summary>
         /// Item short click event
         /// </summary>
-        public event EventHandler<long> ItemClick;
+        public event EventHandler<int> ItemClick;
 
         /// <summary>
         /// Additional item sector short click
         /// </summary>
-        public event EventHandler<long> AdditionalSectorClick;
+        public event EventHandler<string> AdditionalSectorClick;
 
         private void OnClick(int position)
         {
-            var keys = _currentContent.Keys.ToList();
-            ItemClick?.Invoke(this, keys[position]);
+            ItemClick?.Invoke(this, position);
         }
 
         private void OnAditionalClick(int position)
         {
             var keys = _currentContent.Keys.ToList();
-            AdditionalSectorClick?.Invoke(this, keys[position]);
+            var normalizedPhone = PhoneNumberUtils.NormalizeNumber(_currentContent[keys[position]].PhoneNumber);
+            var uri = Uri.WithAppendedPath(ContactsContract.PhoneLookup.ContentFilterUri, Uri.Encode(normalizedPhone));
+            string[] projection = { ContactsContract.Contacts.InterfaceConsts.Id };
+            var loader = new CursorLoader(_context, uri, projection, null, null, null);
+            var cursor = (ICursor)loader.LoadInBackground();
+            if (cursor == null) return;
+            if (cursor.MoveToFirst())
+                AdditionalSectorClick?.Invoke(this, cursor.GetString(0));
+            cursor.Close();
         }
 
         public RecentsRecyclerAdapter(SortedDictionary<long, Recent> currentContent, Context context)
@@ -70,6 +79,13 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
         {
             var keys = _currentContent.Keys.ToList();
             NotifyItemInserted(keys.IndexOf(key));
+        }
+
+        public void NotifyUpdateItem(int key)
+        {
+            if (key != 0)
+                NotifyItemMoved(key, 0);
+            NotifyItemChanged(0);
         }
 
         /// <summary>
@@ -106,7 +122,9 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
             var viewHolder = holder as ViewHolder;
             var keys = _currentContent.Keys.ToList();
             if (viewHolder == null) return;
-            viewHolder.DestinationNumberText.Text = _helper.GetName(_currentContent[keys[position]].PhoneNumber);
+            string text;
+            viewHolder.AdditionalLayout.Visibility = !_helper.GetName(_currentContent[keys[position]].PhoneNumber, out text) ? ViewStates.Invisible : ViewStates.Visible;
+            viewHolder.DestinationNumberText.Text = text;
             viewHolder.CallDateText.Text =
                 DataFormatUtils.ToShortFormattedDate(_context.GetString(Resource.String.Timestamp_yesterday),
                     _currentContent[keys[position]].CallDate);
@@ -139,14 +157,16 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
             /// </summary>
             public TextView CallDateText { get; }
 
+            public LinearLayout AdditionalLayout { get; }
+
             public ViewHolder(View itemView, Action<int> mainListener, Action<int> additionalListener) : base(itemView)
             {
                 DestinationNumberText = itemView.FindViewById<TextView>(Resource.Id.itemRecent_phone);
                 CallDateText = itemView.FindViewById<TextView>(Resource.Id.itemRecent_date);
                 var mainSectorLayout = itemView.FindViewById<RelativeLayout>(Resource.Id.itemRecent_mainArea);
-                var additionalSectorLayout = itemView.FindViewById<LinearLayout>(Resource.Id.itemRecent_additionalArea);
+                AdditionalLayout = itemView.FindViewById<LinearLayout>(Resource.Id.itemRecent_additionalArea);
                 mainSectorLayout.Click += (sender, e) => mainListener(AdapterPosition);
-                additionalSectorLayout.Click += (sender, e) => additionalListener(AdapterPosition);
+                AdditionalLayout.Click += (sender, e) => additionalListener(AdapterPosition);
             }
         }
     }

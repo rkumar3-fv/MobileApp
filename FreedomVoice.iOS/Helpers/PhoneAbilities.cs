@@ -132,6 +132,17 @@ namespace FreedomVoice.iOS.Helpers
         public static async void CreateCallReservation(string systemNumber, string presentationNumber, string destinationNumberFormatted, UIViewController viewController)
         {
             var expectedCallerIdNumber = UserDefault.AccountPhoneNumber;
+
+            if (string.IsNullOrEmpty(expectedCallerIdNumber))
+            {
+                var alertController = UIAlertController.Create(null, "To make calls with this app, please enter your device's phone number.", UIAlertControllerStyle.Alert);
+                alertController.AddAction(UIAlertAction.Create("Settings", UIAlertActionStyle.Default, a => UIApplication.SharedApplication.OpenUrl(new NSUrl(UIApplication.OpenSettingsUrlString))));
+                alertController.AddAction(UIAlertAction.Create("Cancel", UIAlertActionStyle.Cancel, null));
+                viewController.PresentViewController(alertController, true, null);
+
+                return;
+            }
+
             var destinationNumber = Regex.Replace(destinationNumberFormatted.Replace(" ", ""), @"[^\d]", "");
 
             var callReservationViewModel = new CallReservationViewModel(systemNumber, expectedCallerIdNumber, presentationNumber, destinationNumber, viewController);
@@ -139,9 +150,11 @@ namespace FreedomVoice.iOS.Helpers
 
             if (callReservationViewModel.IsErrorResponseReceived) return;
 
+            //TODO: Add "Call failed" alert
+
             var switchboardNumber = callReservationViewModel.Reservation.SwitchboardNumber;
 
-            var phoneNumber = NSUrl.FromString("tel:" + switchboardNumber);
+            var phoneNumber = NSUrl.FromString("tel:" + "+1" + switchboardNumber);
             if (!UIApplication.SharedApplication.OpenUrl(phoneNumber))
             {
                 var alertController = UIAlertController.Create(null, "Your device does not appear to support making cellular voice calls.", UIAlertControllerStyle.Alert);

@@ -156,7 +156,7 @@ namespace FreedomVoice.iOS.ViewModels
             OnSuccessResponse?.Invoke(null, EventArgs.Empty);
         }
 
-        public string LoadingMessage { private get; set; }
+        protected string LoadingMessage { private get; set; }
 
         private LoadingOverlay _loadingOverlay;
         private void BaseOnIsBusyChanged()
