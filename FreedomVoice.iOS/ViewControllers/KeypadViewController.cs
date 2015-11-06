@@ -31,35 +31,37 @@ namespace FreedomVoice.iOS.ViewControllers
 
         public override void ViewDidLoad()
         {
-            CallerIdView = new CallerIdView(new RectangleF(0, (float)(UIApplication.SharedApplication.StatusBarFrame.Height + NavigationController.NavigationBar.Frame.Size.Height), (float)View.Frame.Width, 40), MainTabBarInstance.GetPresentationNumbers());
+            CallerIdView = new CallerIdView(new RectangleF(0, 64, (float)View.Frame.Width, 40), MainTabBarInstance.GetPresentationNumbers());
 
             var keypadLineView = new RecentLineView(new RectangleF(0, (float)(CallerIdView.Frame.Y + CallerIdView.Frame.Height), (float)View.Frame.Width, 0.5f));
 
-            _phoneLabel = new UILabel(new CGRect(30, 105, 250, 52))
+            _phoneLabel = new UILabel(new CGRect(30, keypadLineView.Frame.Y, 250, 52))
             {
                 Font = UIFont.SystemFontOfSize(30, UIFontWeight.Thin),
                 TextAlignment = UITextAlignment.Center
             };
 
-            _clearPhone = new UIButton(new CGRect(277, 110, 40, 40));
+            _clearPhone = new UIButton(new CGRect(277, _phoneLabel.Frame.Y + 5, 40, 40));
             _clearPhone.SetBackgroundImage(UIImage.FromFile("keypad_backspace.png"), UIControlState.Normal);
             _clearPhone.TouchUpInside += OnClearPhonTouchUpInside;
 
-            _keypadDial = new UIButton(new CGRect(130, 440, 62, 62));
-            _keypadDial.SetBackgroundImage(UIImage.FromFile("keypad_call.png"), UIControlState.Normal);
-            _keypadDial.TouchUpInside += OnKeypadDialTouchUpInside;
+            View.AddSubviews(CallerIdView, keypadLineView, _phoneLabel, _clearPhone);
 
-            View.AddSubviews(CallerIdView, keypadLineView, _phoneLabel, _clearPhone, _keypadDial);
+            var keypadPositionX = (Theme.ScreenBounds.Width - 227) / 2;
+            var keypadPositionY = keypadLineView.Frame.Y + _phoneLabel.Frame.Height;
+            const int keypadItemDiameter = 65;
 
-            foreach (var item in DialData.Items)
+            var dialData = new KeypadDial(keypadPositionX, keypadPositionY, keypadItemDiameter, 16, 8);
+
+            foreach (var item in dialData.Items)
             {
-                var buttonRect = new CGRect(item.X, item.Y, item.Width, item.Height);
+                var buttonRect = new CGRect(item.X, item.Y, keypadItemDiameter, keypadItemDiameter);
                 var button = new RoundedButton(buttonRect, string.IsNullOrEmpty(item.Image) ? RoundedButtonStyle.Subtitle : RoundedButtonStyle.CentralImage, item.Text)
                 {
                     BorderColor = Theme.KeypadBorderColor,
-                    TextLabel = { Text = item.Text, Font = UIFont.SystemFontOfSize(32, UIFontWeight.Thin) },
-                    DetailTextLabel = { Text = item.DetailedText, Font = UIFont.SystemFontOfSize(10, UIFontWeight.Thin) },
-                    CornerRadius = 30,
+                    TextLabel = { Text = item.Text, Font = UIFont.SystemFontOfSize(36, UIFontWeight.Thin) },
+                    DetailTextLabel = { Text = item.DetailedText, Font = UIFont.SystemFontOfSize(9, UIFontWeight.Regular) },
+                    CornerRadius = 40,
                     BorderWidth = 1,
                     ContentColor = UIColor.Black,
                     ContentAnimateToColor = Theme.KeypadBorderColor
@@ -73,7 +75,7 @@ namespace FreedomVoice.iOS.ViewControllers
 
                 button.TouchUpInside += OnKeypadButtonTouchUpInside(item);
 
-                if (item.DetailedText == DialData.Plus)
+                if (item.DetailedText == KeypadDial.Plus)
                 {
                     var gestureRecognizer = new UILongPressGestureRecognizer(this, new ObjCRuntime.Selector("HandleLongPress:"));
                     button.AddGestureRecognizer(gestureRecognizer);
@@ -82,7 +84,27 @@ namespace FreedomVoice.iOS.ViewControllers
                 View.AddSubview(button);
             }
 
+            _keypadDial = new UIButton(new CGRect(0, keypadPositionY + 292, 62, 62));
+            _keypadDial.Center = new CGPoint(View.Center.X, _keypadDial.Center.Y);
+            _keypadDial.SetBackgroundImage(UIImage.FromFile("keypad_call.png"), UIControlState.Normal);
+            _keypadDial.TouchUpInside += OnKeypadDialTouchUpInside;
+
+            View.AddSubview(_keypadDial);
+
             base.ViewDidLoad();
+        }
+
+        public override void ViewWillAppear(bool animated)
+        {
+            Title = "Keypad";
+
+            NavigationItem.SetRightBarButtonItem(Appearance.GetLogoutBarButton(this), false);
+
+            PresentationNumber selectedNumber = MainTabBarInstance.GetSelectedPresentationNumber();
+            if (selectedNumber != null)
+                CallerIdView.UpdatePickerData(selectedNumber);
+
+            base.ViewWillAppear(animated);
         }
 
         public override void ViewDidAppear(bool animated)
@@ -91,17 +113,6 @@ namespace FreedomVoice.iOS.ViewControllers
 
             GAI.SharedInstance.DefaultTracker.Set(GAIConstants.ScreenName, "Keypad Screen");
             GAI.SharedInstance.DefaultTracker.Send(GAIDictionaryBuilder.CreateScreenView().Build());
-        }
-
-        public override void ViewWillAppear(bool animated)
-        {
-            MainTabBarInstance.Title = "Keypad";
-
-            PresentationNumber selectedNumber = MainTabBarInstance.GetSelectedPresentationNumber();
-            if (selectedNumber != null)
-                CallerIdView.UpdatePickerData(selectedNumber);
-
-            base.ViewWillAppear(animated);
         }
 
         private EventHandler OnKeypadButtonTouchUpInside(DialItem item)
@@ -118,7 +129,7 @@ namespace FreedomVoice.iOS.ViewControllers
         {
             if (!string.IsNullOrEmpty(PhoneNumber)) return;
 
-            PhoneNumber += DialData.Plus;
+            PhoneNumber += KeypadDial.Plus;
             _phoneLabel.Text = DataFormatUtils.ToPhoneNumber(PhoneNumber);
         }
 

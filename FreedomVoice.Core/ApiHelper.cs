@@ -10,11 +10,16 @@
     using Entities;
     using Entities.Base;
     using Entities.Enums;
+    using Entities.EventArgs;
     using Newtonsoft.Json;
 
     public static class ApiHelper
     {
         public static CookieContainer CookieContainer { get; set; }
+
+        public static event DownloadStatus OnDownloadStatus;
+
+        public delegate void DownloadStatus(string messageId, DownloadStatusArgs args);
 
         public async static Task<BaseResult<string>> Login(string login, string password)
         {
@@ -129,11 +134,11 @@
                 CancellationToken.None);
         }
 
-        public async static Task<BaseResult<Stream>> GetMedia(string systemPhoneNumber, int mailboxNumber, string folderName, string messageId, MediaType mediaType, CancellationToken token)
+        public async static Task<BaseResult<MemoryStream>> GetMedia(string systemPhoneNumber, int mailboxNumber, string folderName, string messageId, MediaType mediaType, CancellationToken token)
         {
             return await MakeAsyncFileDownload(
                 $"/api/v1/systems/{systemPhoneNumber}/mailboxes/{mailboxNumber}/folders/{folderName}/messages/{messageId}/media/{mediaType}",
-                "application/json",
+                "application/json", messageId,
                 token);
         }
 
@@ -185,96 +190,155 @@
             return await GetResponce<T>(request, cts);
         }
 
-        public static async Task<BaseResult<Stream>> MakeAsyncFileDownload(string url, string contentType, CancellationToken ct)
+        public static async Task<BaseResult<MemoryStream>> MakeAsyncFileDownload(string url, string contentType, string messageId, CancellationToken ct)
         {
             var request = GetRequest(url, "GET", contentType);
-            BaseResult<Stream> retResult = null;
-            using (ct.Register(request.Abort, false))
-            {
-                var task = Task.Factory.FromAsync<WebResponse>(request.BeginGetResponse, request.EndGetResponse, null);
+            BaseResult<MemoryStream> retResult = null;
+            var task = Task.Factory.FromAsync<WebResponse>(request.BeginGetResponse, request.EndGetResponse, null);
 
-                try
+            try
+            {
+                var response = await task;
+                var stream = response.GetResponseStream();
+                var total = response.ContentLength;
+                var totalRead = 0;
+                var progressIndicate = 0;
+                var lastProgressIndicate = 0;
+                const int chunkSize = 4096;
+                var buffer = new byte[chunkSize];
+                using (var ms = new MemoryStream())
                 {
-                    var response = await task;
-                    ct.ThrowIfCancellationRequested();
-                    retResult = new BaseResult<Stream>
+                    int bytesRead;
+
+                    if (OnDownloadStatus != null)
                     {
-                        Code = ErrorCodes.Ok,
-                        Result = response.GetResponseStream()
-                    };
-                }
-                catch (WebException ex)
-                {
-                    var resp = (HttpWebResponse)ex.Response;
-                    if (resp != null)
+                        OnDownloadStatus.Invoke(messageId,
+                             new DownloadStatusArgs
+                             {
+                                 Status = Entities.Enums.DownloadStatus.Started,
+                                 Progress = 0
+                             });
+                    }
+                    while ((bytesRead = stream.Read(buffer, 0, buffer.Length)) > 0)
                     {
-                        switch (resp.StatusCode)
+                        if (ct.IsCancellationRequested)
                         {
-                            case HttpStatusCode.Unauthorized:
+                            retResult = new BaseResult<MemoryStream>
+                            {
+                                Code = ErrorCodes.Cancelled,
+                                Result = null
+                            };
+                            break;
+                        }
+
+                        totalRead += bytesRead;
+                        ms.Write(buffer, 0, bytesRead);
+                        progressIndicate = (int)(totalRead * 100 / total);
+
+                        if (OnDownloadStatus != null && progressIndicate > lastProgressIndicate)
+                        {
+                            OnDownloadStatus.Invoke(
+                                messageId, new DownloadStatusArgs
                                 {
-                                    retResult = new BaseResult<Stream>
-                                    {
-                                        Code = ErrorCodes.Unauthorized,
-                                        Result = Stream.Null
-                                    };
-                                    break;
-                                }
-                            case HttpStatusCode.Forbidden:
-                                {
-                                    retResult = new BaseResult<Stream>
-                                    {
-                                        Code = ErrorCodes.Forbidden,
-                                        Result = Stream.Null
-                                    };
-                                    break;
-                                }
-                            case HttpStatusCode.BadRequest:
-                                {
-                                    retResult = new BaseResult<Stream>
-                                    {
-                                        Code = ErrorCodes.BadRequest,
-                                        Result = Stream.Null
-                                    };
-                                    break;
-                                }
-                            case HttpStatusCode.NotFound:
-                                {
-                                    retResult = new BaseResult<Stream>
-                                    {
-                                        Code = ErrorCodes.NotFound,
-                                        Result = Stream.Null
-                                    };
-                                    break;
-                                }
-                            case HttpStatusCode.PaymentRequired:
-                                {
-                                    retResult = new BaseResult<Stream>
-                                    {
-                                        Code = ErrorCodes.PaymentRequired,
-                                        Result = Stream.Null
-                                    };
-                                    break;
-                                }
-                            case HttpStatusCode.InternalServerError:
-                                {
-                                    retResult = new BaseResult<Stream>
-                                    {
-                                        Code = ErrorCodes.InternalServerError,
-                                        Result = Stream.Null
-                                    };
-                                    break;
-                                }
+                                    Status = Entities.Enums.DownloadStatus.InProgress,
+                                    Progress = progressIndicate
+                                });
+
+                            lastProgressIndicate = progressIndicate;
                         }
                     }
 
-                    if (ct.IsCancellationRequested)
+                    if (OnDownloadStatus != null && !ct.IsCancellationRequested)
                     {
-                        retResult = new BaseResult<Stream>
+                        OnDownloadStatus.Invoke(
+                            messageId, new DownloadStatusArgs
+                            {
+                                Status = Entities.Enums.DownloadStatus.Ended,
+                                Progress = 100
+                            });
+                    }
+
+                    if (!ct.IsCancellationRequested)
+                    {
+                        retResult = new BaseResult<MemoryStream>
                         {
-                            Code = ErrorCodes.Cancelled,
-                            Result = Stream.Null
+                            Code = ErrorCodes.Ok,
+                            Result = ms
                         };
                     }
+                }
+            }
+            catch (WebException ex)
+            {
+                var resp = (HttpWebResponse)ex.Response;
+                if (resp != null)
+                {
+                    switch (resp.StatusCode)
+                    {
+                        case HttpStatusCode.Unauthorized:
+                            {
+                                retResult = new BaseResult<MemoryStream>
+                                {
+                                    Code = ErrorCodes.Unauthorized,
+                                    Result = null
+                                };
+                                break;
+                            }
+                        case HttpStatusCode.Forbidden:
+                            {
+                                retResult = new BaseResult<MemoryStream>
+                                {
+                                    Code = ErrorCodes.Forbidden,
+                                    Result = null
+                                };
+                                break;
+                            }
+                        case HttpStatusCode.BadRequest:
+                            {
+                                retResult = new BaseResult<MemoryStream>
+                                {
+                                    Code = ErrorCodes.BadRequest,
+                                    Result = null
+                                };
+                                break;
+                            }
+                        case HttpStatusCode.NotFound:
+                            {
+                                retResult = new BaseResult<MemoryStream>
+                                {
+                                    Code = ErrorCodes.NotFound,
+                                    Result = null
+                                };
+                                break;
+                            }
+                        case HttpStatusCode.PaymentRequired:
+                            {
+                                retResult = new BaseResult<MemoryStream>
+                                {
+                                    Code = ErrorCodes.PaymentRequired,
+                                    Result = null
+                                };
+                                break;
+                            }
+                        case HttpStatusCode.InternalServerError:
+                            {
+                                retResult = new BaseResult<MemoryStream>
+                                {
+                                    Code = ErrorCodes.InternalServerError,
+                                    Result = null
+                                };
+                                break;
+                            }
+                    }
+                }
+
+                if (ct.IsCancellationRequested)
+                {
+                    retResult = new BaseResult<MemoryStream>
+                    {
+                        Code = ErrorCodes.Cancelled,
+                        Result = null
+                    };
                 }
             }
 
@@ -285,92 +349,89 @@
         {
             BaseResult<T> retResult = null;
 
-            using (ct.Register(request.Abort, false))
-            {
-                Task<WebResponse> task = Task.Factory.FromAsync<WebResponse>(request.BeginGetResponse, request.EndGetResponse, null);
+            Task<WebResponse> task = Task.Factory.FromAsync<WebResponse>(request.BeginGetResponse, request.EndGetResponse, null);
 
-                try
+            try
+            {
+                var response = await task;
+                ct.ThrowIfCancellationRequested();
+                retResult = new BaseResult<T>
                 {
-                    var response = await task;
-                    ct.ThrowIfCancellationRequested();
+                    Code = ErrorCodes.Ok,
+                    Result = JsonConvert.DeserializeObject<T>(ReadStreamFromResponse(response))
+                };
+            }
+            catch (WebException ex)
+            {
+                var resp = (HttpWebResponse)ex.Response;
+                if (resp != null)
+                {
+                    switch (resp.StatusCode)
+                    {
+                        case HttpStatusCode.Unauthorized:
+                            {
+                                retResult = new BaseResult<T>
+                                {
+                                    Code = ErrorCodes.Unauthorized,
+                                    Result = default(T)
+                                };
+                                break;
+                            }
+                        case HttpStatusCode.Forbidden:
+                            {
+                                retResult = new BaseResult<T>
+                                {
+                                    Code = ErrorCodes.Forbidden,
+                                    Result = default(T)
+                                };
+                                break;
+                            }
+                        case HttpStatusCode.BadRequest:
+                            {
+                                retResult = new BaseResult<T>
+                                {
+                                    Code = ErrorCodes.BadRequest,
+                                    Result = default(T)
+                                };
+                                break;
+                            }
+                        case HttpStatusCode.NotFound:
+                            {
+                                retResult = new BaseResult<T>
+                                {
+                                    Code = ErrorCodes.NotFound,
+                                    Result = default(T)
+                                };
+                                break;
+                            }
+                        case HttpStatusCode.PaymentRequired:
+                            {
+                                retResult = new BaseResult<T>
+                                {
+                                    Code = ErrorCodes.PaymentRequired,
+                                    Result = default(T)
+                                };
+                                break;
+                            }
+                        case HttpStatusCode.InternalServerError:
+                            {
+                                retResult = new BaseResult<T>
+                                {
+                                    Code = ErrorCodes.InternalServerError,
+                                    Result = default(T)
+                                };
+                                break;
+                            }
+                    }
+                }
+
+                if (ct.IsCancellationRequested)
+                {
                     retResult = new BaseResult<T>
                     {
-                        Code = ErrorCodes.Ok,
-                        Result = JsonConvert.DeserializeObject<T>(ReadStreamFromResponse(response))
+                        Code = ErrorCodes.Cancelled,
+                        Result = default(T)
                     };
-                }
-                catch (WebException ex)
-                {
-                    var resp = (HttpWebResponse)ex.Response;
-                    if (resp != null)
-                    {
-                        switch (resp.StatusCode)
-                        {
-                            case HttpStatusCode.Unauthorized:
-                                {
-                                    retResult = new BaseResult<T>
-                                    {
-                                        Code = ErrorCodes.Unauthorized,
-                                        Result = default(T)
-                                    };
-                                    break;
-                                }
-                            case HttpStatusCode.Forbidden:
-                                {
-                                    retResult = new BaseResult<T>
-                                    {
-                                        Code = ErrorCodes.Forbidden,
-                                        Result = default(T)
-                                    };
-                                    break;
-                                }
-                            case HttpStatusCode.BadRequest:
-                                {
-                                    retResult = new BaseResult<T>
-                                    {
-                                        Code = ErrorCodes.BadRequest,
-                                        Result = default(T)
-                                    };
-                                    break;
-                                }
-                            case HttpStatusCode.NotFound:
-                                {
-                                    retResult = new BaseResult<T>
-                                    {
-                                        Code = ErrorCodes.NotFound,
-                                        Result = default(T)
-                                    };
-                                    break;
-                                }
-                            case HttpStatusCode.PaymentRequired:
-                                {
-                                    retResult = new BaseResult<T>
-                                    {
-                                        Code = ErrorCodes.PaymentRequired,
-                                        Result = default(T)
-                                    };
-                                    break;
-                                }
-                            case HttpStatusCode.InternalServerError:
-                                {
-                                    retResult = new BaseResult<T>
-                                    {
-                                        Code = ErrorCodes.InternalServerError,
-                                        Result = default(T)
-                                    };
-                                    break;
-                                }
-                        }
-                    }
-
-                    if (ct.IsCancellationRequested)
-                    {
-                        retResult = new BaseResult<T>
-                        {
-                            Code = ErrorCodes.Cancelled,
-                            Result = default(T)
-                        };
-                    }
                 }
             }
 

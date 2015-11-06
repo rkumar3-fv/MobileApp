@@ -333,6 +333,23 @@
             </objects>
             <point key="canvasLocation" x="-353" y="168"/>
         </scene>
+        <scene sceneID="5197">
+            <objects>
+                <viewController id="5198" sceneMemberID="viewController" customClass="FaxViewController" storyboardIdentifier="FaxViewController" useStoryboardIdentifierAsRestorationIdentifier="YES">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="5195"/>
+                        <viewControllerLayoutGuide type="bottom" id="5196"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="5199">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="5200" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2488" y="1242"/>
+        </scene>
     </scenes>
     <resources>
         <image name="first" width="16" height="16"/>
@@ -356,7 +373,7 @@
         <image name="keypad_plus.png" width="14" height="14"/>
         <image name="keypad_sharp.png" width="32" height="32"/>
         <image name="Login-568h.png" width="640" height="1136"/>
-        <image name="logo_freedomvoice_grey.png" width="526" height="83"/>
+        <image name="logo_freedomvoice_grey.png" width="526" height="84"/>
         <image name="logo_freedomvoice_small_white.png" width="368" height="58"/>
         <image name="logo_freedomvoice_white.png" width="526" height="84"/>
         <image name="logout.png" width="50" height="50"/>
@@ -400,6 +417,7 @@
         <image name="voicemail.png" width="50" height="50"/>
         <image name="voicemail_active.png" width="50" height="50"/>
         <image name="voicemail_unread.png" width="50" height="50"/>
+        <image name="navbar.png" width="640" height="128"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>

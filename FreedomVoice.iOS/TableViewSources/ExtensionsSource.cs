@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using CoreGraphics;
 using Foundation;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.TableViewCells;
@@ -27,11 +28,12 @@ namespace FreedomVoice.iOS.TableViewSources
         {
             var extension = _extensions[indexPath.Row];
 
-            var cell = tableView.DequeueReusableCell(ExtensionCell.ExtensionCellId) as ExtensionCell;
-            if (cell != null) return cell;
+            var cell = tableView.DequeueReusableCell(ExtensionCell.ExtensionCellId) as ExtensionCell ?? new ExtensionCell { Accessory = UITableViewCellAccessory.DisclosureIndicator };
 
-            cell = new ExtensionCell();
-            cell.UpdateCell(extension);
+            cell.TextLabel.Text = string.Concat(extension.ExtensionNumber, " - ", extension.DisplayName);
+
+            var unreadedMessagesCount = extension.UnreadMessagesCount;
+            cell.NewMessagesCountLabel.Text = unreadedMessagesCount < 100 ? unreadedMessagesCount.ToString() : "99+";
 
             return cell;
         }

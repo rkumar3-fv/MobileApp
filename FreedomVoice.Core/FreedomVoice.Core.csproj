@@ -44,6 +44,8 @@
     <Compile Include="ApiHelper.cs" />
     <Compile Include="Entities\Base\BaseResult.cs" />
     <Compile Include="Entities\CreateCallReservationSetting.cs" />
+    <Compile Include="Entities\Enums\DownloadStatus.cs" />
+    <Compile Include="Entities\EventArgs\DownloadStatusArgs.cs" />
     <Compile Include="Entities\MessageFolderWithCounts.cs" />
     <Compile Include="Entities\PollingInterval.cs" />
     <Compile Include="Entities\PresentationPhoneNumbers.cs" />

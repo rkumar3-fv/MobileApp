@@ -49,10 +49,8 @@ namespace FreedomVoice.iOS.TableViewSources
                 return expandedCell;
             }
 
-            var cell = tableView.DequeueReusableCell(MessageCell.MessageCellId) as MessageCell;
-            if (cell != null) return cell;
+            var cell = tableView.DequeueReusableCell(MessageCell.MessageCellId) as MessageCell ?? new MessageCell { Accessory = UITableViewCellAccessory.None };
 
-            cell = new MessageCell { Accessory = UITableViewCellAccessory.None };
             cell.TextLabel.Text = selectedMessage.Name;
             cell.TextLabel.Font = UIFont.SystemFontOfSize(17, selectedMessage.Unread ? UIFontWeight.Bold : UIFontWeight.Regular);
             cell.DetailTextLabel.Text = Formatting.DateTimeFormat(selectedMessage.ReceivedOn);
