@@ -161,7 +161,9 @@ namespace FreedomVoice.iOS.Utilities
 
             UINavigationBar.Appearance.TintColor = WhiteColor;
             UINavigationBar.Appearance.SetTitleTextAttributes(new UITextAttributes { TextColor = WhiteColor });
-            UINavigationBar.Appearance.BarTintColor = UIColor.FromPatternImage(UIImage.FromFile("navbar.png"));
+            UINavigationBar.Appearance.BarTintColor = UIColor.FromRGB(90, 111, 138);
+            //TODO: Return navigation bar color
+            //UIColor.FromPatternImage(UIImage.FromFile("navbar.png"));
         }
 
         const string FontName = "HelveticaNeue-Light";

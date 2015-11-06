@@ -20,7 +20,7 @@ using ContactsUI;
 namespace FreedomVoice.iOS.ViewControllers
 {
     partial class RecentsViewController : UIViewController
-	{        
+    {
         private RecentsSource _recentSource;
 
         private List<Contact> _contactList;
@@ -29,7 +29,7 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private static MainTabBarController MainTabBarInstance => MainTabBarController.Instance;
 
-        public RecentsViewController (IntPtr handle) : base (handle) { }
+        public RecentsViewController(IntPtr handle) : base(handle) { }
 
         public override async void ViewDidLoad()
         {
@@ -47,7 +47,8 @@ namespace FreedomVoice.iOS.ViewControllers
 
             _recentSource.OnRowSelected += TableSourceOnRowSelected;
             _recentSource.OnRowDeleted += TableSourceOnRowDeleted;
-            if (UIDevice.CurrentDevice.CheckSystemVersion(9, 0))            
+
+            if (UIDevice.CurrentDevice.CheckSystemVersion(9, 0))
                 _recentSource.OnRecentInfoClicked += IOS9TableSourceOnRecentInfoClicked;
             else
                 _recentSource.OnRecentInfoClicked += IOS8TableSourceOnRecentInfoClicked;
@@ -67,49 +68,41 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private void IOS9TableSourceOnRecentInfoClicked(Recent recent)
         {
-            NSError error;
             var store = new CNContactStore();
+            NSError error;
+
             CNContact contact = null;
-            CNContactFetchRequest request = new CNContactFetchRequest(CNContactKey.PhoneNumbers);
-            store.EnumerateContacts(request, out error, (item, cursor) => {
-                if (item.PhoneNumbers.Any(p=> Regex.Replace(p.Value.StringValue, @"[^\d]", "") == Regex.Replace(recent.PhoneNumber, @"[^\d]", "")))                
+
+            var request = new CNContactFetchRequest(CNContactKey.PhoneNumbers);
+            store.EnumerateContacts(request, out error, (item, cursor) =>
+            {
+                if (item.PhoneNumbers.Any(p => Regex.Replace(p.Value.StringValue, @"[^\d]", "") == Regex.Replace(recent.PhoneNumber, @"[^\d]", "")))
                     contact = item;
             });
 
-            if (contact != null)
-            {
-                CNContactFetchRequest keysToFetch = new CNContactFetchRequest(CNContactViewController.DescriptorForRequiredKeys);
+            if (contact == null) return;
 
-                var fetchKeys = new NSArray[] { keysToFetch.KeysToFetch };
-                contact = store.GetUnifiedContact(contact.Identifier, fetchKeys, out error);
+            contact = store.GetUnifiedContact(contact.Identifier, new[] { CNContactViewController.DescriptorForRequiredKeys }, out error);
 
-                try {                    
-                    var view = CNContactViewController.FromContact(contact);
-                    //PresentViewController(view, true, null);
-                    NavigationController.PushViewController(view, true);
-                } catch (Exception ex)
-                {
-                    Console.WriteLine(ex);
-                }
-            }                
+            var viewController = CNContactViewController.FromContact(contact);
+            viewController.AllowsEditing = false;
+            viewController.AllowsActions = false;
+
+            NavigationController.PushViewController(viewController, true);
         }
 
         private void IOS8TableSourceOnRecentInfoClicked(Recent recent)
         {
             NSError error;
             var addressBook = ABAddressBook.Create(out error);
-            var person = addressBook.GetPerson(Int32.Parse(recent.ContactId));
+            var person = addressBook.GetPerson(int.Parse(recent.ContactId));
 
             if (person == null)
                 return;
 
-            var pvc = new ABPersonViewController()
-            {
-                DisplayedPerson = person,
-                AllowsEditing = false
-            };
+            var viewController = new ABPersonViewController { DisplayedPerson = person, AllowsEditing = false, AllowsActions = false };
 
-            NavigationController.PushViewController(pvc, true);
+            NavigationController.PushViewController(viewController, true);
         }
 
         private Contact FindContactByNumber(string number)
@@ -117,8 +110,8 @@ namespace FreedomVoice.iOS.ViewControllers
             return _contactList?.FirstOrDefault(c => c.Phones.Any(p => Regex.Replace(p.Number, @"[^\d]", "") == Regex.Replace(number, @"[^\d]", "")));
         }
 
-	    private static List<Recent> GetRecentsOrdered()
-        {            
+        private static List<Recent> GetRecentsOrdered()
+        {
             return MainTabBarInstance.Recents.OrderByDescending(o => o.DialDate).ToList();
         }
 
@@ -126,7 +119,7 @@ namespace FreedomVoice.iOS.ViewControllers
         {
             List<Recent> res = GetRecentsOrdered();
 
-            foreach(var item in res)
+            foreach (var item in res)
             {
                 if (!string.IsNullOrEmpty(item.ContactId))
                     continue;
@@ -139,13 +132,13 @@ namespace FreedomVoice.iOS.ViewControllers
             }
             return res;
         }
-        
+
         private static void AddRecent(Recent recent)
         {
             MainTabBarInstance.Recents.Add(recent);
         }
 
-	    private static void ClearRecent()
+        private static void ClearRecent()
         {
             MainTabBarInstance.Recents.Clear();
         }
@@ -175,8 +168,8 @@ namespace FreedomVoice.iOS.ViewControllers
         {
             RecentsTableView.SetEditing(true, true);
 
-            NavigationItem.SetRightBarButtonItem(new UIBarButtonItem("Done", UIBarButtonItemStyle.Plain, (s, args) => { RecentsTableView.ReloadData(); ReturnToRecentsView(); }), true);
-            NavigationItem.SetLeftBarButtonItem(new UIBarButtonItem("Clear", UIBarButtonItemStyle.Plain, (s, args) => { ClearAll(); }), true);
+            NavigationItem.SetRightBarButtonItem(Appearance.GetPlainBarButton("Done", (s, args) => { RecentsTableView.ReloadData(); ReturnToRecentsView(); }), true);
+            NavigationItem.SetLeftBarButtonItem(Appearance.GetPlainBarButton("Clear", (s, args) => { ClearAll(); }), true);
         }
 
         private void ReturnToRecentsView()
@@ -189,18 +182,19 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private UIBarButtonItem GetEditButton()
         {
-            return new UIBarButtonItem("Edit", UIBarButtonItemStyle.Plain, (s, args) => { SetEditMode(); });
+            return Appearance.GetPlainBarButton("Edit", (s, args) => { SetEditMode(); });
         }
 
         private void ClearAll()
         {
             var alertController = UIAlertController.Create(null, null, UIAlertControllerStyle.ActionSheet);
-            alertController.AddAction(UIAlertAction.Create("Clear All Recents", UIAlertActionStyle.Destructive, a => {
+            alertController.AddAction(UIAlertAction.Create("Clear All Recents", UIAlertActionStyle.Destructive, a =>
+            {
                 ReturnToRecentsView();
                 ClearRecent();
                 _recentSource.SetRecents(GetRecentsOrdered());
                 RecentsTableView.ReloadData();
-            }));            
+            }));
             alertController.AddAction(UIAlertAction.Create("Cancel", UIAlertActionStyle.Cancel, a => { ReturnToRecentsView(); }));
 
             PresentViewController(alertController, true, null);
@@ -220,7 +214,7 @@ namespace FreedomVoice.iOS.ViewControllers
             AddRecent(newRecent);
 
             _recentSource.SetRecents(GetRecentsOrdered());
-            e.TableView.InsertRows(new[] { NSIndexPath.FromRowSection (e.TableView.NumberOfRowsInSection(0), 0) }, UITableViewRowAnimation.Fade);
+            e.TableView.InsertRows(new[] { NSIndexPath.FromRowSection(e.TableView.NumberOfRowsInSection(0), 0) }, UITableViewRowAnimation.Fade);
 
             RecentsTableView.EndUpdates();
             RecentsTableView.ReloadRows(e.TableView.IndexPathsForVisibleRows, UITableViewRowAnimation.None);
@@ -243,7 +237,7 @@ namespace FreedomVoice.iOS.ViewControllers
             _recentSource.SetRecents(GetRecentsOrdered());
 
             RecentsTableView.DeleteRows(new[] { e.IndexPath }, UITableViewRowAnimation.Fade);
-            RecentsTableView.EndUpdates();                       
+            RecentsTableView.EndUpdates();
         }
     }
 }
