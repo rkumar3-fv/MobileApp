@@ -5,7 +5,7 @@ namespace com.FreedomVoice.MobileApp.Android.Services
     /// <summary>
     /// Communication service result receiver interface
     /// </summary>
-    public interface IComServiceResultReceiver
+    public interface IAppServiceResultReceiver
     {
         /// <summary>
         /// Result callback

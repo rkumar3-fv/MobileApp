@@ -26,7 +26,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
     /// <param name="args">ActionsHelperEventArgs</param>
     public delegate void ActionsHelperEvent(object sender, EventArgs args);
 
-    public class ActionsHelper : IComServiceResultReceiver
+    public class ActionsHelper : IAppServiceResultReceiver
     {
         /// <summary>
         /// Is first app launch flag

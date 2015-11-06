@@ -8,7 +8,6 @@ using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Util;
-using com.FreedomVoice.MobileApp.Android.Helpers;
 using FreedomVoice.Core;
 using FreedomVoice.Core.Entities.Enums;
 
@@ -21,19 +20,17 @@ namespace com.FreedomVoice.MobileApp.Android.Services
     [Service(Exported = false)]
     public class AttachmentsDownloadService : Service
     {
-        public const string ActionTag = "ExtraAction";
         public const string ActionIdTag = "ActionIdTag";
-        public const string ActionNameTag = "ActionNameTag";
-        public const string ActionExecuteTag = "ActionTypeExecute";
+        public const string ActionMsgTag = "ActionMsgTag";
+        public const string ActionNotificationTag = "ActionNotificationTag";
+        public const string ActionStartTag = "ActionTypeStart";
         public const string ActionStopTag = "ActionTypeStop";
         public const string ActionStatusTag = "ActionTypeState";
+
+        private ResultReceiver _receiver;
         private bool _isInWork;
         private ConcurrentQueue<Tuple<int, string, string>> _downloadingUrls;
         private ConcurrentDictionary<int, CancellationToken> _cancellationTokens;
-
-        public event SuccessEventHandler SuccessEvent;
-        public event StartLoadingEventHandler StartEvent;
-        public event StopLoadingEventHandler FailEvent; 
 
         public override void OnCreate()
         {
@@ -47,25 +44,25 @@ namespace com.FreedomVoice.MobileApp.Android.Services
 
         public override IBinder OnBind(Intent intent)
         {
-            var binder = new AttachmentsDownloadBinder(this);
-            return binder;
+            return null;
         }
 
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
         {
+            if (_receiver == null)
+                _receiver = intent.GetParcelableExtra(AttachmentsServiceResultReceiver.ReceiverTag) as ResultReceiver;
             var id = intent.GetIntExtra(ActionIdTag, 0);
-            var name = intent.GetStringExtra(ActionNameTag);
-            var requestUrl = intent.GetStringExtra(ActionTag);
-            if (requestUrl == null) return StartCommandResult.NotSticky;
-#if DEBUG
-            Log.Debug(App.AppPackage, $"DOWNLOADING ID={id}, DOWNLOAD URL={requestUrl}");
-#endif
-            var token = new CancellationToken();
-            _downloadingUrls.Enqueue(new Tuple<int, string, string>(id, name, requestUrl));
-            _cancellationTokens.TryAdd(id, token);
-            if (!_isInWork)
+            switch (intent.Action)
             {
-                Start();
+                case ActionStartTag:
+                    break;
+
+                case ActionStopTag:
+                    break;
+
+                case ActionStatusTag:
+
+                    break;
             }
             return StartCommandResult.NotSticky;
         }
@@ -104,11 +101,9 @@ namespace com.FreedomVoice.MobileApp.Android.Services
                 Directory.CreateDirectory(root);
             var path = Path.GetRandomFileName();
             var lastPart = url.Split('/').Last().ToLower();
-            StartEvent?.Invoke(this, new AttachmentHelperEventArgs<string>(id, lastPart, name));
             var res = ApiHelper.MakeAsyncFileDownload(url, "application/json", token).Result;
             if (res.Code != ErrorCodes.Ok)
             {
-                FailEvent?.Invoke(this, new AttachmentHelperEventArgs<bool>(id, lastPart, res.Code == ErrorCodes.Cancelled));
                 _isInWork = false;
                 return;
             }
@@ -124,7 +119,6 @@ namespace com.FreedomVoice.MobileApp.Android.Services
                 }
             }
             _isInWork = false;
-            SuccessEvent?.Invoke(this, new AttachmentHelperEventArgs<string>(id, lastPart, $"{root}{path}.{lastPart}"));
         }
 
         public override void OnDestroy()
