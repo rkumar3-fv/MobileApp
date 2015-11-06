@@ -29,7 +29,6 @@
   <dimen name="activity_scroll_padding">4dp</dimen>
   <dimen name="activity_scroll_width">4dp</dimen>
   <dimen name="activity_progress">24dp</dimen>
-  <dimen name="activity_cursor_size">1dp</dimen>
   
   <!-- Auth Activity -->
   <dimen name="auth_activity_vertical_margin">8dp</dimen>
@@ -64,7 +63,7 @@
   <dimen name="phone_activity_error_margin">1dp</dimen>
   
   <!-- Select account activity -->
-  <dimen name="select_acc_activity_progress_size">65dp</dimen>
+  <dimen name="select_acc_activity_progress_size">56dp</dimen>
   <dimen name="select_acc_activity_element_height">48dp</dimen>
   <dimen name="select_acc_activity_element_padding">8dp</dimen>
   
@@ -82,6 +81,7 @@
   <dimen name="details_player_time_margin">5dp</dimen>
   <dimen name="details_player_time_begin_size">36dp</dimen>
   <dimen name="details_player_time_end_size">40dp</dimen>
+  <dimen name="details_player_seek_height">2dp</dimen>
   
   <!-- Content activity -->
   <dimen name="content_activity_tab_text_size">14sp</dimen>

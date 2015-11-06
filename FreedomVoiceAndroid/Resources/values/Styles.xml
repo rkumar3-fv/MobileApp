@@ -114,7 +114,7 @@
     <item name="android:scrollHorizontally">true</item>
     <item name="android:fontFamily">sans-serif</item>
     <item name="android:maxHeight">@dimen/auth_activity_field_height_max</item>
-    <item name="android:textCursorDrawable">@drawable/cursor_white</item>
+    <item name="android:textCursorDrawable">@null</item>
   </style>
 
   <!-- RestoreActivity edit fields style -->
@@ -130,7 +130,7 @@
     <item name="android:fontFamily">sans-serif</item>
     <item name="android:scrollHorizontally">true</item>
     <item name="android:maxHeight">@dimen/auth_activity_field_height_max</item>
-    <item name="android:textCursorDrawable">@drawable/cursor_black</item>
+    <item name="android:textCursorDrawable">@null</item>
   </style>
   
   <!-- Borderless restore button style -->
@@ -182,6 +182,7 @@
     <item name="android:textAlignment">center</item>
     <item name="android:minHeight">@dimen/activity_button_size</item>
     <item name="android:textAllCaps">true</item>
+
   </style>
 
   <!-- Borderless EditText for number -->

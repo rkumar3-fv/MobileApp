@@ -87,6 +87,16 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="@dimen/details_player_time_margin" />
+        <SeekBar
+            android:id="@+id/recordActivity_playerSeek"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/details_player_seek_height"
+            android:maxHeight="@dimen/details_player_seek_height"
+            android:progressDrawable="@drawable/seek_progress"
+            android:layout_toRightOf="@id/recordActivity_playerStartText"
+            android:layout_toLeftOf="@id/recordActivity_playerEndText"
+            android:layout_centerVertical="true" />
     </RelativeLayout>
     <RelativeLayout
         android:layout_width="wrap_content"
@@ -99,7 +109,8 @@
             style="@style/BorderlessMessagesButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/details_activity_actions_height"
-            android:drawableStart="@drawable/ic_action_speaker"
+            android:drawableLeft="@drawable/ic_action_speaker"
+            android:drawablePadding="@dimen/details_activity_actions_spacing"
             android:text="@string/ActivityVoice_speaker"
             android:layout_marginTop="@dimen/details_activity_actions_margin"
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
@@ -110,7 +121,8 @@
             style="@style/BorderlessMessagesButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/details_activity_actions_height"
-            android:drawableStart="@drawable/ic_action_callback"
+            android:drawableLeft="@drawable/ic_action_callback"
+            android:drawablePadding="@dimen/details_activity_actions_spacing"
             android:text="@string/ActivityVoice_callback"
             android:layout_marginTop="@dimen/details_activity_actions_margin"
             android:layout_marginLeft="@dimen/details_activity_actions_spacing"

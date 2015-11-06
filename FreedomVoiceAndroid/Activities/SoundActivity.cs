@@ -15,12 +15,14 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         protected TextView EndTextView;
         protected Button SpeakerButton;
         protected Button CallBackButton;
+        protected SeekBar PlayerSeek;
 
         protected override void OnStart()
         {
             base.OnStart();
             SpeakerButton.Click += SpeakerButtonOnClick;
             CallBackButton.Click += CallBackButtonOnClick;
+            PlayerSeek.Activated = false;
         }
 
         protected override void OnResume()

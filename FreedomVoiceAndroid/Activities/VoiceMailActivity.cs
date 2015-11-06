@@ -29,6 +29,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             PlayerButton = FindViewById<ImageButton>(Resource.Id.voicemailActivity_playerButton);
             StarTextView = FindViewById<TextView>(Resource.Id.voicemailActivity_playerStartText);
             EndTextView = FindViewById<TextView>(Resource.Id.voicemailActivity_playerEndText);
+            PlayerSeek = FindViewById<SeekBar>(Resource.Id.voiceMailActivity_playerSeek);
             SupportActionBar.SetTitle(Resource.String.ActivityVoice_title);
         }
     }

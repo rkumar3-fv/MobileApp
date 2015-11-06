@@ -3,15 +3,15 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:minHeight="@dimen/fragment_msg_element_height"
-    android:gravity="center_vertical"
     android:background="?android:attr/selectableItemBackground">
     <ImageView
         android:id="@+id/itemFolder_icon"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:layout_alignParentLeft="true"
-        android:layout_gravity="center_vertical" />
+        android:layout_centerVertical="true"
+        android:scaleType="fitCenter" />
     <LinearLayout
         android:id="@+id/itemFolder_back"
         android:layout_width="@dimen/fragment_msg_ind_width"
@@ -20,7 +20,7 @@
         android:visibility="invisible"
         android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:layout_alignParentRight="true"
-        android:layout_gravity="center_vertical">
+        android:layout_centerVertical="true">
         <TextView
             android:id="@+id/itemFolder_info"
             style="@style/MessagesCounterText"
@@ -36,5 +36,5 @@
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="@dimen/fragment_msg_text_padding"
         android:layout_toLeftOf="@id/itemFolder_back"
-        android:layout_gravity="center_vertical" />
+        android:layout_centerVertical="true" />
 </RelativeLayout>

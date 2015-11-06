@@ -6,6 +6,7 @@ using Android.OS;
 using Android.Util;
 using com.FreedomVoice.MobileApp.Android.Notifications;
 using com.FreedomVoice.MobileApp.Android.Services;
+using FreedomVoice.Core.Utils;
 using Message = com.FreedomVoice.MobileApp.Android.Entities.Message;
 using Uri = Android.Net.Uri;
 
@@ -115,7 +116,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 #if DEBUG
             Log.Debug(App.AppPackage, $"START LOADING ATTACHMENT FROM: {args.Result}");
 #endif
-            _faxNotification.ShowNotification(args.Result);
+            _faxNotification.ShowNotification(DataFormatUtils.ToPhoneNumber(args.Result));
             StartLoadingEvent?.Invoke(this, args);
         }
 

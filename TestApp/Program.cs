@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using FreedomVoice.Core;
 using System.IO;
 using System.Threading;
@@ -233,7 +234,24 @@ namespace TestApp
             {
                 Console.WriteLine(file);
             }
-            Console.Write(Environment.NewLine);
+            Console.WriteLine(Environment.NewLine);
+
+            Stopwatch sw1 = new Stopwatch();
+            sw1.Start();
+            var b = ApiHelper.GetMedia("7607124648", 80, "New", "I161954426", MediaType.Pdf, CancellationToken.None)
+                .Result;
+            sw1.Stop();
+            Console.WriteLine(sw1.Elapsed.TotalSeconds);
+            Console.WriteLine(Process.GetCurrentProcess().WorkingSet64 / 1024);
+
+
+            Stopwatch sw2 = new Stopwatch();
+            sw2.Start();
+            var a = ApiHelper.GetMedia("7607124648", 80, "New", "I161578702", MediaType.Pdf, CancellationToken.None)
+               .Result;
+            sw2.Stop();
+            Console.WriteLine(sw2.Elapsed.TotalSeconds);
+            Console.WriteLine(Process.GetCurrentProcess().WorkingSet64 / 1024);
 
             Console.ReadKey();
         }
