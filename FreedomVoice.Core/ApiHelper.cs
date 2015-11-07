@@ -345,10 +345,10 @@ namespace FreedomVoice.Core
             return retResult;
         }
 
-        public static async Task<BaseResult<BufferedMemoryStream>> MakeAsyncFileDownload(string url, string contentType, int messageId, CancellationToken ct)
+        public static async Task<BaseResult<AttachmentContainer>> MakeAsyncFileDownload(string url, string contentType, int messageId, CancellationToken ct)
         {
             var request = GetRequest(url, "GET", contentType);
-            BaseResult<BufferedMemoryStream> retResult = null;
+            BaseResult<AttachmentContainer> retResult = null;
             var task = Task.Factory.FromAsync(request.BeginGetResponse, request.EndGetResponse, null);
 
             try
@@ -356,64 +356,14 @@ namespace FreedomVoice.Core
                 var response = await task;
                 var stream = response.GetResponseStream();
                 var total = response.ContentLength;
-                var totalRead = 0;
-                var lastProgressIndicate = 0;
-                const int chunkSize = 4096;
-                var buffer = new byte[chunkSize];
-                using (var ms = new BufferedMemoryStream())
+                var ms = new BufferedMemoryStream();
+                Task.Factory.StartNew(() => LoadInBuffer(ms, stream, total, messageId, ct), ct);
+                retResult = new BaseResult<AttachmentContainer>
                 {
-                    int bytesRead;
-
-                    OnDownloadStatusInt?.Invoke(messageId, new DownloadStatusArgs
-                    {
-                        Status = Entities.Enums.DownloadStatus.Started,
-                        Progress = 0
-                    });
-                    while ((bytesRead = stream.Read(buffer, 0, buffer.Length)) > 0)
-                    {
-                        if (ct.IsCancellationRequested)
-                        {
-                            retResult = new BaseResult<BufferedMemoryStream>
-                            {
-                                Code = ErrorCodes.Cancelled,
-                                Result = null
-                            };
-                            break;
-                        }
-
-                        totalRead += bytesRead;
-                        ms.Write(buffer, 0, bytesRead);
-                        var progressIndicate = (int)(totalRead * 100 / total);
-
-                        if (OnDownloadStatus == null || progressIndicate <= lastProgressIndicate) continue;
-                        lastProgressIndicate = progressIndicate;
-                        OnDownloadStatusInt?.Invoke(
-                            messageId, new DownloadStatusArgs
-                            {
-                                Status = Entities.Enums.DownloadStatus.InProgress,
-                                Progress = progressIndicate
-                            });
-                    }
-
-                    if (OnDownloadStatus != null && !ct.IsCancellationRequested)
-                    {
-                        OnDownloadStatusInt?.Invoke(
-                            messageId, new DownloadStatusArgs
-                            {
-                                Status = Entities.Enums.DownloadStatus.Ended,
-                                Progress = 100
-                            });
-                    }
-
-                    if (!ct.IsCancellationRequested)
-                    {
-                        retResult = new BaseResult<BufferedMemoryStream>
-                        {
-                            Code = ErrorCodes.Ok,
-                            Result = ms
-                        };
-                    }
-                }
+                    Code = ErrorCodes.Ok,
+                    Result = new AttachmentContainer(total, ms)
+                };
+                return retResult;
             }
             catch (WebException ex)
             {
@@ -424,7 +374,7 @@ namespace FreedomVoice.Core
                     {
                         case HttpStatusCode.Unauthorized:
                             {
-                                retResult = new BaseResult<BufferedMemoryStream>
+                                retResult = new BaseResult<AttachmentContainer>
                                 {
                                     Code = ErrorCodes.Unauthorized,
                                     Result = null
@@ -433,7 +383,7 @@ namespace FreedomVoice.Core
                             }
                         case HttpStatusCode.Forbidden:
                             {
-                                retResult = new BaseResult<BufferedMemoryStream>
+                                retResult = new BaseResult<AttachmentContainer>
                                 {
                                     Code = ErrorCodes.Forbidden,
                                     Result = null
@@ -442,7 +392,7 @@ namespace FreedomVoice.Core
                             }
                         case HttpStatusCode.BadRequest:
                             {
-                                retResult = new BaseResult<BufferedMemoryStream>
+                                retResult = new BaseResult<AttachmentContainer>
                                 {
                                     Code = ErrorCodes.BadRequest,
                                     Result = null
@@ -451,7 +401,7 @@ namespace FreedomVoice.Core
                             }
                         case HttpStatusCode.NotFound:
                             {
-                                retResult = new BaseResult<BufferedMemoryStream>
+                                retResult = new BaseResult<AttachmentContainer>
                                 {
                                     Code = ErrorCodes.NotFound,
                                     Result = null
@@ -460,7 +410,7 @@ namespace FreedomVoice.Core
                             }
                         case HttpStatusCode.PaymentRequired:
                             {
-                                retResult = new BaseResult<BufferedMemoryStream>
+                                retResult = new BaseResult<AttachmentContainer>
                                 {
                                     Code = ErrorCodes.PaymentRequired,
                                     Result = null
@@ -469,7 +419,7 @@ namespace FreedomVoice.Core
                             }
                         case HttpStatusCode.InternalServerError:
                             {
-                                retResult = new BaseResult<BufferedMemoryStream>
+                                retResult = new BaseResult<AttachmentContainer>
                                 {
                                     Code = ErrorCodes.InternalServerError,
                                     Result = null
@@ -481,7 +431,7 @@ namespace FreedomVoice.Core
 
                 if (ct.IsCancellationRequested)
                 {
-                    retResult = new BaseResult<BufferedMemoryStream>
+                    retResult = new BaseResult<AttachmentContainer>
                     {
                         Code = ErrorCodes.Cancelled,
                         Result = null
@@ -492,6 +442,51 @@ namespace FreedomVoice.Core
             return retResult;
         }
 
+        private static void LoadInBuffer(BufferedMemoryStream ms, Stream stream, long total, int messageId, CancellationToken ct)
+        {
+            var totalRead = 0;
+            var lastProgressIndicate = 0;
+            const int chunkSize = 4096;
+            var buffer = new byte[chunkSize];
+            using (ms)
+            {
+                int bytesRead;
+
+                OnDownloadStatusInt?.Invoke(messageId, new DownloadStatusArgs
+                {
+                    Status = Entities.Enums.DownloadStatus.Started,
+                    Progress = 0
+                });
+                while ((bytesRead = stream.Read(buffer, 0, buffer.Length)) > 0)
+                {
+                    if (ct.IsCancellationRequested)
+                        break;
+
+                    totalRead += bytesRead;
+                    ms.Write(buffer, 0, bytesRead);
+                    var progressIndicate = (int)(totalRead * 100 / total);
+
+                    if (OnDownloadStatusInt == null || progressIndicate <= lastProgressIndicate) continue;
+                    lastProgressIndicate = progressIndicate;
+                    OnDownloadStatusInt?.Invoke(
+                        messageId, new DownloadStatusArgs
+                        {
+                            Status = Entities.Enums.DownloadStatus.InProgress,
+                            Progress = progressIndicate
+                        });
+                }
+
+                if (OnDownloadStatus != null && !ct.IsCancellationRequested)
+                {
+                    OnDownloadStatusInt?.Invoke(
+                        messageId, new DownloadStatusArgs
+                        {
+                            Status = Entities.Enums.DownloadStatus.Ended,
+                            Progress = 100
+                        });
+                }
+            }
+        }
 
         private static async Task<BaseResult<T>> GetResponce<T>(HttpWebRequest request, CancellationToken ct)
         {

@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApiHelper.cs" />
+    <Compile Include="Entities\AttachmentContainer.cs" />
     <Compile Include="Entities\Base\BaseResult.cs" />
     <Compile Include="Entities\CreateCallReservationSetting.cs" />
     <Compile Include="Entities\Enums\DownloadStatus.cs" />

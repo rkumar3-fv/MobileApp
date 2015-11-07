@@ -386,7 +386,9 @@
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\values\Dimens.xml" />
+    <AndroidResource Include="Resources\values\Dimens.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FreedomVoice.Core\FreedomVoice.Core.csproj">
@@ -773,7 +775,9 @@
     <AndroidResource Include="Resources\drawable-xxxhdpi\ic_other_folder.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable\border.xml" />
+    <AndroidResource Include="Resources\drawable\border.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\scrollbar.xml" />

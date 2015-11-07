@@ -9,6 +9,8 @@ using Android.OS;
 using Android.Util;
 using com.FreedomVoice.MobileApp.Android.Actions.Reports;
 using FreedomVoice.Core;
+using FreedomVoice.Core.Entities;
+using FreedomVoice.Core.Entities.Base;
 using FreedomVoice.Core.Entities.Enums;
 using FreedomVoice.Core.Entities.EventArgs;
 using Message = com.FreedomVoice.MobileApp.Android.Entities.Message;
@@ -80,10 +82,10 @@ namespace com.FreedomVoice.MobileApp.Android.Services
 
         private void Start()
         {
+            if (_isInWork)
+                Start();
             if (!_downloadingUrls.IsEmpty)
             {
-                if (_isInWork)
-                    Start();
                 Message item;
                 if (!_downloadingUrls.TryDequeue(out item))
                     Start();
@@ -92,7 +94,8 @@ namespace com.FreedomVoice.MobileApp.Android.Services
                     Start();
                 _isInWork = true;
                 Task.Factory.StartNew(() => BackgroundDownloading(item, token), token).ContinueWith(
-                    t => {
+                    t =>
+                    {
                         CancellationToken removingToken;
                         _cancellationTokens.TryRemove(item.Id, out removingToken);
                         Start();
@@ -107,33 +110,44 @@ namespace com.FreedomVoice.MobileApp.Android.Services
 
         private void BackgroundDownloading(Message msg, CancellationToken token)
         {
+            var task = GetContainer(msg, token);
+        }
+
+        private async Task GetContainer(Message msg, CancellationToken token)
+        {
             var root = $"{GetExternalFilesDir(null)}/";
             if (!Directory.Exists(root))
                 Directory.CreateDirectory(root);
             var path = Path.GetRandomFileName();
             var lastPart = msg.AttachUrl.Split('/').Last().ToLower();
-            ApiHelper.OnDownloadStatus += ApiHelperOnDownloadStatus;
-            var res = ApiHelper.MakeAsyncFileDownload(msg.AttachUrl, "application/json", msg.Id, token).Result;
+            ApiHelper.OnDownloadStatusInt += ApiHelperOnDownloadStatus;
+            var res = await ApiHelper.MakeAsyncFileDownload(msg.AttachUrl, "application/json", msg.Id, token);
             if (res.Code != ErrorCodes.Ok)
             {
                 _isInWork = false;
                 return;
             }
-            using (var ms = new MemoryStream())
+            using (var ms = res.Result.BufferedStream)
             {
-                res.Result.CopyTo(ms);
-                var bytes = ms.ToArray();
+                long received = 0;
+                var bytes = new byte[4096];
                 using (var file = new FileStream($"{root}{path}.{lastPart}", FileMode.Create, FileAccess.Write))
                 {
-                    ms.Read(bytes, 0, (int)ms.Length);
-                    file.Write(bytes, 0, bytes.Length);
-                    ms.Close();
+                    while (res.Result.Size > received)
+                    {
+                        if (ms.DataAvailable)
+                        {
+                            ms.Read(bytes, 0, bytes.Length);
+                            file.Write(bytes, 0, bytes.Length);
+                            received += bytes.Length;
+                        }
+                    }
                 }
 #if DEBUG
                 Log.Debug(App.AppPackage, $"LOADED {root}{path}.{lastPart}");
 #endif
             }
-            ApiHelper.OnDownloadStatus -= ApiHelperOnDownloadStatus;
+            ApiHelper.OnDownloadStatusInt -= ApiHelperOnDownloadStatus;
             _isInWork = false;
         }
 
@@ -142,12 +156,10 @@ namespace com.FreedomVoice.MobileApp.Android.Services
         /// </summary>
         /// <param name="messageId">message ID</param>
         /// <param name="args">progress args</param>
-        private void ApiHelperOnDownloadStatus(string messageId, DownloadStatusArgs args)
+        private void ApiHelperOnDownloadStatus(int messageId, DownloadStatusArgs args)
         {
             var data = new Bundle();
-            int id;
-            int.TryParse(messageId, out id);
-            data.PutParcelable(AttachmentsServiceResultReceiver.ReceiverDataExtra, new ProgressReport(id, args.Progress));
+            data.PutParcelable(AttachmentsServiceResultReceiver.ReceiverDataExtra, new ProgressReport(messageId, args.Progress));
 #if DEBUG
             Log.Debug(App.AppPackage, $"ATTACHMENT {messageId} PROGRESS = {args.Progress}%");
 #endif
