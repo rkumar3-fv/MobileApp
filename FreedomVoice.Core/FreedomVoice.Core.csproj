@@ -13,7 +13,7 @@
     <DefaultLanguage>en-US</DefaultLanguage>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <TargetFrameworkProfile>Profile7</TargetFrameworkProfile>
+    <TargetFrameworkProfile>Profile111</TargetFrameworkProfile>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -42,11 +42,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApiHelper.cs" />
-    <Compile Include="Entities\AttachmentContainer.cs" />
     <Compile Include="Entities\Base\BaseResult.cs" />
     <Compile Include="Entities\CreateCallReservationSetting.cs" />
-    <Compile Include="Entities\Enums\DownloadStatus.cs" />
-    <Compile Include="Entities\EventArgs\DownloadStatusArgs.cs" />
     <Compile Include="Entities\MessageFolderWithCounts.cs" />
     <Compile Include="Entities\PollingInterval.cs" />
     <Compile Include="Entities\PresentationPhoneNumbers.cs" />
@@ -59,7 +56,6 @@
     <Compile Include="Entities\Mailbox.cs" />
     <Compile Include="Entities\DefaultPhoneNumbers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Utils\BufferedMemoryStream.cs" />
     <Compile Include="Utils\DataFormatUtils.cs" />
     <Compile Include="WebResources.Designer.cs">
       <AutoGen>True</AutoGen>

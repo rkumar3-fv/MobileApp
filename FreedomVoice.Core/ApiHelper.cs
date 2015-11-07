@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -8,23 +7,15 @@ using System.Threading.Tasks;
 using FreedomVoice.Core.Entities;
 using FreedomVoice.Core.Entities.Base;
 using FreedomVoice.Core.Entities.Enums;
-using FreedomVoice.Core.Entities.EventArgs;
-using FreedomVoice.Core.Utils;
 using Newtonsoft.Json;
 
 namespace FreedomVoice.Core
 {
+    using System.IO;
+
     public static class ApiHelper
     {
         public static CookieContainer CookieContainer { get; set; }
-
-        public static event DownloadStatus OnDownloadStatus;
-
-        public static event DownloadStatusInt OnDownloadStatusInt;
-
-        public delegate void DownloadStatus(string messageId, DownloadStatusArgs args);
-
-        public delegate void DownloadStatusInt(int messageId, DownloadStatusArgs args);
 
         public static async Task<BaseResult<string>> Login(string login, string password)
         {
@@ -139,7 +130,7 @@ namespace FreedomVoice.Core
                 CancellationToken.None);
         }
 
-        public static async Task<BaseResult<MemoryStream>> GetMedia(string systemPhoneNumber, int mailboxNumber, string folderName, string messageId, MediaType mediaType, CancellationToken token)
+        public static async Task<BaseResult<Stream>> GetMedia(string systemPhoneNumber, int mailboxNumber, string folderName, string messageId, MediaType mediaType, CancellationToken token)
         {
             return await MakeAsyncFileDownload(
                 $"/api/v1/systems/{systemPhoneNumber}/mailboxes/{mailboxNumber}/folders/{folderName}/messages/{messageId}/media/{mediaType}",
@@ -195,175 +186,20 @@ namespace FreedomVoice.Core
             return await GetResponce<T>(request, cts);
         }
 
-        public static async Task<BaseResult<MemoryStream>> MakeAsyncFileDownload(string url, string contentType, string messageId, CancellationToken ct)
+        public static async Task<BaseResult<Stream>> MakeAsyncFileDownload(string url, string contentType, string messageId, CancellationToken ct)
         {
             var request = GetRequest(url, "GET", contentType);
-            BaseResult<MemoryStream> retResult = null;
-            var task = Task.Factory.FromAsync(request.BeginGetResponse, request.EndGetResponse, null);
+            BaseResult<Stream> retResult = null;
+            var task = Task.Factory.FromAsync<WebResponse>(request.BeginGetResponse, request.EndGetResponse, null);
 
             try
             {
                 var response = await task;
-                var stream = response.GetResponseStream();
-                var total = response.ContentLength;
-                var totalRead = 0;
-                var lastProgressIndicate = 0;
-                const int chunkSize = 4096;
-                var buffer = new byte[chunkSize];
-                using (var ms = new MemoryStream())
-                {
-                    int bytesRead;
-
-                    OnDownloadStatus?.Invoke(messageId, new DownloadStatusArgs
-                        {
-                            Status = Entities.Enums.DownloadStatus.Started,
-                            Progress = 0
-                        });
-                    while ((bytesRead = stream.Read(buffer, 0, buffer.Length)) > 0)
-                    {
-                        if (ct.IsCancellationRequested)
-                        {
-                            retResult = new BaseResult<MemoryStream>
-                            {
-                                Code = ErrorCodes.Cancelled,
-                                Result = null
-                            };
-                            break;
-                        }
-
-                        totalRead += bytesRead;
-                        ms.Write(buffer, 0, bytesRead);
-                        var progressIndicate = (int)(totalRead * 100 / total);
-
-                        if (OnDownloadStatus != null && progressIndicate > lastProgressIndicate)
-                        {
-                            OnDownloadStatus.Invoke(
-                                messageId, new DownloadStatusArgs
-                                {
-                                    Status = Entities.Enums.DownloadStatus.InProgress,
-                                    Progress = progressIndicate
-                                });
-
-                            lastProgressIndicate = progressIndicate;
-                        }
-                    }
-
-                    if (OnDownloadStatus != null && !ct.IsCancellationRequested)
-                    {
-                        OnDownloadStatus.Invoke(
-                            messageId, new DownloadStatusArgs
-                            {
-                                Status = Entities.Enums.DownloadStatus.Ended,
-                                Progress = 100
-                            });
-                    }
-
-                    if (!ct.IsCancellationRequested)
-                    {
-                        retResult = new BaseResult<MemoryStream>
-                        {
-                            Code = ErrorCodes.Ok,
-                            Result = ms
-                        };
-                    }
-                }
-            }
-            catch (WebException ex)
-            {
-                var resp = (HttpWebResponse)ex.Response;
-                if (resp != null)
-                {
-                    switch (resp.StatusCode)
-                    {
-                        case HttpStatusCode.Unauthorized:
-                            {
-                                retResult = new BaseResult<MemoryStream>
-                                {
-                                    Code = ErrorCodes.Unauthorized,
-                                    Result = null
-                                };
-                                break;
-                            }
-                        case HttpStatusCode.Forbidden:
-                            {
-                                retResult = new BaseResult<MemoryStream>
-                                {
-                                    Code = ErrorCodes.Forbidden,
-                                    Result = null
-                                };
-                                break;
-                            }
-                        case HttpStatusCode.BadRequest:
-                            {
-                                retResult = new BaseResult<MemoryStream>
-                                {
-                                    Code = ErrorCodes.BadRequest,
-                                    Result = null
-                                };
-                                break;
-                            }
-                        case HttpStatusCode.NotFound:
-                            {
-                                retResult = new BaseResult<MemoryStream>
-                                {
-                                    Code = ErrorCodes.NotFound,
-                                    Result = null
-                                };
-                                break;
-                            }
-                        case HttpStatusCode.PaymentRequired:
-                            {
-                                retResult = new BaseResult<MemoryStream>
-                                {
-                                    Code = ErrorCodes.PaymentRequired,
-                                    Result = null
-                                };
-                                break;
-                            }
-                        case HttpStatusCode.InternalServerError:
-                            {
-                                retResult = new BaseResult<MemoryStream>
-                                {
-                                    Code = ErrorCodes.InternalServerError,
-                                    Result = null
-                                };
-                                break;
-                            }
-                    }
-                }
-
-                if (ct.IsCancellationRequested)
-                {
-                    retResult = new BaseResult<MemoryStream>
-                    {
-                        Code = ErrorCodes.Cancelled,
-                        Result = null
-                    };
-                }
-            }
-
-            return retResult;
-        }
-
-        public static async Task<BaseResult<AttachmentContainer>> MakeAsyncFileDownload(string url, string contentType, int messageId, CancellationToken ct)
-        {
-            var request = GetRequest(url, "GET", contentType);
-            BaseResult<AttachmentContainer> retResult = null;
-            var task = Task.Factory.FromAsync(request.BeginGetResponse, request.EndGetResponse, null);
-
-            try
-            {
-                var response = await task;
-                var stream = response.GetResponseStream();
-                var total = response.ContentLength;
-                var ms = new BufferedMemoryStream();
-                Task.Factory.StartNew(() => LoadInBuffer(ms, stream, total, messageId, ct), ct);
-                retResult = new BaseResult<AttachmentContainer>
+                retResult = new BaseResult<Stream>
                 {
                     Code = ErrorCodes.Ok,
-                    Result = new AttachmentContainer(total, ms)
+                    Result = response.GetResponseStream()
                 };
-                return retResult;
             }
             catch (WebException ex)
             {
@@ -374,7 +210,7 @@ namespace FreedomVoice.Core
                     {
                         case HttpStatusCode.Unauthorized:
                             {
-                                retResult = new BaseResult<AttachmentContainer>
+                                retResult = new BaseResult<Stream>
                                 {
                                     Code = ErrorCodes.Unauthorized,
                                     Result = null
@@ -383,7 +219,7 @@ namespace FreedomVoice.Core
                             }
                         case HttpStatusCode.Forbidden:
                             {
-                                retResult = new BaseResult<AttachmentContainer>
+                                retResult = new BaseResult<Stream>
                                 {
                                     Code = ErrorCodes.Forbidden,
                                     Result = null
@@ -392,7 +228,7 @@ namespace FreedomVoice.Core
                             }
                         case HttpStatusCode.BadRequest:
                             {
-                                retResult = new BaseResult<AttachmentContainer>
+                                retResult = new BaseResult<Stream>
                                 {
                                     Code = ErrorCodes.BadRequest,
                                     Result = null
@@ -401,7 +237,7 @@ namespace FreedomVoice.Core
                             }
                         case HttpStatusCode.NotFound:
                             {
-                                retResult = new BaseResult<AttachmentContainer>
+                                retResult = new BaseResult<Stream>
                                 {
                                     Code = ErrorCodes.NotFound,
                                     Result = null
@@ -410,7 +246,7 @@ namespace FreedomVoice.Core
                             }
                         case HttpStatusCode.PaymentRequired:
                             {
-                                retResult = new BaseResult<AttachmentContainer>
+                                retResult = new BaseResult<Stream>
                                 {
                                     Code = ErrorCodes.PaymentRequired,
                                     Result = null
@@ -419,7 +255,7 @@ namespace FreedomVoice.Core
                             }
                         case HttpStatusCode.InternalServerError:
                             {
-                                retResult = new BaseResult<AttachmentContainer>
+                                retResult = new BaseResult<Stream>
                                 {
                                     Code = ErrorCodes.InternalServerError,
                                     Result = null
@@ -431,7 +267,7 @@ namespace FreedomVoice.Core
 
                 if (ct.IsCancellationRequested)
                 {
-                    retResult = new BaseResult<AttachmentContainer>
+                    retResult = new BaseResult<Stream>
                     {
                         Code = ErrorCodes.Cancelled,
                         Result = null
@@ -440,59 +276,13 @@ namespace FreedomVoice.Core
             }
 
             return retResult;
-        }
-
-        private static void LoadInBuffer(BufferedMemoryStream ms, Stream stream, long total, int messageId, CancellationToken ct)
-        {
-            var totalRead = 0;
-            var lastProgressIndicate = 0;
-            const int chunkSize = 4096;
-            var buffer = new byte[chunkSize];
-            using (ms)
-            {
-                int bytesRead;
-
-                OnDownloadStatusInt?.Invoke(messageId, new DownloadStatusArgs
-                {
-                    Status = Entities.Enums.DownloadStatus.Started,
-                    Progress = 0
-                });
-                while ((bytesRead = stream.Read(buffer, 0, buffer.Length)) > 0)
-                {
-                    if (ct.IsCancellationRequested)
-                        break;
-
-                    totalRead += bytesRead;
-                    ms.Write(buffer, 0, bytesRead);
-                    var progressIndicate = (int)(totalRead * 100 / total);
-
-                    if (OnDownloadStatusInt == null || progressIndicate <= lastProgressIndicate) continue;
-                    lastProgressIndicate = progressIndicate;
-                    OnDownloadStatusInt?.Invoke(
-                        messageId, new DownloadStatusArgs
-                        {
-                            Status = Entities.Enums.DownloadStatus.InProgress,
-                            Progress = progressIndicate
-                        });
-                }
-
-                if (OnDownloadStatus != null && !ct.IsCancellationRequested)
-                {
-                    OnDownloadStatusInt?.Invoke(
-                        messageId, new DownloadStatusArgs
-                        {
-                            Status = Entities.Enums.DownloadStatus.Ended,
-                            Progress = 100
-                        });
-                }
-            }
         }
 
         private static async Task<BaseResult<T>> GetResponce<T>(HttpWebRequest request, CancellationToken ct)
         {
             BaseResult<T> retResult = null;
 
-            var task = Task.Factory.FromAsync(request.BeginGetResponse, request.EndGetResponse, null);
+            var task = Task.Factory.FromAsync<WebResponse>(request.BeginGetResponse, request.EndGetResponse, null);
 
             try
             {
