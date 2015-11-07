@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -11,8 +12,6 @@ using Newtonsoft.Json;
 
 namespace FreedomVoice.Core
 {
-    using System.IO;
-
     public static class ApiHelper
     {
         public static CookieContainer CookieContainer { get; set; }
@@ -191,7 +190,6 @@ namespace FreedomVoice.Core
             var request = GetRequest(url, "GET", contentType);
             BaseResult<Stream> retResult = null;
             var task = Task.Factory.FromAsync<WebResponse>(request.BeginGetResponse, request.EndGetResponse, null);
-
             try
             {
                 var response = await task;
@@ -275,6 +273,96 @@ namespace FreedomVoice.Core
                 }
             }
 
+            return retResult;
+        }
+
+        public static async Task<BaseResult<MediaResponse>> MakeAsyncFileDownload(string url, string contentType, CancellationToken ct)
+        {
+            var request = GetRequest(url, "GET", contentType);
+            BaseResult<MediaResponse> retResult = null;
+            var task = Task.Factory.FromAsync<WebResponse>(request.BeginGetResponse, request.EndGetResponse, null);
+            try
+            {
+                var response = await task;
+                retResult = new BaseResult<MediaResponse>
+                {
+                    Code = ErrorCodes.Ok,
+                    Result = new MediaResponse(response.ContentLength, response.GetResponseStream())
+                };
+            }
+            catch (WebException ex)
+            {
+                var resp = (HttpWebResponse)ex.Response;
+                if (resp != null)
+                {
+                    switch (resp.StatusCode)
+                    {
+                        case HttpStatusCode.Unauthorized:
+                            {
+                                retResult = new BaseResult<MediaResponse>
+                                {
+                                    Code = ErrorCodes.Unauthorized,
+                                    Result = null
+                                };
+                                break;
+                            }
+                        case HttpStatusCode.Forbidden:
+                            {
+                                retResult = new BaseResult<MediaResponse>
+                                {
+                                    Code = ErrorCodes.Forbidden,
+                                    Result = null
+                                };
+                                break;
+                            }
+                        case HttpStatusCode.BadRequest:
+                            {
+                                retResult = new BaseResult<MediaResponse>
+                                {
+                                    Code = ErrorCodes.BadRequest,
+                                    Result = null
+                                };
+                                break;
+                            }
+                        case HttpStatusCode.NotFound:
+                            {
+                                retResult = new BaseResult<MediaResponse>
+                                {
+                                    Code = ErrorCodes.NotFound,
+                                    Result = null
+                                };
+                                break;
+                            }
+                        case HttpStatusCode.PaymentRequired:
+                            {
+                                retResult = new BaseResult<MediaResponse>
+                                {
+                                    Code = ErrorCodes.PaymentRequired,
+                                    Result = null
+                                };
+                                break;
+                            }
+                        case HttpStatusCode.InternalServerError:
+                            {
+                                retResult = new BaseResult<MediaResponse>
+                                {
+                                    Code = ErrorCodes.InternalServerError,
+                                    Result = null
+                                };
+                                break;
+                            }
+                    }
+                }
+
+                if (ct.IsCancellationRequested)
+                {
+                    retResult = new BaseResult<MediaResponse>
+                    {
+                        Code = ErrorCodes.Cancelled,
+                        Result = null
+                    };
+                }
+            }
             return retResult;
         }
 

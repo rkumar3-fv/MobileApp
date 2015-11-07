@@ -103,8 +103,17 @@
   <string name="Notif_fax_progress">Fax Downloading</string>
   <string name="Notif_fax_success">Fax Downloaded</string>
   <string name="Notif_fax_fail">Fax Downloading Failed</string>
+  <string name="Notif_attachment_progress">Attachment Downloading</string>
+  <string name="Notif_attachment_success">Attachment Downloaded</string>
+  <string name="Notif_attachment_fail">Attachment Downloading Failed</string>
   <string name="Notif_voicemail">Voicemail Playback</string>
   <string name="Notif_record">Call Record Playback</string>
+  <string name="Notif_record_progress">Call Record Downloading</string>
+  <string name="Notif_voicemail_progress">Voicemail Downloading</string>
+  <string name="Notif_record_success">Call Record Downloaded</string>
+  <string name="Notif_voicemail_success">Voicemail Downloaded</string>
+  <string name="Notif_record_fail">Call Record Downloading Failed</string>
+  <string name="Notif_voicemail_fail">Voicemail Downloading Failed</string>
   <string name="Notif_faxShow">Show fax</string>
   <string name="Extra_pdfReaderPath">com.google.android.apps.pdfviewer</string>
 </resources>

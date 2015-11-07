@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Concurrent;
 using System.IO;
 using System.Linq;
@@ -6,14 +7,14 @@ using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.OS;
+using Android.Support.V4.App;
 using Android.Util;
 using com.FreedomVoice.MobileApp.Android.Actions.Reports;
 using FreedomVoice.Core;
-using FreedomVoice.Core.Entities;
-using FreedomVoice.Core.Entities.Base;
 using FreedomVoice.Core.Entities.Enums;
-using FreedomVoice.Core.Entities.EventArgs;
+using FreedomVoice.Core.Utils;
 using Message = com.FreedomVoice.MobileApp.Android.Entities.Message;
+using NotificationCompat = Android.Support.V7.App.NotificationCompat;
 
 namespace com.FreedomVoice.MobileApp.Android.Services
 {
@@ -24,6 +25,8 @@ namespace com.FreedomVoice.MobileApp.Android.Services
     [Service(Exported = false)]
     public class AttachmentsDownloadService : Service
     {
+        private const int ProgressNotificationId = 101;
+        private const int BufferSize = 4096;
         public const string ActionIdTag = "ActionIdTag";
         public const string ActionMsgTag = "ActionMsgTag";
         public const string ActionNotificationTag = "ActionNotificationTag";
@@ -35,6 +38,8 @@ namespace com.FreedomVoice.MobileApp.Android.Services
         private bool _isInWork;
         private ConcurrentQueue<Message> _downloadingUrls;
         private ConcurrentDictionary<int, CancellationToken> _cancellationTokens;
+        private NotificationCompat.Builder _builder;
+        private NotificationManagerCompat _notificationManager;
 
         public override void OnCreate()
         {
@@ -44,6 +49,11 @@ namespace com.FreedomVoice.MobileApp.Android.Services
 #endif
             _downloadingUrls = new ConcurrentQueue<Message>();
             _cancellationTokens = new ConcurrentDictionary<int, CancellationToken>();
+
+            _notificationManager = NotificationManagerCompat.From(this);
+            _builder = new NotificationCompat.Builder(this);
+            _builder.SetSmallIcon(Resource.Drawable.ic_notification_download);
+            _builder.SetCategory(Notification.CategoryProgress);
         }
 
         public override IBinder OnBind(Intent intent)
@@ -83,7 +93,7 @@ namespace com.FreedomVoice.MobileApp.Android.Services
         private void Start()
         {
             if (_isInWork)
-                Start();
+                return;
             if (!_downloadingUrls.IsEmpty)
             {
                 Message item;
@@ -93,77 +103,154 @@ namespace com.FreedomVoice.MobileApp.Android.Services
                 if (!_cancellationTokens.TryGetValue(item.Id, out token))
                     Start();
                 _isInWork = true;
-                Task.Factory.StartNew(() => BackgroundDownloading(item, token), token).ContinueWith(
+                //
+
+                string title;
+                switch (item.MessageType)
+                {
+                    case Message.TypeFax:
+                        title = GetString(Resource.String.Notif_fax_progress);
+                        break;
+                    case Message.TypeRec:
+                        title = GetString(Resource.String.Notif_record_progress);
+                        break;
+                    case Message.TypeVoice:
+                        title = GetString(Resource.String.Notif_voicemail_progress);
+                        break;
+                    default:
+                        title = GetString(Resource.String.Notif_attachment_progress);
+                        break;
+                }
+                _builder.SetContentTitle(title);
+                _builder.SetContentText(DataFormatUtils.ToPhoneNumber(item.FromNumber));
+                _builder.SetProgress(100, 100, true);
+                var notification = _builder.Build();
+                //
+                StartForeground(ProgressNotificationId, notification);
+                Task.Factory.StartNew(() => LoadFile(item, token), token).ContinueWith(
                     t =>
                     {
                         CancellationToken removingToken;
                         _cancellationTokens.TryRemove(item.Id, out removingToken);
+                        _isInWork = false;
+                        StopForeground(true);
                         Start();
                     }, token);
             }
             else
-            {
-                _isInWork = false;
                 StopSelf();
-            }
         }
 
-        private void BackgroundDownloading(Message msg, CancellationToken token)
+        private void LoadFile(Message msg, CancellationToken token)
         {
-            var task = GetContainer(msg, token);
-        }
-
-        private async Task GetContainer(Message msg, CancellationToken token)
-        {
-            var root = $"{GetExternalFilesDir(null)}/";
-            if (!Directory.Exists(root))
-                Directory.CreateDirectory(root);
-            var path = Path.GetRandomFileName();
-            var lastPart = msg.AttachUrl.Split('/').Last().ToLower();
-            ApiHelper.OnDownloadStatusInt += ApiHelperOnDownloadStatus;
-            var res = await ApiHelper.MakeAsyncFileDownload(msg.AttachUrl, "application/json", msg.Id, token);
-            if (res.Code != ErrorCodes.Ok)
+            var rootDirectory = $"{GetExternalFilesDir(null)}/";
+            try
             {
-                _isInWork = false;
+                if (!Directory.Exists(rootDirectory))
+                    Directory.CreateDirectory(rootDirectory);
+            }
+            catch (Exception)
+            {
+#if DEBUG
+                Log.Debug(App.AppPackage, "MEDIA REQUEST FAILED: UNABLE TO CREATE DIRECTORY");
+#endif
+                var failData = new Bundle();
+                failData.PutParcelable(AttachmentsServiceResultReceiver.ReceiverDataExtra, new ErrorReport(msg.Id, ErrorReport.ErrorBadRequest));
+                _receiver.Send(Result.Ok, failData);
                 return;
             }
-            using (var ms = res.Result.BufferedStream)
+            var fileExtension = msg.AttachUrl.Split('/').Last().ToLower();
+            var fileName = Path.GetRandomFileName();
+            var fullName = $"{rootDirectory}{fileName}.{fileExtension}";
+            var lastProgress = 0;
+            var totalRead = 0;
+#if DEBUG
+            Log.Debug(App.AppPackage, $"MEDIA REQUEST to {msg.AttachUrl}");
+#endif
+            var res = ApiHelper.MakeAsyncFileDownload(msg.AttachUrl, "application/json", token).Result;
+            if (res.Code != ErrorCodes.Ok)
             {
-                long received = 0;
-                var bytes = new byte[4096];
-                using (var file = new FileStream($"{root}{path}.{lastPart}", FileMode.Create, FileAccess.Write))
+#if DEBUG
+                Log.Debug(App.AppPackage, $"MEDIA REQUEST FAILED with CODE = {res.Code}");
+#endif
+                var failData = new Bundle();
+                failData.PutParcelable(AttachmentsServiceResultReceiver.ReceiverDataExtra, new ErrorReport(msg.Id, res.Code));
+                _receiver.Send(Result.Ok, failData);
+                return;
+            }
+#if DEBUG
+            Log.Debug(App.AppPackage, $"STREAM RESPONSE RECEIVED, LENGTH = {res.Result.Length}");
+#endif
+            var buffer = new byte[BufferSize];
+            try
+            {
+                using (var fs = new FileStream(fullName, FileMode.Create, FileAccess.Write))
                 {
-                    while (res.Result.Size > received)
+                    int bytesRead;
+#if DEBUG
+                    Log.Debug(App.AppPackage, "START LOADING, PROGRESS IS 0%");
+#endif
+                    var progressData = new Bundle();
+                    progressData.PutParcelable(AttachmentsServiceResultReceiver.ReceiverDataExtra, new ProgressReport(msg.Id, 0));
+                    _receiver.Send(Result.Ok, progressData);
+
+                    while ((bytesRead = res.Result.ReceivedStream.Read(buffer, 0, BufferSize)) > 0)
                     {
-                        if (ms.DataAvailable)
+                        if (token.IsCancellationRequested)
                         {
-                            ms.Read(bytes, 0, bytes.Length);
-                            file.Write(bytes, 0, bytes.Length);
-                            received += bytes.Length;
+#if DEBUG
+                            Log.Debug(App.AppPackage, "LOADING CANCELLED");
+#endif
+                            _builder.SetProgress(100, 0, false);
+                            _notificationManager.Notify(ProgressNotificationId, _builder.Build());
+                            var failData = new Bundle();
+                            failData.PutParcelable(AttachmentsServiceResultReceiver.ReceiverDataExtra, new ErrorReport(msg.Id, ErrorReport.ErrorCancelled));
+                            _receiver.Send(Result.Ok, failData);
+                            return;
+                        }
+                        totalRead += bytesRead;
+                        fs.Write(buffer, 0, bytesRead);
+                        var progress = Convert.ToInt32(totalRead*100/res.Result.Length);
+                        if (progress > lastProgress)
+                        {
+#if DEBUG
+                            Log.Debug(App.AppPackage, $"LOADING PROGRESS: {progress}%");
+#endif
+                            _builder.SetProgress(100, progress, false);
+                            _notificationManager.Notify(ProgressNotificationId, _builder.Build());
+                            progressData = new Bundle();
+                            progressData.PutParcelable(AttachmentsServiceResultReceiver.ReceiverDataExtra, new ProgressReport(msg.Id, progress));
+                            _receiver.Send(Result.Ok, progressData);
+                            lastProgress = progress;
                         }
                     }
+                    var resData = new Bundle();
+                    if (!token.IsCancellationRequested)
+                    {
+#if DEBUG
+                        Log.Debug(App.AppPackage, $"MEDIA FILE SAVED. Path - {fullName}");
+#endif
+                        progressData.PutParcelable(AttachmentsServiceResultReceiver.ReceiverDataExtra, new SuccessReport(msg.Id, fullName));
+                    }
+                    else
+                    {
+#if DEBUG
+                        Log.Debug(App.AppPackage, "MEDIA FILE LOADING CANCELLED");
+#endif
+                        progressData.PutParcelable(AttachmentsServiceResultReceiver.ReceiverDataExtra, new ErrorReport(msg.Id, ErrorReport.ErrorCancelled));
+                    }
+                    _receiver.Send(Result.Ok, resData);
                 }
-#if DEBUG
-                Log.Debug(App.AppPackage, $"LOADED {root}{path}.{lastPart}");
-#endif
             }
-            ApiHelper.OnDownloadStatusInt -= ApiHelperOnDownloadStatus;
-            _isInWork = false;
-        }
-
-        /// <summary>
-        /// Progress event
-        /// </summary>
-        /// <param name="messageId">message ID</param>
-        /// <param name="args">progress args</param>
-        private void ApiHelperOnDownloadStatus(int messageId, DownloadStatusArgs args)
-        {
-            var data = new Bundle();
-            data.PutParcelable(AttachmentsServiceResultReceiver.ReceiverDataExtra, new ProgressReport(messageId, args.Progress));
+            catch (Exception)
+            {
 #if DEBUG
-            Log.Debug(App.AppPackage, $"ATTACHMENT {messageId} PROGRESS = {args.Progress}%");
+                Log.Debug(App.AppPackage, "MEDIA REQUEST FAILED: UNABLE TO WRITE FILE");
 #endif
-            _receiver.Send(Result.Ok, data);
+                var failData = new Bundle();
+                failData.PutParcelable(AttachmentsServiceResultReceiver.ReceiverDataExtra, new ErrorReport(msg.Id, ErrorReport.ErrorBadRequest));
+                _receiver.Send(Result.Ok, failData);
+            }
         }
 
         public override void OnDestroy()
