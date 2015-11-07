@@ -799,7 +799,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                     Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} successed - YOU GET FOLDERS LIST");
 #endif
                     var foldersResponse = (GetFoldersResponse)response;
-                    if (!ExtensionsList[SelectedExtension].Folders.Equals(foldersResponse.FoldersList))
+                    if ((SelectedExtension != -1)&&(!ExtensionsList[SelectedExtension].Folders.Equals(foldersResponse.FoldersList)))
                     {
                         ExtensionsList[SelectedExtension].Folders = foldersResponse.FoldersList;
                         SelectedFolder = -1;
@@ -814,7 +814,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                     Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} successed - YOU GET MESSAGES LIST");
 #endif
                     var msgResponse = (GetMessagesResponse)response;
-                    if (!ExtensionsList[SelectedExtension].Folders[SelectedFolder].MessagesList.Equals(msgResponse.MessagesList))
+                    if ((SelectedExtension != -1)&&(SelectedFolder != -1)&&(!ExtensionsList[SelectedExtension].Folders[SelectedFolder].MessagesList.Equals(msgResponse.MessagesList)))
                     {
                         ExtensionsList[SelectedExtension].Folders[SelectedFolder].MessagesList = msgResponse.MessagesList;
                         SelectedMessage = -1;

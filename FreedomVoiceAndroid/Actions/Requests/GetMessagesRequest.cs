@@ -59,47 +59,55 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
 #if DEBUG
             Log.Debug(App.AppPackage, $"{GetType().Name} REQUESTS MESSAGES FOR x{ExtensionId} from {Folder}");
 #endif
-            var asyncRes = await ApiHelper.GetMesages(AccountName, ExtensionId, Folder, 30, 1, false);
-#if DEBUG
-            Log.Debug(App.AppPackage, $"{GetType().Name} GetResponse {(asyncRes == null ? "NULL" : "NOT NULL")}");
-#endif
-            if (asyncRes == null) return new ErrorResponse(Id, ErrorResponse.ErrorConnection);
-            var errorResponse = CheckErrorResponse(Id, asyncRes.Code);
-            if (errorResponse != null)
-                return errorResponse;
-            var listMsg = asyncRes.Result;
             var resList = new List<Message>();
-            foreach (var message in listMsg)
+            for (var i = 1; i < 10; i++)
             {
-                var content="";
-                int type;
-                switch (message.Type)
+                var asyncRes = await ApiHelper.GetMesages(AccountName, ExtensionId, Folder, 30, i, false);
+#if DEBUG
+                Log.Debug(App.AppPackage, $"{GetType().Name} GetResponse {(asyncRes == null ? "NULL" : "NOT NULL")}");
+#endif
+                if (asyncRes == null) return new ErrorResponse(Id, ErrorResponse.ErrorConnection);
+                var errorResponse = CheckErrorResponse(Id, asyncRes.Code);
+                if (errorResponse != null)
+                    if (i == 1)
+                        return errorResponse;
+                    else
+                        return new GetMessagesResponse(Id, resList);
+                var listMsg = asyncRes.Result;
+                if ((listMsg == null)||(listMsg.Count == 0))
+                    break;
+                foreach (var message in listMsg)
                 {
-                    case MessageType.Fax:
-                        type = Message.TypeFax;
-                        content = "Pdf";
-                        break;
-                    case MessageType.Recording:
-                        type = Message.TypeRec;
-                        content = "wav";
-                        break;
-                    case MessageType.Voicemail:
-                        type = Message.TypeVoice;
-                        content = "wav";
-                        break;
-                    default:
-                        type = -1;
-                        break;
+                    var content = "";
+                    int type;
+                    switch (message.Type)
+                    {
+                        case MessageType.Fax:
+                            type = Message.TypeFax;
+                            content = "Pdf";
+                            break;
+                        case MessageType.Recording:
+                            type = Message.TypeRec;
+                            content = "wav";
+                            break;
+                        case MessageType.Voicemail:
+                            type = Message.TypeVoice;
+                            content = "wav";
+                            break;
+                        default:
+                            type = -1;
+                            break;
+                    }
+                    resList.Add(new Message(Convert.ToInt32(message.Id.Substring(1)),
+                        message.Id,
+                        message.SourceName,
+                        message.SourceNumber,
+                        message.ReceivedOn,
+                        type,
+                        message.Unread,
+                        message.Length,
+                        $"/api/v1/systems/{AccountName}/mailboxes/{ExtensionId}/folders/{Folder}/messages/{message.Id}/media/{content}"));
                 }
-                resList.Add(new Message(Convert.ToInt32(message.Id.Substring(1)), 
-                    message.Id, 
-                    message.SourceName,
-                    message.SourceNumber,
-                    message.ReceivedOn,
-                    type,
-                    message.Unread,
-                    message.Length,
-                    $"/api/v1/systems/{AccountName}/mailboxes/{ExtensionId}/folders/{Folder}/messages/{message.Id}/media/{content}"));
             }
             return new GetMessagesResponse(Id, resList);
         }

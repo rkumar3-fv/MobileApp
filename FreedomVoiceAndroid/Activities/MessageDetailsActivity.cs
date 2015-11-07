@@ -17,6 +17,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
     /// </summary>
     public abstract class MessageDetailsActivity : OperationActivity
     {
+        public const string MessageExtraTag = "MessageExtra";
         private ContactsHelper _contactsHelper;
         protected Message Msg;
         protected TextView SenderText;
@@ -32,7 +33,11 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         {
             base.OnCreate(bundle);
             _contactsHelper = ContactsHelper.Instance(this);
-            Msg = Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].MessagesList[Helper.SelectedMessage];
+            var extra = (Message)Intent.GetParcelableExtra(MessageExtraTag);
+            if (extra != null)
+                Msg = extra;
+            else
+                Msg = Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].MessagesList[Helper.SelectedMessage];
             SupportActionBar.SetHomeAsUpIndicator(Resource.Drawable.ic_action_back);
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
             SupportActionBar.SetHomeButtonEnabled(true);
@@ -53,10 +58,24 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         protected override void OnResume()
         {
             base.OnResume();
-            if (Msg.Equals(Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].MessagesList.Count<=Helper.SelectedMessage))
-                OnBackPressed();
-            if (!Msg.Equals(Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].MessagesList[Helper.SelectedMessage]))
-                OnBackPressed();
+            if ((Helper.SelectedExtension != -1)&&(Helper.SelectedFolder != -1)&&(Helper.SelectedMessage != -1))
+            {
+                if (
+                    Msg.Equals(
+                        Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].MessagesList
+                            .Count <= Helper.SelectedMessage))
+                    OnBackPressed();
+                if (
+                    !Msg.Equals(
+                        Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].MessagesList[
+                            Helper.SelectedMessage]))
+                    OnBackPressed();
+            }
+            else
+            {
+                //TODO: change after message refactoring
+                RemoveButton.Visibility = ViewStates.Invisible;
+            }
             string text;
             _contactsHelper.GetName(Msg.FromNumber, out text);
             SenderText.Text = Msg.FromName.Length > 1 ? Msg.FromName : text;
@@ -113,7 +132,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
 
         public override void OnBackPressed()
         {
-            Helper.GetPrevious();
+            if (Helper.SelectedMessage != -1)
+                Helper.GetPrevious();
             base.OnBackPressed();
         }
 

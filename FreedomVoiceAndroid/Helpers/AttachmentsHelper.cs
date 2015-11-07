@@ -6,6 +6,7 @@ using Android.OS;
 using Android.Support.V4.App;
 using Android.Util;
 using com.FreedomVoice.MobileApp.Android.Actions.Reports;
+using com.FreedomVoice.MobileApp.Android.Activities;
 using com.FreedomVoice.MobileApp.Android.Services;
 using FreedomVoice.Core.Utils;
 using Message = com.FreedomVoice.MobileApp.Android.Entities.Message;
@@ -178,18 +179,28 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                                 file.SetReadable(true);
                                 intent.SetDataAndType(Uri.FromFile(file), "application/pdf");
                                 intent.SetFlags(ActivityFlags.NoHistory);
-                                var stackBuilder = TaskStackBuilder.Create(_context);
-                                stackBuilder.AddNextIntent(intent);
-                                var resultPendingIntent = stackBuilder.GetPendingIntent(0, PendingIntentFlags.UpdateCurrent);
+                                var resultPendingIntent = PendingIntent.GetActivity(_context, 0, intent, PendingIntentFlags.CancelCurrent);
                                 _builder.SetContentIntent(resultPendingIntent);
                                 break;
                             case Message.TypeRec:
                                 title = _context.GetString(Resource.String.Notif_record_success);
                                 icon = Resource.Drawable.ic_notification_playback;
+
+                                intent = new Intent(_context, typeof(VoiceRecordActivity));
+                                intent.SetFlags(ActivityFlags.NoHistory);
+                                intent.PutExtra(MessageDetailsActivity.MessageExtraTag, successReport.Msg);
+                                var recordIntent = PendingIntent.GetActivity(_context, 0, intent, PendingIntentFlags.CancelCurrent);
+                                _builder.SetContentIntent(recordIntent);
                                 break;
                             case Message.TypeVoice:
                                 title = _context.GetString(Resource.String.Notif_voicemail_success);
                                 icon = Resource.Drawable.ic_notification_playback;
+
+                                intent = new Intent(_context, typeof(VoiceMailActivity));
+                                intent.SetFlags(ActivityFlags.NoHistory);
+                                intent.PutExtra(MessageDetailsActivity.MessageExtraTag, successReport.Msg);
+                                var voiceIntent = PendingIntent.GetActivity(_context, 0, intent, PendingIntentFlags.CancelCurrent);
+                                _builder.SetContentIntent(voiceIntent);
                                 break;
                             default:
                                 title = _context.GetString(Resource.String.Notif_attachment_success);

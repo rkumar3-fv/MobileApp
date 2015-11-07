@@ -10,6 +10,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
     /// </summary>
     public abstract class SoundActivity : MessageDetailsActivity
     {
+        private string _soundPath;
+        private int _currentPlayPosition;
         protected ImageButton PlayerButton;
         protected TextView StarTextView;
         protected TextView EndTextView;
@@ -22,13 +24,29 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             base.OnStart();
             SpeakerButton.Click += SpeakerButtonOnClick;
             CallBackButton.Click += CallBackButtonOnClick;
-            PlayerSeek.Activated = false;
+            PlayerButton.Click += PlayerButtonOnClick;
+        }
+
+        private void PlayerButtonOnClick(object sender, EventArgs eventArgs)
+        {
+            if (string.IsNullOrEmpty(_soundPath))
+                AttachmentId = AppHelper.Instance(this).AttachmentsHelper.LoadAttachment(Msg);
+            else
+                Play();
         }
 
         protected override void OnResume()
         {
             base.OnResume();
             MessageStamp.Text = DataFormatUtils.ToDuration(Msg.Length);
+            if (!string.IsNullOrEmpty(_soundPath))
+            {
+                PlayerSeek.Enabled = true;
+            }
+            else
+            {
+                PlayerSeek.Enabled = false;
+            }
         }
 
         /// <summary>
@@ -47,20 +65,42 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             Call(Msg.FromNumber);
         }
 
+        private void Play()
+        {
+            
+        }
+
+        private void Pause()
+        {
+            
+        }
+
         protected override void AttachmentsHelperOnProgressLoading(object sender, AttachmentHelperEventArgs<int> args)
         {
             if (Msg.Id != args.Id) return;
             base.AttachmentsHelperOnProgressLoading(sender, args);
-            if (PlayerButton.Activated)
-                PlayerButton.Activated = false;
+            if (PlayerButton.Enabled)
+                PlayerButton.Enabled = false;
         }
 
         protected override void AttachmentsHelperOnFailLoadingEvent(object sender, AttachmentHelperEventArgs<bool> args)
         {
             if (Msg.Id != args.Id) return;
             base.AttachmentsHelperOnFailLoadingEvent(sender, args);
-            if (!PlayerButton.Activated)
-                PlayerButton.Activated = true;
+            if (!PlayerButton.Enabled)
+                PlayerButton.Enabled = true;
+        }
+
+        protected override void AttachmentsHelperOnFinishLoading(object sender, AttachmentHelperEventArgs<string> args)
+        {
+            if (Msg.Id != args.Id) return;
+            base.AttachmentsHelperOnFinishLoading(sender, args);
+            if (!PlayerButton.Enabled)
+                PlayerButton.Enabled = true;
+            _soundPath = args.Result;
+            if (!PlayerSeek.Enabled)
+                PlayerSeek.Enabled = true;
+            Play();
         }
     }
 }
