@@ -1,20 +1,23 @@
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
+using Android.App;
 using Android.Content;
 using Android.OS;
+using Android.Support.V4.App;
 using Android.Util;
-using com.FreedomVoice.MobileApp.Android.Notifications;
+using com.FreedomVoice.MobileApp.Android.Actions.Reports;
 using com.FreedomVoice.MobileApp.Android.Services;
 using FreedomVoice.Core.Utils;
 using Message = com.FreedomVoice.MobileApp.Android.Entities.Message;
+using NotificationCompat = Android.Support.V7.App.NotificationCompat;
+using TaskStackBuilder = Android.App.TaskStackBuilder;
 using Uri = Android.Net.Uri;
 
 namespace com.FreedomVoice.MobileApp.Android.Helpers
 {
     public delegate void SuccessEventHandler(object sender, AttachmentHelperEventArgs<string> args);
 
-    public delegate void StartLoadingEventHandler(object sender, AttachmentHelperEventArgs<string> args);
+    public delegate void ProgressLoadingEventHandler(object sender, AttachmentHelperEventArgs<int> args);
 
     public delegate void StopLoadingEventHandler(object sender, AttachmentHelperEventArgs<bool> args);
 
@@ -23,10 +26,12 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
     /// </summary>
     public class AttachmentsHelper : IAppServiceResultReceiver
     {
+        public const int AttachmentActionNotificationId = 102;
         private readonly Context _context;
         private readonly Dictionary<int, string> _cacheDictionary;
         private readonly List<int> _waitingList;
-        private readonly FaxDownloadNotification _faxNotification;
+        private readonly NotificationCompat.Builder _builder;
+        private readonly NotificationManagerCompat _notificationManager;
 
         /// <summary>
         /// Result receiver for service communication
@@ -35,16 +40,22 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 
         public event SuccessEventHandler OnFinish;
         public event StopLoadingEventHandler FailLoadingEvent;
-        public event StartLoadingEventHandler StartLoadingEvent;
+        public event ProgressLoadingEventHandler OnProgressLoading;
 
         public AttachmentsHelper(Context context)
         {
             _context = context;
             _cacheDictionary = new Dictionary<int, string>();
             _waitingList = new List<int>();
-            _faxNotification = FaxDownloadNotification.Instance(_context);
             _receiver = new ComServiceResultReceiver(new Handler());
             _receiver.SetListener(this);
+
+            _notificationManager = NotificationManagerCompat.From(_context);
+            _builder = new NotificationCompat.Builder(_context);
+            _builder.SetCategory(Notification.CategoryTransport);
+            _builder.SetOngoing(false);
+            _builder.SetProgress(0, 0, false);
+            _builder.SetAutoCancel(true);
         }
 
         public long LoadAttachment(Message msg)
@@ -63,7 +74,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 #if DEBUG
                     Log.Debug(App.AppPackage, "FILE ALREADY DOWNLOADED: " + _cacheDictionary[msg.Id]);
 #endif
-                    OnFinish?.Invoke(this, new AttachmentHelperEventArgs<string>(msg.Id, msg.AttachUrl.Split('/').Last().ToLower(), _cacheDictionary[msg.Id]));
+                    OnFinish?.Invoke(this, new AttachmentHelperEventArgs<string>(msg.Id, msg.MessageType, _cacheDictionary[msg.Id]));
                     return msg.Id;
                 }
             }
@@ -87,50 +98,6 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             return msg.Id;
         }
 
-        private void AttachmentsServiceOnStartEvent(object sender, AttachmentHelperEventArgs<string> args)
-        {
-            //string result;
-            //var res = ContactsHelper.Instance(_context).GetName(args.Result, out result);
-#if DEBUG
-            Log.Debug(App.AppPackage, $"START LOADING ATTACHMENT FROM: {args.Result}");
-#endif
-            _faxNotification.ShowNotification(DataFormatUtils.ToPhoneNumber(args.Result));
-            StartLoadingEvent?.Invoke(this, args);
-        }
-
-        private void AttachmentsServiceOnFailEvent(object sender, AttachmentHelperEventArgs<bool> args)
-        {
-            if (args.Result)
-                _faxNotification.HideNotification();
-            else
-                _faxNotification.FailLoading();
-            _waitingList.Remove(args.Id);
-            FailLoadingEvent?.Invoke(this, args);
-        }
-
-        private void AttachmentsServiceOnSuccessEvent(object sender, AttachmentHelperEventArgs<string> success)
-        {
-#if DEBUG
-            Log.Debug(App.AppPackage, "LOADING FINISHED: file path is " + success.Result);
-#endif
-            _cacheDictionary.Add(success.Id, success.Result);
-            _waitingList.Remove(success.Id);
-            if ((OnFinish == null) || (OnFinish.GetInvocationList().Length == 0))
-            {
-                var intent = new Intent(Intent.ActionView);
-                var file = new Java.IO.File(success.Result);
-                file.SetReadable(true);
-                intent.SetDataAndType(Uri.FromFile(file), "application/pdf");
-                intent.SetFlags(ActivityFlags.NoHistory);
-                _faxNotification.FinishLoading(intent);
-            }
-            else
-            {
-                _faxNotification.HideNotification();
-                OnFinish.Invoke(this, success);
-            }
-        }
-
         /// <summary>
         /// Receive result from service
         /// </summary>
@@ -138,7 +105,108 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         /// <param name="resultData"></param>
         public void OnReceiveResult(int resultCode, Bundle resultData)
         {
-            
+            if (resultCode != (int)Result.Ok) return;
+            var report = resultData.GetParcelable(AttachmentsServiceResultReceiver.ReceiverDataExtra) as BaseReport;
+            if (report != null)
+                OnReceiveResult(report);
+        }
+
+        private void OnReceiveResult(BaseReport report)
+        {
+            var type = report.GetType().Name;
+            switch (type)
+            {
+                case "ErrorReport":
+                    var errorReport = (ErrorReport) report;
+                    _waitingList.Remove(report.Id);
+                    if (errorReport.ErrorCode != ErrorReport.ErrorCancelled)
+                    {
+                        _builder.SetContentText(DataFormatUtils.ToPhoneNumber(report.Msg.FromNumber));
+                        string title;
+                        int icon;
+                        switch (report.Msg.MessageType)
+                        {
+                            case Message.TypeFax:
+                                title = _context.GetString(Resource.String.Notif_fax_fail);
+                                icon = Resource.Drawable.ic_notification_fax;
+                                break;
+                            case Message.TypeRec:
+                                title = _context.GetString(Resource.String.Notif_record_fail);
+                                icon = Resource.Drawable.ic_notification_playback;
+                                break;
+                            case Message.TypeVoice:
+                                title = _context.GetString(Resource.String.Notif_voicemail_fail);
+                                icon = Resource.Drawable.ic_notification_playback;
+                                break;
+                            default:
+                                title = _context.GetString(Resource.String.Notif_attachment_fail);
+                                icon = Resource.Drawable.ic_notification_download;
+                                break;
+                        }
+                        _builder.SetSmallIcon(icon);
+                        _builder.SetContentTitle(title);
+                        _notificationManager.Notify(AttachmentActionNotificationId, _builder.Build());
+                        FailLoadingEvent?.Invoke(this, new AttachmentHelperEventArgs<bool>(errorReport.Id, errorReport.Msg.MessageType, false));
+                    }
+                    else
+                        FailLoadingEvent?.Invoke(this, new AttachmentHelperEventArgs<bool>(errorReport.Id, errorReport.Msg.MessageType, true));
+                    break;
+                case "ProgressReport":
+                    var progressReport = (ProgressReport)report;
+                    if (!_waitingList.Contains(progressReport.Id))
+                        _waitingList.Add(progressReport.Id);
+                    OnProgressLoading?.Invoke(this, new AttachmentHelperEventArgs<int>(progressReport.Id, progressReport.Msg.MessageType, progressReport.ProgressValue));
+                    break;
+                case "SuccessReport":
+                    var successReport = (SuccessReport)report;
+                    _waitingList.Remove(successReport.Id);
+                    _cacheDictionary.Add(successReport.Id, successReport.Path);
+                    if ((OnFinish == null) || (OnFinish.GetInvocationList().Length == 0))
+                    {
+                        _builder.SetContentText(DataFormatUtils.ToPhoneNumber(report.Msg.FromNumber));
+                        string title;
+                        int icon;
+                        Intent intent;
+                        switch (report.Msg.MessageType)
+                        {
+                            case Message.TypeFax:
+                                title = _context.GetString(Resource.String.Notif_fax_success);
+                                icon = Resource.Drawable.ic_notification_fax;
+
+                                intent = new Intent(Intent.ActionView);
+                                var file = new Java.IO.File(successReport.Path);
+                                file.SetReadable(true);
+                                intent.SetDataAndType(Uri.FromFile(file), "application/pdf");
+                                intent.SetFlags(ActivityFlags.NoHistory);
+                                var stackBuilder = TaskStackBuilder.Create(_context);
+                                stackBuilder.AddNextIntent(intent);
+                                var resultPendingIntent = stackBuilder.GetPendingIntent(0, PendingIntentFlags.UpdateCurrent);
+                                _builder.SetContentIntent(resultPendingIntent);
+                                break;
+                            case Message.TypeRec:
+                                title = _context.GetString(Resource.String.Notif_record_success);
+                                icon = Resource.Drawable.ic_notification_playback;
+                                break;
+                            case Message.TypeVoice:
+                                title = _context.GetString(Resource.String.Notif_voicemail_success);
+                                icon = Resource.Drawable.ic_notification_playback;
+                                break;
+                            default:
+                                title = _context.GetString(Resource.String.Notif_attachment_success);
+                                icon = Resource.Drawable.ic_notification_download;
+                                break;
+                        }
+                        _builder.SetSmallIcon(icon);
+                        _builder.SetContentTitle(title);
+                        _notificationManager.Notify(AttachmentActionNotificationId, _builder.Build());
+                    }
+                    else
+                    {
+                        _notificationManager.Cancel(AttachmentActionNotificationId);
+                        OnFinish.Invoke(this, new AttachmentHelperEventArgs<string>(successReport.Id, successReport.Msg.MessageType, successReport.Path));
+                    }
+                    break;
+            }
         }
     }
 }

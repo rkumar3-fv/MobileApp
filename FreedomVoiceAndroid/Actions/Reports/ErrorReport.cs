@@ -2,6 +2,7 @@ using Android.OS;
 using FreedomVoice.Core.Entities.Enums;
 using Java.Interop;
 using Java.Lang;
+using Message = com.FreedomVoice.MobileApp.Android.Entities.Message;
 
 namespace com.FreedomVoice.MobileApp.Android.Actions.Reports
 {
@@ -25,12 +26,12 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Reports
         /// </summary>
         public int ErrorCode { get; }
 
-        public ErrorReport(int id, int code) : base(id)
+        public ErrorReport(int id, Message msg, int code) : base(id, msg)
         {
             ErrorCode = code;
         }
 
-        public ErrorReport(int id, ErrorCodes code) : base(id)
+        public ErrorReport(int id, Message msg, ErrorCodes code) : base(id, msg)
         {
             switch (code)
             {
@@ -64,7 +65,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Reports
             }
         }
 
-        public ErrorReport(Parcel parcel) : base(parcel)
+        private ErrorReport(Parcel parcel) : base(parcel)
         {
             ErrorCode = parcel.ReadInt();
         }

@@ -136,6 +136,8 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             base.OnResume();
             TraceContent();
             _adapter.CurrentContent = Helper.GetCurrent();
+            if (Helper.SelectedFolder != -1)
+                Helper.ForceLoadMessages();
         }
 
         protected override void OnHelperEvent(ActionsHelperEventArgs args)
@@ -146,10 +148,21 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                 {
                     case ActionsHelperEventArgs.MsgUpdated:
                         TraceContent();
-                        if (Helper.SelectedFolder == -1)
+                        if (Helper.SelectedExtension == -1)
+                        {
                             _swipeTouchHelper.AttachToRecyclerView(null);
+                            Helper.ForceLoadExtensions();
+                        }
+                        else if (Helper.SelectedFolder == -1)
+                        {
+                            _swipeTouchHelper.AttachToRecyclerView(null);
+                            Helper.ForceLoadFolders();
+                        }
                         else
+                        {
                             _swipeTouchHelper.AttachToRecyclerView(_recyclerView);
+                            Helper.ForceLoadMessages();
+                        }
                         _adapter.CurrentContent = Helper.GetCurrent();
                         break;
                 }

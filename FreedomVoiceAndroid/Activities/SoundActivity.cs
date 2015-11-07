@@ -47,10 +47,10 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             Call(Msg.FromNumber);
         }
 
-        protected override void AttachmentsHelperOnStartLoadingEvent(object sender, AttachmentHelperEventArgs<string> args)
+        protected override void AttachmentsHelperOnProgressLoading(object sender, AttachmentHelperEventArgs<int> args)
         {
             if (Msg.Id != args.Id) return;
-            base.AttachmentsHelperOnStartLoadingEvent(sender, args);
+            base.AttachmentsHelperOnProgressLoading(sender, args);
             if (PlayerButton.Activated)
                 PlayerButton.Activated = false;
         }

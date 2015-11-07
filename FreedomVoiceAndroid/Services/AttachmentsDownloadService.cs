@@ -155,7 +155,7 @@ namespace com.FreedomVoice.MobileApp.Android.Services
                 Log.Debug(App.AppPackage, "MEDIA REQUEST FAILED: UNABLE TO CREATE DIRECTORY");
 #endif
                 var failData = new Bundle();
-                failData.PutParcelable(AttachmentsServiceResultReceiver.ReceiverDataExtra, new ErrorReport(msg.Id, ErrorReport.ErrorBadRequest));
+                failData.PutParcelable(AttachmentsServiceResultReceiver.ReceiverDataExtra, new ErrorReport(msg.Id, msg, ErrorReport.ErrorBadRequest));
                 _receiver.Send(Result.Ok, failData);
                 return;
             }
@@ -174,7 +174,7 @@ namespace com.FreedomVoice.MobileApp.Android.Services
                 Log.Debug(App.AppPackage, $"MEDIA REQUEST FAILED with CODE = {res.Code}");
 #endif
                 var failData = new Bundle();
-                failData.PutParcelable(AttachmentsServiceResultReceiver.ReceiverDataExtra, new ErrorReport(msg.Id, res.Code));
+                failData.PutParcelable(AttachmentsServiceResultReceiver.ReceiverDataExtra, new ErrorReport(msg.Id, msg, res.Code));
                 _receiver.Send(Result.Ok, failData);
                 return;
             }
@@ -191,7 +191,7 @@ namespace com.FreedomVoice.MobileApp.Android.Services
                     Log.Debug(App.AppPackage, "START LOADING, PROGRESS IS 0%");
 #endif
                     var progressData = new Bundle();
-                    progressData.PutParcelable(AttachmentsServiceResultReceiver.ReceiverDataExtra, new ProgressReport(msg.Id, 0));
+                    progressData.PutParcelable(AttachmentsServiceResultReceiver.ReceiverDataExtra, new ProgressReport(msg.Id, msg, 0));
                     _receiver.Send(Result.Ok, progressData);
 
                     while ((bytesRead = res.Result.ReceivedStream.Read(buffer, 0, BufferSize)) > 0)
@@ -204,7 +204,7 @@ namespace com.FreedomVoice.MobileApp.Android.Services
                             _builder.SetProgress(100, 0, false);
                             _notificationManager.Notify(ProgressNotificationId, _builder.Build());
                             var failData = new Bundle();
-                            failData.PutParcelable(AttachmentsServiceResultReceiver.ReceiverDataExtra, new ErrorReport(msg.Id, ErrorReport.ErrorCancelled));
+                            failData.PutParcelable(AttachmentsServiceResultReceiver.ReceiverDataExtra, new ErrorReport(msg.Id, msg, ErrorReport.ErrorCancelled));
                             _receiver.Send(Result.Ok, failData);
                             return;
                         }
@@ -219,7 +219,7 @@ namespace com.FreedomVoice.MobileApp.Android.Services
                             _builder.SetProgress(100, progress, false);
                             _notificationManager.Notify(ProgressNotificationId, _builder.Build());
                             progressData = new Bundle();
-                            progressData.PutParcelable(AttachmentsServiceResultReceiver.ReceiverDataExtra, new ProgressReport(msg.Id, progress));
+                            progressData.PutParcelable(AttachmentsServiceResultReceiver.ReceiverDataExtra, new ProgressReport(msg.Id, msg, progress));
                             _receiver.Send(Result.Ok, progressData);
                             lastProgress = progress;
                         }
@@ -230,14 +230,14 @@ namespace com.FreedomVoice.MobileApp.Android.Services
 #if DEBUG
                         Log.Debug(App.AppPackage, $"MEDIA FILE SAVED. Path - {fullName}");
 #endif
-                        progressData.PutParcelable(AttachmentsServiceResultReceiver.ReceiverDataExtra, new SuccessReport(msg.Id, fullName));
+                        resData.PutParcelable(AttachmentsServiceResultReceiver.ReceiverDataExtra, new SuccessReport(msg.Id, msg, fullName));
                     }
                     else
                     {
 #if DEBUG
                         Log.Debug(App.AppPackage, "MEDIA FILE LOADING CANCELLED");
 #endif
-                        progressData.PutParcelable(AttachmentsServiceResultReceiver.ReceiverDataExtra, new ErrorReport(msg.Id, ErrorReport.ErrorCancelled));
+                        resData.PutParcelable(AttachmentsServiceResultReceiver.ReceiverDataExtra, new ErrorReport(msg.Id, msg, ErrorReport.ErrorCancelled));
                     }
                     _receiver.Send(Result.Ok, resData);
                 }
@@ -248,7 +248,7 @@ namespace com.FreedomVoice.MobileApp.Android.Services
                 Log.Debug(App.AppPackage, "MEDIA REQUEST FAILED: UNABLE TO WRITE FILE");
 #endif
                 var failData = new Bundle();
-                failData.PutParcelable(AttachmentsServiceResultReceiver.ReceiverDataExtra, new ErrorReport(msg.Id, ErrorReport.ErrorBadRequest));
+                failData.PutParcelable(AttachmentsServiceResultReceiver.ReceiverDataExtra, new ErrorReport(msg.Id, msg, ErrorReport.ErrorBadRequest));
                 _receiver.Send(Result.Ok, failData);
             }
         }

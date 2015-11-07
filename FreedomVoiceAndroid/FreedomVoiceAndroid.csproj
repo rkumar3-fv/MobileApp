@@ -219,8 +219,6 @@
     <Compile Include="Helpers\AppPreferencesHelper.cs" />
     <Compile Include="Helpers\AttachmentHelperEventArgs.cs" />
     <Compile Include="Helpers\AttachmentsHelper.cs" />
-    <Compile Include="Notifications\BaseNotification.cs" />
-    <Compile Include="Notifications\FaxDownloadNotification.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\AppServiceResultReceiver.cs" />

@@ -1,6 +1,7 @@
 using Android.OS;
 using Java.Interop;
 using Object = Java.Lang.Object;
+using Message = com.FreedomVoice.MobileApp.Android.Entities.Message;
 
 namespace com.FreedomVoice.MobileApp.Android.Actions.Reports
 {
@@ -14,12 +15,12 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Reports
         /// </summary>
         public string Path { get; }
 
-        public SuccessReport(int id, string path) : base(id)
+        public SuccessReport(int id, Message msg, string path) : base(id, msg)
         {
             Path = path;
         }
 
-        public SuccessReport(Parcel parcel) : base(parcel)
+        private SuccessReport(Parcel parcel) : base(parcel)
         {
             Path = parcel.ReadString();
         }

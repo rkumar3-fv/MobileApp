@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Android.Graphics.Pdf;
 using Android.OS;
 #if DEBUG
 using Android.Util;

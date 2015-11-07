@@ -3,7 +3,6 @@ using Android.App;
 using Android.Content;
 using Android.Content.PM;
 using Android.OS;
-using Android.Views;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Helpers;
 using Uri = Android.Net.Uri;
@@ -88,10 +87,10 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             MessageStamp.Text = Msg.Length == 1 ? GetString(Resource.String.FragmentMessages_onePage) : $"{Msg.Length} {GetString(Resource.String.FragmentMessages_morePage)}";
         }
 
-        protected override void AttachmentsHelperOnStartLoadingEvent(object sender, AttachmentHelperEventArgs<string> args)
+        protected override void AttachmentsHelperOnProgressLoading(object sender, AttachmentHelperEventArgs<int> args)
         {
             if (Msg.Id != args.Id) return;
-            base.AttachmentsHelperOnStartLoadingEvent(sender, args);
+            base.AttachmentsHelperOnProgressLoading(sender, args);
             if (_openFaxButton.Activated)
                 _openFaxButton.Activated = false;
         }

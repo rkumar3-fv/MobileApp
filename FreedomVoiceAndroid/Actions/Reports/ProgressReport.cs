@@ -1,6 +1,7 @@
 using Android.OS;
 using Java.Interop;
 using Java.Lang;
+using Message = com.FreedomVoice.MobileApp.Android.Entities.Message;
 
 namespace com.FreedomVoice.MobileApp.Android.Actions.Reports
 {
@@ -11,12 +12,12 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Reports
         /// </summary>
         public int ProgressValue { get; }
 
-        public ProgressReport(int id, int progress) : base(id)
+        public ProgressReport(int id, Message msg, int progress) : base(id, msg)
         {
             ProgressValue = progress;
         }
 
-        public ProgressReport(Parcel parcel) : base(parcel)
+        private ProgressReport(Parcel parcel) : base(parcel)
         {
             ProgressValue = parcel.ReadInt();
         }

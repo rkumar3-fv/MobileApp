@@ -16,14 +16,14 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         /// <summary>
         /// Attachment's type
         /// </summary>
-        public string Type { get; }
+        public int Type { get; }
 
         /// <summary>
         /// Result
         /// </summary>
         public T Result { get; }
 
-        public AttachmentHelperEventArgs(int id, string type, T result)
+        public AttachmentHelperEventArgs(int id, int type, T result)
         {
             Id = id;
             Type = type;
