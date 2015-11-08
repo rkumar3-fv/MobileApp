@@ -228,6 +228,7 @@
     <Compile Include="Services\AttachmentsDownloadService.cs" />
     <Compile Include="Services\IAppServiceResultReceiver.cs" />
     <Compile Include="Services\MediaService.cs" />
+    <Compile Include="Services\MediaServiceBinder.cs" />
     <Compile Include="Utils\CallStateHelper.cs" />
     <Compile Include="Utils\ContactsHelper.cs" />
     <Compile Include="Utils\DataValidationUtils.cs" />

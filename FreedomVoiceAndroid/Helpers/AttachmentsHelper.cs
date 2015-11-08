@@ -11,7 +11,6 @@ using com.FreedomVoice.MobileApp.Android.Services;
 using FreedomVoice.Core.Utils;
 using Message = com.FreedomVoice.MobileApp.Android.Entities.Message;
 using NotificationCompat = Android.Support.V7.App.NotificationCompat;
-using TaskStackBuilder = Android.App.TaskStackBuilder;
 using Uri = Android.Net.Uri;
 
 namespace com.FreedomVoice.MobileApp.Android.Helpers

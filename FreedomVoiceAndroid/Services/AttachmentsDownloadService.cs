@@ -29,7 +29,6 @@ namespace com.FreedomVoice.MobileApp.Android.Services
         private const int BufferSize = 4096;
         public const string ActionIdTag = "ActionIdTag";
         public const string ActionMsgTag = "ActionMsgTag";
-        public const string ActionNotificationTag = "ActionNotificationTag";
         public const string ActionStartTag = "ActionTypeStart";
         public const string ActionStopTag = "ActionTypeStop";
         public const string ActionStatusTag = "ActionTypeState";

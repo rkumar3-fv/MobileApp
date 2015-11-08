@@ -70,7 +70,7 @@
             android:layout_alignParentLeft="true" />
         <TextView
             android:id="@+id/recordActivity_playerStartText"
-            android:text="00:00"
+            android:text="0:00"
             style="@style/MessagesCounterText"
             android:layout_width="@dimen/details_player_time_begin_size"
             android:layout_height="wrap_content"
@@ -80,7 +80,7 @@
             android:layout_marginRight="@dimen/details_player_time_margin" />
         <TextView
             android:id="@+id/recordActivity_playerEndText"
-            android:text="-00:00"
+            android:text="-0:00"
             style="@style/MessagesCounterText"
             android:layout_width="@dimen/details_player_time_end_size"
             android:layout_height="wrap_content"

@@ -1,6 +1,10 @@
 using System;
+using System.Timers;
+using Android.Content;
+using Android.OS;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Helpers;
+using com.FreedomVoice.MobileApp.Android.Services;
 using FreedomVoice.Core.Utils;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
@@ -8,16 +12,22 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
     /// <summary>
     /// Message with audio content details
     /// </summary>
-    public abstract class SoundActivity : MessageDetailsActivity
+    public abstract class SoundActivity : MessageDetailsActivity, IServiceConnection
     {
+        private bool _isBinded;
+        private MediaServiceBinder _serviceBinder;
         private string _soundPath;
-        private int _currentPlayPosition;
         protected ImageButton PlayerButton;
-        protected TextView StarTextView;
+        protected TextView StartTextView;
         protected TextView EndTextView;
         protected Button SpeakerButton;
         protected Button CallBackButton;
         protected SeekBar PlayerSeek;
+
+        private bool _isSeeking;
+        private bool _isPlayed;
+        private bool _isCurrent;
+        private Timer _timer;
 
         protected override void OnStart()
         {
@@ -25,6 +35,23 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             SpeakerButton.Click += SpeakerButtonOnClick;
             CallBackButton.Click += CallBackButtonOnClick;
             PlayerButton.Click += PlayerButtonOnClick;
+            MessageStamp.Text = DataFormatUtils.ToDuration(Msg.Length);
+            EndTextView.Text = $"-{DataFormatUtils.ToDuration(Msg.Length)}";
+            PlayerSeek.Enabled = false;
+            PlayerSeek.Max = Msg.Length;
+            PlayerSeek.StartTrackingTouch += PlayerSeekOnStartTrackingTouch;
+            PlayerSeek.StopTrackingTouch += PlayerSeekOnStopTrackingTouch;
+            PlayerSeek.ProgressChanged += PlayerSeekOnProgressChanged;
+            _timer = new Timer {Interval = 300};
+            _timer.Elapsed += TimerOnElapsed;
+            var mediaBinderIntent = new Intent(this, typeof(MediaService));
+            BindService(mediaBinderIntent, this, Bind.AutoCreate);
+        }
+
+        protected override void OnStop()
+        {
+            base.OnStop();
+            UnbindService(this);
         }
 
         private void PlayerButtonOnClick(object sender, EventArgs eventArgs)
@@ -32,20 +59,22 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             if (string.IsNullOrEmpty(_soundPath))
                 AttachmentId = AppHelper.Instance(this).AttachmentsHelper.LoadAttachment(Msg);
             else
-                Play();
+                PlayerAction();
         }
 
-        protected override void OnResume()
+        private void PlayerSeekOnProgressChanged(object sender, SeekBar.ProgressChangedEventArgs progressChangedEventArgs)
         {
-            base.OnResume();
-            MessageStamp.Text = DataFormatUtils.ToDuration(Msg.Length);
-            if (!string.IsNullOrEmpty(_soundPath))
+            if (!_isSeeking) return;
+            if ((_isBinded) && (_isCurrent))
             {
-                PlayerSeek.Enabled = true;
-            }
-            else
-            {
-                PlayerSeek.Enabled = false;
+                var progress = progressChangedEventArgs.Progress;
+                EndTextView.Text = $"-{DataFormatUtils.ToDuration(Msg.Length - progress)}";
+                StartTextView.Text = DataFormatUtils.ToDuration(progress);
+                var intent = new Intent(this, typeof(MediaService));
+                intent.SetAction(MediaService.MediaActionSeek);
+                intent.PutExtra(MediaService.MediaIdTag, Msg.Id);
+                intent.PutExtra(MediaService.MediaSeekTag, progress*1000);
+                StartService(intent);
             }
         }
 
@@ -62,19 +91,60 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         /// </summary>
         private void CallBackButtonOnClick(object sender, EventArgs eventArgs)
         {
+            Pause();
             Call(Msg.FromNumber);
         }
 
+        private void PlayerAction()
+        {
+            if (!_isCurrent)
+                Play();
+            else
+            {
+                if (_isPlayed)
+                    Pause();
+                else
+                    Play();
+            }
+        }
+
+        /// <summary>
+        /// Play action
+        /// </summary>
         private void Play()
         {
-            
+            var intent = new Intent(this, typeof(MediaService));
+            intent.SetAction(MediaService.MediaActionPlay);
+            intent.PutExtra(MediaService.MediaIdTag, Msg.Id);
+            intent.PutExtra(MediaService.MediaPathTag, _soundPath);
+            intent.PutExtra(MediaService.MediaMsgTag, Msg);
+            StartService(intent);
+            _isCurrent = true;
+            _isPlayed = true;
+            PlayerSeek.Enabled = true;
+            PlayerButton.SetImageResource(Resource.Drawable.ic_action_pause);
+            _timer.Start();
         }
 
+        /// <summary>
+        /// Pause action
+        /// </summary>
         private void Pause()
         {
-            
+            if (!_isBinded) return;
+            if (!_serviceBinder.AppMediaService.IsPlaying) return;
+            var intent = new Intent(this, typeof (MediaService));
+            intent.SetAction(MediaService.MediaActionPause);
+            intent.PutExtra(MediaService.MediaIdTag, Msg.Id);
+            StartService(intent);
+            PlayerButton.SetImageResource(Resource.Drawable.ic_action_play);
+            _isPlayed = false;
+            _timer.Stop();
         }
 
+        /// <summary>
+        /// Loading progress event handling
+        /// </summary>
         protected override void AttachmentsHelperOnProgressLoading(object sender, AttachmentHelperEventArgs<int> args)
         {
             if (Msg.Id != args.Id) return;
@@ -83,6 +153,9 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 PlayerButton.Enabled = false;
         }
 
+        /// <summary>
+        /// Fail loading event handling
+        /// </summary>
         protected override void AttachmentsHelperOnFailLoadingEvent(object sender, AttachmentHelperEventArgs<bool> args)
         {
             if (Msg.Id != args.Id) return;
@@ -91,6 +164,9 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 PlayerButton.Enabled = true;
         }
 
+        /// <summary>
+        /// Finish loading event handling
+        /// </summary>
         protected override void AttachmentsHelperOnFinishLoading(object sender, AttachmentHelperEventArgs<string> args)
         {
             if (Msg.Id != args.Id) return;
@@ -98,9 +174,79 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             if (!PlayerButton.Enabled)
                 PlayerButton.Enabled = true;
             _soundPath = args.Result;
-            if (!PlayerSeek.Enabled)
-                PlayerSeek.Enabled = true;
             Play();
+        }
+
+        public void OnServiceConnected(ComponentName name, IBinder service)
+        {
+            var binder = service as MediaServiceBinder;
+            if (binder == null) return;
+            _serviceBinder = binder;
+            _isBinded = true;
+
+            _serviceBinder.AppMediaService.EndEvent += AppMediaServiceOnEndEvent;
+
+            if ((_serviceBinder.AppMediaService.Msg != null) && (_serviceBinder.AppMediaService.Msg.Equals(Msg)))
+            {
+                _isCurrent = true;
+                _isPlayed = _serviceBinder.AppMediaService.IsPlaying;
+            }
+
+            PlayerSeek.Enabled = _isCurrent;
+            PlayerButton.SetImageResource(_isPlayed
+                ? Resource.Drawable.ic_action_pause
+                : Resource.Drawable.ic_action_play);
+        }
+
+        private void AppMediaServiceOnEndEvent(object sender, bool b)
+        {
+            _isPlayed = false;
+            _isCurrent = false;
+            PlayerSeek.Enabled = false;
+            PlayerSeek.Progress = 0;
+            StartTextView.Text = $"0:00";
+            EndTextView.Text = $"-{DataFormatUtils.ToDuration(Msg.Length)}";
+            PlayerButton.SetImageResource(Resource.Drawable.ic_action_play);
+        }
+
+        public void OnServiceDisconnected(ComponentName name)
+        {
+            _serviceBinder = null;
+            _isBinded = false;
+        }
+
+        public override void OnBackPressed()
+        {
+            if (_timer.Enabled)
+                _timer.Stop();
+            var intent = new Intent(this, typeof(MediaService));
+            StopService(intent);
+            base.OnBackPressed();
+        }
+
+        private void PlayerSeekOnStopTrackingTouch(object sender, SeekBar.StopTrackingTouchEventArgs stopTrackingTouchEventArgs)
+        {
+            _isSeeking = false;
+            if (!_timer.Enabled)
+                _timer.Start();
+        }
+
+        private void PlayerSeekOnStartTrackingTouch(object sender, SeekBar.StartTrackingTouchEventArgs startTrackingTouchEventArgs)
+        {
+            _isSeeking = true;
+            if (_timer.Enabled)
+                _timer.Stop();
+        }
+
+        private void TimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
+        {
+            if ((_isBinded) && (PlayerSeek.Enabled))
+            {
+                var progress = _serviceBinder.AppMediaService.SeekPosition / 1000;
+                EndTextView.Text = $"-{DataFormatUtils.ToDuration(Msg.Length - progress)}";
+                StartTextView.Text = DataFormatUtils.ToDuration(progress);
+                PlayerSeek.Progress = progress;
+            }
         }
     }
 }
