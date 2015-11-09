@@ -70,13 +70,13 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 try
                 {
                     StartActivity(new Intent(Intent.ActionView, Uri.Parse("market://details?id=" + GetString(Resource.String.Extra_pdfReaderPath))));
+                    throw;
                 }
                 catch (ActivityNotFoundException)
                 {
                     StartActivity(new Intent(Intent.ActionView, Uri.Parse("http://play.google.com/store/apps/details?id=" + GetString(Resource.String.Extra_pdfReaderPath))));
                     throw;
                 }
-                throw;
             }
         }
 

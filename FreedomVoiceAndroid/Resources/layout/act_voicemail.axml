@@ -55,7 +55,7 @@
         <ImageButton
             android:id="@+id/voicemailActivity_playerButton"
             android:src="@drawable/ic_action_play"
-            android:background="@drawable/ripple"
+            android:background="@android:color/transparent"
             android:layout_width="@dimen/details_play_button_size"
             android:layout_height="@dimen/details_play_button_size"
             android:minHeight="@dimen/details_play_button_size"

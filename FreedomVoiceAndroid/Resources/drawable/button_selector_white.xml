@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?> 
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
   <item android:drawable="@color/colorButtonWhitePressed" android:state_pressed="true"/>
-  <item android:drawable="@android:drawable/dialog_holo_light_frame" android:state_focused="true"/>
-  <item android:drawable="@android:drawable/dialog_holo_light_frame" />
+  <item android:drawable="@color/colorButtonWhite" android:state_focused="true"/>
+  <item android:drawable="@color/colorButtonWhite" />
 </selector>
