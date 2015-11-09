@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using Android.Content;
 using Android.Views;
 using Android.Widget;
-using com.FreedomVoice.MobileApp.Android.Utils;
 using Object = Java.Lang.Object;
 using FreedomVoice.Core.Utils;
 

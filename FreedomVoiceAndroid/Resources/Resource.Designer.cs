@@ -1565,6 +1565,9 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f0b0073
 			public const int activity_button_text = 2131427443;
 			
+			// aapt resource value: 0x7f0b0077
+			public const int activity_cursor_width = 2131427447;
+			
 			// aapt resource value: 0x7f0b006e
 			public const int activity_element_divider = 2131427438;
 			
@@ -1583,53 +1586,53 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f0b0070
 			public const int activity_vertical_margin = 2131427440;
 			
-			// aapt resource value: 0x7f0b0078
-			public const int auth_activity_auth_title_text = 2131427448;
-			
 			// aapt resource value: 0x7f0b0079
-			public const int auth_activity_edit_text_size = 2131427449;
-			
-			// aapt resource value: 0x7f0b007c
-			public const int auth_activity_error_message_spacing = 2131427452;
+			public const int auth_activity_auth_title_text = 2131427449;
 			
 			// aapt resource value: 0x7f0b007a
-			public const int auth_activity_error_text_size = 2131427450;
-			
-			// aapt resource value: 0x7f0b007f
-			public const int auth_activity_field_height_max = 2131427455;
+			public const int auth_activity_edit_text_size = 2131427450;
 			
 			// aapt resource value: 0x7f0b007d
-			public const int auth_activity_login_password_spacing = 2131427453;
-			
-			// aapt resource value: 0x7f0b007e
-			public const int auth_activity_password_button_spacing = 2131427454;
-			
-			// aapt resource value: 0x7f0b0077
-			public const int auth_activity_vertical_margin = 2131427447;
+			public const int auth_activity_error_message_spacing = 2131427453;
 			
 			// aapt resource value: 0x7f0b007b
-			public const int auth_activity_welcome_email_spacing = 2131427451;
+			public const int auth_activity_error_text_size = 2131427451;
 			
-			// aapt resource value: 0x7f0b00a4
-			public const int content_activity_id_elevation = 2131427492;
+			// aapt resource value: 0x7f0b0080
+			public const int auth_activity_field_height_max = 2131427456;
 			
-			// aapt resource value: 0x7f0b009f
-			public const int content_activity_tab_elevation = 2131427487;
+			// aapt resource value: 0x7f0b007e
+			public const int auth_activity_login_password_spacing = 2131427454;
 			
-			// aapt resource value: 0x7f0b00a3
-			public const int content_activity_tab_height = 2131427491;
+			// aapt resource value: 0x7f0b007f
+			public const int auth_activity_password_button_spacing = 2131427455;
 			
-			// aapt resource value: 0x7f0b00a2
-			public const int content_activity_tab_icon_padding = 2131427490;
+			// aapt resource value: 0x7f0b0078
+			public const int auth_activity_vertical_margin = 2131427448;
+			
+			// aapt resource value: 0x7f0b007c
+			public const int auth_activity_welcome_email_spacing = 2131427452;
+			
+			// aapt resource value: 0x7f0b00a5
+			public const int content_activity_id_elevation = 2131427493;
 			
 			// aapt resource value: 0x7f0b00a0
-			public const int content_activity_tab_indicator_size = 2131427488;
+			public const int content_activity_tab_elevation = 2131427488;
+			
+			// aapt resource value: 0x7f0b00a4
+			public const int content_activity_tab_height = 2131427492;
+			
+			// aapt resource value: 0x7f0b00a3
+			public const int content_activity_tab_icon_padding = 2131427491;
 			
 			// aapt resource value: 0x7f0b00a1
-			public const int content_activity_tab_text_padding = 2131427489;
+			public const int content_activity_tab_indicator_size = 2131427489;
 			
-			// aapt resource value: 0x7f0b009e
-			public const int content_activity_tab_text_size = 2131427486;
+			// aapt resource value: 0x7f0b00a2
+			public const int content_activity_tab_text_padding = 2131427490;
+			
+			// aapt resource value: 0x7f0b009f
+			public const int content_activity_tab_text_size = 2131427487;
 			
 			// aapt resource value: 0x7f0b0051
 			public const int design_appbar_elevation = 2131427409;
@@ -1709,47 +1712,47 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f0b004f
 			public const int design_tab_min_width = 2131427407;
 			
-			// aapt resource value: 0x7f0b0095
-			public const int details_activity_actions_height = 2131427477;
-			
-			// aapt resource value: 0x7f0b0093
-			public const int details_activity_actions_margin = 2131427475;
+			// aapt resource value: 0x7f0b0096
+			public const int details_activity_actions_height = 2131427478;
 			
 			// aapt resource value: 0x7f0b0094
-			public const int details_activity_actions_spacing = 2131427476;
+			public const int details_activity_actions_margin = 2131427476;
 			
-			// aapt resource value: 0x7f0b0090
-			public const int details_activity_image_height = 2131427472;
+			// aapt resource value: 0x7f0b0095
+			public const int details_activity_actions_spacing = 2131427477;
 			
 			// aapt resource value: 0x7f0b0091
-			public const int details_activity_number_margin = 2131427473;
-			
-			// aapt resource value: 0x7f0b0096
-			public const int details_activity_progress_size = 2131427478;
+			public const int details_activity_image_height = 2131427473;
 			
 			// aapt resource value: 0x7f0b0092
-			public const int details_activity_stamp_margin = 2131427474;
+			public const int details_activity_number_margin = 2131427474;
 			
 			// aapt resource value: 0x7f0b0097
-			public const int details_play_button_size = 2131427479;
+			public const int details_activity_progress_size = 2131427479;
+			
+			// aapt resource value: 0x7f0b0093
+			public const int details_activity_stamp_margin = 2131427475;
 			
 			// aapt resource value: 0x7f0b0098
-			public const int details_play_margin = 2131427480;
+			public const int details_play_button_size = 2131427480;
 			
 			// aapt resource value: 0x7f0b0099
-			public const int details_player_margin = 2131427481;
-			
-			// aapt resource value: 0x7f0b009d
-			public const int details_player_seek_height = 2131427485;
-			
-			// aapt resource value: 0x7f0b009b
-			public const int details_player_time_begin_size = 2131427483;
-			
-			// aapt resource value: 0x7f0b009c
-			public const int details_player_time_end_size = 2131427484;
+			public const int details_play_margin = 2131427481;
 			
 			// aapt resource value: 0x7f0b009a
-			public const int details_player_time_margin = 2131427482;
+			public const int details_player_margin = 2131427482;
+			
+			// aapt resource value: 0x7f0b009e
+			public const int details_player_seek_height = 2131427486;
+			
+			// aapt resource value: 0x7f0b009c
+			public const int details_player_time_begin_size = 2131427484;
+			
+			// aapt resource value: 0x7f0b009d
+			public const int details_player_time_end_size = 2131427485;
+			
+			// aapt resource value: 0x7f0b009b
+			public const int details_player_time_margin = 2131427483;
 			
 			// aapt resource value: 0x7f0b0008
 			public const int dialog_fixed_height_major = 2131427336;
@@ -1769,53 +1772,53 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f0b0042
 			public const int disabled_alpha_material_light = 2131427394;
 			
-			// aapt resource value: 0x7f0b0083
-			public const int disclaimer_activity_bottom_margin = 2131427459;
-			
 			// aapt resource value: 0x7f0b0084
-			public const int disclaimer_activity_button_margin = 2131427460;
+			public const int disclaimer_activity_bottom_margin = 2131427460;
 			
 			// aapt resource value: 0x7f0b0085
-			public const int disclaimer_activity_text_margin = 2131427461;
+			public const int disclaimer_activity_button_margin = 2131427461;
 			
-			// aapt resource value: 0x7f0b00ca
-			public const int dlg_action_bar_button = 2131427530;
-			
-			// aapt resource value: 0x7f0b00cc
-			public const int dlg_action_bar_font = 2131427532;
-			
-			// aapt resource value: 0x7f0b00c9
-			public const int dlg_action_bar_height = 2131427529;
+			// aapt resource value: 0x7f0b0086
+			public const int disclaimer_activity_text_margin = 2131427462;
 			
 			// aapt resource value: 0x7f0b00cb
-			public const int dlg_action_bar_padding = 2131427531;
-			
-			// aapt resource value: 0x7f0b00d0
-			public const int dlg_content_font = 2131427536;
-			
-			// aapt resource value: 0x7f0b00c8
-			public const int dlg_elevation = 2131427528;
+			public const int dlg_action_bar_button = 2131427531;
 			
 			// aapt resource value: 0x7f0b00cd
-			public const int dlg_margin = 2131427533;
+			public const int dlg_action_bar_font = 2131427533;
 			
-			// aapt resource value: 0x7f0b00d4
-			public const int dlg_min_width = 2131427540;
+			// aapt resource value: 0x7f0b00ca
+			public const int dlg_action_bar_height = 2131427530;
+			
+			// aapt resource value: 0x7f0b00cc
+			public const int dlg_action_bar_padding = 2131427532;
 			
 			// aapt resource value: 0x7f0b00d1
-			public const int dlg_numbers_element_height = 2131427537;
+			public const int dlg_content_font = 2131427537;
 			
-			// aapt resource value: 0x7f0b00d2
-			public const int dlg_numbers_max_height = 2131427538;
-			
-			// aapt resource value: 0x7f0b00d3
-			public const int dlg_numbers_text_margin = 2131427539;
+			// aapt resource value: 0x7f0b00c9
+			public const int dlg_elevation = 2131427529;
 			
 			// aapt resource value: 0x7f0b00ce
-			public const int dlg_padding = 2131427534;
+			public const int dlg_margin = 2131427534;
+			
+			// aapt resource value: 0x7f0b00d5
+			public const int dlg_min_width = 2131427541;
+			
+			// aapt resource value: 0x7f0b00d2
+			public const int dlg_numbers_element_height = 2131427538;
+			
+			// aapt resource value: 0x7f0b00d3
+			public const int dlg_numbers_max_height = 2131427539;
+			
+			// aapt resource value: 0x7f0b00d4
+			public const int dlg_numbers_text_margin = 2131427540;
 			
 			// aapt resource value: 0x7f0b00cf
-			public const int dlg_title_font = 2131427535;
+			public const int dlg_padding = 2131427535;
+			
+			// aapt resource value: 0x7f0b00d0
+			public const int dlg_title_font = 2131427536;
 			
 			// aapt resource value: 0x7f0b006b
 			public const int drawer_elevation = 2131427435;
@@ -1823,110 +1826,110 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f0b006a
 			public const int drawer_size = 2131427434;
 			
-			// aapt resource value: 0x7f0b00c5
-			public const int fragment_contacts_height = 2131427525;
-			
-			// aapt resource value: 0x7f0b00c4
-			public const int fragment_contacts_letter_width = 2131427524;
-			
 			// aapt resource value: 0x7f0b00c6
-			public const int fragment_contacts_search_elevation = 2131427526;
+			public const int fragment_contacts_height = 2131427526;
+			
+			// aapt resource value: 0x7f0b00c5
+			public const int fragment_contacts_letter_width = 2131427525;
 			
 			// aapt resource value: 0x7f0b00c7
-			public const int fragment_contacts_search_height = 2131427527;
+			public const int fragment_contacts_search_elevation = 2131427527;
 			
-			// aapt resource value: 0x7f0b00be
-			public const int fragment_keypad_backspace_margin = 2131427518;
+			// aapt resource value: 0x7f0b00c8
+			public const int fragment_contacts_search_height = 2131427528;
 			
 			// aapt resource value: 0x7f0b00bf
-			public const int fragment_keypad_backspace_size = 2131427519;
-			
-			// aapt resource value: 0x7f0b00b7
-			public const int fragment_keypad_backspace_spacing = 2131427511;
-			
-			// aapt resource value: 0x7f0b00b8
-			public const int fragment_keypad_bottom_margin = 2131427512;
-			
-			// aapt resource value: 0x7f0b00b9
-			public const int fragment_keypad_button_ripple = 2131427513;
-			
-			// aapt resource value: 0x7f0b00ba
-			public const int fragment_keypad_fab_elevation = 2131427514;
-			
-			// aapt resource value: 0x7f0b00bd
-			public const int fragment_keypad_fab_margin = 2131427517;
-			
-			// aapt resource value: 0x7f0b00bc
-			public const int fragment_keypad_fab_ripple = 2131427516;
-			
-			// aapt resource value: 0x7f0b00bb
-			public const int fragment_keypad_fab_translation = 2131427515;
-			
-			// aapt resource value: 0x7f0b00b4
-			public const int fragment_keypad_key_size = 2131427508;
-			
-			// aapt resource value: 0x7f0b00b3
-			public const int fragment_keypad_key_small_text_size = 2131427507;
-			
-			// aapt resource value: 0x7f0b00b6
-			public const int fragment_keypad_key_spacing = 2131427510;
-			
-			// aapt resource value: 0x7f0b00b2
-			public const int fragment_keypad_key_text_size = 2131427506;
-			
-			// aapt resource value: 0x7f0b00b5
-			public const int fragment_keypad_key_top_spacing = 2131427509;
+			public const int fragment_keypad_backspace_margin = 2131427519;
 			
 			// aapt resource value: 0x7f0b00c0
-			public const int fragment_keypad_keyboard_padding = 2131427520;
+			public const int fragment_keypad_backspace_size = 2131427520;
 			
-			// aapt resource value: 0x7f0b00b0
-			public const int fragment_keypad_number_size = 2131427504;
+			// aapt resource value: 0x7f0b00b8
+			public const int fragment_keypad_backspace_spacing = 2131427512;
 			
-			// aapt resource value: 0x7f0b00b1
-			public const int fragment_keypad_number_text_size = 2131427505;
+			// aapt resource value: 0x7f0b00b9
+			public const int fragment_keypad_bottom_margin = 2131427513;
 			
-			// aapt resource value: 0x7f0b00af
-			public const int fragment_keypad_spinner_height = 2131427503;
+			// aapt resource value: 0x7f0b00ba
+			public const int fragment_keypad_button_ripple = 2131427514;
 			
-			// aapt resource value: 0x7f0b00ac
-			public const int fragment_keypad_spinner_size = 2131427500;
+			// aapt resource value: 0x7f0b00bb
+			public const int fragment_keypad_fab_elevation = 2131427515;
 			
-			// aapt resource value: 0x7f0b00ad
-			public const int fragment_keypad_spinner_width = 2131427501;
+			// aapt resource value: 0x7f0b00be
+			public const int fragment_keypad_fab_margin = 2131427518;
 			
-			// aapt resource value: 0x7f0b00ae
-			public const int fragment_keypad_spinner_width_collapsed = 2131427502;
+			// aapt resource value: 0x7f0b00bd
+			public const int fragment_keypad_fab_ripple = 2131427517;
 			
-			// aapt resource value: 0x7f0b00a6
-			public const int fragment_msg_element_big_height = 2131427494;
+			// aapt resource value: 0x7f0b00bc
+			public const int fragment_keypad_fab_translation = 2131427516;
 			
-			// aapt resource value: 0x7f0b00a5
-			public const int fragment_msg_element_height = 2131427493;
+			// aapt resource value: 0x7f0b00b5
+			public const int fragment_keypad_key_size = 2131427509;
 			
-			// aapt resource value: 0x7f0b00a7
-			public const int fragment_msg_element_padding = 2131427495;
+			// aapt resource value: 0x7f0b00b4
+			public const int fragment_keypad_key_small_text_size = 2131427508;
 			
-			// aapt resource value: 0x7f0b00aa
-			public const int fragment_msg_ind_corner = 2131427498;
+			// aapt resource value: 0x7f0b00b7
+			public const int fragment_keypad_key_spacing = 2131427511;
 			
-			// aapt resource value: 0x7f0b00a9
-			public const int fragment_msg_ind_height = 2131427497;
+			// aapt resource value: 0x7f0b00b3
+			public const int fragment_keypad_key_text_size = 2131427507;
 			
-			// aapt resource value: 0x7f0b00a8
-			public const int fragment_msg_ind_width = 2131427496;
-			
-			// aapt resource value: 0x7f0b00ab
-			public const int fragment_msg_text_padding = 2131427499;
+			// aapt resource value: 0x7f0b00b6
+			public const int fragment_keypad_key_top_spacing = 2131427510;
 			
 			// aapt resource value: 0x7f0b00c1
-			public const int fragment_recent_additional_area_width = 2131427521;
+			public const int fragment_keypad_keyboard_padding = 2131427521;
+			
+			// aapt resource value: 0x7f0b00b1
+			public const int fragment_keypad_number_size = 2131427505;
+			
+			// aapt resource value: 0x7f0b00b2
+			public const int fragment_keypad_number_text_size = 2131427506;
+			
+			// aapt resource value: 0x7f0b00b0
+			public const int fragment_keypad_spinner_height = 2131427504;
+			
+			// aapt resource value: 0x7f0b00ad
+			public const int fragment_keypad_spinner_size = 2131427501;
+			
+			// aapt resource value: 0x7f0b00ae
+			public const int fragment_keypad_spinner_width = 2131427502;
+			
+			// aapt resource value: 0x7f0b00af
+			public const int fragment_keypad_spinner_width_collapsed = 2131427503;
+			
+			// aapt resource value: 0x7f0b00a7
+			public const int fragment_msg_element_big_height = 2131427495;
+			
+			// aapt resource value: 0x7f0b00a6
+			public const int fragment_msg_element_height = 2131427494;
+			
+			// aapt resource value: 0x7f0b00a8
+			public const int fragment_msg_element_padding = 2131427496;
+			
+			// aapt resource value: 0x7f0b00ab
+			public const int fragment_msg_ind_corner = 2131427499;
+			
+			// aapt resource value: 0x7f0b00aa
+			public const int fragment_msg_ind_height = 2131427498;
+			
+			// aapt resource value: 0x7f0b00a9
+			public const int fragment_msg_ind_width = 2131427497;
+			
+			// aapt resource value: 0x7f0b00ac
+			public const int fragment_msg_text_padding = 2131427500;
 			
 			// aapt resource value: 0x7f0b00c2
-			public const int fragment_recent_height = 2131427522;
+			public const int fragment_recent_additional_area_width = 2131427522;
 			
 			// aapt resource value: 0x7f0b00c3
-			public const int fragment_recent_icon_size = 2131427523;
+			public const int fragment_recent_height = 2131427523;
+			
+			// aapt resource value: 0x7f0b00c4
+			public const int fragment_recent_icon_size = 2131427524;
 			
 			// aapt resource value: 0x7f0b0043
 			public const int highlight_alpha_material_colored = 2131427395;
@@ -1937,11 +1940,11 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f0b0045
 			public const int highlight_alpha_material_light = 2131427397;
 			
-			// aapt resource value: 0x7f0b0086
-			public const int inactive_activity_button_margin = 2131427462;
-			
 			// aapt resource value: 0x7f0b0087
-			public const int inactive_activity_text_margin = 2131427463;
+			public const int inactive_activity_button_margin = 2131427463;
+			
+			// aapt resource value: 0x7f0b0088
+			public const int inactive_activity_text_margin = 2131427464;
 			
 			// aapt resource value: 0x7f0b0000
 			public const int item_touch_helper_max_drag_scroll_per_frame = 2131427328;
@@ -1961,38 +1964,38 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f0b0048
 			public const int notification_subtext_size = 2131427400;
 			
-			// aapt resource value: 0x7f0b008a
-			public const int phone_activity_button_margin = 2131427466;
-			
-			// aapt resource value: 0x7f0b0089
-			public const int phone_activity_code_size = 2131427465;
-			
-			// aapt resource value: 0x7f0b008c
-			public const int phone_activity_error_margin = 2131427468;
-			
-			// aapt resource value: 0x7f0b0088
-			public const int phone_activity_field_margin = 2131427464;
-			
 			// aapt resource value: 0x7f0b008b
-			public const int phone_activity_skip_margin = 2131427467;
+			public const int phone_activity_button_margin = 2131427467;
 			
-			// aapt resource value: 0x7f0b0082
-			public const int restore_activity_field_button_margin = 2131427458;
-			
-			// aapt resource value: 0x7f0b0081
-			public const int restore_activity_info_field_margin = 2131427457;
-			
-			// aapt resource value: 0x7f0b0080
-			public const int restore_activity_info_label_margin = 2131427456;
-			
-			// aapt resource value: 0x7f0b008e
-			public const int select_acc_activity_element_height = 2131427470;
-			
-			// aapt resource value: 0x7f0b008f
-			public const int select_acc_activity_element_padding = 2131427471;
+			// aapt resource value: 0x7f0b008a
+			public const int phone_activity_code_size = 2131427466;
 			
 			// aapt resource value: 0x7f0b008d
-			public const int select_acc_activity_progress_size = 2131427469;
+			public const int phone_activity_error_margin = 2131427469;
+			
+			// aapt resource value: 0x7f0b0089
+			public const int phone_activity_field_margin = 2131427465;
+			
+			// aapt resource value: 0x7f0b008c
+			public const int phone_activity_skip_margin = 2131427468;
+			
+			// aapt resource value: 0x7f0b0083
+			public const int restore_activity_field_button_margin = 2131427459;
+			
+			// aapt resource value: 0x7f0b0082
+			public const int restore_activity_info_field_margin = 2131427458;
+			
+			// aapt resource value: 0x7f0b0081
+			public const int restore_activity_info_label_margin = 2131427457;
+			
+			// aapt resource value: 0x7f0b008f
+			public const int select_acc_activity_element_height = 2131427471;
+			
+			// aapt resource value: 0x7f0b0090
+			public const int select_acc_activity_element_padding = 2131427472;
+			
+			// aapt resource value: 0x7f0b008e
+			public const int select_acc_activity_progress_size = 2131427470;
 			
 			// aapt resource value: 0x7f0b0063
 			public const int text_big = 2131427427;
@@ -2233,172 +2236,181 @@ namespace com.FreedomVoice.MobileApp.Android
 			public const int common_ic_googleplayservices = 2130837571;
 			
 			// aapt resource value: 0x7f020044
-			public const int design_fab_background = 2130837572;
+			public const int cursor_black = 2130837572;
 			
 			// aapt resource value: 0x7f020045
-			public const int design_snackbar_background = 2130837573;
+			public const int cursor_white = 2130837573;
 			
 			// aapt resource value: 0x7f020046
-			public const int divider = 2130837574;
+			public const int design_fab_background = 2130837574;
 			
 			// aapt resource value: 0x7f020047
-			public const int ic_action_back = 2130837575;
+			public const int design_snackbar_background = 2130837575;
 			
 			// aapt resource value: 0x7f020048
-			public const int ic_action_backspace = 2130837576;
+			public const int divider = 2130837576;
 			
 			// aapt resource value: 0x7f020049
-			public const int ic_action_callback = 2130837577;
+			public const int ic_action_back = 2130837577;
 			
 			// aapt resource value: 0x7f02004a
-			public const int ic_action_clear = 2130837578;
+			public const int ic_action_backspace = 2130837578;
 			
 			// aapt resource value: 0x7f02004b
-			public const int ic_action_close = 2130837579;
+			public const int ic_action_callback = 2130837579;
 			
 			// aapt resource value: 0x7f02004c
-			public const int ic_action_delete = 2130837580;
+			public const int ic_action_clear = 2130837580;
 			
 			// aapt resource value: 0x7f02004d
-			public const int ic_action_dial = 2130837581;
+			public const int ic_action_close = 2130837581;
 			
 			// aapt resource value: 0x7f02004e
-			public const int ic_action_info = 2130837582;
+			public const int ic_action_delete = 2130837582;
 			
 			// aapt resource value: 0x7f02004f
-			public const int ic_action_logout = 2130837583;
+			public const int ic_action_dial = 2130837583;
 			
 			// aapt resource value: 0x7f020050
-			public const int ic_action_more = 2130837584;
+			public const int ic_action_info = 2130837584;
 			
 			// aapt resource value: 0x7f020051
-			public const int ic_action_pause = 2130837585;
+			public const int ic_action_logout = 2130837585;
 			
 			// aapt resource value: 0x7f020052
-			public const int ic_action_play = 2130837586;
+			public const int ic_action_more = 2130837586;
 			
 			// aapt resource value: 0x7f020053
-			public const int ic_action_remove = 2130837587;
+			public const int ic_action_pause = 2130837587;
 			
 			// aapt resource value: 0x7f020054
-			public const int ic_action_search = 2130837588;
+			public const int ic_action_play = 2130837588;
 			
 			// aapt resource value: 0x7f020055
-			public const int ic_action_speaker = 2130837589;
+			public const int ic_action_remove = 2130837589;
 			
 			// aapt resource value: 0x7f020056
-			public const int ic_action_view = 2130837590;
+			public const int ic_action_search = 2130837590;
 			
 			// aapt resource value: 0x7f020057
-			public const int ic_launcher = 2130837591;
+			public const int ic_action_speaker = 2130837591;
 			
 			// aapt resource value: 0x7f020058
-			public const int ic_msg_callrec = 2130837592;
+			public const int ic_action_view = 2130837592;
 			
 			// aapt resource value: 0x7f020059
-			public const int ic_msg_callrec_unread = 2130837593;
+			public const int ic_launcher = 2130837593;
 			
 			// aapt resource value: 0x7f02005a
-			public const int ic_msg_fax = 2130837594;
+			public const int ic_msg_callrec = 2130837594;
 			
 			// aapt resource value: 0x7f02005b
-			public const int ic_msg_fax_unread = 2130837595;
+			public const int ic_msg_callrec_unread = 2130837595;
 			
 			// aapt resource value: 0x7f02005c
-			public const int ic_msg_voicemail = 2130837596;
+			public const int ic_msg_fax = 2130837596;
 			
 			// aapt resource value: 0x7f02005d
-			public const int ic_msg_voicemail_unread = 2130837597;
+			public const int ic_msg_fax_unread = 2130837597;
 			
 			// aapt resource value: 0x7f02005e
-			public const int ic_new_folder = 2130837598;
+			public const int ic_msg_voicemail = 2130837598;
 			
 			// aapt resource value: 0x7f02005f
-			public const int ic_notification_download = 2130837599;
+			public const int ic_msg_voicemail_unread = 2130837599;
 			
 			// aapt resource value: 0x7f020060
-			public const int ic_notification_fax = 2130837600;
+			public const int ic_new_folder = 2130837600;
 			
 			// aapt resource value: 0x7f020061
-			public const int ic_notification_playback = 2130837601;
+			public const int ic_notification_download = 2130837601;
 			
 			// aapt resource value: 0x7f020062
-			public const int ic_other_folder = 2130837602;
+			public const int ic_notification_fax = 2130837602;
 			
 			// aapt resource value: 0x7f020063
-			public const int ic_player_seek = 2130837603;
+			public const int ic_notification_playback = 2130837603;
 			
 			// aapt resource value: 0x7f020064
-			public const int ic_player_seek_inactive = 2130837604;
+			public const int ic_other_folder = 2130837604;
 			
 			// aapt resource value: 0x7f020065
-			public const int ic_player_seek_pressed = 2130837605;
+			public const int ic_player_seek = 2130837605;
 			
 			// aapt resource value: 0x7f020066
-			public const int ic_save_folder = 2130837606;
+			public const int ic_player_seek_inactive = 2130837606;
 			
 			// aapt resource value: 0x7f020067
-			public const int ic_send_folder = 2130837607;
+			public const int ic_player_seek_pressed = 2130837607;
 			
 			// aapt resource value: 0x7f020068
-			public const int ic_tab_contacts = 2130837608;
+			public const int ic_save_folder = 2130837608;
 			
 			// aapt resource value: 0x7f020069
-			public const int ic_tab_history = 2130837609;
+			public const int ic_send_folder = 2130837609;
 			
 			// aapt resource value: 0x7f02006a
-			public const int ic_tab_keypad = 2130837610;
+			public const int ic_tab_contacts = 2130837610;
 			
 			// aapt resource value: 0x7f02006b
-			public const int ic_tab_messages = 2130837611;
+			public const int ic_tab_history = 2130837611;
 			
 			// aapt resource value: 0x7f02006c
-			public const int ic_trash_folder = 2130837612;
+			public const int ic_tab_keypad = 2130837612;
 			
 			// aapt resource value: 0x7f02006d
-			public const int logo_disclaimer = 2130837613;
+			public const int ic_tab_messages = 2130837613;
 			
 			// aapt resource value: 0x7f02006e
-			public const int logo_fax = 2130837614;
+			public const int ic_trash_folder = 2130837614;
 			
 			// aapt resource value: 0x7f02006f
-			public const int logo_grey = 2130837615;
+			public const int logo_disclaimer = 2130837615;
 			
 			// aapt resource value: 0x7f020070
-			public const int logo_record = 2130837616;
+			public const int logo_fax = 2130837616;
 			
 			// aapt resource value: 0x7f020071
-			public const int logo_voicemail = 2130837617;
+			public const int logo_grey = 2130837617;
 			
 			// aapt resource value: 0x7f020072
-			public const int logo_white = 2130837618;
+			public const int logo_record = 2130837618;
 			
 			// aapt resource value: 0x7f020073
-			public const int message_indicator = 2130837619;
-			
-			// aapt resource value: 0x7f02007b
-			public const int notification_template_icon_bg = 2130837627;
+			public const int logo_voicemail = 2130837619;
 			
 			// aapt resource value: 0x7f020074
-			public const int progress_horizontal = 2130837620;
+			public const int logo_white = 2130837620;
 			
 			// aapt resource value: 0x7f020075
-			public const int ripple = 2130837621;
+			public const int message_indicator = 2130837621;
+			
+			// aapt resource value: 0x7f02007e
+			public const int notification_template_icon_bg = 2130837630;
 			
 			// aapt resource value: 0x7f020076
-			public const int scrollbar = 2130837622;
+			public const int progress_horizontal = 2130837622;
 			
 			// aapt resource value: 0x7f020077
-			public const int seek_progress = 2130837623;
+			public const int ripple = 2130837623;
 			
 			// aapt resource value: 0x7f020078
-			public const int seek_progress_empty = 2130837624;
+			public const int scrollbar = 2130837624;
 			
 			// aapt resource value: 0x7f020079
-			public const int seek_progress_fill = 2130837625;
+			public const int seek_progress = 2130837625;
 			
 			// aapt resource value: 0x7f02007a
-			public const int seek_thumb = 2130837626;
+			public const int seek_progress_bar = 2130837626;
+			
+			// aapt resource value: 0x7f02007b
+			public const int seek_progress_empty = 2130837627;
+			
+			// aapt resource value: 0x7f02007c
+			public const int seek_progress_fill = 2130837628;
+			
+			// aapt resource value: 0x7f02007d
+			public const int seek_thumb = 2130837629;
 			
 			static Drawable()
 			{
@@ -3706,8 +3718,8 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f070096
 			public const int Dlg_settings = 2131165334;
 			
-			// aapt resource value: 0x7f0700ac
-			public const int Extra_pdfReaderPath = 2131165356;
+			// aapt resource value: 0x7f0700ad
+			public const int Extra_pdfReaderPath = 2131165357;
 			
 			// aapt resource value: 0x7f070079
 			public const int FragmentContacts_hint = 2131165305;
@@ -3829,50 +3841,50 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f07003d
 			public const int MenuItem_search = 2131165245;
 			
-			// aapt resource value: 0x7f0700a2
-			public const int Notif_attachment_fail = 2131165346;
-			
-			// aapt resource value: 0x7f0700a0
-			public const int Notif_attachment_progress = 2131165344;
+			// aapt resource value: 0x7f0700a3
+			public const int Notif_attachment_fail = 2131165347;
 			
 			// aapt resource value: 0x7f0700a1
-			public const int Notif_attachment_success = 2131165345;
+			public const int Notif_attachment_progress = 2131165345;
 			
-			// aapt resource value: 0x7f0700ab
-			public const int Notif_faxShow = 2131165355;
+			// aapt resource value: 0x7f0700a2
+			public const int Notif_attachment_success = 2131165346;
 			
-			// aapt resource value: 0x7f07009f
-			public const int Notif_fax_fail = 2131165343;
+			// aapt resource value: 0x7f0700ac
+			public const int Notif_faxShow = 2131165356;
 			
-			// aapt resource value: 0x7f07009d
-			public const int Notif_fax_progress = 2131165341;
+			// aapt resource value: 0x7f0700a0
+			public const int Notif_fax_fail = 2131165344;
 			
 			// aapt resource value: 0x7f07009e
-			public const int Notif_fax_success = 2131165342;
+			public const int Notif_fax_progress = 2131165342;
 			
-			// aapt resource value: 0x7f0700a4
-			public const int Notif_record = 2131165348;
-			
-			// aapt resource value: 0x7f0700a9
-			public const int Notif_record_fail = 2131165353;
+			// aapt resource value: 0x7f07009f
+			public const int Notif_fax_success = 2131165343;
 			
 			// aapt resource value: 0x7f0700a5
-			public const int Notif_record_progress = 2131165349;
-			
-			// aapt resource value: 0x7f0700a7
-			public const int Notif_record_success = 2131165351;
-			
-			// aapt resource value: 0x7f0700a3
-			public const int Notif_voicemail = 2131165347;
+			public const int Notif_record = 2131165349;
 			
 			// aapt resource value: 0x7f0700aa
-			public const int Notif_voicemail_fail = 2131165354;
+			public const int Notif_record_fail = 2131165354;
 			
 			// aapt resource value: 0x7f0700a6
-			public const int Notif_voicemail_progress = 2131165350;
+			public const int Notif_record_progress = 2131165350;
 			
 			// aapt resource value: 0x7f0700a8
-			public const int Notif_voicemail_success = 2131165352;
+			public const int Notif_record_success = 2131165352;
+			
+			// aapt resource value: 0x7f0700a4
+			public const int Notif_voicemail = 2131165348;
+			
+			// aapt resource value: 0x7f0700ab
+			public const int Notif_voicemail_fail = 2131165355;
+			
+			// aapt resource value: 0x7f0700a7
+			public const int Notif_voicemail_progress = 2131165351;
+			
+			// aapt resource value: 0x7f0700a9
+			public const int Notif_voicemail_success = 2131165353;
 			
 			// aapt resource value: 0x7f07009a
 			public const int Snack_callFailed = 2131165338;
@@ -3882,6 +3894,9 @@ namespace com.FreedomVoice.MobileApp.Android
 			
 			// aapt resource value: 0x7f070099
 			public const int Snack_connectionLost = 2131165337;
+			
+			// aapt resource value: 0x7f07009d
+			public const int Snack_loadingError = 2131165341;
 			
 			// aapt resource value: 0x7f07009c
 			public const int Snack_serverError = 2131165340;

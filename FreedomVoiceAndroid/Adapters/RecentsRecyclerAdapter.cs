@@ -11,6 +11,7 @@ using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Entities;
 using com.FreedomVoice.MobileApp.Android.Utils;
 using FreedomVoice.Core.Utils;
+using Java.Interop;
 using Uri = Android.Net.Uri;
 
 namespace com.FreedomVoice.MobileApp.Android.Adapters
@@ -46,7 +47,7 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
             var uri = Uri.WithAppendedPath(ContactsContract.PhoneLookup.ContentFilterUri, Uri.Encode(normalizedPhone));
             string[] projection = { ContactsContract.Contacts.InterfaceConsts.Id };
             var loader = new CursorLoader(_context, uri, projection, null, null, null);
-            var cursor = (ICursor)loader.LoadInBackground();
+            var cursor = loader.LoadInBackground().JavaCast<ICursor>();
             if (cursor == null) return;
             if (cursor.MoveToFirst())
                 AdditionalSectorClick?.Invoke(this, cursor.GetString(0));

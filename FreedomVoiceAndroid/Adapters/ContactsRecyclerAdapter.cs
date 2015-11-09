@@ -8,6 +8,7 @@ using Android.Telephony;
 using Android.Views;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Entities;
+using Java.Interop;
 
 namespace com.FreedomVoice.MobileApp.Android.Adapters
 {
@@ -40,7 +41,7 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
                 string[] projection = { ContactsContract.Contacts.InterfaceConsts.Id, ContactsContract.CommonDataKinds.Phone.Number, "data2" };
                 var loader = new CursorLoader(_context, ContactsContract.CommonDataKinds.Phone.ContentUri, projection,
                     $"contact_id={id}", null, null);
-                var cursor = (ICursor)loader.LoadInBackground();
+                var cursor = loader.LoadInBackground().JavaCast<ICursor>();
                 if (cursor != null)
                 {
                     var phones = new List<Phone>();

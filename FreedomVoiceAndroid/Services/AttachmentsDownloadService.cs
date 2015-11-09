@@ -8,11 +8,14 @@ using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Support.V4.App;
+#if DEBUG
+using FreedomVoice.Core.Utils;
 using Android.Util;
+#endif
 using com.FreedomVoice.MobileApp.Android.Actions.Reports;
+using com.FreedomVoice.MobileApp.Android.Utils;
 using FreedomVoice.Core;
 using FreedomVoice.Core.Entities.Enums;
-using FreedomVoice.Core.Utils;
 using Message = com.FreedomVoice.MobileApp.Android.Entities.Message;
 using NotificationCompat = Android.Support.V7.App.NotificationCompat;
 
@@ -102,7 +105,6 @@ namespace com.FreedomVoice.MobileApp.Android.Services
                 if (!_cancellationTokens.TryGetValue(item.Id, out token))
                     Start();
                 _isInWork = true;
-                //
 
                 string title;
                 switch (item.MessageType)
@@ -121,10 +123,12 @@ namespace com.FreedomVoice.MobileApp.Android.Services
                         break;
                 }
                 _builder.SetContentTitle(title);
-                _builder.SetContentText(DataFormatUtils.ToPhoneNumber(item.FromNumber));
+                string text;
+                ContactsHelper.Instance(this).GetName(item.FromNumber, out text);
+                _builder.SetContentText(text);
                 _builder.SetProgress(100, 100, true);
                 var notification = _builder.Build();
-                //
+                
                 StartForeground(ProgressNotificationId, notification);
                 Task.Factory.StartNew(() => LoadFile(item, token), token).ContinueWith(
                     t =>

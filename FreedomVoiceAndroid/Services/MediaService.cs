@@ -5,8 +5,10 @@ using Android.Media;
 using Android.OS;
 using Android.Runtime;
 using Android.Support.V4.App;
+#if DEBUG
 using Android.Util;
 using FreedomVoice.Core.Utils;
+#endif
 using Message = com.FreedomVoice.MobileApp.Android.Entities.Message;
 using NotificationCompat = Android.Support.V7.App.NotificationCompat;
 
@@ -97,8 +99,8 @@ namespace com.FreedomVoice.MobileApp.Android.Services
                     {
 #if DEBUG
                         Log.Debug(App.AppPackage, $"RESUME PLAYING ON {DataFormatUtils.ToDuration(_mediaPlayer.CurrentPosition/1000)}");
-                        _mediaPlayer.Start();
 #endif
+                        _mediaPlayer.Start();
                     }
                     break;
                 case MediaActionPause:

@@ -69,7 +69,9 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             }
             else
             {
+#if DEBUG
                 Log.Debug(App.AppPackage, $"UNDO message {_removedMsgIndex}");
+#endif
                 _remove = false;
                 _adapter.InsertItem(Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].MessagesList[_removedMsgIndex], _removedMsgIndex);
             }

@@ -1,10 +1,13 @@
 using System;
 using Android.Graphics;
 using Android.OS;
+using Android.Support.Design.Widget;
 using Android.Support.V4.Content;
 using Android.Support.V7.Internal.View;
+using Android.Util;
 using Android.Views;
 using Android.Widget;
+using com.FreedomVoice.MobileApp.Android.CustomControls.Callbacks;
 using com.FreedomVoice.MobileApp.Android.Helpers;
 using com.FreedomVoice.MobileApp.Android.Utils;
 using FreedomVoice.Core.Utils;
@@ -28,22 +31,24 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         protected long AttachmentId;
         private Color _lightProgress;
         private Color _darkProgress;
+        private int _remove;
+        private Snackbar _snakForRemoving;
+        private SnackbarCallback _snackCallback;
 
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
             _contactsHelper = ContactsHelper.Instance(this);
             var extra = (Message)Intent.GetParcelableExtra(MessageExtraTag);
-            if (extra != null)
-                Msg = extra;
-            else
-                Msg = Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].MessagesList[Helper.SelectedMessage];
+            Msg = extra ?? Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].MessagesList[Helper.SelectedMessage];
             SupportActionBar.SetHomeAsUpIndicator(Resource.Drawable.ic_action_back);
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
             SupportActionBar.SetHomeButtonEnabled(true);
-
+            _snackCallback = new SnackbarCallback();
+            _snackCallback.SnackbarEvent += OnSnackbarDissmiss;
             _lightProgress = new Color(ContextCompat.GetColor(this, Resource.Color.colorProgressBackground));
             _darkProgress = new Color(ContextCompat.GetColor(this, Resource.Color.colorProgressOrange));
+            _remove = -1;
         }
 
         protected override void OnStart()
@@ -93,6 +98,36 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             AppHelper.Instance(this).AttachmentsHelper.FailLoadingEvent -= AttachmentsHelperOnFailLoadingEvent;
         }
 
+        private void OnUndoClick(View view)
+        {
+            _remove = -1;
+        }
+
+        private void OnSnackbarDissmiss(object sender, EventArgs args)
+        {
+            RemoveAction();
+        }
+
+        private void RemoveAction()
+        {
+            if (_remove != -1)
+            {
+                if (Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].FolderName == GetString(Resource.String.FragmentMessages_folderTrash))
+                    Helper.DeleteMessage(_remove);
+                else
+                    Helper.RemoveMessage(_remove);
+                Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].MessagesList.RemoveAt(_remove);
+#if DEBUG
+                Log.Debug(App.AppPackage, $"REMOVE message {Helper.SelectedMessage}");
+#endif
+            }
+#if DEBUG
+            else
+                Log.Debug(App.AppPackage, $"UNDO removing message {Helper.SelectedMessage}");
+#endif
+            _remove = -1;
+        }
+
         protected virtual void AttachmentsHelperOnFinishLoading(object sender, AttachmentHelperEventArgs<string> args)
         {
             if (Progress.Visibility == ViewStates.Visible)
@@ -109,6 +144,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         {
             if (Progress.Visibility == ViewStates.Visible)
                 Progress.Visibility = ViewStates.Invisible;
+            if (!args.Result)
+                Snackbar.Make(RootLayout, Resource.String.Snack_loadingError, Snackbar.LengthLong).Show();
         }
 
         /// <summary>
@@ -116,22 +153,21 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         /// </summary>
         protected virtual void RemoveButtonOnClick(object sender, EventArgs eventArgs)
         {
-            if (Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].FolderName ==
-                    GetString(Resource.String.FragmentMessages_folderTrash))
-                Helper.DeleteMessage(Helper.SelectedMessage);
-            else
-                Helper.RemoveMessage(Helper.SelectedMessage);
-            Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].TotalMailsCount--;
-            if (Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].MessagesList[Helper.SelectedMessage].Unread)
-            {
-                Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].MailsCount--;
-                Helper.ExtensionsList[Helper.SelectedExtension].MailsCount--;
-            }
-            Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].MessagesList.RemoveAt(Helper.SelectedMessage);
+            _snakForRemoving = Snackbar.Make(RootLayout, Resource.String.FragmentMessages_remove, Snackbar.LengthLong);
+            _snakForRemoving.SetAction(Resource.String.FragmentMessages_removeUndo, OnUndoClick);
+            _snakForRemoving.SetActionTextColor(ContextCompat.GetColor(this, Resource.Color.colorUndoList));
+            _snakForRemoving.SetCallback(_snackCallback);
+            _remove = Helper.SelectedMessage;
+            _snakForRemoving.Show();
         }
 
         public override void OnBackPressed()
         {
+            if ((_snakForRemoving != null) && (_snakForRemoving.IsShown))
+            {
+                RemoveAction();
+                _snakForRemoving.Dismiss();
+            }
             if (Helper.SelectedMessage != -1)
                 Helper.GetPrevious();
             base.OnBackPressed();

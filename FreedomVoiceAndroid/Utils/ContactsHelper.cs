@@ -4,6 +4,7 @@ using Android.Database;
 using Android.Net;
 using Android.Provider;
 using FreedomVoice.Core.Utils;
+using Java.Interop;
 
 namespace com.FreedomVoice.MobileApp.Android.Utils
 {
@@ -53,7 +54,7 @@ namespace com.FreedomVoice.MobileApp.Android.Utils
             var uri = Uri.WithAppendedPath(ContactsContract.PhoneLookup.ContentFilterUri, Uri.Encode(normalizedPhone));
             string[] projection = { ContactsContract.Contacts.InterfaceConsts.DisplayName };
             var loader = new CursorLoader(_context, uri, projection, null, null, null);
-            var cursor = (ICursor)loader.LoadInBackground();
+            var cursor = loader.LoadInBackground().JavaCast<ICursor>();
             
             if (cursor == null)
             {

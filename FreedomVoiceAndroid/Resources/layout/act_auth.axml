@@ -55,7 +55,8 @@
             android:hint="@string/ActivityAuth_passwordHint"
             android:inputType="textPassword"
             android:fontFamily="sans-serif"
-            android:layout_marginTop="@dimen/auth_activity_login_password_spacing" />
+            android:layout_marginTop="@dimen/auth_activity_login_password_spacing"
+            android:textCursorDrawable="@drawable/cursor_white" />
         <TextView
             android:id="@+id/authActivity_passwordError"
             style="@style/AuthErrorLabelText"

@@ -8,6 +8,7 @@ using Android.Util;
 using com.FreedomVoice.MobileApp.Android.Actions.Reports;
 using com.FreedomVoice.MobileApp.Android.Activities;
 using com.FreedomVoice.MobileApp.Android.Services;
+using com.FreedomVoice.MobileApp.Android.Utils;
 using FreedomVoice.Core.Utils;
 using Message = com.FreedomVoice.MobileApp.Android.Entities.Message;
 using NotificationCompat = Android.Support.V7.App.NotificationCompat;
@@ -121,7 +122,9 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                     _waitingList.Remove(report.Id);
                     if (errorReport.ErrorCode != ErrorReport.ErrorCancelled)
                     {
-                        _builder.SetContentText(DataFormatUtils.ToPhoneNumber(report.Msg.FromNumber));
+                        string text;
+                        ContactsHelper.Instance(_context).GetName(report.Msg.FromNumber, out text);
+                        _builder.SetContentText(text);
                         string title;
                         int icon;
                         switch (report.Msg.MessageType)

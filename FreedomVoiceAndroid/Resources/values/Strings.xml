@@ -100,6 +100,7 @@
   <string name="Snack_callFailed">Unsupported phone number</string>
   <string name="Snack_callWrong">Destination number unsupported</string>
   <string name="Snack_serverError">Internal server error</string>
+  <string name="Snack_loadingError">Error loading files</string>
   <string name="Notif_fax_progress">Fax Downloading</string>
   <string name="Notif_fax_success">Fax Downloaded</string>
   <string name="Notif_fax_fail">Fax Downloading Failed</string>

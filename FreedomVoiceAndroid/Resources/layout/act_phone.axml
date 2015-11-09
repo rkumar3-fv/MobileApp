@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:lines="4"
-        android:textSize="@dimen/text_secondary"
+        android:textSize="@dimen/text_main"
         android:textColor="@color/textColorSecondary"
         android:text="@string/ActivityNubmer_description"
         android:layout_alignParentTop="true"

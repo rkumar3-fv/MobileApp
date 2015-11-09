@@ -29,6 +29,7 @@
   <dimen name="activity_scroll_padding">4dp</dimen>
   <dimen name="activity_scroll_width">4dp</dimen>
   <dimen name="activity_progress">24dp</dimen>
+  <dimen name="activity_cursor_width">2dp</dimen>
   
   <!-- Auth Activity -->
   <dimen name="auth_activity_vertical_margin">8dp</dimen>
