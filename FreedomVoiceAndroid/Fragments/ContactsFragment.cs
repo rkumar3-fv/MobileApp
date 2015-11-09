@@ -1,6 +1,7 @@
 using Android.Database;
 using Android.OS;
 using Android.Provider;
+using Android.Runtime;
 using Android.Support.V4.Content;
 using Android.Support.V7.Widget;
 #if DEBUG
@@ -45,7 +46,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                 ContactsContract.Contacts.InterfaceConsts.DisplayName, ContactsContract.Contacts.InterfaceConsts.InVisibleGroup);
             var sortOrder = $"{ContactsContract.Contacts.InterfaceConsts.DisplayName} COLLATE LOCALIZED ASC";
             var loader = new CursorLoader(ContentActivity, uri, projection, selection, null, sortOrder);
-            var cursor = (ICursor)loader.LoadInBackground();
+            var cursor = loader.LoadInBackground().JavaCast<ICursor>();
             _adapter = new ContactsRecyclerAdapter(ContentActivity, cursor);
             _adapter.ItemClick += AdapterOnItemClick;
             _contactsView.SetAdapter(_adapter);
@@ -121,7 +122,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                 ContactsContract.Contacts.InterfaceConsts.DisplayName, ContactsContract.Contacts.InterfaceConsts.InVisibleGroup, query);
             var sortOrder = $"{ContactsContract.Contacts.InterfaceConsts.DisplayName} COLLATE LOCALIZED ASC";
             var loader = new CursorLoader(ContentActivity, uri, projection, selection, null, sortOrder);
-            return (ICursor)loader.LoadInBackground();
+            return loader.LoadInBackground().JavaCast<ICursor>();
         }
 
     }

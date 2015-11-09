@@ -66,13 +66,25 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         }
 
         /// <summary>
-        /// Check is airplane mode ON
+        /// Check is airplane mode ON for different API levels
         /// </summary>
         private bool IsAirplaneModeOn()
         {
-            if ((int)Build.VERSION.SdkInt < 17)
-                return Settings.System.GetInt(ContentResolver, Settings.System.AirplaneModeOn, 0) != 0;
+            return (int) Build.VERSION.SdkInt < 17 ? IsAirplaneOldApi() : IsAirplaneNewApi();
+        }
+
+        //@SuppressLint("NewApi")
+        private bool IsAirplaneNewApi()
+        {
             return Settings.Global.GetInt(ContentResolver, Settings.Global.AirplaneModeOn, 0) != 0;
+        }
+
+        //@SuppressWarnings("deprecation")
+        private bool IsAirplaneOldApi()
+        {
+#pragma warning disable 618
+            return Settings.System.GetInt(ContentResolver, Settings.System.AirplaneModeOn, 0) != 0;
+#pragma warning restore 618
         }
 
         /// <summary>

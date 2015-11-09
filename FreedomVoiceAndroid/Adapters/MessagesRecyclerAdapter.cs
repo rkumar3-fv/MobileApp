@@ -138,7 +138,12 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
                         viewHolder.InfoLayout.Visibility = ViewStates.Invisible;
                     }
                 }
-                else if (folder.FolderName == _context.GetString(Resource.String.FragmentMessages_folderSent))
+                else
+                {
+                    viewHolder.FoldersInfo.Text = "";
+                    viewHolder.InfoLayout.Visibility = ViewStates.Invisible;
+                }
+                if (folder.FolderName == _context.GetString(Resource.String.FragmentMessages_folderSent))
                     viewHolder.FoldersIcon.SetImageResource(Resource.Drawable.ic_send_folder);
                 else if (folder.FolderName == _context.GetString(Resource.String.FragmentMessages_folderTrash))
                     viewHolder.FoldersIcon.SetImageResource(Resource.Drawable.ic_trash_folder);

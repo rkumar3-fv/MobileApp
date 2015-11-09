@@ -8,10 +8,15 @@
         android:layout_height="@dimen/details_activity_image_height"
         android:src="@drawable/logo_record"
         android:scaleType="centerCrop" />
+    <ProgressBar
+        android:id="@+id/recordActivity_progress"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/details_activity_progress_size"
+        style="@style/OrangeHorizontalProgressBar"
+        android:visibility="invisible" />
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/details_activity_number_margin"
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:layout_marginRight="@dimen/activity_horizontal_margin">
         <TextView
@@ -21,6 +26,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
+            android:layout_marginTop="@dimen/details_activity_number_margin"
             android:layout_marginBottom="@dimen/details_activity_stamp_margin" />
         <TextView
             android:id="@+id/recordActivity_dateText"
@@ -38,6 +44,56 @@
             android:layout_alignParentLeft="true" />
     </RelativeLayout>
     <RelativeLayout
+        android:id="@+id/recordActivity_touchArea"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/details_play_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="@dimen/details_activity_number_margin">
+        <ImageButton
+            android:id="@+id/recordActivity_playerButton"
+            android:src="@drawable/ic_action_play"
+            android:background="@android:color/transparent"
+            android:layout_width="@dimen/details_play_button_size"
+            android:layout_height="@dimen/details_play_button_size"
+            android:minHeight="@dimen/details_play_button_size"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true" />
+        <TextView
+            android:id="@+id/recordActivity_playerStartText"
+            android:text="0:00"
+            style="@style/MessagesCounterText"
+            android:layout_width="@dimen/details_player_time_begin_size"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/recordActivity_playerButton"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/details_player_margin"
+            android:layout_marginRight="@dimen/details_player_time_margin" />
+        <TextView
+            android:id="@+id/recordActivity_playerEndText"
+            android:text="-0:00"
+            style="@style/MessagesCounterText"
+            android:layout_width="@dimen/details_player_time_end_size"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/details_player_time_margin" />
+        <SeekBar
+            android:id="@+id/recordActivity_playerSeek"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/details_player_seek_height"
+            android:maxHeight="@dimen/details_player_seek_height"
+            android:progressDrawable="@drawable/seek_progress"
+            android:thumb="@drawable/seek_thumb"
+            android:paddingTop="@dimen/details_player_seek_padding"
+            android:paddingBottom="@dimen/details_player_seek_padding"
+            android:layout_toRightOf="@id/recordActivity_playerStartText"
+            android:layout_toLeftOf="@id/recordActivity_playerEndText"
+            android:layout_centerVertical="true" />
+    </RelativeLayout>
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:background="@drawable/border"
@@ -48,7 +104,8 @@
             style="@style/BorderlessMessagesButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/details_activity_actions_height"
-            android:drawableStart="@drawable/ic_action_speaker"
+            android:drawableLeft="@drawable/ic_action_speaker"
+            android:drawablePadding="@dimen/details_activity_actions_spacing"
             android:text="@string/ActivityVoice_speaker"
             android:layout_marginTop="@dimen/details_activity_actions_margin"
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
@@ -59,7 +116,8 @@
             style="@style/BorderlessMessagesButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/details_activity_actions_height"
-            android:drawableStart="@drawable/ic_action_callback"
+            android:drawableLeft="@drawable/ic_action_callback"
+            android:drawablePadding="@dimen/details_activity_actions_spacing"
             android:text="@string/ActivityVoice_callback"
             android:layout_marginTop="@dimen/details_activity_actions_margin"
             android:layout_marginLeft="@dimen/details_activity_actions_spacing"

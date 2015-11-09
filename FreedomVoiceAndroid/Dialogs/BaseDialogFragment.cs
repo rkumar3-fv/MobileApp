@@ -39,8 +39,8 @@ namespace com.FreedomVoice.MobileApp.Android.Dialogs
         /// </summary>
         private void CancelButtonOnClick(object sender, EventArgs eventArgs)
         {
-            DialogEvent?.Invoke(this, new DialogEventArgs(DialogResult.Cancel));
             Dismiss();
+            DialogEvent?.Invoke(this, new DialogEventArgs(DialogResult.Cancel));
         }
 
         /// <summary>
@@ -48,8 +48,8 @@ namespace com.FreedomVoice.MobileApp.Android.Dialogs
         /// </summary>
         private void OkButtonOnClick(object sender, EventArgs eventArgs)
         {
-            DialogEvent?.Invoke(this, new DialogEventArgs(DialogResult.Ok));
             Dismiss();
+            DialogEvent?.Invoke(this, new DialogEventArgs(DialogResult.Ok));
         }
     }
 }

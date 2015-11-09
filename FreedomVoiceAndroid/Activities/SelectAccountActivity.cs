@@ -69,6 +69,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         protected override void OnResume()
         {
             base.OnResume();
+            if (_progressLayout.Visibility == ViewStates.Visible)
+                _progressLayout.Visibility = ViewStates.Gone;
             if (Helper.SelectedAccount == null) return;
             var intent = (Helper.IsFirstRun)
                 ? new Intent(this, typeof (DisclaimerActivity))

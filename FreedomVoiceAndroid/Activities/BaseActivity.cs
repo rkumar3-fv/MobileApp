@@ -69,6 +69,9 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                     case ActionsHelperEventArgs.ConnectionLostError:
                         Snackbar.Make(RootLayout, Resource.String.Snack_connectionLost, Snackbar.LengthLong).Show();
                         return;
+                    case ActionsHelperEventArgs.InternalError:
+                        Snackbar.Make(RootLayout, Resource.String.Snack_serverError, Snackbar.LengthLong).Show();
+                        return;
                 }
             }
         }

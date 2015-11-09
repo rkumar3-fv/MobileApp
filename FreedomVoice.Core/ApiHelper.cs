@@ -1,27 +1,22 @@
-﻿namespace FreedomVoice.Core
-{
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Net;
-    using System.Text;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using Entities;
-    using Entities.Base;
-    using Entities.Enums;
-    using Entities.EventArgs;
-    using Newtonsoft.Json;
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using FreedomVoice.Core.Entities;
+using FreedomVoice.Core.Entities.Base;
+using FreedomVoice.Core.Entities.Enums;
+using Newtonsoft.Json;
 
+namespace FreedomVoice.Core
+{
     public static class ApiHelper
     {
         public static CookieContainer CookieContainer { get; set; }
 
-        public static event DownloadStatus OnDownloadStatus;
-
-        public delegate void DownloadStatus(string messageId, DownloadStatusArgs args);
-
-        public async static Task<BaseResult<string>> Login(string login, string password)
+        public static async Task<BaseResult<string>> Login(string login, string password)
         {
             CookieContainer = new CookieContainer();
 
@@ -29,30 +24,30 @@
             return await MakeAsyncPostRequest<string>("/api/v1/login", postdata, "application/x-www-form-urlencoded", CancellationToken.None);
         }
 
-        public async static Task<BaseResult<string>> Logout()
+        public static async Task<BaseResult<string>> Logout()
         {
             CookieContainer = null;
             var task = Task.Run(() => new BaseResult<string> { Code = ErrorCodes.Ok, Result = "" });
             return await task;
         }
 
-        public async static Task<BaseResult<string>> PasswordReset(string login)
+        public static async Task<BaseResult<string>> PasswordReset(string login)
         {
             var postdata = $"UserName={login}";
             return await MakeAsyncPostRequest<string>("/api/v1/passwordReset", postdata, "application/x-www-form-urlencoded", CancellationToken.None);
         }
 
-        public async static Task<BaseResult<PollingInterval>> GetPollingInterval()
+        public static async Task<BaseResult<PollingInterval>> GetPollingInterval()
         {
             return await MakeAsyncGetRequest<PollingInterval>("/api/v1/settings/pollingInterval", "application/json", CancellationToken.None);
         }
 
-        public async static Task<BaseResult<DefaultPhoneNumbers>> GetSystems()
+        public static async Task<BaseResult<DefaultPhoneNumbers>> GetSystems()
         {
             return await MakeAsyncGetRequest<DefaultPhoneNumbers>("/api/v1/systems", "application/json", CancellationToken.None);
         }
 
-        public async static Task<BaseResult<PresentationPhoneNumbers>> GetPresentationPhoneNumbers(string systemPhoneNumber)
+        public static async Task<BaseResult<PresentationPhoneNumbers>> GetPresentationPhoneNumbers(string systemPhoneNumber)
         {
             return await MakeAsyncGetRequest<PresentationPhoneNumbers>(
                 $"/api/v1/systems/{systemPhoneNumber}/presentationPhoneNumbers",
@@ -60,7 +55,7 @@
                 CancellationToken.None);
         }
 
-        public async static Task<BaseResult<CreateCallReservationSetting>> CreateCallReservation(string systemPhoneNumber, string expectedCallerIdNumber, string presentationPhoneNumber, string destinationPhoneNumber)
+        public static async Task<BaseResult<CreateCallReservationSetting>> CreateCallReservation(string systemPhoneNumber, string expectedCallerIdNumber, string presentationPhoneNumber, string destinationPhoneNumber)
         {
             var postdata = $"ExpectedCallerIdNumber={expectedCallerIdNumber.Replace("+", "%2B")}&PresentationPhoneNumber={presentationPhoneNumber}&DestinationPhoneNumber={destinationPhoneNumber.Replace("+", "%2B")}";
             return await MakeAsyncPostRequest<CreateCallReservationSetting>(
@@ -70,7 +65,7 @@
                 CancellationToken.None);
         }
 
-        public async static Task<BaseResult<List<Mailbox>>> GetMailboxes(string systemPhoneNumber)
+        public static async Task<BaseResult<List<Mailbox>>> GetMailboxes(string systemPhoneNumber)
         {
             return await MakeAsyncGetRequest<List<Mailbox>>(
                 $"/api/v1/systems/{systemPhoneNumber}/mailboxes",
@@ -78,7 +73,7 @@
                 CancellationToken.None);
         }
 
-        public async static Task<BaseResult<List<MailboxWithCount>>> GetMailboxesWithCounts(string systemPhoneNumber)
+        public static async Task<BaseResult<List<MailboxWithCount>>> GetMailboxesWithCounts(string systemPhoneNumber)
         {
             return await MakeAsyncGetRequest<List<MailboxWithCount>>(
                 $"/api/v1/systems/{systemPhoneNumber}/mailboxesWithCounts",
@@ -86,7 +81,7 @@
                 CancellationToken.None);
         }
 
-        public async static Task<BaseResult<List<Folder>>> GetFolders(string systemPhoneNumber, int mailboxNumber)
+        public static async Task<BaseResult<List<Folder>>> GetFolders(string systemPhoneNumber, int mailboxNumber)
         {
             return await MakeAsyncGetRequest<List<Folder>>(
                 $"/api/v1/systems/{systemPhoneNumber}/mailboxes/{mailboxNumber}/folders",
@@ -94,7 +89,7 @@
                 CancellationToken.None);
         }
 
-        public async static Task<BaseResult<List<MessageFolderWithCounts>>> GetFoldersWithCount(string systemPhoneNumber, int mailboxNumber)
+        public static async Task<BaseResult<List<MessageFolderWithCounts>>> GetFoldersWithCount(string systemPhoneNumber, int mailboxNumber)
         {
             return await MakeAsyncGetRequest<List<MessageFolderWithCounts>>(
                 $"/api/v1/systems/{systemPhoneNumber}/mailboxes/{mailboxNumber}/foldersWithCounts",
@@ -102,7 +97,7 @@
                 CancellationToken.None);
         }
 
-        public async static Task<BaseResult<List<Message>>> GetMesages(string systemPhoneNumber, int mailboxNumber, string folderName, int pageSize, int pageNumber, bool asc)
+        public static async Task<BaseResult<List<Message>>> GetMesages(string systemPhoneNumber, int mailboxNumber, string folderName, int pageSize, int pageNumber, bool asc)
         {
             return await MakeAsyncGetRequest<List<Message>>(
                 $"/api/v1/systems/{systemPhoneNumber}/mailboxes/{mailboxNumber}/folders/{folderName}/messages?PageSize={pageSize}&PageNumber={pageNumber}&SortAsc={asc}",
@@ -110,7 +105,7 @@
                 CancellationToken.None);
         }
 
-        public async static Task<BaseResult<string>> MoveMessages(string systemPhoneNumber, int mailboxNumber, string destinationFolder, List<string> messageIds)
+        public static async Task<BaseResult<string>> MoveMessages(string systemPhoneNumber, int mailboxNumber, string destinationFolder, List<string> messageIds)
         {
             var messagesStr = messageIds.Aggregate(string.Empty, (current, messageId) => current + ("&MessageIds=" + messageId));
 
@@ -123,7 +118,7 @@
                 CancellationToken.None);
         }
 
-        public async static Task<BaseResult<string>> DeleteMessages(string systemPhoneNumber, int mailboxNumber, List<string> messageIds)
+        public static async Task<BaseResult<string>> DeleteMessages(string systemPhoneNumber, int mailboxNumber, List<string> messageIds)
         {
             var postdata = messageIds.Aggregate(string.Empty, (current, messageId) => current + ("&MessageIds=" + messageId));
 
@@ -134,7 +129,7 @@
                 CancellationToken.None);
         }
 
-        public async static Task<BaseResult<MemoryStream>> GetMedia(string systemPhoneNumber, int mailboxNumber, string folderName, string messageId, MediaType mediaType, CancellationToken token)
+        public static async Task<BaseResult<Stream>> GetMedia(string systemPhoneNumber, int mailboxNumber, string folderName, string messageId, MediaType mediaType, CancellationToken token)
         {
             return await MakeAsyncFileDownload(
                 $"/api/v1/systems/{systemPhoneNumber}/mailboxes/{mailboxNumber}/folders/{folderName}/messages/{messageId}/media/{mediaType}",
@@ -190,83 +185,19 @@
             return await GetResponce<T>(request, cts);
         }
 
-        public static async Task<BaseResult<MemoryStream>> MakeAsyncFileDownload(string url, string contentType, string messageId, CancellationToken ct)
+        public static async Task<BaseResult<Stream>> MakeAsyncFileDownload(string url, string contentType, string messageId, CancellationToken ct)
         {
             var request = GetRequest(url, "GET", contentType);
-            BaseResult<MemoryStream> retResult = null;
+            BaseResult<Stream> retResult = null;
             var task = Task.Factory.FromAsync<WebResponse>(request.BeginGetResponse, request.EndGetResponse, null);
-
             try
             {
                 var response = await task;
-                var stream = response.GetResponseStream();
-                var total = response.ContentLength;
-                var totalRead = 0;
-                var progressIndicate = 0;
-                var lastProgressIndicate = 0;
-                const int chunkSize = 4096;
-                var buffer = new byte[chunkSize];
-                using (var ms = new MemoryStream())
+                retResult = new BaseResult<Stream>
                 {
-                    int bytesRead;
-
-                    if (OnDownloadStatus != null)
-                    {
-                        OnDownloadStatus.Invoke(messageId,
-                             new DownloadStatusArgs
-                             {
-                                 Status = Entities.Enums.DownloadStatus.Started,
-                                 Progress = 0
-                             });
-                    }
-                    while ((bytesRead = stream.Read(buffer, 0, buffer.Length)) > 0)
-                    {
-                        if (ct.IsCancellationRequested)
-                        {
-                            retResult = new BaseResult<MemoryStream>
-                            {
-                                Code = ErrorCodes.Cancelled,
-                                Result = null
-                            };
-                            break;
-                        }
-
-                        totalRead += bytesRead;
-                        ms.Write(buffer, 0, bytesRead);
-                        progressIndicate = (int)(totalRead * 100 / total);
-
-                        if (OnDownloadStatus != null && progressIndicate > lastProgressIndicate)
-                        {
-                            OnDownloadStatus.Invoke(
-                                messageId, new DownloadStatusArgs
-                                {
-                                    Status = Entities.Enums.DownloadStatus.InProgress,
-                                    Progress = progressIndicate
-                                });
-
-                            lastProgressIndicate = progressIndicate;
-                        }
-                    }
-
-                    if (OnDownloadStatus != null && !ct.IsCancellationRequested)
-                    {
-                        OnDownloadStatus.Invoke(
-                            messageId, new DownloadStatusArgs
-                            {
-                                Status = Entities.Enums.DownloadStatus.Ended,
-                                Progress = 100
-                            });
-                    }
-
-                    if (!ct.IsCancellationRequested)
-                    {
-                        retResult = new BaseResult<MemoryStream>
-                        {
-                            Code = ErrorCodes.Ok,
-                            Result = ms
-                        };
-                    }
-                }
+                    Code = ErrorCodes.Ok,
+                    Result = response.GetResponseStream()
+                };
             }
             catch (WebException ex)
             {
@@ -277,7 +208,7 @@
                     {
                         case HttpStatusCode.Unauthorized:
                             {
-                                retResult = new BaseResult<MemoryStream>
+                                retResult = new BaseResult<Stream>
                                 {
                                     Code = ErrorCodes.Unauthorized,
                                     Result = null
@@ -286,7 +217,7 @@
                             }
                         case HttpStatusCode.Forbidden:
                             {
-                                retResult = new BaseResult<MemoryStream>
+                                retResult = new BaseResult<Stream>
                                 {
                                     Code = ErrorCodes.Forbidden,
                                     Result = null
@@ -295,7 +226,7 @@
                             }
                         case HttpStatusCode.BadRequest:
                             {
-                                retResult = new BaseResult<MemoryStream>
+                                retResult = new BaseResult<Stream>
                                 {
                                     Code = ErrorCodes.BadRequest,
                                     Result = null
@@ -304,7 +235,7 @@
                             }
                         case HttpStatusCode.NotFound:
                             {
-                                retResult = new BaseResult<MemoryStream>
+                                retResult = new BaseResult<Stream>
                                 {
                                     Code = ErrorCodes.NotFound,
                                     Result = null
@@ -313,7 +244,7 @@
                             }
                         case HttpStatusCode.PaymentRequired:
                             {
-                                retResult = new BaseResult<MemoryStream>
+                                retResult = new BaseResult<Stream>
                                 {
                                     Code = ErrorCodes.PaymentRequired,
                                     Result = null
@@ -322,7 +253,7 @@
                             }
                         case HttpStatusCode.InternalServerError:
                             {
-                                retResult = new BaseResult<MemoryStream>
+                                retResult = new BaseResult<Stream>
                                 {
                                     Code = ErrorCodes.InternalServerError,
                                     Result = null
@@ -334,7 +265,7 @@
 
                 if (ct.IsCancellationRequested)
                 {
-                    retResult = new BaseResult<MemoryStream>
+                    retResult = new BaseResult<Stream>
                     {
                         Code = ErrorCodes.Cancelled,
                         Result = null
@@ -345,11 +276,101 @@
             return retResult;
         }
 
+        public static async Task<BaseResult<MediaResponse>> MakeAsyncFileDownload(string url, string contentType, CancellationToken ct)
+        {
+            var request = GetRequest(url, "GET", contentType);
+            BaseResult<MediaResponse> retResult = null;
+            var task = Task.Factory.FromAsync<WebResponse>(request.BeginGetResponse, request.EndGetResponse, null);
+            try
+            {
+                var response = await task;
+                retResult = new BaseResult<MediaResponse>
+                {
+                    Code = ErrorCodes.Ok,
+                    Result = new MediaResponse(response.ContentLength, response.GetResponseStream())
+                };
+            }
+            catch (WebException ex)
+            {
+                var resp = (HttpWebResponse)ex.Response;
+                if (resp != null)
+                {
+                    switch (resp.StatusCode)
+                    {
+                        case HttpStatusCode.Unauthorized:
+                            {
+                                retResult = new BaseResult<MediaResponse>
+                                {
+                                    Code = ErrorCodes.Unauthorized,
+                                    Result = null
+                                };
+                                break;
+                            }
+                        case HttpStatusCode.Forbidden:
+                            {
+                                retResult = new BaseResult<MediaResponse>
+                                {
+                                    Code = ErrorCodes.Forbidden,
+                                    Result = null
+                                };
+                                break;
+                            }
+                        case HttpStatusCode.BadRequest:
+                            {
+                                retResult = new BaseResult<MediaResponse>
+                                {
+                                    Code = ErrorCodes.BadRequest,
+                                    Result = null
+                                };
+                                break;
+                            }
+                        case HttpStatusCode.NotFound:
+                            {
+                                retResult = new BaseResult<MediaResponse>
+                                {
+                                    Code = ErrorCodes.NotFound,
+                                    Result = null
+                                };
+                                break;
+                            }
+                        case HttpStatusCode.PaymentRequired:
+                            {
+                                retResult = new BaseResult<MediaResponse>
+                                {
+                                    Code = ErrorCodes.PaymentRequired,
+                                    Result = null
+                                };
+                                break;
+                            }
+                        case HttpStatusCode.InternalServerError:
+                            {
+                                retResult = new BaseResult<MediaResponse>
+                                {
+                                    Code = ErrorCodes.InternalServerError,
+                                    Result = null
+                                };
+                                break;
+                            }
+                    }
+                }
+
+                if (ct.IsCancellationRequested)
+                {
+                    retResult = new BaseResult<MediaResponse>
+                    {
+                        Code = ErrorCodes.Cancelled,
+                        Result = null
+                    };
+                }
+            }
+            return retResult;
+        }
+
         private static async Task<BaseResult<T>> GetResponce<T>(HttpWebRequest request, CancellationToken ct)
         {
             BaseResult<T> retResult = null;
 
-            Task<WebResponse> task = Task.Factory.FromAsync<WebResponse>(request.BeginGetResponse, request.EndGetResponse, null);
+            var task = Task.Factory.FromAsync<WebResponse>(request.BeginGetResponse, request.EndGetResponse, null);
 
             try
             {

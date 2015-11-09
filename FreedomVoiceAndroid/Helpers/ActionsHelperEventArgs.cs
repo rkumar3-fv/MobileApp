@@ -9,6 +9,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
     {
         public const int ConnectionLostError = 1;       //Connection lost
         public const int ChangePresentation = 2;       //Presentation number changed
+        public const int InternalError = 3;
         public const int AuthLoginError = 11;           //BadRequest
         public const int AuthPasswdError = 12;          //Unauthorized
         public const int RestoreError = 21;             //BadRequest

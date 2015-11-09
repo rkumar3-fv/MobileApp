@@ -13,8 +13,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         Label = "@string/ActivityNumber_title",
         ScreenOrientation = ScreenOrientation.Portrait,
         WindowSoftInputMode = SoftInput.AdjustResize,
-        Theme = "@style/AppThemeActionBar",
-        NoHistory = true)]
+        Theme = "@style/AppThemeActionBar")]
     public class SetNumberActivityWithBack : SetNumberActivity
     {
         protected override void OnCreate(Bundle bundle)
@@ -26,7 +25,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             SkipButton.Visibility = ViewStates.Gone;
         }
 
-        protected new void ApplyButtonOnClick(object sender, EventArgs eventArgs)
+        protected override void ApplyButtonOnClick(object sender, EventArgs eventArgs)
         {
             if (SetupNumber())
                 BaseBackPressed();

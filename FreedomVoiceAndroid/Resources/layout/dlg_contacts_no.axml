@@ -14,7 +14,6 @@
             android:id="@+id/NoContactsDlg_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/dlg_padding"
             style="@style/DlgContentText"
             android:maxLines="2"
             android:singleLine="false"

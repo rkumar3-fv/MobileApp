@@ -25,6 +25,12 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             MessageStamp = FindViewById<TextView>(Resource.Id.voicemailActivity_stampText);
             CallBackButton = FindViewById<Button>(Resource.Id.voicemailActivity_callbackButton);
             SpeakerButton = FindViewById<Button>(Resource.Id.voicemailActivity_speakerButton);
+            Progress = FindViewById<ProgressBar>(Resource.Id.voicemailActivity_progress);
+            PlayerButton = FindViewById<ImageButton>(Resource.Id.voicemailActivity_playerButton);
+            StartTextView = FindViewById<TextView>(Resource.Id.voicemailActivity_playerStartText);
+            EndTextView = FindViewById<TextView>(Resource.Id.voicemailActivity_playerEndText);
+            PlayerSeek = FindViewById<SeekBar>(Resource.Id.voiceMailActivity_playerSeek);
+            TouchLayout = FindViewById<RelativeLayout>(Resource.Id.voicemailActivity_touchArea);
             SupportActionBar.SetTitle(Resource.String.ActivityVoice_title);
         }
     }

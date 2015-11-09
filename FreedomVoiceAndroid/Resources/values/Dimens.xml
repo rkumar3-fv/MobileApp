@@ -2,6 +2,7 @@
 <resources>
   <!-- Text-->
   <dimen name="text_big">34sp</dimen>
+  <dimen name="text_edit">18sp</dimen>
   <dimen name="text_main">16sp</dimen>
   <dimen name="text_secondary">14sp</dimen>
   <dimen name="text_small">12sp</dimen>
@@ -29,6 +30,7 @@
   <dimen name="activity_scroll_padding">4dp</dimen>
   <dimen name="activity_scroll_width">4dp</dimen>
   <dimen name="activity_progress">24dp</dimen>
+  <dimen name="activity_cursor_width">2dp</dimen>
   
   <!-- Auth Activity -->
   <dimen name="auth_activity_vertical_margin">8dp</dimen>
@@ -56,23 +58,33 @@
   <dimen name="inactive_activity_text_margin">43dp</dimen>
   
   <!-- Phone activity -->
-  <dimen name="phone_activity_field_margin">30dp</dimen>
+  <dimen name="phone_activity_field_margin">13dp</dimen>
   <dimen name="phone_activity_code_size">30dp</dimen>
-  <dimen name="phone_activity_button_margin">14dp</dimen>
-  <dimen name="phone_activity_skip_margin">24dp</dimen>
+  <dimen name="phone_activity_button_margin">20dp</dimen>
+  <dimen name="phone_activity_skip_margin">19dp</dimen>
+  <dimen name="phone_activity_error_margin">1dp</dimen>
   
   <!-- Select account activity -->
-  <dimen name="select_acc_activity_progress_size">65dp</dimen>
+  <dimen name="select_acc_activity_progress_size">56dp</dimen>
   <dimen name="select_acc_activity_element_height">48dp</dimen>
   <dimen name="select_acc_activity_element_padding">8dp</dimen>
   
   <!-- Messages details activity -->
   <dimen name="details_activity_image_height">200dp</dimen>
-  <dimen name="details_activity_number_margin">30dp</dimen>
+  <dimen name="details_activity_number_margin">26dp</dimen>
   <dimen name="details_activity_stamp_margin">20dp</dimen>
   <dimen name="details_activity_actions_margin">10dp</dimen>
   <dimen name="details_activity_actions_spacing">8dp</dimen>
   <dimen name="details_activity_actions_height">36dp</dimen>
+  <dimen name="details_activity_progress_size">4dp</dimen>
+  <dimen name="details_play_button_size">36dp</dimen>
+  <dimen name="details_play_margin">9dp</dimen>
+  <dimen name="details_player_margin">7dp</dimen>
+  <dimen name="details_player_time_margin">5dp</dimen>
+  <dimen name="details_player_time_begin_size">36dp</dimen>
+  <dimen name="details_player_time_end_size">40dp</dimen>
+  <dimen name="details_player_seek_height">2dp</dimen>
+  <dimen name="details_player_seek_padding">10dp</dimen>
   
   <!-- Content activity -->
   <dimen name="content_activity_tab_text_size">14sp</dimen>

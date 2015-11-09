@@ -29,6 +29,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             SenderText = FindViewById<TextView>(Resource.Id.faxActivity_senderText);
             MessageDate = FindViewById<TextView>(Resource.Id.faxActivity_dateText);
             MessageStamp = FindViewById<TextView>(Resource.Id.faxActivity_stampText);
+            Progress = FindViewById<ProgressBar>(Resource.Id.faxActivity_progress);
             _openFaxButton = FindViewById<Button>(Resource.Id.faxActivity_openFax);
             _openFaxButton.Click += OpenFaxButtonOnClick;
             SupportActionBar.SetTitle(Resource.String.ActivityFax_title);
@@ -46,35 +47,36 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         /// </summary>
         private void OpenFaxButtonOnClick(object sender, EventArgs eventArgs)
         {
-            AttachmentId = AppHelper.Instance(this).AttachmentsHelper.LoadFaxAttachment(Msg);
+            AttachmentId = AppHelper.Instance(this).AttachmentsHelper.LoadAttachment(Msg);
         }
 
-        private void AttachmentsHelperOnFinishLoading(object sender, AttachmentHelperEventArgs<string> args)
+        protected override void AttachmentsHelperOnFinishLoading(object sender, AttachmentHelperEventArgs<string> args)
         {
-            if (args.Id == Msg.Id)
+            if (args.Id != Msg.Id) return;
+            base.AttachmentsHelperOnFinishLoading(sender, args);
+            if (!_openFaxButton.Activated)
+                _openFaxButton.Activated = true;
+            var intent = new Intent(Intent.ActionView);
+            var file = new Java.IO.File(args.Result);
+            file.SetReadable(true);
+            intent.SetDataAndType(Uri.FromFile(file), "application/pdf");
+            intent.SetFlags(ActivityFlags.NoHistory);
+            try
             {
-                var intent = new Intent(Intent.ActionView);
-                var file = new Java.IO.File(args.Result);
-                file.SetReadable(true);
-                intent.SetDataAndType(Uri.FromFile(file), "application/pdf");
-                intent.SetFlags(ActivityFlags.NoHistory);
+                StartActivityForResult(intent, 1);
+            }
+            catch (ActivityNotFoundException)
+            {
                 try
                 {
-                    StartActivityForResult(intent, 1);
+                    StartActivity(new Intent(Intent.ActionView, Uri.Parse("market://details?id=" + GetString(Resource.String.Extra_pdfReaderPath))));
                 }
                 catch (ActivityNotFoundException)
                 {
-                    try
-                    {
-                        StartActivity(new Intent(Intent.ActionView, Uri.Parse("market://details?id=" + GetString(Resource.String.Extra_pdfReaderPath))));
-                    }
-                    catch (ActivityNotFoundException)
-                    {
-                        StartActivity(new Intent(Intent.ActionView, Uri.Parse("http://play.google.com/store/apps/details?id=" + GetString(Resource.String.Extra_pdfReaderPath))));
-                        throw;
-                    }
+                    StartActivity(new Intent(Intent.ActionView, Uri.Parse("http://play.google.com/store/apps/details?id=" + GetString(Resource.String.Extra_pdfReaderPath))));
                     throw;
                 }
+                throw;
             }
         }
 
@@ -83,13 +85,22 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             base.OnResume();
             _openFaxButton.Activated = Msg.Length != 0;
             MessageStamp.Text = Msg.Length == 1 ? GetString(Resource.String.FragmentMessages_onePage) : $"{Msg.Length} {GetString(Resource.String.FragmentMessages_morePage)}";
-            AppHelper.Instance(this).AttachmentsHelper.OnFinish += AttachmentsHelperOnFinishLoading;
         }
 
-        protected override void OnPause()
+        protected override void AttachmentsHelperOnProgressLoading(object sender, AttachmentHelperEventArgs<int> args)
         {
-            base.OnPause();
-            AppHelper.Instance(this).AttachmentsHelper.OnFinish -= AttachmentsHelperOnFinishLoading;
+            if (Msg.Id != args.Id) return;
+            base.AttachmentsHelperOnProgressLoading(sender, args);
+            if (_openFaxButton.Activated)
+                _openFaxButton.Activated = false;
+        }
+
+        protected override void AttachmentsHelperOnFailLoadingEvent(object sender, AttachmentHelperEventArgs<bool> args)
+        {
+            if (Msg.Id != args.Id) return;
+            base.AttachmentsHelperOnFailLoadingEvent(sender, args);
+            if (!_openFaxButton.Activated)
+                _openFaxButton.Activated = true;
         }
     }
 }

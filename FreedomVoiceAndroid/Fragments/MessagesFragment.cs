@@ -2,7 +2,6 @@ using System;
 using Android.Content;
 using Android.Support.Design.Widget;
 using Android.Support.V4.Content;
-using Android.Support.V4.Widget;
 using Android.Support.V7.Widget;
 using Android.Support.V7.Widget.Helper;
 using Android.Util;
@@ -21,7 +20,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
     /// <summary>
     /// Messages tab
     /// </summary>
-    public class MessagesFragment : BasePagerFragment, SwipeRefreshLayout.IOnRefreshListener
+    public class MessagesFragment : BasePagerFragment
     {
         private int _removedMsgIndex;
         private bool _remove;
@@ -30,15 +29,11 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         private SnackbarCallback _snackCallback;
         private MessagesRecyclerAdapter _adapter;
         private RecyclerView _recyclerView;
-        private SwipeRefreshLayout _swipeRefresh;
         private ItemTouchHelper _swipeTouchHelper;
 
         protected override View InitView()
         {
             var view = Inflater.Inflate(Resource.Layout.frag_messages, null, false);
-            _swipeRefresh = view.FindViewById<SwipeRefreshLayout>(Resource.Id.messagesFragment_swipe);
-            _swipeRefresh.SetOnRefreshListener(this);
-            _swipeRefresh.SetColorSchemeResources(Resource.Color.colorPullRefreshFirst, Resource.Color.colorPullRefreshSecond, Resource.Color.colorPullRefreshThird);
             _recyclerView = view.FindViewById<RecyclerView>(Resource.Id.messagesFragment_recyclerView);
             _recyclerView.SetLayoutManager(new LinearLayoutManager(Activity));
             _recyclerView.AddItemDecoration(new DividerItemDecorator(Activity, Resource.Drawable.divider));
@@ -74,7 +69,9 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             }
             else
             {
+#if DEBUG
                 Log.Debug(App.AppPackage, $"UNDO message {_removedMsgIndex}");
+#endif
                 _remove = false;
                 _adapter.InsertItem(Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].MessagesList[_removedMsgIndex], _removedMsgIndex);
             }
@@ -141,6 +138,8 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             base.OnResume();
             TraceContent();
             _adapter.CurrentContent = Helper.GetCurrent();
+            if (Helper.SelectedFolder != -1)
+                Helper.ForceLoadMessages();
         }
 
         protected override void OnHelperEvent(ActionsHelperEventArgs args)
@@ -151,12 +150,22 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                 {
                     case ActionsHelperEventArgs.MsgUpdated:
                         TraceContent();
-                        if (Helper.SelectedFolder == -1)
+                        if (Helper.SelectedExtension == -1)
+                        {
                             _swipeTouchHelper.AttachToRecyclerView(null);
+                            Helper.ForceLoadExtensions();
+                        }
+                        else if (Helper.SelectedFolder == -1)
+                        {
+                            _swipeTouchHelper.AttachToRecyclerView(null);
+                            Helper.ForceLoadFolders();
+                        }
                         else
+                        {
                             _swipeTouchHelper.AttachToRecyclerView(_recyclerView);
+                            Helper.ForceLoadMessages();
+                        }
                         _adapter.CurrentContent = Helper.GetCurrent();
-                        _swipeRefresh.Refreshing = false;
                         break;
                 }
             }
@@ -185,11 +194,6 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                         break;
                 }
             }
-        }
-
-        public void OnRefresh()
-        {
-            Helper.ForceLoadExtensions();
         }
     }
 }

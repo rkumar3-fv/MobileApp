@@ -24,7 +24,12 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Responses
         public CallReservationResponse(long requestId, string serviceNumber) : base(requestId)
         {
 #if DEBUG
-            ServiceNumber = $"+1{serviceNumber}";
+            if ((serviceNumber.Length==12)&&(serviceNumber.StartsWith("+1")))
+                ServiceNumber = serviceNumber;
+            else if ((serviceNumber.Length == 11) && (serviceNumber.StartsWith("1")))
+                ServiceNumber = $"+{serviceNumber}";
+            else
+                ServiceNumber = $"+1{serviceNumber}";
 #else
             ServiceNumber = serviceNumber;
 #endif

@@ -5,7 +5,8 @@
     android:layout_height="fill_parent"
     android:layout_marginLeft="@dimen/activity_horizontal_margin"
     android:layout_marginRight="@dimen/activity_horizontal_margin"
-    android:layout_marginBottom="@dimen/auth_activity_vertical_margin">
+    android:layout_marginBottom="@dimen/auth_activity_vertical_margin"
+    android:clipToPadding="false">
     <Button
         android:id="@+id/authActivity_restoreButton"
         style="@style/BorderlessRestoreButtonStyle"
@@ -55,7 +56,8 @@
             android:hint="@string/ActivityAuth_passwordHint"
             android:inputType="textPassword"
             android:fontFamily="sans-serif"
-            android:layout_marginTop="@dimen/auth_activity_login_password_spacing" />
+            android:layout_marginTop="@dimen/auth_activity_login_password_spacing"
+            android:textCursorDrawable="@drawable/cursor_white" />
         <TextView
             android:id="@+id/authActivity_passwordError"
             style="@style/AuthErrorLabelText"

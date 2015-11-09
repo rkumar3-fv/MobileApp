@@ -52,7 +52,7 @@
     <AndroidUseSharedRuntime>False</AndroidUseSharedRuntime>
     <AndroidLinkSkip>
     </AndroidLinkSkip>
-    <AndroidLinkMode>None</AndroidLinkMode>
+    <AndroidLinkMode>SdkOnly</AndroidLinkMode>
     <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
     <BundleAssemblies>False</BundleAssemblies>
     <AndroidCreatePackagePerAbi>False</AndroidCreatePackagePerAbi>
@@ -81,6 +81,7 @@
     <Reference Include="System" />
     <Reference Include="System.Collections" />
     <Reference Include="System.Core" />
+    <Reference Include="System.IO" />
     <Reference Include="System.Runtime" />
     <Reference Include="System.Threading.Tasks" />
     <Reference Include="System.Xml.Linq" />
@@ -120,6 +121,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Actions\BaseAction.cs" />
+    <Compile Include="Actions\Reports\BaseReport.cs" />
+    <Compile Include="Actions\Reports\ErrorReport.cs" />
+    <Compile Include="Actions\Reports\ProgressReport.cs" />
+    <Compile Include="Actions\Reports\SuccessReport.cs" />
     <Compile Include="Actions\Requests\BaseRequest.cs" />
     <Compile Include="Actions\Requests\CallReservationRequest.cs" />
     <Compile Include="Actions\Requests\DeleteMessageRequest.cs" />
@@ -213,20 +218,21 @@
     <Compile Include="Helpers\AppHelper.cs" />
     <Compile Include="Helpers\AppPreferencesHelper.cs" />
     <Compile Include="Helpers\AttachmentHelperEventArgs.cs" />
-    <Compile Include="Helpers\FaxForegroundBinder.cs" />
     <Compile Include="Helpers\AttachmentsHelper.cs" />
-    <Compile Include="Notifications\BaseNotification.cs" />
-    <Compile Include="Notifications\FaxUploadNotification.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\AppServiceResultReceiver.cs" />
+    <Compile Include="Services\AttachmentsServiceResultReceiver.cs" />
     <Compile Include="Services\ComService.cs" />
     <Compile Include="Services\ComServiceResultReceiver.cs" />
-    <Compile Include="Services\FaxForegroundService.cs" />
-    <Compile Include="Services\IComServiceResultReceiver.cs" />
+    <Compile Include="Services\AttachmentsDownloadService.cs" />
+    <Compile Include="Services\IAppServiceResultReceiver.cs" />
     <Compile Include="Services\MediaService.cs" />
+    <Compile Include="Services\MediaServiceBinder.cs" />
     <Compile Include="Utils\CallStateHelper.cs" />
     <Compile Include="Utils\ContactsHelper.cs" />
     <Compile Include="Utils\DataValidationUtils.cs" />
+    <Compile Include="Utils\TouchHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\act_auth.axml" />
@@ -334,6 +340,9 @@
     <AndroidResource Include="Resources\layout\act_phone.axml">
       <SubType>AndroidResource</SubType>
     </AndroidResource>
+    <AndroidResource Include="Resources\layout\dlg_logout_short.axml">
+      <SubType>AndroidResource</SubType>
+    </AndroidResource>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Assets\" />
@@ -377,7 +386,9 @@
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\values\Dimens.xml" />
+    <AndroidResource Include="Resources\values\Dimens.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FreedomVoice.Core\FreedomVoice.Core.csproj">
@@ -764,7 +775,9 @@
     <AndroidResource Include="Resources\drawable-xxxhdpi\ic_other_folder.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable\border.xml" />
+    <AndroidResource Include="Resources\drawable\border.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\scrollbar.xml" />
@@ -1050,6 +1063,75 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable-hdpi\ic_notification_fax.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\progress_horizontal.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\seek_progress_bar.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\seek_progress_fill.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\seek_progress_empty.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\seek_thumb.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-hdpi\ic_player_seek.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-hdpi\ic_player_seek_inactive.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-hdpi\ic_player_seek_pressed.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-mdpi\ic_player_seek.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-mdpi\ic_player_seek_inactive.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-mdpi\ic_player_seek_pressed.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xhdpi\ic_player_seek.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xhdpi\ic_player_seek_inactive.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xhdpi\ic_player_seek_pressed.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxhdpi\ic_player_seek.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxhdpi\ic_player_seek_inactive.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxhdpi\ic_player_seek_pressed.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxxhdpi\ic_player_seek.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxxhdpi\ic_player_seek_inactive.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxxhdpi\ic_player_seek_pressed.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\cursor_white.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\cursor_black.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\seek_progress.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
