@@ -30,6 +30,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             StartTextView = FindViewById<TextView>(Resource.Id.recordActivity_playerStartText);
             EndTextView = FindViewById<TextView>(Resource.Id.recordActivity_playerEndText);
             PlayerSeek = FindViewById<SeekBar>(Resource.Id.recordActivity_playerSeek);
+            TouchLayout = FindViewById<RelativeLayout>(Resource.Id.recordActivity_touchArea);
             SupportActionBar.SetTitle(Resource.String.ActivityRecord_title);
         }
     }

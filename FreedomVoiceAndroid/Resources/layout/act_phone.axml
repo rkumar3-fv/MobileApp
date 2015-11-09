@@ -26,7 +26,7 @@
             android:layout_width="@dimen/phone_activity_code_size"
             android:layout_height="wrap_content"
             android:text="@string/ActivityNumber_code"
-            android:textSize="@dimen/text_secondary"
+            android:textSize="@dimen/text_edit"
             android:textColor="@color/textColorSecondary"
             android:gravity="center_vertical" />
         <EditText

@@ -171,6 +171,16 @@ namespace com.FreedomVoice.MobileApp.Android.Services
             Log.Debug(App.AppPackage, $"MEDIA REQUEST to {msg.AttachUrl}");
 #endif
             var res = ApiHelper.MakeAsyncFileDownload(msg.AttachUrl, "application/json", token).Result;
+            if (res == null)
+            {
+#if DEBUG
+                Log.Debug(App.AppPackage, $"MEDIA REQUEST FAILED : CONNECTION LOST");
+#endif
+                var failData = new Bundle();
+                failData.PutParcelable(AttachmentsServiceResultReceiver.ReceiverDataExtra, new ErrorReport(msg.Id, msg, ErrorCodes.ConnectionLost));
+                _receiver.Send(Result.Ok, failData);
+                return;
+            }
             if (res.Code != ErrorCodes.Ok)
             {
 #if DEBUG

@@ -53,6 +53,7 @@
             android:layout_alignParentRight="true" />
     </RelativeLayout>
     <RelativeLayout
+        android:id="@+id/recordActivity_touchArea"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/details_play_margin"
@@ -95,6 +96,8 @@
             android:maxHeight="@dimen/details_player_seek_height"
             android:progressDrawable="@drawable/seek_progress"
             android:thumb="@drawable/seek_thumb"
+            android:paddingTop="@dimen/details_player_seek_padding"
+            android:paddingBottom="@dimen/details_player_seek_padding"
             android:layout_toRightOf="@id/recordActivity_playerStartText"
             android:layout_toLeftOf="@id/recordActivity_playerEndText"
             android:layout_centerVertical="true" />

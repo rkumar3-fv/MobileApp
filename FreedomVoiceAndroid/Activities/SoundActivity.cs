@@ -5,6 +5,7 @@ using Android.OS;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Helpers;
 using com.FreedomVoice.MobileApp.Android.Services;
+using com.FreedomVoice.MobileApp.Android.Utils;
 using FreedomVoice.Core.Utils;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
@@ -23,6 +24,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         protected Button SpeakerButton;
         protected Button CallBackButton;
         protected SeekBar PlayerSeek;
+        protected RelativeLayout TouchLayout;
 
         private bool _isSeeking;
         private bool _isPlayed;
@@ -46,6 +48,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             _timer.Elapsed += TimerOnElapsed;
             var mediaBinderIntent = new Intent(this, typeof(MediaService));
             BindService(mediaBinderIntent, this, Bind.AutoCreate);
+            TouchHelper.IncreaseClickArea(TouchLayout, PlayerSeek);
         }
 
         protected override void OnStop()

@@ -232,6 +232,7 @@
     <Compile Include="Utils\CallStateHelper.cs" />
     <Compile Include="Utils\ContactsHelper.cs" />
     <Compile Include="Utils\DataValidationUtils.cs" />
+    <Compile Include="Utils\TouchHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\act_auth.axml" />

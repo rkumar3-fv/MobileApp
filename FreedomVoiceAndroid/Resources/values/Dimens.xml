@@ -2,6 +2,7 @@
 <resources>
   <!-- Text-->
   <dimen name="text_big">34sp</dimen>
+  <dimen name="text_edit">18sp</dimen>
   <dimen name="text_main">16sp</dimen>
   <dimen name="text_secondary">14sp</dimen>
   <dimen name="text_small">12sp</dimen>
@@ -83,6 +84,7 @@
   <dimen name="details_player_time_begin_size">36dp</dimen>
   <dimen name="details_player_time_end_size">40dp</dimen>
   <dimen name="details_player_seek_height">2dp</dimen>
+  <dimen name="details_player_seek_padding">10dp</dimen>
   
   <!-- Content activity -->
   <dimen name="content_activity_tab_text_size">14sp</dimen>
