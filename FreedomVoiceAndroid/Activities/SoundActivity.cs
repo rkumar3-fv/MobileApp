@@ -44,7 +44,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             PlayerSeek.StartTrackingTouch += PlayerSeekOnStartTrackingTouch;
             PlayerSeek.StopTrackingTouch += PlayerSeekOnStopTrackingTouch;
             PlayerSeek.ProgressChanged += PlayerSeekOnProgressChanged;
-            _timer = new Timer {Interval = 300};
+            _timer = new Timer {Interval = 500};
             _timer.Elapsed += TimerOnElapsed;
             var mediaBinderIntent = new Intent(this, typeof(MediaService));
             BindService(mediaBinderIntent, this, Bind.AutoCreate);
