@@ -2326,67 +2326,79 @@ namespace com.FreedomVoice.MobileApp.Android
 			public const int ic_other_folder = 2130837602;
 			
 			// aapt resource value: 0x7f020063
-			public const int ic_save_folder = 2130837603;
+			public const int ic_player_seek = 2130837603;
 			
 			// aapt resource value: 0x7f020064
-			public const int ic_send_folder = 2130837604;
+			public const int ic_player_seek_inactive = 2130837604;
 			
 			// aapt resource value: 0x7f020065
-			public const int ic_tab_contacts = 2130837605;
+			public const int ic_player_seek_pressed = 2130837605;
 			
 			// aapt resource value: 0x7f020066
-			public const int ic_tab_history = 2130837606;
+			public const int ic_save_folder = 2130837606;
 			
 			// aapt resource value: 0x7f020067
-			public const int ic_tab_keypad = 2130837607;
+			public const int ic_send_folder = 2130837607;
 			
 			// aapt resource value: 0x7f020068
-			public const int ic_tab_messages = 2130837608;
+			public const int ic_tab_contacts = 2130837608;
 			
 			// aapt resource value: 0x7f020069
-			public const int ic_trash_folder = 2130837609;
+			public const int ic_tab_history = 2130837609;
 			
 			// aapt resource value: 0x7f02006a
-			public const int logo_disclaimer = 2130837610;
+			public const int ic_tab_keypad = 2130837610;
 			
 			// aapt resource value: 0x7f02006b
-			public const int logo_fax = 2130837611;
+			public const int ic_tab_messages = 2130837611;
 			
 			// aapt resource value: 0x7f02006c
-			public const int logo_grey = 2130837612;
+			public const int ic_trash_folder = 2130837612;
 			
 			// aapt resource value: 0x7f02006d
-			public const int logo_record = 2130837613;
+			public const int logo_disclaimer = 2130837613;
 			
 			// aapt resource value: 0x7f02006e
-			public const int logo_voicemail = 2130837614;
+			public const int logo_fax = 2130837614;
 			
 			// aapt resource value: 0x7f02006f
-			public const int logo_white = 2130837615;
+			public const int logo_grey = 2130837615;
 			
 			// aapt resource value: 0x7f020070
-			public const int message_indicator = 2130837616;
-			
-			// aapt resource value: 0x7f020077
-			public const int notification_template_icon_bg = 2130837623;
+			public const int logo_record = 2130837616;
 			
 			// aapt resource value: 0x7f020071
-			public const int progress_horizontal = 2130837617;
+			public const int logo_voicemail = 2130837617;
 			
 			// aapt resource value: 0x7f020072
-			public const int ripple = 2130837618;
+			public const int logo_white = 2130837618;
 			
 			// aapt resource value: 0x7f020073
-			public const int scrollbar = 2130837619;
+			public const int message_indicator = 2130837619;
+			
+			// aapt resource value: 0x7f02007b
+			public const int notification_template_icon_bg = 2130837627;
 			
 			// aapt resource value: 0x7f020074
-			public const int seek_progress = 2130837620;
+			public const int progress_horizontal = 2130837620;
 			
 			// aapt resource value: 0x7f020075
-			public const int seek_progress_empty = 2130837621;
+			public const int ripple = 2130837621;
 			
 			// aapt resource value: 0x7f020076
-			public const int seek_progress_fill = 2130837622;
+			public const int scrollbar = 2130837622;
+			
+			// aapt resource value: 0x7f020077
+			public const int seek_progress = 2130837623;
+			
+			// aapt resource value: 0x7f020078
+			public const int seek_progress_empty = 2130837624;
+			
+			// aapt resource value: 0x7f020079
+			public const int seek_progress_fill = 2130837625;
+			
+			// aapt resource value: 0x7f02007a
+			public const int seek_thumb = 2130837626;
 			
 			static Drawable()
 			{

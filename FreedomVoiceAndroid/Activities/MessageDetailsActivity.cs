@@ -114,7 +114,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         /// <summary>
         /// Remove message request
         /// </summary>
-        private void RemoveButtonOnClick(object sender, EventArgs eventArgs)
+        protected virtual void RemoveButtonOnClick(object sender, EventArgs eventArgs)
         {
             if (Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].FolderName ==
                     GetString(Resource.String.FragmentMessages_folderTrash))

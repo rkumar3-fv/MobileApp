@@ -94,6 +94,7 @@
             android:minHeight="@dimen/details_player_seek_height"
             android:maxHeight="@dimen/details_player_seek_height"
             android:progressDrawable="@drawable/seek_progress"
+            android:thumb="@drawable/seek_thumb"
             android:layout_toRightOf="@id/recordActivity_playerStartText"
             android:layout_toLeftOf="@id/recordActivity_playerEndText"
             android:layout_centerVertical="true" />

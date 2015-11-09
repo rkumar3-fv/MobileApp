@@ -87,6 +87,20 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         }
 
         /// <summary>
+        /// Remove message request
+        /// </summary>
+        protected override void RemoveButtonOnClick(object sender, EventArgs eventArgs)
+        {
+            if (_timer.Enabled)
+                _timer.Stop();
+            var intent = new Intent(this, typeof(MediaService));
+            StopService(intent);
+            _isPlayed = false;
+            PlayerButton.SetImageResource(Resource.Drawable.ic_action_play);
+            base.RemoveButtonOnClick(sender, eventArgs);
+        }
+
+        /// <summary>
         /// Call back action
         /// </summary>
         private void CallBackButtonOnClick(object sender, EventArgs eventArgs)
