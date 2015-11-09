@@ -103,7 +103,6 @@
       <DependentUpon>FaxViewController.cs</DependentUpon>
     </Compile>
     <Compile Include="Helpers\ExpandedCellButtonClickEventArgs.cs" />
-    <Compile Include="Helpers\Formatting.cs" />
     <Compile Include="Helpers\LoadingOverlay.cs" />
     <Compile Include="Services\IMediaService.cs" />
     <Compile Include="Services\IMessageOperationsService.cs" />

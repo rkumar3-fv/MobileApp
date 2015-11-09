@@ -7,22 +7,18 @@ namespace FreedomVoice.iOS.Helpers
 {
     public class ExpandedCellButtonClickEventArgs : EventArgs
     {
-
         public Message SelectedMessage { get; private set; }
-        public string FilePath { get; set; } = string.Empty;
+        public string FilePath { get; private set; } = string.Empty;
 
-        public UITableView TableView;
-        public NSIndexPath IndexPath;
+        public readonly UITableView TableView;
+        public readonly NSIndexPath IndexPath;
 
         public ExpandedCellButtonClickEventArgs(Message selectedMessage)
         {
             SelectedMessage = selectedMessage;
         }
 
-        public ExpandedCellButtonClickEventArgs()
-        {
-
-        }
+        public ExpandedCellButtonClickEventArgs() { }
 
         public ExpandedCellButtonClickEventArgs(UITableView tableView, NSIndexPath indexPath)
         {

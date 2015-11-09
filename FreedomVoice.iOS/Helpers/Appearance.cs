@@ -43,11 +43,6 @@ namespace FreedomVoice.iOS.Helpers
             });
         }
 
-        public static UIImageView GetMessageImageView(MessageType messageType, bool unread, bool active)
-        {
-            return new UIImageView(new CGRect(15, 15, 25, 25)) { Image = GetMessageImage(messageType, unread, active) };
-        }
-
         public static UIImage GetMessageImage(MessageType messageType, bool unread, bool active)
         {
             var imagePostfix = active ? "_active" : unread ? "_unread" : string.Empty;

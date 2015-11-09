@@ -3,7 +3,7 @@ using CoreGraphics;
 using Foundation;
 using System;
 using System.Collections.Generic;
-using FreedomVoice.iOS.Helpers;
+using FreedomVoice.Core.Utils;
 using UIKit;
 using FreedomVoice.iOS.TableViewCells;
 
@@ -56,13 +56,13 @@ namespace FreedomVoice.iOS.Views
 
             _labelElapsed = new UILabel(new CGRect(25, 7, 37, 16)) { Text = "0:00" };
 
-            _progressBar = new UISlider(new CGRect(50, 12, 176, 7)) { Value = 0, MinValue = 0, MaxValue = (float)_sourceCell.GetDuration() };
+            _progressBar = new UISlider(new CGRect(50, 12, 176, 7)) { Value = 0, MinValue = 0, MaxValue = _sourceCell.GetDuration() };
             _progressBar.SetThumbImage(UIImage.FromFile("scroller.png"), UIControlState.Normal);
             _progressBar.SetMaxTrackImage(new UIImage(), UIControlState.Normal);
             _progressBar.SetMinTrackImage(new UIImage(), UIControlState.Normal);
             _progressBar.ValueChanged += OnProgressBarValueChanged;
 
-            _labelRemaining = new UILabel(new CGRect(225, 7, 37, 16)) { Text = $"-{Formatting.SecondsToFormattedString(_sourceCell.GetDuration())}" };
+            _labelRemaining = new UILabel(new CGRect(225, 7, 37, 16)) { Text = $"-{DataFormatUtils.ToDuration(_sourceCell.GetDuration())}" };
 
             foreach (var lbl in new List<UILabel> { _labelElapsed, _labelRemaining })
             {
@@ -148,8 +148,8 @@ namespace FreedomVoice.iOS.Views
 
         private void UpdateCurrentTime()
         {
-            _labelRemaining.Text = $"-{Formatting.SecondsToFormattedString(_player.Duration - _player.CurrentTime)}";
-            _labelElapsed.Text = Formatting.SecondsToFormattedString(_player.CurrentTime);
+            _labelRemaining.Text = $"-{DataFormatUtils.ToDuration((int)(_player.Duration - _player.CurrentTime))}";
+            _labelElapsed.Text = DataFormatUtils.ToDuration((int)_player.CurrentTime);
             _progressBar.Value = (float)_player.CurrentTime;
         }
 

@@ -52,7 +52,6 @@ namespace FreedomVoice.iOS.ViewControllers
             var source = new MessagesSource(_messagesList, SelectedAccount, NavigationController);
             source.OnRowCallbackClick += OnSourceRowCallbackClick;
             source.OnRowViewFaxClick += OnSourceRowViewFaxClick;
-            source.OnRowDeleteMessageClick += OnSourceRowDeleteMessageClick;
             MessagesTableView.Source = source;
 
             MessagesTableView.ReloadData();
@@ -62,12 +61,10 @@ namespace FreedomVoice.iOS.ViewControllers
             base.ViewDidLoad();
         }
 
-        private void OnSourceRowDeleteMessageClick(object sender, ExpandedCellButtonClickEventArgs e)
-        {            
-            e.TableView.DeselectRow(e.IndexPath, false);
-            MessagesTableView.BeginUpdates();                
-            MessagesTableView.DeleteRows(new[] { e.IndexPath }, UITableViewRowAnimation.Fade);
-            MessagesTableView.EndUpdates();            
+        private void OnSourceRowCallbackClick(object sender, ExpandedCellButtonClickEventArgs e)
+        {
+            var selectedCallerId = MainTabBarInstance.GetSelectedPresentationNumber().PhoneNumber;
+            PhoneCall.CreateCallReservation(MainTabBarInstance.SelectedAccount.PhoneNumber, selectedCallerId, e.SelectedMessage.SourceNumber, NavigationController);
         }
 
         private async void OnSourceRowViewFaxClick(object sender, ExpandedCellButtonClickEventArgs e)
@@ -79,12 +76,6 @@ namespace FreedomVoice.iOS.ViewControllers
 
             var navigationController = new UINavigationController(faxViewController);
             await PresentViewControllerAsync(navigationController, true);
-        }
-
-        private void OnSourceRowCallbackClick(object sender, ExpandedCellButtonClickEventArgs e)
-        {            
-            var selectedCallerId = MainTabBarInstance.GetSelectedPresentationNumber().PhoneNumber;
-            PhoneCall.CreateCallReservation(MainTabBarInstance.SelectedAccount.PhoneNumber, selectedCallerId, e.SelectedMessage.SourceNumber, NavigationController);
         }
 
         public override void ViewWillAppear(bool animated)

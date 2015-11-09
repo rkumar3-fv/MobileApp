@@ -1,6 +1,5 @@
-﻿using Foundation;
+﻿using System;
 using FreedomVoice.Core.Entities.Enums;
-using FreedomVoice.iOS.Utilities.Extensions;
 
 namespace FreedomVoice.iOS.Entities
 {
@@ -15,7 +14,7 @@ namespace FreedomVoice.iOS.Entities
             SourceNumber = message.SourceNumber;
             Length = message.Length;
             Mailbox = message.Mailbox;
-            ReceivedOn = message.ReceivedOn.ToNSDate();
+            ReceivedOn = message.ReceivedOn;
             Type = message.Type;
             Unread = message.Unread;
         }
@@ -29,7 +28,7 @@ namespace FreedomVoice.iOS.Entities
         public int Length { get; set; }
         public int Mailbox { get; set; }
 
-        public NSDate ReceivedOn { get; set; }
+        public DateTime ReceivedOn { get; set; }
 
         public MessageType Type { get; set; }
 

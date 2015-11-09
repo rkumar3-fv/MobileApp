@@ -11,6 +11,7 @@ using FreedomVoice.iOS.Helpers;
 using UIKit;
 using FreedomVoice.iOS.ViewModels;
 using System.Threading.Tasks;
+using FreedomVoice.Core.Utils;
 
 namespace FreedomVoice.iOS.TableViewCells
 {
@@ -18,74 +19,76 @@ namespace FreedomVoice.iOS.TableViewCells
     {
         #region Controls
 
-        private UIImageView _icon;
+        private readonly UIImageView _image;
 
-        private UILabel _title;
-        private UILabel _date;
-        private UILabel _length;
+        private readonly UILabel _title;
+        private readonly UILabel _date;
+        private readonly UILabel _length;
 
         private AVPlayerView _player;
 
         private UIButton _callBackButton;
-        private UIButton _deleteButton;
         private UIButton _speakerButton;
         private UIButton _viewFaxButton;
 
+        public readonly UIButton DeleteButton;
+
         #endregion
 
-        private readonly Message _message;
+        private Message _message;
 
         private string _systemPhoneNumber;
-        
-        private UINavigationController _navigationController;
 
-        private static readonly NSString ExpandedCellId = new NSString("ExpandedCell");
-        public ExpandedCell(Message message) : base (UITableViewCellStyle.Default, ExpandedCellId)
+        private readonly UINavigationController _navigationController;
+
+        public static readonly NSString ExpandedCellId = new NSString("ExpandedCell");
+        public ExpandedCell(Message cellMessage, UINavigationController navigationController) : base (UITableViewCellStyle.Default, ExpandedCellId)
         {
-            _message = message;
-            SetBackground();            
+            _message = cellMessage;
+            _navigationController = navigationController;
+
+            var isFaxMessageType = _message.Type == MessageType.Fax;
+
+            _image = GetMessageImageView();
+            _title = new UILabel(new CGRect(55, 10, 270, 19)) { TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(17) };
+            _date = new UILabel(new CGRect(55, 29, 120, 11)) { TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(12) };
+            _length = new UILabel(new CGRect(isFaxMessageType ? 257 : 275, 29, 50, 13)) { TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(12) };
+
+            DeleteButton = new UIButton(new CGRect(285, isFaxMessageType ? 60 : 99, 25, 25));
+            DeleteButton.SetBackgroundImage(UIImage.FromFile("delete.png"), UIControlState.Normal);            
         }
 
-        private void SetBackground()
+        private void SetBackground(bool isFaxMessageType)
         {
-            nfloat bgHeight = _message.Type == MessageType.Fax ? 100 : 138;
             var gradientLayer = new CAGradientLayer
             {
-                Frame = new CGRect(Bounds.X, Bounds.Y, Bounds.Width, bgHeight),
+                Frame = new CGRect(Bounds.X, Bounds.Y, Bounds.Width, isFaxMessageType ? 100 : 138),
                 Colors = new[] { UIColor.FromRGB(51, 71, 98).CGColor, UIColor.FromRGB(98, 120, 149).CGColor }
             };
             Layer.AddSublayer(gradientLayer);
         }
 
-        public void UpdateCell(string systemPhoneNumber, UINavigationController navigationController)
+        public void UpdateCell(Message cellMessage, string systemPhoneNumber)
         {
+            _message = cellMessage;
             _systemPhoneNumber = systemPhoneNumber;
-            _navigationController = navigationController;
 
-            var selectedViews = new List<UIView>();
-            var faxMessageType = _message.Type == MessageType.Fax;
+            var isFaxMessageType = _message.Type == MessageType.Fax;
+            SetBackground(isFaxMessageType);
 
-            _icon = Helpers.Appearance.GetMessageImageView(_message.Type, false, true);
-            _title = new UILabel(new CGRect(55, 10, 270, 19)) { Text = _message.Name, TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(17) };
-            _date = new UILabel(new CGRect(55, 29, 120, 11)) { Text = Formatting.DateTimeFormat(_message.ReceivedOn), TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(12) };
+            AddSubviews(_image, _title, _date, _length, DeleteButton);
 
-            _length = GetFormattedLength(_message.Length, faxMessageType);
+            _image.Image = Helpers.Appearance.GetMessageImage(_message.Type, _message.Unread, true);
 
-            _deleteButton = new UIButton(new CGRect(285, faxMessageType ? 60 : 99, 25, 25));
-            _deleteButton.SetBackgroundImage(UIImage.FromFile("delete.png"), UIControlState.Normal);
-            _deleteButton.TouchDown += OnDeleteButtonTouchDown;
+            _title.Text = !string.IsNullOrEmpty(_message.SourceName.Trim()) ? _message.SourceName.Trim() : (!string.IsNullOrEmpty(_message.SourceNumber.Trim()) ? DataFormatUtils.ToPhoneNumber(_message.SourceNumber.Trim()) : "Unavailable");
+            _date.Text = DataFormatUtils.ToFormattedDate("Yesterday", _message.ReceivedOn);
 
-            selectedViews.AddRange(new List<UIView> { _icon, _title, _date, _length, _deleteButton });
+            _length.Text = GetFormattedLength(_message.Length, isFaxMessageType);
+            _length.Frame = new CGRect(isFaxMessageType ? 257 : 275, _length.Frame.Y, _length.Frame.Width, _length.Frame.Height);
 
-            if (faxMessageType)
-                selectedViews.Add(GetFaxButton());
-            else
-            {
-                _player = new AVPlayerView(new CGRect(46, 54, 256, 23), this);
-                selectedViews.AddRange(new List<UIView> { _player, GetSpeakerButton(), GetCallBackButton() });
-            }
+            DeleteButton.Frame = new CGRect(DeleteButton.Frame.X, isFaxMessageType ? 60 : 99, DeleteButton.Frame.Width, DeleteButton.Frame.Height);
 
-            AddSubviews(selectedViews.ToArray());
+            AddSubviews(isFaxMessageType ? new UIView[] { GetFaxButton() } : new UIView[] { _player = GetPlayerView(), GetSpeakerButton(), GetCallBackButton() });
 
             InitCommonStyles();
         }
@@ -101,20 +104,19 @@ namespace FreedomVoice.iOS.TableViewCells
             }
         }
 
-        private static UILabel GetFormattedLength(double length, bool faxMessageType)
-        {
-            var formattedLength = faxMessageType ? Formatting.PagesToFormattedString(length) : Formatting.SecondsToFormattedString(length);
-            return new UILabel(new CGRect(faxMessageType ? 257 : 275, 29, 50, 13))
-            {
-                Text = formattedLength,
-                TextColor = UIColor.White,
-                Font = UIFont.SystemFontOfSize(12)
-            };
-        }
-
         private static void BackgroundColorAnimate(UIButton btn, UIColor tapColor)
         {
             Animate(0.2, 0, UIViewAnimationOptions.Autoreverse, () => { btn.BackgroundColor = tapColor; }, () => { btn.BackgroundColor = UIColor.Clear; });
+        }
+
+        private static UIImageView GetMessageImageView()
+        {
+            return new UIImageView(new CGRect(15, 15, 25, 25));
+        }
+
+        private AVPlayerView GetPlayerView()
+        {
+            return new AVPlayerView(new CGRect(46, 54, 256, 23), this);
         }
 
         private UIButton GetSpeakerButton()
@@ -159,6 +161,11 @@ namespace FreedomVoice.iOS.TableViewCells
             _player?.ToggleSoundOutput();
         }
 
+        private static string GetFormattedLength(int length, bool faxMessageType)
+        {
+            return faxMessageType ? DataFormatUtils.PagesToFormattedString(length) : DataFormatUtils.ToDuration(length);
+        }
+
         public async Task<string> GetMediaPath(MediaType mediaType)
         {
             var viewModel = new MediaViewModel(_systemPhoneNumber, _message.Mailbox, _message.Folder, _message.Id, mediaType, _navigationController);
@@ -180,22 +187,10 @@ namespace FreedomVoice.iOS.TableViewCells
             OnCallbackClick?.Invoke(this, new ExpandedCellButtonClickEventArgs());
         }
 
-        private void OnDeleteButtonTouchDown(object sender, EventArgs e)
-        {
-            var alertController = UIAlertController.Create("Confirm deletion", "Delete this message?", UIAlertControllerStyle.Alert);
-            alertController.AddAction(UIAlertAction.Create("Delete", UIAlertActionStyle.Default, a => {
-                OnRowDeleteMessageClick?.Invoke(this, new ExpandedCellButtonClickEventArgs());
-            }));
-            alertController.AddAction(UIAlertAction.Create("Don't delete", UIAlertActionStyle.Cancel, a => { }));
-
-            _navigationController.PresentViewController(alertController, true, null);
-        }
-
         public event EventHandler<ExpandedCellButtonClickEventArgs> OnCallbackClick;
         public event EventHandler<ExpandedCellButtonClickEventArgs> OnViewFaxClick;
-        public event EventHandler<ExpandedCellButtonClickEventArgs> OnRowDeleteMessageClick;
 
-        public double GetDuration()
+        public int GetDuration()
         {
             return _message.Length;
         }

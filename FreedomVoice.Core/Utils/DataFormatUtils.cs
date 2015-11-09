@@ -108,5 +108,15 @@ namespace FreedomVoice.Core.Utils
                 return yesterdayLabel;
             return date.ToString("MM/dd/yy");
         }
+
+        /// <summary>
+        /// Pages formatter
+        /// </summary>
+        /// <param name="pages">pages for formatting</param>
+        /// <returns>formatted pages string</returns>
+        public static string PagesToFormattedString(int pages)
+        {
+            return pages == 1 ? $"{pages} page" : $"{pages} pages";
+        }
     }
 }
