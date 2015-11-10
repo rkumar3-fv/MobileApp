@@ -1,5 +1,5 @@
 using System;
-using Android.Widget;
+using Android.Support.V7.Widget;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
 {
@@ -8,7 +8,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
     /// </summary>
     public abstract class InfoActivity : LogoutActivity
     {
-        protected Button ActionButton;
+        protected CardView ActionButton;
 
         protected override void OnStart()
         {

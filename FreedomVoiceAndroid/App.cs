@@ -12,11 +12,11 @@ using Android.Util;
 #if TRACE
 #if !DEBUG
 using System.Threading.Tasks;
+using HockeyApp;
 #endif
 #endif
 using com.FreedomVoice.MobileApp.Android.Helpers;
 using com.FreedomVoice.MobileApp.Android.Utils;
-using HockeyApp;
 
 namespace com.FreedomVoice.MobileApp.Android
 {

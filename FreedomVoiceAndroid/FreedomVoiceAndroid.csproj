@@ -223,6 +223,7 @@
     <Compile Include="Helpers\AppPreferencesHelper.cs" />
     <Compile Include="Helpers\AttachmentHelperEventArgs.cs" />
     <Compile Include="Helpers\AttachmentsHelper.cs" />
+    <Compile Include="Receivers\NotificationBroadcastReceiver.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\AppServiceResultReceiver.cs" />
@@ -354,6 +355,15 @@
     <AndroidResource Include="Resources\layout-v21\act_restore.axml">
       <SubType>AndroidResource</SubType>
     </AndroidResource>
+    <AndroidResource Include="Resources\layout-v21\act_inactive.axml">
+      <SubType>AndroidResource</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout-v21\act_disclaimer.axml">
+      <SubType>AndroidResource</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout-v21\act_phone.axml">
+      <SubType>AndroidResource</SubType>
+    </AndroidResource>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Assets\" />
@@ -389,7 +399,9 @@
     <AndroidResource Include="Resources\drawable-xxxhdpi\ic_launcher.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\values\Colors.xml" />
+    <AndroidResource Include="Resources\values\Colors.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\values\Styles.xml">
@@ -598,9 +610,6 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\button_selector.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable-v21\button_selector.xml" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\message_indicator.xml" />
@@ -947,7 +956,7 @@
     <AndroidResource Include="Resources\menu\menu_recents.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\values-w320dp-hdpi\Dimens.xml" />
+    <AndroidResource Include="Resources\values-normal\Dimens.xml" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\menu\menu_contacts.xml" />
@@ -1056,9 +1065,6 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\button_selector_white.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable-v21\button_selector_white.xml" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable-xxxhdpi\ic_notification_fax.png" />

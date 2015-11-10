@@ -60,9 +60,9 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         {
             bool hasRecents;
             if ((Helper.RecentsDictionary == null) || (Helper.RecentsDictionary.Count == 0))
-                hasRecents = true;
-            else
                 hasRecents = false;
+            else
+                hasRecents = true;
             var logoutDialog = new LogoutDialogFragment(hasRecents);
             logoutDialog.DialogEvent += OnDialogEvent;
             logoutDialog.Show(SupportFragmentManager, GetString(Resource.String.DlgLogout_title));

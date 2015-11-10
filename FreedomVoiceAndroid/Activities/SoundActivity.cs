@@ -36,6 +36,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             base.OnStart();
             SpeakerButton.Click += SpeakerButtonOnClick;
             CallBackButton.Click += CallBackButtonOnClick;
+            if (Msg.FromNumber.Length < 2)
+                CallBackButton.Enabled = false;
             PlayerButton.Click += PlayerButtonOnClick;
             MessageStamp.Text = DataFormatUtils.ToDuration(Msg.Length);
             EndTextView.Text = $"-{DataFormatUtils.ToDuration(Msg.Length)}";
@@ -44,7 +46,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             PlayerSeek.StartTrackingTouch += PlayerSeekOnStartTrackingTouch;
             PlayerSeek.StopTrackingTouch += PlayerSeekOnStopTrackingTouch;
             PlayerSeek.ProgressChanged += PlayerSeekOnProgressChanged;
-            _timer = new Timer {Interval = 500};
+            _timer = new Timer {Interval = 1000};
             _timer.Elapsed += TimerOnElapsed;
             var mediaBinderIntent = new Intent(this, typeof(MediaService));
             BindService(mediaBinderIntent, this, Bind.AutoCreate);
@@ -108,6 +110,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         /// </summary>
         private void CallBackButtonOnClick(object sender, EventArgs eventArgs)
         {
+            if (MarkForRemove != (-1))
+                MarkForRemove = -1;
             Pause();
             Call(Msg.FromNumber);
         }
@@ -259,10 +263,13 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         {
             if ((_isBinded) && (PlayerSeek.Enabled))
             {
-                var progress = _serviceBinder.AppMediaService.SeekPosition / 1000;
-                EndTextView.Text = $"-{DataFormatUtils.ToDuration(Msg.Length - progress)}";
-                StartTextView.Text = DataFormatUtils.ToDuration(progress);
-                PlayerSeek.Progress = progress;
+                RunOnUiThread(delegate
+                {
+                    var progress = _serviceBinder.AppMediaService.SeekPosition / 1000;
+                    EndTextView.Text = $"-{DataFormatUtils.ToDuration(Msg.Length - progress)}";
+                    StartTextView.Text = DataFormatUtils.ToDuration(progress);
+                    PlayerSeek.Progress = progress;
+                });
             }
         }
     }

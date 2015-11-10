@@ -7,6 +7,7 @@ using Android.Support.V4.App;
 using Android.Util;
 using com.FreedomVoice.MobileApp.Android.Actions.Reports;
 using com.FreedomVoice.MobileApp.Android.Activities;
+using com.FreedomVoice.MobileApp.Android.Receivers;
 using com.FreedomVoice.MobileApp.Android.Services;
 using com.FreedomVoice.MobileApp.Android.Utils;
 using FreedomVoice.Core.Utils;
@@ -175,13 +176,9 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                             case Message.TypeFax:
                                 title = _context.GetString(Resource.String.Notif_fax_success);
                                 icon = Resource.Drawable.ic_notification_fax;
-
-                                intent = new Intent(Intent.ActionView);
-                                var file = new Java.IO.File(successReport.Path);
-                                file.SetReadable(true);
-                                intent.SetDataAndType(Uri.FromFile(file), "application/pdf");
-                                intent.SetFlags(ActivityFlags.NoHistory);
-                                var resultPendingIntent = PendingIntent.GetActivity(_context, 0, intent, PendingIntentFlags.CancelCurrent);
+                                intent = new Intent(_context.GetString(Resource.String.Extra_notificationBroadcast));
+                                intent.PutExtra(NotificationBroadcastReceiver.ExtraPdfPath, successReport.Path);
+                                var resultPendingIntent = PendingIntent.GetBroadcast(_context, 0, intent, 0);
                                 _builder.SetContentIntent(resultPendingIntent);
                                 break;
                             case Message.TypeRec:
