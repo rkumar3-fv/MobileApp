@@ -5,6 +5,7 @@ using Android.Content.PM;
 using Android.Graphics;
 using Android.OS;
 using Android.Support.V4.Content;
+using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Dialogs;
@@ -25,7 +26,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         public const string EmailField = "EMailField";
         private Color _errorColor;
         private EditText _emailText;
-        private Button _restoreButton;
+        private CardView _restoreButton;
+        private TextView _restoreLabel;
         private TextView _resultLabel;
         private ProgressBar _progressSend;
 
@@ -37,7 +39,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             RootLayout = FindViewById(Resource.Id.restoreActivity_root);
             _emailText = FindViewById<EditText>(Resource.Id.restoreActivity_emailField);
             _emailText.Text = eMail;
-            _restoreButton = FindViewById<Button>(Resource.Id.restoreActivity_sendButton);
+            _restoreButton = FindViewById<CardView>(Resource.Id.restoreActivity_sendButton);
+            _restoreLabel = FindViewById<TextView>(Resource.Id.restoreActivity_sendLabel);
             _resultLabel = FindViewById<TextView>(Resource.Id.restoreActivity_resultText);
             _progressSend = FindViewById<ProgressBar>(Resource.Id.restoreActivity_progress);
             _restoreButton.Click += RestoreButtonOnClick;
@@ -64,8 +67,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                     _emailText.Background.ClearColorFilter();
                     if (_progressSend.Visibility == ViewStates.Invisible)
                         _progressSend.Visibility = ViewStates.Visible;
-                    if (_restoreButton.Text.Length > 0)
-                        _restoreButton.Text = "";
+                    if (_restoreLabel.Visibility == ViewStates.Visible)
+                        _restoreLabel.Visibility = ViewStates.Invisible;
                     if (_resultLabel.Text.Length > 0)
                         _resultLabel.Text = "";
                     Helper.RestorePassword(_emailText.Text);
@@ -94,8 +97,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             {
                 if (_progressSend.Visibility == ViewStates.Visible)
                     _progressSend.Visibility = ViewStates.Invisible;
-                if (_restoreButton.Text.Length == 0)
-                    _restoreButton.Text = GetString(Resource.String.ActivityRestore_sendButton);
+                if (_restoreLabel.Visibility == ViewStates.Invisible)
+                    _restoreLabel.Visibility = ViewStates.Visible;
                 switch (code)
                 {
                     case ActionsHelperEventArgs.RestoreError:

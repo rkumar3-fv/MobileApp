@@ -219,12 +219,16 @@
     <item name="android:indeterminate">true</item>
     <item name="android:indeterminateTint">@color/colorProgressWhite</item>
     <item name="android:indeterminateTintMode">src_in</item>
+    <item name="android:maxWidth">@dimen/activity_progress</item>
+    <item name="android:maxHeight">@dimen/activity_progress</item>
   </style>
 
   <style name="InWhiteButtonProgressBar" parent="Widget.AppCompat.ProgressBar">
     <item name="android:indeterminate">true</item>
     <item name="android:indeterminateTint">@color/colorProgressBlue</item>
     <item name="android:indeterminateTintMode">src_in</item>
+    <item name="android:maxWidth">@dimen/activity_progress</item>
+    <item name="android:maxHeight">@dimen/activity_progress</item>
   </style>
   
   <style name="OrangeHorizontalProgressBar" parent="Widget.AppCompat.ProgressBar.Horizontal">
@@ -340,5 +344,13 @@
     <item name="android:textColor">@color/textColorSecondary</item>
     <item name="android:textSize">@dimen/text_big</item>
     <item name="android:lines">1</item>
+  </style>
+
+  <!-- Main button text style-->
+  <style name="AppButtonTextStyle">
+    <item name="android:textSize">@dimen/activity_button_text</item>
+    <item name="android:textColor">@color/colorActionBarText</item>
+    <item name="android:textAlignment">center</item>
+    <item name="android:textAllCaps">true</item>
   </style>
 </resources>

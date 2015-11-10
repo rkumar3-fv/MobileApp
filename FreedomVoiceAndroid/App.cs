@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 #endif
 using com.FreedomVoice.MobileApp.Android.Helpers;
 using com.FreedomVoice.MobileApp.Android.Utils;
+using HockeyApp;
 
 namespace com.FreedomVoice.MobileApp.Android
 {
@@ -50,6 +51,9 @@ namespace com.FreedomVoice.MobileApp.Android
                 if (_tracker != null) return _tracker;
                 var analytics = GoogleAnalytics.GetInstance(this);
                 _tracker = analytics.NewTracker(Analytics);
+                _tracker.EnableAutoActivityTracking(true);
+                _tracker.EnableExceptionReporting(true);
+                analytics.EnableAutoActivityReports(this);
                 return _tracker;
             }
         }
@@ -79,17 +83,18 @@ namespace com.FreedomVoice.MobileApp.Android
 
 #if TRACE
 #if !DEBUG
-            HockeyApp.CrashManager.Register(this, HockeyAppKey);
-            HockeyApp.TraceWriter.Initialize();
+            CrashManager.Register(this, HockeyAppKey);
+            TraceWriter.Initialize();
             AndroidEnvironment.UnhandledExceptionRaiser += (sender, args) =>
             {
-                HockeyApp.TraceWriter.WriteTrace(args.Exception);
+                TraceWriter.WriteTrace(args.Exception);
                 args.Handled = true;
             };
             AppDomain.CurrentDomain.UnhandledException +=
-                (sender, args) => HockeyApp.TraceWriter.WriteTrace(args.ExceptionObject);
+                (sender, args) => TraceWriter.WriteTrace(args.ExceptionObject);
             TaskScheduler.UnobservedTaskException +=
-                (sender, args) => HockeyApp.TraceWriter.WriteTrace(args.Exception);
+                (sender, args) => TraceWriter.WriteTrace(args.Exception);
+            ExceptionSupport.UncaughtTaskExceptionHandler = TraceWriter.WriteTrace;
 #endif
 #endif
 
