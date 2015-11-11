@@ -13,7 +13,6 @@ using com.FreedomVoice.MobileApp.Android.Utils;
 using FreedomVoice.Core.Utils;
 using Message = com.FreedomVoice.MobileApp.Android.Entities.Message;
 using NotificationCompat = Android.Support.V7.App.NotificationCompat;
-using Uri = Android.Net.Uri;
 
 namespace com.FreedomVoice.MobileApp.Android.Helpers
 {
@@ -87,7 +86,6 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 #if DEBUG
                 Log.Debug(App.AppPackage, "FILE ALREADY DOWNLOADING: " +msg.Id);
 #endif
-                intent.SetAction(AttachmentsDownloadService.ActionStatusTag);
             }
             else
             {

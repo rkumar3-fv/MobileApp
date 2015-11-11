@@ -982,32 +982,32 @@ namespace com.FreedomVoice.MobileApp.Android
 		public partial class Color
 		{
 			
-			// aapt resource value: 0x7f080081
-			public const int abc_background_cache_hint_selector_material_dark = 2131230849;
-			
-			// aapt resource value: 0x7f080082
-			public const int abc_background_cache_hint_selector_material_light = 2131230850;
-			
 			// aapt resource value: 0x7f080083
-			public const int abc_color_highlight_material = 2131230851;
+			public const int abc_background_cache_hint_selector_material_dark = 2131230851;
+			
+			// aapt resource value: 0x7f080084
+			public const int abc_background_cache_hint_selector_material_light = 2131230852;
+			
+			// aapt resource value: 0x7f080085
+			public const int abc_color_highlight_material = 2131230853;
 			
 			// aapt resource value: 0x7f08000e
 			public const int abc_input_method_navigation_guard = 2131230734;
 			
-			// aapt resource value: 0x7f080084
-			public const int abc_primary_text_disable_only_material_dark = 2131230852;
-			
-			// aapt resource value: 0x7f080085
-			public const int abc_primary_text_disable_only_material_light = 2131230853;
-			
 			// aapt resource value: 0x7f080086
-			public const int abc_primary_text_material_dark = 2131230854;
+			public const int abc_primary_text_disable_only_material_dark = 2131230854;
 			
 			// aapt resource value: 0x7f080087
-			public const int abc_primary_text_material_light = 2131230855;
+			public const int abc_primary_text_disable_only_material_light = 2131230855;
 			
 			// aapt resource value: 0x7f080088
-			public const int abc_search_url_text = 2131230856;
+			public const int abc_primary_text_material_dark = 2131230856;
+			
+			// aapt resource value: 0x7f080089
+			public const int abc_primary_text_material_light = 2131230857;
+			
+			// aapt resource value: 0x7f08008a
+			public const int abc_search_url_text = 2131230858;
 			
 			// aapt resource value: 0x7f08000f
 			public const int abc_search_url_text_normal = 2131230735;
@@ -1018,11 +1018,11 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f080011
 			public const int abc_search_url_text_selected = 2131230737;
 			
-			// aapt resource value: 0x7f080089
-			public const int abc_secondary_text_material_dark = 2131230857;
+			// aapt resource value: 0x7f08008b
+			public const int abc_secondary_text_material_dark = 2131230859;
 			
-			// aapt resource value: 0x7f08008a
-			public const int abc_secondary_text_material_light = 2131230858;
+			// aapt resource value: 0x7f08008c
+			public const int abc_secondary_text_material_light = 2131230860;
 			
 			// aapt resource value: 0x7f080012
 			public const int accent_material_dark = 2131230738;
@@ -1180,11 +1180,11 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f080077
 			public const int colorScroll = 2131230839;
 			
-			// aapt resource value: 0x7f08007f
-			public const int colorSeekEmpty = 2131230847;
+			// aapt resource value: 0x7f080081
+			public const int colorSeekEmpty = 2131230849;
 			
-			// aapt resource value: 0x7f080080
-			public const int colorSeekFill = 2131230848;
+			// aapt resource value: 0x7f080082
+			public const int colorSeekFill = 2131230850;
 			
 			// aapt resource value: 0x7f080078
 			public const int colorSpinnerSelector = 2131230840;
@@ -1194,6 +1194,12 @@ namespace com.FreedomVoice.MobileApp.Android
 			
 			// aapt resource value: 0x7f08005d
 			public const int colorTabIndicatorInactive = 2131230813;
+			
+			// aapt resource value: 0x7f08007f
+			public const int colorToggleChecked = 2131230847;
+			
+			// aapt resource value: 0x7f080080
+			public const int colorToggleUnchecked = 2131230848;
 			
 			// aapt resource value: 0x7f080051
 			public const int colorTransparent = 2131230801;
@@ -1231,11 +1237,11 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f080005
 			public const int common_signin_btn_light_text_pressed = 2131230725;
 			
-			// aapt resource value: 0x7f08008b
-			public const int common_signin_btn_text_dark = 2131230859;
+			// aapt resource value: 0x7f08008d
+			public const int common_signin_btn_text_dark = 2131230861;
 			
-			// aapt resource value: 0x7f08008c
-			public const int common_signin_btn_text_light = 2131230860;
+			// aapt resource value: 0x7f08008e
+			public const int common_signin_btn_text_light = 2131230862;
 			
 			// aapt resource value: 0x7f080048
 			public const int design_fab_shadow_end_color = 2131230792;
@@ -1384,11 +1390,11 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f080045
 			public const int switch_thumb_disabled_material_light = 2131230789;
 			
-			// aapt resource value: 0x7f08008d
-			public const int switch_thumb_material_dark = 2131230861;
+			// aapt resource value: 0x7f08008f
+			public const int switch_thumb_material_dark = 2131230863;
 			
-			// aapt resource value: 0x7f08008e
-			public const int switch_thumb_material_light = 2131230862;
+			// aapt resource value: 0x7f080090
+			public const int switch_thumb_material_light = 2131230864;
 			
 			// aapt resource value: 0x7f080046
 			public const int switch_thumb_normal_material_dark = 2131230790;

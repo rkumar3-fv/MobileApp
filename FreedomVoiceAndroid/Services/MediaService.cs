@@ -3,6 +3,7 @@ using Android.App;
 using Android.Content;
 using Android.Media;
 using Android.OS;
+using Android.Runtime;
 #if DEBUG
 using Android.Util;
 using FreedomVoice.Core.Utils;
@@ -29,9 +30,13 @@ namespace com.FreedomVoice.MobileApp.Android.Services
         public const string MediaSeekTag = "MediaSeekTag";
         public const string MediaOutputTag = "MediaOutputTag";
 
+        private AudioManager _audioManager;
         private MediaPlayer _mediaPlayer;
         private string _path;
         private bool _isVoiceCallType;
+
+        private bool _isPlaying;
+        private int _position;
 
         public event EventHandler<bool> EndEvent;
 
@@ -49,6 +54,12 @@ namespace com.FreedomVoice.MobileApp.Android.Services
         /// Current player position
         /// </summary>
         public int SeekPosition => _mediaPlayer?.CurrentPosition ?? 0;
+
+        public override void OnCreate()
+        {
+            base.OnCreate();
+            _audioManager = GetSystemService(AudioService).JavaCast<AudioManager>();
+        }
 
         public override IBinder OnBind(Intent intent)
         {
@@ -74,14 +85,9 @@ namespace com.FreedomVoice.MobileApp.Android.Services
 #if DEBUG
                         Log.Debug(App.AppPackage, $"PREPARE PLAYING {_path}");
 #endif
-                        _mediaPlayer = new MediaPlayer();
-                        _mediaPlayer.SetAudioStreamType(_isVoiceCallType? Stream.VoiceCall : Stream.Music);
-                        _mediaPlayer.SetOnPreparedListener(this);
-                        _mediaPlayer.Looping = false;
-                        _mediaPlayer.SetOnCompletionListener(this);
-                        _mediaPlayer.SetOnErrorListener(this);
-                        _mediaPlayer.SetDataSource(_path);
-                        _mediaPlayer.PrepareAsync();
+                        _position = 0;
+                        _isPlaying = true;
+                        PreparePlayer();
                     }
                     else
                     {
@@ -94,10 +100,26 @@ namespace com.FreedomVoice.MobileApp.Android.Services
                 case MediaActionChangeOut:
                     var type = intent.GetBooleanExtra(MediaOutputTag, false);
                     _isVoiceCallType = type;
+                    if (type)
+                    {
+                        _audioManager.Mode = Mode.InCall;
+                        _audioManager.SpeakerphoneOn = false;
+                    }
+                    else
+                    {
+                        _audioManager.Mode = Mode.Normal;
+                        _audioManager.SpeakerphoneOn = true;
+                    }
 #if DEBUG
                     Log.Debug(App.AppPackage, $"CHANGE OUTPUT TO {(type ? ("VOICECALL"):("MUSIC"))}");
 #endif
-                    _mediaPlayer?.SetAudioStreamType(_isVoiceCallType ? Stream.VoiceCall : Stream.Music);
+                    if (_mediaPlayer != null)
+                    {
+                        _isPlaying = _mediaPlayer.IsPlaying;
+                        _position = _mediaPlayer.CurrentPosition;
+                        _mediaPlayer.Release();
+                        PreparePlayer();
+                    }
                     break;
                 case MediaActionPause:
                     if ((Msg != null) && (!string.IsNullOrEmpty(_path)))
@@ -130,6 +152,18 @@ namespace com.FreedomVoice.MobileApp.Android.Services
             return StartCommandResult.NotSticky;
         }
 
+        private void PreparePlayer()
+        {
+            _mediaPlayer = new MediaPlayer();
+            _mediaPlayer.SetAudioStreamType(_isVoiceCallType ? Stream.VoiceCall : Stream.Music);
+            _mediaPlayer.SetOnPreparedListener(this);
+            _mediaPlayer.Looping = false;
+            _mediaPlayer.SetOnCompletionListener(this);
+            _mediaPlayer.SetOnErrorListener(this);
+            _mediaPlayer.SetDataSource(_path);
+            _mediaPlayer.PrepareAsync();
+        }
+
         /// <summary>
         /// Media player ready callback
         /// </summary>
@@ -138,11 +172,19 @@ namespace com.FreedomVoice.MobileApp.Android.Services
 #if DEBUG
             Log.Debug(App.AppPackage, "MEDIA PLAYER PREPAIRED");
 #endif
-            mp?.Start();
+            if (mp != null)
+            {
+                if (_position != 0)
+                    mp.SeekTo(_position);
+                if (_isPlaying)
+                    mp.Start();
+            }
         }
 
         private void ReleasePlayer()
         {
+            _position = 0;
+            _isPlaying = false;
             if (_mediaPlayer != null)
             {
                 _mediaPlayer.Release();
@@ -166,6 +208,7 @@ namespace com.FreedomVoice.MobileApp.Android.Services
 
         public bool OnError(MediaPlayer mp, MediaError what, int extra)
         {
+            if ((int) what == -38) return true;
             ReleasePlayer();
             EndEvent?.Invoke(this, true);
             return true;

@@ -298,6 +298,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             if ((_viewPager.CurrentItem == 3) && (Helper.SelectedExtension != -1))
             {
                 Helper.GetPrevious();
+                SetToolbarContent();
                 return;
             }
             var menu = _toolbar.Menu;
