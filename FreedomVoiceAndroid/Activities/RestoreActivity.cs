@@ -5,6 +5,7 @@ using Android.Content.PM;
 using Android.Graphics;
 using Android.OS;
 using Android.Support.V4.Content;
+using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Dialogs;
@@ -24,8 +25,10 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
     {
         public const string EmailField = "EMailField";
         private Color _errorColor;
+        private Color _editColor;
         private EditText _emailText;
-        private Button _restoreButton;
+        private CardView _restoreButton;
+        private TextView _restoreLabel;
         private TextView _resultLabel;
         private ProgressBar _progressSend;
 
@@ -37,7 +40,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             RootLayout = FindViewById(Resource.Id.restoreActivity_root);
             _emailText = FindViewById<EditText>(Resource.Id.restoreActivity_emailField);
             _emailText.Text = eMail;
-            _restoreButton = FindViewById<Button>(Resource.Id.restoreActivity_sendButton);
+            _restoreButton = FindViewById<CardView>(Resource.Id.restoreActivity_sendButton);
+            _restoreLabel = FindViewById<TextView>(Resource.Id.restoreActivity_sendLabel);
             _resultLabel = FindViewById<TextView>(Resource.Id.restoreActivity_resultText);
             _progressSend = FindViewById<ProgressBar>(Resource.Id.restoreActivity_progress);
             _restoreButton.Click += RestoreButtonOnClick;
@@ -49,6 +53,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
 
             _errorColor = new Color(ContextCompat.GetColor(this, Resource.Color.textColorError));
             var progressColor = new Color(ContextCompat.GetColor(this, Resource.Color.colorProgressWhite));
+            _editColor = new Color(ContextCompat.GetColor(this, Resource.Color.textColorPrimary));
+            _emailText.Background?.SetColorFilter(_editColor, PorterDuff.Mode.SrcAtop);
             _progressSend.IndeterminateDrawable?.SetColorFilter(progressColor, PorterDuff.Mode.SrcIn);
             _progressSend.ProgressDrawable?.SetColorFilter(progressColor, PorterDuff.Mode.SrcIn);
         }
@@ -58,14 +64,15 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         /// </summary>
         private void RestoreButtonOnClick(object sender, EventArgs e)
         {
+            _emailText.Background.ClearColorFilter();
             if (_emailText.Length() > 5)
                 if (DataValidationUtils.IsEmailValid(_emailText.Text))
                 {
-                    _emailText.Background.ClearColorFilter();
+                    _emailText.Background?.SetColorFilter(_editColor, PorterDuff.Mode.SrcAtop);
                     if (_progressSend.Visibility == ViewStates.Invisible)
                         _progressSend.Visibility = ViewStates.Visible;
-                    if (_restoreButton.Text.Length > 0)
-                        _restoreButton.Text = "";
+                    if (_restoreLabel.Visibility == ViewStates.Visible)
+                        _restoreLabel.Visibility = ViewStates.Invisible;
                     if (_resultLabel.Text.Length > 0)
                         _resultLabel.Text = "";
                     Helper.RestorePassword(_emailText.Text);
@@ -94,14 +101,18 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             {
                 if (_progressSend.Visibility == ViewStates.Visible)
                     _progressSend.Visibility = ViewStates.Invisible;
-                if (_restoreButton.Text.Length == 0)
-                    _restoreButton.Text = GetString(Resource.String.ActivityRestore_sendButton);
+                if (_restoreLabel.Visibility == ViewStates.Invisible)
+                    _restoreLabel.Visibility = ViewStates.Visible;
                 switch (code)
                 {
                     case ActionsHelperEventArgs.RestoreError:
+                        _emailText.Background.ClearColorFilter();
+                        _emailText.Background.SetColorFilter(_errorColor, PorterDuff.Mode.SrcAtop);
                         _resultLabel.Text = GetString(Resource.String.ActivityRestore_badEmail);
                         return;
                     case ActionsHelperEventArgs.RestoreWrongEmail:
+                        _emailText.Background.ClearColorFilter();
+                        _emailText.Background.SetColorFilter(_errorColor, PorterDuff.Mode.SrcAtop);
                         _resultLabel.Text = GetString(Resource.String.ActivityRestore_unregistered);
                         return;
                     case ActionsHelperEventArgs.RestoreOk:

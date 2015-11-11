@@ -35,14 +35,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/voicemailActivity_senderText"
-            android:layout_alignParentRight="true" />
+            android:layout_alignParentLeft="true" />
         <TextView
             android:id="@+id/voicemailActivity_stampText"
             style="@style/MessagesCounterText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/voicemailActivity_senderText"
-            android:layout_alignParentLeft="true" />
+            android:layout_alignParentRight="true" />
     </RelativeLayout>
     <RelativeLayout
         android:id="@+id/voicemailActivity_touchArea"

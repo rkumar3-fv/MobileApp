@@ -4,7 +4,9 @@ using Android.OS;
 using Android.Support.Design.Widget;
 using Android.Support.V4.Content;
 using Android.Support.V7.Internal.View;
+#if DEBUG
 using Android.Util;
+#endif
 using Android.Views;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.CustomControls.Callbacks;
@@ -31,7 +33,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         protected long AttachmentId;
         private Color _lightProgress;
         private Color _darkProgress;
-        private int _remove;
+        protected int MarkForRemove;
         private Snackbar _snakForRemoving;
         private SnackbarCallback _snackCallback;
 
@@ -48,7 +50,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             _snackCallback.SnackbarEvent += OnSnackbarDissmiss;
             _lightProgress = new Color(ContextCompat.GetColor(this, Resource.Color.colorProgressBackground));
             _darkProgress = new Color(ContextCompat.GetColor(this, Resource.Color.colorProgressOrange));
-            _remove = -1;
+            MarkForRemove = -1;
         }
 
         protected override void OnStart()
@@ -100,7 +102,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
 
         private void OnUndoClick(View view)
         {
-            _remove = -1;
+            MarkForRemove = -1;
         }
 
         private void OnSnackbarDissmiss(object sender, EventArgs args)
@@ -110,13 +112,13 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
 
         private void RemoveAction()
         {
-            if (_remove != -1)
+            if (MarkForRemove != -1)
             {
                 if (Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].FolderName == GetString(Resource.String.FragmentMessages_folderTrash))
-                    Helper.DeleteMessage(_remove);
+                    Helper.DeleteMessage(MarkForRemove);
                 else
-                    Helper.RemoveMessage(_remove);
-                Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].MessagesList.RemoveAt(_remove);
+                    Helper.RemoveMessage(MarkForRemove);
+                Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].MessagesList.RemoveAt(MarkForRemove);
 #if DEBUG
                 Log.Debug(App.AppPackage, $"REMOVE message {Helper.SelectedMessage}");
 #endif
@@ -125,7 +127,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             else
                 Log.Debug(App.AppPackage, $"UNDO removing message {Helper.SelectedMessage}");
 #endif
-            _remove = -1;
+            MarkForRemove = -1;
         }
 
         protected virtual void AttachmentsHelperOnFinishLoading(object sender, AttachmentHelperEventArgs<string> args)
@@ -157,7 +159,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             _snakForRemoving.SetAction(Resource.String.FragmentMessages_removeUndo, OnUndoClick);
             _snakForRemoving.SetActionTextColor(ContextCompat.GetColor(this, Resource.Color.colorUndoList));
             _snakForRemoving.SetCallback(_snackCallback);
-            _remove = Helper.SelectedMessage;
+            MarkForRemove = Helper.SelectedMessage;
             _snakForRemoving.Show();
         }
 

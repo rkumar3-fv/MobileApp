@@ -34,14 +34,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/recordActivity_senderText"
-            android:layout_alignParentRight="true" />
+            android:layout_alignParentLeft="true" />
         <TextView
             android:id="@+id/recordActivity_stampText"
             style="@style/MessagesCounterText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/recordActivity_senderText"
-            android:layout_alignParentLeft="true" />
+            android:layout_alignParentRight="true" />
     </RelativeLayout>
     <RelativeLayout
         android:id="@+id/recordActivity_touchArea"

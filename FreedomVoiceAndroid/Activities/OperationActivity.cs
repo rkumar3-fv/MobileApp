@@ -9,6 +9,7 @@ using FreedomVoice.Core.Utils;
 #endif
 using com.FreedomVoice.MobileApp.Android.Dialogs;
 using com.FreedomVoice.MobileApp.Android.Helpers;
+using Java.Lang;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
 {
@@ -43,11 +44,21 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                     }
                     else
                     {
-                        var normalizedNumber = PhoneNumberUtils.NormalizeNumber(phone);
+                        if (phone.Length > 1)
+                        {
+                            var normalizedNumber = PhoneNumberUtils.NormalizeNumber(phone);
 #if DEBUG
-                    Log.Debug(App.AppPackage, $"DIAL TO {DataFormatUtils.ToPhoneNumber(phone)}");
+                            Log.Debug(App.AppPackage, $"DIAL TO {DataFormatUtils.ToPhoneNumber(phone)}");
 #endif
-                        Helper.Call(normalizedNumber);
+                            Helper.Call(normalizedNumber);
+                            JavaSystem.Gc();
+                        }
+#if DEBUG
+                        else
+                        {
+                            Log.Debug(App.AppPackage, "DIAL TO EMPTY PHONE UNAVAILABLE");
+                        }
+#endif
                     }
                 }
             }

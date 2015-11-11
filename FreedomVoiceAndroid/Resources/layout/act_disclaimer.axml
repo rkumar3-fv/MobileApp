@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/disclaimerActivity_root"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
@@ -25,13 +26,41 @@
             android:text="@string/ActivityDisclaimer_info"
             android:layout_marginTop="@dimen/disclaimer_activity_text_margin"
             android:gravity="center_horizontal" />
-        <Button
+        <android.support.v7.widget.CardView
             android:id="@+id/disclaimerActivity_agreeButton"
-            style="@style/AppButtonStyle"
+            android:clickable="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/ActivityDisclaimer_okButton"
+            android:minHeight="@dimen/activity_button_size"
             android:layout_marginTop="@dimen/disclaimer_activity_button_margin"
-            android:layout_marginBottom="@dimen/disclaimer_activity_bottom_margin" />
+            android:layout_marginBottom="@dimen/disclaimer_activity_bottom_margin"
+            app:cardPreventCornerOverlap="false"
+            app:cardUseCompatPadding="true"
+            app:cardElevation="@dimen/activity_button_elevation">
+            <RelativeLayout
+                android:background="@drawable/button_selector"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:layout_width="fill_parent"
+                android:layout_height="@dimen/activity_button_size">
+                <TextView
+                    android:id="@+id/disclaimerActivity_agreeLabel"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    style="@style/AppButtonTextStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ActivityDisclaimer_okButton" />
+                <ProgressBar
+                    android:id="@+id/disclaimerActivity_progress"
+                    style="@style/InButtonProgressBar"
+                    android:layout_centerInParent="true"
+                    android:visibility="invisible"
+                    android:layout_width="@dimen/activity_progress"
+                    android:layout_height="@dimen/activity_progress"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true" />
+            </RelativeLayout>
+        </android.support.v7.widget.CardView>
     </LinearLayout>
 </LinearLayout>
