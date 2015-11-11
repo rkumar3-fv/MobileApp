@@ -34,6 +34,7 @@
     <item name="colorControlNormal">@color/colorDivider</item>
     <item name="android:actionBarStyle">@style/ActionBarTheme</item>
     <item name="actionBarStyle">@style/ActionBarTheme</item>
+    <item name="android:editTextBackground">@drawable/fvapptheme_edit_text</item>
   </style>
 
   <!-- Content toolbar theme -->
@@ -136,8 +137,7 @@
     <item name="android:scrollHorizontally">true</item>
     <item name="android:maxHeight">@dimen/auth_activity_field_height_max</item>
     <item name="android:textCursorDrawable">@drawable/cursor_black</item>
-    <item name="colorControlActivated">@color/colorDivider</item>
-    <item name="colorControlNormal">@color/colorDivider</item>
+    <item name="android:background">@drawable/fvapptheme_edit_text</item>
   </style>
   
   <!-- Borderless restore button style -->
@@ -158,6 +158,18 @@
     <item name="android:textAlignment">center</item>
     <item name="android:textAllCaps">true</item>
     <item name="android:maxHeight">@dimen/activity_button_size</item>
+  </style>
+
+  <!-- Borderless message ations button style -->
+  <style name="BorderlessMessagesToggleButtonStyle" parent="Widget.AppCompat.Button.Borderless">
+    <item name="android:textSize">@dimen/text_secondary</item>
+    <item name="android:textColor">@color/colorDlgButton</item>
+    <item name="android:gravity">center</item>
+    <item name="android:textAlignment">center</item>
+    <item name="android:textAllCaps">true</item>
+    <item name="android:maxHeight">@dimen/details_activity_actions_height</item>
+    <item name="android:background">@drawable/toggle_selector</item>
+    <item name="android:elevation">0dp</item>
   </style>
 
   <!-- Borderless dialog button style -->

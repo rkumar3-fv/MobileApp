@@ -17,6 +17,7 @@ using HockeyApp;
 #endif
 using com.FreedomVoice.MobileApp.Android.Helpers;
 using com.FreedomVoice.MobileApp.Android.Utils;
+using Xamarin;
 
 namespace com.FreedomVoice.MobileApp.Android
 {
@@ -31,7 +32,11 @@ namespace com.FreedomVoice.MobileApp.Android
     public class App : Application
     {
         public const string AppPackage = "com.FreedomVoice.MobileApp.Android";
+#if TRACE
         private const string Analytics = "UA-69040520-1";
+#else
+        private const string Analytics = "UA-587407-95"; 
+#endif
 #if TRACE
 #if !DEBUG
         public const string HockeyAppKey = "4f540a867b134c62b99fba824046466c";
@@ -108,6 +113,15 @@ namespace com.FreedomVoice.MobileApp.Android
 #else
             ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
 #endif
+            Insights.HasPendingCrashReport += (sender, isStartupCrash) =>
+            {
+                if (isStartupCrash)
+                {
+                    Insights.PurgePendingCrashReports().Wait();
+                }
+            };
+            Insights.Initialize("96308ef2e65dff5994132a9a8b18021948dadc54", this);
+
             CallState = new CallStateHelper();
             CallState.CallEvent += CallStateOnCallEvent;
             var telManager = (TelephonyManager)GetSystemService(TelephonyService);

@@ -3,14 +3,11 @@ using Android.App;
 using Android.Content;
 using Android.Media;
 using Android.OS;
-using Android.Runtime;
-using Android.Support.V4.App;
 #if DEBUG
 using Android.Util;
 using FreedomVoice.Core.Utils;
 #endif
 using Message = com.FreedomVoice.MobileApp.Android.Entities.Message;
-using NotificationCompat = Android.Support.V7.App.NotificationCompat;
 
 namespace com.FreedomVoice.MobileApp.Android.Services
 {
@@ -25,16 +22,16 @@ namespace com.FreedomVoice.MobileApp.Android.Services
         public const string MediaActionPause = "MediaActionPause";
         public const string MediaActionSeek = "MediaActionSeek";
         public const string MediaActionStop = "MediaActionStop";
+        public const string MediaActionChangeOut = "MediaActionChangeOut";
         public const string MediaIdTag = "MediaIdTag";
         public const string MediaMsgTag = "MediaMsgTag";
         public const string MediaPathTag = "MediaPathTag";
         public const string MediaSeekTag = "MediaSeekTag";
+        public const string MediaOutputTag = "MediaOutputTag";
 
-        private NotificationCompat.Builder _builder;
-        private NotificationManagerCompat _notificationManager;
         private MediaPlayer _mediaPlayer;
-        private AudioManager _audioManager;
         private string _path;
+        private bool _isVoiceCallType;
 
         public event EventHandler<bool> EndEvent;
 
@@ -52,15 +49,6 @@ namespace com.FreedomVoice.MobileApp.Android.Services
         /// Current player position
         /// </summary>
         public int SeekPosition => _mediaPlayer?.CurrentPosition ?? 0;
-
-        public override void OnCreate()
-        {
-            base.OnCreate();
-            _notificationManager = NotificationManagerCompat.From(this);
-            _builder = new NotificationCompat.Builder(this);
-            _builder.SetCategory(Notification.CategoryTransport);
-            _audioManager = GetSystemService(AudioService).JavaCast<AudioManager>();
-        }
 
         public override IBinder OnBind(Intent intent)
         {
@@ -87,7 +75,7 @@ namespace com.FreedomVoice.MobileApp.Android.Services
                         Log.Debug(App.AppPackage, $"PREPARE PLAYING {_path}");
 #endif
                         _mediaPlayer = new MediaPlayer();
-                        _mediaPlayer.SetAudioStreamType(Stream.Music);
+                        _mediaPlayer.SetAudioStreamType(_isVoiceCallType? Stream.VoiceCall : Stream.Music);
                         _mediaPlayer.SetOnPreparedListener(this);
                         _mediaPlayer.Looping = false;
                         _mediaPlayer.SetOnCompletionListener(this);
@@ -102,6 +90,14 @@ namespace com.FreedomVoice.MobileApp.Android.Services
 #endif
                         _mediaPlayer.Start();
                     }
+                    break;
+                case MediaActionChangeOut:
+                    var type = intent.GetBooleanExtra(MediaOutputTag, false);
+                    _isVoiceCallType = type;
+#if DEBUG
+                    Log.Debug(App.AppPackage, $"CHANGE OUTPUT TO {(type ? ("VOICECALL"):("MUSIC"))}");
+#endif
+                    _mediaPlayer?.SetAudioStreamType(_isVoiceCallType ? Stream.VoiceCall : Stream.Music);
                     break;
                 case MediaActionPause:
                     if ((Msg != null) && (!string.IsNullOrEmpty(_path)))

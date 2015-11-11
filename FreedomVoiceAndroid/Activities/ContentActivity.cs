@@ -295,6 +295,11 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
 
         public override void OnBackPressed()
         {
+            if ((_viewPager.CurrentItem == 3) && (Helper.SelectedExtension != -1))
+            {
+                Helper.GetPrevious();
+                return;
+            }
             var menu = _toolbar.Menu;
             var item = menu?.FindItem(Resource.Id.menu_action_search);
             if (item != null)

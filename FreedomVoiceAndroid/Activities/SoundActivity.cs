@@ -1,7 +1,9 @@
 using System;
 using System.Timers;
 using Android.Content;
+using Android.Media;
 using Android.OS;
+using Android.Runtime;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Helpers;
 using com.FreedomVoice.MobileApp.Android.Services;
@@ -21,10 +23,11 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         protected ImageButton PlayerButton;
         protected TextView StartTextView;
         protected TextView EndTextView;
-        protected Button SpeakerButton;
+        protected ToggleButton SpeakerButton;
         protected Button CallBackButton;
         protected SeekBar PlayerSeek;
         protected RelativeLayout TouchLayout;
+        private AudioManager _audioManager;
 
         private bool _isSeeking;
         private bool _isPlayed;
@@ -34,7 +37,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         protected override void OnStart()
         {
             base.OnStart();
-            SpeakerButton.Click += SpeakerButtonOnClick;
+            SpeakerButton.CheckedChange += SpeakerButtonOnClick;
             CallBackButton.Click += CallBackButtonOnClick;
             if (Msg.FromNumber.Length < 2)
                 CallBackButton.Enabled = false;
@@ -51,6 +54,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             var mediaBinderIntent = new Intent(this, typeof(MediaService));
             BindService(mediaBinderIntent, this, Bind.AutoCreate);
             TouchHelper.IncreaseClickArea(TouchLayout, PlayerSeek);
+            _audioManager = GetSystemService(AudioService).JavaCast<AudioManager>();
         }
 
         protected override void OnStop()
@@ -83,12 +87,38 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             }
         }
 
+        protected override void OnResume()
+        {
+            base.OnResume();
+            SpeakerButton.Enabled = _isBinded;
+            if (_isBinded)
+                CheckSoundOutput(SpeakerButton.Checked);
+        }
+
         /// <summary>
         /// Changing output sound device
         /// </summary>
-        private void SpeakerButtonOnClick(object sender, EventArgs eventArgs)
+        private void SpeakerButtonOnClick(object sender, CompoundButton.CheckedChangeEventArgs eventArgs)
         {
+            CheckSoundOutput(eventArgs.IsChecked);
+        }
 
+        private void CheckSoundOutput(bool isInSpeaker)
+        {
+            var intent = new Intent(this, typeof(MediaService));
+            intent.SetAction(MediaService.MediaActionChangeOut);
+            if (isInSpeaker)
+            {
+                _audioManager.Mode = Mode.Normal;
+                _audioManager.SpeakerphoneOn = true;
+            }
+            else
+            {
+                _audioManager.Mode = Mode.InCall;
+                _audioManager.SpeakerphoneOn = false;
+            }
+            intent.PutExtra(MediaService.MediaOutputTag, !isInSpeaker);
+            StartService(intent);
         }
 
         /// <summary>
@@ -206,7 +236,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             _isBinded = true;
 
             _serviceBinder.AppMediaService.EndEvent += AppMediaServiceOnEndEvent;
-
+            SpeakerButton.Enabled = true;
             if ((_serviceBinder.AppMediaService.Msg != null) && (_serviceBinder.AppMediaService.Msg.Equals(Msg)))
             {
                 _isCurrent = true;
@@ -234,6 +264,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         {
             _serviceBinder = null;
             _isBinded = false;
+            SpeakerButton.Enabled = false;
         }
 
         public override void OnBackPressed()
