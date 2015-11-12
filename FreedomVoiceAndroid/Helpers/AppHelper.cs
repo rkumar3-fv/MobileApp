@@ -5,12 +5,15 @@ using Android.App;
 using Android.Content;
 using Android.Content.PM;
 using Android.Gms.Analytics;
+using Android.Net;
 using Android.OS;
+using Android.Provider;
 using Android.Runtime;
 using com.FreedomVoice.MobileApp.Android.Utils;
 using HockeyApp;
 using Java.Util;
 using Xamarin;
+using Environment = Android.OS.Environment;
 
 namespace com.FreedomVoice.MobileApp.Android.Helpers
 {
@@ -226,7 +229,59 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 #endregion
 
 #region Device State
+        /// <summary>
+        /// Check is airplane mode ON
+        /// </summary>
+        public bool IsAirplaneModeOn()
+        {
+            return (int)Build.VERSION.SdkInt < 17 ? IsAirplaneOldApi() : IsAirplaneNewApi();
+        }
 
+        //@SuppressLint("NewApi")
+        private bool IsAirplaneNewApi()
+        {
+            return Settings.Global.GetInt(_context.ContentResolver, Settings.Global.AirplaneModeOn, 0) != 0;
+        }
+
+        //@SuppressWarnings("deprecation")
+        private bool IsAirplaneOldApi()
+        {
+#pragma warning disable 618
+            return Settings.System.GetInt(_context.ContentResolver, Settings.System.AirplaneModeOn, 0) != 0;
+#pragma warning restore 618
+        }
+
+        /// <summary>
+        /// Check caller ID state
+        /// <b>No API method available for getting caller ID state</b>
+        /// </summary>
+        public bool IsCallerIdHides()
+        {
+            return false;
+        }
+
+        /// <summary>
+        /// Check is internet connected
+        /// </summary>
+        public bool IsInternetConnected()
+        {
+            if (!CheckInternetPermissions()) return false;
+            var conMgr = _context.GetSystemService(Context.ConnectivityService).JavaCast<ConnectivityManager>();
+            var info = conMgr?.ActiveNetworkInfo;
+            var isAvailable = info?.IsAvailable ?? false;
+            var isConnected = info?.IsConnected ?? false;
+            return isAvailable && isConnected;
+        }
+
+        /// <summary>
+        /// Check external storage
+        /// </summary>
+        public bool IsStorageAvailable()
+        {
+            if (!CheckFilesPremissions()) return false;
+            var state = Environment.ExternalStorageState;
+            return state == Environment.MediaMounted;
+        }
 #endregion
 
         private AppHelper(Context context)

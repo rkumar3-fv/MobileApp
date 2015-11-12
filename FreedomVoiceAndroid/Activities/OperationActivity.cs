@@ -1,5 +1,4 @@
 using Android.Content;
-using Android.OS;
 using Android.Provider;
 using Android.Support.Design.Widget;
 using Android.Telephony;
@@ -28,7 +27,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             }
             else
             {
-                if (IsAirplaneModeOn())
+                if (AppHelper.Instance(this).IsAirplaneModeOn())
                 {
                     var airplaneDialog = new AirplaneDialogFragment();
                     airplaneDialog.DialogEvent += AirplaneDialogOnDialogEvent;
@@ -36,7 +35,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 }
                 else
                 {
-                    if (IsCallerIdHides())
+                    if (AppHelper.Instance(this).IsCallerIdHides())
                     {
                         var callerDialog = new CallerIdDialogFragment();
                         callerDialog.DialogEvent += CallerDialogOnDialogEvent;
@@ -74,37 +73,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         {
             if (args.Result == DialogResult.Ok)
                 StartActivityForResult(new Intent(Settings.ActionAirplaneModeSettings), 0);
-        }
-
-        /// <summary>
-        /// Check is airplane mode ON for different API levels
-        /// </summary>
-        private bool IsAirplaneModeOn()
-        {
-            return (int) Build.VERSION.SdkInt < 17 ? IsAirplaneOldApi() : IsAirplaneNewApi();
-        }
-
-        //@SuppressLint("NewApi")
-        private bool IsAirplaneNewApi()
-        {
-            return Settings.Global.GetInt(ContentResolver, Settings.Global.AirplaneModeOn, 0) != 0;
-        }
-
-        //@SuppressWarnings("deprecation")
-        private bool IsAirplaneOldApi()
-        {
-#pragma warning disable 618
-            return Settings.System.GetInt(ContentResolver, Settings.System.AirplaneModeOn, 0) != 0;
-#pragma warning restore 618
-        }
-
-        /// <summary>
-        /// Get caller ID state
-        /// <b>No API method available for getting caller ID state</b>
-        /// </summary>
-        private bool IsCallerIdHides()
-        {
-            return false;
         }
 
         protected override void OnHelperEvent(ActionsHelperEventArgs args)
