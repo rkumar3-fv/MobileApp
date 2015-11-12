@@ -15,7 +15,7 @@
         android:textColor="@color/textColorSecondary"
         android:text="@string/ActivityNubmer_description"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="@dimen/restore_activity_info_label_margin" />
+        android:layout_marginTop="@dimen/phone_activity_info_label_margin" />
     <LinearLayout
         android:id="@+id/phoneActivity_phoneArea"
         android:orientation="horizontal"
@@ -41,7 +41,7 @@
     </LinearLayout>
     <TextView
         android:id="@+id/phoneActivity_resultText"
-        style="@style/AuthErrorLabelText"
+        style="@style/DarkErrorLabelText"
         android:text="@string/ActivityNumber_error"
         android:visibility="invisible"
         android:layout_width="wrap_content"

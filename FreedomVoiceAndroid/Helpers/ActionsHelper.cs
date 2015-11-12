@@ -613,10 +613,13 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 #if DEBUG
                             Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} failed: CONNECTION LOST");
 #endif
-                            var key = _waitingRequestArray[response.RequestId].GetType().Name;
-                            var val = $"{DateTime.Now}: CONNECTION LOST - {InetReport()}";
-                            var dict = new Dictionary<string, string> {{key, val}};
-                            Insights.Report(null, dict, Insights.Severity.Error );
+                            if (AppHelper.Instance(_app).IsInsigthsOn)
+                            {
+                                var key = _waitingRequestArray[response.RequestId].GetType().Name;
+                                var val = $"{DateTime.Now}: CONNECTION LOST - {InetReport()}";
+                                var dict = new Dictionary<string, string> {{key, val}};
+                                Insights.Report(null, dict, Insights.Severity.Error);
+                            }
                             HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.ConnectionLostError}));
                             break;
                         // Authorization failed
@@ -644,10 +647,13 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 #if DEBUG
                                 Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} failed: BAD LOGIN FORMAT");
 #endif
-                                var keyB = _waitingRequestArray[response.RequestId].GetType().Name;
-                                var valB = $"{DateTime.Now}: BAD REQUEST - {InetReport()}";
-                                var dictB = new Dictionary<string, string> { { keyB, valB } };
-                                Insights.Report(null, dictB, Insights.Severity.Error);
+                                if (AppHelper.Instance(_app).IsInsigthsOn)
+                                {
+                                    var keyB = _waitingRequestArray[response.RequestId].GetType().Name;
+                                    var valB = $"{DateTime.Now}: BAD REQUEST - {InetReport()}";
+                                    var dictB = new Dictionary<string, string> {{keyB, valB}};
+                                    Insights.Report(null, dictB, Insights.Severity.Error);
+                                }
                                 HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new []{ActionsHelperEventArgs.AuthLoginError, ActionsHelperEventArgs.RestoreError}));
                             }
                             // Call reservation bad request

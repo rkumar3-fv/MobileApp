@@ -3,19 +3,12 @@ using System.Collections.Generic;
 using System.Net;
 using Android.App;
 using Android.Content;
-using Android.Gms.Analytics;
 using Android.OS;
 using Android.Runtime;
 using Android.Telephony;
 using com.FreedomVoice.MobileApp.Android.CustomControls.CustomEventArgs;
 #if DEBUG
 using Android.Util;
-#endif
-#if TRACE
-#if !DEBUG
-using System.Threading.Tasks;
-using HockeyApp;
-#endif
 #endif
 using com.FreedomVoice.MobileApp.Android.Helpers;
 using com.FreedomVoice.MobileApp.Android.Utils;
@@ -34,36 +27,7 @@ namespace com.FreedomVoice.MobileApp.Android
     public class App : Application
     {
         public const string AppPackage = "com.FreedomVoice.MobileApp.Android";
-#if TRACE
-        private const string Analytics = "UA-69040520-1";
-#else
-        private const string Analytics = "UA-587407-95"; 
-#endif
-#if TRACE
-#if !DEBUG
-        public const string HockeyAppKey = "4f540a867b134c62b99fba824046466c";
-#endif
-#endif
-
-        private Tracker _tracker;
         private AppHelper _helper;
-
-        /// <summary>
-        /// Analytics tracker
-        /// </summary>
-        public Tracker AnalyticsTracker
-        {
-            get
-            {
-                if (_tracker != null) return _tracker;
-                var analytics = GoogleAnalytics.GetInstance(this);
-                _tracker = analytics.NewTracker(Analytics);
-                _tracker.EnableAutoActivityTracking(true);
-                _tracker.EnableExceptionReporting(true);
-                analytics.EnableAutoActivityReports(this);
-                return _tracker;
-            }
-        }
 
         /// <summary>
         /// Call state helper
@@ -87,24 +51,6 @@ namespace com.FreedomVoice.MobileApp.Android
         public override void OnCreate()
         {
             base.OnCreate();
-
-#if TRACE
-#if !DEBUG
-            CrashManager.Register(this, HockeyAppKey);
-            TraceWriter.Initialize();
-            AndroidEnvironment.UnhandledExceptionRaiser += (sender, args) =>
-            {
-                TraceWriter.WriteTrace(args.Exception);
-                args.Handled = true;
-            };
-            AppDomain.CurrentDomain.UnhandledException +=
-                (sender, args) => TraceWriter.WriteTrace(args.ExceptionObject);
-            TaskScheduler.UnobservedTaskException +=
-                (sender, args) => TraceWriter.WriteTrace(args.Exception);
-            ExceptionSupport.UncaughtTaskExceptionHandler = TraceWriter.WriteTrace;
-#endif
-#endif
-
             _helper = AppHelper.Instance(this);
 #if DEBUG
             ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) =>
@@ -115,15 +61,11 @@ namespace com.FreedomVoice.MobileApp.Android
 #else
             ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
 #endif
-            Insights.HasPendingCrashReport += (sender, isStartupCrash) =>
-            {
-                if (isStartupCrash)
-                {
-                    Insights.PurgePendingCrashReports().Wait();
-                }
-            };
-            Insights.Initialize("96308ef2e65dff5994132a9a8b18021948dadc54", this);
-
+#if TRACE
+#if !DEBUG
+            _helper.InitHockeyApp();
+#endif
+#endif
             CallState = new CallStateHelper();
             CallState.CallEvent += CallStateOnCallEvent;
             var telManager = (TelephonyManager)GetSystemService(TelephonyService);
@@ -141,14 +83,17 @@ namespace com.FreedomVoice.MobileApp.Android
         public override void OnLowMemory()
         {
             base.OnLowMemory();
-            var mi = new ActivityManager.MemoryInfo();
-            var activityManager = GetSystemService(ActivityService).JavaCast<ActivityManager>();
-            activityManager.GetMemoryInfo(mi);
-            var availableMegs = mi.AvailMem / 1048576L;
-            var totalMegs = (int) Build.VERSION.SdkInt > 15 ? $"{mi.TotalMem}" : "API 15";
-            var val = $"{DateTime.Now}: available {totalMegs}Mb / {availableMegs}Mb";
-            var dict = new Dictionary<string, string> { { "LOW MEMORY" , val } };
-            Insights.Report(null, dict, Insights.Severity.Critical);
+            if (_helper.IsInsigthsOn)
+            {
+                var mi = new ActivityManager.MemoryInfo();
+                var activityManager = GetSystemService(ActivityService).JavaCast<ActivityManager>();
+                activityManager.GetMemoryInfo(mi);
+                var availableMegs = mi.AvailMem/1048576L;
+                var totalMegs = (int) Build.VERSION.SdkInt > 15 ? $"{mi.TotalMem}" : "API 15";
+                var val = $"{DateTime.Now}: available {totalMegs}Mb / {availableMegs}Mb";
+                var dict = new Dictionary<string, string> {{"LOW MEMORY", val}};
+                Insights.Report(null, dict, Insights.Severity.Critical);
+            }
         }
     }
 }

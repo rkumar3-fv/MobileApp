@@ -2,7 +2,9 @@ using System;
 using Android.OS;
 using Android.Support.Design.Widget;
 using Android.Support.V7.App;
+#if DEBUG
 using Android.Util;
+#endif
 using Android.Views;
 using com.FreedomVoice.MobileApp.Android.Helpers;
 
@@ -27,14 +29,20 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         protected override void OnPause()
         {
             base.OnPause();
+#if DEBUG
             Log.Debug(App.AppPackage, $"ACTIVITY {GetType().Name} paused");
+#endif
             Helper.HelperEvent -= OnHelperEvent;
         }
 
         protected override void OnResume()
         {
             base.OnResume();
+#if DEBUG
             Log.Debug(App.AppPackage, $"ACTIVITY {GetType().Name} resumed");
+#else
+            AppHelper.Instance(this).InitInsights();
+#endif
             Helper.HelperEvent += OnHelperEvent;
         }
 
@@ -45,7 +53,9 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         /// <param name="args">Result args</param>
         private void OnHelperEvent(object sender, EventArgs args)
         {
+#if DEBUG
             Log.Debug(App.AppPackage, $"ACTIVITY {GetType().Name} handle event {args.GetType().Name}");
+#endif
             var arg = args as ActionsHelperIntentArgs;
             if (arg != null)
             {

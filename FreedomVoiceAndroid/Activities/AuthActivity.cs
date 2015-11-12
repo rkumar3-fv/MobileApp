@@ -14,7 +14,6 @@ using Android.Views;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Helpers;
 using com.FreedomVoice.MobileApp.Android.Utils;
-using Java.Util;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
 {
@@ -30,13 +29,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         Theme = "@style/AuthAppTheme")]
     public class AuthActivity : BaseActivity
     {
-#if DEBUG
-        private void DebugOnly()
-        {
-            _loginText.Text = "freedomvoice.adm.267055@gmail.com";
-            _passwordText.Text = "adm654654";
-        }
-#endif
         private Color _errorColor;
         private CardView _authButton;
         private TextView _authLabel;
@@ -78,19 +70,16 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             var progressColor = new Color(ContextCompat.GetColor(this, Resource.Color.colorProgressWhite));
             _progressLogin.IndeterminateDrawable?.SetColorFilter(progressColor, PorterDuff.Mode.SrcIn);
             _progressLogin.ProgressDrawable?.SetColorFilter(progressColor, PorterDuff.Mode.SrcIn);
-
-            var pInfo = PackageManager.GetPackageInfo(PackageName, 0);
-            Appl.AnalyticsTracker.SetAppName(GetString(Resource.String.ApplicationName));
-            Appl.AnalyticsTracker.SetAppVersion($"{pInfo.VersionCode} ({pInfo.VersionName})");
-            Appl.AnalyticsTracker.SetLanguage(Locale.Default.Language);
-            Appl.AnalyticsTracker.SetScreenResolution(Resources.DisplayMetrics.WidthPixels, Resources.DisplayMetrics.HeightPixels);
-
-#if TRACE
-#if !DEBUG
-            HockeyApp.UpdateManager.Register(this, App.HockeyAppKey);
-#endif
-#endif
         }
+
+#if DEBUG
+        protected override void OnStart()
+        {
+            base.OnStart();
+            _loginText.Text = "freedomvoice.adm.267055@gmail.com";
+            _passwordText.Text = "adm654654";
+        }
+#endif
 
         private void FieldOnFocusChange(object sender, View.FocusChangeEventArgs focusChangeEventArgs)
         {
@@ -102,12 +91,24 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         protected override void OnResume()
         {
             base.OnResume();
-#if DEBUG
-            DebugOnly();
-#endif
             if (Helper.IsLoggedIn)
                 Helper.GetAccounts();
-            Appl.AnalyticsTracker.Send(new HitBuilders.ScreenViewBuilder().Build());
+
+            else
+            {
+#if !DEBUG
+#if TRACE
+                if (AppHelper.Instance(this).IsHockeyAppOn)
+                    AppHelper.Instance(this).InitHockeyUpdater(this);
+#endif
+#endif
+#if TRACE
+                if (AppHelper.Instance(this).InitGa(false))
+#else
+                if (AppHelper.Instance(this).InitGa(true))
+#endif
+                    AppHelper.Instance(this).AnalyticsTracker.Send(new HitBuilders.ScreenViewBuilder().Build());
+            }
         }
 
         /// <summary>

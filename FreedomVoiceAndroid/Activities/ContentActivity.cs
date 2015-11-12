@@ -17,6 +17,7 @@ using com.FreedomVoice.MobileApp.Android.CustomControls;
 using com.FreedomVoice.MobileApp.Android.CustomControls.Callbacks;
 using com.FreedomVoice.MobileApp.Android.Dialogs;
 using com.FreedomVoice.MobileApp.Android.Fragments;
+using com.FreedomVoice.MobileApp.Android.Helpers;
 using Java.Lang;
 using SearchView = Android.Support.V7.Widget.SearchView;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
@@ -134,8 +135,13 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         private void ViewPagerOnPageSelected(object sender, ViewPager.PageSelectedEventArgs pageSelectedEventArgs)
         {
             SetToolbarContent();
-            Appl.AnalyticsTracker.SetScreenName($"Activity {GetType().Name}, Screen {_pagerAdapter.GetItem(_viewPager.CurrentItem).GetType().Name}");
-            Appl.AnalyticsTracker.Send(new HitBuilders.ScreenViewBuilder().Build());
+            if (AppHelper.Instance(this).IsGoogleAnalyticsOn)
+            {
+                AppHelper.Instance(this)
+                    .AnalyticsTracker.SetScreenName(
+                        $"Activity {GetType().Name}, Screen {_pagerAdapter.GetItem(_viewPager.CurrentItem).GetType().Name}");
+                AppHelper.Instance(this).AnalyticsTracker.Send(new HitBuilders.ScreenViewBuilder().Build());
+            }
         }
 
         public void SetToolbarContent()

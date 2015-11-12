@@ -27,6 +27,7 @@
   <color name="colorFieldsHint">#80ffffff</color>
   <color name="colorBlackFieldsHint">#66000000</color>
   <color name="textColorError">#fec95f</color>
+  <color name="textColorErrorDark">#fec95f</color>
   <color name="colorDivider">#26000000</color>
   <color name="colorKeyOnKeyboardMain">#038ac1</color>
   <color name="colorKeyOnKeyboardSecondary">#8c000000</color>
