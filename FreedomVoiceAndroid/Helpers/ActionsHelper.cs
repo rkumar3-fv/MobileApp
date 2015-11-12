@@ -16,6 +16,7 @@ using com.FreedomVoice.MobileApp.Android.Actions.Responses;
 using com.FreedomVoice.MobileApp.Android.Activities;
 using com.FreedomVoice.MobileApp.Android.Entities;
 using com.FreedomVoice.MobileApp.Android.Services;
+using com.FreedomVoice.MobileApp.Android.Storage;
 using Xamarin;
 using Java.Util.Concurrent.Atomic;
 using Uri = Android.Net.Uri;

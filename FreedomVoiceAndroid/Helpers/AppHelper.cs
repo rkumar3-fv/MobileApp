@@ -9,6 +9,7 @@ using Android.Net;
 using Android.OS;
 using Android.Provider;
 using Android.Runtime;
+using com.FreedomVoice.MobileApp.Android.Storage;
 using com.FreedomVoice.MobileApp.Android.Utils;
 using HockeyApp;
 using Java.Util;
@@ -50,6 +51,16 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         /// App attachments helper
         /// </summary>
         public AttachmentsHelper AttachmentsHelper { get; }
+
+        /// <summary>
+        /// App preferences helper
+        /// </summary>
+        public AppPreferencesHelper PreferencesHelper { get; }
+
+        /// <summary>
+        /// App DB helper
+        /// </summary>
+        public AppDbHelper DbHelper { get; }
 #endregion
 
 #region Permissions
@@ -284,11 +295,17 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         }
 #endregion
 
+#region App State
+
+#endregion
+
         private AppHelper(Context context)
         {
             _context = context;
             ActionsHelper = new ActionsHelper(App.GetApplication(context));
             AttachmentsHelper = new AttachmentsHelper(context);
+            PreferencesHelper = AppPreferencesHelper.Instance(_context);
+            DbHelper = new AppDbHelper(_context);
         }
     }
 }

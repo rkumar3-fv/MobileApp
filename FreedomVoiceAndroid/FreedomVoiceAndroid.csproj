@@ -235,7 +235,6 @@
     <Compile Include="Helpers\ActionsHelperEventArgs.cs" />
     <Compile Include="Helpers\ActionsHelperIntentArgs.cs" />
     <Compile Include="Helpers\AppHelper.cs" />
-    <Compile Include="Helpers\AppPreferencesHelper.cs" />
     <Compile Include="Helpers\AttachmentHelperEventArgs.cs" />
     <Compile Include="Helpers\AttachmentsHelper.cs" />
     <Compile Include="Receivers\NotificationBroadcastReceiver.cs" />
@@ -249,10 +248,14 @@
     <Compile Include="Services\IAppServiceResultReceiver.cs" />
     <Compile Include="Services\MediaService.cs" />
     <Compile Include="Services\MediaServiceBinder.cs" />
+    <Compile Include="Storage\AppDbHelper.cs" />
+    <Compile Include="Storage\AppPreferencesHelper.cs" />
     <Compile Include="Utils\CallStateHelper.cs" />
     <Compile Include="Utils\ContactsHelper.cs" />
+    <Compile Include="Utils\CookieSerializer.cs" />
     <Compile Include="Utils\DataValidationUtils.cs" />
     <Compile Include="Utils\ExceptionSupport.cs" />
+    <Compile Include="Utils\SecurityHelper.cs" />
     <Compile Include="Utils\TouchHelper.cs" />
   </ItemGroup>
   <ItemGroup>
