@@ -53,7 +53,9 @@ namespace com.FreedomVoice.MobileApp.Android.Utils
 
             var uri = Uri.WithAppendedPath(ContactsContract.PhoneLookup.ContentFilterUri, Uri.Encode(normalizedPhone));
             string[] projection = { ContactsContract.Contacts.InterfaceConsts.DisplayName };
-            var loader = new CursorLoader(_context, uri, projection, null, null, null);
+            var selection = string.Format("(({0} IS NOT NULL) AND ({0} != '') AND ({1} = '1'))",
+                ContactsContract.Contacts.InterfaceConsts.DisplayName, ContactsContract.Contacts.InterfaceConsts.InVisibleGroup);
+            var loader = new CursorLoader(_context, uri, projection, selection, null, null);
             var cursor = loader.LoadInBackground().JavaCast<ICursor>();
             
             if (cursor == null)

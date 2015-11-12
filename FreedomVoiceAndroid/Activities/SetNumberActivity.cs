@@ -26,7 +26,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
     public class SetNumberActivity : LogoutActivity
     {
         private Color _errorColor;
-        private Color _editColor;
         private CardView _applyButton;
         private TextView _applyLabel;
         protected CardView SkipButton;
@@ -53,11 +52,9 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             _phoneErrorText = FindViewById<TextView>(Resource.Id.phoneActivity_resultText);
             SkipButton.Click += SkipButtonOnClick;
             SupportActionBar.SetTitle(Resource.String.ActivityNumber_title);
-            _editColor = new Color(ContextCompat.GetColor(this, Resource.Color.textColorPrimary));
             _errorColor = new Color(ContextCompat.GetColor(this, Resource.Color.textColorError));
             var applyBarColor = new Color(ContextCompat.GetColor(this, Resource.Color.colorProgressWhite));
             var skipBarColor = new Color(ContextCompat.GetColor(this, Resource.Color.colorProgressBlue));
-            _phoneText.Background?.SetColorFilter(_editColor, PorterDuff.Mode.SrcAtop);
             _applyProgressBar.IndeterminateDrawable?.SetColorFilter(applyBarColor, PorterDuff.Mode.SrcIn);
             _applyProgressBar.ProgressDrawable?.SetColorFilter(applyBarColor, PorterDuff.Mode.SrcIn);
             _skipProgressBar.IndeterminateDrawable?.SetColorFilter(skipBarColor, PorterDuff.Mode.SrcIn);
@@ -68,7 +65,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         {
             if (!focusChangeEventArgs.HasFocus) return;
             _phoneText.Background.ClearColorFilter();
-            _phoneText.Background?.SetColorFilter(_editColor, PorterDuff.Mode.SrcAtop);
             _phoneErrorText.Visibility = ViewStates.Invisible;
         }
 
@@ -83,7 +79,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         protected void SkipButtonOnClick(object sender, EventArgs eventArgs)
         {
             _phoneText.Background.ClearColorFilter();
-            _phoneText.Background?.SetColorFilter(_editColor, PorterDuff.Mode.SrcAtop);
             _phoneErrorText.Visibility = ViewStates.Invisible;
             if (_skipProgressBar.Visibility == ViewStates.Invisible)
                 _skipProgressBar.Visibility = ViewStates.Visible;
@@ -95,7 +90,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         protected virtual void ApplyButtonOnClick(object sender, EventArgs eventArgs)
         {
             _phoneText.Background.ClearColorFilter();
-            _phoneText.Background?.SetColorFilter(_editColor, PorterDuff.Mode.SrcAtop);
             _phoneErrorText.Visibility = ViewStates.Invisible;
             if (!SetupNumber()) return;
             if (_applyProgressBar.Visibility == ViewStates.Invisible)
@@ -111,7 +105,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         /// <returns></returns>
         protected bool SetupNumber()
         {
-            _phoneText.Background.ClearColorFilter();
 #if DEBUG
             if ((_phoneText.Text.Length >9)&&(_phoneText.Text.Length<13))
 
@@ -123,7 +116,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 if (DataValidationUtils.IsPhoneValid(_phoneText.Text) != "")
                 {
                     Helper.SaveNewNumber(_phoneText.Text);
-                    _phoneText.Background?.SetColorFilter(_editColor, PorterDuff.Mode.SrcAtop);
+                    _phoneText.Background.ClearColorFilter();
                     _phoneErrorText.Visibility = ViewStates.Invisible;
                     return true;
                 }

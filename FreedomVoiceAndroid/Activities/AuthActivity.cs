@@ -51,6 +51,13 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
+
+            if ((Intent.Flags & ActivityFlags.BroughtToFront) != 0)
+            {
+                Finish();
+                return;
+            }
+
             SetContentView(Resource.Layout.act_auth);
             RootLayout = FindViewById(Resource.Id.authActivity_root);
             _authButton = FindViewById<CardView>(Resource.Id.authActivity_loginButton);

@@ -46,6 +46,8 @@
   <color name="colorProgressBackground">#66f0aa1e</color>
   <color name="colorButtonWhite">#1a5a6f8a</color>
   <color name="colorButtonWhitePressed">#335a6f8a</color>
+  <color name="colorToggleChecked">#26038ac1</color>
+  <color name="colorToggleUnchecked">#ffffff</color>
   <color name="colorSeekEmpty">#1a000000</color>
   <color name="colorSeekFill">#038ac1</color>
 </resources>

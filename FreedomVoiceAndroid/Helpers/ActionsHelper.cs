@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Android.App;
 using Android.Content;
+using Android.Net;
 using Android.OS;
+using Android.Runtime;
 using Android.Telephony;
 #if DEBUG
 using Android.Util;
@@ -14,6 +16,7 @@ using com.FreedomVoice.MobileApp.Android.Actions.Responses;
 using com.FreedomVoice.MobileApp.Android.Activities;
 using com.FreedomVoice.MobileApp.Android.Entities;
 using com.FreedomVoice.MobileApp.Android.Services;
+using Xamarin;
 using Java.Util.Concurrent.Atomic;
 using Uri = Android.Net.Uri;
 
@@ -610,6 +613,10 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 #if DEBUG
                             Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} failed: CONNECTION LOST");
 #endif
+                            var key = _waitingRequestArray[response.RequestId].GetType().Name;
+                            var val = $"{DateTime.Now}: CONNECTION LOST - {InetReport()}";
+                            var dict = new Dictionary<string, string> {{key, val}};
+                            Insights.Report(null, dict, Insights.Severity.Error );
                             HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.ConnectionLostError}));
                             break;
                         // Authorization failed
@@ -637,6 +644,10 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 #if DEBUG
                                 Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} failed: BAD LOGIN FORMAT");
 #endif
+                                var keyB = _waitingRequestArray[response.RequestId].GetType().Name;
+                                var valB = $"{DateTime.Now}: BAD REQUEST - {InetReport()}";
+                                var dictB = new Dictionary<string, string> { { keyB, valB } };
+                                Insights.Report(null, dictB, Insights.Severity.Error);
                                 HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new []{ActionsHelperEventArgs.AuthLoginError, ActionsHelperEventArgs.RestoreError}));
                             }
                             // Call reservation bad request
@@ -913,6 +924,17 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             if (keyForRemove != -1)
                 RecentsDictionary.Remove(keyForRemove);
             RecentsDictionary.Add(response.RequestId, recent);
+        }
+
+        private string InetReport()
+        {
+            var conMgr = _app?.GetSystemService(Context.ConnectivityService).JavaCast<ConnectivityManager>();
+            var info = conMgr?.ActiveNetworkInfo;
+            var isAvailable = info?.IsAvailable ?? false;
+            var isConnected = info?.IsConnected ?? false;
+            var name = info?.TypeName ?? "no name";
+            var subname = info?.SubtypeName ?? "no subname";
+            return $"{name} ({subname}) {((isConnected)?("connected"):("not connected"))} & {((isAvailable) ? ("available") : ("unavailable"))}";
         }
     }
 }

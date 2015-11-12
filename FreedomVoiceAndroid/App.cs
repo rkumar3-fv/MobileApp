@@ -1,8 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.Net;
 using Android.App;
 using Android.Content;
 using Android.Gms.Analytics;
+using Android.OS;
 using Android.Runtime;
 using Android.Telephony;
 using com.FreedomVoice.MobileApp.Android.CustomControls.CustomEventArgs;
@@ -17,6 +19,7 @@ using HockeyApp;
 #endif
 using com.FreedomVoice.MobileApp.Android.Helpers;
 using com.FreedomVoice.MobileApp.Android.Utils;
+using Xamarin;
 
 namespace com.FreedomVoice.MobileApp.Android
 {
@@ -31,7 +34,11 @@ namespace com.FreedomVoice.MobileApp.Android
     public class App : Application
     {
         public const string AppPackage = "com.FreedomVoice.MobileApp.Android";
+#if TRACE
         private const string Analytics = "UA-69040520-1";
+#else
+        private const string Analytics = "UA-587407-95"; 
+#endif
 #if TRACE
 #if !DEBUG
         public const string HockeyAppKey = "4f540a867b134c62b99fba824046466c";
@@ -108,6 +115,15 @@ namespace com.FreedomVoice.MobileApp.Android
 #else
             ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
 #endif
+            Insights.HasPendingCrashReport += (sender, isStartupCrash) =>
+            {
+                if (isStartupCrash)
+                {
+                    Insights.PurgePendingCrashReports().Wait();
+                }
+            };
+            Insights.Initialize("96308ef2e65dff5994132a9a8b18021948dadc54", this);
+
             CallState = new CallStateHelper();
             CallState.CallEvent += CallStateOnCallEvent;
             var telManager = (TelephonyManager)GetSystemService(TelephonyService);
@@ -120,6 +136,19 @@ namespace com.FreedomVoice.MobileApp.Android
         private void CallStateOnCallEvent(object sender, DialingEventArgs args)
         {
             _helper.ActionsHelper.MarkCallAsFinished();
+        }
+
+        public override void OnLowMemory()
+        {
+            base.OnLowMemory();
+            var mi = new ActivityManager.MemoryInfo();
+            var activityManager = GetSystemService(ActivityService).JavaCast<ActivityManager>();
+            activityManager.GetMemoryInfo(mi);
+            var availableMegs = mi.AvailMem / 1048576L;
+            var totalMegs = (int) Build.VERSION.SdkInt > 15 ? $"{mi.TotalMem}" : "API 15";
+            var val = $"{DateTime.Now}: available {totalMegs}Mb / {availableMegs}Mb";
+            var dict = new Dictionary<string, string> { { "LOW MEMORY" , val } };
+            Insights.Report(null, dict, Insights.Severity.Critical);
         }
     }
 }

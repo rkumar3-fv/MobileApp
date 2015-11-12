@@ -42,7 +42,12 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             base.OnCreate(bundle);
             _contactsHelper = ContactsHelper.Instance(this);
             var extra = (Message)Intent.GetParcelableExtra(MessageExtraTag);
-            Msg = extra ?? Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].MessagesList[Helper.SelectedMessage];
+            if (extra != null)
+                Msg = extra;
+            else if ((Helper.SelectedExtension != -1)&&(Helper.SelectedFolder != -1)&&(Helper.SelectedMessage != -1))
+                Msg = Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].MessagesList[Helper.SelectedMessage];
+            else
+                base.OnBackPressed();
             SupportActionBar.SetHomeAsUpIndicator(Resource.Drawable.ic_action_back);
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
             SupportActionBar.SetHomeButtonEnabled(true);

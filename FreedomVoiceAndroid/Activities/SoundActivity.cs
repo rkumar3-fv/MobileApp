@@ -21,7 +21,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         protected ImageButton PlayerButton;
         protected TextView StartTextView;
         protected TextView EndTextView;
-        protected Button SpeakerButton;
+        protected ToggleButton SpeakerButton;
         protected Button CallBackButton;
         protected SeekBar PlayerSeek;
         protected RelativeLayout TouchLayout;
@@ -34,7 +34,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         protected override void OnStart()
         {
             base.OnStart();
-            SpeakerButton.Click += SpeakerButtonOnClick;
+            SpeakerButton.CheckedChange += SpeakerButtonOnClick;
             CallBackButton.Click += CallBackButtonOnClick;
             if (Msg.FromNumber.Length < 2)
                 CallBackButton.Enabled = false;
@@ -83,12 +83,27 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             }
         }
 
+        protected override void OnResume()
+        {
+            base.OnResume();
+            if (_isBinded)
+                CheckSoundOutput(SpeakerButton.Checked);
+        }
+
         /// <summary>
         /// Changing output sound device
         /// </summary>
-        private void SpeakerButtonOnClick(object sender, EventArgs eventArgs)
+        private void SpeakerButtonOnClick(object sender, CompoundButton.CheckedChangeEventArgs eventArgs)
         {
+            CheckSoundOutput(eventArgs.IsChecked);
+        }
 
+        private void CheckSoundOutput(bool isInSpeaker)
+        {
+            var intent = new Intent(this, typeof(MediaService));
+            intent.SetAction(MediaService.MediaActionChangeOut);
+            intent.PutExtra(MediaService.MediaOutputTag, !isInSpeaker);
+            StartService(intent);
         }
 
         /// <summary>
@@ -206,7 +221,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             _isBinded = true;
 
             _serviceBinder.AppMediaService.EndEvent += AppMediaServiceOnEndEvent;
-
             if ((_serviceBinder.AppMediaService.Msg != null) && (_serviceBinder.AppMediaService.Msg.Equals(Msg)))
             {
                 _isCurrent = true;
