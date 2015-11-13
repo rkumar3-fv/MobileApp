@@ -103,6 +103,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             AppHelper.Instance(this).AttachmentsHelper.OnFinish -= AttachmentsHelperOnFinishLoading;
             AppHelper.Instance(this).AttachmentsHelper.OnProgressLoading -= AttachmentsHelperOnProgressLoading;
             AppHelper.Instance(this).AttachmentsHelper.FailLoadingEvent -= AttachmentsHelperOnFailLoadingEvent;
+            MarkForRemove = -1;
         }
 
         private void OnUndoClick(View view)

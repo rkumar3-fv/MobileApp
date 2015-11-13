@@ -36,8 +36,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         private EditText _loginText;
         private EditText _passwordText;
         private TextView _errorText;
-        private TextView _errorTextLogin;
-        private TextView _errorTextPassword;
         private ProgressBar _progressLogin;
 
         protected override void OnCreate(Bundle bundle)
@@ -57,8 +55,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             _forgotButton = FindViewById<Button>(Resource.Id.authActivity_forgotButton);
             _loginText = FindViewById<EditText>(Resource.Id.authActivity_loginField);
             _passwordText = FindViewById<EditText>(Resource.Id.authActivity_passwordField);
-            _errorTextLogin = FindViewById<TextView>(Resource.Id.authActivity_loginError);
-            _errorTextPassword = FindViewById<TextView>(Resource.Id.authActivity_passwordError);
             _errorText = FindViewById<TextView>(Resource.Id.authActivity_errorText);
             _progressLogin = FindViewById<ProgressBar>(Resource.Id.authActivity_progress);
 
@@ -93,7 +89,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             base.OnResume();
             if (Helper.IsLoggedIn)
                 Helper.GetAccounts();
-
             else
             {
 #if !DEBUG
@@ -117,19 +112,21 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         private void AuthButtonOnClick(object sender, EventArgs eventArgs)
         {
             HideErrors();
-            if ((_loginText.Text.Length == 0)||(!DataValidationUtils.IsEmailValid(_loginText.Text)))
+            if ((_loginText.Text.Trim().Length < 6)||(!DataValidationUtils.IsEmailValid(_loginText.Text.Trim())))
             {
                 _loginText.Background.SetColorFilter(_errorColor, PorterDuff.Mode.SrcAtop);
-                _errorTextLogin.Visibility = ViewStates.Visible;
+                _errorText.Text = GetString(Resource.String.ActivityAuth_badLogin);
+                _errorText.Visibility = ViewStates.Visible;
                 return;
             }
             if (_passwordText.Text.Length == 0)
             {
                 _passwordText.Background.SetColorFilter(_errorColor, PorterDuff.Mode.SrcAtop);
-                _errorTextPassword.Visibility = ViewStates.Visible;
+                _errorText.Text = GetString(Resource.String.ActivityAuth_badPassword);
+                _errorText.Visibility = ViewStates.Visible;
                 return;
             }
-            var res = Helper.Authorize(_loginText.Text, _passwordText.Text);
+            var res = Helper.Authorize(_loginText.Text.Trim(), _passwordText.Text);
             if (res == -1)
                 Helper.GetAccounts();
             else
@@ -143,18 +140,13 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
 
         private void HideErrors()
         {
-            if (_errorTextLogin.Visibility == ViewStates.Visible)
+            _loginText.Background.ClearColorFilter();
+            _passwordText.Background.ClearColorFilter();
+            if (_errorText.Text.Length != 0)
             {
-                _loginText.Background.ClearColorFilter();
-                _errorTextLogin.Visibility = ViewStates.Invisible;
-            }
-            if (_errorTextPassword.Visibility == ViewStates.Visible)
-            {
-                _passwordText.Background.ClearColorFilter();
-                _errorTextPassword.Visibility = ViewStates.Invisible;
-            }
-            if (_errorText.Visibility == ViewStates.Visible)
+                _errorText.Text = "";
                 _errorText.Visibility = ViewStates.Invisible;
+            }
         }
 
         /// <summary>
@@ -188,6 +180,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 {
                     case ActionsHelperEventArgs.AuthLoginError:
                     case ActionsHelperEventArgs.AuthPasswdError:
+                        _errorText.Text = GetString(Resource.String.ActivityAuth_incorrectError);
                         _errorText.Visibility = ViewStates.Visible;
                         return;
                 }

@@ -21,8 +21,6 @@ namespace com.FreedomVoice.MobileApp.Android.Storage
 
         private const string ColumnPhone = "phone";
         private const string ColumnDate = "date";
-        private const string ColumnDuration = "duration";
-        private const string ColumnResult = "result";
 
         public AppDbHelper (Context context) : base(context, DbName, null, DbVersion)
         {}
@@ -32,7 +30,7 @@ namespace com.FreedomVoice.MobileApp.Android.Storage
             var accTableScript = $"create table {TableNameAccounts} ({ColumnPk} integer primary key, {ColumnAccountName} integer not null);";
             var callerTableScript = $"create table {TableNameCallerId} ({ColumnPk} integer primary key, {ColumnCallerId} integer not null);";
             var accCallerLinkTableScript = $"create table {TableNameAccountCallerLink} ({ColumnPk} integer primary key, {ColumnAccountLink} integer not null, {ColumnCallerIdLink} integer not null);";
-            var recentsTableScript = $"create table {TableRecents} ({ColumnPk} integer primary key, {ColumnPhone} integer not null, {ColumnDate} integer not null, {ColumnDuration} integer, {ColumnResult} integer not null, {ColumnAccountLink} integer not null);";
+            var recentsTableScript = $"create table {TableRecents} ({ColumnPk} integer primary key, {ColumnPhone} integer not null, {ColumnDate} integer not null, {ColumnAccountLink} integer not null);";
             db.ExecSQL(accTableScript);
             db.ExecSQL(callerTableScript);
             db.ExecSQL(accCallerLinkTableScript);

@@ -5,13 +5,10 @@ using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Runtime;
-using Android.Telephony;
-using com.FreedomVoice.MobileApp.Android.CustomControls.CustomEventArgs;
 #if DEBUG
 using Android.Util;
 #endif
 using com.FreedomVoice.MobileApp.Android.Helpers;
-using com.FreedomVoice.MobileApp.Android.Utils;
 using Xamarin;
 
 namespace com.FreedomVoice.MobileApp.Android
@@ -28,11 +25,6 @@ namespace com.FreedomVoice.MobileApp.Android
     {
         public const string AppPackage = "com.FreedomVoice.MobileApp.Android";
         private AppHelper _helper;
-
-        /// <summary>
-        /// Call state helper
-        /// </summary>
-        public CallStateHelper CallState { get; private set; }
 
         /// <summary>
         /// Get app context
@@ -66,18 +58,6 @@ namespace com.FreedomVoice.MobileApp.Android
             _helper.InitHockeyApp();
 #endif
 #endif
-            CallState = new CallStateHelper();
-            CallState.CallEvent += CallStateOnCallEvent;
-            var telManager = (TelephonyManager)GetSystemService(TelephonyService);
-            telManager.Listen(CallState, PhoneStateListenerFlags.CallState);
-        }
-
-        /// <summary>
-        /// Outgoing call finished event
-        /// </summary>
-        private void CallStateOnCallEvent(object sender, DialingEventArgs args)
-        {
-            _helper.ActionsHelper.MarkCallAsFinished();
         }
 
         public override void OnLowMemory()

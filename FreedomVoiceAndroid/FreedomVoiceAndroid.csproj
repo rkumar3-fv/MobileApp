@@ -250,7 +250,6 @@
     <Compile Include="Services\MediaServiceBinder.cs" />
     <Compile Include="Storage\AppDbHelper.cs" />
     <Compile Include="Storage\AppPreferencesHelper.cs" />
-    <Compile Include="Utils\CallStateHelper.cs" />
     <Compile Include="Utils\ContactsHelper.cs" />
     <Compile Include="Utils\CookieSerializer.cs" />
     <Compile Include="Utils\DataValidationUtils.cs" />
@@ -974,7 +973,7 @@
     <AndroidResource Include="Resources\menu\menu_recents.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\values-normal\Dimens.xml" />
+    <AndroidResource Include="Resources\values-normal-hdpi\Dimens.xml" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\menu\menu_contacts.xml" />

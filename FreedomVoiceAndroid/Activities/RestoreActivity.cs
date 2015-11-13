@@ -62,7 +62,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         private void RestoreButtonOnClick(object sender, EventArgs e)
         {
             if (_emailText.Length() > 5)
-                if (DataValidationUtils.IsEmailValid(_emailText.Text))
+                if (DataValidationUtils.IsEmailValid(_emailText.Text.Trim()))
                 {
                     _emailText.Background.ClearColorFilter();
                     if (_progressSend.Visibility == ViewStates.Invisible)
@@ -71,7 +71,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                         _restoreLabel.Visibility = ViewStates.Invisible;
                     if (_resultLabel.Text.Length > 0)
                         _resultLabel.Text = "";
-                    Helper.RestorePassword(_emailText.Text);
+                    Helper.RestorePassword(_emailText.Text.Trim());
                     return;
                 }
             _resultLabel.Text = GetString(Resource.String.ActivityRestore_badEmail);

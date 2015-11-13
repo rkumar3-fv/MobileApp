@@ -121,7 +121,6 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         /// </summary>
         private readonly Dictionary<long, BaseRequest> _waitingRequestArray;
 
-        private long _successDial = -1;
         private readonly AtomicLong _idCounter;
         private readonly AppPreferencesHelper _preferencesHelper;
 
@@ -536,15 +535,6 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         }
 
         /// <summary>
-        /// Mark outgoing call as finished
-        /// </summary>
-        public void MarkCallAsFinished()
-        {
-            if (RecentsDictionary.ContainsKey(_successDial))
-                RecentsDictionary[_successDial].CallEnded();
-        }
-
-        /// <summary>
         /// ClearRecents
         /// </summary>
         public void ClearAllRecents()
@@ -663,7 +653,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 #if DEBUG
                                 Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} failed: BAD REQUEST");
 #endif
-                                SaveRecent(response, Recent.ResultFail);
+                                SaveRecent(response);
                                 HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.CallReservationFail }));
                             }
                             break;
@@ -691,7 +681,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 #if DEBUG
                                 Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} failed: FORBIDDEN");
 #endif
-                                SaveRecent(response, Recent.ResultFail);
+                                SaveRecent(response);
                                 HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.CallReservationWrong }));
                             }
                             break;
@@ -846,21 +836,17 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                     Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} successed (Call reservation)");
 #endif
                     var callResponse = (CallReservationResponse)response;
+                    SaveRecent(response);
                     if (callResponse.ServiceNumber.Length > 6)
                     {
                         var callIntent = new Intent(Intent.ActionCall, Uri.Parse("tel:" + callResponse.ServiceNumber));
 #if DEBUG
                         Log.Debug(App.AppPackage, $"ACTIVITY {GetType().Name} CREATES CALL to {callResponse.ServiceNumber}");
 #endif
-                        SaveRecent(response, Recent.ResultOk);
-                        _successDial = response.RequestId;
                         HelperEvent?.Invoke(this, new ActionsHelperIntentArgs(response.RequestId, callIntent));
                     }
                     else
-                    {
-                        SaveRecent(response, Recent.ResultFail);
                         HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.CallReservationFail }));
-                    }
                     break;
 
                 // Move message to trash response
@@ -904,7 +890,6 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             SelectedExtension = -1;
             SelectedFolder = -1;
             SelectedMessage = -1;
-            _successDial = -1;
             RecentsDictionary.Clear();
             var intent = new Intent(_app, typeof(AuthActivity));
             HelperEvent?.Invoke(this, new ActionsHelperIntentArgs(id, intent));
@@ -914,11 +899,10 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         /// Recents saving
         /// </summary>
         /// <param name="response">response from server</param>
-        /// <param name="result">success or failure</param>
-        private void SaveRecent(BaseResponse response, int result)
+        private void SaveRecent(BaseResponse response)
         {
             var callReservation = (CallReservationRequest)_waitingRequestArray[response.RequestId];
-            var recent = new Recent(callReservation.DialingNumber, result);
+            var recent = new Recent(callReservation.DialingNumber);
             var values = RecentsDictionary.Values.ToList();
             var keys = RecentsDictionary.Keys.ToList();
             long keyForRemove = -1;

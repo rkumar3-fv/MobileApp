@@ -19,14 +19,15 @@
   <color name="messageIndicator">#1a000000</color>
   <color name="messageIndicatorText">#8c000000</color>
   <color name="colorAuthHeader">#002f57</color>
-  <color name="textForgotPassword">#03678f</color>
+  <color name="textForgotPassword">#ffffff</color>
   <color name="colorButton">#f0aa1e</color>
   <color name="colorButtonPressed">#d6971a</color>
   <color name="colorFieldsActive">#ffffff</color>
   <color name="colorFieldsNormal">#59ffffff</color>
   <color name="colorFieldsHint">#80ffffff</color>
   <color name="colorBlackFieldsHint">#66000000</color>
-  <color name="textColorError">#fec95f</color>
+  <color name="textColorError">#ffffff</color>
+  <color name="textColorErrorBack">#f04e3d</color>
   <color name="textColorErrorDark">#fec95f</color>
   <color name="colorDivider">#26000000</color>
   <color name="colorKeyOnKeyboardMain">#038ac1</color>
