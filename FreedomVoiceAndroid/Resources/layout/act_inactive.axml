@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/inactiveActivity_root"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
@@ -25,12 +26,40 @@
             android:text="@string/ActivityInactive_info"
             android:layout_marginTop="@dimen/inactive_activity_text_margin"
             android:gravity="center_horizontal" />
-        <Button
+        <android.support.v7.widget.CardView
             android:id="@+id/inactiveActivity_dialButton"
-            style="@style/AppButtonStyle"
+            android:clickable="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/ActivityIncative_callButton"
-            android:layout_marginTop="@dimen/inactive_activity_button_margin" />
+            android:minHeight="@dimen/activity_button_size"
+            android:layout_marginTop="@dimen/inactive_activity_button_margin"
+            app:cardPreventCornerOverlap="false"
+            app:cardUseCompatPadding="true"
+            app:cardElevation="@dimen/activity_button_elevation">
+            <RelativeLayout
+                android:background="@drawable/button_selector"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:layout_width="fill_parent"
+                android:layout_height="@dimen/activity_button_size">
+                <TextView
+                    android:id="@+id/inactiveActivity_dialLabel"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    style="@style/AppButtonTextStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ActivityIncative_callButton" />
+                <ProgressBar
+                    android:id="@+id/inactiveActivity_progress"
+                    style="@style/InButtonProgressBar"
+                    android:layout_centerInParent="true"
+                    android:visibility="invisible"
+                    android:layout_width="@dimen/activity_progress"
+                    android:layout_height="@dimen/activity_progress"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true" />
+            </RelativeLayout>
+        </android.support.v7.widget.CardView>
     </LinearLayout>
 </LinearLayout>

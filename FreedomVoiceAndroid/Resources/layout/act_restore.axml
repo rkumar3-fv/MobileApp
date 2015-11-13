@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/restoreActivity_root"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:layout_marginStart="@dimen/activity_horizontal_margin"
-    android:layout_marginEnd="@dimen/activity_horizontal_margin"
+    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+    android:layout_marginRight="@dimen/activity_horizontal_margin"
     android:clipToPadding="false">
     <TextView
         android:id="@+id/restoreActivity_infoText"
@@ -25,27 +26,42 @@
         android:inputType="textEmailAddress"
         android:layout_below="@id/restoreActivity_infoText"
         android:layout_marginTop="@dimen/restore_activity_info_field_margin" />
-    <RelativeLayout
+    <android.support.v7.widget.CardView
+        android:id="@+id/restoreActivity_sendButton"
+        android:clickable="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:minHeight="@dimen/activity_button_size"
         android:layout_below="@id/restoreActivity_emailField"
-        android:layout_marginTop="@dimen/restore_activity_field_button_margin">
-        <Button
-            android:id="@+id/restoreActivity_sendButton"
-            style="@style/AppButtonStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/ActivityRestore_sendButton" />
-        <ProgressBar
-            android:id="@+id/restoreActivity_progress"
-            style="@style/InButtonProgressBar"
-            android:visibility="invisible"
-            android:layout_width="@dimen/activity_progress"
-            android:layout_height="@dimen/activity_progress"
+        android:layout_marginTop="@dimen/restore_activity_field_button_margin"
+        app:cardPreventCornerOverlap="false"
+        app:cardUseCompatPadding="true"
+        app:cardElevation="@dimen/activity_button_elevation">
+        <RelativeLayout
+            android:background="@drawable/button_selector"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:elevation="@dimen/activity_button_elevation" />
-    </RelativeLayout>
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/activity_button_size">
+            <TextView
+                android:id="@+id/restoreActivity_sendLabel"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                style="@style/AppButtonTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ActivityRestore_sendButton" />
+            <ProgressBar
+                android:id="@+id/restoreActivity_progress"
+                style="@style/InButtonProgressBar"
+                android:layout_centerInParent="true"
+                android:visibility="invisible"
+                android:layout_width="@dimen/activity_progress"
+                android:layout_height="@dimen/activity_progress"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true" />
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
     <TextView
         android:id="@+id/restoreActivity_resultText"
         style="@style/AuthErrorLabelText"

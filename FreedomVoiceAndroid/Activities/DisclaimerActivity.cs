@@ -3,6 +3,7 @@ using Android.App;
 using Android.Content;
 using Android.Content.PM;
 using Android.OS;
+using Android.Support.V7.Widget;
 using Android.Widget;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
@@ -22,7 +23,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             base.OnCreate(bundle);
             SetContentView(Resource.Layout.act_disclaimer);
             RootLayout = FindViewById(Resource.Id.disclaimerActivity_root);
-            ActionButton = FindViewById<Button>(Resource.Id.disclaimerActivity_agreeButton);
+            ActionButton = FindViewById<CardView>(Resource.Id.disclaimerActivity_agreeButton);
         }
 
         /// <summary>

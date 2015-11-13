@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/phoneActivity_root"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
@@ -48,48 +49,76 @@
         android:layout_below="@id/phoneActivity_phoneArea"
         android:layout_marginLeft="@dimen/phone_activity_code_size"
         android:layout_marginTop="@dimen/phone_activity_error_margin" />
-    <RelativeLayout
-        android:id="@+id/phoneActivity_applyArea"
+    <android.support.v7.widget.CardView
+        android:id="@+id/phoneActivity_applyButton"
+        android:clickable="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:minHeight="@dimen/activity_button_size"
         android:layout_below="@id/phoneActivity_resultText"
-        android:layout_marginTop="@dimen/phone_activity_button_margin">
-        <Button
-            android:id="@+id/phoneActivity_applyButton"
-            style="@style/AppButtonStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/ActivityNumber_applyButton" />
-        <ProgressBar
-            android:id="@+id/phoneActivity_applyProgress"
-            style="@style/InButtonProgressBar"
-            android:visibility="invisible"
-            android:layout_width="@dimen/activity_progress"
-            android:layout_height="@dimen/activity_progress"
+        android:layout_marginTop="@dimen/phone_activity_button_margin"
+        app:cardPreventCornerOverlap="false"
+        app:cardUseCompatPadding="true"
+        app:cardElevation="@dimen/activity_button_elevation">
+        <RelativeLayout
+            android:background="@drawable/button_selector"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:elevation="@dimen/activity_button_elevation" />
-    </RelativeLayout>
-    <RelativeLayout
-        android:id="@+id/phoneActivity_skipArea"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/activity_button_size">
+            <TextView
+                android:id="@+id/phoneActivity_applyLabel"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                style="@style/AppButtonTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ActivityNumber_applyButton" />
+            <ProgressBar
+                android:id="@+id/phoneActivity_applyProgress"
+                style="@style/InButtonProgressBar"
+                android:layout_centerInParent="true"
+                android:visibility="invisible"
+                android:layout_width="@dimen/activity_progress"
+                android:layout_height="@dimen/activity_progress"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true" />
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
+    <android.support.v7.widget.CardView
+        android:id="@+id/phoneActivity_skipButton"
+        android:clickable="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:minHeight="@dimen/activity_button_size"
         android:layout_marginTop="@dimen/phone_activity_skip_margin"
-        android:layout_below="@id/phoneActivity_applyArea">
-        <Button
-            android:id="@+id/phoneActivity_skipButton"
-            style="@style/WhiteAppButtonStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/ActivityNumber_cancelButton" />
-        <ProgressBar
-            android:id="@+id/phoneActivity_skipProgress"
-            style="@style/InWhiteButtonProgressBar"
-            android:visibility="invisible"
-            android:layout_width="@dimen/activity_progress"
-            android:layout_height="@dimen/activity_progress"
+        android:layout_below="@id/phoneActivity_applyButton"
+        app:cardPreventCornerOverlap="false"
+        app:cardUseCompatPadding="true"
+        app:cardElevation="@dimen/activity_button_elevation">
+        <RelativeLayout
+            android:background="@drawable/button_selector_white"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:elevation="@dimen/activity_button_elevation" />
-    </RelativeLayout>
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/activity_button_size">
+            <TextView
+                android:id="@+id/phoneActivity_skipLabel"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                style="@style/WhiteAppButtonTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ActivityNumber_cancelButton" />
+            <ProgressBar
+                android:id="@+id/phoneActivity_skipProgress"
+                style="@style/InWhiteButtonProgressBar"
+                android:layout_centerInParent="true"
+                android:visibility="invisible"
+                android:layout_width="@dimen/activity_progress"
+                android:layout_height="@dimen/activity_progress"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true" />
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
 </RelativeLayout>

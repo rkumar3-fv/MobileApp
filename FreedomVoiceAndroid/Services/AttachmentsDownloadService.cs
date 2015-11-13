@@ -9,7 +9,6 @@ using Android.Content;
 using Android.OS;
 using Android.Support.V4.App;
 #if DEBUG
-using FreedomVoice.Core.Utils;
 using Android.Util;
 #endif
 using com.FreedomVoice.MobileApp.Android.Actions.Reports;
@@ -34,12 +33,11 @@ namespace com.FreedomVoice.MobileApp.Android.Services
         public const string ActionMsgTag = "ActionMsgTag";
         public const string ActionStartTag = "ActionTypeStart";
         public const string ActionStopTag = "ActionTypeStop";
-        public const string ActionStatusTag = "ActionTypeState";
 
         private ResultReceiver _receiver;
         private bool _isInWork;
         private ConcurrentQueue<Message> _downloadingUrls;
-        private ConcurrentDictionary<int, CancellationToken> _cancellationTokens;
+        private ConcurrentDictionary<int, CancellationTokenSource> _cancellationTokens;
         private NotificationCompat.Builder _builder;
         private NotificationManagerCompat _notificationManager;
 
@@ -50,7 +48,7 @@ namespace com.FreedomVoice.MobileApp.Android.Services
             Log.Debug(App.AppPackage, "DOWNLOADING FOREGROUND SERVICE STARTED");
 #endif
             _downloadingUrls = new ConcurrentQueue<Message>();
-            _cancellationTokens = new ConcurrentDictionary<int, CancellationToken>();
+            _cancellationTokens = new ConcurrentDictionary<int, CancellationTokenSource>();
 
             _notificationManager = NotificationManagerCompat.From(this);
             _builder = new NotificationCompat.Builder(this);
@@ -74,8 +72,8 @@ namespace com.FreedomVoice.MobileApp.Android.Services
                     var msg = intent.GetParcelableExtra(ActionMsgTag) as Message;
                     if (msg != null)
                     {
-                        var token = new CancellationToken();
-                        _cancellationTokens.TryAdd(msg.Id, token);
+                        var tokenSource = new CancellationTokenSource();
+                        _cancellationTokens.TryAdd(msg.Id, tokenSource);
                         _downloadingUrls.Enqueue(msg);
                     }
                     if (!_isInWork)
@@ -83,10 +81,16 @@ namespace com.FreedomVoice.MobileApp.Android.Services
                     break;
 
                 case ActionStopTag:
-                    break;
-
-                case ActionStatusTag:
-
+                    if (_isInWork)
+                    {
+                        if (_cancellationTokens.ContainsKey(id))
+                        {
+                            CancellationTokenSource tokenSource;
+                            var res = _cancellationTokens.TryRemove(id, out tokenSource);
+                            if (res)
+                                tokenSource.Cancel();
+                        }
+                    }
                     break;
             }
             return StartCommandResult.NotSticky;
@@ -101,8 +105,8 @@ namespace com.FreedomVoice.MobileApp.Android.Services
                 Message item;
                 if (!_downloadingUrls.TryDequeue(out item))
                     Start();
-                CancellationToken token;
-                if (!_cancellationTokens.TryGetValue(item.Id, out token))
+                CancellationTokenSource tokenSource;
+                if (!_cancellationTokens.TryGetValue(item.Id, out tokenSource))
                     Start();
                 _isInWork = true;
 
@@ -130,15 +134,21 @@ namespace com.FreedomVoice.MobileApp.Android.Services
                 var notification = _builder.Build();
                 
                 StartForeground(ProgressNotificationId, notification);
-                Task.Factory.StartNew(() => LoadFile(item, token), token).ContinueWith(
-                    t =>
-                    {
-                        CancellationToken removingToken;
-                        _cancellationTokens.TryRemove(item.Id, out removingToken);
-                        _isInWork = false;
-                        StopForeground(true);
-                        Start();
-                    }, token);
+                if (tokenSource != null)
+                {
+                    var token = tokenSource.Token;
+                    Task.Factory.StartNew(() => LoadFile(item, token), token).ContinueWith(
+                            t =>
+                            {
+                                CancellationTokenSource removingToken;
+                                _cancellationTokens.TryRemove(item.Id, out removingToken);
+                                _isInWork = false;
+                                StopForeground(true);
+                                Start();
+                            }, token);
+                }
+                else
+                    Start();
             }
             else
                 StopSelf();

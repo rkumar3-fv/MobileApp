@@ -3,11 +3,11 @@ using Android.App;
 using Android.Content;
 using Android.Content.PM;
 using Android.OS;
+using Android.Support.V7.Widget;
 #if DEBUG
 using Android.Util;
 #endif
 using Android.Views;
-using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Dialogs;
 using FreedomVoice.Core.Utils;
 using Uri = Android.Net.Uri;
@@ -31,7 +31,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             var extra = Intent.GetStringExtra(InactiveAccontTag);
             SetContentView(Resource.Layout.act_inactive);
             RootLayout = FindViewById(Resource.Id.inactiveActivity_root);
-            ActionButton = FindViewById<Button>(Resource.Id.inactiveActivity_dialButton);
+            ActionButton = FindViewById<CardView>(Resource.Id.inactiveActivity_dialButton);
             if (extra != null)
                 SupportActionBar.Title = DataFormatUtils.ToPhoneNumber(extra);
             else if (Helper.SelectedAccount != null)

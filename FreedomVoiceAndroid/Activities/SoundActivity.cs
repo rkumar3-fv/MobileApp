@@ -21,7 +21,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         protected ImageButton PlayerButton;
         protected TextView StartTextView;
         protected TextView EndTextView;
-        protected Button SpeakerButton;
+        protected ToggleButton SpeakerButton;
         protected Button CallBackButton;
         protected SeekBar PlayerSeek;
         protected RelativeLayout TouchLayout;
@@ -34,8 +34,10 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         protected override void OnStart()
         {
             base.OnStart();
-            SpeakerButton.Click += SpeakerButtonOnClick;
+            SpeakerButton.CheckedChange += SpeakerButtonOnClick;
             CallBackButton.Click += CallBackButtonOnClick;
+            if (Msg.FromNumber.Length < 2)
+                CallBackButton.Enabled = false;
             PlayerButton.Click += PlayerButtonOnClick;
             MessageStamp.Text = DataFormatUtils.ToDuration(Msg.Length);
             EndTextView.Text = $"-{DataFormatUtils.ToDuration(Msg.Length)}";
@@ -44,7 +46,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             PlayerSeek.StartTrackingTouch += PlayerSeekOnStartTrackingTouch;
             PlayerSeek.StopTrackingTouch += PlayerSeekOnStopTrackingTouch;
             PlayerSeek.ProgressChanged += PlayerSeekOnProgressChanged;
-            _timer = new Timer {Interval = 300};
+            _timer = new Timer {Interval = 1000};
             _timer.Elapsed += TimerOnElapsed;
             var mediaBinderIntent = new Intent(this, typeof(MediaService));
             BindService(mediaBinderIntent, this, Bind.AutoCreate);
@@ -81,12 +83,27 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             }
         }
 
+        protected override void OnResume()
+        {
+            base.OnResume();
+            if (_isBinded)
+                CheckSoundOutput(SpeakerButton.Checked);
+        }
+
         /// <summary>
         /// Changing output sound device
         /// </summary>
-        private void SpeakerButtonOnClick(object sender, EventArgs eventArgs)
+        private void SpeakerButtonOnClick(object sender, CompoundButton.CheckedChangeEventArgs eventArgs)
         {
+            CheckSoundOutput(eventArgs.IsChecked);
+        }
 
+        private void CheckSoundOutput(bool isInSpeaker)
+        {
+            var intent = new Intent(this, typeof(MediaService));
+            intent.SetAction(MediaService.MediaActionChangeOut);
+            intent.PutExtra(MediaService.MediaOutputTag, !isInSpeaker);
+            StartService(intent);
         }
 
         /// <summary>
@@ -108,6 +125,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         /// </summary>
         private void CallBackButtonOnClick(object sender, EventArgs eventArgs)
         {
+            if (MarkForRemove != (-1))
+                MarkForRemove = -1;
             Pause();
             Call(Msg.FromNumber);
         }
@@ -202,7 +221,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             _isBinded = true;
 
             _serviceBinder.AppMediaService.EndEvent += AppMediaServiceOnEndEvent;
-
             if ((_serviceBinder.AppMediaService.Msg != null) && (_serviceBinder.AppMediaService.Msg.Equals(Msg)))
             {
                 _isCurrent = true;
@@ -259,10 +277,13 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         {
             if ((_isBinded) && (PlayerSeek.Enabled))
             {
-                var progress = _serviceBinder.AppMediaService.SeekPosition / 1000;
-                EndTextView.Text = $"-{DataFormatUtils.ToDuration(Msg.Length - progress)}";
-                StartTextView.Text = DataFormatUtils.ToDuration(progress);
-                PlayerSeek.Progress = progress;
+                RunOnUiThread(delegate
+                {
+                    var progress = _serviceBinder.AppMediaService.SeekPosition / 1000;
+                    EndTextView.Text = $"-{DataFormatUtils.ToDuration(Msg.Length - progress)}";
+                    StartTextView.Text = DataFormatUtils.ToDuration(progress);
+                    PlayerSeek.Progress = progress;
+                });
             }
         }
     }

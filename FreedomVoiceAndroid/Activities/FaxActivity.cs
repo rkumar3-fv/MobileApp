@@ -3,8 +3,12 @@ using Android.App;
 using Android.Content;
 using Android.Content.PM;
 using Android.OS;
+using Android.Support.Design.Widget;
+using Android.Support.V4.Content;
+using Android.Views;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Helpers;
+using Java.Lang;
 using Uri = Android.Net.Uri;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
@@ -61,22 +65,29 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             file.SetReadable(true);
             intent.SetDataAndType(Uri.FromFile(file), "application/pdf");
             intent.SetFlags(ActivityFlags.NoHistory);
+            JavaSystem.Gc();
             try
             {
                 StartActivityForResult(intent, 1);
             }
             catch (ActivityNotFoundException)
             {
-                try
-                {
-                    StartActivity(new Intent(Intent.ActionView, Uri.Parse("market://details?id=" + GetString(Resource.String.Extra_pdfReaderPath))));
-                }
-                catch (ActivityNotFoundException)
-                {
-                    StartActivity(new Intent(Intent.ActionView, Uri.Parse("http://play.google.com/store/apps/details?id=" + GetString(Resource.String.Extra_pdfReaderPath))));
-                    throw;
-                }
-                throw;
+                var snakPdf = Snackbar.Make(RootLayout, Resource.String.Snack_pdfError, Snackbar.LengthLong);
+                snakPdf.SetAction(Resource.String.Snack_pdfGet, OnUndoClick);
+                snakPdf.SetActionTextColor(ContextCompat.GetColor(this, Resource.Color.colorUndoList));
+                snakPdf.Show();
+            }
+        }
+
+        private void OnUndoClick(View view)
+        {
+            try
+            {
+                StartActivity(new Intent(Intent.ActionView, Uri.Parse("market://details?id=" + GetString(Resource.String.Extra_pdfReaderPath))));
+            }
+            catch (ActivityNotFoundException)
+            {
+                Snackbar.Make(RootLayout, Resource.String.Snack_noPlayMarket, Snackbar.LengthLong).Show();
             }
         }
 

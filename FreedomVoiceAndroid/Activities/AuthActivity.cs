@@ -6,6 +6,7 @@ using Android.Gms.Analytics;
 using Android.Graphics;
 using Android.OS;
 using Android.Support.V4.Content;
+using Android.Support.V7.Widget;
 #if DEBUG
 using Android.Util;
 #endif
@@ -37,7 +38,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         }
 #endif
         private Color _errorColor;
-        private Button _authButton;
+        private CardView _authButton;
+        private TextView _authLabel;
         private Button _forgotButton;
         private EditText _loginText;
         private EditText _passwordText;
@@ -49,9 +51,17 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
+
+            if ((Intent.Flags & ActivityFlags.BroughtToFront) != 0)
+            {
+                Finish();
+                return;
+            }
+
             SetContentView(Resource.Layout.act_auth);
             RootLayout = FindViewById(Resource.Id.authActivity_root);
-            _authButton = FindViewById<Button>(Resource.Id.authActivity_loginButton);
+            _authButton = FindViewById<CardView>(Resource.Id.authActivity_loginButton);
+            _authLabel = FindViewById<TextView>(Resource.Id.authActivity_loginLabel);
             _forgotButton = FindViewById<Button>(Resource.Id.authActivity_forgotButton);
             _loginText = FindViewById<EditText>(Resource.Id.authActivity_loginField);
             _passwordText = FindViewById<EditText>(Resource.Id.authActivity_passwordField);
@@ -97,7 +107,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
 #endif
             if (Helper.IsLoggedIn)
                 Helper.GetAccounts();
-            Appl.AnalyticsTracker.SetScreenName($"Activity {GetType().Name}");
             Appl.AnalyticsTracker.Send(new HitBuilders.ScreenViewBuilder().Build());
         }
 
@@ -126,8 +135,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             {
                 if (_progressLogin.Visibility == ViewStates.Invisible)
                     _progressLogin.Visibility = ViewStates.Visible;
-                if (_authButton.Text.Length != 0)
-                    _authButton.Text = "";
+                if (_authLabel.Visibility == ViewStates.Visible)
+                    _authLabel.Visibility = ViewStates.Invisible;
             }
         }
 
@@ -172,8 +181,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             {
                 if (_progressLogin.Visibility == ViewStates.Visible)
                     _progressLogin.Visibility = ViewStates.Invisible;
-                if (_authButton.Text.Length == 0)
-                    _authButton.Text = GetString(Resource.String.ActivityAuth_authButton);
+                if (_authLabel.Visibility == ViewStates.Invisible)
+                    _authLabel.Visibility = ViewStates.Visible;
                 switch (code)
                 {
                     case ActionsHelperEventArgs.AuthLoginError:

@@ -34,14 +34,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/recordActivity_senderText"
-            android:layout_alignParentRight="true" />
+            android:layout_alignParentLeft="true" />
         <TextView
             android:id="@+id/recordActivity_stampText"
             style="@style/MessagesCounterText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/recordActivity_senderText"
-            android:layout_alignParentLeft="true" />
+            android:layout_alignParentRight="true" />
     </RelativeLayout>
     <RelativeLayout
         android:id="@+id/recordActivity_touchArea"
@@ -99,18 +99,21 @@
         android:background="@drawable/border"
         android:layout_alignParentRight="true"
         android:layout_marginTop="@dimen/details_activity_number_margin">
-        <Button
+        <ToggleButton
             android:id="@+id/recordActivity_speakerButton"
-            style="@style/BorderlessMessagesButtonStyle"
+            style="@style/BorderlessMessagesToggleButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/details_activity_actions_height"
             android:drawableLeft="@drawable/ic_action_speaker"
             android:drawablePadding="@dimen/details_activity_actions_spacing"
-            android:text="@string/ActivityVoice_speaker"
+            android:textOn="@string/ActivityVoice_speaker"
+            android:textOff="@string/ActivityVoice_speaker"
+            android:checked="true"
             android:layout_marginTop="@dimen/details_activity_actions_margin"
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
             android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true" />
+            android:layout_alignParentLeft="true"
+            android:paddingEnd="@dimen/details_activity_actions_spacing" />
         <Button
             android:id="@+id/recordActivity_callbackButton"
             style="@style/BorderlessMessagesButtonStyle"

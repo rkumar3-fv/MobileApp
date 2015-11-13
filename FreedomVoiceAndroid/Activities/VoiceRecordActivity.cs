@@ -24,7 +24,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             MessageDate = FindViewById<TextView>(Resource.Id.recordActivity_dateText);
             MessageStamp = FindViewById<TextView>(Resource.Id.recordActivity_stampText);
             CallBackButton = FindViewById<Button>(Resource.Id.recordActivity_callbackButton);
-            SpeakerButton = FindViewById<Button>(Resource.Id.recordActivity_speakerButton);
+            SpeakerButton = FindViewById<ToggleButton>(Resource.Id.recordActivity_speakerButton);
             Progress = FindViewById<ProgressBar>(Resource.Id.recordActivity_progress);
             PlayerButton = FindViewById<ImageButton>(Resource.Id.recordActivity_playerButton);
             StartTextView = FindViewById<TextView>(Resource.Id.recordActivity_playerStartText);
