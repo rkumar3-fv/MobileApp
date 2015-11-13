@@ -2,15 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using UIKit;
 using CoreGraphics;
-using Foundation;
 using FreedomVoice.iOS.Entities;
-using FreedomVoice.iOS.Helpers;
 using FreedomVoice.iOS.TableViewSources;
 using FreedomVoice.iOS.Utilities;
+using FreedomVoice.iOS.Utilities.Helpers;
 using FreedomVoice.iOS.Views;
 using FreedomVoice.iOS.Views.Shared;
+using UIKit;
 using Xamarin.Contacts;
 
 namespace FreedomVoice.iOS.ViewControllers
@@ -27,9 +26,9 @@ namespace FreedomVoice.iOS.ViewControllers
         private UISearchBar _contactsSearchBar;
         private UILabel _noResultsLabel;
 
-        private bool _havePermissions;
-
         private CallerIdView CallerIdView { get; set; }
+
+        private bool _hasContactsPermissions;
 
         private static MainTabBarController MainTabBarInstance => MainTabBarController.Instance;
 
@@ -41,11 +40,10 @@ namespace FreedomVoice.iOS.ViewControllers
 
         public override async void ViewDidLoad()
         {
-            var addressBook = new Xamarin.Contacts.AddressBook();
-            _havePermissions = await addressBook.RequestPermission();
-            if (!_havePermissions)
+            _hasContactsPermissions = await AppDelegate.ContactHasAccessPermissionsAsync();
+            if (!_hasContactsPermissions)
             {
-                View.AddSubview(new NoAccessToContacts(Theme.ScreenBounds));
+                View.AddSubview(new NoAccessToContactsView(Theme.ScreenBounds));
                 return;
             }
 
@@ -56,7 +54,7 @@ namespace FreedomVoice.iOS.ViewControllers
                 Font = UIFont.SystemFontOfSize(28),
                 TextColor = Theme.GrayColor,
                 TextAlignment = UITextAlignment.Center,
-                Center = View.Center,
+                Center = new CGPoint(View.Center.X, View.Center.Y - Theme.StatusBarHeight + NavigationController.NavigationBarHeight()),
                 Hidden = true
             };
 
@@ -79,14 +77,14 @@ namespace FreedomVoice.iOS.ViewControllers
             _contactsSearchBar.ShouldEndEditing += SearchBarOnShouldEndEditing;
             _contactsSearchBar.TextChanged += SearchBarOnTextChanged;
             _contactsSearchBar.CancelButtonClicked += SearchBarOnCancelButtonClicked;
-            _contactsSearchBar.SearchButtonClicked += _contactsSearchBar_SearchButtonClicked;
+            _contactsSearchBar.SearchButtonClicked += SearchBarOnSearchButtonClicked;
 
             CallerIdView = new CallerIdView(new RectangleF(0, (float)(_contactsSearchBar.Frame.Y + _contactsSearchBar.Frame.Height), (float)View.Frame.Width, 40), MainTabBarInstance.GetPresentationNumbers());
 
             var headerView = new UIView(new CGRect(0, 0, View.Frame.Width, _contactsSearchBar.Frame.Height + CallerIdView.Frame.Height));
             headerView.AddSubviews(_contactsSearchBar, CallerIdView);
 
-            _contactList = addressBook.ToList();
+            _contactList = await AppDelegate.GetContactsListAsync();
             _contactSource = new ContactSource { ContactsList = _contactList };
             _contactSource.OnRowSelected += TableSourceOnRowSelected;
 
@@ -101,14 +99,27 @@ namespace FreedomVoice.iOS.ViewControllers
             base.ViewDidLoad();
         }
 
-        private void _contactsSearchBar_SearchButtonClicked(object sender, EventArgs e)
+        public override void ViewWillAppear(bool animated)
+        {
+            Title = "Contacts";
+
+            NavigationItem.SetRightBarButtonItem(Appearance.GetLogoutBarButton(this), false);
+
+            PresentationNumber selectedNumber = MainTabBarInstance.GetSelectedPresentationNumber();
+            if (selectedNumber != null && _hasContactsPermissions)
+                CallerIdView.UpdatePickerData(selectedNumber);
+
+            base.ViewWillAppear(animated);
+        }
+
+        private void SearchBarOnSearchButtonClicked(object sender, EventArgs e)
         {
             _contactsSearchBar.ResignFirstResponder();
         }
 
         private void SearchBarOnTextChanged(object sender, UISearchBarTextChangedEventArgs e)
         {
-            _filteredContactList = _contactList.Where(c => c.DisplayName.StartsWith(_contactsSearchBar.Text, StringComparison.OrdinalIgnoreCase)).ToList();
+            _filteredContactList = _contactList.Where(c => c.FirstName != null && c.FirstName.StartsWith(_contactsSearchBar.Text, StringComparison.OrdinalIgnoreCase) || c.LastName != null && c.LastName.StartsWith(_contactsSearchBar.Text, StringComparison.OrdinalIgnoreCase)).ToList();
             _contactSource.IsSearchMode = !string.IsNullOrEmpty(e.SearchText);
             _contactSource.ContactsList = _filteredContactList;
             ContactsTableView.ReloadData();
@@ -141,22 +152,9 @@ namespace FreedomVoice.iOS.ViewControllers
         {
             e.TableView.DeselectRow(e.IndexPath, false);
 
-            if (PhoneCapability.IsAirplaneMode())
-            {
-                var alertController = UIAlertController.Create(null, "Airplane Mode must be turned off to make calls from the FreedomVoice app.", UIAlertControllerStyle.Alert);
-                alertController.AddAction(UIAlertAction.Create("Settings", UIAlertActionStyle.Default, a => {
-                    var url = new NSUrl(UIApplication.OpenSettingsUrlString);
-                    UIApplication.SharedApplication.OpenUrl(url);
-                }));
-                alertController.AddAction(UIAlertAction.Create("Cancel", UIAlertActionStyle.Cancel, null));
-
-                PresentViewController(alertController, true, null);
-                return;
-            }
-
             var selectedCallerId = MainTabBarInstance.GetSelectedPresentationNumber().PhoneNumber;
 
-            var person = _contactList.Where(c => c.DisplayName.StartsWith(_contactSource.Keys[e.IndexPath.Section], StringComparison.OrdinalIgnoreCase)).ToList()[e.IndexPath.Row];
+            var person = _contactList.Where(c => c.LastName != null && c.LastName.StartsWith(_contactSource.Keys[e.IndexPath.Section], StringComparison.OrdinalIgnoreCase)).ToList()[e.IndexPath.Row];
             var phoneNumbers = person.Phones.ToList();
 
             switch (phoneNumbers.Count)
@@ -203,19 +201,6 @@ namespace FreedomVoice.iOS.ViewControllers
                 _noResultsLabel.Hidden = true;
                 ContactsTableView.SeparatorStyle = UITableViewCellSeparatorStyle.SingleLine;
             }
-        }
-
-        public override void ViewWillAppear(bool animated)
-        {
-            Title = "Contacts";
-
-            NavigationItem.SetRightBarButtonItem(Appearance.GetLogoutBarButton(this), false);
-
-            PresentationNumber selectedNumber = MainTabBarInstance.GetSelectedPresentationNumber();
-            if (selectedNumber != null && _havePermissions)
-                CallerIdView.UpdatePickerData(selectedNumber);
-
-            base.ViewWillAppear(animated);
         }
     }
 }

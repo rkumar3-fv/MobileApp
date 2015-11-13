@@ -1,9 +1,11 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using FreedomVoice.Core.Entities.Enums;
 using FreedomVoice.iOS.Services;
 using FreedomVoice.iOS.Services.Responses;
 using FreedomVoice.iOS.Utilities;
+using FreedomVoice.iOS.Utilities.Helpers;
 using UIKit;
 
 namespace FreedomVoice.iOS.ViewModels
@@ -11,6 +13,7 @@ namespace FreedomVoice.iOS.ViewModels
     public class MediaViewModel : BaseViewModel
     {
         private readonly IMediaService _service;
+        private readonly UIViewController _viewController;
 
         private readonly string _systemPhoneNumber;
         private readonly int _mailboxNumber;
@@ -20,6 +23,8 @@ namespace FreedomVoice.iOS.ViewModels
 
         public string FilePath { get; private set; }
 
+        protected override string LoadingMessage => "Downloading file...";
+
         /// <summary>
         /// Constructor, requires an IService
         /// </summary>
@@ -27,9 +32,10 @@ namespace FreedomVoice.iOS.ViewModels
         {
             _service = ServiceContainer.Resolve<IMediaService>();
 
-            LoadingMessage = "Downloading file...";
+            ProgressControl = ProgressControlType.ProgressBar;
 
             ViewController = viewController;
+            _viewController = viewController;
 
             _systemPhoneNumber = systemPhoneNumber;
             _mailboxNumber = mailboxNumber;
@@ -44,14 +50,31 @@ namespace FreedomVoice.iOS.ViewModels
         /// <returns></returns>
         public async Task GetMediaAsync()
         {
+            CurrentTask = async delegate { await GetMediaAsync(); };
+
+            if (PhoneCapability.NetworkIsUnreachable)
+            {
+                Appearance.ShowNetworkUnreachableAlert(_viewController);
+                return;
+            }
+
             IsBusy = true;
 
-            var requestResult = await _service.ExecuteRequest(_systemPhoneNumber, _mailboxNumber, _folderName, _messageId, _mediaType, CancellationToken.None);
+            ProgressBar.Progress = 0;
+
+            var progressReporter = new Progress<DownloadBytesProgress>();
+            progressReporter.ProgressChanged += (s, args) => ProgressBar.Progress = args.PercentComplete;
+
+            var tokenSource = new CancellationTokenSource();
+
+            CancelDownloadButton.TouchUpInside += (sender, args) => tokenSource.Cancel();
+
+            var requestResult = await _service.ExecuteRequest(progressReporter, _systemPhoneNumber, _mailboxNumber, _folderName, _messageId, _mediaType, tokenSource.Token);
             if (requestResult is ErrorResponse)
-                ProceedErrorResponse(requestResult);
+                await ProceedErrorResponse(requestResult);
             else
             {
-                var data = requestResult as MediaResponse;
+                var data = requestResult as GetMediaResponse;
                 if (data != null)
                     FilePath = data.FilePath;
             }

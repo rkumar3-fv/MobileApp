@@ -3,6 +3,7 @@ using CoreGraphics;
 using Foundation;
 using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.Utilities.Extensions;
+using FreedomVoice.iOS.Utilities.Helpers;
 using FreedomVoice.iOS.ViewModels;
 using UIKit;
 
@@ -75,17 +76,21 @@ namespace FreedomVoice.iOS.ViewControllers
 	    {
             _emailTextField.ResignFirstResponder();
 
-            if (_forgotPasswordViewModel.IsValid)
-            {
-                UIApplication.SharedApplication.NetworkActivityIndicatorVisible = true;
-                _sendRecoveryButton.Hidden = true;
-
-                await _forgotPasswordViewModel.ForgotPasswordAsync();
-
-                UIApplication.SharedApplication.NetworkActivityIndicatorVisible = false;
-            }
-            else
+            if (!_forgotPasswordViewModel.IsValid)
                 EMailValidate();
+
+            if (PhoneCapability.NetworkIsUnreachable)
+            {
+                Appearance.ShowNetworkUnreachableAlert(NavigationController);
+                return;
+            }
+
+            UIApplication.SharedApplication.NetworkActivityIndicatorVisible = true;
+            _sendRecoveryButton.Hidden = true;
+
+            await _forgotPasswordViewModel.ForgotPasswordAsync();
+
+            UIApplication.SharedApplication.NetworkActivityIndicatorVisible = false; 
         }
 
         private void OnForgotPasswordSuccess(object sender, EventArgs e)
@@ -164,7 +169,7 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private void InitializeRecoveryInfoLabel()
         {
-            var labelFrame = new CGRect(15, UIApplication.SharedApplication.StatusBarFrame.Height + NavigationController.NavigationBar.Frame.Size.Height + 20, Theme.ScreenBounds.Width - 30, 40);
+            var labelFrame = new CGRect(15, 20, Theme.ScreenBounds.Width - 30, 40);
             _recoveryInfoLabel = new UILabel(labelFrame)
             {
                 Font = UIFont.SystemFontOfSize(15, UIFontWeight.Regular),

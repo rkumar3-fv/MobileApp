@@ -36,7 +36,7 @@ namespace FreedomVoice.iOS.ViewModels
 
             var requestResult = await _service.ExecuteRequest();
             if (requestResult is ErrorResponse)
-                ProceedErrorResponse(requestResult);
+                await ProceedErrorResponse(requestResult);
             else
             {
                 var data = requestResult as AccountsResponse;

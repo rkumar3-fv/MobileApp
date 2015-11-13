@@ -44,12 +44,14 @@ namespace FreedomVoice.iOS.ViewModels
         /// <returns></returns>
         public async Task GetExtensionsListAsync()
         {
+            CurrentTask = async delegate { await GetExtensionsListAsync(); };
+
             IsBusy = true;
 
             var requestResult = await _extensionsService.ExecuteRequest(_selectedAccount.PhoneNumber);
             if (requestResult is ErrorResponse)
             {
-                ProceedErrorResponse(requestResult);
+                await ProceedErrorResponse(requestResult);
                 IsBusy = false;
             }
             else
@@ -68,7 +70,7 @@ namespace FreedomVoice.iOS.ViewModels
         {
             var requestResult = await _presentationNumbersService.ExecuteRequest(_selectedAccount.PhoneNumber);
             if (requestResult is ErrorResponse)
-                ProceedErrorResponse(requestResult);
+                await ProceedErrorResponse(requestResult);
             else
             {
                 var data = requestResult as PresentationNumbersResponse;

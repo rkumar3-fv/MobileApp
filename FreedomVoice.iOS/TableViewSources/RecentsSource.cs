@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using CoreGraphics;
 using Foundation;
-using UIKit;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.TableViewCells;
 using FreedomVoice.iOS.Utilities;
+using UIKit;
 
 namespace FreedomVoice.iOS.TableViewSources
 {

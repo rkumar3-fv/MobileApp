@@ -1,16 +1,16 @@
-using CoreGraphics;
-using FreedomVoice.iOS.Helpers;
-using GoogleAnalytics.iOS;
-using MRoundedButton;
 using System;
 using System.Drawing;
+using CoreGraphics;
+using Foundation;
 using FreedomVoice.Core.Utils;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.Utilities;
+using FreedomVoice.iOS.Utilities.Helpers;
 using FreedomVoice.iOS.Views;
 using FreedomVoice.iOS.Views.Shared;
+using GoogleAnalytics.iOS;
+using MRoundedButton;
 using UIKit;
-using Foundation;
 
 namespace FreedomVoice.iOS.ViewControllers
 {
@@ -31,7 +31,7 @@ namespace FreedomVoice.iOS.ViewControllers
 
         public override void ViewDidLoad()
         {
-            CallerIdView = new CallerIdView(new RectangleF(0, 64, (float)View.Frame.Width, 40), MainTabBarInstance.GetPresentationNumbers());
+            CallerIdView = new CallerIdView(new RectangleF(0, 0, (float)View.Frame.Width, 40), MainTabBarInstance.GetPresentationNumbers());
 
             var keypadLineView = new RecentLineView(new RectangleF(0, (float)(CallerIdView.Frame.Y + CallerIdView.Frame.Height), (float)View.Frame.Width, 0.5f));
 

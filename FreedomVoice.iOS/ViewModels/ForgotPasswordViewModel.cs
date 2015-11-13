@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
-using FreedomVoice.iOS.Helpers;
 using FreedomVoice.iOS.Services;
 using FreedomVoice.iOS.Services.Responses;
 using FreedomVoice.iOS.Utilities;
+using FreedomVoice.iOS.Utilities.Helpers;
 using UIKit;
 
 namespace FreedomVoice.iOS.ViewModels
@@ -58,7 +58,7 @@ namespace FreedomVoice.iOS.ViewModels
 
             var requestResult = await _service.ExecuteRequest(EMail);
             if (requestResult is ErrorResponse)
-                ProceedErrorResponse(requestResult);
+                await ProceedErrorResponse(requestResult);
             else
                 ProceedSuccessResponse();
 

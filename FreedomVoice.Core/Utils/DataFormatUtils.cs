@@ -86,10 +86,13 @@ namespace FreedomVoice.Core.Utils
         public static string ToFormattedDate(string yesterdayLabel, DateTime date)
         {
             var current = DateTime.Now;
+
             if ((date.DayOfYear == current.DayOfYear) && (date.Year == current.Year))
                 return date.ToString("HH:mm tt");
-            if ((date.DayOfYear == current.DayOfYear) && (date.Year == current.Year))
+
+            if ((date.DayOfYear == current.DayOfYear - 1) && (date.Year == current.Year))
                 return $"{yesterdayLabel} {date.ToString("HH:mm tt")}";
+
             return date.ToString("MM/dd/yyyy HH:mm tt");
         }
 
@@ -102,10 +105,13 @@ namespace FreedomVoice.Core.Utils
         public static string ToShortFormattedDate(string yesterdayLabel, DateTime date)
         {
             var current = DateTime.Now;
+
             if ((date.DayOfYear == current.DayOfYear) && (date.Year == current.Year))
                 return date.ToString("HH:mm tt");
-            if ((date.DayOfYear == current.DayOfYear) && (date.Year == current.Year))
+
+            if ((date.DayOfYear == current.DayOfYear - 1) && (date.Year == current.Year))
                 return yesterdayLabel;
+
             return date.ToString("MM/dd/yy");
         }
 

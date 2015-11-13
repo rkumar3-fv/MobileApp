@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.Services;
 using FreedomVoice.iOS.Services.Responses;
@@ -18,14 +19,14 @@ namespace FreedomVoice.iOS.ViewModels
 
         public CallReservation Reservation { get; private set; }
 
+        protected override string LoadingMessage => "Creating Call Reservation...";
+
         /// <summary>
         /// Constructor, requires an IService
         /// </summary>
         public CallReservationViewModel(string systemNumber, string callerIdNumber, string presentationNumber, string destinationNumber, UIViewController viewController)
         {
             _service = ServiceContainer.Resolve<ICallReservationService>();
-
-            LoadingMessage = "Creating Call Reservation...";
 
             ViewController = viewController;
 
@@ -41,11 +42,13 @@ namespace FreedomVoice.iOS.ViewModels
         /// <returns></returns>
         public async Task CreateCallReservationAsync()
         {
+            CurrentTask = async delegate { await CreateCallReservationAsync(); };
+
             IsBusy = true;
 
             var requestResult = await _service.ExecuteRequest(_systemNumber, _callerIdNumber, _presentationNumber, _destinationNumber);
             if (requestResult is ErrorResponse)
-                ProceedErrorResponse(requestResult);
+                await ProceedErrorResponse(requestResult);
             else
             {
                 var data = requestResult as CallReservationResponse;

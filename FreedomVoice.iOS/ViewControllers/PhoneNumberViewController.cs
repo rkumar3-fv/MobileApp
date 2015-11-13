@@ -2,8 +2,8 @@ using System;
 using CoreGraphics;
 using Foundation;
 using FreedomVoice.iOS.Entities;
-using FreedomVoice.iOS.Helpers;
 using FreedomVoice.iOS.Utilities;
+using FreedomVoice.iOS.Utilities.Helpers;
 using UIKit;
 
 namespace FreedomVoice.iOS.ViewControllers
@@ -68,7 +68,7 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private void InitializeFirstLabel()
         {
-            var labelFrame = new CGRect(15, UIApplication.SharedApplication.StatusBarFrame.Height + NavigationController.NavigationBar.Frame.Size.Height + 10, Theme.ScreenBounds.Width - 30, 90);
+            var labelFrame = new CGRect(15, 10, Theme.ScreenBounds.Width - 30, 90);
             _firstLabel = new UILabel(labelFrame)
             {
                 Text = $"To make calls with this app, we require your device's phone number and you must enable the Caller ID feature.{Environment.NewLine}This information is not shared with any 3rd parties.",

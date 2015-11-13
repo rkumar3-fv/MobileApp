@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using FreedomVoice.iOS.Helpers;
+using System.Threading.Tasks;
 using FreedomVoice.iOS.Services;
 using FreedomVoice.iOS.Services.Responses;
 using FreedomVoice.iOS.Utilities;
+using FreedomVoice.iOS.Utilities.Helpers;
 using UIKit;
 
 namespace FreedomVoice.iOS.ViewModels
@@ -17,18 +18,29 @@ namespace FreedomVoice.iOS.ViewModels
         /// </summary>
         public event EventHandler IsBusyChanged;
 
-        /// <summary>
-        /// Event for when IsValid changes
-        /// </summary>
-        public event EventHandler IsValidChanged;
+        protected Action<Task> CurrentTask;
 
-        /// <summary>
-        /// Default constructor
-        /// </summary>
         protected BaseViewModel()
         {
+            ProgressControl = ProgressControlType.ActivityIndicator;
+
             //Make sure validation is performed on startup
-            Validate();
+            //Validate();
+        }
+
+        private async Task ProceedAutoLogin()
+        {
+            string password = null;
+
+            var userName = KeyChain.GetUsername();
+            if (userName != null)
+                password = KeyChain.GetPasswordForUsername(userName);
+
+            if (string.IsNullOrEmpty(userName) || string.IsNullOrEmpty(password)) return;
+
+            var loginViewModel = new LoginViewModel(userName, password, ViewController);
+            
+            await loginViewModel.AutoLoginAsync().ContinueWith(CurrentTask);
         }
 
         /// <summary>
@@ -42,15 +54,12 @@ namespace FreedomVoice.iOS.ViewModels
         public List<string> Errors { get; } = new List<string>();
 
         /// <summary>
-        /// Protected method for validating the ViewModel
-        /// - Fires PropertyChanged for IsValid and Errors
+        /// Protected method for validating the ViewModel - Fires PropertyChanged for IsValid and Errors
         /// </summary>
         protected virtual void Validate()
         {
             OnPropertyChanged("IsValid");
             OnPropertyChanged("Errors");
-
-            IsValidChanged?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -58,7 +67,7 @@ namespace FreedomVoice.iOS.ViewModels
         /// </summary>
         /// <param name="validate">Func to determine if a value is valid</param>
         /// <param name="error">The error message to use if not valid</param>
-        protected virtual void ValidateProperty(Func<bool> validate, string error)
+        protected void ValidateProperty(Func<bool> validate, string error)
         {
             if (validate())
             {
@@ -103,8 +112,9 @@ namespace FreedomVoice.iOS.ViewModels
                 IsBusyChanged.Invoke(this, EventArgs.Empty);
         }
 
-        public event EventHandler OnSuccessResponse;
         public event EventHandler OnUnauthorizedResponse;
+        public event EventHandler OnErrorConnectionResponse;
+        public event EventHandler OnSuccessResponse;
         public event EventHandler OnPaymentRequiredResponse;
         public event EventHandler OnBadRequestResponse;
         public event EventHandler OnNotFoundResponse;
@@ -113,7 +123,7 @@ namespace FreedomVoice.iOS.ViewModels
 
         public bool IsErrorResponseReceived;
 
-        protected void ProceedErrorResponse(BaseResponse baseResponse)
+        protected async Task ProceedErrorResponse(BaseResponse baseResponse)
         {
             var response = baseResponse as ErrorResponse;
             if (response == null) return;
@@ -126,10 +136,14 @@ namespace FreedomVoice.iOS.ViewModels
                     OnPaymentRequiredResponse?.Invoke(null, EventArgs.Empty);
                     return;
                 case ErrorResponse.ErrorConnection:
-                    new UIAlertView("Service is unreachable", "Please try again later.", null, "OK", null).Show();
+                    new UIAlertView("Service is unavailable", "Please try again later.", null, "OK", null).Show();
+                    OnErrorConnectionResponse?.Invoke(null, EventArgs.Empty);
                     return;
                 case ErrorResponse.ErrorUnauthorized:
-                    OnUnauthorizedResponse?.Invoke(null, EventArgs.Empty);
+                    if (OnUnauthorizedResponse != null)
+                        OnUnauthorizedResponse.Invoke(null, EventArgs.Empty);
+                    else
+                        await ProceedAutoLogin();
                     return;
                 case ErrorResponse.ErrorBadRequest:
                     OnBadRequestResponse?.Invoke(null, EventArgs.Empty);
@@ -146,16 +160,23 @@ namespace FreedomVoice.iOS.ViewModels
                 case ErrorResponse.ErrorUnknown:
                     return;
             }
-    }
+        }
 
         protected void ProceedSuccessResponse()
         {
             OnSuccessResponse?.Invoke(null, EventArgs.Empty);
         }
 
-        protected string LoadingMessage { private get; set; }
+        protected virtual string LoadingMessage => "Loading Data...";
+
+        protected ProgressControlType ProgressControl { private get; set; }
 
         private LoadingOverlay _loadingOverlay;
+
+        private UIActivityIndicatorView _activityIndicator;
+        protected UIProgressView ProgressBar;
+        protected UIButton CancelDownloadButton;
+
         private void BaseOnIsBusyChanged()
         {
             if (!ViewController.IsViewLoaded)
@@ -163,11 +184,25 @@ namespace FreedomVoice.iOS.ViewModels
 
             if (IsBusy)
             {
-                _loadingOverlay = string.IsNullOrEmpty(LoadingMessage) ? new LoadingOverlay(Theme.ScreenBounds) : new LoadingOverlay(Theme.ScreenBounds, LoadingMessage);
-                ViewController.View.Add(_loadingOverlay);
+                _loadingOverlay =  new LoadingOverlay(Theme.ScreenBounds, ProgressControl, LoadingMessage);
+
+                ProgressBar = _loadingOverlay.ProgressBar;
+                CancelDownloadButton = _loadingOverlay.CancelDownloadButton;
+                _activityIndicator = _loadingOverlay.ActivityIndicator;
+
+                UIApplication.SharedApplication.KeyWindow.AddSubview(_loadingOverlay);
             }
             else
+            {
+                _activityIndicator?.StopAnimating();
                 _loadingOverlay.Hide();
+            }
+        }
+
+        public enum ProgressControlType
+        {
+            ProgressBar,
+            ActivityIndicator
         }
     }
 }

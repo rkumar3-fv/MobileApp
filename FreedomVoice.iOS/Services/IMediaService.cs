@@ -1,7 +1,9 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using FreedomVoice.Core.Entities.Enums;
 using FreedomVoice.iOS.Services.Responses;
+using FreedomVoice.iOS.Utilities;
 
 namespace FreedomVoice.iOS.Services
 {
@@ -10,6 +12,6 @@ namespace FreedomVoice.iOS.Services
         /// <summary>
         /// Asynchronous retrieving of media
         /// </summary>
-        Task<BaseResponse> ExecuteRequest(string systemNumber, int mailboxNumber, string folderName, string messageId, MediaType mediaType, CancellationToken token);
+        Task<BaseResponse> ExecuteRequest(IProgress<DownloadBytesProgress> progressReporter, string systemNumber, int mailboxNumber, string folderName, string messageId, MediaType mediaType, CancellationToken token);
     }
 }

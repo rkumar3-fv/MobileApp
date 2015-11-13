@@ -1,18 +1,26 @@
 ﻿using CoreGraphics;
 using Foundation;
+using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.Utilities;
 using UIKit;
+using AppearanceHelper = FreedomVoice.iOS.Utilities.Helpers.Appearance;
 
 namespace FreedomVoice.iOS.TableViewCells
 {
     public class FolderCell : UITableViewCell
     {
-        public UILabel NewMessagesCountLabel { get; }
+        private readonly UIImageView _imageView;
+
+        private readonly UILabel _titleLabel;
+        private readonly UILabel _newMessagesCountLabel;
 
         public static readonly NSString FolderCellId = new NSString("FolderCell");
         public FolderCell() : base(UITableViewCellStyle.Default, FolderCellId)
         {
-            NewMessagesCountLabel = new UILabel(new CGRect(Theme.ScreenBounds.Width - 69, 13, 30, 19))
+            _imageView = AppearanceHelper.GetMessageImageView(44);
+            _titleLabel = new UILabel(new CGRect(48, 12, Theme.ScreenBounds.Width - 134, 21)) { Font = UIFont.SystemFontOfSize(17) };
+
+            _newMessagesCountLabel = new UILabel(new CGRect(Theme.ScreenBounds.Width - 69, 12.5, 30, 19))
             {
                 TextColor = UIColor.Black,
                 Font = UIFont.SystemFontOfSize(12),
@@ -20,13 +28,24 @@ namespace FreedomVoice.iOS.TableViewCells
                 ClipsToBounds = true
             };
 
-            NewMessagesCountLabel.Layer.BackgroundColor = UIColor.FromRGBA(0, 0, 0, 25).CGColor;
-            NewMessagesCountLabel.Layer.CornerRadius = 3;
+            _newMessagesCountLabel.Layer.BackgroundColor = UIColor.FromRGBA(0, 0, 0, 25).CGColor;
+            _newMessagesCountLabel.Layer.CornerRadius = 3;
 
-            Add(NewMessagesCountLabel);
+            AddSubviews(_imageView, _titleLabel, _newMessagesCountLabel);
         }
 
-        public static UIImage GetImageByFolderName(string folderName)
+        public void UpdateCell(FolderWithCount folder)
+        {
+            _titleLabel.Text = folder.DisplayName;
+
+            _imageView.Image = GetImageByFolderName(folder.DisplayName);
+
+            var unreadedMessagesCount = folder.UnreadMessagesCount;
+            _newMessagesCountLabel.Hidden = unreadedMessagesCount == 0;
+            _newMessagesCountLabel.Text = unreadedMessagesCount < 100 ? unreadedMessagesCount.ToString() : "99+";
+        }
+
+        private static UIImage GetImageByFolderName(string folderName)
         {
             switch (folderName)
             {

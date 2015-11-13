@@ -30,12 +30,7 @@ namespace FreedomVoice.iOS.TableViewSources
             var folder = _folders[indexPath.Row];
 
             var cell = tableView.DequeueReusableCell(FolderCell.FolderCellId) as FolderCell ?? new FolderCell { Accessory = UITableViewCellAccessory.DisclosureIndicator };
-
-            cell.TextLabel.Text = folder.DisplayName;
-            cell.ImageView.Image = FolderCell.GetImageByFolderName(folder.DisplayName);
-
-            var unreadedMessagesCount = folder.UnreadMessagesCount;
-            cell.NewMessagesCountLabel.Text = unreadedMessagesCount < 100 ? unreadedMessagesCount.ToString() : "99+";
+            cell.UpdateCell(folder);
 
             return cell;
         }
@@ -43,6 +38,11 @@ namespace FreedomVoice.iOS.TableViewSources
         public override nint RowsInSection(UITableView tableview, nint section)
         {
             return _folders?.Count ?? 0;
+        }
+
+        public override nfloat GetHeightForRow(UITableView tableView, NSIndexPath indexPath)
+        {
+            return 44;
         }
 
         public override void RowSelected(UITableView tableView, NSIndexPath indexPath)

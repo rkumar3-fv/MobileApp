@@ -1,17 +1,19 @@
-﻿using CoreAnimation;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using CoreAnimation;
 using CoreGraphics;
 using Foundation;
 using FreedomVoice.Core.Entities.Enums;
-using FreedomVoice.iOS.Views;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using FreedomVoice.iOS.Entities;
-using FreedomVoice.iOS.Helpers;
-using UIKit;
-using FreedomVoice.iOS.ViewModels;
-using System.Threading.Tasks;
 using FreedomVoice.Core.Utils;
+using FreedomVoice.iOS.Entities;
+using FreedomVoice.iOS.Utilities;
+using FreedomVoice.iOS.Utilities.Events;
+using FreedomVoice.iOS.ViewModels;
+using FreedomVoice.iOS.Views;
+using UIKit;
+using AppearanceHelper = FreedomVoice.iOS.Utilities.Helpers.Appearance;
 
 namespace FreedomVoice.iOS.TableViewCells
 {
@@ -35,11 +37,14 @@ namespace FreedomVoice.iOS.TableViewCells
 
         #endregion
 
-        private Message _message;
+        private readonly UINavigationController _navigationController;
 
+        private Message _message;
         private string _systemPhoneNumber;
 
-        private readonly UINavigationController _navigationController;
+        private bool IsFaxMessageType => _message?.Type == MessageType.Fax;
+
+        public int Duration => _message.Length;
 
         public static readonly NSString ExpandedCellId = new NSString("ExpandedCell");
         public ExpandedCell(Message cellMessage, UINavigationController navigationController) : base (UITableViewCellStyle.Default, ExpandedCellId)
@@ -47,15 +52,17 @@ namespace FreedomVoice.iOS.TableViewCells
             _message = cellMessage;
             _navigationController = navigationController;
 
-            var isFaxMessageType = _message.Type == MessageType.Fax;
+            SetBackground(IsFaxMessageType);
 
-            _image = GetMessageImageView();
-            _title = new UILabel(new CGRect(55, 10, 270, 19)) { TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(17) };
-            _date = new UILabel(new CGRect(55, 29, 120, 11)) { TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(12) };
-            _length = new UILabel(new CGRect(isFaxMessageType ? 257 : 275, 29, 50, 13)) { TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(12) };
+            _image = AppearanceHelper.GetMessageImageView(48);
+            _title = new UILabel(new CGRect(48, 9, Theme.ScreenBounds.Width - 63, 21)) { TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(17) };
+            _length = new UILabel(new CGRect(Theme.ScreenBounds.Width - 75, 30, 60, 15)) { TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(12), TextAlignment = UITextAlignment.Right };
+            _date = new UILabel(new CGRect(48, 30, _length.Frame.X - 53, 15)) { TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(12) };
+            
+            DeleteButton = new UIButton(new CGRect(Theme.ScreenBounds.Width - 37, IsFaxMessageType ? 60 : 98, 25, 25));
+            DeleteButton.SetBackgroundImage(UIImage.FromFile("delete.png"), UIControlState.Normal);
 
-            DeleteButton = new UIButton(new CGRect(285, isFaxMessageType ? 60 : 99, 25, 25));
-            DeleteButton.SetBackgroundImage(UIImage.FromFile("delete.png"), UIControlState.Normal);            
+            AddSubviews(_image, _title, _date, _length, DeleteButton);
         }
 
         private void SetBackground(bool isFaxMessageType)
@@ -65,7 +72,7 @@ namespace FreedomVoice.iOS.TableViewCells
                 Frame = new CGRect(Bounds.X, Bounds.Y, Bounds.Width, isFaxMessageType ? 100 : 138),
                 Colors = new[] { UIColor.FromRGB(51, 71, 98).CGColor, UIColor.FromRGB(98, 120, 149).CGColor }
             };
-            Layer.AddSublayer(gradientLayer);
+            Layer.InsertSublayer(gradientLayer, 0);
         }
 
         public void UpdateCell(Message cellMessage, string systemPhoneNumber)
@@ -73,24 +80,72 @@ namespace FreedomVoice.iOS.TableViewCells
             _message = cellMessage;
             _systemPhoneNumber = systemPhoneNumber;
 
-            var isFaxMessageType = _message.Type == MessageType.Fax;
-            SetBackground(isFaxMessageType);
+            _image.Image = AppearanceHelper.GetMessageImage(_message.Type, _message.Unread, true);
 
-            AddSubviews(_image, _title, _date, _length, DeleteButton);
-
-            _image.Image = Helpers.Appearance.GetMessageImage(_message.Type, _message.Unread, true);
-
-            _title.Text = !string.IsNullOrEmpty(_message.SourceName.Trim()) ? _message.SourceName.Trim() : (!string.IsNullOrEmpty(_message.SourceNumber.Trim()) ? DataFormatUtils.ToPhoneNumber(_message.SourceNumber.Trim()) : "Unavailable");
+            _title.Text = _message.Title;
+            _length.Text = AppearanceHelper.GetFormattedMessageLength(_message.Length, IsFaxMessageType);
             _date.Text = DataFormatUtils.ToFormattedDate("Yesterday", _message.ReceivedOn);
+            
+            _title.Center = new CGPoint(_title.Center.X, 16);
+            _length.Center = new CGPoint(_length.Center.X, 35);
+            _date.Center = new CGPoint(_date.Center.X, 35);
 
-            _length.Text = GetFormattedLength(_message.Length, isFaxMessageType);
-            _length.Frame = new CGRect(isFaxMessageType ? 257 : 275, _length.Frame.Y, _length.Frame.Width, _length.Frame.Height);
+            DeleteButton.Frame = new CGRect(DeleteButton.Frame.X, IsFaxMessageType ? 60 : 98, DeleteButton.Frame.Width, DeleteButton.Frame.Height);
 
-            DeleteButton.Frame = new CGRect(DeleteButton.Frame.X, isFaxMessageType ? 60 : 99, DeleteButton.Frame.Width, DeleteButton.Frame.Height);
-
-            AddSubviews(isFaxMessageType ? new UIView[] { GetFaxButton() } : new UIView[] { _player = GetPlayerView(), GetSpeakerButton(), GetCallBackButton() });
-
+            InitSubviews();
+            InitBackground();
             InitCommonStyles();
+        }
+
+        private void InitBackground()
+        {
+            Layer.Sublayers[0].RemoveFromSuperLayer();
+            SetBackground(IsFaxMessageType);
+        }
+
+        private void InitSubviews()
+        {
+            if (IsFaxMessageType)
+            {
+                if (_viewFaxButton == null)
+                    AddSubview(GetFaxButton());
+
+                foreach (var subView in Subviews)
+                {
+                    if (Equals(subView, _player))
+                    {
+                        _player?.RemoveFromSuperview();
+                        _player = null;
+                    }
+                    else if (Equals(subView, _speakerButton))
+                    {
+                        _speakerButton?.RemoveFromSuperview();
+                        _speakerButton = null;
+                    }
+                    else if (Equals(subView, _callBackButton))
+                    {
+                        _callBackButton?.RemoveFromSuperview();
+                        _callBackButton = null;
+                    }
+                }
+            }
+            else
+            {
+                if (Subviews.Any(subView => Equals(subView, _viewFaxButton)))
+                {
+                    _viewFaxButton?.RemoveFromSuperview();
+                    _viewFaxButton = null;
+                }
+
+                if (_player == null)
+                    AddSubview(GetPlayerView());
+
+                if (_speakerButton == null)
+                    AddSubview(GetSpeakerButton());
+
+                if (_callBackButton == null)
+                    AddSubview(GetCallBackButton());
+            }
         }
 
         private void InitCommonStyles()
@@ -98,6 +153,7 @@ namespace FreedomVoice.iOS.TableViewCells
             foreach (var btn in new List<UIButton> { _callBackButton, _viewFaxButton, _speakerButton }.Where(btn => btn != null))
             {
                 btn.Font = UIFont.SystemFontOfSize(14);
+                btn.TitleEdgeInsets = new UIEdgeInsets(0, 5, 0, 0);
                 btn.ClipsToBounds = true;
                 btn.Layer.CornerRadius = 5;
                 btn.Layer.BorderWidth = 1;
@@ -109,31 +165,14 @@ namespace FreedomVoice.iOS.TableViewCells
             Animate(0.2, 0, UIViewAnimationOptions.Autoreverse, () => { btn.BackgroundColor = tapColor; }, () => { btn.BackgroundColor = UIColor.Clear; });
         }
 
-        private static UIImageView GetMessageImageView()
-        {
-            return new UIImageView(new CGRect(15, 15, 25, 25));
-        }
-
         private AVPlayerView GetPlayerView()
         {
-            return new AVPlayerView(new CGRect(46, 54, 256, 23), this);
-        }
-
-        private UIButton GetSpeakerButton()
-        {
-            _speakerButton = new UIButton(new CGRect(52, 97, 98, 29));
-            _speakerButton.SetTitle("Speaker", UIControlState.Normal);
-            _speakerButton.SetTitleColor(UIColor.FromRGB(119, 229, 246), UIControlState.Normal);
-            _speakerButton.SetImage(UIImage.FromFile("speaker.png"), UIControlState.Normal);            
-            _speakerButton.Layer.BorderColor = UIColor.FromRGBA(119, 229, 246, 110).CGColor;            
-            _speakerButton.TouchDown += OnSpeakerButtonTouchDown;
-            
-            return _speakerButton;
+            return _player = new AVPlayerView(new CGRect(40, 48, Theme.ScreenBounds.Width - 55, 30), this);
         }
 
         private UIButton GetFaxButton()
         {
-            _viewFaxButton = new UIButton(new CGRect(52, 58, 98, 28));
+            _viewFaxButton = new UIButton(new CGRect(43, 58, 101, 28));
             _viewFaxButton.SetTitle("View Fax", UIControlState.Normal);
             _viewFaxButton.SetTitleColor(UIColor.FromRGB(198, 242, 138), UIControlState.Normal);
             _viewFaxButton.SetImage(UIImage.FromFile("view_fax.png"), UIControlState.Normal);
@@ -143,9 +182,21 @@ namespace FreedomVoice.iOS.TableViewCells
             return _viewFaxButton;
         }
 
+        private UIButton GetSpeakerButton()
+        {
+            _speakerButton = new UIButton(new CGRect(43, 98, 98, 28));
+            _speakerButton.SetTitle("Speaker", UIControlState.Normal);
+            _speakerButton.SetTitleColor(UIColor.FromRGB(119, 229, 246), UIControlState.Normal);
+            _speakerButton.SetImage(UIImage.FromFile("speaker.png"), UIControlState.Normal);            
+            _speakerButton.Layer.BorderColor = UIColor.FromRGBA(119, 229, 246, 110).CGColor;            
+            _speakerButton.TouchDown += OnSpeakerButtonTouchDown;
+            
+            return _speakerButton;
+        }
+
         private UIButton GetCallBackButton()
         {
-            _callBackButton = new UIButton(new CGRect(158, 97, 104, 29));
+            _callBackButton = new UIButton(new CGRect(151, 98, 104, 28));
             _callBackButton.SetTitle("Call Back", UIControlState.Normal);
             _callBackButton.SetTitleColor(UIColor.FromRGB(198, 242, 138), UIControlState.Normal);
             _callBackButton.SetImage(UIImage.FromFile("call_back.png"), UIControlState.Normal);
@@ -161,24 +212,20 @@ namespace FreedomVoice.iOS.TableViewCells
             _player?.ToggleSoundOutput();
         }
 
-        private static string GetFormattedLength(int length, bool faxMessageType)
-        {
-            return faxMessageType ? DataFormatUtils.PagesToFormattedString(length) : DataFormatUtils.ToDuration(length);
-        }
-
         public async Task<string> GetMediaPath(MediaType mediaType)
         {
             var viewModel = new MediaViewModel(_systemPhoneNumber, _message.Mailbox, _message.Folder, _message.Id, mediaType, _navigationController);
 
             await viewModel.GetMediaAsync();
 
-            return viewModel.FilePath;         
+            return viewModel.FilePath;
         }
 
         private async void OnFaxButtonTouchDown(object sender, EventArgs args)
         {
             var filePath = await GetMediaPath(MediaType.Pdf);
-            OnViewFaxClick?.Invoke(this, new ExpandedCellButtonClickEventArgs(filePath));
+            if (!string.IsNullOrEmpty(filePath))
+                OnViewFaxClick?.Invoke(this, new ExpandedCellButtonClickEventArgs(filePath));
         }
 
         private void OnCallBackButtonTouchDown(object sender, EventArgs args)
@@ -189,10 +236,5 @@ namespace FreedomVoice.iOS.TableViewCells
 
         public event EventHandler<ExpandedCellButtonClickEventArgs> OnCallbackClick;
         public event EventHandler<ExpandedCellButtonClickEventArgs> OnViewFaxClick;
-
-        public int GetDuration()
-        {
-            return _message.Length;
-        }
     }
 }

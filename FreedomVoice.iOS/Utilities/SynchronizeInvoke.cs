@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Threading;
 using System.ComponentModel;
+using System.Threading;
 using Foundation;
 
 namespace FreedomVoice.iOS.Utilities

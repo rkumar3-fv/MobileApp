@@ -1,21 +1,68 @@
-﻿using System.Threading;
+﻿using System;
+using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using FreedomVoice.Core;
 using FreedomVoice.Core.Entities.Enums;
 using FreedomVoice.iOS.Services.Responses;
+using FreedomVoice.iOS.Utilities;
 
 namespace FreedomVoice.iOS.Services.Implementations
 {
     public class MediaService : BaseService, IMediaService
     {
-        public async Task<BaseResponse> ExecuteRequest(string systemNumber, int mailboxNumber, string folderName, string messageId, MediaType mediaType, CancellationToken token)
+        public async Task<BaseResponse> ExecuteRequest(IProgress<DownloadBytesProgress> progressReporter, string systemNumber, int mailboxNumber, string folderName, string messageId, MediaType mediaType, CancellationToken token)
         {
-            var asyncRes = await ApiHelper.GetMedia(systemNumber, mailboxNumber, folderName, messageId, mediaType, token);
+            var tmpFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "..", "tmp");
+            var fileName = string.Concat(DateTime.Now.ToString("MMddyyyy_"), messageId, ".", mediaType);
+
+            var filePath = Path.Combine(tmpFolderPath, fileName);
+
+            if (File.Exists(filePath))
+                return new GetMediaResponse(filePath);
+
+            var asyncRes = await ApiHelper.MakeAsyncFileDownload($"/api/v1/systems/{systemNumber}/mailboxes/{mailboxNumber}/folders/{folderName}/messages/{messageId}/media/{mediaType}", "application/json", token);
             var errorResponse = CheckErrorResponse(asyncRes.Code);
             if (errorResponse != null)
                 return errorResponse;
 
-            return new MediaResponse(asyncRes.Result, mediaType);
+            var mediaResponse = asyncRes.Result;
+
+            var receivedBytes = 0;  
+            var totalBytes = mediaResponse.Length;
+
+            using (var stream = mediaResponse.ReceivedStream)
+            using (var targetStream = new FileStream(filePath, FileMode.CreateNew, FileAccess.Write))
+            {
+                var buffer = new byte[4096];
+
+                do {
+                    if (token.IsCancellationRequested)
+                    {
+                        if (File.Exists(filePath))
+                            File.Delete(filePath);
+
+                        return null;
+                    }
+
+                    var bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length, token);
+                    targetStream.Write(buffer, 0, bytesRead);
+
+                    if (bytesRead == 0)
+                    {
+                        await Task.Yield();
+                        break;
+                    }
+
+                    receivedBytes += bytesRead;
+                    if (progressReporter == null) continue;
+
+                    var args = new DownloadBytesProgress(receivedBytes, totalBytes);
+                    progressReporter.Report(args);
+                } while (true);
+            }
+
+            return new GetMediaResponse(filePath);
         }
     }
 }

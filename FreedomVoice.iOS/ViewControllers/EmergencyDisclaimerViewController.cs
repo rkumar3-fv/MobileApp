@@ -1,8 +1,8 @@
 using System;
 using CoreGraphics;
 using FreedomVoice.iOS.Entities;
-using FreedomVoice.iOS.Helpers;
 using FreedomVoice.iOS.Utilities;
+using FreedomVoice.iOS.Utilities.Helpers;
 using UIKit;
 
 namespace FreedomVoice.iOS.ViewControllers
@@ -48,7 +48,7 @@ namespace FreedomVoice.iOS.ViewControllers
         private void InitializeEmergencyDisclaimerImage()
         {
             _emergencyDisclaimerImage = new UIImageView(UIImage.FromFile("warning.png"));
-            _emergencyDisclaimerImage.Frame = new CGRect(0, UIApplication.SharedApplication.StatusBarFrame.Height + 145, _emergencyDisclaimerImage.Image.CGImage.Width / 2, _emergencyDisclaimerImage.Image.CGImage.Height / 2);
+            _emergencyDisclaimerImage.Frame = new CGRect(0, 102, _emergencyDisclaimerImage.Image.CGImage.Width / 2, _emergencyDisclaimerImage.Image.CGImage.Height / 2);
             _emergencyDisclaimerImage.Center = new CGPoint(View.Center.X, _emergencyDisclaimerImage.Center.Y);
 
             View.AddSubview(_emergencyDisclaimerImage);

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
-using FreedomVoice.iOS.Helpers;
 using FreedomVoice.iOS.Services;
 using FreedomVoice.iOS.Services.Responses;
 using FreedomVoice.iOS.Utilities;
+using FreedomVoice.iOS.Utilities.Helpers;
 using UIKit;
 
 namespace FreedomVoice.iOS.ViewModels
@@ -21,9 +21,6 @@ namespace FreedomVoice.iOS.ViewModels
         private readonly UIActivityIndicatorView _activityIndicator;
         private readonly UIViewController _viewController;
 
-        readonly TimeSpan _autoLogoutTime = TimeSpan.FromMinutes(2);
-        DateTime _dateInactive = DateTime.Now;
-
         /// <summary>
         /// Constructor, requires an IService
         /// </summary>
@@ -37,6 +34,17 @@ namespace FreedomVoice.iOS.ViewModels
             _activityIndicator = activityIndicator;
 
             IsBusyChanged += OnIsBusyChanged;
+        }
+
+        /// <summary>
+        /// Constructor for autologin functionality, requires an IService
+        /// </summary>
+        public LoginViewModel(string userName, string password, UIViewController viewController)
+        {
+            _service = ServiceContainer.Resolve<ILoginService>();
+
+            Username = userName;
+            Password = password;
         }
 
         /// <summary>
@@ -77,24 +85,25 @@ namespace FreedomVoice.iOS.ViewModels
 
             var requestResult = await _service.ExecuteRequest(Username, Password);
             if (requestResult is ErrorResponse)
-                ProceedErrorResponse(requestResult);
+                await ProceedErrorResponse(requestResult);
             else
+            {
+                KeyChain.SetPasswordForUsername(Username, Password);
                 ProceedSuccessResponse();
+            }
 
             IsBusy = false;
         }
 
         /// <summary>
-        /// True if the login screen should be presented
+        /// Performs an asynchronous login
         /// </summary>
-        public bool IsInactive => DateTime.Now - _dateInactive > _autoLogoutTime;
-
-        /// <summary>
-        /// Should be called to reset the last inactive time, so on DidEnterBackground on iOS, for example
-        /// </summary>
-        public void ResetInactiveTime()
+        /// <returns></returns>
+        public async Task AutoLoginAsync()
         {
-            _dateInactive = DateTime.Now;
+            var requestResult = await _service.ExecuteRequest(Username, Password);
+            if (requestResult is ErrorResponse)
+                await ProceedErrorResponse(requestResult);
         }
 
         /// <summary>

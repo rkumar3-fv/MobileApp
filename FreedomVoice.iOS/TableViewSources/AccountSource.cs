@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using Foundation;
 using FreedomVoice.iOS.Entities;
-using FreedomVoice.iOS.Helpers;
 using FreedomVoice.iOS.TableViewCells;
 using FreedomVoice.iOS.Utilities;
+using FreedomVoice.iOS.Utilities.Helpers;
 using FreedomVoice.iOS.ViewControllers;
 using UIKit;
 

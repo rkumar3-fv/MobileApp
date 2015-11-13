@@ -1,37 +1,65 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 using FreedomVoice.Core.Entities.Enums;
+using FreedomVoice.Core.Utils;
+using Xamarin.Contacts;
 
 namespace FreedomVoice.iOS.Entities
 {
     public class Message
     {
-        public Message(Core.Entities.Message message)
+        public Message(Core.Entities.Message message, List<Contact> contactList)
         {
             Id = message.Id;
             Name = message.Name;
             Folder = message.Folder;
-            SourceName = message.SourceName;
-            SourceNumber = message.SourceNumber;
+            SourceName = message.SourceName.Trim();
+            SourceNumber = message.SourceNumber.Trim();
             Length = message.Length;
             Mailbox = message.Mailbox;
             ReceivedOn = message.ReceivedOn;
             Type = message.Type;
             Unread = message.Unread;
+
+            ContactList = contactList;
+            Title = GetMessageTitle();
         }
 
-        public string Id { get; set; }
+        public string Title { get; set; }
+        public string Id { get; private set; }
+        public int Length { get; private set; }
+        public string SourceNumber { get; }
+        public DateTime ReceivedOn { get; private set; }
+        public MessageType Type { get; private set; }
+        public bool Unread { get; private set; }
+        public string Folder { get; private set; }
+        public int Mailbox { get; private set; }
+
         public string Name { get; set; }
-        public string Folder { get; set; }
-        public string SourceName { get; set; }
-        public string SourceNumber { get; set; }
 
-        public int Length { get; set; }
-        public int Mailbox { get; set; }
+        private string SourceName { get; }
+        private List<Contact> ContactList { get; }
 
-        public DateTime ReceivedOn { get; set; }
+        private string GetMessageTitle()
+        {
+            if (!string.IsNullOrEmpty(SourceNumber))
+            {
+                var contact = FindContactByNumber(SourceNumber);
+                if (contact != null)
+                    return contact.DisplayName;
+            }
 
-        public MessageType Type { get; set; }
+            if (!string.IsNullOrEmpty(SourceName))
+                return SourceName;
 
-        public bool Unread { get; set; }
+            return !string.IsNullOrEmpty(SourceNumber) ? DataFormatUtils.ToPhoneNumber(SourceNumber) : "Unavailable";
+        }
+
+        private Contact FindContactByNumber(string number)
+        {
+            return ContactList?.FirstOrDefault(c => c.Phones.Any(p => Regex.Replace(p.Number, @"[^\d]", "") == Regex.Replace(number, @"[^\d]", "")));
+        }
     }
 }

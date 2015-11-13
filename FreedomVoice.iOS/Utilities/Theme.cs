@@ -152,6 +152,13 @@ namespace FreedomVoice.iOS.Utilities
 
         public static CGRect ScreenBounds => UIScreen.MainScreen.Bounds;
 
+        public static nfloat StatusBarHeight => UIApplication.SharedApplication.StatusBarFrame.Height;
+
+        public static nfloat NavigationBarHeight(this UINavigationController navigationController)
+        {
+            return navigationController.NavigationBar?.Frame.Size.Height ?? 0;
+        }
+
         /// <summary>
         /// Apply UIAppearance to this application, this is iOS's version of "styling"
         /// </summary>
@@ -161,9 +168,7 @@ namespace FreedomVoice.iOS.Utilities
 
             UINavigationBar.Appearance.TintColor = WhiteColor;
             UINavigationBar.Appearance.SetTitleTextAttributes(new UITextAttributes { TextColor = WhiteColor });
-            UINavigationBar.Appearance.BarTintColor = UIColor.FromRGB(90, 111, 138);
-            //TODO: Return navigation bar color
-            //UIColor.FromPatternImage(UIImage.FromFile("navbar.png"));
+            UINavigationBar.Appearance.SetBackgroundImage(UIImage.FromFile("navbar.png"), UIBarMetrics.Default);
         }
 
         const string FontName = "HelveticaNeue-Light";

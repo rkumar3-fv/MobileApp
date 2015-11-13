@@ -2,8 +2,9 @@ using System;
 using System.Collections.Generic;
 using CoreGraphics;
 using FreedomVoice.iOS.Entities;
-using FreedomVoice.iOS.Helpers;
 using FreedomVoice.iOS.TableViewSources;
+using FreedomVoice.iOS.Utilities;
+using FreedomVoice.iOS.Utilities.Helpers;
 using UIKit;
 
 namespace FreedomVoice.iOS.ViewControllers
@@ -20,6 +21,10 @@ namespace FreedomVoice.iOS.ViewControllers
         public override void ViewDidLoad()
         {
             ExtensionsTableView.TableFooterView = new UIView(CGRect.Empty);
+
+            var insets = new UIEdgeInsets(0, 0, Theme.StatusBarHeight + NavigationController.NavigationBarHeight(), 0);
+            ExtensionsTableView.ContentInset = insets;
+            ExtensionsTableView.ScrollIndicatorInsets = insets;
 
             ExtensionsTableView.Source = new ExtensionsSource(ExtensionsList, SelectedAccount, NavigationController);
 

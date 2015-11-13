@@ -1,11 +1,13 @@
-﻿using AVFoundation;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using AVFoundation;
 using CoreGraphics;
 using Foundation;
-using System;
-using System.Collections.Generic;
+using FreedomVoice.Core.Entities.Enums;
 using FreedomVoice.Core.Utils;
-using UIKit;
 using FreedomVoice.iOS.TableViewCells;
+using UIKit;
 
 namespace FreedomVoice.iOS.Views
 {
@@ -31,21 +33,33 @@ namespace FreedomVoice.iOS.Views
         #endregion
 
         private readonly ExpandedCell _sourceCell;
+        private AVAudioSession _audioSession;
 
-        private AVAudioSession _session;
-        private bool _isSpeakerSource;
+        private bool _isLoudSpeaker;
 
         public AVPlayerView(CGRect bounds, ExpandedCell sourceCell) : base(bounds)
         {
             _sourceCell = sourceCell;
-            Initialize();
+            SetupAudioSession();
+            InitializeControls();
         }
 
-        private void Initialize()
+        private void SetupAudioSession()
         {
-            _session = AVAudioSession.SharedInstance();
+            _audioSession = AVAudioSession.SharedInstance();
 
-            var sliderBackground = new SliderBackgorund(new CGRect(60, 12, 156, 7));
+            _isLoudSpeaker = true;
+            var error = _audioSession.SetCategory(AVAudioSessionCategory.Playback, AVAudioSessionCategoryOptions.DefaultToSpeaker);
+            if (error != null)
+                Console.WriteLine(error);
+
+            if (!_audioSession.SetMode(AVAudioSession.ModeSpokenAudio, out error))
+                Console.WriteLine(error);
+        }
+
+        private void InitializeControls()
+        {
+            var sliderBackground = new SliderBackgorundView(new CGRect(68, 12, Bounds.Width - 106, 7));
 
             _playButtonImage = UIImage.FromFile("play.png");
             _pauseButtonImage = UIImage.FromFile("pause.png");
@@ -54,38 +68,35 @@ namespace FreedomVoice.iOS.Views
             _playButton.SetImage(_playButtonImage, UIControlState.Normal);
             _playButton.TouchUpInside += OnPlayButtonTouchUpInside;
 
-            _labelElapsed = new UILabel(new CGRect(25, 7, 37, 16)) { Text = "0:00" };
-
-            _progressBar = new UISlider(new CGRect(50, 12, 176, 7)) { Value = 0, MinValue = 0, MaxValue = _sourceCell.GetDuration() };
+            _labelElapsed = new UILabel(new CGRect(30, 0, 38, 30)) { Text = "0:00", TextAlignment = UITextAlignment.Center };
+            _progressBar = new UISlider(new CGRect(58, 12, Bounds.Width - 82, 7)) { Value = 0, MinValue = 0, MaxValue = _sourceCell.Duration };
             _progressBar.SetThumbImage(UIImage.FromFile("scroller.png"), UIControlState.Normal);
             _progressBar.SetMaxTrackImage(new UIImage(), UIControlState.Normal);
             _progressBar.SetMinTrackImage(new UIImage(), UIControlState.Normal);
             _progressBar.ValueChanged += OnProgressBarValueChanged;
 
-            _labelRemaining = new UILabel(new CGRect(225, 7, 37, 16)) { Text = $"-{DataFormatUtils.ToDuration(_sourceCell.GetDuration())}" };
+            _labelRemaining = new UILabel(new CGRect(Bounds.Width - 38, 0, 38, 30)) { Text = $"-{DataFormatUtils.ToDuration(_sourceCell.Duration)}", TextAlignment = UITextAlignment.Right };
 
-            foreach (var lbl in new List<UILabel> { _labelElapsed, _labelRemaining })
+            foreach (var lbl in new List<UILabel> { _labelElapsed, _labelRemaining }) 
             {
                 lbl.TextColor = UIColor.White;
-                lbl.Font = UIFont.SystemFontOfSize(11f);
-                lbl.TextAlignment = UITextAlignment.Center;
+                lbl.Font = UIFont.SystemFontOfSize(12);
             }
 
             AddSubviews(sliderBackground, _playButton, _labelElapsed, _progressBar, _labelRemaining);
         }
 
-        private void OnPlayerFinishedPlaying(object sender, AVStatusEventArgs e)
+        private async void OnPlayButtonTouchUpInside(object sender, EventArgs e)
         {
-            if (!e.Status)
-                Console.WriteLine(@"Did not complete successfully");
+            if (_player == null)
+                await InitializePlayer(sender, e);
 
-            _player.CurrentTime = 0;
-            UpdateViewForPlayerState(sender, EventArgs.Empty);
-        }
+            if (_player == null) return;
 
-        private static void OnPlayerDecoderError(object sender, AVErrorEventArgs e)
-        {
-            Console.WriteLine($"Decoder error: {e.Error.LocalizedDescription}");
+            if (_player.Playing)
+                PausePlayback(sender, e);
+            else
+                StartPlayback(sender, e);
         }
 
         private void OnProgressBarValueChanged(object sender, EventArgs e)
@@ -97,35 +108,45 @@ namespace FreedomVoice.iOS.Views
             UpdateCurrentTime();
         }
 
+        private async Task InitializePlayer(object sender, EventArgs e)
+        {
+            var filePath = await _sourceCell.GetMediaPath(MediaType.Wav);
+            if (!string.IsNullOrEmpty(filePath))
+            {
+                _player = AVAudioPlayer.FromUrl(new NSUrl(filePath, false));
+                _player.BeginInterruption += UpdateViewForPlayerState;
+                _player.EndInterruption += StartPlayback;
+                _player.FinishedPlaying += OnPlayerFinishedPlaying;
+                _player.DecoderError += OnPlayerDecoderError;
+            }
+        }
+
         private void StartPlayback(object sender, EventArgs e)
         {
+            NSError error;
+            _audioSession.SetActive(true, out error);
+            if (error != null)
+                Console.WriteLine(error);
+
             if (_player.Play())
                 UpdateViewForPlayerState(sender, EventArgs.Empty);
             else
                 Console.WriteLine($"Could not play the file {_player.Url}");
         }
 
-        private void OnPlayButtonTouchUpInside(object sender, EventArgs e)
+        private void OnPlayerFinishedPlaying(object sender, AVStatusEventArgs e)
         {
-            if (_player != null && _player.Playing)
-                PausePlayback(sender, e);
-            else if (_player == null)
-                InitPlayer(sender, e);
-            else
-                StartPlayback(sender, e);
-        }
+            if (!e.Status)
+                Console.WriteLine(@"Did not complete successfully");
 
-        private async void InitPlayer(object sender, EventArgs e)
-        {
-            var filePath = await _sourceCell.GetMediaPath(Core.Entities.Enums.MediaType.Wav);
+            _player.CurrentTime = 0;
 
-            _player = AVAudioPlayer.FromUrl(new NSUrl(filePath, false));
-            _player.FinishedPlaying += OnPlayerFinishedPlaying;
-            _player.DecoderError += OnPlayerDecoderError;
-            _player.BeginInterruption += UpdateViewForPlayerState;
-            _player.EndInterruption += StartPlayback;
+            NSError error;
+            _audioSession.SetActive(false, out error);
+            if (error != null)
+                Console.WriteLine(error);
 
-            StartPlayback(sender, e);
+            UpdateViewForPlayerState(sender, EventArgs.Empty);
         }
 
         private void UpdateViewForPlayerState(object sender, EventArgs e)
@@ -137,7 +158,7 @@ namespace FreedomVoice.iOS.Views
             if (_player.Playing)
             {
                 _playButton.SetImage(_pauseButtonImage, UIControlState.Normal);
-                _updateTimer = NSTimer.CreateRepeatingScheduledTimer(TimeSpan.FromSeconds(0.5), delegate { UpdateCurrentTime(); });
+                _updateTimer = NSTimer.CreateRepeatingScheduledTimer(TimeSpan.FromSeconds(1), delegate { UpdateCurrentTime(); });
             }
             else
             {
@@ -146,11 +167,18 @@ namespace FreedomVoice.iOS.Views
             }
         }
 
+        private static void OnPlayerDecoderError(object sender, AVErrorEventArgs e)
+        {
+            Console.WriteLine($"Decoder error: {e.Error.LocalizedDescription}");
+        }
+
         private void UpdateCurrentTime()
         {
-            _labelRemaining.Text = $"-{DataFormatUtils.ToDuration((int)(_player.Duration - _player.CurrentTime))}";
-            _labelElapsed.Text = DataFormatUtils.ToDuration((int)_player.CurrentTime);
-            _progressBar.Value = (float)_player.CurrentTime;
+            var playerCurrentTime = (int)_player.CurrentTime;
+
+            _labelElapsed.Text = DataFormatUtils.ToDuration(playerCurrentTime);
+            _labelRemaining.Text = $"-{DataFormatUtils.ToDuration((int)_player.Duration - playerCurrentTime)}";
+            _progressBar.Value = playerCurrentTime;
         }
 
         private void PausePlayback(object sender, EventArgs e)
@@ -161,17 +189,12 @@ namespace FreedomVoice.iOS.Views
 
         public void ToggleSoundOutput()
         {
-            NSError error;
-            if (_isSpeakerSource)
-            {
-                _session.OverrideOutputAudioPort(AVAudioSessionPortOverride.None, out error);
-                _isSpeakerSource = false;
-            }
-            else
-            {
-                _session.OverrideOutputAudioPort(AVAudioSessionPortOverride.Speaker, out error);
-                _isSpeakerSource = true;
-            }
+            var error = _isLoudSpeaker ? _audioSession.SetCategory(AVAudioSessionCategory.PlayAndRecord, AVAudioSessionCategoryOptions.AllowBluetooth)
+                                       : _audioSession.SetCategory(AVAudioSessionCategory.Playback, AVAudioSessionCategoryOptions.DefaultToSpeaker);
+
+            _isLoudSpeaker = !_isLoudSpeaker;
+
+            if (error != null) Console.WriteLine(error);
         }
     }
 }

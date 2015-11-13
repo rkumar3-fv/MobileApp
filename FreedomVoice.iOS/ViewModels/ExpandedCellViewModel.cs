@@ -17,7 +17,7 @@ namespace FreedomVoice.iOS.ViewModels
 
         private static string DestinationFolder => "Trash";
 
-        public string Result { private set; get; }
+        protected override string LoadingMessage => "Performing operation...";
 
         /// <summary>
         /// Constructor, requires an IService
@@ -39,19 +39,13 @@ namespace FreedomVoice.iOS.ViewModels
         /// <returns></returns>
         public async Task MoveMessageToTrashAsync()
         {
-            LoadingMessage = "Performing operation...";
+            CurrentTask = async delegate { await MoveMessageToTrashAsync(); };
 
             IsBusy = true;
 
             var requestResult = await _service.ExecuteMoveRequest(_systemPhoneNumber, _mailboxNumber, DestinationFolder, new List<string> { _messageId });
             if (requestResult is ErrorResponse)
-                ProceedErrorResponse(requestResult);
-            else
-            {
-                var data = requestResult as MessageOperationsResponse;
-                if (data != null)
-                    Result = data.Result;
-            }
+                await ProceedErrorResponse(requestResult);
 
             IsBusy = false;
         }
@@ -62,19 +56,13 @@ namespace FreedomVoice.iOS.ViewModels
         /// <returns></returns>
         public async Task DeleteMessageAsync()
         {
-            LoadingMessage = "Performing operation...";
+            CurrentTask = async delegate { await DeleteMessageAsync(); };
 
             IsBusy = true;
 
             var requestResult = await _service.ExecuteDeleteRequest(_systemPhoneNumber, _mailboxNumber, new List<string> { _messageId });
             if (requestResult is ErrorResponse)
-                ProceedErrorResponse(requestResult);
-            else
-            {
-                var data = requestResult as MessageOperationsResponse;
-                if (data != null)
-                    Result = data.Result;
-            }
+                await ProceedErrorResponse(requestResult);
 
             IsBusy = false;
         }

@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using FreedomVoice.iOS.Entities;
-using FreedomVoice.iOS.Helpers;
 using FreedomVoice.iOS.TableViewSources;
+using FreedomVoice.iOS.Utilities.Helpers;
 
 namespace FreedomVoice.iOS.ViewControllers
 {

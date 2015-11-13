@@ -6,8 +6,8 @@ using Foundation;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.ViewModels;
 using UIKit;
-using FreedomVoice.iOS.Helpers;
 using FreedomVoice.iOS.Utilities;
+using FreedomVoice.iOS.Utilities.Events;
 
 namespace FreedomVoice.iOS.Views.Shared
 {
@@ -37,7 +37,7 @@ namespace FreedomVoice.iOS.Views.Shared
 
             _callerIdPickerModel.ValueChanged += (s, e) => {
                 _selectedPresentationNumber = _callerIdPickerModel.SelectedItem;
-                CallerIDEvent.OnCallerIDChangedEvent(new CallerIDEventArgs(_selectedPresentationNumber));
+                CallerIdEvent.OnCallerIdChangedEvent(new CallerIdEventArgs(_selectedPresentationNumber));
             };
 
             _pickerField = new UIPickerView

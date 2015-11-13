@@ -1,6 +1,8 @@
 using System;
+using CoreGraphics;
 using Foundation;
-using FreedomVoice.iOS.Helpers;
+using FreedomVoice.iOS.Utilities;
+using FreedomVoice.iOS.Utilities.Helpers;
 using UIKit;
 
 namespace FreedomVoice.iOS.ViewControllers
@@ -16,10 +18,9 @@ namespace FreedomVoice.iOS.ViewControllers
 
         public override void ViewDidLoad()
         {
-            NavigationController.NavigationBar.BarTintColor = UIColor.FromRGB(90, 111, 138);
             EdgesForExtendedLayout = UIRectEdge.None;
 
-            var webView = new UIWebView(View.Bounds);
+            var webView = new UIWebView(new CGRect(0, 0, View.Bounds.Width, View.Bounds.Height - Theme.StatusBarHeight - NavigationController.NavigationBarHeight()));
             View.AddSubview(webView);
 
             webView.LoadRequest(new NSUrlRequest(new NSUrl(FilePath, false)));
@@ -31,6 +32,9 @@ namespace FreedomVoice.iOS.ViewControllers
         public override void ViewWillAppear(bool animated)
         {
             NavigationItem.Title = "Fax";
+
+            var backgroundImage = Appearance.GetImageFromColor(UIColor.FromRGB(35, 53, 77), new CGSize(View.Bounds.Width, Theme.StatusBarHeight + NavigationController.NavigationBarHeight()));
+            NavigationController.NavigationBar.SetBackgroundImage(backgroundImage, UIBarMetrics.Default);
 
             var backButtonTitle = ((NSString)SelectedFolderTitle).StringSize(UIFont.SystemFontOfSize(17, UIFontWeight.Medium)).Width > 86 ? "Back" : SelectedFolderTitle;
             NavigationItem.SetLeftBarButtonItems(Appearance.GetBarButtonWithArrow(OnBackButtonClicked, backButtonTitle, true), true);

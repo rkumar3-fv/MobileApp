@@ -3,6 +3,7 @@ using CoreGraphics;
 using Foundation;
 using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.Utilities.Extensions;
+using FreedomVoice.iOS.Utilities.Helpers;
 using FreedomVoice.iOS.ViewModels;
 using UIKit;
 
@@ -126,20 +127,25 @@ namespace FreedomVoice.iOS.ViewControllers
 	        _usernameTextField.ResignFirstResponder();
 	        _passwordTextField.ResignFirstResponder();
 
-	        if (_loginViewModel.IsValid)
-	        {
-                UIApplication.SharedApplication.NetworkActivityIndicatorVisible = true;
-                _loginButton.Hidden = true;
-
-                await _loginViewModel.LoginAsync();
-
-                UIApplication.SharedApplication.NetworkActivityIndicatorVisible = false;
-            }
-	        else
-	        {
+	        if (!_loginViewModel.IsValid)
+            {
                 UsernameValidate();
                 PasswordValidate();
+                return;
             }
+
+            if (PhoneCapability.NetworkIsUnreachable)
+            {
+                Appearance.ShowNetworkUnreachableAlert(NavigationController);
+                return;
+            }
+
+            UIApplication.SharedApplication.NetworkActivityIndicatorVisible = true;
+            _loginButton.Hidden = true;
+
+            await _loginViewModel.LoginAsync();
+
+            UIApplication.SharedApplication.NetworkActivityIndicatorVisible = false;
         }
 
         private void OnLoginFailed(object sender, EventArgs args)
@@ -149,6 +155,12 @@ namespace FreedomVoice.iOS.ViewControllers
 
             OnUsernameValidationFailed();
             OnPasswordValidationFailed();
+        }
+
+        private void OnErrorConnection(object sender, EventArgs args)
+        {
+            _authorizationFailedLabel.Hidden = true;
+            _loginButton.Hidden = false;
         }
 
         protected override void Dispose(bool disposing)
@@ -180,6 +192,7 @@ namespace FreedomVoice.iOS.ViewControllers
 	    {
             _loginViewModel.OnSuccessResponse -= OnLoginSuccess;
             _loginViewModel.OnUnauthorizedResponse -= OnLoginFailed;
+            _loginViewModel.OnErrorConnectionResponse -= OnErrorConnection;
             _loginViewModel.OnBadRequestResponse -= OnLoginFailed;
         }
 
@@ -187,6 +200,7 @@ namespace FreedomVoice.iOS.ViewControllers
         {
             _loginViewModel.OnSuccessResponse += OnLoginSuccess;
             _loginViewModel.OnUnauthorizedResponse += OnLoginFailed;
+            _loginViewModel.OnErrorConnectionResponse += OnErrorConnection;
             _loginViewModel.OnBadRequestResponse += OnLoginFailed;
         }
 
@@ -251,7 +265,7 @@ namespace FreedomVoice.iOS.ViewControllers
         private void InitializeLogoImage()
 	    {
             _logoImage = new UIImageView(UIImage.FromFile("logo_freedomvoice_white.png"));
-            _logoImage.Frame = new CGRect(0, UIApplication.SharedApplication.StatusBarFrame.Height + 35, _logoImage.Image.CGImage.Width / 2, _logoImage.Image.CGImage.Height / 2);
+            _logoImage.Frame = new CGRect(0, Theme.StatusBarHeight + 35, _logoImage.Image.CGImage.Width / 2, _logoImage.Image.CGImage.Height / 2);
             _logoImage.Center = new CGPoint(View.Center.X, _logoImage.Center.Y);
 
             View.AddSubview(_logoImage);
@@ -259,7 +273,7 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private void InitializeWelcomeLabel()
         {
-            var labelFrame = new CGRect(15, UIApplication.SharedApplication.StatusBarFrame.Height + 136, Theme.ScreenBounds.Width - 30, 30);
+            var labelFrame = new CGRect(15, Theme.StatusBarHeight + 136, Theme.ScreenBounds.Width - 30, 30);
             _welcomeLabel = new UILabel(labelFrame)
             {
                 Text = "Welcome",
@@ -421,14 +435,14 @@ namespace FreedomVoice.iOS.ViewControllers
         private void AdjustLogoImage(bool keyboardVisible = false)
         {
             _logoImage.Image = keyboardVisible ? UIImage.FromFile("logo_freedomvoice_small_white.png") : UIImage.FromFile("logo_freedomvoice_white.png");
-            _logoImage.Frame = new CGRect(0, UIApplication.SharedApplication.StatusBarFrame.Height + (keyboardVisible ? 10 : 35), _logoImage.Image.CGImage.Width / 2, _logoImage.Image.CGImage.Height / 2);
+            _logoImage.Frame = new CGRect(0, Theme.StatusBarHeight + (keyboardVisible ? 10 : 35), _logoImage.Image.CGImage.Width / 2, _logoImage.Image.CGImage.Height / 2);
             _logoImage.Center = new CGPoint(View.Center.X, _logoImage.Center.Y);
         }
 
         private void AdjustWelcomeLabel(bool keyboardVisible = false)
         {
             _welcomeLabel.Font = UIFont.SystemFontOfSize((keyboardVisible ? 24 : 36), UIFontWeight.Thin);
-            _welcomeLabel.Frame = new CGRect(15, UIApplication.SharedApplication.StatusBarFrame.Height + (keyboardVisible ? 43 : 135), Theme.ScreenBounds.Width - 30, (keyboardVisible ? 18 : 30));
+            _welcomeLabel.Frame = new CGRect(15, Theme.StatusBarHeight + (keyboardVisible ? 43 : 135), Theme.ScreenBounds.Width - 30, (keyboardVisible ? 18 : 30));
             _welcomeLabel.Center = new CGPoint(View.Center.X, _welcomeLabel.Center.Y);
         }
 

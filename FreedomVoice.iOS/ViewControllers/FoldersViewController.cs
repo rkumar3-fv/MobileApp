@@ -1,8 +1,9 @@
 using System;
 using CoreGraphics;
 using FreedomVoice.iOS.Entities;
-using FreedomVoice.iOS.Helpers;
 using FreedomVoice.iOS.TableViewSources;
+using FreedomVoice.iOS.Utilities;
+using FreedomVoice.iOS.Utilities.Helpers;
 using FreedomVoice.iOS.ViewModels;
 using UIKit;
 
@@ -20,6 +21,10 @@ namespace FreedomVoice.iOS.ViewControllers
         public override async void ViewDidLoad()
         {
             FoldersTableView.TableFooterView = new UIView(CGRect.Empty);
+
+            var insets = new UIEdgeInsets(0, 0, Theme.StatusBarHeight + NavigationController.NavigationBarHeight(), 0);
+            FoldersTableView.ContentInset = insets;
+            FoldersTableView.ScrollIndicatorInsets = insets;
 
             _foldersViewModel = new FoldersViewModel(SelectedAccount.PhoneNumber, SelectedExtension.ExtensionNumber, NavigationController);
 

@@ -1,16 +1,13 @@
 ﻿using CoreGraphics;
 using Foundation;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using UIKit;
 
 namespace FreedomVoice.iOS.Views
 {
-    [Register("SliderBackgorund")]
-    public class SliderBackgorund : UIView
+    [Register("SliderBackgorundView")]
+    public class SliderBackgorundView : UIView
     {
-        public SliderBackgorund(CGRect rect) : base (rect) { }
+        public SliderBackgorundView(CGRect rect) : base (rect) { }
 
         public override void Draw(CGRect rect)
         {
@@ -18,8 +15,7 @@ namespace FreedomVoice.iOS.Views
 
             using (CGContext g = UIGraphics.GetCurrentContext())
             {
-                g.SetLineWidth(14);
-                //UIColor.FromRGBA(255, 255, 255, 175).SetStroke();                
+                g.SetLineWidth(14);            
                 UIColor.FromRGB(145, 158, 174).SetStroke();
                 var path = new CGPath();
                 path.AddLines(new[] { new CGPoint(rect.X, rect.Y), new CGPoint(rect.Width, rect.Y) });

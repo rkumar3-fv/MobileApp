@@ -4,6 +4,7 @@ using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.Services;
 using FreedomVoice.iOS.Services.Responses;
 using FreedomVoice.iOS.Utilities;
+using FreedomVoice.iOS.Utilities.Helpers;
 using UIKit;
 
 namespace FreedomVoice.iOS.ViewModels
@@ -11,6 +12,8 @@ namespace FreedomVoice.iOS.ViewModels
     public class FoldersViewModel : BaseViewModel
     {
         private readonly IFoldersService _service;
+        private readonly UIViewController _viewController;
+
         private readonly string _systemPhoneNumber;
         private readonly int _mailboxNumber;
         
@@ -26,6 +29,7 @@ namespace FreedomVoice.iOS.ViewModels
             _service = ServiceContainer.Resolve<IFoldersService>();
 
             ViewController = viewController;
+            _viewController = viewController;
 
             _systemPhoneNumber = systemPhoneNumber;
             _mailboxNumber = mailboxNumber;
@@ -37,11 +41,19 @@ namespace FreedomVoice.iOS.ViewModels
         /// <returns></returns>
         public async Task GetFoldersListAsync()
         {
+            CurrentTask = async delegate { await GetFoldersListAsync(); };
+
+            if (PhoneCapability.NetworkIsUnreachable)
+            {
+                Appearance.ShowNetworkUnreachableAlert(_viewController);
+                return;
+            }
+
             IsBusy = true;
 
             var requestResult = await _service.ExecuteRequest(_systemPhoneNumber, _mailboxNumber);
             if (requestResult is ErrorResponse)
-                ProceedErrorResponse(requestResult);
+                await ProceedErrorResponse(requestResult);
             else
             {
                 var data = requestResult as FoldersWithCountResponse;

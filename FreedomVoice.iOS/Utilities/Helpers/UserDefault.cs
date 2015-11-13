@@ -1,7 +1,7 @@
 ﻿using Foundation;
 using FreedomVoice.Core.Utils;
 
-namespace FreedomVoice.iOS.Helpers
+namespace FreedomVoice.iOS.Utilities.Helpers
 {
     public static class UserDefault
     {
@@ -27,7 +27,7 @@ namespace FreedomVoice.iOS.Helpers
             }
         }
 
-        public static string AccountPhoneNumber { get; set; }
+        public static string AccountPhoneNumber { get; private set; }
 
         public static void SaveAccountPhoneNumber(string userPhoneNumber)
         {

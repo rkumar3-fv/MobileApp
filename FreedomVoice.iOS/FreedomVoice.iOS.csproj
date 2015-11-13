@@ -49,9 +49,9 @@
     <ConsolePause>false</ConsolePause>
     <MtouchArch>ARMv7, ARM64</MtouchArch>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
-    <CodesignKey>iPhone Developer: Александр Пятаков (TRSB9P63FJ)</CodesignKey>
+    <CodesignKey>iPhone Developer</CodesignKey>
     <MtouchDebug>true</MtouchDebug>
-    <CodesignProvision>e4550f35-55a5-4b52-bf0d-0ebdf39f79ea</CodesignProvision>
+    <CodesignProvision>6daf5f1e-e78c-476a-89c9-92e88b7bb0b4</CodesignProvision>
     <CodesignResourceRules />
     <CodesignExtraArgs />
   </PropertyGroup>
@@ -98,12 +98,16 @@
     <Compile Include="Entities\FolderWithCount.cs" />
     <Compile Include="Entities\Message.cs" />
     <Compile Include="Entities\PresentationNumber.cs" />
+    <Compile Include="Utilities\DownloadBytesProgress.cs" />
+    <Compile Include="Utilities\Helpers\Contacts.cs" />
+    <Compile Include="Utilities\Helpers\KeyChain.cs" />
+    <Compile Include="Utilities\PhoneCall.cs" />
     <Compile Include="ViewControllers\FaxViewController.cs" />
     <Compile Include="ViewControllers\FaxViewController.designer.cs">
       <DependentUpon>FaxViewController.cs</DependentUpon>
     </Compile>
-    <Compile Include="Helpers\ExpandedCellButtonClickEventArgs.cs" />
-    <Compile Include="Helpers\LoadingOverlay.cs" />
+    <Compile Include="Utilities\Events\ExpandedCellButtonClickEventArgs.cs" />
+    <Compile Include="Utilities\LoadingOverlay.cs" />
     <Compile Include="Services\IMediaService.cs" />
     <Compile Include="Services\IMessageOperationsService.cs" />
     <Compile Include="Services\Implementations\CallReservationService.cs" />
@@ -111,7 +115,7 @@
     <Compile Include="Services\Implementations\MediaService.cs" />
     <Compile Include="Services\Implementations\MessageOperationsService.cs" />
     <Compile Include="Services\Responses\CallReservationResponse.cs" />
-    <Compile Include="Services\Responses\MediaResponse.cs" />
+    <Compile Include="Services\Responses\GetMediaResponse.cs" />
     <Compile Include="Services\Responses\MessageOperationsResponse.cs" />
     <Compile Include="ViewControllers\PhoneNumberViewController.cs" />
     <Compile Include="ViewControllers\PhoneNumberViewController.designer.cs">
@@ -126,8 +130,7 @@
       <DependentUpon>ExtensionsViewController.cs</DependentUpon>
     </Compile>
     <Compile Include="TableViewCells\ExpandedCell.cs" />
-    <Compile Include="Utilities\Extensions\NSDateDateTimeExtensions.cs" />
-    <Compile Include="Helpers\CallerIDEvent.cs" />
+    <Compile Include="Utilities\Events\CallerIdEvent.cs" />
     <Compile Include="Services\BaseService.cs" />
     <Compile Include="Services\IFoldersService.cs" />
     <Compile Include="Services\IMessagesService.cs" />
@@ -141,7 +144,7 @@
     <Compile Include="Services\Implementations\PresentationNumbersService.cs" />
     <Compile Include="Services\IPresentationNumbersService.cs" />
     <Compile Include="Entities\Recent.cs" />
-    <Compile Include="Helpers\PhoneAbilities.cs" />
+    <Compile Include="Utilities\PhoneAbilities.cs" />
     <Compile Include="Services\Responses\FoldersWithCountResponse.cs" />
     <Compile Include="Services\Responses\ForgotPasswordResponse.cs" />
     <Compile Include="Services\Responses\LoginResponse.cs" />
@@ -152,7 +155,7 @@
     <Compile Include="ViewModels\ExpandedCellViewModel.cs" />
     <Compile Include="ViewModels\MediaViewModel.cs" />
     <Compile Include="Views\AVPlayerView.cs" />
-    <Compile Include="Views\NoAccessToContacts.cs" />
+    <Compile Include="Views\NoAccessToContactsView.cs" />
     <Compile Include="Views\RecentLineView.cs" />
     <Compile Include="Views\Shared\CallerIdView.cs" />
     <Compile Include="TableViewCells\ContactCell.cs" />
@@ -176,9 +179,9 @@
     <Compile Include="Services\ILoginService.cs" />
     <Compile Include="Services\Implementations\LoginService.cs" />
     <Compile Include="Services\PropertyChangedBase.cs" />
-    <Compile Include="Helpers\Appearance.cs" />
-    <Compile Include="Helpers\UserDefault.cs" />
-    <Compile Include="Helpers\Validation.cs" />
+    <Compile Include="Utilities\Helpers\Appearance.cs" />
+    <Compile Include="Utilities\Helpers\UserDefault.cs" />
+    <Compile Include="Utilities\Helpers\Validation.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Utilities\ServiceContainer.cs" />
     <Compile Include="Services\ServiceRegistrar.cs" />
@@ -198,7 +201,7 @@
     <Compile Include="ViewControllers\EmergencyDisclaimerViewController.designer.cs">
       <DependentUpon>EmergencyDisclaimerViewController.cs</DependentUpon>
     </Compile>
-    <Compile Include="Helpers\KeypadDial.cs" />
+    <Compile Include="Utilities\KeypadDial.cs" />
     <Compile Include="ViewControllers\AccountUnavailableViewController.cs" />
     <Compile Include="ViewControllers\AccountUnavailableViewController.designer.cs">
       <DependentUpon>AccountUnavailableViewController.cs</DependentUpon>
@@ -232,7 +235,7 @@
     </Compile>
     <Compile Include="AppDelegate.cs" />
     <Compile Include="ViewModels\MessagesViewModel.cs" />
-    <Compile Include="Views\SliderBackgorund.cs" />
+    <Compile Include="Views\SliderBackgorundView.cs" />
     <None Include="Info.plist">
       <SubType>Designer</SubType>
     </None>
@@ -284,6 +287,20 @@
     <BundleResource Include="Resources\view_fax%402x.png" />
     <BundleResource Include="Resources\call_back%402x.png" />
     <BundleResource Include="Resources\navbar%402x.png" />
+    <BundleResource Include="Resources\Icons\Icon-60%402x.png" />
+    <BundleResource Include="Resources\Icons\Icon-60%403x.png" />
+    <BundleResource Include="Resources\Icons\Icon-76.png" />
+    <BundleResource Include="Resources\Icons\Icon-76%402x.png" />
+    <BundleResource Include="Resources\Icons\Icon-Small.png" />
+    <BundleResource Include="Resources\Icons\Icon-Small%402x.png" />
+    <BundleResource Include="Resources\Icons\Icon-Small%403x.png" />
+    <BundleResource Include="Resources\Icons\Icon-Small-40.png" />
+    <BundleResource Include="Resources\Icons\Icon-Small-40%402x.png" />
+    <BundleResource Include="Resources\Icons\Icon-Small-40%403x.png" />
+    <ITunesArtwork Include="Resources\Icons\iTunesArtwork%402x.png" />
+    <BundleResource Include="Resources\Icon.png" />
+    <BundleResource Include="Resources\Icon%402x.png" />
+    <BundleResource Include="Resources\Icon-60%402x.png" />
     <Content Include="Settings.bundle\Root.plist">
       <SubType>Designer</SubType>
     </Content>
@@ -348,6 +365,48 @@
       <Version>0.7.7</Version>
       <Visible>False</Visible>
     </XamarinComponentReference>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <ImageAsset Include="Resources/Media.xcassets/AppIcons.appiconset/Contents.json">
+      <InProject>false</InProject>
+    </ImageAsset>
+    <ImageAsset Include="Resources/Media.xcassets/AppIcons.appiconset/Icon-60@2x.png">
+      <InProject>false</InProject>
+    </ImageAsset>
+    <ImageAsset Include="Resources/Media.xcassets/AppIcons.appiconset/Icon-60@3x.png">
+      <InProject>false</InProject>
+    </ImageAsset>
+    <ImageAsset Include="Resources/Media.xcassets/AppIcons.appiconset/Icon-76.png">
+      <InProject>false</InProject>
+    </ImageAsset>
+    <ImageAsset Include="Resources/Media.xcassets/AppIcons.appiconset/Icon-76@2x.png">
+      <InProject>false</InProject>
+    </ImageAsset>
+    <ImageAsset Include="Resources/Media.xcassets/AppIcons.appiconset/Icon-Small-40.png">
+      <InProject>false</InProject>
+    </ImageAsset>
+    <ImageAsset Include="Resources/Media.xcassets/AppIcons.appiconset/Icon-Small-40@2x.png">
+      <InProject>false</InProject>
+    </ImageAsset>
+    <ImageAsset Include="Resources/Media.xcassets/AppIcons.appiconset/Icon-Small-40@3x.png">
+      <InProject>false</InProject>
+    </ImageAsset>
+    <ImageAsset Include="Resources/Media.xcassets/AppIcons.appiconset/Icon-Small.png">
+      <InProject>false</InProject>
+    </ImageAsset>
+    <ImageAsset Include="Resources/Media.xcassets/AppIcons.appiconset/Icon-Small@2x.png">
+      <InProject>false</InProject>
+    </ImageAsset>
+    <ImageAsset Include="Resources/Media.xcassets/AppIcons.appiconset/Icon-Small@3x.png">
+      <InProject>false</InProject>
+    </ImageAsset>
+    <ImageAsset Include="Resources/Media.xcassets/LaunchImages.launchimage/Contents.json">
+      <InProject>false</InProject>
+    </ImageAsset>
+    <ImageAsset Include="Resources/Media.xcassets/LaunchImages.launchimage/Default-568h@2x.png">
+      <InProject>false</InProject>
+    </ImageAsset>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 </Project>

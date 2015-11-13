@@ -2,9 +2,10 @@ using System;
 using System.Collections.Generic;
 using CoreGraphics;
 using FreedomVoice.iOS.Entities;
-using FreedomVoice.iOS.Helpers;
 using FreedomVoice.iOS.TableViewSources;
 using FreedomVoice.iOS.Utilities;
+using FreedomVoice.iOS.Utilities.Events;
+using FreedomVoice.iOS.Utilities.Helpers;
 using FreedomVoice.iOS.ViewModels;
 using UIKit;
 
@@ -30,6 +31,11 @@ namespace FreedomVoice.iOS.ViewControllers
         {
             MessagesTableView.TableFooterView = new UIView(CGRect.Empty);
 
+            var headerHeight = Theme.StatusBarHeight + NavigationController.NavigationBarHeight();
+            var insets = new UIEdgeInsets(0, 0, headerHeight, 0);
+            MessagesTableView.ContentInset = insets;
+            MessagesTableView.ScrollIndicatorInsets = insets;
+
             var frame = new CGRect(15, 0, Theme.ScreenBounds.Width - 30, 30);
             _noMessagesLabel = new UILabel(frame)
             {
@@ -37,7 +43,7 @@ namespace FreedomVoice.iOS.ViewControllers
                 Font = UIFont.SystemFontOfSize(28),
                 TextColor = Theme.GrayColor,
                 TextAlignment = UITextAlignment.Center,
-                Center = View.Center,
+                Center = new CGPoint(View.Center.X, View.Center.Y - headerHeight),
                 Hidden = true
             };
 
@@ -64,7 +70,15 @@ namespace FreedomVoice.iOS.ViewControllers
         private void OnSourceRowCallbackClick(object sender, ExpandedCellButtonClickEventArgs e)
         {
             var selectedCallerId = MainTabBarInstance.GetSelectedPresentationNumber().PhoneNumber;
-            PhoneCall.CreateCallReservation(MainTabBarInstance.SelectedAccount.PhoneNumber, selectedCallerId, e.SelectedMessage.SourceNumber, NavigationController);
+            var selectedMessagePhoneNumber = e.SelectedMessage.SourceNumber;
+
+            PhoneCall.CreateCallReservation(MainTabBarInstance.SelectedAccount.PhoneNumber, selectedCallerId, selectedMessagePhoneNumber, NavigationController);
+            AddRecent(selectedMessagePhoneNumber);
+        }
+
+        private static void AddRecent(string phoneNumber)
+        {
+            MainTabBarInstance.Recents.Add(new Recent(string.Empty, phoneNumber, DateTime.Now));
         }
 
         private async void OnSourceRowViewFaxClick(object sender, ExpandedCellButtonClickEventArgs e)

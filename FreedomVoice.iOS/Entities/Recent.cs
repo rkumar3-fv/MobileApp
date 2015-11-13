@@ -1,6 +1,5 @@
-﻿using FreedomVoice.Core.Utils;
-using System;
-using System.Globalization;
+﻿using System;
+using FreedomVoice.Core.Utils;
 
 namespace FreedomVoice.iOS.Entities
 {
@@ -11,7 +10,7 @@ namespace FreedomVoice.iOS.Entities
         public DateTime DialDate { get; set; }
         public string ContactId { get; set; }
 
-        public string FormatedDialDate => DialDate.Date == DateTime.Now.Date.AddDays(-1) ? "Yesterday" : DialDate.ToString(DialDate.Date < DateTime.Now.Date.AddDays(-1) ? @"MM/dd/yy" : @"hh:mm tt", new CultureInfo("en-US"));
+        public string FormatedDialDate => DataFormatUtils.ToShortFormattedDate("Yesterday", DialDate);
 
         public string TitleOrNumber => !string.IsNullOrEmpty(Title) ? Title : DataFormatUtils.ToPhoneNumber(PhoneNumber);
 

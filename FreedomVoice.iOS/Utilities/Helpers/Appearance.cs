@@ -1,9 +1,10 @@
 ﻿using System;
 using CoreGraphics;
 using FreedomVoice.Core.Entities.Enums;
+using FreedomVoice.Core.Utils;
 using UIKit;
 
-namespace FreedomVoice.iOS.Helpers
+namespace FreedomVoice.iOS.Utilities.Helpers
 {
     public static class Appearance
     {
@@ -43,6 +44,19 @@ namespace FreedomVoice.iOS.Helpers
             });
         }
 
+        public static void ShowNetworkUnreachableAlert(UIViewController controller)
+        {
+            //TODO: Change alert text to something more informative
+            var alertController = UIAlertController.Create(null, "No Internet Connection.", UIAlertControllerStyle.Alert);
+            alertController.AddAction(UIAlertAction.Create("Ok", UIAlertActionStyle.Cancel, null));
+            controller.PresentViewController(alertController, true, null);
+        }
+
+        public static UIImageView GetMessageImageView(int cellHeight)
+        {
+            return new UIImageView(new CGRect(15, (cellHeight - 25) / 2, 25, 25));
+        }
+
         public static UIImage GetMessageImage(MessageType messageType, bool unread, bool active)
         {
             var imagePostfix = active ? "_active" : unread ? "_unread" : string.Empty;
@@ -58,6 +72,26 @@ namespace FreedomVoice.iOS.Helpers
                 default:
                     return null;
             }
+        }
+
+        public static UIImage GetImageFromColor(UIColor color, CGSize size)
+        {
+            var imageFrame = new CGRect(0, 0, size.Width, size.Height);
+            UIGraphics.BeginImageContext(imageFrame.Size);
+
+            var context = UIGraphics.GetCurrentContext();
+            context.SetFillColor(color.CGColor);
+            context.FillRect(imageFrame);
+
+            var image = UIGraphics.GetImageFromCurrentImageContext();
+            UIGraphics.EndImageContext();
+
+            return image;
+        }
+
+        public static string GetFormattedMessageLength(int length, bool faxMessageType)
+        {
+            return faxMessageType ? DataFormatUtils.PagesToFormattedString(length) : DataFormatUtils.ToDuration(length);
         }
     }
 }

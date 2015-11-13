@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace FreedomVoice.iOS.Helpers
+namespace FreedomVoice.iOS.Utilities.Helpers
 {
     public static class Validation
     {

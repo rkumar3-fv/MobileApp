@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace FreedomVoice.iOS.Helpers
+namespace FreedomVoice.iOS.Utilities
 {
     public class KeypadDial
     {

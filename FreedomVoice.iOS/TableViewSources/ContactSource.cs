@@ -27,12 +27,12 @@ namespace FreedomVoice.iOS.TableViewSources
         private string[] _keys;
         public string[] Keys
         {
-            get { return _keys ?? (_keys = Letters.Where(l => ContactsList.Any(p => p.DisplayName.StartsWith(l, StringComparison.OrdinalIgnoreCase))).ToArray()); }
+            get { return _keys ?? (_keys = Letters.Where(l => ContactsList.Any(p => p.LastName != null && p.LastName.StartsWith(l, StringComparison.OrdinalIgnoreCase))).ToArray()); }
         }
 
         public override nint RowsInSection(UITableView tableview, nint section)
         {
-            return ContactsList.Count(c => c.DisplayName.StartsWith(Keys[section], StringComparison.OrdinalIgnoreCase));
+            return ContactsList.Count(c => c.LastName != null && c.LastName.StartsWith(Keys[section], StringComparison.OrdinalIgnoreCase));
         }
 
         public override string[] SectionIndexTitles(UITableView tableView)
@@ -64,7 +64,7 @@ namespace FreedomVoice.iOS.TableViewSources
         {
             var cell = tableView.DequeueReusableCell(ContactCell.ContactCellId) as ContactCell ?? new ContactCell();
 
-            var person = ContactsList.Where(c => c.DisplayName.StartsWith(Keys[indexPath.Section], StringComparison.OrdinalIgnoreCase)).ToList()[indexPath.Row];
+            var person = ContactsList.Where(c => c.LastName != null && c.LastName.StartsWith(Keys[indexPath.Section], StringComparison.OrdinalIgnoreCase)).ToList()[indexPath.Row];
             cell.TextLabel.Text = person.DisplayName;
             cell.DetailTextLabel.Text = person.Nickname;
 

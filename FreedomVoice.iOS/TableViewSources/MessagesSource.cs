@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using Foundation;
+using FreedomVoice.Core.Entities.Enums;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.TableViewCells;
-using UIKit;
-using FreedomVoice.Core.Entities.Enums;
-using FreedomVoice.Core.Utils;
-using FreedomVoice.iOS.Helpers;
+using FreedomVoice.iOS.Utilities;
+using FreedomVoice.iOS.Utilities.Events;
+using FreedomVoice.iOS.Utilities.Helpers;
 using FreedomVoice.iOS.ViewModels;
+using UIKit;
 
 namespace FreedomVoice.iOS.TableViewSources
 {
@@ -46,14 +47,10 @@ namespace FreedomVoice.iOS.TableViewSources
                 return _expandedCell;
             }
 
-            var cell = tableView.DequeueReusableCell(MessageCell.MessageCellId) as MessageCell ?? new MessageCell { Accessory = UITableViewCellAccessory.None };
+            var messageCell = tableView.DequeueReusableCell(MessageCell.MessageCellId) as MessageCell ?? new MessageCell { Accessory = UITableViewCellAccessory.None };
+            messageCell.UpdateCell(selectedMessage);
 
-            cell.TextLabel.Text = !string.IsNullOrEmpty(selectedMessage.SourceName.Trim()) ? selectedMessage.SourceName.Trim() : (!string.IsNullOrEmpty(selectedMessage.SourceNumber.Trim()) ? DataFormatUtils.ToPhoneNumber(selectedMessage.SourceNumber.Trim()) : "Unavailable");
-            cell.TextLabel.Font = UIFont.SystemFontOfSize(17, selectedMessage.Unread ? UIFontWeight.Bold : UIFontWeight.Regular);
-            cell.DetailTextLabel.Text = DataFormatUtils.ToFormattedDate("Yesterday", selectedMessage.ReceivedOn);
-            cell.ImageView.Image = Appearance.GetMessageImage(selectedMessage.Type, selectedMessage.Unread, false);
-
-            return cell;
+            return messageCell;
         }
 
         private void ProceedEventsSubscription(UITableView tableView, NSIndexPath indexPath)
@@ -138,6 +135,12 @@ namespace FreedomVoice.iOS.TableViewSources
 
         private async void DeleteMessageClick(UITableView tableView, NSIndexPath indexPath)
         {
+            if (PhoneCapability.NetworkIsUnreachable)
+            {
+                Appearance.ShowNetworkUnreachableAlert(_navigationController);
+                return;
+            }
+
             var selectedMessage = _messages[indexPath.Row];
 
             if (tableView.CellAt(indexPath) is ExpandedCell)

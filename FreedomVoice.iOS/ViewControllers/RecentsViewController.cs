@@ -1,21 +1,22 @@
-using Foundation;
-using FreedomVoice.iOS.Entities;
-using FreedomVoice.iOS.TableViewSources;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using FreedomVoice.iOS.Views;
-using FreedomVoice.iOS.Views.Shared;
-using UIKit;
-using Xamarin.Contacts;
 using System.Text.RegularExpressions;
-using CoreGraphics;
-using FreedomVoice.iOS.Helpers;
 using AddressBook;
 using AddressBookUI;
 using Contacts;
 using ContactsUI;
+using CoreGraphics;
+using Foundation;
+using FreedomVoice.iOS.Entities;
+using FreedomVoice.iOS.TableViewSources;
+using FreedomVoice.iOS.Utilities;
+using FreedomVoice.iOS.Utilities.Helpers;
+using FreedomVoice.iOS.Views;
+using FreedomVoice.iOS.Views.Shared;
+using UIKit;
+using Xamarin.Contacts;
 
 namespace FreedomVoice.iOS.ViewControllers
 {
@@ -49,24 +50,16 @@ namespace FreedomVoice.iOS.ViewControllers
             _recentSource.OnRowDeleted += TableSourceOnRowDeleted;
 
             if (UIDevice.CurrentDevice.CheckSystemVersion(9, 0))
-                _recentSource.OnRecentInfoClicked += IOS9TableSourceOnRecentInfoClicked;
+                _recentSource.OnRecentInfoClicked += TableSourceOnRecentInfoClicked;
             else
-                _recentSource.OnRecentInfoClicked += IOS8TableSourceOnRecentInfoClicked;
+                _recentSource.OnRecentInfoClicked += DeprecatedTableSourceOnRecentInfoClicked;
 
-            var addressBook = new Xamarin.Contacts.AddressBook();
-            if (!await addressBook.RequestPermission())
-            {
-                //TODO: Do we need this alert?
-                new UIAlertView("Permission denied", "User has denied this app access to their contacts", null, "Close").Show();
-                return;
-            }
-
-            _contactList = addressBook.ToList();
+            _contactList = await AppDelegate.GetContactsListAsync();
 
             base.ViewDidLoad();
         }
 
-        private void IOS9TableSourceOnRecentInfoClicked(Recent recent)
+        private void TableSourceOnRecentInfoClicked(Recent recent)
         {
             var store = new CNContactStore();
             NSError error;
@@ -91,7 +84,7 @@ namespace FreedomVoice.iOS.ViewControllers
             NavigationController.PushViewController(viewController, true);
         }
 
-        private void IOS8TableSourceOnRecentInfoClicked(Recent recent)
+        private void DeprecatedTableSourceOnRecentInfoClicked(Recent recent)
         {
             NSError error;
             var addressBook = ABAddressBook.Create(out error);

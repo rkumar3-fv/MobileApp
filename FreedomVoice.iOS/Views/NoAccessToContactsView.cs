@@ -6,14 +6,14 @@ using UIKit;
 
 namespace FreedomVoice.iOS.Views
 {
-    public class NoAccessToContacts : UIView
+    public class NoAccessToContactsView : UIView
     {
         private UIImageView _noAccessToContactsImage;
         private UILabel _mainLabel;
         private UILabel _instructionsLabel;
         private UIButton _settingsButton;
 
-        public NoAccessToContacts(CGRect rect) : base(rect)
+        public NoAccessToContactsView(CGRect rect) : base(rect)
         {
             BackgroundColor = UIColor.White;
         }
@@ -38,7 +38,7 @@ namespace FreedomVoice.iOS.Views
         private void InitializeNoAccessToContactsImage()
         {
             _noAccessToContactsImage = new UIImageView(UIImage.FromFile("contacts_access.png"));
-            _noAccessToContactsImage.Frame = new CGRect(0, UIApplication.SharedApplication.StatusBarFrame.Height + 118, _noAccessToContactsImage.Image.CGImage.Width / 2, _noAccessToContactsImage.Image.CGImage.Height / 2);
+            _noAccessToContactsImage.Frame = new CGRect(0, 73, _noAccessToContactsImage.Image.CGImage.Width / 2, _noAccessToContactsImage.Image.CGImage.Height / 2);
             _noAccessToContactsImage.Center = new CGPoint(Center.X, _noAccessToContactsImage.Center.Y);
 
             AddSubview(_noAccessToContactsImage);

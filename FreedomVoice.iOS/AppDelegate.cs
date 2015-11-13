@@ -5,12 +5,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using Foundation;
 using FreedomVoice.iOS.Entities;
-using FreedomVoice.iOS.Helpers;
 using FreedomVoice.iOS.Utilities;
+using FreedomVoice.iOS.Utilities.Helpers;
 using FreedomVoice.iOS.ViewControllers;
 using FreedomVoice.iOS.ViewModels;
 using UIKit;
 using GoogleAnalytics.iOS;
+using Xamarin.Contacts;
 
 namespace FreedomVoice.iOS
 {
@@ -21,6 +22,21 @@ namespace FreedomVoice.iOS
 
         private static UIStoryboard MainStoryboard => UIStoryboard.FromName("MainStoryboard", NSBundle.MainBundle);
         private NSObject _observer;
+
+        private static readonly Xamarin.Contacts.AddressBook AddressBook = new Xamarin.Contacts.AddressBook();
+
+        public static async Task<bool> ContactHasAccessPermissionsAsync()
+        {
+            return await AddressBook.RequestPermission();
+        }
+
+        public async static Task<List<Contact>> GetContactsListAsync()
+        {
+            if (await ContactHasAccessPermissionsAsync()) return AddressBook.ToList();
+
+            new UIAlertView("Permission denied", "User has denied this app access to their contacts", null, "Close").Show();
+            return null;
+        }
 
         public static T GetViewController<T>() where T : UIViewController
         {
@@ -44,19 +60,17 @@ namespace FreedomVoice.iOS
             ServiceContainer.Register(Window);
             ServiceContainer.Register<ISynchronizeInvoke>(() => new SynchronizeInvoke());
 
-            //Apply our UI theme
+            InitializeGoogleAnalytics();
             Theme.Apply();
 
             if (UserDefault.IsAuthenticated)
-                SetAccountsViewAsRootView();
+                ProceedWithAuthenticatedUser();
             else
                 SetLoginViewAsRootView();
 
-            Window.MakeKeyAndVisible();
-
-            InitGA();
-
             _observer = NSNotificationCenter.DefaultCenter.AddObserver((NSString)"NSUserDefaultsDidChangeNotification", DefaultsChanged);
+
+            Window.MakeKeyAndVisible();
 
             return true;
         }
@@ -71,6 +85,8 @@ namespace FreedomVoice.iOS
         public void GoToLoginScreen()
         {
             UserDefault.IsAuthenticated = false;
+            KeyChain.DeletePasswordForUsername(KeyChain.GetUsername());
+
             SetLoginViewAsRootView();
         }
 
@@ -78,6 +94,12 @@ namespace FreedomVoice.iOS
 
         private async Task ProceedGetAccountsList()
         {
+            if (PhoneCapability.NetworkIsUnreachable)
+            {
+                Appearance.ShowNetworkUnreachableAlert(Window.RootViewController);
+                return;
+            }
+
             _accountsViewModel = new AccountsViewModel(Window.RootViewController);
 
             await _accountsViewModel.GetAccountsListAsync();
@@ -134,16 +156,22 @@ namespace FreedomVoice.iOS
             SetRootViewController(navigationController, false);
         }
 
-        private void SetAccountsViewAsRootView()
+        private async void ProceedWithAuthenticatedUser()
         {
-            var accountsController = GetViewController<AccountsViewController>();
+            //TODO: Create splash screen navigation controller and make it root controller
 
-            var navigationController = new UINavigationController(accountsController);
-            SetRootViewController(navigationController, false);
+            await ProceedGetAccountsList();
+
         }
 
         public static async Task<MainTabBarController> GetMainTabBarController(Account selectetdAccount, UIViewController viewController)
         {
+            if (PhoneCapability.NetworkIsUnreachable)
+            {
+                Appearance.ShowNetworkUnreachableAlert(viewController);
+                return null;
+            }
+
             var mainTabBarViewModel = new MainTabBarViewModel(selectetdAccount, viewController);
             await mainTabBarViewModel.GetExtensionsListAsync();
             if (mainTabBarViewModel.IsErrorResponseReceived) return null;
@@ -181,9 +209,9 @@ namespace FreedomVoice.iOS
         }
 
         public IGAITracker Tracker;
-        public const string TrackingId = "UA-69040520-2";
+        private const string TrackingId = "UA-587407-96";
 
-        private void InitGA()
+        private void InitializeGoogleAnalytics()
         {
             GAI.SharedInstance.DispatchInterval = 20;                        
             GAI.SharedInstance.TrackUncaughtExceptions = true;                        

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using FreedomVoice.iOS.Entities;
+using Xamarin.Contacts;
 
 namespace FreedomVoice.iOS.Services.Responses
 {
@@ -11,12 +12,13 @@ namespace FreedomVoice.iOS.Services.Responses
         /// Response init for MessagesService
         /// </summary>
         /// <param name="messages">Messages</param>
-        public MessagesResponse(IEnumerable<Core.Entities.Message> messages)
+        /// <param name="contactList"></param>
+        public MessagesResponse(IEnumerable<Core.Entities.Message> messages, List<Contact> contactList)
         {
             MessagesList = new List<Message>();
 
             foreach (var m in messages)
-                MessagesList.Add(new Message(m));
+                MessagesList.Add(new Message(m, contactList));
         }
     }
 }

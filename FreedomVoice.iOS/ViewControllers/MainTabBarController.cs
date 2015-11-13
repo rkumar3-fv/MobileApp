@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
-using FreedomVoice.iOS.Entities;
-using FreedomVoice.iOS.Helpers;
-using UIKit;
 using System.Linq;
+using FreedomVoice.iOS.Entities;
+using FreedomVoice.iOS.Utilities.Events;
+using UIKit;
 
 namespace FreedomVoice.iOS.ViewControllers
 {
@@ -47,7 +47,7 @@ namespace FreedomVoice.iOS.ViewControllers
 
             SelectedIndex = 2;  
 
-            CallerIDEvent.CallerIDChanged += PresentationNumberChanged;
+            CallerIdEvent.CallerIdChanged += PresentationNumberChanged;
 
             base.ViewDidLoad();
         }
@@ -80,7 +80,7 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private void PresentationNumberChanged(object sender, EventArgs args)
         {
-            var selectedPresentationNumber = (args as CallerIDEventArgs)?.SelectedPresentationNumber;
+            var selectedPresentationNumber = (args as CallerIdEventArgs)?.SelectedPresentationNumber;
             foreach (var item in PresentationNumbers)
                 item.IsSelected = item == selectedPresentationNumber;
         }
