@@ -17,6 +17,7 @@ using com.FreedomVoice.MobileApp.Android.Activities;
 using com.FreedomVoice.MobileApp.Android.Entities;
 using com.FreedomVoice.MobileApp.Android.Services;
 using com.FreedomVoice.MobileApp.Android.Storage;
+using FreedomVoice.Core;
 using Xamarin;
 using Java.Util.Concurrent.Atomic;
 using Uri = Android.Net.Uri;
@@ -123,7 +124,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 
         private readonly AtomicLong _idCounter;
         private readonly AppPreferencesHelper _preferencesHelper;
-
+        private readonly TelephonyManager _telephony;
         /// <summary>
         /// Set actions helper for current context
         /// </summary>
@@ -141,18 +142,18 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             Log.Debug(App.AppPackage, "HELPER: " + (IsFirstRun ? "First run" : "Not first run"));
 #endif
             PhoneNumber = _preferencesHelper.GetPhoneNumber();
-            var telemanager = app.GetSystemService(Context.TelephonyService) as TelephonyManager;
+            _telephony = app.GetSystemService(Context.TelephonyService) as TelephonyManager;
 
-            if ((telemanager?.Line1Number == null)||(telemanager.SimSerialNumber == null)||(telemanager.SimSerialNumber.Length==0))
+            if ((_telephony?.Line1Number == null)||(_telephony.SimSerialNumber == null)||(_telephony.SimSerialNumber.Length==0))
                 PhoneNumber = null;
-            else if ((PhoneNumber != telemanager.Line1Number) && (telemanager.Line1Number.Length > 1))
+            else if ((PhoneNumber != _telephony.Line1Number) && (_telephony.Line1Number.Length > 1))
             {
-                if ((telemanager.Line1Number.StartsWith("1")) && (telemanager.Line1Number.Length == 11))
-                    PhoneNumber = telemanager.Line1Number.Substring(1);
-                else if ((telemanager.Line1Number.StartsWith("+1")) && (telemanager.Line1Number.Length == 12))
-                    PhoneNumber = telemanager.Line1Number.Substring(2);
+                if ((_telephony.Line1Number.StartsWith("1")) && (_telephony.Line1Number.Length == 11))
+                    PhoneNumber = _telephony.Line1Number.Substring(1);
+                else if ((_telephony.Line1Number.StartsWith("+1")) && (_telephony.Line1Number.Length == 12))
+                    PhoneNumber = _telephony.Line1Number.Substring(2);
                 else
-                    PhoneNumber = telemanager.Line1Number;
+                    PhoneNumber = _telephony.Line1Number;
                 _preferencesHelper.SavePhoneNumber(PhoneNumber);
             }
 #if DEBUG
@@ -163,6 +164,45 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             SelectedExtension = -1;
             SelectedFolder = -1;
             SelectedMessage = -1;
+
+            if (!IsFirstRun)
+            {
+                var container = _preferencesHelper.GetCookieContainer();
+                var pair = _preferencesHelper.GetLoginPass(_telephony!=null ? _telephony.DeviceId : "00");
+                if (pair != null)
+                {
+                    _userLogin = (string) pair.First;
+                    _userPassword = (string) pair.Second;
+                }
+                if (container != null)
+                {
+                    ApiHelper.CookieContainer = container;
+                    IsLoggedIn = true;
+                    if ((AccountsList == null) || (SelectedAccount == null))
+                    {
+                        GetAccounts();
+                        return;
+                    }
+                    if ((SelectedAccount.PresentationNumbers == null) ||
+                        (string.IsNullOrEmpty(SelectedAccount.PresentationNumber)))
+                    {
+                        GetPresentationNumbers();
+                        return;
+                    }
+                    var intent = new Intent(_app, typeof(ContentActivity));
+                    intent.SetFlags(ActivityFlags.NewTask);
+                    _app.StartActivity(intent);
+                    return;
+                }
+                if ((!string.IsNullOrEmpty(_userLogin)) && (!string.IsNullOrEmpty(_userPassword)))
+                {
+                    Authorize(_userLogin, _userPassword);
+                    return;
+                }
+            }
+            var authIntent = new Intent(_app, typeof(AuthActivity));
+            authIntent.SetFlags(ActivityFlags.NewTask);
+             _app.StartActivity(authIntent);
         }
 
         /// <summary>
@@ -698,7 +738,9 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                 // Login action response
                 case "LoginResponse":
                     IsLoggedIn = true;
-#if DEBUG
+                    _preferencesHelper.SaveCredentials(_userLogin, _userPassword, _telephony != null ? _telephony.DeviceId : "00");
+                    _preferencesHelper.SaveCookie(ApiHelper.CookieContainer);
+#if DEBUG           
                     Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} successed: YOU ARE LOGGED IN");
 #endif
                     if ((IsFirstRun) || (PhoneNumber == null))
@@ -891,6 +933,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             SelectedFolder = -1;
             SelectedMessage = -1;
             RecentsDictionary.Clear();
+            _preferencesHelper.ClearCredentials();
             var intent = new Intent(_app, typeof(AuthActivity));
             HelperEvent?.Invoke(this, new ActionsHelperIntentArgs(id, intent));
         }

@@ -1,3 +1,5 @@
+using System;
+using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 using Android.Content;
@@ -13,7 +15,7 @@ namespace com.FreedomVoice.MobileApp.Android.Storage
         private static readonly object Locker = new object();
         private readonly ISharedPreferences _preferences;
         private readonly Context _context;
-
+        private readonly string _cookiePath;
         private const string AppPreferencesFile = "fvprefs";
         private const string KeyIsFirstRun = "IsFirstRun";
         private const string KeyPhoneNumber = "PhoneNumber";
@@ -24,6 +26,7 @@ namespace com.FreedomVoice.MobileApp.Android.Storage
         {
             _context = context;
             _preferences = context.GetSharedPreferences(AppPreferencesFile, FileCreationMode.Private);
+            _cookiePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "cookie.dat");
         }
 
         /// <summary>
@@ -77,7 +80,16 @@ namespace com.FreedomVoice.MobileApp.Android.Storage
         /// </summary>
         public CookieContainer GetCookieContainer()
         {
-            return CookieSerializer.ReadCookiesFromDisk("cookie.dat");
+            return CookieSerializer.ReadCookiesFromDisk(_cookiePath);
+        }
+
+        public void ClearCredentials()
+        {
+            CookieSerializer.ClearCookies(_cookiePath);
+            var editor = _preferences.Edit();
+            editor.PutString(KeyLogin, "");
+            editor.PutString(KeyToken, "");
+            editor.Apply();
         }
 
         /// <summary>
@@ -85,9 +97,12 @@ namespace com.FreedomVoice.MobileApp.Android.Storage
         /// </summary>
         public void SetNotIsFirstRun()
         {
-            var editor = _preferences.Edit();
-            editor.PutBoolean(KeyIsFirstRun, false);
-            editor.Apply();
+            Task.Factory.StartNew(() =>
+            {
+                var editor = _preferences.Edit();
+                editor.PutBoolean(KeyIsFirstRun, false);
+                editor.Apply();
+            });
         }
 
         /// <summary>
@@ -95,6 +110,7 @@ namespace com.FreedomVoice.MobileApp.Android.Storage
         /// </summary>
         public void SavePhoneNumber(string phone)
         {
+            
             var editor = _preferences.Edit();
             editor.PutString(KeyPhoneNumber, phone);
             editor.Apply();
@@ -112,7 +128,7 @@ namespace com.FreedomVoice.MobileApp.Android.Storage
             Task.Factory.StartNew(() =>
             {
                 var log = SecurityHelper.Encrypt(login, androidId, salt);
-                var pass = SecurityHelper.Encrypt(login, salt, androidId);
+                var pass = SecurityHelper.Encrypt(token, salt, androidId);
                 var editor = _preferences.Edit();
                 editor.PutString(KeyLogin, log);
                 editor.PutString(KeyToken, pass);
@@ -126,7 +142,7 @@ namespace com.FreedomVoice.MobileApp.Android.Storage
         /// <param name="cookie">used cookie container</param>
         public void SaveCookie(CookieContainer cookie)
         {
-            Task.Factory.StartNew(() => { CookieSerializer.WriteCookiesToDisk("cookie.dat", cookie);});
+            Task.Factory.StartNew(() => { CookieSerializer.WriteCookiesToDisk(_cookiePath, cookie);});
         }
     }
 }

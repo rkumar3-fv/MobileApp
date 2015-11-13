@@ -2,7 +2,6 @@
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
-using Android.Gms.Analytics;
 using Android.Graphics;
 using Android.OS;
 using Android.Support.V4.Content;
@@ -21,7 +20,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
     /// Authorization activity
     /// </summary>
     [Activity(
-        MainLauncher = true,
         Label = "@string/ApplicationTitle",
         Icon = "@mipmap/ic_launcher",
         ScreenOrientation = ScreenOrientation.Portrait,
@@ -82,28 +80,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             if ((sender != _loginText) && (sender != _passwordText)) return;
             if (focusChangeEventArgs.HasFocus)
                 HideErrors();
-        }
-
-        protected override void OnResume()
-        {
-            base.OnResume();
-            if (Helper.IsLoggedIn)
-                Helper.GetAccounts();
-            else
-            {
-#if !DEBUG
-#if TRACE
-                if (AppHelper.Instance(this).IsHockeyAppOn)
-                    AppHelper.Instance(this).InitHockeyUpdater(this);
-#endif
-#endif
-#if TRACE
-                if (AppHelper.Instance(this).InitGa(false))
-#else
-                if (AppHelper.Instance(this).InitGa(true))
-#endif
-                    AppHelper.Instance(this).AnalyticsTracker.Send(new HitBuilders.ScreenViewBuilder().Build());
-            }
         }
 
         /// <summary>

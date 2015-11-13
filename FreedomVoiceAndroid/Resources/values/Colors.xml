@@ -28,7 +28,8 @@
   <color name="colorBlackFieldsHint">#66000000</color>
   <color name="textColorError">#ffffff</color>
   <color name="textColorErrorBack">#f04e3d</color>
-  <color name="textColorErrorDark">#fec95f</color>
+  <color name="textColorErrorDark">#f0230c</color>
+  <color name="textColorErrorDarkLine">#f04e3d</color>
   <color name="colorDivider">#26000000</color>
   <color name="colorKeyOnKeyboardMain">#038ac1</color>
   <color name="colorKeyOnKeyboardSecondary">#8c000000</color>

@@ -50,7 +50,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
             SupportActionBar.SetHomeButtonEnabled(true);
 
-            _errorColor = new Color(ContextCompat.GetColor(this, Resource.Color.textColorError));
+            _errorColor = new Color(ContextCompat.GetColor(this, Resource.Color.textColorErrorDarkLine));
             var progressColor = new Color(ContextCompat.GetColor(this, Resource.Color.colorProgressWhite));
             _progressSend.IndeterminateDrawable?.SetColorFilter(progressColor, PorterDuff.Mode.SrcIn);
             _progressSend.ProgressDrawable?.SetColorFilter(progressColor, PorterDuff.Mode.SrcIn);

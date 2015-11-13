@@ -7,8 +7,23 @@ namespace com.FreedomVoice.MobileApp.Android.Utils
 {
     public static class CookieSerializer
     {
+        public static void ClearCookies(string file)
+        {
+            try
+            {
+                if (File.Exists(file))
+                    File.Delete(file);
+            }
+            catch (Exception)
+            {
+                //ignored
+            }
+            
+        }
+
         public static void WriteCookiesToDisk(string file, CookieContainer cookieJar)
         {
+            ClearCookies(file);
             using (Stream stream = File.Create(file))
             {
                 try
@@ -35,7 +50,7 @@ namespace com.FreedomVoice.MobileApp.Android.Utils
             }
             catch (Exception)
             {
-                return new CookieContainer();
+                return null;
             }
         }
     }

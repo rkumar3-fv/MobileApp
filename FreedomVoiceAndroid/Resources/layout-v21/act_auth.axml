@@ -85,7 +85,7 @@
             style="@style/ErrorLabelText"
             android:layout_centerHorizontal="true"
             android:layout_below="@id/authActivity_loginButton"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/auth_activity_error_message_spacing"
             android:text=""
