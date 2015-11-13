@@ -18,14 +18,22 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         public override void OnActivityCreated(Bundle savedInstanceState)
         {
             base.OnActivityCreated(savedInstanceState);
-            IdSpinner.ItemSelected += (sender, args) => Helper.SetPresentationNumber(args.Position);
-            var adapter = new CallerIdSpinnerAdapter(Activity, Helper.SelectedAccount.PresentationNumbers);
-            IdSpinner.Adapter = adapter;
+            if (Helper.SelectedAccount == null)
+                Helper.GetAccounts();
+            else if (Helper.SelectedAccount.PresentationNumbers == null)
+                Helper.GetPresentationNumbers();
+            else if (IdSpinner != null)
+            {
+                var adapter = new CallerIdSpinnerAdapter(Context, Helper.SelectedAccount.PresentationNumbers);
+                IdSpinner.ItemSelected += (sender, args) => Helper.SetPresentationNumber(args.Position);
+                IdSpinner.Adapter = adapter;
+            }
         }
 
         public override void OnResume()
         {
             base.OnResume();
+            if (Helper.SelectedAccount?.PresentationNumbers == null) return;
             if (Helper.SelectedAccount.PresentationNumbers.Count == 1)
             {
                 IdSpinner.Visibility = ViewStates.Invisible;

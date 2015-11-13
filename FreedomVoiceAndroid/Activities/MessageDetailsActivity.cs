@@ -118,6 +118,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
 
         private void RemoveAction()
         {
+            if (AppHelper.Instance(this).AttachmentsHelper.IsInProcess(Msg.Id)) return;
             if (MarkForRemove != -1)
             {
                 if (Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].FolderName == GetString(Resource.String.FragmentMessages_folderTrash))
