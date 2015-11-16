@@ -14,7 +14,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         Label = "@string/ApplicationTitle",
         Icon = "@mipmap/ic_launcher",
         ScreenOrientation = ScreenOrientation.Portrait,
-        WindowSoftInputMode = SoftInput.AdjustResize,
+        WindowSoftInputMode = SoftInput.StateAlwaysHidden,
         NoHistory = true,
         Theme = "@style/AuthAppTheme")]
     public class LoadingActivity : BaseActivity
@@ -43,16 +43,16 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             {
 #if !DEBUG
 #if TRACE
-                if (AppHelper.Instance(this).IsHockeyAppOn)
-                    AppHelper.Instance(this).InitHockeyUpdater(this);
+                if (Appl.ApplicationHelper.IsHockeyAppOn)
+                    Appl.ApplicationHelper.InitHockeyUpdater(this);
 #endif
 #endif
 #if TRACE
-                if (AppHelper.Instance(this).InitGa(false))
+                if (Appl.ApplicationHelper.InitGa(false))
 #else
-                if (AppHelper.Instance(this).InitGa(true))
+                if (Appl.ApplicationHelper.InitGa(true))
 #endif
-                    AppHelper.Instance(this).AnalyticsTracker.Send(new HitBuilders.ScreenViewBuilder().Build());
+                    Appl.ApplicationHelper.AnalyticsTracker.Send(new HitBuilders.ScreenViewBuilder().Build());
             }
         }
 

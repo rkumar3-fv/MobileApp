@@ -70,7 +70,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         private void PlayerButtonOnClick(object sender, EventArgs eventArgs)
         {
             if (string.IsNullOrEmpty(_soundPath))
-                AttachmentId = AppHelper.Instance(this).AttachmentsHelper.LoadAttachment(Msg);
+                AttachmentId = Appl.ApplicationHelper.AttachmentsHelper.LoadAttachment(Msg);
             else
                 PlayerAction();
         }

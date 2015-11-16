@@ -46,8 +46,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>
-    </DefineConstants>
+    <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AndroidUseSharedRuntime>False</AndroidUseSharedRuntime>
@@ -205,6 +204,7 @@
     <Compile Include="Adapters\AccountsRecyclerAdapter.cs" />
     <Compile Include="Adapters\PhonesRecyclerAdapter.cs" />
     <Compile Include="Adapters\RecentsRecyclerAdapter.cs" />
+    <Compile Include="CustomControls\AlwaysTopSpinner.cs" />
     <Compile Include="CustomControls\Callbacks\SearchViewListener.cs" />
     <Compile Include="CustomControls\Callbacks\SnackbarCallback.cs" />
     <Compile Include="CustomControls\Callbacks\SwipeCallback.cs" />

@@ -10,9 +10,11 @@ using Android.Support.V7.Widget;
 using Android.Util;
 #endif
 using Android.Views;
+using Android.Views.InputMethods;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Helpers;
 using com.FreedomVoice.MobileApp.Android.Utils;
+using Java.Interop;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
 {
@@ -88,6 +90,9 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         private void AuthButtonOnClick(object sender, EventArgs eventArgs)
         {
             HideErrors();
+            var imm = GetSystemService(InputMethodService).JavaCast<InputMethodManager>();
+            imm.HideSoftInputFromWindow(RootLayout.WindowToken, 0);
+
             if ((_loginText.Text.Trim().Length < 6)||(!DataValidationUtils.IsEmailValid(_loginText.Text.Trim())))
             {
                 _loginText.Background.SetColorFilter(_errorColor, PorterDuff.Mode.SrcAtop);

@@ -1,7 +1,9 @@
 using Android.Content;
 using Android.Provider;
 using Android.Support.Design.Widget;
+using Android.Support.V4.Content;
 using Android.Telephony;
+using Android.Views;
 #if DEBUG
 using Android.Util;
 using FreedomVoice.Core.Utils;
@@ -14,20 +16,36 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
 {
     public abstract class OperationActivity : LogoutActivity
     {
+        private const int ContactsPermissionRequestId = 2045;
+
         /// <summary>
         /// Call action
         /// </summary>
         /// <param name="phone">Destination phone</param>
         public void Call(string phone)
         {
-            if ((Helper.PhoneNumber == null) || (Helper.PhoneNumber.Length == 0))
+            if (Appl.ApplicationHelper.CheckCallsPermission() == false)
+            {
+                var snackPerm = Snackbar.Make(RootLayout, Resource.String.Snack_noPhonePermission, Snackbar.LengthLong);
+                snackPerm.SetAction(Resource.String.Snack_noPhonePermissionAction, OnSetPermission);
+                snackPerm.SetActionTextColor(ContextCompat.GetColor(this, Resource.Color.colorUndoList));
+                snackPerm.Show();
+            }
+            else if (!Appl.ApplicationHelper.IsVoicecallsSupported()||(Appl.ApplicationHelper.GetMyPhoneNumber() == null))
             {
                 var noCellularDialog = new NoCellularDialogFragment();
                 noCellularDialog.Show(SupportFragmentManager, GetString(Resource.String.DlgCellular_title));
             }
+            else if (Appl.ApplicationHelper.GetMyPhoneNumber().Length < 10)
+            {
+                var snackPhone = Snackbar.Make(RootLayout, Resource.String.Snack_noPhoneNumber, Snackbar.LengthLong);
+                snackPhone.SetAction(Resource.String.Snack_noPhoneNumberAction, OnSetPhoneClick);
+                snackPhone.SetActionTextColor(ContextCompat.GetColor(this, Resource.Color.colorUndoList));
+                snackPhone.Show();
+            }
             else
             {
-                if (AppHelper.Instance(this).IsAirplaneModeOn())
+                if (Appl.ApplicationHelper.IsAirplaneModeOn())
                 {
                     var airplaneDialog = new AirplaneDialogFragment();
                     airplaneDialog.DialogEvent += AirplaneDialogOnDialogEvent;
@@ -35,7 +53,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 }
                 else
                 {
-                    if (AppHelper.Instance(this).IsCallerIdHides())
+                    if (Appl.ApplicationHelper.IsCallerIdHides())
                     {
                         var callerDialog = new CallerIdDialogFragment();
                         callerDialog.DialogEvent += CallerDialogOnDialogEvent;
@@ -82,6 +100,23 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             {
                 switch (code)
                 {
+                    case ActionsHelperEventArgs.CallReservationNotSupports:
+                        var noCellularDialog = new NoCellularDialogFragment();
+                        noCellularDialog.Show(SupportFragmentManager, GetString(Resource.String.DlgCellular_title));
+                        break;
+                    case ActionsHelperEventArgs.PhoneNumberNotSets:
+                        var snackPhone = Snackbar.Make(RootLayout, Resource.String.Snack_noPhoneNumber, Snackbar.LengthLong);
+                        snackPhone.SetAction(Resource.String.Snack_noPhoneNumberAction, OnSetPhoneClick);
+                        snackPhone.SetActionTextColor(ContextCompat.GetColor(this, Resource.Color.colorUndoList));
+                        snackPhone.Show();
+                        break;
+                    case ActionsHelperEventArgs.CallPermissionDenied:
+                        var snackPerm = Snackbar.Make(RootLayout, Resource.String.Snack_noPhonePermission, Snackbar.LengthLong);
+                        snackPerm.SetAction(Resource.String.Snack_noPhonePermissionAction, OnSetPermission);
+                        snackPerm.SetActionTextColor(ContextCompat.GetColor(this, Resource.Color.colorUndoList));
+                        snackPerm.Show();
+                        break;
+
                     case ActionsHelperEventArgs.CallReservationFail:
                         Snackbar.Make(RootLayout, Resource.String.Snack_callFailed, Snackbar.LengthLong).Show();
                         break;
@@ -90,6 +125,17 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                         break;
                 }
             }
+        }
+
+        private void OnSetPhoneClick(View view)
+        {
+            var intent = new Intent(this, typeof(SetNumberActivityWithBack));
+            StartActivity(intent);
+        }
+
+        private void OnSetPermission(View view)
+        {
+            RequestPermissions(new[] { AppHelper.MakeCallsPermission }, ContactsPermissionRequestId);
         }
     }
 }

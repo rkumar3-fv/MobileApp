@@ -39,12 +39,6 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         public bool IsFirstRun { get; private set; }
 
         /// <summary>
-        /// Current phone number
-        /// May be null if cellular inactive
-        /// </summary>
-        public string PhoneNumber { get; private set; }
-
-        /// <summary>
         /// Last entered user login
         /// </summary>
         private string _userLogin;
@@ -124,7 +118,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 
         private readonly AtomicLong _idCounter;
         private readonly AppPreferencesHelper _preferencesHelper;
-        private readonly TelephonyManager _telephony;
+
         /// <summary>
         /// Set actions helper for current context
         /// </summary>
@@ -141,34 +135,17 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 #if DEBUG
             Log.Debug(App.AppPackage, "HELPER: " + (IsFirstRun ? "First run" : "Not first run"));
 #endif
-            PhoneNumber = _preferencesHelper.GetPhoneNumber();
-            _telephony = app.GetSystemService(Context.TelephonyService) as TelephonyManager;
-
-            if ((_telephony?.Line1Number == null)||(_telephony.SimSerialNumber == null)||(_telephony.SimSerialNumber.Length==0))
-                PhoneNumber = null;
-            else if ((PhoneNumber != _telephony.Line1Number) && (_telephony.Line1Number.Length > 1))
-            {
-                if ((_telephony.Line1Number.StartsWith("1")) && (_telephony.Line1Number.Length == 11))
-                    PhoneNumber = _telephony.Line1Number.Substring(1);
-                else if ((_telephony.Line1Number.StartsWith("+1")) && (_telephony.Line1Number.Length == 12))
-                    PhoneNumber = _telephony.Line1Number.Substring(2);
-                else
-                    PhoneNumber = _telephony.Line1Number;
-                _preferencesHelper.SavePhoneNumber(PhoneNumber);
-            }
-#if DEBUG
-            Log.Debug(App.AppPackage, "HELPER: " + ((PhoneNumber == null) ? "NO CELLULAR" : $" PHONE NUMBER IS {PhoneNumber}"));
-#endif
             RecentsDictionary = new SortedDictionary<long, Recent>(Comparer<long>.Create((x, y) => y.CompareTo(x)));
             ExtensionsList = new List<Extension>();
             SelectedExtension = -1;
             SelectedFolder = -1;
             SelectedMessage = -1;
 
+            var telephony = _app.GetSystemService(Context.TelephonyService).JavaCast<TelephonyManager>();
             if (!IsFirstRun)
             {
                 var container = _preferencesHelper.GetCookieContainer();
-                var pair = _preferencesHelper.GetLoginPass(_telephony!=null ? _telephony.DeviceId : "00");
+                var pair = _preferencesHelper.GetLoginPass(telephony!=null ? telephony.DeviceId : "00");
                 if (pair != null)
                 {
                     _userLogin = (string) pair.First;
@@ -278,6 +255,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         public long RestorePassword(string email)
         {
             var requestId = RequestId;
+            if (!CheckRequestAbility(requestId)) return requestId;
             var restoreRequest = new RestorePasswordRequest(requestId, email);
             foreach (var request in _waitingRequestArray.Where(response => response.Value is RestorePasswordRequest).Where(request => ((RestorePasswordRequest)(request.Value)).Equals(restoreRequest)))
             {
@@ -322,6 +300,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         public long GetPresentationNumbers()
         {
             var requestId = RequestId;
+            if (!CheckRequestAbility(requestId)) return requestId;
             var getPresNumbersRequest = new GetPresentationNumbersRequest(requestId, SelectedAccount.AccountName);
             foreach (var request in _waitingRequestArray.Where(response => response.Value is GetPresentationNumbersRequest).Where(request => ((GetPresentationNumbersRequest)(request.Value)).Equals(getPresNumbersRequest)))
             {
@@ -355,6 +334,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         public long ForceLoadExtensions()
         {
             var requestId = RequestId;
+            if (!CheckRequestAbility(requestId)) return requestId;
             var getExtRequest = new GetExtensionsRequest(requestId, SelectedAccount.AccountName);
             foreach (var request in _waitingRequestArray.Where(response => response.Value is GetExtensionsRequest).Where(request => ((GetExtensionsRequest)(request.Value)).Equals(getExtRequest)))
             {
@@ -378,6 +358,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         {
             if (SelectedExtension == -1) return -1;
             var requestId = RequestId;
+            if (!CheckRequestAbility(requestId)) return requestId;
             var getFoldersRequest = new GetFoldersRequest(requestId, SelectedAccount.AccountName, ExtensionsList[SelectedExtension].Id);
             foreach (var request in _waitingRequestArray.Where(response => response.Value is GetFoldersRequest).Where(request => ((GetFoldersRequest)(request.Value)).Equals(getFoldersRequest)))
             {
@@ -401,6 +382,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         {
             if ((SelectedExtension == -1)||(SelectedFolder == -1)) return -1;
             var requestId = RequestId;
+            if (!CheckRequestAbility(requestId)) return requestId;
             var getMsgRequest = new GetMessagesRequest(requestId, SelectedAccount.AccountName, ExtensionsList[SelectedExtension].Id, ExtensionsList[SelectedExtension].Folders[SelectedFolder].FolderName);
             foreach (var request in _waitingRequestArray.Where(response => response.Value is GetMessagesRequest).Where(request => ((GetMessagesRequest)(request.Value)).Equals(getMsgRequest)))
             {
@@ -424,19 +406,46 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         public long Call(string number)
         {
             var requestId = RequestId;
-            var reserveCallRequest = new CallReservationRequest(requestId, SelectedAccount.AccountName, SelectedAccount.PresentationNumber, PhoneNumber, number);
-            foreach (var request in _waitingRequestArray.Where(response => response.Value is GetMessagesRequest).Where(request => ((GetMessagesRequest)(request.Value)).Equals(reserveCallRequest)))
+            if (!CheckRequestAbility(requestId)) return requestId;
+            if (!_app.ApplicationHelper.CheckContactsPermission())
             {
-#if DEBUG
-                Log.Debug(App.AppPackage, "HELPER REQUEST: Duplicate call reservation request. Execute ID=" + request.Key);
-#endif
-                return request.Key;
+                HelperEvent?.Invoke(this, new ActionsHelperEventArgs(requestId, new[] {ActionsHelperEventArgs.CallPermissionDenied}));
             }
+            else
+            {
+                var phone = _app.ApplicationHelper.GetMyPhoneNumber();
+                if (phone == null)
+                {
+                    HelperEvent?.Invoke(this,
+                        new ActionsHelperEventArgs(requestId, new[] {ActionsHelperEventArgs.CallReservationNotSupports}));
+                }
+                else if (phone.Length < 10)
+                {
+                    HelperEvent?.Invoke(this, new ActionsHelperEventArgs(requestId, new[] {ActionsHelperEventArgs.PhoneNumberNotSets}));
+                }
+                else
+                {
+                    var reserveCallRequest = new CallReservationRequest(requestId, SelectedAccount.AccountName,
+                        SelectedAccount.PresentationNumber, phone, number);
+                    foreach (
+                        var request in
+                            _waitingRequestArray.Where(response => response.Value is GetMessagesRequest)
+                                .Where(request => ((GetMessagesRequest) (request.Value)).Equals(reserveCallRequest)))
+                    {
 #if DEBUG
-            Log.Debug(App.AppPackage, $"HELPER REQUEST: Call ID={requestId}");
-            Log.Debug(App.AppPackage, $"Call from {reserveCallRequest.Account} (shows as {reserveCallRequest.PresentationNumber}) to {reserveCallRequest.DialingNumber} using SIM {reserveCallRequest.RealSimNumber}");
+                        Log.Debug(App.AppPackage,
+                            "HELPER REQUEST: Duplicate call reservation request. Execute ID=" + request.Key);
 #endif
-            PrepareIntent(requestId, reserveCallRequest);
+                        return request.Key;
+                    }
+#if DEBUG
+                    Log.Debug(App.AppPackage, $"HELPER REQUEST: Call ID={requestId}");
+                    Log.Debug(App.AppPackage,
+                        $"Call from {reserveCallRequest.Account} (shows as {reserveCallRequest.PresentationNumber}) to {reserveCallRequest.DialingNumber} using SIM {reserveCallRequest.RealSimNumber}");
+#endif
+                    PrepareIntent(requestId, reserveCallRequest);
+                }
+            }
             return requestId;
         }
 
@@ -448,6 +457,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         public long RemoveMessage(int index)
         {
             var requestId = RequestId;
+            if (!CheckRequestAbility(requestId)) return requestId;
             var removeRequest = new RemoveMessageRequest(requestId, SelectedAccount.AccountName, ExtensionsList[SelectedExtension].Id, 
                 ExtensionsList[SelectedExtension].Folders[SelectedFolder].MessagesList[index].Name);
             foreach (var request in _waitingRequestArray.Where(response => response.Value is RemoveMessageRequest).Where(request => ((RemoveMessageRequest)(request.Value)).Equals(removeRequest)))
@@ -472,6 +482,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         public long DeleteMessage(int index)
         {
             var requestId = RequestId;
+            if (!CheckRequestAbility(requestId)) return requestId;
             var deleteRequest = new DeleteMessageRequest(requestId, SelectedAccount.AccountName, ExtensionsList[SelectedExtension].Id,
                 ExtensionsList[SelectedExtension].Folders[SelectedFolder].MessagesList[index].Name);
             foreach (var request in _waitingRequestArray.Where(response => response.Value is DeleteMessageRequest).Where(request => ((DeleteMessageRequest)(request.Value)).Equals(deleteRequest)))
@@ -496,6 +507,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         public long RestoreMessage(string messageCode)
         {
             var requestId = RequestId;
+            if (!CheckRequestAbility(requestId)) return requestId;
             var restoreRequest = new RestoreMessageRequest(requestId, SelectedAccount.AccountName, ExtensionsList[SelectedExtension].Id, messageCode,
                 ExtensionsList[SelectedExtension].Folders[SelectedFolder].FolderName);
             foreach (var request in _waitingRequestArray.Where(response => response.Value is RestoreMessageRequest).Where(request => ((RestoreMessageRequest)(request.Value)).Equals(restoreRequest)))
@@ -530,6 +542,18 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 #endif
             _app.StartService(intent);
         }
+
+        private bool CheckRequestAbility(long requestId)
+        {
+            if (!_app.ApplicationHelper.IsInternetConnected())
+            {
+                HelperEvent?.Invoke(this,
+                    new ActionsHelperEventArgs(requestId, new[] {ActionsHelperEventArgs.NoInternetConnection}));
+                return false;
+            }
+            return true;
+        }
+
 
         /// <summary>
         /// Get current messages list content
@@ -597,8 +621,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 
         public void SaveNewNumber(string number)
         {
-            PhoneNumber = number;
-            _preferencesHelper.SavePhoneNumber(number);
+            _app.ApplicationHelper.SetMyPhoneNumber(number);
         }
 
         /// <summary>
@@ -644,7 +667,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 #if DEBUG
                             Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} failed: CONNECTION LOST");
 #endif
-                            if (AppHelper.Instance(_app).IsInsigthsOn)
+                            if (_app.ApplicationHelper.IsInsigthsOn)
                             {
                                 var key = _waitingRequestArray[response.RequestId].GetType().Name;
                                 var val = $"{DateTime.Now}: CONNECTION LOST - {InetReport()}";
@@ -678,7 +701,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 #if DEBUG
                                 Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} failed: BAD LOGIN FORMAT");
 #endif
-                                if (AppHelper.Instance(_app).IsInsigthsOn)
+                                if (_app.ApplicationHelper.IsInsigthsOn)
                                 {
                                     var keyB = _waitingRequestArray[response.RequestId].GetType().Name;
                                     var valB = $"{DateTime.Now}: BAD REQUEST - {InetReport()}";
@@ -738,12 +761,13 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                 // Login action response
                 case "LoginResponse":
                     IsLoggedIn = true;
-                    _preferencesHelper.SaveCredentials(_userLogin, _userPassword, _telephony != null ? _telephony.DeviceId : "00");
+                    var telephony = _app.GetSystemService(Context.TelephonyService).JavaCast<TelephonyManager>();
+                    _preferencesHelper.SaveCredentials(_userLogin, _userPassword, telephony != null ? telephony.DeviceId : "00");
                     _preferencesHelper.SaveCookie(ApiHelper.CookieContainer);
 #if DEBUG           
                     Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} successed: YOU ARE LOGGED IN");
 #endif
-                    if ((IsFirstRun) || (PhoneNumber == null))
+                    if ((IsFirstRun) || (_app.ApplicationHelper.GetMyPhoneNumber() == ""))
                     {
                         intent = new Intent(_app, typeof(SetNumberActivity));
                         HelperEvent?.Invoke(this, new ActionsHelperIntentArgs(response.RequestId, intent));          

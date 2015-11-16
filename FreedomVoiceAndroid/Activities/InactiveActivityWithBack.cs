@@ -1,6 +1,7 @@
 using Android.App;
 using Android.Content.PM;
 using Android.OS;
+using Android.Views;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
 {
@@ -10,6 +11,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
     [Activity(
         Label = "@string/ActivityInactive_title",
         ScreenOrientation = ScreenOrientation.Portrait,
+        WindowSoftInputMode = SoftInput.StateAlwaysHidden,
         Theme = "@style/AppThemeActionBar")]
     public class InactiveActivityWithBack : InactiveActivity
     {

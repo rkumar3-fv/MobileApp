@@ -10,6 +10,7 @@ using Android.Util;
 #endif
 using com.FreedomVoice.MobileApp.Android.Helpers;
 using Xamarin;
+using Process = System.Diagnostics.Process;
 
 namespace com.FreedomVoice.MobileApp.Android
 {
@@ -18,13 +19,21 @@ namespace com.FreedomVoice.MobileApp.Android
     /// </summary>
     [Application
         (Label = "@string/ApplicationName",
-        AllowBackup = true,
+        AllowBackup = false,
         Icon = "@mipmap/ic_launcher",
         Theme = "@style/AppTheme")]
     public class App : Application
     {
         public const string AppPackage = "com.FreedomVoice.MobileApp.Android";
         private AppHelper _helper;
+
+        /// <summary>
+        /// Main application helper
+        /// </summary>
+        public AppHelper ApplicationHelper => _helper;
+
+        protected App(IntPtr javaReference, JniHandleOwnership transfer) : base(javaReference, transfer)
+        {}
 
         /// <summary>
         /// Get app context
@@ -37,13 +46,10 @@ namespace com.FreedomVoice.MobileApp.Android
             return (App)context.ApplicationContext;
         }
 
-        public App (IntPtr handle, JniHandleOwnership ownerShip) : base(handle, ownerShip)
-        { }
-
         public override void OnCreate()
         {
             base.OnCreate();
-            _helper = AppHelper.Instance(this);
+            _helper = new AppHelper(this);
 #if DEBUG
             ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) =>
             {
@@ -57,6 +63,10 @@ namespace com.FreedomVoice.MobileApp.Android
 #if !DEBUG
             _helper.InitHockeyApp();
 #endif
+#endif
+#if !TRACE
+            if (!_helper.IsInsigthsOn)
+                AppDomain.CurrentDomain.UnhandledException += HandleUnhandledException;
 #endif
         }
 
@@ -74,6 +84,11 @@ namespace com.FreedomVoice.MobileApp.Android
                 var dict = new Dictionary<string, string> {{"LOW MEMORY", val}};
                 Insights.Report(null, dict, Insights.Severity.Critical);
             }
+        }
+
+        protected void HandleUnhandledException(object sender, UnhandledExceptionEventArgs args)
+        {
+            Process.GetCurrentProcess().Kill();
         }
     }
 }

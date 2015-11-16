@@ -96,7 +96,12 @@
   <string name="Dlg_settings">SETTINGS</string>
   <string name="DlgPhone_content">To make calls with this app, please enter your device\'s phone number by going to the app menu > Edit Phone Number.</string>
   <string name="Timestamp_yesterday">Yesterday</string>
-  <string name="Snack_connectionLost">No Internet Connection</string>
+  <string name="Snack_noPhoneNumber">Enter your phone number before</string>
+  <string name="Snack_noPhoneNumberAction">SET PHONE</string>
+  <string name="Snack_noPhonePermission">Application needs permission for making calls</string>
+  <string name="Snack_noPhonePermissionAction">CHANGE</string>
+  <string name="Snack_noInternet">No Internet Connection</string>
+  <string name="Snack_connectionLost">Server unavailable</string>
   <string name="Snack_callFailed">Call Failed</string>
   <string name="Snack_callWrong">Call Failed</string>
   <string name="Snack_serverError">Internal server error</string>

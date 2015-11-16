@@ -23,7 +23,9 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         {
             base.OnCreate(savedInstanceState);
             Appl = App.GetApplication(this);
-            Helper = AppHelper.Instance(this).ActionsHelper;
+            if (Appl.ApplicationHelper == null)
+                return;
+            Helper = Appl.ApplicationHelper.ActionsHelper;
         }
 
         protected override void OnPause()
@@ -41,7 +43,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
 #if DEBUG
             Log.Debug(App.AppPackage, $"ACTIVITY {GetType().Name} resumed");
 #else
-            AppHelper.Instance(this).InitInsights();
+            Appl.ApplicationHelper.InitInsights();
 #endif
             Helper.HelperEvent += OnHelperEvent;
         }
@@ -76,6 +78,9 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             {
                 switch (code)
                 {
+                    case ActionsHelperEventArgs.NoInternetConnection:
+                        Snackbar.Make(RootLayout, Resource.String.Snack_noInternet, Snackbar.LengthLong).Show();
+                        return;
                     case ActionsHelperEventArgs.ConnectionLostError:
                         Snackbar.Make(RootLayout, Resource.String.Snack_connectionLost, Snackbar.LengthLong).Show();
                         return;

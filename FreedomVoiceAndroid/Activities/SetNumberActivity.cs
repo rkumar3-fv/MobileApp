@@ -151,8 +151,9 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         protected override void OnResume()
         {
             base.OnResume();
-            if (string.IsNullOrEmpty(Helper.PhoneNumber)) return;
-            _phoneText.Text = Helper.PhoneNumber;
+            var phone = Appl.ApplicationHelper.GetMyPhoneNumber();
+            if (string.IsNullOrEmpty(phone)) return;
+            _phoneText.Text = phone;
             _phoneText.SetSelection(_phoneText.Text.Length);
         }
 

@@ -1,4 +1,3 @@
-using Android.Animation;
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
@@ -17,8 +16,6 @@ using com.FreedomVoice.MobileApp.Android.CustomControls;
 using com.FreedomVoice.MobileApp.Android.CustomControls.Callbacks;
 using com.FreedomVoice.MobileApp.Android.Dialogs;
 using com.FreedomVoice.MobileApp.Android.Fragments;
-using com.FreedomVoice.MobileApp.Android.Helpers;
-using Java.Lang;
 using SearchView = Android.Support.V7.Widget.SearchView;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 
@@ -43,7 +40,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         private ContentPager _viewPager;
         private Toolbar _toolbar;
         private TabLayout _tabLayout;
-        private AnimatorListener _animatorListener;
         private string _request;
 
         /// <summary>
@@ -86,7 +82,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 _viewPager.PageSelected += ViewPagerOnPageSelected;
             }
             _tabLayout.SetupWithViewPager(_viewPager);
-            _animatorListener = new AnimatorListener(_appBar, _toolbar, _tabLayout, _viewPager);
         }
 
         protected override void OnResume()
@@ -135,13 +130,10 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         private void ViewPagerOnPageSelected(object sender, ViewPager.PageSelectedEventArgs pageSelectedEventArgs)
         {
             SetToolbarContent();
-            if (AppHelper.Instance(this).IsGoogleAnalyticsOn)
-            {
-                AppHelper.Instance(this)
-                    .AnalyticsTracker.SetScreenName(
-                        $"Activity {GetType().Name}, Screen {_pagerAdapter.GetItem(_viewPager.CurrentItem).GetType().Name}");
-                AppHelper.Instance(this).AnalyticsTracker.Send(new HitBuilders.ScreenViewBuilder().Build());
-            }
+            if (!Appl.ApplicationHelper.IsGoogleAnalyticsOn) return;
+            Appl.ApplicationHelper.AnalyticsTracker.SetScreenName(
+                    $"Activity {GetType().Name}, Screen {_pagerAdapter.GetItem(_viewPager.CurrentItem).GetType().Name}");
+            Appl.ApplicationHelper.AnalyticsTracker.Send(new HitBuilders.ScreenViewBuilder().Build());
         }
 
         public void SetToolbarContent()
@@ -214,7 +206,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                     SetToolbarContent();
                     return true;
                 case Resource.Id.menu_action_phone:
-                    if (Helper.PhoneNumber == null)
+                    if (Appl.ApplicationHelper.IsVoicecallsSupported() == false)
                     {
                         var noCellularDialog = new NoCellularDialogFragment();
                         noCellularDialog.Show(SupportFragmentManager, GetString(Resource.String.DlgCellular_title));
@@ -276,10 +268,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             SupportActionBar.SetHomeButtonEnabled(true);
             var param = _toolbar.LayoutParameters.JavaCast<AppBarLayout.LayoutParams>();
             param.ScrollFlags = AppBarLayout.LayoutParams.ScrollFlagExitUntilCollapsed;
-            //var animator = ValueAnimator.OfFloat(_tabLayout.Height, 0);
-            //animator.SetDuration(1000);
-            //animator.AddUpdateListener(_animatorListener);
-            //animator.Start();
             _tabLayout.Visibility = ViewStates.Gone;
         }
 
@@ -292,10 +280,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             SupportActionBar.SetHomeButtonEnabled(false);
             var param = _toolbar.LayoutParameters.JavaCast<AppBarLayout.LayoutParams>();
             param.ScrollFlags = AppBarLayout.LayoutParams.ScrollFlagScroll | AppBarLayout.LayoutParams.ScrollFlagEnterAlways;
-            //var animator = ValueAnimator.OfFloat(0, _tabLayout.Height);
-            //animator.SetDuration(1000);
-            //animator.AddUpdateListener(_animatorListener);
-            //animator.Start();
             _tabLayout.Visibility = ViewStates.Visible;
         }
 
@@ -320,27 +304,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 }
             }
             MoveTaskToBack(true);
-        }
-
-        private class AnimatorListener : Object, ValueAnimator.IAnimatorUpdateListener
-        {
-            private readonly AppBarLayout _appBar;
-            private readonly Toolbar _toolbar;
-            private readonly TabLayout _tabLayout;
-            private readonly ViewPager _viewPager;
-
-            public AnimatorListener(AppBarLayout appBar, Toolbar toolbar, TabLayout tabLayout, ViewPager viewPager)
-            {
-                _appBar = appBar;
-                _toolbar = toolbar;
-                _tabLayout = tabLayout;
-                _viewPager = viewPager;
-            }
-
-            public void OnAnimationUpdate(ValueAnimator animation)
-            {
-                
-            }
         }
     }
 }

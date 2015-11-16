@@ -62,9 +62,9 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             _buttonZero.Click += (sender, e) => { ButtonDigitOnClick("0"); };
             _buttonZero.LongClick += ButtonZeroOnLongClick;
             _buttonStar = view.FindViewById<Button>(Resource.Id.keypadFragment_buttonStar);
-            _buttonStar.Click += (sender, e) => { ButtonDigitOnClick(""); };
+            _buttonStar.Click += (sender, e) => { ButtonDigitOnClick("*"); };
             _buttonHash = view.FindViewById<Button>(Resource.Id.keypadFragment_buttonHash);
-            _buttonHash.Click += (sender, e) => { ButtonDigitOnClick(""); };
+            _buttonHash.Click += (sender, e) => { ButtonDigitOnClick("#"); };
             _buttonDial = view.FindViewById<FloatingActionButton>(Resource.Id.keypadFragment_buttonDial);
             _buttonDial.Click += ButtonDialOnClick;
             return view;

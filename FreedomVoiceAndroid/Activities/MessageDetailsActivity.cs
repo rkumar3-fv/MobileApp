@@ -92,17 +92,17 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             _contactsHelper.GetName(Msg.FromNumber, out text);
             SenderText.Text = Msg.FromName.Length > 1 ? Msg.FromName : text;
             MessageDate.Text = DataFormatUtils.ToFormattedDate(GetString(Resource.String.Timestamp_yesterday), Msg.MessageDate);
-            AppHelper.Instance(this).AttachmentsHelper.OnFinish += AttachmentsHelperOnFinishLoading;
-            AppHelper.Instance(this).AttachmentsHelper.OnProgressLoading += AttachmentsHelperOnProgressLoading;
-            AppHelper.Instance(this).AttachmentsHelper.FailLoadingEvent += AttachmentsHelperOnFailLoadingEvent;
+            Appl.ApplicationHelper.AttachmentsHelper.OnFinish += AttachmentsHelperOnFinishLoading;
+            Appl.ApplicationHelper.AttachmentsHelper.OnProgressLoading += AttachmentsHelperOnProgressLoading;
+            Appl.ApplicationHelper.AttachmentsHelper.FailLoadingEvent += AttachmentsHelperOnFailLoadingEvent;
         }
 
         protected override void OnPause()
         {
             base.OnPause();
-            AppHelper.Instance(this).AttachmentsHelper.OnFinish -= AttachmentsHelperOnFinishLoading;
-            AppHelper.Instance(this).AttachmentsHelper.OnProgressLoading -= AttachmentsHelperOnProgressLoading;
-            AppHelper.Instance(this).AttachmentsHelper.FailLoadingEvent -= AttachmentsHelperOnFailLoadingEvent;
+            Appl.ApplicationHelper.AttachmentsHelper.OnFinish -= AttachmentsHelperOnFinishLoading;
+            Appl.ApplicationHelper.AttachmentsHelper.OnProgressLoading -= AttachmentsHelperOnProgressLoading;
+            Appl.ApplicationHelper.AttachmentsHelper.FailLoadingEvent -= AttachmentsHelperOnFailLoadingEvent;
             MarkForRemove = -1;
         }
 
@@ -118,7 +118,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
 
         private void RemoveAction()
         {
-            if (AppHelper.Instance(this).AttachmentsHelper.IsInProcess(Msg.Id)) return;
+            if (Appl.ApplicationHelper.AttachmentsHelper.IsInProcess(Msg.Id)) return;
             if (MarkForRemove != -1)
             {
                 if (Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].FolderName == GetString(Resource.String.FragmentMessages_folderTrash))

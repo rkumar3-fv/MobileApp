@@ -1,6 +1,8 @@
+using Android.Content;
 using Android.OS;
 using Android.Views;
 using Android.Widget;
+using com.FreedomVoice.MobileApp.Android.Activities;
 using com.FreedomVoice.MobileApp.Android.Adapters;
 using com.FreedomVoice.MobileApp.Android.Helpers;
 using FreedomVoice.Core.Utils;
@@ -19,9 +21,15 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         {
             base.OnActivityCreated(savedInstanceState);
             if (Helper.SelectedAccount == null)
+            {
                 Helper.GetAccounts();
+                ContentActivity.StartActivity(new Intent(ContentActivity, typeof(LoadingActivity)));
+            }
             else if (Helper.SelectedAccount.PresentationNumbers == null)
+            {
                 Helper.GetPresentationNumbers();
+                ContentActivity.StartActivity(new Intent(ContentActivity, typeof(LoadingActivity)));
+            }
             else if (IdSpinner != null)
             {
                 var adapter = new CallerIdSpinnerAdapter(Context, Helper.SelectedAccount.PresentationNumbers);

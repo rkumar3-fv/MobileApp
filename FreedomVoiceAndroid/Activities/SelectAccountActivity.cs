@@ -23,6 +23,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
     [Activity
         (Label = "@string/ActivitySelect_title",
         ScreenOrientation = ScreenOrientation.Portrait,
+        WindowSoftInputMode = SoftInput.StateAlwaysHidden, 
         Theme = "@style/AppThemeActionBar")]
     public class SelectAccountActivity : LogoutActivity
     {

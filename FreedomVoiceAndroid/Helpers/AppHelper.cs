@@ -9,6 +9,7 @@ using Android.Net;
 using Android.OS;
 using Android.Provider;
 using Android.Runtime;
+using Android.Telephony;
 using com.FreedomVoice.MobileApp.Android.Storage;
 using com.FreedomVoice.MobileApp.Android.Utils;
 using HockeyApp;
@@ -23,24 +24,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
     /// </summary>
     public class AppHelper
     {
-#region Singleton
-        private static volatile AppHelper _instance;
-        private static readonly object Locker = new object();
         private readonly Context _context;
-
-        /// <summary>
-        /// Get application helper instance
-        /// </summary>
-        public static AppHelper Instance(Context context)
-        {
-            if (_instance != null) return _instance;
-            lock (Locker)
-            {
-                if (_instance == null)
-                    _instance = new AppHelper(context);
-            }
-            return _instance;
-        }
 
         /// <summary>
         /// App network actions helper
@@ -61,16 +45,15 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         /// App DB helper
         /// </summary>
         public AppDbHelper DbHelper { get; }
-#endregion
 
 #region Permissions
-        private const string MakeCallsPermission = Manifest.Permission.CallPhone;
-        private const string ReadContactsPermission = Manifest.Permission.ReadContacts;
-        private const string WriteStoragePermission = Manifest.Permission.WriteExternalStorage;
-        private const string ReadStoragePermission = Manifest.Permission.ReadExternalStorage;
-        private const string WakeLockStatePermission = Manifest.Permission.WakeLock;
-        private const string AccessNetworkStatePermission = Manifest.Permission.AccessNetworkState;
-        private const string InternetPermission = Manifest.Permission.Internet;
+        public const string MakeCallsPermission = Manifest.Permission.CallPhone;
+        public const string ReadContactsPermission = Manifest.Permission.ReadContacts;
+        public const string WriteStoragePermission = Manifest.Permission.WriteExternalStorage;
+        public const string ReadStoragePermission = Manifest.Permission.ReadExternalStorage;
+        public const string WakeLockStatePermission = Manifest.Permission.WakeLock;
+        public const string AccessNetworkStatePermission = Manifest.Permission.AccessNetworkState;
+        public const string InternetPermission = Manifest.Permission.Internet;
 
         /// <summary>
         /// Check WAKE_LOCK permission
@@ -240,6 +223,8 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 #endregion
 
 #region Device State
+        private string _phoneNumber;
+
         /// <summary>
         /// Check is airplane mode ON
         /// </summary>
@@ -293,13 +278,72 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             var state = Environment.ExternalStorageState;
             return state == Environment.MediaMounted;
         }
+
+        /// <summary>
+        /// Check phone type
+        /// </summary>
+        /// <returns></returns>
+        public bool IsVoicecallsSupported()
+        {
+            if (!CheckCallsPermission()) return false;
+            var tm = _context.GetSystemService(Context.TelephonyService).JavaCast<TelephonyManager>();
+            if (tm != null)
+                return tm.PhoneType != PhoneType.None;
+            return false;
+        }
+
+        /// <summary>
+        /// Get my phone number
+        /// </summary>
+        /// <returns>Phone number or null if not supported</returns>
+        public string GetMyPhoneNumber()
+        {
+            if (!IsVoicecallsSupported())
+            {
+                _phoneNumber = null;
+                PreferencesHelper.SavePhoneNumber("");
+                return null;
+            }
+            _phoneNumber = PreferencesHelper.GetPhoneNumber();
+            var telephony = _context.GetSystemService(Context.TelephonyService).JavaCast<TelephonyManager>();
+            if ((telephony?.Line1Number == null) || (telephony.SimSerialNumber == null) || (telephony.SimSerialNumber.Length == 0))
+            {
+                _phoneNumber = null;
+                PreferencesHelper.SavePhoneNumber("");
+                return null;
+            }
+            if ((_phoneNumber != telephony.Line1Number) && (telephony.Line1Number.Length > 1))
+            {
+                if (telephony.Line1Number.StartsWith("1") && (telephony.Line1Number.Length == 11))
+                    _phoneNumber = telephony.Line1Number.Substring(1);
+                else if (telephony.Line1Number.StartsWith("+1") && (telephony.Line1Number.Length == 12))
+                    _phoneNumber = telephony.Line1Number.Substring(2);
+                else
+                    _phoneNumber = telephony.Line1Number;
+                PreferencesHelper.SavePhoneNumber(_phoneNumber);
+                return _phoneNumber;
+            }
+            return _phoneNumber;
+        }
+
+        /// <summary>
+        /// Set my phone number if voicecalls supported
+        /// </summary>
+        public bool SetMyPhoneNumber(string phoneNumber)
+        {
+            if (!IsVoicecallsSupported()) return false;
+            if ((_phoneNumber != null)&&(_phoneNumber == phoneNumber)) return true;
+            _phoneNumber = phoneNumber;
+            PreferencesHelper.SavePhoneNumber(phoneNumber);
+            return true;
+        }
 #endregion
 
 #region App State
 
 #endregion
 
-        private AppHelper(Context context)
+        public AppHelper(Context context)
         {
             _context = context;
             ActionsHelper = new ActionsHelper(App.GetApplication(context));
