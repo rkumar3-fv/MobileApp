@@ -1,0 +1,10 @@
+diff a/FreedomVoiceAndroid/Resources/layout/frag_keypad.axml b/FreedomVoiceAndroid/Resources/layout/frag_keypad.axml	(rejected hunks)
+@@ -77,7 +77,7 @@
+                 android:id="@+id/keypadFragment_buttonOne"
+                 android:orientation="vertical"
+                 android:clickable="true"
+-                android:background="@android:color/transparent"
++                android:background="@drawable/ripple"
+                 android:layout_width="@dimen/fragment_keypad_key_size"
+                 android:layout_height="@dimen/fragment_keypad_key_size">
+                 <TextView

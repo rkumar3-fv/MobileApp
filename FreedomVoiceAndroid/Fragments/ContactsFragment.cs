@@ -1,4 +1,6 @@
+using System.Text.RegularExpressions;
 using Android.Database;
+using Android.Net;
 using Android.OS;
 using Android.Provider;
 using Android.Runtime;
@@ -115,14 +117,26 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
 
         private ICursor Search(string query)
         {
+            string selection;
+            if (Regex.IsMatch(query, @"^\d+$"))
+            {
+                //TODO: inner selection
+                selection = string.Format("(({0} IS NOT NULL) AND ({0} != '') AND ({1} = '1') AND ({0} like '%{2}%'))",
+                ContactsContract.Contacts.InterfaceConsts.DisplayName, ContactsContract.Contacts.InterfaceConsts.InVisibleGroup, query);
+            }
+            else
+            {
+                selection = string.Format("(({0} IS NOT NULL) AND ({0} != '') AND ({1} = '1') AND ({0} like '%{2}%'))",
+                ContactsContract.Contacts.InterfaceConsts.DisplayName, ContactsContract.Contacts.InterfaceConsts.InVisibleGroup, query);
+            }
+            
             var uri = ContactsContract.Contacts.ContentUri;
             string[] projection = { ContactsContract.Contacts.InterfaceConsts.Id, ContactsContract.Contacts.InterfaceConsts.DisplayName,
                 ContactsContract.Contacts.InterfaceConsts.HasPhoneNumber, ContactsContract.Contacts.InterfaceConsts.PhotoUri };
-            var selection = string.Format("(({0} IS NOT NULL) AND ({0} != '') AND ({1} = '1') AND ({0} like '%{2}%'))",
-                ContactsContract.Contacts.InterfaceConsts.DisplayName, ContactsContract.Contacts.InterfaceConsts.InVisibleGroup, query);
             var sortOrder = $"{ContactsContract.Contacts.InterfaceConsts.DisplayName} COLLATE LOCALIZED ASC";
             var loader = new CursorLoader(ContentActivity, uri, projection, selection, null, sortOrder);
-            return loader.LoadInBackground().JavaCast<ICursor>();
+            var namesCursor = loader.LoadInBackground().JavaCast<ICursor>();
+            return namesCursor;
         }
 
     }

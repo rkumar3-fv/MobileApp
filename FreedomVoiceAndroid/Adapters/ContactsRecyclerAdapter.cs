@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Android.Content;
 using Android.Database;
 using Android.Provider;
@@ -44,15 +45,16 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
                 var cursor = loader.LoadInBackground().JavaCast<ICursor>();
                 if (cursor != null)
                 {
-                    var phones = new List<Phone>();
+                    var phonesDict = new Dictionary<string, Phone>();
                     while (cursor.MoveToNext())
                     {
                         var phone = PhoneNumberUtils.NormalizeNumber(cursor.GetString(cursor.GetColumnIndex(projection[1])));
                         var type = Convert.ToInt32(cursor.GetString(cursor.GetColumnIndex(projection[2])));
-                        phones.Add(new Phone(phone, type));
+                        if (!phonesDict.ContainsKey(phone))
+                            phonesDict.Add(phone, new Phone(phone, type));
                     }
                     cursor.Close();
-                    ItemClick?.Invoke(this, new Contact(name, phones));
+                    ItemClick?.Invoke(this, new Contact(name, phonesDict.Values.ToList()));
                 }
                 else
                     ItemClick?.Invoke(this, new Contact(name));

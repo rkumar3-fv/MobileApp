@@ -7,12 +7,10 @@ namespace com.FreedomVoice.MobileApp.Android.Utils
     public static class ExceptionSupport
     {
         public static void LogAndIgnore(Task task)
-        {
-            Console.WriteLine(@"Task failed: {0}", task.Exception);
-        }
+        {}
+
         public static void ReportAndExit(Task task)
         {
-            Console.WriteLine(@"Task failed: {0}", task.Exception);
             UncaughtTaskExceptionHandler(task.Exception);
             Process.GetCurrentProcess().Kill();
         }

@@ -124,9 +124,7 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
                 var folder = contentItem as Folder;
                 if (viewHolder == null) return;
                 viewHolder.FoldersName.Text = folder.FolderName;
-                if (folder.FolderName == _context.GetString(Resource.String.FragmentMessages_folderNew))
-                {
-                    viewHolder.FoldersIcon.SetImageResource(Resource.Drawable.ic_new_folder);
+                
                     if (folder.MailsCount > 0)
                     {
                         viewHolder.FoldersInfo.Text = folder.MailsCount > 99 ? "99+" : folder.MailsCount.ToString();
@@ -137,12 +135,9 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
                         viewHolder.FoldersInfo.Text = "";
                         viewHolder.InfoLayout.Visibility = ViewStates.Invisible;
                     }
-                }
-                else
-                {
-                    viewHolder.FoldersInfo.Text = "";
-                    viewHolder.InfoLayout.Visibility = ViewStates.Invisible;
-                }
+
+                if (folder.FolderName == _context.GetString(Resource.String.FragmentMessages_folderNew))
+                    viewHolder.FoldersIcon.SetImageResource(Resource.Drawable.ic_new_folder);
                 if (folder.FolderName == _context.GetString(Resource.String.FragmentMessages_folderSent))
                     viewHolder.FoldersIcon.SetImageResource(Resource.Drawable.ic_send_folder);
                 else if (folder.FolderName == _context.GetString(Resource.String.FragmentMessages_folderTrash))

@@ -19,6 +19,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
     [Activity(
         Label = "@string/ActivityFax_title",
         Theme = "@style/AppThemeActionBar",
+        WindowSoftInputMode = SoftInput.StateAlwaysHidden,
         ScreenOrientation = ScreenOrientation.Portrait)]
     public class FaxActivity : MessageDetailsActivity
     {
@@ -51,7 +52,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         /// </summary>
         private void OpenFaxButtonOnClick(object sender, EventArgs eventArgs)
         {
-            AttachmentId = AppHelper.Instance(this).AttachmentsHelper.LoadAttachment(Msg);
+            AttachmentId = Appl.ApplicationHelper.AttachmentsHelper.LoadAttachment(Msg);
         }
 
         protected override void AttachmentsHelperOnFinishLoading(object sender, AttachmentHelperEventArgs<string> args)

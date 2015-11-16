@@ -57,7 +57,10 @@ namespace FreedomVoice.Core
 
         public static async Task<BaseResult<CreateCallReservationSetting>> CreateCallReservation(string systemPhoneNumber, string expectedCallerIdNumber, string presentationPhoneNumber, string destinationPhoneNumber)
         {
-            var postdata = $"ExpectedCallerIdNumber={expectedCallerIdNumber.Replace("+", "%2B")}&PresentationPhoneNumber={presentationPhoneNumber}&DestinationPhoneNumber={destinationPhoneNumber.Replace("+", "%2B")}";
+            var expectFormatted = expectedCallerIdNumber.Replace("+", "%2B").Replace("#", "%23").Replace("*", "%2A");
+            var presentFormatted = presentationPhoneNumber.Replace("+", "%2B").Replace("#", "%23").Replace("*", "%2A");
+            var destFormatted = destinationPhoneNumber.Replace("+", "%2B").Replace("#", "%23").Replace("*", "%2A");
+            var postdata = $"ExpectedCallerIdNumber={expectFormatted}&PresentationPhoneNumber={presentFormatted}&DestinationPhoneNumber={destFormatted}";
             return await MakeAsyncPostRequest<CreateCallReservationSetting>(
                 $"/api/v1/systems/{systemPhoneNumber}/createCallReservation",
                 postdata,

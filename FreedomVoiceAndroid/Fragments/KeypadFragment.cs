@@ -62,9 +62,9 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             _buttonZero.Click += (sender, e) => { ButtonDigitOnClick("0"); };
             _buttonZero.LongClick += ButtonZeroOnLongClick;
             _buttonStar = view.FindViewById<Button>(Resource.Id.keypadFragment_buttonStar);
-            _buttonStar.Click += (sender, e) => { ButtonDigitOnClick(""); };
+            _buttonStar.Click += (sender, e) => { ButtonDigitOnClick("*"); };
             _buttonHash = view.FindViewById<Button>(Resource.Id.keypadFragment_buttonHash);
-            _buttonHash.Click += (sender, e) => { ButtonDigitOnClick(""); };
+            _buttonHash.Click += (sender, e) => { ButtonDigitOnClick("#"); };
             _buttonDial = view.FindViewById<FloatingActionButton>(Resource.Id.keypadFragment_buttonDial);
             _buttonDial.Click += ButtonDialOnClick;
             return view;
@@ -115,7 +115,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         /// </summary>
         private void ButtonZeroOnLongClick(object sender, View.LongClickEventArgs longClickEventArgs)
         {
-            if (_enteredNumber.Length != 0) return;
+            //if (_enteredNumber.Length != 0) return;
 #if DEBUG
             Log.Debug(App.AppPackage, "KEYPAD: + added");
 #endif

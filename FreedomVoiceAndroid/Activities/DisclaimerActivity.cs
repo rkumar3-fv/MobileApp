@@ -4,6 +4,7 @@ using Android.Content;
 using Android.Content.PM;
 using Android.OS;
 using Android.Support.V7.Widget;
+using Android.Views;
 using Android.Widget;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
@@ -15,6 +16,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         Label = "@string/ActivityDisclaimer_title",
         Theme = "@style/AppThemeActionBar",
         ScreenOrientation = ScreenOrientation.Portrait,
+        WindowSoftInputMode = SoftInput.StateAlwaysHidden, 
         NoHistory = true)]
     public class DisclaimerActivity : InfoActivity
     {

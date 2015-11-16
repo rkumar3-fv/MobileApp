@@ -11,7 +11,8 @@
         android:layout_height="@dimen/fragment_keypad_spinner_size"
         android:gravity="center"
         android:elevation="@dimen/content_activity_id_elevation"
-        android:background="@color/colorCallerId">
+        android:background="@color/colorCallerId"
+        android:weightSum="1.0">
         <TextView
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
             style="@style/CallerIdSpinnerText"
@@ -19,13 +20,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/FragmentKeypad_callerId"
-            android:layout_weight="1" />
+            android:layout_weight="0.4" />
         <RelativeLayout
             android:layout_marginRight="@dimen/activity_horizontal_margin"
             android:layout_width="match_parent"
             android:layout_height="@dimen/fragment_keypad_spinner_size"
-            android:layout_weight="1">
-            <Spinner
+            android:layout_weight="0.6">
+            <com.FreedomVoice.MobileApp.Android.CustomControls.AlwaysTopSpinner
                 android:id="@+id/keypadFragment_idSpinner"
                 android:layout_width="@dimen/fragment_keypad_spinner_width_collapsed"
                 android:layout_height="@dimen/fragment_keypad_spinner_size"

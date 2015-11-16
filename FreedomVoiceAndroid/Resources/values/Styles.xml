@@ -12,6 +12,9 @@
     <item name="actionBarStyle">@style/ActionBarTheme</item>
     <item name="searchViewStyle">@style/AppSearchViewStyle</item>
     <item name="android:searchViewStyle">@style/AppSearchViewStyle</item>
+    <item name="android:textSelectHandleLeft">@drawable/sel_white_left</item>
+    <item name="android:textSelectHandleRight">@drawable/sel_white_right</item>
+    <item name="android:textSelectHandle">@drawable/sel_white_straight</item>
   </style>
 
   <!-- AuthActivity w/o action bar theme -->
@@ -22,6 +25,12 @@
     <item name="colorAccent">@color/colorFieldsNormal</item>
     <item name="colorControlActivated">@color/colorFieldsActive</item>
     <item name="colorControlNormal">@color/colorFieldsNormal</item>
+    <item name="android:textSelectHandleLeft">@drawable/apptheme_text_select_handle_left</item>
+    <item name="android:textSelectHandleRight">@drawable/apptheme_text_select_handle_right</item>
+    <item name="android:textSelectHandle">@drawable/apptheme_text_select_handle_middle</item>
+    <item name="android:textSelectHandleLeft">@drawable/sel_white_left</item>
+    <item name="android:textSelectHandleRight">@drawable/sel_white_right</item>
+    <item name="android:textSelectHandle">@drawable/sel_white_straight</item>
   </style>
 
   <!-- Activity w/ action bar theme -->
@@ -35,6 +44,9 @@
     <item name="android:actionBarStyle">@style/ActionBarTheme</item>
     <item name="actionBarStyle">@style/ActionBarTheme</item>
     <item name="android:editTextBackground">@drawable/fvapptheme_edit_text</item>
+    <item name="android:textSelectHandleLeft">@drawable/sel_black_left</item>
+    <item name="android:textSelectHandleRight">@drawable/sel_black_right</item>
+    <item name="android:textSelectHandle">@drawable/sel_black_straight</item>
   </style>
 
   <!-- Content toolbar theme -->
@@ -252,9 +264,17 @@
   </style>
   
   <!-- Text styles -->
-  <!-- Auth activity error label -->
-  <style name="AuthErrorLabelText">
+  <!-- Activity error label -->
+  <style name="ErrorLabelText">
     <item name="android:textColor">@color/textColorError</item>
+    <item name="android:textSize">@dimen/auth_activity_error_text_size</item>
+    <item name="android:background">@color/textColorErrorBack</item>
+    <item name="android:gravity">center</item>
+    <item name="android:lines">1</item>
+  </style>
+
+  <style name="DarkErrorLabelText">
+    <item name="android:textColor">@color/textColorErrorDark</item>
     <item name="android:textSize">@dimen/auth_activity_error_text_size</item>
     <item name="android:lines">1</item>
   </style>

@@ -1,5 +1,5 @@
 using System;
-using System.Net.Mail;
+using System.Text.RegularExpressions;
 using Android.Telephony;
 
 namespace com.FreedomVoice.MobileApp.Android.Utils
@@ -16,15 +16,7 @@ namespace com.FreedomVoice.MobileApp.Android.Utils
         /// <returns>validation result</returns>
         public static bool IsEmailValid(string email)
         {
-            try
-            {
-                var mailAddress = new MailAddress(email);
-                return true;
-            }
-            catch (FormatException)
-            {
-                return false;
-            }
+            return Regex.IsMatch(email, @"^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$");
         }
 
         /// <summary>
