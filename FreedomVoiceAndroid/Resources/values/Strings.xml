@@ -102,6 +102,7 @@
   <string name="Snack_noPhonePermissionAction">CHANGE</string>
   <string name="Snack_noInternet">No Internet Connection</string>
   <string name="Snack_connectionLost">Server unavailable</string>
+  <string name="Snack_incorrectDest">Incorrect number</string>
   <string name="Snack_callFailed">Call Failed</string>
   <string name="Snack_callWrong">Call Failed</string>
   <string name="Snack_serverError">Internal server error</string>

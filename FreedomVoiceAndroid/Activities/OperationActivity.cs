@@ -61,7 +61,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                     }
                     else
                     {
-                        if (phone.Length > 1)
+                        if (phone.Length > 4)
                         {
                             var normalizedNumber = PhoneNumberUtils.NormalizeNumber(phone);
 #if DEBUG
@@ -70,12 +70,14 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                             Helper.Call(normalizedNumber);
                             JavaSystem.Gc();
                         }
-#if DEBUG
+
                         else
                         {
+                            Snackbar.Make(RootLayout, Resource.String.Snack_incorrectDest, Snackbar.LengthLong).Show();
+#if DEBUG
                             Log.Debug(App.AppPackage, "DIAL TO EMPTY PHONE UNAVAILABLE");
-                        }
 #endif
+                        }
                     }
                 }
             }

@@ -118,6 +118,11 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
 
         private void RemoveAction()
         {
+            if (Helper.SelectedMessage == -1) return;
+            if (Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].MessagesList == null) return;
+            if (Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].MessagesList.Count < Helper.SelectedMessage) return;
+            if (Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].MessagesList[Helper.SelectedMessage] == null) return;
+            if (!Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].MessagesList[Helper.SelectedMessage].Equals(Msg)) return;
             if (Appl.ApplicationHelper.AttachmentsHelper.IsInProcess(Msg.Id)) return;
             if (MarkForRemove != -1)
             {
