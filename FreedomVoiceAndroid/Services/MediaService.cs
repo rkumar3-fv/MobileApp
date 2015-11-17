@@ -45,6 +45,8 @@ namespace com.FreedomVoice.MobileApp.Android.Services
         /// </summary>
         public Message Msg { get; private set; }
 
+        public bool IsInChange { get; private set; }
+
         /// <summary>
         /// Playing status
         /// </summary>
@@ -72,6 +74,7 @@ namespace com.FreedomVoice.MobileApp.Android.Services
             switch (intent.Action)
             {
                 case MediaActionPlay:
+                    if (IsInChange) break;
                     var message = (Message)intent.GetParcelableExtra(MediaMsgTag);
                     var path = intent.GetStringExtra(MediaPathTag);
                     if ((!message.Equals(Msg))||(path != _path))
@@ -99,29 +102,34 @@ namespace com.FreedomVoice.MobileApp.Android.Services
                     break;
                 case MediaActionChangeOut:
                     var type = intent.GetBooleanExtra(MediaOutputTag, false);
-                    _isVoiceCallType = type;
-                    if (type)
+                    if (!IsInChange)
                     {
-                        _audioManager.Mode = Mode.InCall;
-                        _audioManager.SpeakerphoneOn = false;
-                    }
-                    else
-                    {
-                        _audioManager.Mode = Mode.Normal;
-                        _audioManager.SpeakerphoneOn = true;
-                    }
+                        IsInChange = true;
+                        _isVoiceCallType = type;
+                        if (type)
+                        {
+                            _audioManager.Mode = Mode.InCall;
+                            _audioManager.SpeakerphoneOn = false;
+                        }
+                        else
+                        {
+                            _audioManager.Mode = Mode.Normal;
+                            _audioManager.SpeakerphoneOn = true;
+                        }
 #if DEBUG
-                    Log.Debug(App.AppPackage, $"CHANGE OUTPUT TO {(type ? ("VOICECALL"):("MUSIC"))}");
+                        Log.Debug(App.AppPackage, $"CHANGE OUTPUT TO {(type ? ("VOICECALL") : ("MUSIC"))}");
 #endif
-                    if (_mediaPlayer != null)
-                    {
-                        _isPlaying = _mediaPlayer.IsPlaying;
-                        _position = _mediaPlayer.CurrentPosition;
-                        _mediaPlayer.Release();
-                        PreparePlayer();
+                        if (_mediaPlayer != null)
+                        {
+                            _isPlaying = _mediaPlayer.IsPlaying;
+                            _position = _mediaPlayer.CurrentPosition;
+                            _mediaPlayer.Release();
+                            PreparePlayer();
+                        }
                     }
                     break;
                 case MediaActionPause:
+                    if (IsInChange) break;
                     if ((Msg != null) && (!string.IsNullOrEmpty(_path)))
                     {
 #if DEBUG
@@ -131,6 +139,7 @@ namespace com.FreedomVoice.MobileApp.Android.Services
                     }
                     break;
                 case MediaActionSeek:
+                    if (IsInChange) break;
                     if ((Msg != null) && (!string.IsNullOrEmpty(_path)))
                     {
                         var pos = intent.GetIntExtra(MediaSeekTag, -1);
@@ -174,6 +183,7 @@ namespace com.FreedomVoice.MobileApp.Android.Services
 #endif
             if (mp != null)
             {
+                IsInChange = false;
                 if (_position != 0)
                     mp.SeekTo(_position);
                 if (_isPlaying)

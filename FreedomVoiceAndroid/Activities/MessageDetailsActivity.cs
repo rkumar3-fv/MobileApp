@@ -70,6 +70,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         protected override void OnResume()
         {
             base.OnResume();
+            RemoveButton.Visibility = ViewStates.Gone;
             if ((Helper.SelectedExtension != -1)&&(Helper.SelectedFolder != -1)&&(Helper.SelectedMessage != -1))
             {
                 if (!(Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].MessagesList.Count > Helper.SelectedMessage))
@@ -77,11 +78,11 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 if (!Msg.Equals(Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].MessagesList[Helper.SelectedMessage]))
                     OnBackPressed();
             }
-            else
-            {
+            //else
+            //{
                 //TODO: change after message refactoring
-                RemoveButton.Visibility = ViewStates.Invisible;
-            }
+                //RemoveButton.Visibility = ViewStates.Invisible;
+            //}
             string text;
             _contactsHelper.GetName(Msg.FromNumber, out text);
             SenderText.Text = Msg.FromName.Length > 1 ? Msg.FromName : text;
@@ -200,8 +201,12 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
 
         public override bool OnCreateOptionsMenu(IMenu menu)
         {
+            _menu = menu;
             var inflater = new SupportMenuInflater(this);
-            inflater.Inflate(Resource.Menu.menu_details, menu);
+            if ((Helper.SelectedExtension != -1) && (Helper.SelectedFolder != -1) && (Helper.SelectedMessage != -1))
+                inflater.Inflate(Resource.Menu.menu_details, menu);
+            else
+                inflater.Inflate(Resource.Menu.menu_content, menu);
             return true;
         }
 

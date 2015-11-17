@@ -2701,29 +2701,29 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f0c0069
 			public const int authActivity_authForm = 2131492969;
 			
-			// aapt resource value: 0x7f0c006f
-			public const int authActivity_errorText = 2131492975;
+			// aapt resource value: 0x7f0c0070
+			public const int authActivity_errorText = 2131492976;
 			
 			// aapt resource value: 0x7f0c0068
 			public const int authActivity_forgotButton = 2131492968;
 			
-			// aapt resource value: 0x7f0c006c
-			public const int authActivity_loginButton = 2131492972;
-			
-			// aapt resource value: 0x7f0c006a
-			public const int authActivity_loginField = 2131492970;
-			
 			// aapt resource value: 0x7f0c006d
-			public const int authActivity_loginLabel = 2131492973;
-			
-			// aapt resource value: 0x7f0c0070
-			public const int authActivity_loginTitle = 2131492976;
+			public const int authActivity_loginButton = 2131492973;
 			
 			// aapt resource value: 0x7f0c006b
-			public const int authActivity_passwordField = 2131492971;
+			public const int authActivity_loginField = 2131492971;
 			
 			// aapt resource value: 0x7f0c006e
-			public const int authActivity_progress = 2131492974;
+			public const int authActivity_loginLabel = 2131492974;
+			
+			// aapt resource value: 0x7f0c006a
+			public const int authActivity_loginTitle = 2131492970;
+			
+			// aapt resource value: 0x7f0c006c
+			public const int authActivity_passwordField = 2131492972;
+			
+			// aapt resource value: 0x7f0c006f
+			public const int authActivity_progress = 2131492975;
 			
 			// aapt resource value: 0x7f0c0067
 			public const int authActivity_root = 2131492967;

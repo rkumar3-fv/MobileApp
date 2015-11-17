@@ -87,6 +87,12 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         protected override void OnResume()
         {
             base.OnResume();
+            
+        }
+
+        protected override void OnResumeFragments()
+        {
+            base.OnResumeFragments();
             SetToolbarContent();
             if (_request != null)
             {
