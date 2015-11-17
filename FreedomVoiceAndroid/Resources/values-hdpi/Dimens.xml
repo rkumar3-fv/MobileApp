@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<resources>
+  <!-- Content activity -->
+  <dimen name="content_activity_tab_text_size">12sp</dimen>
+  <dimen name="content_activity_tab_text_padding">6dp</dimen>
+
+  <!-- Keypad fragment -->
+  <dimen name="fragment_keypad_key_text_size">32sp</dimen>
+  <dimen name="fragment_keypad_key_small_text_size">11sp</dimen>
+
+  <dimen name="auth_activity_welcome_top_spacing">28dp</dimen>
+  <dimen name="auth_activity_welcome_email_spacing">20dp</dimen>
+</resources>

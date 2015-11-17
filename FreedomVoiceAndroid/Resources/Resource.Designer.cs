@@ -2974,59 +2974,59 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f0c0000
 			public const int item_touch_helper_previous_elevation = 2131492864;
 			
-			// aapt resource value: 0x7f0c00ce
-			public const int keypadFragment_backspace = 2131493070;
-			
-			// aapt resource value: 0x7f0c00db
-			public const int keypadFragment_buttonDial = 2131493083;
-			
-			// aapt resource value: 0x7f0c00d6
-			public const int keypadFragment_buttonEight = 2131493078;
-			
-			// aapt resource value: 0x7f0c00d3
-			public const int keypadFragment_buttonFive = 2131493075;
-			
-			// aapt resource value: 0x7f0c00d2
-			public const int keypadFragment_buttonFour = 2131493074;
-			
-			// aapt resource value: 0x7f0c00da
-			public const int keypadFragment_buttonHash = 2131493082;
-			
-			// aapt resource value: 0x7f0c00d7
-			public const int keypadFragment_buttonNine = 2131493079;
-			
 			// aapt resource value: 0x7f0c00cf
-			public const int keypadFragment_buttonOne = 2131493071;
+			public const int keypadFragment_backspace = 2131493071;
 			
-			// aapt resource value: 0x7f0c00d5
-			public const int keypadFragment_buttonSeven = 2131493077;
-			
-			// aapt resource value: 0x7f0c00d4
-			public const int keypadFragment_buttonSix = 2131493076;
-			
-			// aapt resource value: 0x7f0c00d8
-			public const int keypadFragment_buttonStar = 2131493080;
-			
-			// aapt resource value: 0x7f0c00d1
-			public const int keypadFragment_buttonThree = 2131493073;
-			
-			// aapt resource value: 0x7f0c00d0
-			public const int keypadFragment_buttonTwo = 2131493072;
+			// aapt resource value: 0x7f0c00dd
+			public const int keypadFragment_buttonDial = 2131493085;
 			
 			// aapt resource value: 0x7f0c00d9
-			public const int keypadFragment_buttonZero = 2131493081;
+			public const int keypadFragment_buttonEight = 2131493081;
 			
-			// aapt resource value: 0x7f0c00cd
-			public const int keypadFragment_dialText = 2131493069;
+			// aapt resource value: 0x7f0c00d6
+			public const int keypadFragment_buttonFive = 2131493078;
+			
+			// aapt resource value: 0x7f0c00d4
+			public const int keypadFragment_buttonFour = 2131493076;
+			
+			// aapt resource value: 0x7f0c00db
+			public const int keypadFragment_buttonHash = 2131493083;
+			
+			// aapt resource value: 0x7f0c00d8
+			public const int keypadFragment_buttonNine = 2131493080;
+			
+			// aapt resource value: 0x7f0c00d1
+			public const int keypadFragment_buttonOne = 2131493073;
+			
+			// aapt resource value: 0x7f0c00d7
+			public const int keypadFragment_buttonSeven = 2131493079;
+			
+			// aapt resource value: 0x7f0c00d5
+			public const int keypadFragment_buttonSix = 2131493077;
+			
+			// aapt resource value: 0x7f0c00da
+			public const int keypadFragment_buttonStar = 2131493082;
+			
+			// aapt resource value: 0x7f0c00d2
+			public const int keypadFragment_buttonThree = 2131493074;
+			
+			// aapt resource value: 0x7f0c00d3
+			public const int keypadFragment_buttonTwo = 2131493075;
+			
+			// aapt resource value: 0x7f0c00dc
+			public const int keypadFragment_buttonZero = 2131493084;
+			
+			// aapt resource value: 0x7f0c00ce
+			public const int keypadFragment_dialText = 2131493070;
 			
 			// aapt resource value: 0x7f0c00cb
 			public const int keypadFragment_idSpinner = 2131493067;
 			
-			// aapt resource value: 0x7f0c00dd
-			public const int keypadFragment_keysArea = 2131493085;
+			// aapt resource value: 0x7f0c00d0
+			public const int keypadFragment_keysArea = 2131493072;
 			
-			// aapt resource value: 0x7f0c00dc
-			public const int keypadFragment_phoneArea = 2131493084;
+			// aapt resource value: 0x7f0c00cd
+			public const int keypadFragment_phoneArea = 2131493069;
 			
 			// aapt resource value: 0x7f0c00cc
 			public const int keypadFragment_singleId = 2131493068;

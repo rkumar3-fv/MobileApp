@@ -31,7 +31,7 @@
   <string name="ActivitySelect_title">Select Account</string>
   <string name="ActivityExtension_title">Select extension</string>
   <string name="FragmentKeypad_title">Keypad</string>
-  <string name="FragmentKeypad_callerId">Show as Caller ID</string>
+  <string name="FragmentKeypad_callerId">Show as Caller ID:</string>
   <string name="FragmentKeypad_oneButtonTitle">1</string>
   <string name="FragmentKeypad_oneButton"> </string>
   <string name="FragmentKeypad_twoButtonTitle">2</string>
