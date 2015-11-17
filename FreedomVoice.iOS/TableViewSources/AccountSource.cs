@@ -40,6 +40,8 @@ namespace FreedomVoice.iOS.TableViewSources
             tableView.DeselectRow(indexPath, false);
             var selectedAccount = _accounts[indexPath.Row];
 
+            UserDefault.LastUsedAccount = selectedAccount.PhoneNumber;
+
             if (!UserDefault.IsLaunchedBefore)
             {
                 var phoneNumberController = AppDelegate.GetViewController<PhoneNumberViewController>();
@@ -54,7 +56,7 @@ namespace FreedomVoice.iOS.TableViewSources
 
             var mainTabBarController = await AppDelegate.GetMainTabBarController(selectedAccount, _navigationController);
             if (mainTabBarController != null)
-                _navigationController.PushViewController(mainTabBarController, true);
+                _navigationController.PushViewController(mainTabBarController, false);
         }
     }
 }

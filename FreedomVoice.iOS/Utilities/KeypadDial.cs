@@ -10,7 +10,7 @@ namespace FreedomVoice.iOS.Utilities
 
         public const string Plus = "+";
 
-        public KeypadDial(nfloat startPositionX, nfloat startPositionY, int diameter, int distanceX, int distanceY)
+        public KeypadDial(nfloat startPositionX, nfloat startPositionY, nfloat diameter, nfloat distanceX, nfloat distanceY)
         {
             _x1 = startPositionX;
             _x2 = _x1 + distanceX + diameter;
@@ -25,14 +25,14 @@ namespace FreedomVoice.iOS.Utilities
         public List<DialItem> Items => new List<DialItem>
         {
             new DialItem { Text = "1", X = _x1, Y = _y1 },
-            new DialItem { Text = "2", X = _x2, Y = _y1, DetailedText = "ABC" },
-            new DialItem { Text = "3", X = _x3, Y = _y1, DetailedText = "DEF"},
-            new DialItem { Text = "4", X = _x1, Y = _y2, DetailedText = "GHI" },
-            new DialItem { Text = "5", X = _x2, Y = _y2, DetailedText = "JKL" },
-            new DialItem { Text = "6", X = _x3, Y = _y2, DetailedText = "MNO"},
-            new DialItem { Text = "7", X = _x1, Y = _y3, DetailedText = "PQRS" },
-            new DialItem { Text = "8", X = _x2, Y = _y3, DetailedText = "TUV" },
-            new DialItem { Text = "9", X = _x3, Y = _y3, DetailedText = "WXYZ" },
+            new DialItem { Text = "2", X = _x2, Y = _y1, DetailedText = "A B C" },
+            new DialItem { Text = "3", X = _x3, Y = _y1, DetailedText = "D E F"},
+            new DialItem { Text = "4", X = _x1, Y = _y2, DetailedText = "G H I" },
+            new DialItem { Text = "5", X = _x2, Y = _y2, DetailedText = "J K L" },
+            new DialItem { Text = "6", X = _x3, Y = _y2, DetailedText = "M N O"},
+            new DialItem { Text = "7", X = _x1, Y = _y3, DetailedText = "P Q R S" },
+            new DialItem { Text = "8", X = _x2, Y = _y3, DetailedText = "T U V" },
+            new DialItem { Text = "9", X = _x3, Y = _y3, DetailedText = "W X Y Z" },
             new DialItem { Text = "*", X = _x1, Y = _y4, Image = "keypad_asterisk.png" },
             new DialItem { Text = "0", X = _x2, Y = _y4, DetailedText = Plus },
             new DialItem { Text = "#", X = _x3, Y = _y4, Image = "keypad_sharp.png" }

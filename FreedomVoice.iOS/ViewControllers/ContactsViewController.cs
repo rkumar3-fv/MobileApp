@@ -27,10 +27,12 @@ namespace FreedomVoice.iOS.ViewControllers
         private UILabel _noResultsLabel;
 
         private CallerIdView CallerIdView { get; set; }
+        private UITableView _contactTableView;
 
         private bool _hasContactsPermissions;
+        private bool _justLoaded;
 
-        private static MainTabBarController MainTabBarInstance => MainTabBarController.Instance;
+        private static MainTabBarController MainTabBarInstance => MainTabBarController.SharedInstance;
 
         public ContactsViewController(IntPtr handle) : base(handle)
         {
@@ -40,25 +42,14 @@ namespace FreedomVoice.iOS.ViewControllers
 
         public override async void ViewDidLoad()
         {
+            _justLoaded = true;
+
             _hasContactsPermissions = await AppDelegate.ContactHasAccessPermissionsAsync();
             if (!_hasContactsPermissions)
             {
                 View.AddSubview(new NoAccessToContactsView(Theme.ScreenBounds));
                 return;
             }
-
-            var frame = new CGRect(15, 0, Theme.ScreenBounds.Width - 30, 30);
-            _noResultsLabel = new UILabel(frame)
-            {
-                Text = "No Result",
-                Font = UIFont.SystemFontOfSize(28),
-                TextColor = Theme.GrayColor,
-                TextAlignment = UITextAlignment.Center,
-                Center = new CGPoint(View.Center.X, View.Center.Y - Theme.StatusBarHeight + NavigationController.NavigationBarHeight()),
-                Hidden = true
-            };
-
-            View.Add(_noResultsLabel);
 
             _contactsSearchBar = new UISearchBar(new CGRect(0, 0, View.Frame.Width, 44))
             {
@@ -80,28 +71,60 @@ namespace FreedomVoice.iOS.ViewControllers
             _contactsSearchBar.SearchButtonClicked += SearchBarOnSearchButtonClicked;
 
             CallerIdView = new CallerIdView(new RectangleF(0, (float)(_contactsSearchBar.Frame.Y + _contactsSearchBar.Frame.Height), (float)View.Frame.Width, 40), MainTabBarInstance.GetPresentationNumbers());
+            var lineView = new LineView(new RectangleF(0, (float)(CallerIdView.Frame.Y + CallerIdView.Frame.Height), (float)Theme.ScreenBounds.Width, 0.5f));
 
-            var headerView = new UIView(new CGRect(0, 0, View.Frame.Width, _contactsSearchBar.Frame.Height + CallerIdView.Frame.Height));
-            headerView.AddSubviews(_contactsSearchBar, CallerIdView);
+            var headerView = new UIView(new CGRect(0, 0, View.Frame.Width, _contactsSearchBar.Frame.Height + CallerIdView.Frame.Height + lineView.Frame.Height));
+            headerView.AddSubviews(_contactsSearchBar, CallerIdView, lineView);
+            View.AddSubview(headerView);
 
             _contactList = await AppDelegate.GetContactsListAsync();
             _contactSource = new ContactSource { ContactsList = _contactList };
             _contactSource.OnRowSelected += TableSourceOnRowSelected;
 
-            ContactsTableView.Source = _contactSource;
-            ContactsTableView.TableHeaderView = headerView;
+            var headerHeight = Theme.StatusBarHeight + NavigationController.NavigationBarHeight();
+            var insets = new UIEdgeInsets(0, 0, headerHeight, 0);
 
-            ContactsTableView.SectionIndexBackgroundColor = UIColor.Clear;
-            ContactsTableView.SectionIndexColor = Theme.BlueColor;
+            var headerViewHeight = headerView.Frame.Height;
+            _contactTableView = new UITableView
+            {
+                Frame = new CGRect(0, headerViewHeight, Theme.ScreenBounds.Width, Theme.ScreenBounds.Height - Theme.TabBarHeight - headerViewHeight),
+                Source = _contactSource,
+                SectionIndexBackgroundColor = UIColor.Clear,
+                SectionIndexColor = Theme.BlueColor,
+                ContentInset = insets,
+                ScrollIndicatorInsets = insets
+            };
+            View.Add(_contactTableView);
+
+            var frame = new CGRect(15, 0, Theme.ScreenBounds.Width - 30, 30);
+            _noResultsLabel = new UILabel(frame)
+            {
+                Text = "No Result",
+                Font = UIFont.SystemFontOfSize(28),
+                TextColor = Theme.GrayColor,
+                TextAlignment = UITextAlignment.Center,
+                Center = new CGPoint(View.Center.X, _contactTableView.Center.Y - Theme.TabBarHeight),
+                Hidden = true
+            };
+            View.Add(_noResultsLabel);
 
             CheckResult(ContactsCount);
 
             base.ViewDidLoad();
         }
 
-        public override void ViewWillAppear(bool animated)
+        public override async void ViewWillAppear(bool animated)
         {
             Title = "Contacts";
+
+            if (_hasContactsPermissions && !_justLoaded)
+            {
+                _contactList = await AppDelegate.GetContactsListAsync();
+                _contactSource.ContactsList = _contactList;
+                _contactTableView.ReloadData();
+            }
+
+            _justLoaded = true;
 
             NavigationItem.SetRightBarButtonItem(Appearance.GetLogoutBarButton(this), false);
 
@@ -119,20 +142,25 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private void SearchBarOnTextChanged(object sender, UISearchBarTextChangedEventArgs e)
         {
-            _filteredContactList = _contactList.Where(c => c.FirstName != null && c.FirstName.StartsWith(_contactsSearchBar.Text, StringComparison.OrdinalIgnoreCase) || c.LastName != null && c.LastName.StartsWith(_contactsSearchBar.Text, StringComparison.OrdinalIgnoreCase)).ToList();
-            _contactSource.IsSearchMode = !string.IsNullOrEmpty(e.SearchText);
+            _filteredContactList = GetMatchedContacts(e.SearchText);
+            _contactSource.SearchText = e.SearchText;
             _contactSource.ContactsList = _filteredContactList;
-            ContactsTableView.ReloadData();
+            _contactTableView.ReloadData();
             CheckResult(FilteredContactsCount);
+        }
+
+        private List<Contact> GetMatchedContacts(string searchText)
+        {
+            return _contactList.Where(c => c.DisplayName != null && c.DisplayName.StartsWith(searchText, StringComparison.OrdinalIgnoreCase) || c.LastName != null && c.LastName.StartsWith(searchText, StringComparison.OrdinalIgnoreCase) || c.Phones.Any(p => p.Number.Contains(searchText))).ToList();
         }
 
         private void SearchBarOnCancelButtonClicked(object sender, EventArgs args)
         {
             _contactsSearchBar.Text = string.Empty;
             _contactsSearchBar.ResignFirstResponder();
-            _contactSource.IsSearchMode = false;
+            _contactSource.SearchText = string.Empty;
             _contactSource.ContactsList = _contactList;
-            ContactsTableView.ReloadData();
+            _contactTableView.ReloadData();
             CheckResult(ContactsCount);
         }
 
@@ -194,12 +222,12 @@ namespace FreedomVoice.iOS.ViewControllers
             if (contactsCount == 0)
             {
                 _noResultsLabel.Hidden = false;
-                ContactsTableView.SeparatorStyle = UITableViewCellSeparatorStyle.None;
+                _contactTableView.SeparatorStyle = UITableViewCellSeparatorStyle.None;
             }
             else
             {
                 _noResultsLabel.Hidden = true;
-                ContactsTableView.SeparatorStyle = UITableViewCellSeparatorStyle.SingleLine;
+                _contactTableView.SeparatorStyle = UITableViewCellSeparatorStyle.SingleLine;
             }
         }
     }

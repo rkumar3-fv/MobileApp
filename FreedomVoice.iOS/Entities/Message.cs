@@ -27,13 +27,13 @@ namespace FreedomVoice.iOS.Entities
             Title = GetMessageTitle();
         }
 
-        public string Title { get; set; }
+        public string Title { get; private set; }
         public string Id { get; private set; }
         public int Length { get; private set; }
         public string SourceNumber { get; }
         public DateTime ReceivedOn { get; private set; }
         public MessageType Type { get; private set; }
-        public bool Unread { get; private set; }
+        public bool Unread { get; set; }
         public string Folder { get; private set; }
         public int Mailbox { get; private set; }
 
@@ -59,7 +59,9 @@ namespace FreedomVoice.iOS.Entities
 
         private Contact FindContactByNumber(string number)
         {
-            return ContactList?.FirstOrDefault(c => c.Phones.Any(p => Regex.Replace(p.Number, @"[^\d]", "") == Regex.Replace(number, @"[^\d]", "")));
+            var numberToCompareWith = Regex.Replace(number, @"[^\d]", "");
+
+            return ContactList?.FirstOrDefault(c => c.Phones.Any(p => Regex.Replace(p.Number, @"[^\d]", "").EndsWith(numberToCompareWith)));
         }
     }
 }

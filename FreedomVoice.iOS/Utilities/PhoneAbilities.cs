@@ -2,6 +2,7 @@
 using System.Net;
 using CoreFoundation;
 using SystemConfiguration;
+using CoreTelephony;
 
 namespace FreedomVoice.iOS.Utilities
 {
@@ -20,6 +21,13 @@ namespace FreedomVoice.iOS.Utilities
         private static NetworkReachability _adHocWiFiNetworkReachability;
 
         public static bool NetworkIsUnreachable => InternetConnectionStatus() == NetworkStatus.NotReachable;
+
+        public static bool IsSimCardInstalled()
+        {
+            var provider = new CTTelephonyNetworkInfo().SubscriberCellularProvider;
+
+            return !string.IsNullOrEmpty(provider?.MobileNetworkCode);
+        }
 
         private static NetworkStatus InternetConnectionStatus()
         {

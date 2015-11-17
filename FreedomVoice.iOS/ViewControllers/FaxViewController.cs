@@ -36,7 +36,7 @@ namespace FreedomVoice.iOS.ViewControllers
             var backgroundImage = Appearance.GetImageFromColor(UIColor.FromRGB(35, 53, 77), new CGSize(View.Bounds.Width, Theme.StatusBarHeight + NavigationController.NavigationBarHeight()));
             NavigationController.NavigationBar.SetBackgroundImage(backgroundImage, UIBarMetrics.Default);
 
-            var backButtonTitle = ((NSString)SelectedFolderTitle).StringSize(UIFont.SystemFontOfSize(17, UIFontWeight.Medium)).Width > 86 ? "Back" : SelectedFolderTitle;
+            var backButtonTitle = ((NSString)SelectedFolderTitle).StringSize(UIFont.SystemFontOfSize(17, UIFontWeight.Medium)).Width > Theme.BackButtonLabelWidth ? "Back" : SelectedFolderTitle;
             NavigationItem.SetLeftBarButtonItems(Appearance.GetBarButtonWithArrow(OnBackButtonClicked, backButtonTitle, true), true);
 
             base.ViewWillAppear(animated);

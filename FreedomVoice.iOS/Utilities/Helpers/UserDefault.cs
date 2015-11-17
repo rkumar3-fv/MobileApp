@@ -17,6 +17,26 @@ namespace FreedomVoice.iOS.Utilities.Helpers
             }
         }
 
+        public static int PoolingInterval
+        {
+            get { return (int)NSUserDefaults.StandardUserDefaults.IntForKey("PoolingIntervalKey"); }
+            set
+            {
+                NSUserDefaults.StandardUserDefaults.SetInt(value, "PoolingIntervalKey");
+                NSUserDefaults.StandardUserDefaults.Synchronize();
+            }
+        }
+
+        public static string LastUsedAccount
+        {
+            get { return NSUserDefaults.StandardUserDefaults.StringForKey("LastUsedAccount"); }
+            set
+            {
+                NSUserDefaults.StandardUserDefaults.SetString(value, "LastUsedAccount");
+                NSUserDefaults.StandardUserDefaults.Synchronize();
+            }
+        }
+
         public static bool IsLaunchedBefore
         {
             get { return NSUserDefaults.StandardUserDefaults.BoolForKey("IsLaunchedBeforeKey"); }

@@ -1,12 +1,12 @@
 using System;
 using System.Drawing;
+using System.Linq;
 using CoreGraphics;
 using Foundation;
 using FreedomVoice.Core.Utils;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.Utilities.Helpers;
-using FreedomVoice.iOS.Views;
 using FreedomVoice.iOS.Views.Shared;
 using GoogleAnalytics.iOS;
 using MRoundedButton;
@@ -25,43 +25,42 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private CallerIdView CallerIdView { get; set; }
 
-        private static MainTabBarController MainTabBarInstance => MainTabBarController.Instance;
+        private static MainTabBarController MainTabBarInstance => MainTabBarController.SharedInstance;
 
         public KeypadViewController(IntPtr handle) : base(handle) { }
 
         public override void ViewDidLoad()
         {
-            CallerIdView = new CallerIdView(new RectangleF(0, 0, (float)View.Frame.Width, 40), MainTabBarInstance.GetPresentationNumbers());
+            CallerIdView = new CallerIdView(new RectangleF(0, 0, (float)Theme.ScreenBounds.Width, 40), MainTabBarInstance.GetPresentationNumbers());
 
-            var keypadLineView = new RecentLineView(new RectangleF(0, (float)(CallerIdView.Frame.Y + CallerIdView.Frame.Height), (float)View.Frame.Width, 0.5f));
+            var keypadLineView = new LineView(new RectangleF(0, (float)(CallerIdView.Frame.Y + CallerIdView.Frame.Height), (float)Theme.ScreenBounds.Width, 0.5f));
 
-            _phoneLabel = new UILabel(new CGRect(30, keypadLineView.Frame.Y, 250, 52))
+            _phoneLabel = new UILabel(new CGRect(30, keypadLineView.Frame.Y, Theme.ScreenBounds.Width - 60, 52))
             {
                 Font = UIFont.SystemFontOfSize(30, UIFontWeight.Thin),
                 TextAlignment = UITextAlignment.Center
             };
 
-            _clearPhone = new UIButton(new CGRect(277, _phoneLabel.Frame.Y + 5, 40, 40));
+            _clearPhone = new UIButton(new CGRect(Theme.ScreenBounds.Width - 43, _phoneLabel.Frame.Y + 5, 40, 40));
             _clearPhone.SetBackgroundImage(UIImage.FromFile("keypad_backspace.png"), UIControlState.Normal);
-            _clearPhone.TouchUpInside += OnClearPhonTouchUpInside;
+            _clearPhone.TouchUpInside += OnClearPhoneTouchUpInside;
 
             View.AddSubviews(CallerIdView, keypadLineView, _phoneLabel, _clearPhone);
 
-            var keypadPositionX = (Theme.ScreenBounds.Width - 227) / 2;
-            var keypadPositionY = keypadLineView.Frame.Y + _phoneLabel.Frame.Height;
-            const int keypadItemDiameter = 65;
+            var keypadPositionX = (Theme.ScreenBounds.Width - Theme.KeypadWidth) / 2;
+            var keypadPositionY = keypadLineView.Frame.Y + _phoneLabel.Frame.Height + Theme.KeypadTopPadding;
 
-            var dialData = new KeypadDial(keypadPositionX, keypadPositionY, keypadItemDiameter, 16, 8);
+            var dialData = new KeypadDial(keypadPositionX, keypadPositionY, Theme.KeypadButtonDiameter, Theme.KeypadDistanceX, Theme.KeypadDistanceY);
 
             foreach (var item in dialData.Items)
             {
-                var buttonRect = new CGRect(item.X, item.Y, keypadItemDiameter, keypadItemDiameter);
+                var buttonRect = new CGRect(item.X, item.Y, Theme.KeypadButtonDiameter, Theme.KeypadButtonDiameter);
                 var button = new RoundedButton(buttonRect, string.IsNullOrEmpty(item.Image) ? RoundedButtonStyle.Subtitle : RoundedButtonStyle.CentralImage, item.Text)
                 {
                     BorderColor = Theme.KeypadBorderColor,
                     TextLabel = { Text = item.Text, Font = UIFont.SystemFontOfSize(36, UIFontWeight.Thin) },
                     DetailTextLabel = { Text = item.DetailedText, Font = UIFont.SystemFontOfSize(9, UIFontWeight.Regular) },
-                    CornerRadius = 40,
+                    CornerRadius = RoundedButton.MaxValue,
                     BorderWidth = 1,
                     ContentColor = UIColor.Black,
                     ContentAnimateToColor = Theme.KeypadBorderColor
@@ -84,9 +83,9 @@ namespace FreedomVoice.iOS.ViewControllers
                 View.AddSubview(button);
             }
 
-            _keypadDial = new UIButton(new CGRect(0, keypadPositionY + 292, 62, 62));
+            _keypadDial = new UIButton(new CGRect(0, keypadPositionY + Theme.KeypadHeight, Theme.KeypadDialButtonDiameter, Theme.KeypadDialButtonDiameter));
             _keypadDial.Center = new CGPoint(View.Center.X, _keypadDial.Center.Y);
-            _keypadDial.SetBackgroundImage(UIImage.FromFile("keypad_call.png"), UIControlState.Normal);
+            _keypadDial.SetBackgroundImage(Theme.KeypadDialImage, UIControlState.Normal);
             _keypadDial.TouchUpInside += OnKeypadDialTouchUpInside;
 
             View.AddSubview(_keypadDial);
@@ -133,7 +132,7 @@ namespace FreedomVoice.iOS.ViewControllers
             _phoneLabel.Text = DataFormatUtils.ToPhoneNumber(PhoneNumber);
         }
 
-        private void OnClearPhonTouchUpInside(object sender, EventArgs args)
+        private void OnClearPhoneTouchUpInside(object sender, EventArgs args)
         {
             if (string.IsNullOrEmpty(PhoneNumber) || PhoneNumber.Length <= 1)
             {
@@ -149,14 +148,27 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private void OnKeypadDialTouchUpInside(object sender, EventArgs args)
         {
-            AddRecent();
+            string phoneNumberForCallReservation;
+
+            if (string.IsNullOrEmpty(PhoneNumber))
+            {
+                if (MainTabBarInstance.Recents.Count != 0)
+                    phoneNumberForCallReservation = MainTabBarInstance.Recents.Last().PhoneNumber;
+                else
+                    return;
+            }
+            else
+                phoneNumberForCallReservation = PhoneNumber;
+
             var selectedCallerId = MainTabBarInstance.GetSelectedPresentationNumber().PhoneNumber;
-            PhoneCall.CreateCallReservation(MainTabBarInstance.SelectedAccount.PhoneNumber, selectedCallerId, PhoneNumber, NavigationController);
+            PhoneCall.CreateCallReservation(MainTabBarInstance.SelectedAccount.PhoneNumber, selectedCallerId, phoneNumberForCallReservation, NavigationController);
+
+            AddRecent(phoneNumberForCallReservation);
         }
         
-	    private void AddRecent()
+	    private static void AddRecent(string phoneNumber)
         {
-            MainTabBarInstance.Recents.Add(new Recent(string.Empty, PhoneNumber, DateTime.Now));
+            MainTabBarInstance.Recents.Add(new Recent(string.Empty, phoneNumber, DateTime.Now));
         }
     }
 }

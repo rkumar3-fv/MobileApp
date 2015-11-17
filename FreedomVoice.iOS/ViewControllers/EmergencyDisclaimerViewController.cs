@@ -39,7 +39,7 @@ namespace FreedomVoice.iOS.ViewControllers
             var controller = ParentController as UINavigationController;
             if (controller == null) return;
 
-            controller.PushViewController(mainTabBarController, true);
+            controller.PushViewController(mainTabBarController, false);
             Theme.TransitionController(controller);
 	    }
 

@@ -14,16 +14,8 @@ namespace FreedomVoice.iOS.ViewControllers
 	[Register ("ContactsViewController")]
 	partial class ContactsViewController
 	{
-		[Outlet]
-		[GeneratedCode ("iOS Designer", "1.0")]
-		UITableView ContactsTableView { get; set; }
-
 		void ReleaseDesignerOutlets ()
 		{
-			if (ContactsTableView != null) {
-				ContactsTableView.Dispose ();
-				ContactsTableView = null;
-			}
 		}
 	}
 }

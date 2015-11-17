@@ -1,39 +1,46 @@
 using System;
-using System.Collections.Generic;
 using CoreGraphics;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.TableViewSources;
 using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.Utilities.Helpers;
+using FreedomVoice.iOS.ViewModels;
 using UIKit;
 
 namespace FreedomVoice.iOS.ViewControllers
 {
     partial class ExtensionsViewController : BaseViewController
     {
-        public Account SelectedAccount { private get; set; }
-        public List<ExtensionWithCount> ExtensionsList { private get; set; }
-
         public ExtensionsViewController(IntPtr handle) : base(handle) { }
 
-        private static MainTabBarController MainTabBarInstance => MainTabBarController.Instance;
+        private static MainTabBarController MainTabBarInstance => MainTabBarController.SharedInstance;
+
+        private static Account SelectedAccount => MainTabBarInstance.SelectedAccount;
+
+        private UITableView _extensionsTableView;
+        private ExtensionsSource _extensionsSource;
+        private bool _justLoaded;
 
         public override void ViewDidLoad()
         {
-            ExtensionsTableView.TableFooterView = new UIView(CGRect.Empty);
+            _justLoaded = true;
+            var insets = new UIEdgeInsets(0, 0, Theme.StatusBarHeight + NavigationController.NavigationBarHeight() + Theme.TabBarHeight, 0);
 
-            var insets = new UIEdgeInsets(0, 0, Theme.StatusBarHeight + NavigationController.NavigationBarHeight(), 0);
-            ExtensionsTableView.ContentInset = insets;
-            ExtensionsTableView.ScrollIndicatorInsets = insets;
-
-            ExtensionsTableView.Source = new ExtensionsSource(ExtensionsList, SelectedAccount, NavigationController);
-
-            View.AddSubview(ExtensionsTableView);
+            _extensionsSource = new ExtensionsSource(MainTabBarInstance.ExtensionsList, SelectedAccount, NavigationController);
+            _extensionsTableView = new UITableView
+            {
+                Frame = Theme.ScreenBounds,
+                TableFooterView = new UIView(CGRect.Empty),
+                Source = _extensionsSource,
+                ContentInset = insets,
+                ScrollIndicatorInsets = insets
+            };
+            View.Add(_extensionsTableView);
 
             base.ViewDidLoad();
         }
 
-        public override void ViewWillAppear(bool animated)
+        public override async void ViewWillAppear(bool animated)
         {
             NavigationItem.Title = SelectedAccount.FormattedPhoneNumber;
 
@@ -41,6 +48,20 @@ namespace FreedomVoice.iOS.ViewControllers
                 NavigationItem.SetLeftBarButtonItems(Appearance.GetBarButtonWithArrow((s, args) => MainTabBarInstance.NavigationController.PopViewController(true), "Accounts"), true);
 
             NavigationItem.SetRightBarButtonItem(Appearance.GetLogoutBarButton(this), false);
+
+            if (!_justLoaded)
+            {
+                var mainTabBarViewModel = new MainTabBarViewModel(SelectedAccount, NavigationController);
+                await mainTabBarViewModel.GetExtensionsListAsync();
+
+                //TODO: Fix this behaviour later
+                mainTabBarViewModel.IsBusy = false;
+
+                MainTabBarInstance.ExtensionsList = mainTabBarViewModel.ExtensionsList;
+                _extensionsSource.Extensions = mainTabBarViewModel.ExtensionsList;
+                _extensionsTableView.ReloadData();
+            }
+            _justLoaded = false;
 
             base.ViewWillAppear(animated);
         }

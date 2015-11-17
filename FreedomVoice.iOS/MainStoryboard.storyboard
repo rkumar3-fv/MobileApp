@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="4451" systemVersion="13A461" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="1156">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6206.8" systemVersion="13A461" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="1156" useTraitCollections="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733.0"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7026.1"/>
     </dependencies>
     <scenes>
         <!--class Prefix:identifier First View Controller - First-->
@@ -38,15 +38,15 @@
                         <color key="backgroundColor" colorSpace="calibratedWhite" white="0" alpha="0"/>
                     </view>
                     <connections>
-                        <segue id="4710" destination="1198" kind="push"/>
-                        <segue id="4885" destination="1074" kind="modal"/>
+                        <segue id="4710" destination="1198" kind="show" identifier="LoginToForgotPasswordSegue"/>
+                        <segue id="4885" destination="1074" kind="presentation" identifier="LoginToTabBarSegue"/>
                     </connections>
                     <navigationItem title="Title" id="2036" key="navigationItem"/>
                     <nil key="simulatedTopBarMetrics"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="1158" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1379" y="567"/>
+            <point key="canvasLocation" x="-1377" y="662"/>
         </scene>
         <scene sceneID="1197">
             <objects>
@@ -68,7 +68,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="1200" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-765" y="168"/>
+            <point key="canvasLocation" x="-764" y="-10"/>
         </scene>
         <scene sceneID="2276">
             <objects>
@@ -78,18 +78,16 @@
                         <viewControllerLayoutGuide type="bottom" id="2269"/>
                     </layoutGuides>
                     <navigationItem key="navigationItem" title="Root View Controller" id="2277"/>
-                    <connections>
-                        <outlet property="RecentsTableView" destination="5071" id="name-outlet-5071"/>
-                    </connections>
-                    <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="5071" translatesAutoresizingMaskIntoConstraints="NO" key="view">
+                    <connections/>
+                    <view contentMode="scaleToFill" id="5232" translatesAutoresizingMaskIntoConstraints="NO" key="view">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <prototypes/>
-                    </tableView>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                    </view>
+                    <extendedEdge key="edgesForExtendedLayout" top="YES"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="2279" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="839" y="547"/>
+            <point key="canvasLocation" x="839" y="363"/>
         </scene>
         <scene sceneID="2449">
             <objects>
@@ -98,14 +96,12 @@
                         <viewControllerLayoutGuide type="top" id="2441"/>
                         <viewControllerLayoutGuide type="bottom" id="2442"/>
                     </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="2451">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                        <subviews/>
-                    </view>
                     <navigationItem key="navigationItem" title="Root View Controller" id="2450"/>
                     <connections/>
+                    <view contentMode="scaleToFill" id="5228" translatesAutoresizingMaskIntoConstraints="NO" key="view">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                    </view>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="2452" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -123,7 +119,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="2818" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-696" y="2022"/>
+            <point key="canvasLocation" x="-701" y="2240"/>
         </scene>
         <scene sceneID="2819">
             <objects>
@@ -143,7 +139,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="2822" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-124" y="2018"/>
+            <point key="canvasLocation" x="-95" y="2236"/>
         </scene>
         <scene sceneID="4003">
             <objects>
@@ -157,7 +153,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4008" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-667" y="1022"/>
+            <point key="canvasLocation" x="-713" y="1200"/>
         </scene>
         <scene sceneID="4009">
             <objects>
@@ -177,7 +173,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4012" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-133" y="1022"/>
+            <point key="canvasLocation" x="-190" y="1206"/>
         </scene>
         <scene sceneID="4364">
             <objects>
@@ -186,27 +182,19 @@
                         <viewControllerLayoutGuide type="top" id="4362"/>
                         <viewControllerLayoutGuide type="bottom" id="4363"/>
                     </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="4366">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                        <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="4638" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" clearsContextBeforeDrawing="NO" opaque="NO">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <prototypes/>
-                            </tableView>
-                        </subviews>
-                    </view>
                     <connections>
-                        <segue id="4538" destination="4004" kind="modal"/>
-                        <segue id="4636" destination="1074" kind="push"/>
-                        <outlet property="AccountsTableView" destination="4638" id="name-outlet-4638"/>
+                        <segue id="4538" destination="4004" kind="presentation" identifier="AccountsToEmergencyDisclaimerSegue"/>
+                        <segue id="4636" destination="1074" kind="show" identifier="AccountsToTabBarSegue"/>
                     </connections>
+                    <view contentMode="scaleToFill" id="5234" translatesAutoresizingMaskIntoConstraints="NO" key="view">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                    </view>
+                    <extendedEdge key="edgesForExtendedLayout" top="YES"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4367" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1242" y="1587"/>
+            <point key="canvasLocation" x="-1362" y="1742"/>
         </scene>
         <scene sceneID="4999">
             <objects>
@@ -215,25 +203,16 @@
                         <viewControllerLayoutGuide type="top" id="4997"/>
                         <viewControllerLayoutGuide type="bottom" id="4998"/>
                     </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="5001" clipsSubviews="YES">
+                    <connections/>
+                    <view contentMode="scaleToFill" id="5233" translatesAutoresizingMaskIntoConstraints="NO" key="view">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                        <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" dataMode="prototypes" style="plain" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="5036" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" alwaysBounceVertical="YES">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <prototypes/>
-                            </tableView>
-                        </subviews>
                     </view>
-                    <connections>
-                        <outlet property="ContactsTableView" destination="5036" id="name-outlet-5036"/>
-                    </connections>
+                    <extendedEdge key="edgesForExtendedLayout" top="YES"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5002" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1250" y="545"/>
+            <point key="canvasLocation" x="1319" y="361"/>
         </scene>
         <scene sceneID="5109">
             <objects>
@@ -242,25 +221,16 @@
                         <viewControllerLayoutGuide type="top" id="5107"/>
                         <viewControllerLayoutGuide type="bottom" id="5108"/>
                     </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="5111">
+                    <connections/>
+                    <view contentMode="scaleToFill" id="5229" translatesAutoresizingMaskIntoConstraints="NO" key="view">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                        <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="5114" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" opaque="NO">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <prototypes/>
-                            </tableView>
-                        </subviews>
                     </view>
-                    <connections>
-                        <outlet property="ExtensionsTableView" destination="5114" id="name-outlet-5114"/>
-                    </connections>
+                    <extendedEdge key="edgesForExtendedLayout" top="YES"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5112" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1255" y="1242"/>
+            <point key="canvasLocation" x="1324" y="1242"/>
         </scene>
         <scene sceneID="5127">
             <objects>
@@ -269,25 +239,16 @@
                         <viewControllerLayoutGuide type="top" id="5125"/>
                         <viewControllerLayoutGuide type="bottom" id="5126"/>
                     </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="5129">
+                    <connections/>
+                    <view contentMode="scaleToFill" id="5230" translatesAutoresizingMaskIntoConstraints="NO" key="view">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                        <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="5132" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <prototypes/>
-                            </tableView>
-                        </subviews>
                     </view>
-                    <connections>
-                        <outlet property="FoldersTableView" destination="5132" id="name-outlet-5132"/>
-                    </connections>
+                    <extendedEdge key="edgesForExtendedLayout" top="YES"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5130" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1664" y="1241"/>
+            <point key="canvasLocation" x="1807" y="1247"/>
         </scene>
         <scene sceneID="5150">
             <objects>
@@ -296,25 +257,16 @@
                         <viewControllerLayoutGuide type="top" id="5148"/>
                         <viewControllerLayoutGuide type="bottom" id="5149"/>
                     </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="5152">
+                    <connections/>
+                    <view contentMode="scaleToFill" id="5231" translatesAutoresizingMaskIntoConstraints="NO" key="view">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                        <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="5155" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" opaque="NO">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <prototypes/>
-                            </tableView>
-                        </subviews>
                     </view>
-                    <connections>
-                        <outlet property="MessagesTableView" destination="5155" id="name-outlet-5155"/>
-                    </connections>
+                    <extendedEdge key="edgesForExtendedLayout" top="YES"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5153" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2067" y="1242"/>
+            <point key="canvasLocation" x="2285" y="1247"/>
         </scene>
         <scene sceneID="5174">
             <objects>
@@ -331,7 +283,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5177" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-353" y="168"/>
+            <point key="canvasLocation" x="-307" y="-10"/>
         </scene>
         <scene sceneID="5197">
             <objects>
@@ -348,7 +300,24 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5200" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2488" y="1242"/>
+            <point key="canvasLocation" x="2820" y="1242"/>
+        </scene>
+        <scene sceneID="5285">
+            <objects>
+                <viewController id="5286" sceneMemberID="viewController" customClass="SplashViewController" storyboardIdentifier="SplashViewController" useStoryboardIdentifierAsRestorationIdentifier="YES">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="5283"/>
+                        <viewControllerLayoutGuide type="bottom" id="5284"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="5287">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="5288" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-1382" y="-222"/>
         </scene>
     </scenes>
     <resources>
@@ -360,23 +329,23 @@
         <image name="clearPhone.png" width="44" height="35"/>
         <image name="dial.png" width="125" height="125"/>
         <image name="recent.png" width="44" height="44"/>
-        <image name="back.png" width="24" height="42"/>
-        <image name="contacts_access.png" width="190" height="190"/>
-        <image name="dropdown_arrow.png" width="20" height="12"/>
-        <image name="folder_new.png" width="50" height="50"/>
-        <image name="folder_saved.png" width="50" height="50"/>
-        <image name="folder_sent.png" width="50" height="50"/>
-        <image name="folder_trash.png" width="50" height="50"/>
-        <image name="keypad_asterisk.png" width="32" height="28"/>
-        <image name="keypad_backspace.png" width="80" height="80"/>
-        <image name="keypad_call.png" width="124" height="124"/>
-        <image name="keypad_plus.png" width="14" height="14"/>
-        <image name="keypad_sharp.png" width="32" height="32"/>
+        <image name="back.png" width="36" height="63"/>
+        <image name="contacts_access.png" width="285" height="285"/>
+        <image name="dropdown_arrow.png" width="30" height="18"/>
+        <image name="folder_new.png" width="75" height="75"/>
+        <image name="folder_saved.png" width="75" height="75"/>
+        <image name="folder_sent.png" width="75" height="75"/>
+        <image name="folder_trash.png" width="75" height="75"/>
+        <image name="keypad_asterisk.png" width="48" height="42"/>
+        <image name="keypad_backspace.png" width="120" height="120"/>
+        <image name="keypad_call.png" width="186" height="186"/>
+        <image name="keypad_plus.png" width="21" height="21"/>
+        <image name="keypad_sharp.png" width="48" height="48"/>
         <image name="Login-568h.png" width="640" height="1136"/>
-        <image name="logo_freedomvoice_grey.png" width="526" height="84"/>
-        <image name="logo_freedomvoice_small_white.png" width="368" height="58"/>
-        <image name="logo_freedomvoice_white.png" width="526" height="84"/>
-        <image name="logout.png" width="50" height="50"/>
+        <image name="logo_freedomvoice_grey.png" width="789" height="126"/>
+        <image name="logo_freedomvoice_small_white.png" width="552" height="87"/>
+        <image name="logo_freedomvoice_white.png" width="789" height="126"/>
+        <image name="logout.png" width="75" height="75"/>
         <image name="messages_callrecord.png" width="50" height="50"/>
         <image name="messages_callrecord_active.png" width="50" height="50"/>
         <image name="messages_callrecord_unread.png" width="50" height="50"/>
@@ -386,42 +355,53 @@
         <image name="messages_voicemail.png" width="50" height="50"/>
         <image name="messages_voicemail_active.png" width="50" height="50"/>
         <image name="messages_voicemail_unread.png" width="50" height="50"/>
-        <image name="recents_info.png" width="50" height="50"/>
-        <image name="tab_contacts.png" width="60" height="60"/>
-        <image name="tab_contacts_active.png" width="60" height="60"/>
-        <image name="tab_keypad.png" width="60" height="60"/>
-        <image name="tab_keypad_active.png" width="60" height="60"/>
-        <image name="tab_messages.png" width="60" height="60"/>
-        <image name="tab_messages_active.png" width="60" height="60"/>
-        <image name="tab_recents.png" width="60" height="60"/>
-        <image name="tab_recents_active.png" width="60" height="60"/>
-        <image name="warning.png" width="190" height="190"/>
+        <image name="recents_info.png" width="75" height="75"/>
+        <image name="tab_contacts.png" width="90" height="90"/>
+        <image name="tab_contacts_active.png" width="90" height="90"/>
+        <image name="tab_keypad.png" width="90" height="90"/>
+        <image name="tab_keypad_active.png" width="90" height="90"/>
+        <image name="tab_messages.png" width="90" height="90"/>
+        <image name="tab_messages_active.png" width="90" height="90"/>
+        <image name="tab_recents.png" width="90" height="90"/>
+        <image name="tab_recents_active.png" width="90" height="90"/>
+        <image name="warning.png" width="285" height="285"/>
         <image name="btn_pause.png" width="30" height="30"/>
         <image name="btn_play.png" width="31" height="32"/>
         <image name="progress_bar_thumb.png" width="7" height="30"/>
-        <image name="back_transparent.png" width="24" height="42"/>
-        <image name="call_back.png" width="36" height="36"/>
+        <image name="back_transparent.png" width="36" height="63"/>
+        <image name="call_back.png" width="54" height="54"/>
         <image name="callback.png" width="207" height="56"/>
-        <image name="callrecord.png" width="50" height="50"/>
-        <image name="callrecord_active.png" width="50" height="50"/>
-        <image name="callrecord_unread.png" width="50" height="50"/>
-        <image name="delete.png" width="50" height="50"/>
-        <image name="fax.png" width="50" height="50"/>
-        <image name="fax_active.png" width="50" height="50"/>
-        <image name="fax_unread.png" width="50" height="50"/>
-        <image name="pause.png" width="60" height="60"/>
-        <image name="play.png" width="60" height="60"/>
-        <image name="scroller.png" width="46" height="46"/>
-        <image name="speaker.png" width="36" height="36"/>
-        <image name="view_fax.png" width="36" height="36"/>
-        <image name="voicemail.png" width="50" height="50"/>
-        <image name="voicemail_active.png" width="50" height="50"/>
-        <image name="voicemail_unread.png" width="50" height="50"/>
-        <image name="navbar.png" width="640" height="128"/>
+        <image name="callrecord.png" width="75" height="75"/>
+        <image name="callrecord_active.png" width="75" height="75"/>
+        <image name="callrecord_unread.png" width="75" height="75"/>
+        <image name="delete.png" width="75" height="75"/>
+        <image name="fax.png" width="75" height="75"/>
+        <image name="fax_active.png" width="75" height="75"/>
+        <image name="fax_unread.png" width="75" height="75"/>
+        <image name="pause.png" width="90" height="90"/>
+        <image name="play.png" width="90" height="90"/>
+        <image name="scroller.png" width="69" height="69"/>
+        <image name="speaker.png" width="54" height="54"/>
+        <image name="view_fax.png" width="54" height="54"/>
+        <image name="voicemail.png" width="75" height="75"/>
+        <image name="voicemail_active.png" width="75" height="75"/>
+        <image name="voicemail_unread.png" width="75" height="75"/>
+        <image name="navbar.png" width="960" height="192"/>
+        <image name="Icon-60.png" width="120" height="120"/>
+        <image name="Icon.png" width="57" height="57"/>
+        <image name="Icons/Icon-60.png" width="180" height="180"/>
+        <image name="Icons/Icon-76.png" width="76" height="76"/>
+        <image name="Icons/Icon-Small-40.png" width="40" height="40"/>
+        <image name="Icons/Icon-Small.png" width="29" height="29"/>
+        <image name="Default.jpg" width="1242" height="2208"/>
+        <image name="Login.jpg" width="1242" height="2208"/>
+        <image name="Default-667h.png" width="750" height="1334"/>
+        <image name="Default-736h.png" width="1242" height="2208"/>
+        <image name="Login-667h.png" width="750" height="1334"/>
+        <image name="Login-736h.png" width="1242" height="2208"/>
+        <image name="navbar_wide.png" width="750" height="128"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
-        <simulatedStatusBarMetrics key="statusBar"/>
-        <simulatedOrientationMetrics key="orientation"/>
-        <simulatedScreenMetrics key="destination" type="retina4"/>
+        <simulatedScreenMetrics key="destination" type="retina55"/>
     </simulatedMetricsContainer>
 </document>

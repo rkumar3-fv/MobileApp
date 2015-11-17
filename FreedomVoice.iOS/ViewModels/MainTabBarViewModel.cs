@@ -5,6 +5,7 @@ using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.Services;
 using FreedomVoice.iOS.Services.Responses;
 using FreedomVoice.iOS.Utilities;
+using FreedomVoice.iOS.Utilities.Helpers;
 using FreedomVoice.iOS.ViewControllers;
 using UIKit;
 
@@ -14,6 +15,7 @@ namespace FreedomVoice.iOS.ViewModels
     {
         private readonly IExtensionsService _extensionsService;
         private readonly IPresentationNumbersService _presentationNumbersService;
+        private readonly IPollingIntervalService _poolingIntervalService;
 
         private readonly Account _selectedAccount;
         private readonly UIViewController _viewController;
@@ -30,6 +32,7 @@ namespace FreedomVoice.iOS.ViewModels
 
             _extensionsService = ServiceContainer.Resolve<IExtensionsService>();
             _presentationNumbersService = ServiceContainer.Resolve<IPresentationNumbersService>();
+            _poolingIntervalService = ServiceContainer.Resolve<IPollingIntervalService>();
 
             _selectedAccount = selectedAccount;
             _viewController = viewController;
@@ -44,8 +47,6 @@ namespace FreedomVoice.iOS.ViewModels
         /// <returns></returns>
         public async Task GetExtensionsListAsync()
         {
-            CurrentTask = async delegate { await GetExtensionsListAsync(); };
-
             IsBusy = true;
 
             var requestResult = await _extensionsService.ExecuteRequest(_selectedAccount.PhoneNumber);
@@ -59,6 +60,23 @@ namespace FreedomVoice.iOS.ViewModels
                 var data = requestResult as ExtensionsWithCountResponse;
                 if (data != null)
                     ExtensionsList = data.ExtensionsWithCount;
+            }
+        }
+
+        /// <summary>
+        /// Performs an asynchronous Extensions With Count request
+        /// </summary>
+        /// <returns></returns>
+        public async Task GetPoolingIntervalAsync()
+        {
+            var requestResult = await _poolingIntervalService.ExecuteRequest();
+            if (requestResult is ErrorResponse)
+                await ProceedErrorResponse(requestResult);
+            else
+            {
+                var data = requestResult as PollingIntervalResponse;
+                if (data != null)
+                    UserDefault.PoolingInterval = data.PollingInterval;
             }
         }
 

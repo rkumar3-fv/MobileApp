@@ -22,17 +22,20 @@ namespace FreedomVoice.iOS.TableViewSources
                 _contactsList = value;
             }
         }
-        public bool IsSearchMode;
+
+        public string SearchText;
+
+        private bool IsSearchMode => !string.IsNullOrEmpty(SearchText);
 
         private string[] _keys;
         public string[] Keys
         {
-            get { return _keys ?? (_keys = Letters.Where(l => ContactsList.Any(p => p.LastName != null && p.LastName.StartsWith(l, StringComparison.OrdinalIgnoreCase))).ToArray()); }
+            get { return _keys ?? (_keys = Letters.Where(l => ContactsList.Any(c => ContactSearchPredicate(c, l))).ToArray()); }
         }
 
         public override nint RowsInSection(UITableView tableview, nint section)
         {
-            return ContactsList.Count(c => c.LastName != null && c.LastName.StartsWith(Keys[section], StringComparison.OrdinalIgnoreCase));
+            return ContactsList.Count(c => ContactSearchPredicate(c, Keys[section]));
         }
 
         public override string[] SectionIndexTitles(UITableView tableView)
@@ -64,9 +67,9 @@ namespace FreedomVoice.iOS.TableViewSources
         {
             var cell = tableView.DequeueReusableCell(ContactCell.ContactCellId) as ContactCell ?? new ContactCell();
 
-            var person = ContactsList.Where(c => c.LastName != null && c.LastName.StartsWith(Keys[indexPath.Section], StringComparison.OrdinalIgnoreCase)).ToList()[indexPath.Row];
-            cell.TextLabel.Text = person.DisplayName;
-            cell.DetailTextLabel.Text = person.Nickname;
+            var person = ContactsList.Where(c => ContactSearchPredicate(c, Keys[indexPath.Section])).ToList()[indexPath.Row];
+            cell.UpdateCell(person, SearchText);
+            cell.LayoutSubviews();
 
             return cell;
         }
@@ -75,6 +78,11 @@ namespace FreedomVoice.iOS.TableViewSources
         {
             OnRowSelected?.Invoke(this, new RowSelectedEventArgs(tableView, indexPath));
         }
+
+        private static bool ContactSearchPredicate(Contact c, string firstLetter)
+        {
+            return c.LastName?.StartsWith(firstLetter, StringComparison.OrdinalIgnoreCase) ?? c.DisplayName != null && c.DisplayName.StartsWith(firstLetter, StringComparison.OrdinalIgnoreCase);
+        } 
 
         public class RowSelectedEventArgs : EventArgs
         {

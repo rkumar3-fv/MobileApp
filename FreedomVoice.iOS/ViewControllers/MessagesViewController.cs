@@ -6,7 +6,6 @@ using FreedomVoice.iOS.TableViewSources;
 using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.Utilities.Events;
 using FreedomVoice.iOS.Utilities.Helpers;
-using FreedomVoice.iOS.ViewModels;
 using UIKit;
 
 namespace FreedomVoice.iOS.ViewControllers
@@ -16,25 +15,39 @@ namespace FreedomVoice.iOS.ViewControllers
         public Account SelectedAccount { private get; set; }
         public ExtensionWithCount SelectedExtension { private get; set; }
         public FolderWithCount SelectedFolder { private get; set; }
+        public List<Message> MessagesList { private get; set; }
 
-        private MessagesViewModel _messagesViewModel;
-        private List<Message> _messagesList;
-
-	    private int MessagesCount => _messagesList.Count;
+	    private int MessagesCount => MessagesList.Count;
 
         private UILabel _noMessagesLabel;
-        private static MainTabBarController MainTabBarInstance => MainTabBarController.Instance;
+	    private UITableView _messagesTableView;
+	    private MessagesSource _messagesSource;
+
+	    //private NSTimer _updateTimer;
+
+        private static MainTabBarController MainTabBarInstance => MainTabBarController.SharedInstance;
 
         public MessagesViewController (IntPtr handle) : base (handle) { }
 
-        public override async void ViewDidLoad()
+        public override void ViewDidLoad()
         {
-            MessagesTableView.TableFooterView = new UIView(CGRect.Empty);
-
             var headerHeight = Theme.StatusBarHeight + NavigationController.NavigationBarHeight();
-            var insets = new UIEdgeInsets(0, 0, headerHeight, 0);
-            MessagesTableView.ContentInset = insets;
-            MessagesTableView.ScrollIndicatorInsets = insets;
+            var insets = new UIEdgeInsets(0, 0, headerHeight + Theme.TabBarHeight, 0);
+
+            _messagesTableView = new UITableView
+            {
+                Frame = Theme.ScreenBounds,
+                TableFooterView = new UIView(CGRect.Empty),
+                ContentInset = insets,
+                ScrollIndicatorInsets = insets
+            };
+
+            _messagesSource = new MessagesSource(MessagesList, SelectedAccount, NavigationController);
+            _messagesSource.OnRowCallbackClick += OnSourceRowCallbackClick;
+            _messagesSource.OnRowViewFaxClick += OnSourceRowViewFaxClick;
+            _messagesTableView.Source = _messagesSource;
+
+            View.Add(_messagesTableView);
 
             var frame = new CGRect(15, 0, Theme.ScreenBounds.Width - 30, 30);
             _noMessagesLabel = new UILabel(frame)
@@ -48,19 +61,6 @@ namespace FreedomVoice.iOS.ViewControllers
             };
 
             View.Add(_noMessagesLabel);
-
-            _messagesViewModel = new MessagesViewModel(SelectedAccount.PhoneNumber, SelectedExtension.ExtensionNumber, SelectedFolder.DisplayName, NavigationController);
-
-            await _messagesViewModel.GetMessagesListAsync(SelectedFolder.MessageCount);
-
-            _messagesList = _messagesViewModel.MessagesList;
-
-            var source = new MessagesSource(_messagesList, SelectedAccount, NavigationController);
-            source.OnRowCallbackClick += OnSourceRowCallbackClick;
-            source.OnRowViewFaxClick += OnSourceRowViewFaxClick;
-            MessagesTableView.Source = source;
-
-            MessagesTableView.ReloadData();
 
             CheckIfTableEmpty(MessagesCount);
 
@@ -98,20 +98,44 @@ namespace FreedomVoice.iOS.ViewControllers
             NavigationItem.SetLeftBarButtonItems(Appearance.GetBarButtonWithArrow((s, args) => NavigationController.PopViewController(true), "x" + SelectedExtension.ExtensionNumber), false);
             NavigationItem.SetRightBarButtonItem(Appearance.GetLogoutBarButton(this), false);
 
+            //_updateTimer = NSTimer.CreateRepeatingScheduledTimer(UserDefault.PoolingInterval, delegate {
+            //    UpdateMessageTable();
+            //});
+
             base.ViewWillAppear(animated);
 	    }
+
+        //public override void ViewWillDisappear(bool animated)
+        //{
+        //    _updateTimer.Invalidate();
+        //}
+
+        //private async void UpdateMessageTable()
+        //{
+        //    var messagesViewModel = new MessagesViewModel(SelectedAccount.PhoneNumber, SelectedExtension.ExtensionNumber, SelectedFolder.DisplayName, NavigationController);
+        //    await messagesViewModel.GetMessagesListAsync(SelectedFolder.MessageCount);
+
+        //    MessagesList = messagesViewModel.MessagesList;
+
+        //    _messagesTableView.BeginUpdates();
+        //    _messagesSource.MessagesList = MessagesList;
+        //    _messagesTableView.InsertRows(new[] { NSIndexPath.FromRowSection(0, 0) }, UITableViewRowAnimation.Top);
+        //    _messagesTableView.EndUpdates();
+
+        //    new UIAlertView(null, "Table updated", null, "Ok").Show();
+        //}
 
         private void CheckIfTableEmpty(int messagesCount)
         {
             if (messagesCount == 0)
             {
                 _noMessagesLabel.Hidden = false;
-                MessagesTableView.SeparatorStyle = UITableViewCellSeparatorStyle.None;
+                _messagesTableView.SeparatorStyle = UITableViewCellSeparatorStyle.None;
             }
             else
             {
                 _noMessagesLabel.Hidden = true;
-                MessagesTableView.SeparatorStyle = UITableViewCellSeparatorStyle.SingleLine;
+                _messagesTableView.SeparatorStyle = UITableViewCellSeparatorStyle.SingleLine;
             }
         }
     }

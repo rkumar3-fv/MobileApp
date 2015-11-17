@@ -14,7 +14,7 @@ namespace FreedomVoice.iOS.Services.Implementations
             if (errorResponse != null)
                 return errorResponse;
 
-            return new MessageOperationsResponse();
+            return new EmptyResponse();
         }
 
         public async Task<BaseResponse> ExecuteDeleteRequest(string systemNumber, int mailboxNumber, List<string> messageIds)
@@ -24,7 +24,7 @@ namespace FreedomVoice.iOS.Services.Implementations
             if (errorResponse != null)
                 return errorResponse;
 
-            return new MessageOperationsResponse();
+            return new EmptyResponse();
         }
     }
 }

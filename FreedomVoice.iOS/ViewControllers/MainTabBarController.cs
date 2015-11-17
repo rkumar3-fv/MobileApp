@@ -11,24 +11,25 @@ namespace FreedomVoice.iOS.ViewControllers
 	{
         public Account SelectedAccount { get; set; }
         public List<PresentationNumber> PresentationNumbers { private get; set; }
-	    public List<ExtensionWithCount> ExtensionsList { private get; set; }
+	    public List<ExtensionWithCount> ExtensionsList { get; set; }
 
 	    public bool IsRootController => NavigationController.ViewControllers.Length == 1;
 
-        UIViewController _recentsTab, _contactsTab, _keypadTab, _messagesTab;
+	    readonly UIViewController _recentsTab;
+	    readonly UIViewController _contactsTab;
+	    readonly UIViewController _keypadTab;
+	    readonly UIViewController _messagesTab;
 
-        public List<Recent> Recents { get; private set; }
+	    public List<Recent> Recents { get; private set; }
 
-	    public static MainTabBarController Instance;
+	    public static MainTabBarController SharedInstance;
 
         public MainTabBarController(IntPtr handle) : base(handle)
         {
-            Recents = new List<Recent>();
-            Instance = this;
-        }
+            SharedInstance = this;
 
-	    public override void ViewDidLoad()
-	    {
+            Recents = new List<Recent>();
+
             var recentsViewController = AppDelegate.GetViewController<RecentsViewController>();
             _recentsTab = GetTabBarItem(recentsViewController, "Recents");
 
@@ -38,15 +39,15 @@ namespace FreedomVoice.iOS.ViewControllers
             var keypadViewController = AppDelegate.GetViewController<KeypadViewController>();
             _keypadTab = GetTabBarItem(keypadViewController, "Keypad");
 
-	        var extensionsViewController = AppDelegate.GetViewController<ExtensionsViewController>();
-	        extensionsViewController.SelectedAccount = SelectedAccount;
-	        extensionsViewController.ExtensionsList = ExtensionsList;
+            var extensionsViewController = AppDelegate.GetViewController<ExtensionsViewController>();
             _messagesTab = GetTabBarItem(extensionsViewController, "Messages");
 
-	        ViewControllers = new[] { _recentsTab, _contactsTab, _keypadTab, _messagesTab };
+            ViewControllers = new[] { _recentsTab, _contactsTab, _keypadTab, _messagesTab };
+        }
 
-            SelectedIndex = 2;  
-
+	    public override void ViewDidLoad()
+	    {
+            SelectedIndex = 2;
             CallerIdEvent.CallerIdChanged += PresentationNumberChanged;
 
             base.ViewDidLoad();
@@ -55,6 +56,7 @@ namespace FreedomVoice.iOS.ViewControllers
 	    public override void ViewWillAppear(bool animated)
 	    {
             NavigationController.NavigationBarHidden = true;
+
             base.ViewWillAppear(animated);
         }
 

@@ -27,32 +27,59 @@ namespace FreedomVoice.iOS.ViewControllers
         private List<Contact> _contactList;
 
         private CallerIdView CallerIdView { get; set; }
+        private UITableView _recentsTableView;
 
-        private static MainTabBarController MainTabBarInstance => MainTabBarController.Instance;
+        private UILabel _noItemsLabel;
+
+        private static MainTabBarController MainTabBarInstance => MainTabBarController.SharedInstance;
+
+        private static int RecentsCount => MainTabBarInstance.Recents.Count;
 
         public RecentsViewController(IntPtr handle) : base(handle) { }
 
         public override async void ViewDidLoad()
         {
-            RecentsTableView.TableFooterView = new UIView(CGRect.Empty);
-
-            CallerIdView = new CallerIdView(new RectangleF(0, 0, (float)View.Frame.Width, 40), MainTabBarInstance.GetPresentationNumbers());
-
-            var recentLineView = new RecentLineView(new RectangleF(0, (float)(CallerIdView.Frame.Y + CallerIdView.Frame.Height), (float)View.Frame.Width, 0.5f));
-            View.AddSubviews(CallerIdView, recentLineView);
-
-            RecentsTableView.TableHeaderView = CallerIdView;
+            CallerIdView = new CallerIdView(new RectangleF(0, 0, (float)Theme.ScreenBounds.Width, 40), MainTabBarInstance.GetPresentationNumbers());
+            View.AddSubview(CallerIdView);
 
             _recentSource = new RecentsSource(GetRecentsOrdered());
-            RecentsTableView.Source = _recentSource;
+
+            var insets = new UIEdgeInsets(0, 0, Theme.StatusBarHeight + NavigationController.NavigationBarHeight(), 0);
+
+            _recentsTableView = new UITableView
+            {
+                Frame = new CGRect(0, CallerIdView.Frame.Height, Theme.ScreenBounds.Width, Theme.ScreenBounds.Height - Theme.TabBarHeight - CallerIdView.Frame.Height),
+                TableFooterView = new UIView(CGRect.Empty),
+                Source = _recentSource,
+                ContentInset = insets,
+                ScrollIndicatorInsets = insets
+            };
+            View.Add(_recentsTableView);
 
             _recentSource.OnRowSelected += TableSourceOnRowSelected;
             _recentSource.OnRowDeleted += TableSourceOnRowDeleted;
 
-            if (UIDevice.CurrentDevice.CheckSystemVersion(9, 0))
+            if (AppDelegate.SystemVersion == 9)
                 _recentSource.OnRecentInfoClicked += TableSourceOnRecentInfoClicked;
             else
                 _recentSource.OnRecentInfoClicked += DeprecatedTableSourceOnRecentInfoClicked;
+
+            var recentLineView = new LineView(new RectangleF(0, (float)(CallerIdView.Frame.Y + CallerIdView.Frame.Height), (float)Theme.ScreenBounds.Width, 0.5f));
+            View.AddSubviews(recentLineView);
+
+            var frame = new CGRect(15, 0, Theme.ScreenBounds.Width - 30, 30);
+            _noItemsLabel = new UILabel(frame)
+            {
+                Text = "No Items",
+                Font = UIFont.SystemFontOfSize(28),
+                TextColor = Theme.GrayColor,
+                TextAlignment = UITextAlignment.Center,
+                Center = new CGPoint(View.Center.X, _recentsTableView.Center.Y - Theme.TabBarHeight),
+                Hidden = true
+            };
+            View.Add(_noItemsLabel);
+
+            CheckResult(RecentsCount);
 
             _contactList = await AppDelegate.GetContactsListAsync();
 
@@ -131,14 +158,16 @@ namespace FreedomVoice.iOS.ViewControllers
             MainTabBarInstance.Recents.Add(recent);
         }
 
-        private static void ClearRecent()
+        private void ClearRecent()
         {
             MainTabBarInstance.Recents.Clear();
+            CheckResult(RecentsCount);
         }
 
-        private static void RemoveRecent(Recent recent)
+        private void RemoveRecent(Recent recent)
         {
             MainTabBarInstance.Recents.Remove(recent);
+            CheckResult(RecentsCount);
         }
 
         public override void ViewWillAppear(bool animated)
@@ -148,7 +177,9 @@ namespace FreedomVoice.iOS.ViewControllers
             NavigationItem.SetRightBarButtonItem(Appearance.GetLogoutBarButton(this), false);
 
             _recentSource.SetRecents(GetRecentsUpdatedAndOrdered());
-            RecentsTableView.ReloadData();
+            _recentsTableView.ReloadData();
+
+            CheckResult(RecentsCount);
 
             PresentationNumber selectedNumber = MainTabBarInstance.GetSelectedPresentationNumber();
             if (selectedNumber != null)
@@ -159,15 +190,15 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private void SetEditMode()
         {
-            RecentsTableView.SetEditing(true, true);
+            _recentsTableView.SetEditing(true, true);
 
-            NavigationItem.SetRightBarButtonItem(Appearance.GetPlainBarButton("Done", (s, args) => { RecentsTableView.ReloadData(); ReturnToRecentsView(); }), true);
+            NavigationItem.SetRightBarButtonItem(Appearance.GetPlainBarButton("Done", (s, args) => { _recentsTableView.ReloadData(); ReturnToRecentsView(); }), true);
             NavigationItem.SetLeftBarButtonItem(Appearance.GetPlainBarButton("Clear", (s, args) => { ClearAll(); }), true);
         }
 
         private void ReturnToRecentsView()
         {
-            RecentsTableView.SetEditing(false, true);
+            _recentsTableView.SetEditing(false, true);
 
             NavigationItem.SetLeftBarButtonItem(GetEditButton(), true);
             NavigationItem.SetRightBarButtonItem(Appearance.GetLogoutBarButton(this), false);
@@ -185,8 +216,8 @@ namespace FreedomVoice.iOS.ViewControllers
             {
                 ReturnToRecentsView();
                 ClearRecent();
-                _recentSource.SetRecents(GetRecentsOrdered());
-                RecentsTableView.ReloadData();
+                _recentSource.SetRecents(new List<Recent>());
+                _recentsTableView.ReloadData();
             }));
             alertController.AddAction(UIAlertAction.Create("Cancel", UIAlertActionStyle.Cancel, a => { ReturnToRecentsView(); }));
 
@@ -200,20 +231,19 @@ namespace FreedomVoice.iOS.ViewControllers
             var recent = GetRecentsOrdered()[e.IndexPath.Row];
             if (recent == null) return;
 
-            RecentsTableView.BeginUpdates();
-
             var newRecent = (Recent)recent.Clone();
             newRecent.DialDate = DateTime.Now;
             AddRecent(newRecent);
 
+            var selectedCallerId = MainTabBarInstance.GetSelectedPresentationNumber().PhoneNumber;
+            PhoneCall.CreateCallReservation(MainTabBarInstance.SelectedAccount.PhoneNumber, selectedCallerId, newRecent.PhoneNumber, NavigationController);
+
+            _recentsTableView.BeginUpdates();
+
             _recentSource.SetRecents(GetRecentsOrdered());
             e.TableView.InsertRows(new[] { NSIndexPath.FromRowSection(e.TableView.NumberOfRowsInSection(0), 0) }, UITableViewRowAnimation.Fade);
 
-            RecentsTableView.EndUpdates();
-            RecentsTableView.ReloadRows(e.TableView.IndexPathsForVisibleRows, UITableViewRowAnimation.None);
-
-            var selectedCallerId = MainTabBarInstance.GetSelectedPresentationNumber().PhoneNumber;
-            PhoneCall.CreateCallReservation(MainTabBarInstance.SelectedAccount.PhoneNumber, selectedCallerId, newRecent.PhoneNumber, NavigationController);
+            _recentsTableView.EndUpdates();
         }
 
         private void TableSourceOnRowDeleted(object sender, RecentsSource.RowSelectedEventArgs e)
@@ -223,14 +253,28 @@ namespace FreedomVoice.iOS.ViewControllers
             var recent = GetRecentsOrdered()[e.IndexPath.Row];
             if (recent == null) return;
 
-            RecentsTableView.BeginUpdates();
+            _recentsTableView.BeginUpdates();
 
             RemoveRecent(recent);
 
             _recentSource.SetRecents(GetRecentsOrdered());
 
-            RecentsTableView.DeleteRows(new[] { e.IndexPath }, UITableViewRowAnimation.Fade);
-            RecentsTableView.EndUpdates();
+            _recentsTableView.DeleteRows(new[] { e.IndexPath }, UITableViewRowAnimation.Fade);
+            _recentsTableView.EndUpdates();
+        }
+
+        private void CheckResult(int contactsCount)
+        {
+            if (contactsCount == 0)
+            {
+                _noItemsLabel.Hidden = false;
+                _recentsTableView.SeparatorStyle = UITableViewCellSeparatorStyle.None;
+            }
+            else
+            {
+                _noItemsLabel.Hidden = true;
+                _recentsTableView.SeparatorStyle = UITableViewCellSeparatorStyle.SingleLine;
+            }
         }
     }
 }

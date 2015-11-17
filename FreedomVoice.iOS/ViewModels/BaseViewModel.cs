@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using FreedomVoice.iOS.Services;
 using FreedomVoice.iOS.Services.Responses;
 using FreedomVoice.iOS.Utilities;
-using FreedomVoice.iOS.Utilities.Helpers;
+using FreedomVoice.iOS.Utilities.Events;
 using UIKit;
 
 namespace FreedomVoice.iOS.ViewModels
@@ -18,29 +17,9 @@ namespace FreedomVoice.iOS.ViewModels
         /// </summary>
         public event EventHandler IsBusyChanged;
 
-        protected Action<Task> CurrentTask;
-
         protected BaseViewModel()
         {
             ProgressControl = ProgressControlType.ActivityIndicator;
-
-            //Make sure validation is performed on startup
-            //Validate();
-        }
-
-        private async Task ProceedAutoLogin()
-        {
-            string password = null;
-
-            var userName = KeyChain.GetUsername();
-            if (userName != null)
-                password = KeyChain.GetPasswordForUsername(userName);
-
-            if (string.IsNullOrEmpty(userName) || string.IsNullOrEmpty(password)) return;
-
-            var loginViewModel = new LoginViewModel(userName, password, ViewController);
-            
-            await loginViewModel.AutoLoginAsync().ContinueWith(CurrentTask);
         }
 
         /// <summary>
@@ -85,7 +64,7 @@ namespace FreedomVoice.iOS.ViewModels
         /// <summary>
         /// Value inidicating if a spinner should be shown
         /// </summary>
-        protected bool IsBusy
+        public bool IsBusy
         {
             get { return _isBusy; }
             set
@@ -143,7 +122,7 @@ namespace FreedomVoice.iOS.ViewModels
                     if (OnUnauthorizedResponse != null)
                         OnUnauthorizedResponse.Invoke(null, EventArgs.Empty);
                     else
-                        await ProceedAutoLogin();
+                        await AppDelegate.ProceedAutoLogin(ViewController);
                     return;
                 case ErrorResponse.ErrorBadRequest:
                     OnBadRequestResponse?.Invoke(null, EventArgs.Empty);
@@ -195,7 +174,7 @@ namespace FreedomVoice.iOS.ViewModels
             else
             {
                 _activityIndicator?.StopAnimating();
-                _loadingOverlay.Hide();
+                _loadingOverlay?.Hide();
             }
         }
 

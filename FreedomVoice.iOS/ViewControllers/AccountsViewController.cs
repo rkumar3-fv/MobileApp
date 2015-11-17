@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.TableViewSources;
+using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.Utilities.Helpers;
+using UIKit;
 
 namespace FreedomVoice.iOS.ViewControllers
 {
@@ -14,9 +16,14 @@ namespace FreedomVoice.iOS.ViewControllers
 
         public override void ViewDidLoad()
         {
-            AccountsTableView.TableFooterView = new UIKit.UIView(CoreGraphics.CGRect.Empty);
+            var accountsTableView = new UITableView
+            {
+                Frame = Theme.ScreenBounds,
+                TableFooterView = new UIView(CoreGraphics.CGRect.Empty),
+                Source = new AccountSource(AccountsList, NavigationController)
+            };
 
-            AccountsTableView.Source = new AccountSource(AccountsList, NavigationController);
+            View.Add(accountsTableView);
 
             base.ViewDidLoad();
         }

@@ -14,7 +14,7 @@ namespace FreedomVoice.iOS.TableViewSources
 {
     public class MessagesSource : UITableViewSource
     {
-        private readonly List<Message> _messages;
+        private readonly List<Message> _messagesList;
 
         private readonly Account _selectedAccount;
 
@@ -27,7 +27,7 @@ namespace FreedomVoice.iOS.TableViewSources
 
         public MessagesSource(List<Message> messages, Account selectedAccount, UINavigationController navigationController)
         {
-            _messages = messages;
+            _messagesList = messages;
             _selectedAccount = selectedAccount;
 
             _navigationController = navigationController;
@@ -35,13 +35,18 @@ namespace FreedomVoice.iOS.TableViewSources
 
         public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
         {
-            var selectedMessage = _messages[indexPath.Row];
+            var selectedMessage = _messagesList[indexPath.Row];
 
             if (indexPath.Row == _selectedRowIndexPath?.Row)
             {
                 _expandedCell = tableView.DequeueReusableCell(ExpandedCell.ExpandedCellId) as ExpandedCell ?? new ExpandedCell(selectedMessage, _navigationController);
 
-                _expandedCell.UpdateCell(selectedMessage, _selectedAccount.PhoneNumber);
+                var activePlayer = selectedMessage.Type != MessageType.Fax &&
+                                   selectedMessage.Id == AppDelegate.ActivePlayerMessageId
+                    ? AppDelegate.ActivePlayerView
+                    : null;
+
+                _expandedCell.UpdateCell(selectedMessage, _selectedAccount.PhoneNumber, activePlayer);
                 ProceedEventsSubscription(tableView, _selectedRowIndexPath);
 
                 return _expandedCell;
@@ -59,16 +64,23 @@ namespace FreedomVoice.iOS.TableViewSources
                 return;
 
             _expandedCell.OnCallbackClick -= OnCallbackClick(indexPath);
-            _expandedCell.OnViewFaxClick -= OnViewFaxClick();
+            _expandedCell.OnViewFaxClick -= OnViewFaxClick(indexPath);
+            _expandedCell.OnPlayClick -= OnPlayClick(indexPath);
             _expandedCell.DeleteButton.TouchDown -= OnDeleteMessageClick(tableView);
             _expandedCell.OnCallbackClick += OnCallbackClick(indexPath);
-            _expandedCell.OnViewFaxClick += OnViewFaxClick();
+            _expandedCell.OnViewFaxClick += OnViewFaxClick(indexPath);
+            _expandedCell.OnPlayClick += OnPlayClick(indexPath);
             _expandedCell.DeleteButton.TouchDown += OnDeleteMessageClick(tableView);
         }
 
-        private EventHandler<ExpandedCellButtonClickEventArgs> OnViewFaxClick()
+        private EventHandler<ExpandedCellButtonClickEventArgs> OnViewFaxClick(NSIndexPath indexPath)
         {
-            return (sender, args) => RowViewFaxClick(args.FilePath);
+            return (sender, args) => RowViewFaxClick(indexPath, args.FilePath);
+        }
+
+        private EventHandler<ExpandedCellButtonClickEventArgs> OnPlayClick(NSIndexPath indexPath)
+        {
+            return (sender, args) => RowPlayClick(indexPath);
         }
 
         private EventHandler<ExpandedCellButtonClickEventArgs> OnCallbackClick(NSIndexPath indexPath)
@@ -92,7 +104,7 @@ namespace FreedomVoice.iOS.TableViewSources
 
         public override nint RowsInSection(UITableView tableview, nint section)
         {
-            return _messages?.Count ?? 0;
+            return _messagesList?.Count ?? 0;
         }
 
         public override void RowSelected(UITableView tableView, NSIndexPath indexPath)
@@ -100,10 +112,9 @@ namespace FreedomVoice.iOS.TableViewSources
             if (Equals(_selectedRowIndexPath, indexPath))
                 return;
 
-            _deletedRowIndexPath = indexPath;
-
             var previousSelectedPath = _selectedRowIndexPath;
             _selectedRowIndexPath = indexPath;
+            _deletedRowIndexPath = indexPath;
 
             var indexes = new List<NSIndexPath>();
             if (previousSelectedPath != null && tableView.CellAt(previousSelectedPath) != null && !Equals(previousSelectedPath, indexPath))
@@ -117,31 +128,37 @@ namespace FreedomVoice.iOS.TableViewSources
 
         public override nfloat GetHeightForRow(UITableView tableView, NSIndexPath indexPath)
         {
-            return indexPath.Row == _selectedRowIndexPath?.Row ? (_messages[indexPath.Row].Type == MessageType.Fax ? 100 : 138) : 48;
+            return indexPath.Row == _selectedRowIndexPath?.Row ? (_messagesList[indexPath.Row].Type == MessageType.Fax ? 100 : 138) : 48;
         }
 
         public event EventHandler<ExpandedCellButtonClickEventArgs> OnRowCallbackClick;
         public event EventHandler<ExpandedCellButtonClickEventArgs> OnRowViewFaxClick;
 
-        private void RowViewFaxClick(string filePath)
+        private void RowPlayClick(NSIndexPath indexPath)
         {
+            _messagesList[indexPath.Row].Unread = false;
+        }
+
+        private void RowViewFaxClick(NSIndexPath indexPath, string filePath)
+        {
+            _messagesList[indexPath.Row].Unread = false;
             OnRowViewFaxClick?.Invoke(this, new ExpandedCellButtonClickEventArgs(filePath));
         }
 
         private void RowCallbackClick(NSIndexPath indexPath)
         {
-            OnRowCallbackClick?.Invoke(this, new ExpandedCellButtonClickEventArgs(_messages[indexPath.Row]));
+            OnRowCallbackClick?.Invoke(this, new ExpandedCellButtonClickEventArgs(_messagesList[indexPath.Row]));
         }
 
         private async void DeleteMessageClick(UITableView tableView, NSIndexPath indexPath)
         {
             if (PhoneCapability.NetworkIsUnreachable)
             {
-                Appearance.ShowNetworkUnreachableAlert(_navigationController);
+                Appearance.ShowOkAlertWithMessage(_navigationController, Appearance.AlertMessageType.NetworkUnreachable);
                 return;
             }
 
-            var selectedMessage = _messages[indexPath.Row];
+            var selectedMessage = _messagesList[indexPath.Row];
 
             if (tableView.CellAt(indexPath) is ExpandedCell)
             {
@@ -162,7 +179,7 @@ namespace FreedomVoice.iOS.TableViewSources
                 await model.MoveMessageToTrashAsync();
 
             tableView.BeginUpdates();
-            _messages.RemoveAt(indexPath.Row);
+            _messagesList.RemoveAt(indexPath.Row);
             tableView.DeleteRows(new[] { indexPath }, UITableViewRowAnimation.Fade);
             tableView.EndUpdates();
         }

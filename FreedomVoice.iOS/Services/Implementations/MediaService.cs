@@ -13,10 +13,9 @@ namespace FreedomVoice.iOS.Services.Implementations
     {
         public async Task<BaseResponse> ExecuteRequest(IProgress<DownloadBytesProgress> progressReporter, string systemNumber, int mailboxNumber, string folderName, string messageId, MediaType mediaType, CancellationToken token)
         {
-            var tmpFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "..", "tmp");
             var fileName = string.Concat(DateTime.Now.ToString("MMddyyyy_"), messageId, ".", mediaType);
 
-            var filePath = Path.Combine(tmpFolderPath, fileName);
+            var filePath = Path.Combine(AppDelegate.TempFolderPath, fileName);
 
             if (File.Exists(filePath))
                 return new GetMediaResponse(filePath);

@@ -43,6 +43,9 @@ namespace FreedomVoice.iOS.ViewModels
         {
             _service = ServiceContainer.Resolve<ILoginService>();
 
+            //TODO: Remove after functional implementation
+            _viewController = viewController;
+
             Username = userName;
             Password = password;
         }
@@ -101,6 +104,11 @@ namespace FreedomVoice.iOS.ViewModels
         /// <returns></returns>
         public async Task AutoLoginAsync()
         {
+            //TODO: Remove after functional implementation
+            //var alertController = UIAlertController.Create(null, "Auto Login process was executed.", UIAlertControllerStyle.Alert);
+            //alertController.AddAction(UIAlertAction.Create("Ok", UIAlertActionStyle.Cancel, null));
+            //_viewController.PresentViewController(alertController, true, null);
+
             var requestResult = await _service.ExecuteRequest(Username, Password);
             if (requestResult is ErrorResponse)
                 await ProceedErrorResponse(requestResult);

@@ -39,8 +39,6 @@ namespace FreedomVoice.iOS.ViewModels
         /// <returns></returns>
         public async Task MoveMessageToTrashAsync()
         {
-            CurrentTask = async delegate { await MoveMessageToTrashAsync(); };
-
             IsBusy = true;
 
             var requestResult = await _service.ExecuteMoveRequest(_systemPhoneNumber, _mailboxNumber, DestinationFolder, new List<string> { _messageId });
@@ -56,8 +54,6 @@ namespace FreedomVoice.iOS.ViewModels
         /// <returns></returns>
         public async Task DeleteMessageAsync()
         {
-            CurrentTask = async delegate { await DeleteMessageAsync(); };
-
             IsBusy = true;
 
             var requestResult = await _service.ExecuteDeleteRequest(_systemPhoneNumber, _mailboxNumber, new List<string> { _messageId });

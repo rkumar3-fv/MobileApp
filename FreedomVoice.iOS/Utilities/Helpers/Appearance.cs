@@ -13,7 +13,7 @@ namespace FreedomVoice.iOS.Utilities.Helpers
             return new UIBarButtonItem(title, UIBarButtonItemStyle.Plain, handler);
         }
 
-        public static UIBarButtonItem[] GetBarButtonWithArrow(EventHandler handler, string title, bool isWideLabel = false)
+        public static UIBarButtonItem[] GetBarButtonWithArrow(EventHandler handler, string title, bool wideLabel = false)
         {
             var negativeSpacer = new UIBarButtonItem(UIBarButtonSystemItem.FixedSpace) { Width = -8 };
 
@@ -21,7 +21,7 @@ namespace FreedomVoice.iOS.Utilities.Helpers
             var highlightedButtonImage = UIImage.FromFile("back_transparent.png");
             var button = new UIButton(UIButtonType.Custom)
             {
-                Frame = new CGRect(0, 0, isWideLabel ? 105 : 93, 33),
+                Frame = new CGRect(0, 0, Theme.BackButtonWidth(wideLabel), 33),
                 HorizontalAlignment = UIControlContentHorizontalAlignment.Left,
                 TitleEdgeInsets = new UIEdgeInsets(0, 5, 0, 0)
             };
@@ -44,17 +44,34 @@ namespace FreedomVoice.iOS.Utilities.Helpers
             });
         }
 
-        public static void ShowNetworkUnreachableAlert(UIViewController controller)
+        public static void ShowOkAlertWithMessage(UIViewController viewController, AlertMessageType alertMessageType)
         {
-            //TODO: Change alert text to something more informative
-            var alertController = UIAlertController.Create(null, "No Internet Connection.", UIAlertControllerStyle.Alert);
+            var alertMessageText = string.Empty;
+
+            switch (alertMessageType)
+            {
+                case AlertMessageType.CallsUnsuported:
+                    alertMessageText = "Your device does not appear to support making cellular voice calls";
+                    break;
+                case AlertMessageType.NetworkUnreachable:
+                    alertMessageText = "No Internet Connection";
+                    break;
+                case AlertMessageType.NoSimCardInstalled:
+                    alertMessageText = "No SIM Card Installed";
+                    break;
+                case AlertMessageType.EmptyFileDownload:
+                    alertMessageText = "Error loading file";
+                    break;
+            }
+
+            var alertController = UIAlertController.Create(null, alertMessageText, UIAlertControllerStyle.Alert);
             alertController.AddAction(UIAlertAction.Create("Ok", UIAlertActionStyle.Cancel, null));
-            controller.PresentViewController(alertController, true, null);
+            viewController.PresentViewController(alertController, true, null);
         }
 
         public static UIImageView GetMessageImageView(int cellHeight)
         {
-            return new UIImageView(new CGRect(15, (cellHeight - 25) / 2, 25, 25));
+            return new UIImageView(new CGRect(15, (cellHeight - 25)/2, 25, 25));
         }
 
         public static UIImage GetMessageImage(MessageType messageType, bool unread, bool active)
@@ -92,6 +109,14 @@ namespace FreedomVoice.iOS.Utilities.Helpers
         public static string GetFormattedMessageLength(int length, bool faxMessageType)
         {
             return faxMessageType ? DataFormatUtils.PagesToFormattedString(length) : DataFormatUtils.ToDuration(length);
+        }
+
+        public enum AlertMessageType
+        {
+            NetworkUnreachable,
+            CallsUnsuported,
+            NoSimCardInstalled,
+            EmptyFileDownload
         }
     }
 }

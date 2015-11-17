@@ -50,11 +50,9 @@ namespace FreedomVoice.iOS.ViewModels
         /// <returns></returns>
         public async Task GetMediaAsync()
         {
-            CurrentTask = async delegate { await GetMediaAsync(); };
-
             if (PhoneCapability.NetworkIsUnreachable)
             {
-                Appearance.ShowNetworkUnreachableAlert(_viewController);
+                Appearance.ShowOkAlertWithMessage(_viewController, Appearance.AlertMessageType.NetworkUnreachable);
                 return;
             }
 

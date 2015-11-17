@@ -15,7 +15,13 @@ namespace FreedomVoice.iOS.Utilities
 
             if (PhoneCapability.NetworkIsUnreachable)
             {
-                Appearance.ShowNetworkUnreachableAlert(viewController);
+                Appearance.ShowOkAlertWithMessage(viewController, Appearance.AlertMessageType.NetworkUnreachable);
+                return;
+            }
+
+            if (!PhoneCapability.IsSimCardInstalled())
+            {
+                Appearance.ShowOkAlertWithMessage(viewController, Appearance.AlertMessageType.NoSimCardInstalled);
                 return;
             }
 
@@ -46,15 +52,14 @@ namespace FreedomVoice.iOS.Utilities
 
             var phoneNumber = NSUrl.FromString($"tel:{switchboardNumber}");
             if (!UIApplication.SharedApplication.OpenUrl(phoneNumber))
-            {
-                var alertController = UIAlertController.Create(null, "Your device does not appear to support making cellular voice calls.", UIAlertControllerStyle.Alert);
-                alertController.AddAction(UIAlertAction.Create("Ok", UIAlertActionStyle.Cancel, null));
-                viewController.PresentViewController(alertController, true, null);
-            }
+                Appearance.ShowOkAlertWithMessage(viewController, Appearance.AlertMessageType.CallsUnsuported);
         }
 
         private static string FormatPhoneNumber(string unformattedPhoneNumber)
         {
+            if (string.IsNullOrEmpty(unformattedPhoneNumber))
+                return string.Empty;
+
             var phoneNumber = Regex.Replace(unformattedPhoneNumber.Replace(" ", ""), @"(?<!^)\+|[^\d+]+", "");
 
             if (phoneNumber.Length == 11 && phoneNumber.StartsWith("1"))

@@ -42,8 +42,6 @@ namespace FreedomVoice.iOS.ViewModels
         /// <returns></returns>
         public async Task CreateCallReservationAsync()
         {
-            CurrentTask = async delegate { await CreateCallReservationAsync(); };
-
             IsBusy = true;
 
             var requestResult = await _service.ExecuteRequest(_systemNumber, _callerIdNumber, _presentationNumber, _destinationNumber);

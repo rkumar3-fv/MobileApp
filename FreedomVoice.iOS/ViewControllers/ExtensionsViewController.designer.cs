@@ -14,16 +14,8 @@ namespace FreedomVoice.iOS.ViewControllers
 	[Register ("ExtensionsViewController")]
 	partial class ExtensionsViewController
 	{
-		[Outlet]
-		[GeneratedCode ("iOS Designer", "1.0")]
-		UITableView ExtensionsTableView { get; set; }
-
 		void ReleaseDesignerOutlets ()
 		{
-			if (ExtensionsTableView != null) {
-				ExtensionsTableView.Dispose ();
-				ExtensionsTableView = null;
-			}
 		}
 	}
 }

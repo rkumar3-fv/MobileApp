@@ -14,16 +14,8 @@ namespace FreedomVoice.iOS.ViewControllers
 	[Register ("RecentsViewController")]
 	partial class RecentsViewController
 	{
-		[Outlet]
-		[GeneratedCode ("iOS Designer", "1.0")]
-		UITableView RecentsTableView { get; set; }
-
 		void ReleaseDesignerOutlets ()
 		{
-			if (RecentsTableView != null) {
-				RecentsTableView.Dispose ();
-				RecentsTableView = null;
-			}
 		}
 	}
 }

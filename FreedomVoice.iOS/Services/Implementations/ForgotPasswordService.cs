@@ -13,7 +13,7 @@ namespace FreedomVoice.iOS.Services.Implementations
             if (errorResponse != null)
                 return errorResponse;
 
-            return new ForgotPasswordResponse();
+            return new EmptyResponse();
         }
     }
 }

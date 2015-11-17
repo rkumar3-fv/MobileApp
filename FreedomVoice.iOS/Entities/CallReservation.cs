@@ -4,11 +4,11 @@ namespace FreedomVoice.iOS.Entities
 {
     public class CallReservation
     {
+        public string SwitchboardNumber { get; private set; }
+
         public CallReservation(CreateCallReservationSetting callReservationSetting)
         {
             SwitchboardNumber = callReservationSetting.SwitchboardPhoneNumber;
         }
-
-        public string SwitchboardNumber { get; set; }
     }
 }

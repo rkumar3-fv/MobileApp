@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using CoreGraphics;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.TableViewSources;
@@ -13,36 +14,50 @@ namespace FreedomVoice.iOS.ViewControllers
     {
 		public Account SelectedAccount { private get; set; }
         public ExtensionWithCount SelectedExtension { private get; set; }
+	    public List<FolderWithCount> FoldersList { private get; set; }
 
-        private FoldersViewModel _foldersViewModel;
+	    private UITableView _foldersTableView;
+	    private FoldersSource _foldersSource;
+
+        private bool _justLoaded;
 
         public FoldersViewController(IntPtr handle) : base(handle) { }
 
-        public override async void ViewDidLoad()
+        public override void ViewDidLoad()
         {
-            FoldersTableView.TableFooterView = new UIView(CGRect.Empty);
+            _justLoaded = true;
+            var insets = new UIEdgeInsets(0, 0, Theme.StatusBarHeight + NavigationController.NavigationBarHeight() + Theme.TabBarHeight, 0);
 
-            var insets = new UIEdgeInsets(0, 0, Theme.StatusBarHeight + NavigationController.NavigationBarHeight(), 0);
-            FoldersTableView.ContentInset = insets;
-            FoldersTableView.ScrollIndicatorInsets = insets;
-
-            _foldersViewModel = new FoldersViewModel(SelectedAccount.PhoneNumber, SelectedExtension.ExtensionNumber, NavigationController);
-
-            await _foldersViewModel.GetFoldersListAsync();
-
-            FoldersTableView.Source = new FoldersSource(_foldersViewModel.FoldersList, SelectedExtension, SelectedAccount, NavigationController);
-            FoldersTableView.ReloadData();
-
-            View.AddSubview(FoldersTableView);
+            _foldersSource = new FoldersSource(FoldersList, SelectedExtension, SelectedAccount, NavigationController);
+            _foldersTableView = new UITableView
+            {
+                Frame = Theme.ScreenBounds,
+                TableFooterView = new UIView(CGRect.Empty),
+                Source = _foldersSource,
+                ContentInset = insets,
+                ScrollIndicatorInsets = insets
+            };
+            View.Add(_foldersTableView);
 
             base.ViewDidLoad();
         }
 
-	    public override void ViewWillAppear(bool animated)
+	    public override async void ViewWillAppear(bool animated)
 	    {
             NavigationItem.Title = "x" + SelectedExtension.ExtensionNumber;
             NavigationItem.SetLeftBarButtonItems(Appearance.GetBarButtonWithArrow((s, args) => NavigationController.PopViewController(true), "Extensions", true), false);
             NavigationItem.SetRightBarButtonItem(Appearance.GetLogoutBarButton(this), false);
+
+	        if (!_justLoaded)
+	        {
+	            var foldersViewModel = new FoldersViewModel(SelectedAccount.PhoneNumber, SelectedExtension.ExtensionNumber, NavigationController);
+	            await foldersViewModel.GetFoldersListAsync();
+
+	            FoldersList = foldersViewModel.FoldersList;
+	            _foldersSource.Folders = FoldersList;
+                _foldersTableView.ReloadData();
+	        }
+	        _justLoaded = false;
 
             base.ViewWillAppear(animated);
 	    }

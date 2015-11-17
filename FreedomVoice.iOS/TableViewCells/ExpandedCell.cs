@@ -37,16 +37,26 @@ namespace FreedomVoice.iOS.TableViewCells
 
         #endregion
 
-        private readonly UINavigationController _navigationController;
+        #region Public Properties
+
+        public static readonly NSString ExpandedCellId = new NSString("ExpandedCell");
+
+        public int Duration => _message.Length;
+
+        #endregion
+
+        #region Private Properties
 
         private Message _message;
+
+        private readonly UINavigationController _navigationController;
+
         private string _systemPhoneNumber;
 
         private bool IsFaxMessageType => _message?.Type == MessageType.Fax;
 
-        public int Duration => _message.Length;
+        #endregion
 
-        public static readonly NSString ExpandedCellId = new NSString("ExpandedCell");
         public ExpandedCell(Message cellMessage, UINavigationController navigationController) : base (UITableViewCellStyle.Default, ExpandedCellId)
         {
             _message = cellMessage;
@@ -69,13 +79,13 @@ namespace FreedomVoice.iOS.TableViewCells
         {
             var gradientLayer = new CAGradientLayer
             {
-                Frame = new CGRect(Bounds.X, Bounds.Y, Bounds.Width, isFaxMessageType ? 100 : 138),
+                Frame = new CGRect(Bounds.X, Bounds.Y, Theme.ScreenBounds.Width, isFaxMessageType ? 100 : 138),
                 Colors = new[] { UIColor.FromRGB(51, 71, 98).CGColor, UIColor.FromRGB(98, 120, 149).CGColor }
             };
             Layer.InsertSublayer(gradientLayer, 0);
         }
 
-        public void UpdateCell(Message cellMessage, string systemPhoneNumber)
+        public void UpdateCell(Message cellMessage, string systemPhoneNumber, AVPlayerView activePlayer)
         {
             _message = cellMessage;
             _systemPhoneNumber = systemPhoneNumber;
@@ -92,7 +102,7 @@ namespace FreedomVoice.iOS.TableViewCells
 
             DeleteButton.Frame = new CGRect(DeleteButton.Frame.X, IsFaxMessageType ? 60 : 98, DeleteButton.Frame.Width, DeleteButton.Frame.Height);
 
-            InitSubviews();
+            InitSubviews(activePlayer);
             InitBackground();
             InitCommonStyles();
         }
@@ -103,7 +113,7 @@ namespace FreedomVoice.iOS.TableViewCells
             SetBackground(IsFaxMessageType);
         }
 
-        private void InitSubviews()
+        private void InitSubviews(AVPlayerView activePlayer)
         {
             if (IsFaxMessageType)
             {
@@ -115,7 +125,6 @@ namespace FreedomVoice.iOS.TableViewCells
                     if (Equals(subView, _player))
                     {
                         _player?.RemoveFromSuperview();
-                        _player = null;
                     }
                     else if (Equals(subView, _speakerButton))
                     {
@@ -137,13 +146,31 @@ namespace FreedomVoice.iOS.TableViewCells
                     _viewFaxButton = null;
                 }
 
-                if (_player == null)
-                    AddSubview(GetPlayerView());
+                foreach (var subView in Subviews)
+                {
+                    if (Equals(subView, _player))
+                    {
+                        _player?.RemoveFromSuperview();
+                    }
+                    else if (Equals(subView, _viewFaxButton))
+                    {
+                        _viewFaxButton?.RemoveFromSuperview();
+                        _viewFaxButton = null;
+                    }
+                }
+
+                var playerView = GetPlayerView(activePlayer);
+                AddSubview(playerView);
 
                 if (_speakerButton == null)
                     AddSubview(GetSpeakerButton());
 
-                if (_callBackButton == null)
+                if (string.IsNullOrEmpty(_message.SourceNumber))
+                {
+                    _callBackButton?.RemoveFromSuperview();
+                    _callBackButton = null;
+                }
+                else if (_callBackButton == null)
                     AddSubview(GetCallBackButton());
             }
         }
@@ -165,9 +192,10 @@ namespace FreedomVoice.iOS.TableViewCells
             Animate(0.2, 0, UIViewAnimationOptions.Autoreverse, () => { btn.BackgroundColor = tapColor; }, () => { btn.BackgroundColor = UIColor.Clear; });
         }
 
-        private AVPlayerView GetPlayerView()
+        private AVPlayerView GetPlayerView(AVPlayerView activePlayerView)
         {
-            return _player = new AVPlayerView(new CGRect(40, 48, Theme.ScreenBounds.Width - 55, 30), this);
+            _player = activePlayerView ?? new AVPlayerView(new CGRect(40, 48, Theme.ScreenBounds.Width - 55, 30), this) { OnPlayButtonClick = OnPlayerPlayButtonTouchDown };
+            return _player;
         }
 
         private UIButton GetFaxButton()
@@ -206,6 +234,14 @@ namespace FreedomVoice.iOS.TableViewCells
             return _callBackButton;
         }
 
+        private void OnPlayerPlayButtonTouchDown(object sender, EventArgs args)
+        {
+            AppDelegate.ActivePlayerView = _player;
+            AppDelegate.ActivePlayerMessageId = _message.Id;
+
+            OnPlayClick?.Invoke(this, new ExpandedCellButtonClickEventArgs());
+        }
+
         private void OnSpeakerButtonTouchDown(object sender, EventArgs args)
         {
             BackgroundColorAnimate(_speakerButton, UIColor.FromRGBA(119, 229, 246, 127));
@@ -223,6 +259,12 @@ namespace FreedomVoice.iOS.TableViewCells
 
         private async void OnFaxButtonTouchDown(object sender, EventArgs args)
         {
+            if (_message.Length == 0)
+            {
+                AppearanceHelper.ShowOkAlertWithMessage(_navigationController, AppearanceHelper.AlertMessageType.EmptyFileDownload);
+                return;
+            }
+
             var filePath = await GetMediaPath(MediaType.Pdf);
             if (!string.IsNullOrEmpty(filePath))
                 OnViewFaxClick?.Invoke(this, new ExpandedCellButtonClickEventArgs(filePath));
@@ -235,6 +277,7 @@ namespace FreedomVoice.iOS.TableViewCells
         }
 
         public event EventHandler<ExpandedCellButtonClickEventArgs> OnCallbackClick;
+        public event EventHandler<ExpandedCellButtonClickEventArgs> OnPlayClick;
         public event EventHandler<ExpandedCellButtonClickEventArgs> OnViewFaxClick;
     }
 }

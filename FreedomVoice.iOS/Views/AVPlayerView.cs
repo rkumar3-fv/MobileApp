@@ -37,6 +37,8 @@ namespace FreedomVoice.iOS.Views
 
         private bool _isLoudSpeaker;
 
+        public EventHandler OnPlayButtonClick;
+
         public AVPlayerView(CGRect bounds, ExpandedCell sourceCell) : base(bounds)
         {
             _sourceCell = sourceCell;
@@ -49,7 +51,7 @@ namespace FreedomVoice.iOS.Views
             _audioSession = AVAudioSession.SharedInstance();
 
             _isLoudSpeaker = true;
-            var error = _audioSession.SetCategory(AVAudioSessionCategory.Playback, AVAudioSessionCategoryOptions.DefaultToSpeaker);
+            var error = _audioSession.SetCategory(AVAudioSessionCategory.Playback);
             if (error != null)
                 Console.WriteLine(error);
 
@@ -93,6 +95,8 @@ namespace FreedomVoice.iOS.Views
 
             if (_player == null) return;
 
+            OnPlayButtonClick?.Invoke(null, EventArgs.Empty);
+
             if (_player.Playing)
                 PausePlayback(sender, e);
             else
@@ -123,15 +127,32 @@ namespace FreedomVoice.iOS.Views
 
         private void StartPlayback(object sender, EventArgs e)
         {
-            NSError error;
-            _audioSession.SetActive(true, out error);
-            if (error != null)
-                Console.WriteLine(error);
+            ChangeAudioSessionState(false);
+            ChangeAudioSessionState(true);
 
             if (_player.Play())
                 UpdateViewForPlayerState(sender, EventArgs.Empty);
             else
                 Console.WriteLine($"Could not play the file {_player.Url}");
+        }
+
+        private void PausePlayback(object sender, EventArgs e)
+        {
+            _player.Pause();
+
+            ChangeAudioSessionState(false);
+
+            UpdateViewForPlayerState(sender, e);
+        }
+
+        public void StopPlayback()
+        {
+            _player?.Stop();
+
+            if (_player != null)
+                _player.CurrentTime = 0;
+
+            ChangeAudioSessionState(false);
         }
 
         private void OnPlayerFinishedPlaying(object sender, AVStatusEventArgs e)
@@ -141,10 +162,7 @@ namespace FreedomVoice.iOS.Views
 
             _player.CurrentTime = 0;
 
-            NSError error;
-            _audioSession.SetActive(false, out error);
-            if (error != null)
-                Console.WriteLine(error);
+            ChangeAudioSessionState(false);
 
             UpdateViewForPlayerState(sender, EventArgs.Empty);
         }
@@ -181,19 +199,21 @@ namespace FreedomVoice.iOS.Views
             _progressBar.Value = playerCurrentTime;
         }
 
-        private void PausePlayback(object sender, EventArgs e)
-        {
-            _player.Pause();
-            UpdateViewForPlayerState(sender, e);
-        }
-
         public void ToggleSoundOutput()
         {
             var error = _isLoudSpeaker ? _audioSession.SetCategory(AVAudioSessionCategory.PlayAndRecord, AVAudioSessionCategoryOptions.AllowBluetooth)
-                                       : _audioSession.SetCategory(AVAudioSessionCategory.Playback, AVAudioSessionCategoryOptions.DefaultToSpeaker);
+                                       : _audioSession.SetCategory(AVAudioSessionCategory.Playback);
 
             _isLoudSpeaker = !_isLoudSpeaker;
 
+            if (error != null)
+                Console.WriteLine(error);
+        }
+
+        private void ChangeAudioSessionState(bool active)
+        {
+            NSError error;
+            _audioSession.SetActive(active, AVAudioSessionSetActiveOptions.NotifyOthersOnDeactivation, out error);
             if (error != null) Console.WriteLine(error);
         }
     }

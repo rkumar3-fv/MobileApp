@@ -17,8 +17,11 @@ namespace FreedomVoice.iOS.Views.Shared
         private PresentationNumber _selectedPresentationNumber;
 
         private CallerIdPickerViewModel _callerIdPickerModel;
+
+        private UILabel _labelField;
         private UIPickerView _pickerField;
         private UITextField _callerIdTextField;
+        private UIImageView _dropdownImage;
 
         public CallerIdView(RectangleF bounds, IList<PresentationNumber> numbers) : base(bounds)
         {
@@ -27,7 +30,8 @@ namespace FreedomVoice.iOS.Views.Shared
 
         void Initialize(IList<PresentationNumber> numbers)
         {
-            var labelField = new UILabel(new CGRect(15, 0, Theme.ScreenBounds.Width / 2 - 15, 40)) { Text = "Show as Caller ID:", Font = UIFont.SystemFontOfSize(17, UIFontWeight.Regular) };
+            var labelWidth = ((NSString)"Show as Caller ID:").StringSize(UIFont.SystemFontOfSize(17, UIFontWeight.Regular)).Width;
+            _labelField = new UILabel(new CGRect(15, 0, labelWidth + 5, 40)) { Text = "Show as Caller ID:", Font = UIFont.SystemFontOfSize(17, UIFontWeight.Regular) };
 
             if (_selectedPresentationNumber == null && numbers != null && numbers.Count > 0)
                 _selectedPresentationNumber = numbers[0];
@@ -53,14 +57,14 @@ namespace FreedomVoice.iOS.Views.Shared
             _callerIdTextField = new UITextField
             {
                 Font = UIFont.SystemFontOfSize(17, UIFontWeight.Medium),
-                Frame = new CGRect(labelField.Frame.X + labelField.Frame.Width, 0, Theme.ScreenBounds.Width / 2, 40),
+                Frame = new CGRect(_labelField.Frame.X + _labelField.Frame.Width, 0, 140, 40),
                 UserInteractionEnabled = true,
                 Text = _callerIdPickerModel.SelectedItem.FormattedPhoneNumber,
                 TintColor = UIColor.Clear
             };
             _callerIdTextField.TouchDown += SetPicker;
 
-            var dropdownImage = new UIImageView(new CGRect(295, 16, 10, 7)) { Image = UIImage.FromFile("dropdown_arrow.png") };
+            _dropdownImage = new UIImageView(new CGRect(_callerIdTextField.Frame.X + _callerIdTextField.Frame.Width + 5, 17, 10, 7)) { Image = UIImage.FromFile("dropdown_arrow.png") };
 
             var toolbar = new UIToolbar { BarStyle = UIBarStyle.Black, Translucent = true, BarTintColor = Theme.BarBackgroundColor };
             toolbar.SizeToFit();
@@ -71,6 +75,8 @@ namespace FreedomVoice.iOS.Views.Shared
 
             var doneButton = new UIBarButtonItem("Done", UIBarButtonItemStyle.Done, (s, e) =>
             {
+                var phoneNumberFieldWidth = ((NSString)_selectedPresentationNumber.FormattedPhoneNumber).StringSize(UIFont.SystemFontOfSize(17, UIFontWeight.Medium)).Width;
+                _dropdownImage.Frame =  new CGRect(_callerIdTextField.Frame.X + phoneNumberFieldWidth + 5, _dropdownImage.Frame.Y, _dropdownImage.Frame.Width, _dropdownImage.Frame.Height);
                 _callerIdTextField.Text = _selectedPresentationNumber.FormattedPhoneNumber;
                 _callerIdTextField.ResignFirstResponder();
             }) { TintColor = Theme.BlueColor };
@@ -81,7 +87,7 @@ namespace FreedomVoice.iOS.Views.Shared
             _callerIdTextField.InputView.BackgroundColor = UIColor.White;
             _callerIdTextField.InputAccessoryView = toolbar;
 
-            AddSubviews(labelField, _callerIdTextField, dropdownImage);
+            AddSubviews(_labelField, _callerIdTextField, _dropdownImage);
         }
 
         public void UpdatePickerData(PresentationNumber selectedPresentationNumber)
@@ -90,6 +96,10 @@ namespace FreedomVoice.iOS.Views.Shared
             if (selectedPresentationNumber == null) return;
 
             _pickerField.Select(_callerIdPickerModel.Items.IndexOf(selectedPresentationNumber), 0, true);
+
+            var phoneNumberFieldWidth = ((NSString)selectedPresentationNumber.FormattedPhoneNumber).StringSize(UIFont.SystemFontOfSize(17, UIFontWeight.Medium)).Width;
+            _dropdownImage.Frame = new CGRect(_labelField.Frame.X + _labelField.Frame.Width + phoneNumberFieldWidth + 5, _dropdownImage.Frame.Y, _dropdownImage.Frame.Width, _dropdownImage.Frame.Height);
+
             _callerIdTextField.Text = selectedPresentationNumber.FormattedPhoneNumber;
         }
 

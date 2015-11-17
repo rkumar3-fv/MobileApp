@@ -22,7 +22,9 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private UIActivityIndicatorView _activityIndicator;
 
-        #endregion
+	    public string EmailAddress { private get; set; }
+
+	    #endregion
 
         private ForgotPasswordViewModel _forgotPasswordViewModel;
 
@@ -41,17 +43,12 @@ namespace FreedomVoice.iOS.ViewControllers
             UnsubscribeFromEvents();
             SubscribeToEvents();
 
-            FillInLoginData();
-
             base.ViewDidLoad();
         }
 
-	    /// <summary>
-        /// Only for test purposes, will be removed later
-        /// </summary>
-	    private void FillInLoginData()
+        public override void TouchesBegan(NSSet touches, UIEvent evt)
         {
-            _emailTextField.Text = _forgotPasswordViewModel.EMail = "freedomvoice.adm.267055@gmail.com";
+            View.EndEditing(true);
         }
 
         private void InitializeViewModel()
@@ -76,12 +73,15 @@ namespace FreedomVoice.iOS.ViewControllers
 	    {
             _emailTextField.ResignFirstResponder();
 
-            if (!_forgotPasswordViewModel.IsValid)
+	        if (!_forgotPasswordViewModel.IsValid)
+	        {
                 EMailValidate();
+	            return;
+	        }
 
             if (PhoneCapability.NetworkIsUnreachable)
             {
-                Appearance.ShowNetworkUnreachableAlert(NavigationController);
+                Appearance.ShowOkAlertWithMessage(NavigationController, Appearance.AlertMessageType.NetworkUnreachable);
                 return;
             }
 
@@ -100,10 +100,16 @@ namespace FreedomVoice.iOS.ViewControllers
             PresentViewController(alertController, true, null);
         }
 
-        private void OnForgotPasswordFailed(object sender, EventArgs args)
+        private void OnEMailNotFound(object sender, EventArgs args)
         {
             _sendRecoveryButton.Hidden = false;
-            OnEMailValidationFailed();
+            OnPasswordRestoreFailed();
+        }
+
+        private void OnForgotPasswordBadRequest(object sender, EventArgs args)
+        {
+            _sendRecoveryButton.Hidden = false;
+            OnForgotPasswordFailed();
         }
 
         private void ReturnToLogin()
@@ -135,14 +141,37 @@ namespace FreedomVoice.iOS.ViewControllers
         private void OnEMailValidationSuccess()
         {
             _emailTextField.ResignFirstResponder();
-            _emailTextField.Layer.BorderColor = Theme.LoginPageTextFieldBorderColor.ToCGColor();
-            _emailValidationLabel.Hidden = true;
+            HideValidationInfo();
+        }
+
+        private void OnPasswordRestoreFailed()
+        {
+            _emailValidationLabel.Text = "The email is not registered with us.";
+            ShowValidationInfo();
         }
 
         private void OnEMailValidationFailed()
         {
-            _emailValidationLabel.Hidden = false;
-            _emailTextField.Layer.BorderColor = Theme.InvalidTextFieldBorderColor.ToCGColor();
+            _emailValidationLabel.Text = "Please enter a valid email address.";
+            ShowValidationInfo();
+        }
+
+        private void OnForgotPasswordFailed()
+        {
+            _emailValidationLabel.Text = "Server is unavailable.";
+            ShowValidationInfo();
+        }
+
+        private void ShowValidationInfo()
+	    {
+	        _emailValidationLabel.Hidden = false;
+	        _emailTextField.Layer.BorderColor = Theme.InvalidTextFieldBorderColor.ToCGColor();
+	    }
+
+        private void HideValidationInfo()
+        {
+            _emailValidationLabel.Hidden = true;
+            _emailTextField.Layer.BorderColor = Theme.LoginPageTextFieldBorderColor.ToCGColor();
         }
 
         #endregion
@@ -151,16 +180,16 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private void UnsubscribeFromEvents()
         {
-            _forgotPasswordViewModel.OnBadRequestResponse -= OnForgotPasswordFailed;
-            _forgotPasswordViewModel.OnUnauthorizedResponse -= OnForgotPasswordFailed;
             _forgotPasswordViewModel.OnSuccessResponse -= OnForgotPasswordSuccess;
+            _forgotPasswordViewModel.OnNotFoundResponse -= OnEMailNotFound;
+            _forgotPasswordViewModel.OnBadRequestResponse -= OnForgotPasswordBadRequest;
         }
 
         private void SubscribeToEvents()
         {
-            _forgotPasswordViewModel.OnBadRequestResponse += OnForgotPasswordFailed;
-            _forgotPasswordViewModel.OnUnauthorizedResponse += OnForgotPasswordFailed;
             _forgotPasswordViewModel.OnSuccessResponse += OnForgotPasswordSuccess;
+            _forgotPasswordViewModel.OnNotFoundResponse += OnEMailNotFound;
+            _forgotPasswordViewModel.OnBadRequestResponse += OnForgotPasswordBadRequest;
         }
 
         #endregion
@@ -188,6 +217,7 @@ namespace FreedomVoice.iOS.ViewControllers
             var textFieldFrame = new CGRect(15, _recoveryInfoLabel.Frame.Y + _recoveryInfoLabel.Frame.Height + 27, Theme.ScreenBounds.Width - 30, 44);
             _emailTextField = new UITextField(textFieldFrame)
             {
+                Text = EmailAddress,
                 TextColor = Theme.BlackColor,
                 BackgroundColor = UIColor.Clear,
                 Font = UIFont.SystemFontOfSize(17, UIFontWeight.Regular),
@@ -214,13 +244,11 @@ namespace FreedomVoice.iOS.ViewControllers
             var labelFrame = new CGRect(15, _emailTextField.Frame.Y + _emailTextField.Frame.Height + 3, Theme.ScreenBounds.Width - 30, 14);
             _emailValidationLabel = new UILabel(labelFrame)
             {
-                Text = "Please enter a valid email address.",
                 TextColor = Theme.InvalidLabelColor,
                 TextAlignment = UITextAlignment.Left,
                 Font = UIFont.SystemFontOfSize(12, UIFontWeight.Regular),
                 Hidden = true
             };
-
             View.Add(_emailValidationLabel);
         }
 

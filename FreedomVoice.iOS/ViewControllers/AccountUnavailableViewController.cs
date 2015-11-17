@@ -37,12 +37,12 @@ namespace FreedomVoice.iOS.ViewControllers
             base.ViewDidLoad();
         }
 
-        private static void OnCallCustomerCareTouchUpInside(object sender, EventArgs args)
+        private void OnCallCustomerCareTouchUpInside(object sender, EventArgs args)
 	    {
             var url = new NSUrl("tel:+18004771477");
 
             if (!UIApplication.SharedApplication.OpenUrl(url))
-                new UIAlertView("Not supported", "Your device does not appear to support making cellular voice calls.", null, "OK", null).Show();
+                Appearance.ShowOkAlertWithMessage(this, Appearance.AlertMessageType.CallsUnsuported);
         }
 
         #region Controls Initialization

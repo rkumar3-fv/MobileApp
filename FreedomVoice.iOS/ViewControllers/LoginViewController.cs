@@ -22,9 +22,7 @@ namespace FreedomVoice.iOS.ViewControllers
         private UIButton _forgotPasswordButton;
 
         private UILabel _welcomeLabel;
-        private UILabel _usernameValidationLabel;
-        private UILabel _passwordValidationLabel;
-        private UILabel _authorizationFailedLabel;
+        private UILabel _validationFailedLabel;
 
 	    private UIActivityIndicatorView _activityIndicator;
 
@@ -44,12 +42,10 @@ namespace FreedomVoice.iOS.ViewControllers
             InitializeLogoImage();
             InitializeWelcomeLabel();
 	        InitializeUsernameTextField();
-	        InitializeUsernameValidationLabel();
             InitializePasswordTextField();
-	        InitializePasswordValidationLabel();
 	        InitializeLoginButton();
 	        InitializeActivityIndicator();
-	        InitializeAuthorizationFailedLabel();
+	        InitializeValidationFailedLabel();
             InitializeForgotPasswordButton();
 
             InitializeViewModel();
@@ -83,6 +79,11 @@ namespace FreedomVoice.iOS.ViewControllers
             NavigationController.NavigationBar.Hidden = false;
         }
 
+        public override void TouchesBegan(NSSet touches, UIEvent evt)
+        {
+            View.EndEditing(true);
+        }
+
         private void InitializeViewModel()
         {
             _loginViewModel = new LoginViewModel(NavigationController, _activityIndicator);
@@ -95,14 +96,13 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private void OnForgotPasswordTouchUpInside(object sender, EventArgs args)
         {
-            _usernameValidationLabel.Hidden = true;
-            _passwordValidationLabel.Hidden = true;
-            _authorizationFailedLabel.Hidden = true;
+            _validationFailedLabel.Hidden = true;
 
             _usernameTextField.Layer.BorderColor = Theme.LoginPageTextFieldBorderColor.ToCGColor();
             _passwordTextField.Layer.BorderColor = Theme.LoginPageTextFieldBorderColor.ToCGColor();
 
             var forgotPasswordController = AppDelegate.GetViewController<ForgotPasswordViewController>();
+            forgotPasswordController.EmailAddress = _usernameTextField.Text;
             NavigationController.PushViewController(forgotPasswordController, true);
         }
 
@@ -136,7 +136,7 @@ namespace FreedomVoice.iOS.ViewControllers
 
             if (PhoneCapability.NetworkIsUnreachable)
             {
-                Appearance.ShowNetworkUnreachableAlert(NavigationController);
+                Appearance.ShowOkAlertWithMessage(NavigationController, Appearance.AlertMessageType.NetworkUnreachable);
                 return;
             }
 
@@ -150,16 +150,15 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private void OnLoginFailed(object sender, EventArgs args)
         {
-            _authorizationFailedLabel.Hidden = false;
+            _validationFailedLabel.Text = "Incorrect email or password.";
+            _validationFailedLabel.Hidden = false;
             _loginButton.Hidden = false;
-
-            OnUsernameValidationFailed();
-            OnPasswordValidationFailed();
         }
 
-        private void OnErrorConnection(object sender, EventArgs args)
+        private void OnLoginBadRequest(object sender, EventArgs args)
         {
-            _authorizationFailedLabel.Hidden = true;
+            _validationFailedLabel.Text = "Server is unavailable.";
+            _validationFailedLabel.Hidden = false;
             _loginButton.Hidden = false;
         }
 
@@ -177,12 +176,10 @@ namespace FreedomVoice.iOS.ViewControllers
             AdjustLogoImage(visible);
             AdjustWelcomeLabel(visible);
             AdjustUsernameTextField(visible);
-            AdjustUsernameValidationLabel();
-            AdjustPasswordTextField();
-            AdjustPasswordValidationLabel();
-            AdjustLoginButton();
+            AdjustPasswordTextField(visible);
+            AdjustLoginButton(visible);
             AdjustActivityIndicator();
-            AdjustAuthorizationFailedLabel();
+            AdjustValidationFailedLabel();
             AdjustForgotPasswordButton(height, visible);
         }
 
@@ -192,16 +189,14 @@ namespace FreedomVoice.iOS.ViewControllers
 	    {
             _loginViewModel.OnSuccessResponse -= OnLoginSuccess;
             _loginViewModel.OnUnauthorizedResponse -= OnLoginFailed;
-            _loginViewModel.OnErrorConnectionResponse -= OnErrorConnection;
-            _loginViewModel.OnBadRequestResponse -= OnLoginFailed;
+            _loginViewModel.OnBadRequestResponse -= OnLoginBadRequest;
         }
 
         private void SubscribeToEvents()
         {
             _loginViewModel.OnSuccessResponse += OnLoginSuccess;
             _loginViewModel.OnUnauthorizedResponse += OnLoginFailed;
-            _loginViewModel.OnErrorConnectionResponse += OnErrorConnection;
-            _loginViewModel.OnBadRequestResponse += OnLoginFailed;
+            _loginViewModel.OnBadRequestResponse += OnLoginBadRequest;
         }
 
         #endregion
@@ -222,6 +217,8 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private bool PasswordValidate()
         {
+            if (_loginViewModel.Errors.Contains(LoginViewModel.UsernameError)) return false;
+
             if (_loginViewModel.Errors.Contains(LoginViewModel.PasswordError))
             {
                 OnPasswordValidationFailed();
@@ -235,27 +232,31 @@ namespace FreedomVoice.iOS.ViewControllers
         private void OnUsernameValidationSuccess()
         {
             _usernameTextField.ResignFirstResponder();
-            _usernameValidationLabel.Hidden = true;
             _usernameTextField.Layer.BorderColor = Theme.LoginPageTextFieldBorderColor.ToCGColor();
+
+            _validationFailedLabel.Hidden = true;
         }
 
         private void OnPasswordValidationSuccess()
         {
             _passwordTextField.ResignFirstResponder();
-            _passwordValidationLabel.Hidden = true;
+
             _passwordTextField.Layer.BorderColor = Theme.LoginPageTextFieldBorderColor.ToCGColor();
+            _validationFailedLabel.Hidden = true;
         }
 
         private void OnUsernameValidationFailed()
         {
-            _usernameValidationLabel.Hidden = false;
             _usernameTextField.Layer.BorderColor = Theme.InvalidTextFieldBorderColor.ToCGColor();
+            _validationFailedLabel.Text = "Please enter a valid email address.";
+            _validationFailedLabel.Hidden = false;
         }
 
         private void OnPasswordValidationFailed()
         {
-            _passwordValidationLabel.Hidden = false;
             _passwordTextField.Layer.BorderColor = Theme.InvalidTextFieldBorderColor.ToCGColor();
+            _validationFailedLabel.Text = "Please enter your FreedomVoice password.";
+            _validationFailedLabel.Hidden = false;
         }
 
         #endregion
@@ -264,8 +265,7 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private void InitializeLogoImage()
 	    {
-            _logoImage = new UIImageView(UIImage.FromFile("logo_freedomvoice_white.png"));
-            _logoImage.Frame = new CGRect(0, Theme.StatusBarHeight + 35, _logoImage.Image.CGImage.Width / 2, _logoImage.Image.CGImage.Height / 2);
+            _logoImage = new UIImageView(UIImage.FromFile("logo_freedomvoice_white.png")) { Frame = new CGRect(0, Theme.StatusBarHeight + 35, Theme.LogoImageWidth(), Theme.LogoImageHeight()) };
             _logoImage.Center = new CGPoint(View.Center.X, _logoImage.Center.Y);
 
             View.AddSubview(_logoImage);
@@ -273,7 +273,7 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private void InitializeWelcomeLabel()
         {
-            var labelFrame = new CGRect(15, Theme.StatusBarHeight + 136, Theme.ScreenBounds.Width - 30, 30);
+            var labelFrame = new CGRect(15, _logoImage.Frame.Y + _logoImage.Frame.Height + Theme.WelcomeLabelTopPadding(), Theme.ScreenBounds.Width - 30, Theme.WelcomeLabelHeight());
             _welcomeLabel = new UILabel(labelFrame)
             {
                 Text = "Welcome",
@@ -288,7 +288,7 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private void InitializeUsernameTextField()
         {
-            var textFieldFrame = new CGRect(15, _welcomeLabel.Frame.Y + _welcomeLabel.Frame.Height + 30, Theme.ScreenBounds.Width - 30, 44);
+            var textFieldFrame = new CGRect(15, _welcomeLabel.Frame.Y + _welcomeLabel.Frame.Height + Theme.UsernameTextFieldTopPadding(), Theme.ScreenBounds.Width - 30, 44);
             _usernameTextField = new UITextField(textFieldFrame)
             {
                 TextColor = Theme.LoginPageTextFieldTextColor,
@@ -312,24 +312,9 @@ namespace FreedomVoice.iOS.ViewControllers
             View.AddSubview(_usernameTextField);
         }
 
-        private void InitializeUsernameValidationLabel()
-        {
-            var labelFrame = new CGRect(15, _usernameTextField.Frame.Y + _usernameTextField.Frame.Height + 3, Theme.ScreenBounds.Width - 30, 14);
-            _usernameValidationLabel = new UILabel(labelFrame)
-            {
-                Text = "Please enter a valid email address.",
-                TextColor = Theme.InvalidLabelColor,
-                TextAlignment = UITextAlignment.Left,
-                Font = UIFont.SystemFontOfSize(12, UIFontWeight.Regular),
-                Hidden = true
-            };
-
-            View.Add(_usernameValidationLabel);
-        }
-
         private void InitializePasswordTextField()
         {
-            var textFieldFrame = new CGRect(15, _usernameTextField.Frame.Y + _usernameTextField.Frame.Height + 27, Theme.ScreenBounds.Width - 30, 44);
+            var textFieldFrame = new CGRect(15, _usernameTextField.Frame.Y + _usernameTextField.Frame.Height + Theme.PasswordTextFieldPadding, Theme.ScreenBounds.Width - 30, 44);
             _passwordTextField = new UITextField(textFieldFrame)
             {
                 TextColor = Theme.LoginPageTextFieldTextColor,
@@ -353,27 +338,12 @@ namespace FreedomVoice.iOS.ViewControllers
             View.AddSubview(_passwordTextField);
         }
 
-	    private void InitializePasswordValidationLabel()
-        {
-            var labelFrame = new CGRect(15, _passwordTextField.Frame.Y + _passwordTextField.Frame.Height + 3, Theme.ScreenBounds.Width - 30, 14);
-            _passwordValidationLabel = new UILabel(labelFrame)
-            {
-                Text = "Please enter your FreedomVoice password.",
-                TextColor = Theme.InvalidLabelColor,
-                TextAlignment = UITextAlignment.Left,
-                Font = UIFont.SystemFontOfSize(12, UIFontWeight.Regular),
-                Hidden = true
-            };
-
-            View.Add(_passwordValidationLabel);
-        }
-
         private void InitializeLoginButton()
         {
             _loginButton = new UIButton(UIButtonType.System)
             {
                 BackgroundColor = Theme.ButtonColor,
-                Frame = new CGRect(15, _passwordTextField.Frame.Y + _passwordTextField.Frame.Height + 27, Theme.ScreenBounds.Width - 30, 44),
+                Frame = new CGRect(15, _passwordTextField.Frame.Y + _passwordTextField.Frame.Height + Theme.PasswordTextFieldPadding, Theme.ScreenBounds.Width - 30, 44),
                 Font = UIFont.SystemFontOfSize(21, UIFontWeight.Medium),
                 ClipsToBounds = true
             };
@@ -399,20 +369,22 @@ namespace FreedomVoice.iOS.ViewControllers
             View.AddSubview(_activityIndicator);
         }
 
-        private void InitializeAuthorizationFailedLabel()
+        private void InitializeValidationFailedLabel()
         {
-            var labelFrame = new CGRect(15, _loginButton.Frame.Y + _loginButton.Frame.Height + 10, Theme.ScreenBounds.Width - 30, 14);
-            _authorizationFailedLabel = new UILabel(labelFrame)
+            var labelFrame = new CGRect(15, _loginButton.Frame.Y + _loginButton.Frame.Height + Theme.LoginValidationLabelTopPadding, Theme.ScreenBounds.Width - 30, 20);
+            _validationFailedLabel = new UILabel(labelFrame)
             {
-                Text = "Incorrect email or password.",
-                TextColor = Theme.InvalidLabelColor,
+                BackgroundColor = Theme.InvalidLabelBackgroundColor,
+                TextColor = Theme.LoginInvalidLabelColor,
                 TextAlignment = UITextAlignment.Center,
                 Font = UIFont.SystemFontOfSize(12, UIFontWeight.Regular),
+                ClipsToBounds = true,
                 Hidden = true
             };
-            _authorizationFailedLabel.Center = new CGPoint(View.Center.X, _authorizationFailedLabel.Center.Y);
+            _validationFailedLabel.Layer.CornerRadius = 5;
+            _validationFailedLabel.Center = new CGPoint(View.Center.X, _validationFailedLabel.Center.Y);
 
-            View.Add(_authorizationFailedLabel);
+            View.Add(_validationFailedLabel);
         }
 
         private void InitializeForgotPasswordButton()
@@ -434,41 +406,31 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private void AdjustLogoImage(bool keyboardVisible = false)
         {
-            _logoImage.Image = keyboardVisible ? UIImage.FromFile("logo_freedomvoice_small_white.png") : UIImage.FromFile("logo_freedomvoice_white.png");
-            _logoImage.Frame = new CGRect(0, Theme.StatusBarHeight + (keyboardVisible ? 10 : 35), _logoImage.Image.CGImage.Width / 2, _logoImage.Image.CGImage.Height / 2);
+            _logoImage.Image = Theme.LoginLogoImage(keyboardVisible);
+            _logoImage.Frame = new CGRect(0, Theme.StatusBarHeight + Theme.LogoImageTopPadding(keyboardVisible), Theme.LogoImageWidth(keyboardVisible), Theme.LogoImageHeight(keyboardVisible));
             _logoImage.Center = new CGPoint(View.Center.X, _logoImage.Center.Y);
         }
 
         private void AdjustWelcomeLabel(bool keyboardVisible = false)
         {
-            _welcomeLabel.Font = UIFont.SystemFontOfSize((keyboardVisible ? 24 : 36), UIFontWeight.Thin);
-            _welcomeLabel.Frame = new CGRect(15, Theme.StatusBarHeight + (keyboardVisible ? 43 : 135), Theme.ScreenBounds.Width - 30, (keyboardVisible ? 18 : 30));
+            _welcomeLabel.Font = Theme.WelcomeLabelFont(keyboardVisible);
+            _welcomeLabel.Frame = new CGRect(15, _logoImage.Frame.Y + _logoImage.Frame.Height + Theme.WelcomeLabelTopPadding(keyboardVisible), Theme.ScreenBounds.Width - 30, Theme.WelcomeLabelHeight(keyboardVisible));
             _welcomeLabel.Center = new CGPoint(View.Center.X, _welcomeLabel.Center.Y);
         }
 
 	    private void AdjustUsernameTextField(bool keyboardVisible = false)
 	    {
-	        _usernameTextField.Frame = new CGRect(15, _welcomeLabel.Frame.Y + _welcomeLabel.Frame.Height + (keyboardVisible ? 10 : 30), Theme.ScreenBounds.Width - 30, 44);
+	        _usernameTextField.Frame = new CGRect(15, _welcomeLabel.Frame.Y + _welcomeLabel.Frame.Height + Theme.UsernameTextFieldTopPadding(keyboardVisible), Theme.ScreenBounds.Width - 30, 44);
 	    }
 
-        private void AdjustUsernameValidationLabel()
+        private void AdjustPasswordTextField(bool keyboardVisible = false)
         {
-            _usernameValidationLabel.Frame = new CGRect(15, _usernameTextField.Frame.Y + _usernameTextField.Frame.Height + 3, Theme.ScreenBounds.Width - 30, 14);
+            _passwordTextField.Frame = new CGRect(15, _usernameTextField.Frame.Y + _usernameTextField.Frame.Height + Theme.PasswordTextFieldPadding, Theme.ScreenBounds.Width - 30, 44);
         }
 
-        private void AdjustPasswordTextField()
+        private void AdjustLoginButton(bool keyboardVisible = false)
         {
-            _passwordTextField.Frame = new CGRect(15, _usernameTextField.Frame.Y + _usernameTextField.Frame.Height + 27, Theme.ScreenBounds.Width - 30, 44);
-        }
-
-        private void AdjustPasswordValidationLabel()
-        {
-            _passwordValidationLabel.Frame = new CGRect(15, _passwordTextField.Frame.Y + _passwordTextField.Frame.Height + 3, Theme.ScreenBounds.Width - 30, 14);
-        }
-
-        private void AdjustLoginButton()
-        {
-            _loginButton.Frame = new CGRect(15, _passwordTextField.Frame.Y + _passwordTextField.Frame.Height + 27, Theme.ScreenBounds.Width - 30, 44);
+            _loginButton.Frame = new CGRect(15, _passwordTextField.Frame.Y + _passwordTextField.Frame.Height + Theme.PasswordTextFieldPadding, Theme.ScreenBounds.Width - 30, 44);
         }
 
         private void AdjustActivityIndicator()
@@ -476,9 +438,9 @@ namespace FreedomVoice.iOS.ViewControllers
             _activityIndicator.Center = _loginButton.Center;
         }
 
-        private void AdjustAuthorizationFailedLabel()
+        private void AdjustValidationFailedLabel()
         {
-            _authorizationFailedLabel.Frame = new CGRect(15, _loginButton.Frame.Y + _loginButton.Frame.Height + 10, Theme.ScreenBounds.Width - 30, 14);
+            _validationFailedLabel.Frame = new CGRect(15, _loginButton.Frame.Y + _loginButton.Frame.Height + Theme.LoginValidationLabelTopPadding, Theme.ScreenBounds.Width - 30, 20);
         }
 
         private void AdjustForgotPasswordButton(nfloat keyboardHeight, bool keyboardVisible = false)

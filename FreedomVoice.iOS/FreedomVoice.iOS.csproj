@@ -8,7 +8,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>FreedomVoice.iOS</RootNamespace>
     <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
-    <AssemblyName>FreedomVoiceiOS</AssemblyName>
+    <AssemblyName>FreedomVoice</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
     <DebugSymbols>true</DebugSymbols>
@@ -51,7 +51,7 @@
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
     <CodesignKey>iPhone Developer</CodesignKey>
     <MtouchDebug>true</MtouchDebug>
-    <CodesignProvision>6daf5f1e-e78c-476a-89c9-92e88b7bb0b4</CodesignProvision>
+    <CodesignProvision>75ddc1d2-9468-4392-b425-3a9c59e84768</CodesignProvision>
     <CodesignResourceRules />
     <CodesignExtraArgs />
   </PropertyGroup>
@@ -76,8 +76,10 @@
     <MtouchArch>ARMv7, ARM64</MtouchArch>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
     <BuildIpa>True</BuildIpa>
-    <CodesignProvision>Automatic:AdHoc</CodesignProvision>
-    <CodesignKey>iPhone Distribution</CodesignKey>
+    <CodesignProvision>3b2e9d14-a7b0-4264-9b38-c54a20bc72ca</CodesignProvision>
+    <CodesignKey>iPhone Developer: Александр Пятаков (TRSB9P63FJ)</CodesignKey>
+    <CodesignResourceRules />
+    <CodesignExtraArgs />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|iPhone' ">
     <DebugType>none</DebugType>
@@ -98,6 +100,15 @@
     <Compile Include="Entities\FolderWithCount.cs" />
     <Compile Include="Entities\Message.cs" />
     <Compile Include="Entities\PresentationNumber.cs" />
+    <Compile Include="Services\Implementations\PollingIntervalService.cs" />
+    <Compile Include="Services\IPoolingIntervalService.cs" />
+    <Compile Include="Services\Responses\EmptyResponse.cs" />
+    <Compile Include="Services\Responses\PollingIntervalResponse.cs" />
+    <Compile Include="Utilities\DeviceHardware.cs" />
+    <Compile Include="ViewControllers\SplashViewController.cs" />
+    <Compile Include="ViewControllers\SplashViewController.designer.cs">
+      <DependentUpon>SplashViewController.cs</DependentUpon>
+    </Compile>
     <Compile Include="Utilities\DownloadBytesProgress.cs" />
     <Compile Include="Utilities\Helpers\Contacts.cs" />
     <Compile Include="Utilities\Helpers\KeyChain.cs" />
@@ -116,7 +127,6 @@
     <Compile Include="Services\Implementations\MessageOperationsService.cs" />
     <Compile Include="Services\Responses\CallReservationResponse.cs" />
     <Compile Include="Services\Responses\GetMediaResponse.cs" />
-    <Compile Include="Services\Responses\MessageOperationsResponse.cs" />
     <Compile Include="ViewControllers\PhoneNumberViewController.cs" />
     <Compile Include="ViewControllers\PhoneNumberViewController.designer.cs">
       <DependentUpon>PhoneNumberViewController.cs</DependentUpon>
@@ -146,8 +156,6 @@
     <Compile Include="Entities\Recent.cs" />
     <Compile Include="Utilities\PhoneAbilities.cs" />
     <Compile Include="Services\Responses\FoldersWithCountResponse.cs" />
-    <Compile Include="Services\Responses\ForgotPasswordResponse.cs" />
-    <Compile Include="Services\Responses\LoginResponse.cs" />
     <Compile Include="Services\Responses\ExtensionsWithCountResponse.cs" />
     <Compile Include="Services\Responses\MessagesResponse.cs" />
     <Compile Include="Services\Responses\PresentationNumbersResponse.cs" />
@@ -156,7 +164,7 @@
     <Compile Include="ViewModels\MediaViewModel.cs" />
     <Compile Include="Views\AVPlayerView.cs" />
     <Compile Include="Views\NoAccessToContactsView.cs" />
-    <Compile Include="Views\RecentLineView.cs" />
+    <Compile Include="Views\Shared\LineView.cs" />
     <Compile Include="Views\Shared\CallerIdView.cs" />
     <Compile Include="TableViewCells\ContactCell.cs" />
     <Compile Include="TableViewCells\ExtensionCell.cs" />
@@ -178,13 +186,13 @@
     <Compile Include="Services\IForgotPasswordService.cs" />
     <Compile Include="Services\ILoginService.cs" />
     <Compile Include="Services\Implementations\LoginService.cs" />
-    <Compile Include="Services\PropertyChangedBase.cs" />
+    <Compile Include="Utilities\Events\PropertyChangedBase.cs" />
     <Compile Include="Utilities\Helpers\Appearance.cs" />
     <Compile Include="Utilities\Helpers\UserDefault.cs" />
     <Compile Include="Utilities\Helpers\Validation.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Utilities\ServiceContainer.cs" />
-    <Compile Include="Services\ServiceRegistrar.cs" />
+    <Compile Include="Utilities\ServiceRegistrar.cs" />
     <Compile Include="Utilities\SynchronizeInvoke.cs" />
     <Compile Include="Utilities\Extensions\TaskExtensions.cs" />
     <Compile Include="Utilities\Theme.cs" />
@@ -265,8 +273,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <BundleResource Include="Resources\btn_play%402x.png" />
-    <BundleResource Include="Resources\btn_pause%402x.png" />
     <BundleResource Include="Resources\progress_bar_thumb%402x.png" />
     <BundleResource Include="Resources\back_transparent%402x.png" />
     <BundleResource Include="Resources\voicemail_unread%402x.png" />
@@ -279,7 +285,6 @@
     <BundleResource Include="Resources\voicemail_active%402x.png" />
     <BundleResource Include="Resources\fax_active%402x.png" />
     <BundleResource Include="Resources\speaker%402x.png" />
-    <BundleResource Include="Resources\callback%402x.png" />
     <BundleResource Include="Resources\delete%402x.png" />
     <BundleResource Include="Resources\pause%402x.png" />
     <BundleResource Include="Resources\play%402x.png" />
@@ -297,10 +302,59 @@
     <BundleResource Include="Resources\Icons\Icon-Small-40.png" />
     <BundleResource Include="Resources\Icons\Icon-Small-40%402x.png" />
     <BundleResource Include="Resources\Icons\Icon-Small-40%403x.png" />
-    <ITunesArtwork Include="Resources\Icons\iTunesArtwork%402x.png" />
+    <ITunesArtwork Include="Resources\iTunesArtwork%402x.png" />
     <BundleResource Include="Resources\Icon.png" />
     <BundleResource Include="Resources\Icon%402x.png" />
     <BundleResource Include="Resources\Icon-60%402x.png" />
+    <BundleResource Include="Resources\back%403x.png" />
+    <BundleResource Include="Resources\back_transparent%403x.png" />
+    <BundleResource Include="Resources\call_back%403x.png" />
+    <BundleResource Include="Resources\callrecord%403x.png" />
+    <BundleResource Include="Resources\callrecord_active%403x.png" />
+    <BundleResource Include="Resources\callrecord_unread%403x.png" />
+    <BundleResource Include="Resources\contacts_access%403x.png" />
+    <BundleResource Include="Resources\delete%403x.png" />
+    <BundleResource Include="Resources\dropdown_arrow%403x.png" />
+    <BundleResource Include="Resources\fax%403x.png" />
+    <BundleResource Include="Resources\fax_active%403x.png" />
+    <BundleResource Include="Resources\fax_unread%403x.png" />
+    <BundleResource Include="Resources\folder_new%403x.png" />
+    <BundleResource Include="Resources\folder_saved%403x.png" />
+    <BundleResource Include="Resources\folder_sent%403x.png" />
+    <BundleResource Include="Resources\folder_trash%403x.png" />
+    <BundleResource Include="Resources\keypad_asterisk%403x.png" />
+    <BundleResource Include="Resources\keypad_backspace%403x.png" />
+    <BundleResource Include="Resources\keypad_call%403x.png" />
+    <BundleResource Include="Resources\keypad_plus%403x.png" />
+    <BundleResource Include="Resources\keypad_sharp%403x.png" />
+    <BundleResource Include="Resources\logo_freedomvoice_grey%403x.png" />
+    <BundleResource Include="Resources\logo_freedomvoice_white%403x.png" />
+    <BundleResource Include="Resources\logout%403x.png" />
+    <BundleResource Include="Resources\navbar%403x.png" />
+    <BundleResource Include="Resources\pause%403x.png" />
+    <BundleResource Include="Resources\play%403x.png" />
+    <BundleResource Include="Resources\recents_info%403x.png" />
+    <BundleResource Include="Resources\scroller%403x.png" />
+    <BundleResource Include="Resources\speaker%403x.png" />
+    <BundleResource Include="Resources\tab_contacts%403x.png" />
+    <BundleResource Include="Resources\tab_contacts_active%403x.png" />
+    <BundleResource Include="Resources\tab_keypad%403x.png" />
+    <BundleResource Include="Resources\tab_keypad_active%403x.png" />
+    <BundleResource Include="Resources\tab_messages%403x.png" />
+    <BundleResource Include="Resources\tab_messages_active%403x.png" />
+    <BundleResource Include="Resources\tab_recents%403x.png" />
+    <BundleResource Include="Resources\tab_recents_active%403x.png" />
+    <BundleResource Include="Resources\view_fax%403x.png" />
+    <BundleResource Include="Resources\voicemail%403x.png" />
+    <BundleResource Include="Resources\voicemail_active%403x.png" />
+    <BundleResource Include="Resources\voicemail_unread%403x.png" />
+    <BundleResource Include="Resources\warning%403x.png" />
+    <BundleResource Include="Resources\Default-667h%402x.png" />
+    <BundleResource Include="Resources\Default-736h%403x.png" />
+    <BundleResource Include="Resources\Login-667h%402x.png" />
+    <BundleResource Include="Resources\Login-736h%403x.png" />
+    <BundleResource Include="Resources\navbar_wide%402x.png" />
+    <BundleResource Include="Resources\keypad_call_big%402x.png" />
     <Content Include="Settings.bundle\Root.plist">
       <SubType>Designer</SubType>
     </Content>
@@ -325,15 +379,6 @@
     <BundleResource Include="Resources\logo_freedomvoice_small_white%402x.png" />
     <BundleResource Include="Resources\logo_freedomvoice_white%402x.png" />
     <BundleResource Include="Resources\logout%402x.png" />
-    <BundleResource Include="Resources\messages_callrecord%402x.png" />
-    <BundleResource Include="Resources\messages_callrecord_active%402x.png" />
-    <BundleResource Include="Resources\messages_callrecord_unread%402x.png" />
-    <BundleResource Include="Resources\messages_fax%402x.png" />
-    <BundleResource Include="Resources\messages_fax_active%402x.png" />
-    <BundleResource Include="Resources\messages_fax_unread%402x.png" />
-    <BundleResource Include="Resources\messages_voicemail%402x.png" />
-    <BundleResource Include="Resources\messages_voicemail_active%402x.png" />
-    <BundleResource Include="Resources\messages_voicemail_unread%402x.png" />
     <BundleResource Include="Resources\recents_info%402x.png" />
     <BundleResource Include="Resources\tab_contacts%402x.png" />
     <BundleResource Include="Resources\tab_contacts_active%402x.png" />
@@ -399,12 +444,6 @@
       <InProject>false</InProject>
     </ImageAsset>
     <ImageAsset Include="Resources/Media.xcassets/AppIcons.appiconset/Icon-Small@3x.png">
-      <InProject>false</InProject>
-    </ImageAsset>
-    <ImageAsset Include="Resources/Media.xcassets/LaunchImages.launchimage/Contents.json">
-      <InProject>false</InProject>
-    </ImageAsset>
-    <ImageAsset Include="Resources/Media.xcassets/LaunchImages.launchimage/Default-568h@2x.png">
       <InProject>false</InProject>
     </ImageAsset>
   </ItemGroup>

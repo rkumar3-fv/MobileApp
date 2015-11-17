@@ -14,16 +14,8 @@ namespace FreedomVoice.iOS.ViewControllers
 	[Register ("AccountsViewController")]
 	partial class AccountsViewController
 	{
-		[Outlet]
-		[GeneratedCode ("iOS Designer", "1.0")]
-		UITableView AccountsTableView { get; set; }
-
 		void ReleaseDesignerOutlets ()
 		{
-			if (AccountsTableView != null) {
-				AccountsTableView.Dispose ();
-				AccountsTableView = null;
-			}
 		}
 	}
 }

@@ -14,16 +14,8 @@ namespace FreedomVoice.iOS.ViewControllers
 	[Register ("FoldersViewController")]
 	partial class FoldersViewController
 	{
-		[Outlet]
-		[GeneratedCode ("iOS Designer", "1.0")]
-		UITableView FoldersTableView { get; set; }
-
 		void ReleaseDesignerOutlets ()
 		{
-			if (FoldersTableView != null) {
-				FoldersTableView.Dispose ();
-				FoldersTableView = null;
-			}
 		}
 	}
 }

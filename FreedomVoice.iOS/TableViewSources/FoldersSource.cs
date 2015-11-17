@@ -4,13 +4,14 @@ using Foundation;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.TableViewCells;
 using FreedomVoice.iOS.ViewControllers;
+using FreedomVoice.iOS.ViewModels;
 using UIKit;
 
 namespace FreedomVoice.iOS.TableViewSources
 {
     public class FoldersSource : UITableViewSource
     {
-        private readonly List<FolderWithCount> _folders;
+        public List<FolderWithCount> Folders { private get; set; }
 
         private readonly Account _selectedAccount;
         private readonly ExtensionWithCount _selectedExtension;
@@ -19,7 +20,7 @@ namespace FreedomVoice.iOS.TableViewSources
 
         public FoldersSource(List<FolderWithCount> folders, ExtensionWithCount selectedExtension, Account selectedAccount, UINavigationController navigationController)
         {
-            _folders = folders;
+            Folders = folders;
             _selectedExtension = selectedExtension;
             _selectedAccount = selectedAccount;
             _navigationController = navigationController;
@@ -27,7 +28,7 @@ namespace FreedomVoice.iOS.TableViewSources
 
         public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
         {
-            var folder = _folders[indexPath.Row];
+            var folder = Folders[indexPath.Row];
 
             var cell = tableView.DequeueReusableCell(FolderCell.FolderCellId) as FolderCell ?? new FolderCell { Accessory = UITableViewCellAccessory.DisclosureIndicator };
             cell.UpdateCell(folder);
@@ -37,7 +38,7 @@ namespace FreedomVoice.iOS.TableViewSources
 
         public override nint RowsInSection(UITableView tableview, nint section)
         {
-            return _folders?.Count ?? 0;
+            return Folders?.Count ?? 0;
         }
 
         public override nfloat GetHeightForRow(UITableView tableView, NSIndexPath indexPath)
@@ -45,15 +46,19 @@ namespace FreedomVoice.iOS.TableViewSources
             return 44;
         }
 
-        public override void RowSelected(UITableView tableView, NSIndexPath indexPath)
+        public override async void RowSelected(UITableView tableView, NSIndexPath indexPath)
         {
             tableView.DeselectRow(indexPath, false);
-            var selectedFolder = _folders[indexPath.Row];
+            var selectedFolder = Folders[indexPath.Row];
+
+            var messagesViewModel = new MessagesViewModel(_selectedAccount.PhoneNumber, _selectedExtension.ExtensionNumber, selectedFolder.DisplayName, _navigationController);
+            await messagesViewModel.GetMessagesListAsync(selectedFolder.MessageCount);
 
             var messagesController = AppDelegate.GetViewController<MessagesViewController>();
             messagesController.SelectedAccount = _selectedAccount;
             messagesController.SelectedExtension = _selectedExtension;
             messagesController.SelectedFolder = selectedFolder;
+            messagesController.MessagesList = messagesViewModel.MessagesList;
 
             _navigationController.PushViewController(messagesController, false);
         }

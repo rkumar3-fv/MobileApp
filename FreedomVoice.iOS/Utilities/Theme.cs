@@ -6,6 +6,9 @@ namespace FreedomVoice.iOS.Utilities
 {
     public static class Theme
     {
+        private static readonly bool _iPhone6 = AppDelegate.CurrentDeviceName == "iPhone 6" || AppDelegate.CurrentDeviceName == "iPhone 6S";
+        private static readonly bool _iPhone6Plus = AppDelegate.CurrentDeviceName == "iPhone 6 Plus" || AppDelegate.CurrentDeviceName == "iPhone 6S Plus";
+
         #region Backgrounds
 
         /// <summary>
@@ -21,8 +24,22 @@ namespace FreedomVoice.iOS.Utilities
         /// <summary>
         /// Login page background image
         /// </summary>
-        static readonly Lazy<UIImage> loginBackgroundImage = new Lazy<UIImage>(() => UIImage.FromFile("Login-568h.png"));
+        static readonly Lazy<UIImage> loginBackgroundImage = new Lazy<UIImage>(() => UIImage.FromFile($"Login-{(_iPhone6Plus ? "736h" : _iPhone6 ? "667h" : "568h")}.png"));
         public static UIImage LoginBackgroundImage => loginBackgroundImage.Value;
+
+        /// <summary>
+        /// Splash screen background image
+        /// </summary>
+        static readonly Lazy<UIImage> splashScreenImage = new Lazy<UIImage>(() => UIImage.FromFile($"Default-{(_iPhone6Plus ? "736h" : _iPhone6 ? "667h" : "568h")}.png"));
+        public static UIImage SplashScreenImage => splashScreenImage.Value;
+
+        /// <summary>
+        /// Keypad Dial image
+        /// </summary>
+        private static readonly Lazy<UIImage> keypadDialImage = new Lazy<UIImage>(() => UIImage.FromFile($"keypad_call{(_iPhone6 ? "_big" : "")}.png"));
+        public static UIImage KeypadDialImage => keypadDialImage.Value;
+
+        public static UIImage LoginLogoImage(bool keyboardVisible) => UIImage.FromFile($"logo_freedomvoice{(!_iPhone6 && !_iPhone6Plus && keyboardVisible ? "_small" : "")}_white.png");
 
         #endregion
 
@@ -37,7 +54,7 @@ namespace FreedomVoice.iOS.Utilities
         /// <summary>
         /// Orange button color
         /// </summary>
-        static readonly Lazy<UIColor> buttonColor = new Lazy<UIColor>(() => UIColor.FromRGB(240, 170, 30));
+        static readonly Lazy<UIColor> buttonColor = new Lazy<UIColor>(() => OrangeColor);
         public static UIColor ButtonColor => buttonColor.Value;
 
         /// <summary>
@@ -73,14 +90,26 @@ namespace FreedomVoice.iOS.Utilities
         /// <summary>
         /// Invalid text field border color
         /// </summary>
-        static readonly Lazy<UIColor> invalidTextFieldBorderColor = new Lazy<UIColor>(() => DimOrangeColor);
+        static readonly Lazy<UIColor> invalidTextFieldBorderColor = new Lazy<UIColor>(() => RedColor);
         public static UIColor InvalidTextFieldBorderColor => invalidTextFieldBorderColor.Value;
 
         /// <summary>
         /// Invalid label color
         /// </summary>
-        static readonly Lazy<UIColor> invalidLabelColor = new Lazy<UIColor>(() => DimOrangeColor);
+        static readonly Lazy<UIColor> loginInvalidLabelColor = new Lazy<UIColor>(() => WhiteColor);
+        public static UIColor LoginInvalidLabelColor => loginInvalidLabelColor.Value;
+
+        /// <summary>
+        /// Invalid label color
+        /// </summary>
+        static readonly Lazy<UIColor> invalidLabelColor = new Lazy<UIColor>(() => RedColor);
         public static UIColor InvalidLabelColor => invalidLabelColor.Value;
+
+        /// <summary>
+        /// Invalid label color
+        /// </summary>
+        static readonly Lazy<UIColor> invalidLabelBackgroundColor = new Lazy<UIColor>(() => RedColor);
+        public static UIColor InvalidLabelBackgroundColor => invalidLabelBackgroundColor.Value;
 
         /// <summary>
         /// Text fields border color
@@ -133,14 +162,21 @@ namespace FreedomVoice.iOS.Utilities
         /// <summary>
         /// Dim orange color
         /// </summary>
-        static readonly Lazy<UIColor> dimOrangeColor = new Lazy<UIColor>(() => UIColor.FromRGB(254, 201, 95));
-        public static UIColor DimOrangeColor => dimOrangeColor.Value;
+        static readonly Lazy<UIColor> orangeColor = new Lazy<UIColor>(() => UIColor.FromRGB(240, 170, 30));
+        public static UIColor OrangeColor => orangeColor.Value;
 
         /// <summary>
         /// Dark gray color
         /// </summary>
         static readonly Lazy<UIColor> darkGrayColor = new Lazy<UIColor>(() => UIColor.FromRGB(73, 81, 82));
         public static UIColor DarkGrayColor => darkGrayColor.Value;
+
+        /// <summary>
+        /// Dark gray color
+        /// </summary>
+        static readonly Lazy<UIColor> redColor = new Lazy<UIColor>(() => UIColor.FromRGB(240, 78, 61));
+        public static UIColor RedColor => redColor.Value;
+
 
         /// <summary>
         /// Keypad border color
@@ -150,14 +186,62 @@ namespace FreedomVoice.iOS.Utilities
 
         #endregion
 
+        #region Dimensions
+
         public static CGRect ScreenBounds => UIScreen.MainScreen.Bounds;
 
         public static nfloat StatusBarHeight => UIApplication.SharedApplication.StatusBarFrame.Height;
+
+        public static nfloat TabBarHeight => 49;
+
+        public static nfloat BackButtonWidth(bool wideLabel)
+        {
+            if (AppDelegate.SystemVersion == 9)
+                return wideLabel ? 105 : 93;
+
+            return wideLabel ? 110 : 98;
+        }
+
+        public static nfloat LogoImageTopPadding(bool keyboardVisible) => !_iPhone6 && !_iPhone6Plus && keyboardVisible ? 10 : 35;
+
+        public static nfloat LogoImageWidth(bool keyboardVisible = false) => !_iPhone6 && !_iPhone6Plus && keyboardVisible ? 184 : 263;
+
+        public static nfloat LogoImageHeight(bool keyboardVisible = false) => !_iPhone6 && !_iPhone6Plus && keyboardVisible ? 29 : 42;
+
+        public static nfloat WelcomeLabelTopPadding(bool keyboardVisible = false) => _iPhone6Plus ? (keyboardVisible ? 32 : 118) : _iPhone6 ? (keyboardVisible ? 15 : 94) : (keyboardVisible ? 4 : 57);
+
+        public static UIFont WelcomeLabelFont(bool keyboardVisible) => UIFont.SystemFontOfSize((!_iPhone6 && !_iPhone6Plus && keyboardVisible ? 24 : 36), UIFontWeight.Thin);
+
+        public static nfloat WelcomeLabelHeight(bool keyboardVisible = false) => !_iPhone6 && !_iPhone6Plus && keyboardVisible ? 18 : 30;
+
+        public static nfloat UsernameTextFieldTopPadding(bool keyboardVisible = false) => !_iPhone6 && !_iPhone6Plus && keyboardVisible ? 10 : 28;
+
+        public static nfloat PasswordTextFieldPadding => _iPhone6Plus ? 33 : 27;
+
+        public static nfloat LoginValidationLabelTopPadding => _iPhone6Plus ? 17 : 10;
+
+        public static nfloat BackButtonLabelWidth => AppDelegate.SystemVersion == 9 ? 86 : 91;
+
+        public static nfloat KeypadButtonDiameter => _iPhone6 || _iPhone6Plus ? 75 : 65;
+
+        public static nfloat KeypadDistanceX => _iPhone6 || _iPhone6Plus ? 28 : 16;
+
+        public static nfloat KeypadDistanceY => _iPhone6 || _iPhone6Plus ? 15 : 8;
+
+        public static nfloat KeypadWidth => KeypadButtonDiameter * 3 + KeypadDistanceX * 2;
+
+        public static nfloat KeypadHeight => (KeypadButtonDiameter + KeypadDistanceY) * 4;
+
+        public static nfloat KeypadTopPadding => _iPhone6Plus ? 44 : _iPhone6 ? 17 : 0;
+
+        public static nfloat KeypadDialButtonDiameter => KeypadButtonDiameter - 3;
 
         public static nfloat NavigationBarHeight(this UINavigationController navigationController)
         {
             return navigationController.NavigationBar?.Frame.Size.Height ?? 0;
         }
+
+        #endregion
 
         /// <summary>
         /// Apply UIAppearance to this application, this is iOS's version of "styling"
@@ -168,6 +252,9 @@ namespace FreedomVoice.iOS.Utilities
 
             UINavigationBar.Appearance.TintColor = WhiteColor;
             UINavigationBar.Appearance.SetTitleTextAttributes(new UITextAttributes { TextColor = WhiteColor });
+
+            //var navigationBarImage = AppDelegate.CurrentDeviceName == iPhone6 || AppDelegate.CurrentDeviceName == iPhone6S ? "navbar_wide.png" : "navbar.png";
+            //UINavigationBar.Appearance.SetBackgroundImage(UIImage.FromFile(navigationBarImage), UIBarMetrics.Default);
             UINavigationBar.Appearance.SetBackgroundImage(UIImage.FromFile("navbar.png"), UIBarMetrics.Default);
         }
 

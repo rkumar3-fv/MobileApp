@@ -11,10 +11,10 @@ namespace FreedomVoice.iOS.Entities
             UnreadMessagesCount = messageFolder.UnreadMessages;
         }
 
-        public int MessageCount { get; set; }
+        public int MessageCount { get; private set; }
 
-        public string DisplayName { get; set; }
+        public string DisplayName { get; private set; }
 
-        public int UnreadMessagesCount { get; set; }
+        public int UnreadMessagesCount { get; private set; }
     }
 }
