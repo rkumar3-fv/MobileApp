@@ -38,11 +38,13 @@
   <dimen name="auth_activity_auth_title_text">36sp</dimen>
   <dimen name="auth_activity_edit_text_size">16sp</dimen>
   <dimen name="auth_activity_error_text_size">12sp</dimen>
+  <dimen name="auth_activity_welcome_top_spacing">38dp</dimen>
   <dimen name="auth_activity_welcome_email_spacing">28dp</dimen>
   <dimen name="auth_activity_error_message_spacing">3dp</dimen>
   <dimen name="auth_activity_login_password_spacing">16dp</dimen>
   <dimen name="auth_activity_password_button_spacing">23dp</dimen>
   <dimen name="auth_activity_field_height_max">48dp</dimen>
+  <dimen name="auth_activity_error_height">22dp</dimen>
   
   <!-- Restore Activity -->
   <dimen name="restore_activity_info_label_margin">30dp</dimen>
@@ -59,10 +61,11 @@
   <dimen name="inactive_activity_text_margin">43dp</dimen>
   
   <!-- Phone activity -->
+  <dimen name="phone_activity_info_label_margin">15dp</dimen>
   <dimen name="phone_activity_field_margin">13dp</dimen>
   <dimen name="phone_activity_code_size">30dp</dimen>
   <dimen name="phone_activity_button_margin">20dp</dimen>
-  <dimen name="phone_activity_skip_margin">19dp</dimen>
+  <dimen name="phone_activity_skip_margin">14dp</dimen>
   <dimen name="phone_activity_error_margin">1dp</dimen>
   
   <!-- Select account activity -->
@@ -107,8 +110,8 @@
   
   <!-- Keypad fragment -->
   <dimen name="fragment_keypad_spinner_size">56dp</dimen>
-  <dimen name="fragment_keypad_spinner_width">168dp</dimen>
-  <dimen name="fragment_keypad_spinner_width_collapsed">156dp</dimen>
+  <dimen name="fragment_keypad_spinner_width">180dp</dimen>
+  <dimen name="fragment_keypad_spinner_width_collapsed">168dp</dimen>
   <dimen name="fragment_keypad_spinner_height">48dp</dimen>
   <dimen name="fragment_keypad_number_size">65dp</dimen>
   <dimen name="fragment_keypad_number_text_size">30sp</dimen>

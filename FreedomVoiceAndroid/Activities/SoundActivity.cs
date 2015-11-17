@@ -1,7 +1,9 @@
 using System;
 using System.Timers;
 using Android.Content;
+using Android.Media;
 using Android.OS;
+using Android.Runtime;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Helpers;
 using com.FreedomVoice.MobileApp.Android.Services;
@@ -25,11 +27,17 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         protected Button CallBackButton;
         protected SeekBar PlayerSeek;
         protected RelativeLayout TouchLayout;
-
+        private AudioManager _audioManager;
         private bool _isSeeking;
         private bool _isPlayed;
         private bool _isCurrent;
         private Timer _timer;
+
+        protected override void OnCreate(Bundle bundle)
+        {
+            base.OnCreate(bundle);
+            _audioManager = GetSystemService(AudioService).JavaCast<AudioManager>();
+        }
 
         protected override void OnStart()
         {
@@ -62,7 +70,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         private void PlayerButtonOnClick(object sender, EventArgs eventArgs)
         {
             if (string.IsNullOrEmpty(_soundPath))
-                AttachmentId = AppHelper.Instance(this).AttachmentsHelper.LoadAttachment(Msg);
+                AttachmentId = Appl.ApplicationHelper.AttachmentsHelper.LoadAttachment(Msg);
             else
                 PlayerAction();
         }
@@ -88,6 +96,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             base.OnResume();
             if (_isBinded)
                 CheckSoundOutput(SpeakerButton.Checked);
+            _audioManager.Mode = Mode.Normal;
+            _audioManager.SpeakerphoneOn = true;
         }
 
         /// <summary>
@@ -176,6 +186,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             PlayerButton.SetImageResource(Resource.Drawable.ic_action_play);
             _isPlayed = false;
             _timer.Stop();
+            _audioManager.Mode = Mode.Normal;
+            _audioManager.SpeakerphoneOn = true;
         }
 
         /// <summary>

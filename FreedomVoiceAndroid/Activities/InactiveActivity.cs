@@ -20,6 +20,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
     [Activity(
         Label = "@string/ActivityInactive_title",
         ScreenOrientation = ScreenOrientation.Portrait,
+        WindowSoftInputMode = SoftInput.StateAlwaysHidden, 
         Theme = "@style/AppThemeActionBar")]
     public class InactiveActivity : InfoActivity
     {
@@ -72,7 +73,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         /// </summary>
         protected override void ActionButtonOnClick(object sender, EventArgs eventArgs)
         {
-            if (Helper.PhoneNumber != null)
+            if (Appl.ApplicationHelper.IsVoicecallsSupported())
             {
 #if DEBUG
                 var callIntent = new Intent(Intent.ActionCall, Uri.Parse("tel:+1" + GetString(Resource.String.ActivityInactive_customerNumber)));

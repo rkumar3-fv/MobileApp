@@ -92,17 +92,18 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             _contactsHelper.GetName(Msg.FromNumber, out text);
             SenderText.Text = Msg.FromName.Length > 1 ? Msg.FromName : text;
             MessageDate.Text = DataFormatUtils.ToFormattedDate(GetString(Resource.String.Timestamp_yesterday), Msg.MessageDate);
-            AppHelper.Instance(this).AttachmentsHelper.OnFinish += AttachmentsHelperOnFinishLoading;
-            AppHelper.Instance(this).AttachmentsHelper.OnProgressLoading += AttachmentsHelperOnProgressLoading;
-            AppHelper.Instance(this).AttachmentsHelper.FailLoadingEvent += AttachmentsHelperOnFailLoadingEvent;
+            Appl.ApplicationHelper.AttachmentsHelper.OnFinish += AttachmentsHelperOnFinishLoading;
+            Appl.ApplicationHelper.AttachmentsHelper.OnProgressLoading += AttachmentsHelperOnProgressLoading;
+            Appl.ApplicationHelper.AttachmentsHelper.FailLoadingEvent += AttachmentsHelperOnFailLoadingEvent;
         }
 
         protected override void OnPause()
         {
             base.OnPause();
-            AppHelper.Instance(this).AttachmentsHelper.OnFinish -= AttachmentsHelperOnFinishLoading;
-            AppHelper.Instance(this).AttachmentsHelper.OnProgressLoading -= AttachmentsHelperOnProgressLoading;
-            AppHelper.Instance(this).AttachmentsHelper.FailLoadingEvent -= AttachmentsHelperOnFailLoadingEvent;
+            Appl.ApplicationHelper.AttachmentsHelper.OnFinish -= AttachmentsHelperOnFinishLoading;
+            Appl.ApplicationHelper.AttachmentsHelper.OnProgressLoading -= AttachmentsHelperOnProgressLoading;
+            Appl.ApplicationHelper.AttachmentsHelper.FailLoadingEvent -= AttachmentsHelperOnFailLoadingEvent;
+            MarkForRemove = -1;
         }
 
         private void OnUndoClick(View view)
@@ -117,6 +118,12 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
 
         private void RemoveAction()
         {
+            if (Helper.SelectedMessage == -1) return;
+            if (Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].MessagesList == null) return;
+            if (Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].MessagesList.Count < Helper.SelectedMessage) return;
+            if (Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].MessagesList[Helper.SelectedMessage] == null) return;
+            if (!Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].MessagesList[Helper.SelectedMessage].Equals(Msg)) return;
+            if (Appl.ApplicationHelper.AttachmentsHelper.IsInProcess(Msg.Id)) return;
             if (MarkForRemove != -1)
             {
                 if (Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].FolderName == GetString(Resource.String.FragmentMessages_folderTrash))

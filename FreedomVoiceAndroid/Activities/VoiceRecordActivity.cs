@@ -1,6 +1,7 @@
 using Android.App;
 using Android.Content.PM;
 using Android.OS;
+using Android.Views;
 using Android.Widget;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
@@ -11,6 +12,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
     [Activity(
         Label = "@string/ActivityRecord_title",
         Theme = "@style/AppThemeActionBar",
+        WindowSoftInputMode = SoftInput.StateAlwaysHidden,
         ScreenOrientation = ScreenOrientation.Portrait)]
     public class VoiceRecordActivity : SoundActivity
     {

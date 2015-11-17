@@ -1,8 +1,9 @@
 using Android.Content;
-using Android.OS;
 using Android.Provider;
 using Android.Support.Design.Widget;
+using Android.Support.V4.Content;
 using Android.Telephony;
+using Android.Views;
 #if DEBUG
 using Android.Util;
 using FreedomVoice.Core.Utils;
@@ -15,20 +16,36 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
 {
     public abstract class OperationActivity : LogoutActivity
     {
+        private const int ContactsPermissionRequestId = 2045;
+
         /// <summary>
         /// Call action
         /// </summary>
         /// <param name="phone">Destination phone</param>
         public void Call(string phone)
         {
-            if ((Helper.PhoneNumber == null) || (Helper.PhoneNumber.Length == 0))
+            if (Appl.ApplicationHelper.CheckCallsPermission() == false)
+            {
+                var snackPerm = Snackbar.Make(RootLayout, Resource.String.Snack_noPhonePermission, Snackbar.LengthLong);
+                snackPerm.SetAction(Resource.String.Snack_noPhonePermissionAction, OnSetPermission);
+                snackPerm.SetActionTextColor(ContextCompat.GetColor(this, Resource.Color.colorUndoList));
+                snackPerm.Show();
+            }
+            else if (!Appl.ApplicationHelper.IsVoicecallsSupported()||(Appl.ApplicationHelper.GetMyPhoneNumber() == null))
             {
                 var noCellularDialog = new NoCellularDialogFragment();
                 noCellularDialog.Show(SupportFragmentManager, GetString(Resource.String.DlgCellular_title));
             }
+            else if (Appl.ApplicationHelper.GetMyPhoneNumber().Length < 10)
+            {
+                var snackPhone = Snackbar.Make(RootLayout, Resource.String.Snack_noPhoneNumber, Snackbar.LengthLong);
+                snackPhone.SetAction(Resource.String.Snack_noPhoneNumberAction, OnSetPhoneClick);
+                snackPhone.SetActionTextColor(ContextCompat.GetColor(this, Resource.Color.colorUndoList));
+                snackPhone.Show();
+            }
             else
             {
-                if (IsAirplaneModeOn())
+                if (Appl.ApplicationHelper.IsAirplaneModeOn())
                 {
                     var airplaneDialog = new AirplaneDialogFragment();
                     airplaneDialog.DialogEvent += AirplaneDialogOnDialogEvent;
@@ -36,7 +53,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 }
                 else
                 {
-                    if (IsCallerIdHides())
+                    if (Appl.ApplicationHelper.IsCallerIdHides())
                     {
                         var callerDialog = new CallerIdDialogFragment();
                         callerDialog.DialogEvent += CallerDialogOnDialogEvent;
@@ -44,7 +61,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                     }
                     else
                     {
-                        if (phone.Length > 1)
+                        if (phone.Length > 4)
                         {
                             var normalizedNumber = PhoneNumberUtils.NormalizeNumber(phone);
 #if DEBUG
@@ -53,12 +70,14 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                             Helper.Call(normalizedNumber);
                             JavaSystem.Gc();
                         }
-#if DEBUG
+
                         else
                         {
+                            Snackbar.Make(RootLayout, Resource.String.Snack_incorrectDest, Snackbar.LengthLong).Show();
+#if DEBUG
                             Log.Debug(App.AppPackage, "DIAL TO EMPTY PHONE UNAVAILABLE");
-                        }
 #endif
+                        }
                     }
                 }
             }
@@ -76,37 +95,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 StartActivityForResult(new Intent(Settings.ActionAirplaneModeSettings), 0);
         }
 
-        /// <summary>
-        /// Check is airplane mode ON for different API levels
-        /// </summary>
-        private bool IsAirplaneModeOn()
-        {
-            return (int) Build.VERSION.SdkInt < 17 ? IsAirplaneOldApi() : IsAirplaneNewApi();
-        }
-
-        //@SuppressLint("NewApi")
-        private bool IsAirplaneNewApi()
-        {
-            return Settings.Global.GetInt(ContentResolver, Settings.Global.AirplaneModeOn, 0) != 0;
-        }
-
-        //@SuppressWarnings("deprecation")
-        private bool IsAirplaneOldApi()
-        {
-#pragma warning disable 618
-            return Settings.System.GetInt(ContentResolver, Settings.System.AirplaneModeOn, 0) != 0;
-#pragma warning restore 618
-        }
-
-        /// <summary>
-        /// Get caller ID state
-        /// <b>No API method available for getting caller ID state</b>
-        /// </summary>
-        private bool IsCallerIdHides()
-        {
-            return false;
-        }
-
         protected override void OnHelperEvent(ActionsHelperEventArgs args)
         {
             base.OnHelperEvent(args);
@@ -114,6 +102,23 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             {
                 switch (code)
                 {
+                    case ActionsHelperEventArgs.CallReservationNotSupports:
+                        var noCellularDialog = new NoCellularDialogFragment();
+                        noCellularDialog.Show(SupportFragmentManager, GetString(Resource.String.DlgCellular_title));
+                        break;
+                    case ActionsHelperEventArgs.PhoneNumberNotSets:
+                        var snackPhone = Snackbar.Make(RootLayout, Resource.String.Snack_noPhoneNumber, Snackbar.LengthLong);
+                        snackPhone.SetAction(Resource.String.Snack_noPhoneNumberAction, OnSetPhoneClick);
+                        snackPhone.SetActionTextColor(ContextCompat.GetColor(this, Resource.Color.colorUndoList));
+                        snackPhone.Show();
+                        break;
+                    case ActionsHelperEventArgs.CallPermissionDenied:
+                        var snackPerm = Snackbar.Make(RootLayout, Resource.String.Snack_noPhonePermission, Snackbar.LengthLong);
+                        snackPerm.SetAction(Resource.String.Snack_noPhonePermissionAction, OnSetPermission);
+                        snackPerm.SetActionTextColor(ContextCompat.GetColor(this, Resource.Color.colorUndoList));
+                        snackPerm.Show();
+                        break;
+
                     case ActionsHelperEventArgs.CallReservationFail:
                         Snackbar.Make(RootLayout, Resource.String.Snack_callFailed, Snackbar.LengthLong).Show();
                         break;
@@ -122,6 +127,17 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                         break;
                 }
             }
+        }
+
+        private void OnSetPhoneClick(View view)
+        {
+            var intent = new Intent(this, typeof(SetNumberActivityWithBack));
+            StartActivity(intent);
+        }
+
+        private void OnSetPermission(View view)
+        {
+            RequestPermissions(new[] { AppHelper.MakeCallsPermission }, ContactsPermissionRequestId);
         }
     }
 }

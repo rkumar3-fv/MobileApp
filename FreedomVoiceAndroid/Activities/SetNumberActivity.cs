@@ -52,7 +52,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             _phoneErrorText = FindViewById<TextView>(Resource.Id.phoneActivity_resultText);
             SkipButton.Click += SkipButtonOnClick;
             SupportActionBar.SetTitle(Resource.String.ActivityNumber_title);
-            _errorColor = new Color(ContextCompat.GetColor(this, Resource.Color.textColorError));
+            _errorColor = new Color(ContextCompat.GetColor(this, Resource.Color.textColorErrorDarkLine));
             var applyBarColor = new Color(ContextCompat.GetColor(this, Resource.Color.colorProgressWhite));
             var skipBarColor = new Color(ContextCompat.GetColor(this, Resource.Color.colorProgressBlue));
             _applyProgressBar.IndeterminateDrawable?.SetColorFilter(applyBarColor, PorterDuff.Mode.SrcIn);
@@ -151,8 +151,9 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         protected override void OnResume()
         {
             base.OnResume();
-            if (string.IsNullOrEmpty(Helper.PhoneNumber)) return;
-            _phoneText.Text = Helper.PhoneNumber;
+            var phone = Appl.ApplicationHelper.GetMyPhoneNumber();
+            if (string.IsNullOrEmpty(phone)) return;
+            _phoneText.Text = phone;
             _phoneText.SetSelection(_phoneText.Text.Length);
         }
 

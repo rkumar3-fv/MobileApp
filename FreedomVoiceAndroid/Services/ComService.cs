@@ -46,7 +46,8 @@ namespace com.FreedomVoice.MobileApp.Android.Services
             Log.Debug(App.AppPackage, "SERVICE REQUEST ID=" + request.Id);
 #endif
             var task = ExecuteRequest(request);
-            _activeActions.Add(id, task);
+            if (!_activeActions.ContainsKey(id))
+                _activeActions.Add(id, task);
             return StartCommandResult.NotSticky;
         }
 

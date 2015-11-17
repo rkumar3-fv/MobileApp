@@ -98,6 +98,11 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             return msg.Id;
         }
 
+        public bool IsInProcess(int id)
+        {
+            return _waitingList != null && _waitingList.Contains(id);
+        }
+
         /// <summary>
         /// Receive result from service
         /// </summary>

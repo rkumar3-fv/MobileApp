@@ -1,6 +1,8 @@
+using Android.Content;
 using Android.OS;
 using Android.Views;
 using Android.Widget;
+using com.FreedomVoice.MobileApp.Android.Activities;
 using com.FreedomVoice.MobileApp.Android.Adapters;
 using com.FreedomVoice.MobileApp.Android.Helpers;
 using FreedomVoice.Core.Utils;
@@ -18,14 +20,28 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         public override void OnActivityCreated(Bundle savedInstanceState)
         {
             base.OnActivityCreated(savedInstanceState);
-            IdSpinner.ItemSelected += (sender, args) => Helper.SetPresentationNumber(args.Position);
-            var adapter = new CallerIdSpinnerAdapter(Activity, Helper.SelectedAccount.PresentationNumbers);
-            IdSpinner.Adapter = adapter;
+            if (Helper.SelectedAccount == null)
+            {
+                Helper.GetAccounts();
+                ContentActivity.StartActivity(new Intent(ContentActivity, typeof(LoadingActivity)));
+            }
+            else if (Helper.SelectedAccount.PresentationNumbers == null)
+            {
+                Helper.GetPresentationNumbers();
+                ContentActivity.StartActivity(new Intent(ContentActivity, typeof(LoadingActivity)));
+            }
+            else if (IdSpinner != null)
+            {
+                var adapter = new CallerIdSpinnerAdapter(Context, Helper.SelectedAccount.PresentationNumbers);
+                IdSpinner.ItemSelected += (sender, args) => Helper.SetPresentationNumber(args.Position);
+                IdSpinner.Adapter = adapter;
+            }
         }
 
         public override void OnResume()
         {
             base.OnResume();
+            if (Helper.SelectedAccount?.PresentationNumbers == null) return;
             if (Helper.SelectedAccount.PresentationNumbers.Count == 1)
             {
                 IdSpinner.Visibility = ViewStates.Invisible;

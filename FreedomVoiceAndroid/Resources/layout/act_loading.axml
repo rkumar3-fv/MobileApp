@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/authActivity_root"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+    <ProgressBar
+        style="@style/InButtonProgressBar"
+        android:layout_width="@dimen/select_acc_activity_progress_size"
+        android:layout_height="@dimen/select_acc_activity_progress_size"
+        android:layout_centerInParent="true" />
+</RelativeLayout>

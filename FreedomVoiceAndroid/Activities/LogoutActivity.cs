@@ -20,7 +20,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             switch (item.ItemId)
             {
                 case Resource.Id.menu_action_phone:
-                    if (Helper.PhoneNumber == null)
+                    if (!Appl.ApplicationHelper.IsVoicecallsSupported())
                     {
                         var noCellularDialog = new NoCellularDialogFragment();
                         noCellularDialog.Show(SupportFragmentManager, GetString(Resource.String.DlgCellular_title));

@@ -46,7 +46,8 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>
+    </DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AndroidUseSharedRuntime>False</AndroidUseSharedRuntime>
@@ -67,6 +68,29 @@
     <EnableProguard>False</EnableProguard>
     <DevInstrumentationEnabled>False</DevInstrumentationEnabled>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Trace|AnyCPU'">
+    <OutputPath>bin\Trace\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <AndroidUseSharedRuntime>True</AndroidUseSharedRuntime>
+    <AndroidLinkSkip />
+    <AndroidLinkMode>SdkOnly</AndroidLinkMode>
+    <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
+    <BundleAssemblies>False</BundleAssemblies>
+    <AndroidCreatePackagePerAbi>False</AndroidCreatePackagePerAbi>
+    <AndroidSupportedAbis />
+    <AndroidStoreUncompressedFileExtensions />
+    <MandroidI18n />
+    <JavaMaximumHeapSize>1G</JavaMaximumHeapSize>
+    <Debugger>Xamarin</Debugger>
+    <AndroidEnableMultiDex>False</AndroidEnableMultiDex>
+    <DevInstrumentationEnabled>True</DevInstrumentationEnabled>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="HockeyApp.Android">
       <HintPath>..\Components\hockeyappandroid-3.6.2.0\lib\android\HockeyApp.Android.dll</HintPath>
@@ -79,11 +103,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Collections" />
     <Reference Include="System.Core" />
-    <Reference Include="System.IO" />
-    <Reference Include="System.Runtime" />
-    <Reference Include="System.Threading.Tasks" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml" />
     <Reference Include="Xamarin.Android.Support.Design, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -164,6 +184,7 @@
     <Compile Include="Activities\BaseActivity.cs" />
     <Compile Include="Activities\FaxActivity.cs" />
     <Compile Include="Activities\InactiveActivityWithBack.cs" />
+    <Compile Include="Activities\LoadingActivity.cs" />
     <Compile Include="Activities\LogoutActivity.cs" />
     <Compile Include="Activities\MessageDetailsActivity.cs" />
     <Compile Include="Activities\OperationActivity.cs" />
@@ -180,6 +201,7 @@
     <Compile Include="Adapters\AccountsRecyclerAdapter.cs" />
     <Compile Include="Adapters\PhonesRecyclerAdapter.cs" />
     <Compile Include="Adapters\RecentsRecyclerAdapter.cs" />
+    <Compile Include="CustomControls\AlwaysTopSpinner.cs" />
     <Compile Include="CustomControls\Callbacks\SearchViewListener.cs" />
     <Compile Include="CustomControls\Callbacks\SnackbarCallback.cs" />
     <Compile Include="CustomControls\Callbacks\SwipeCallback.cs" />
@@ -224,7 +246,6 @@
     <Compile Include="Helpers\ActionsHelperEventArgs.cs" />
     <Compile Include="Helpers\ActionsHelperIntentArgs.cs" />
     <Compile Include="Helpers\AppHelper.cs" />
-    <Compile Include="Helpers\AppPreferencesHelper.cs" />
     <Compile Include="Helpers\AttachmentHelperEventArgs.cs" />
     <Compile Include="Helpers\AttachmentsHelper.cs" />
     <Compile Include="Receivers\NotificationBroadcastReceiver.cs" />
@@ -238,10 +259,13 @@
     <Compile Include="Services\IAppServiceResultReceiver.cs" />
     <Compile Include="Services\MediaService.cs" />
     <Compile Include="Services\MediaServiceBinder.cs" />
-    <Compile Include="Utils\CallStateHelper.cs" />
+    <Compile Include="Storage\AppDbHelper.cs" />
+    <Compile Include="Storage\AppPreferencesHelper.cs" />
     <Compile Include="Utils\ContactsHelper.cs" />
+    <Compile Include="Utils\CookieSerializer.cs" />
     <Compile Include="Utils\DataValidationUtils.cs" />
     <Compile Include="Utils\ExceptionSupport.cs" />
+    <Compile Include="Utils\SecurityHelper.cs" />
     <Compile Include="Utils\TouchHelper.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -366,6 +390,9 @@
       <SubType>AndroidResource</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout-v21\act_phone.axml">
+      <SubType>AndroidResource</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\act_loading.axml">
       <SubType>AndroidResource</SubType>
     </AndroidResource>
   </ItemGroup>
@@ -960,7 +987,7 @@
     <AndroidResource Include="Resources\menu\menu_recents.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\values-normal\Dimens.xml" />
+    <AndroidResource Include="Resources\values-normal-hdpi\Dimens.xml" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\menu\menu_contacts.xml" />
@@ -1234,6 +1261,96 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable-v21\toggle_off.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-hdpi\sel_black_left.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-hdpi\sel_black_right.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-hdpi\sel_black_straight.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-hdpi\sel_white_left.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-hdpi\sel_white_right.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-hdpi\sel_white_straight.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-mdpi\sel_black_left.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-mdpi\sel_black_right.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-mdpi\sel_black_straight.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-mdpi\sel_white_left.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-mdpi\sel_white_right.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-mdpi\sel_white_straight.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xhdpi\sel_black_left.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xhdpi\sel_black_right.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xhdpi\sel_black_straight.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xhdpi\sel_white_left.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xhdpi\sel_white_right.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xhdpi\sel_white_straight.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxhdpi\sel_black_left.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxhdpi\sel_black_right.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxhdpi\sel_black_straight.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxhdpi\sel_white_left.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxhdpi\sel_white_right.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxhdpi\sel_white_straight.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxxhdpi\sel_black_left.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxxhdpi\sel_black_right.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxxhdpi\sel_black_straight.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxxhdpi\sel_white_left.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxxhdpi\sel_white_right.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxxhdpi\sel_white_straight.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
