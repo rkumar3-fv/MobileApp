@@ -83,8 +83,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
 
         private void NoPhoneDialogOnDialogEvent(object sender, DialogEventArgs args)
         {
-            var intent = new Intent(this, typeof(SetNumberActivityWithBack));
-            StartActivity(intent);
+            if (args.Result == DialogResult.Ok)
+                StartActivity(new Intent(this, typeof(SetNumberActivityWithBack)));
         }
 
         private void CallerDialogOnDialogEvent(object sender, DialogEventArgs args)

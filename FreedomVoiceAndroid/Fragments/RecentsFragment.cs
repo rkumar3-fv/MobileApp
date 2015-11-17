@@ -15,7 +15,6 @@ using com.FreedomVoice.MobileApp.Android.CustomControls;
 using com.FreedomVoice.MobileApp.Android.CustomControls.Callbacks;
 using com.FreedomVoice.MobileApp.Android.CustomControls.CustomEventArgs;
 using com.FreedomVoice.MobileApp.Android.Helpers;
-using FreedomVoice.Core.Utils;
 
 namespace com.FreedomVoice.MobileApp.Android.Fragments
 {
@@ -67,6 +66,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         /// </summary>
         private void AdapterOnAdditionalSectorClick(object sender, string id)
         {
+            if (string.IsNullOrEmpty(id)) return;
             var intent = new Intent(Intent.ActionView);
             var uri = Uri.WithAppendedPath(ContactsContract.Contacts.ContentUri, id);
             intent.SetData(uri);
@@ -79,8 +79,11 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         private void AdapterOnItemClick(object sender, int l)
         {
             var keys = Helper.RecentsDictionary.Keys.ToList();
-            ContentActivity.Call(Helper.RecentsDictionary[keys[l]].PhoneNumber);
-            _lastClicked = l;
+            if ((l < keys.Count) && (l != -1))
+            {
+                ContentActivity.Call(Helper.RecentsDictionary[keys[l]].PhoneNumber);
+                _lastClicked = l;
+            }
         }
 
         /// <summary>

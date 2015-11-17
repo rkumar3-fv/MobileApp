@@ -103,7 +103,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         /// </summary>
         private void MessageViewOnClick(object sender, int position)
         {
-            if (position > _adapter.CurrentContent.Count) return;
+            if (position >= _adapter.CurrentContent.Count) return;
             Log.Debug(App.AppPackage, $"FRAGMENT {GetType().Name}: select item #{position}");
             _adapter.CurrentContent = Helper.GetNext(position);
             if (Helper.SelectedMessage != -1)
