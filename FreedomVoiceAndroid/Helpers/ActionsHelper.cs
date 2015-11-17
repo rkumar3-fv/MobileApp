@@ -40,6 +40,9 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         Stopwatch _watchGetAccs;
         Stopwatch _watchGetCaller;
         Stopwatch _watchGetExt;
+        Stopwatch _watchGetFolders;
+        Stopwatch _watchGetMessages;
+        Stopwatch _watchCall;
 #endif
         /// <summary>
         /// Is first app launch flag
@@ -382,6 +385,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                 return request.Key;
             }
 #if DEBUG
+            _watchGetFolders = Stopwatch.StartNew();
             Log.Debug(App.AppPackage, "HELPER REQUEST: ForceLoadFolders ID=" + requestId);
 #endif
             PrepareIntent(requestId, getFoldersRequest);
@@ -406,6 +410,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                 return request.Key;
             }
 #if DEBUG
+            _watchGetMessages = Stopwatch.StartNew();
             Log.Debug(App.AppPackage, "HELPER REQUEST: ForceLoadMessages ID=" + requestId);
 #endif
             PrepareIntent(requestId, getMsgRequest);
@@ -453,6 +458,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                         return request.Key;
                     }
 #if DEBUG
+                    _watchCall = Stopwatch.StartNew();
                     Log.Debug(App.AppPackage, $"HELPER REQUEST: Call ID={requestId}");
                     Log.Debug(App.AppPackage,
                         $"Call from {reserveCallRequest.Account} (shows as {reserveCallRequest.PresentationNumber}) to {reserveCallRequest.DialingNumber} using SIM {reserveCallRequest.RealSimNumber}");
@@ -938,6 +944,8 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                 // Get folders response
                 case "GetFoldersResponse":
 #if DEBUG
+                    _watchGetFolders.Stop();
+                    Log.Debug("DIAG", $"DIAGNOSTICS: Get Folders time {_watchGetFolders.ElapsedMilliseconds} Ms");
                     Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} successed - YOU GET FOLDERS LIST");
 #endif
                     var foldersResponse = (GetFoldersResponse)response;
@@ -953,6 +961,8 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                 // Get messages response
                 case "GetMessagesResponse":
 #if DEBUG
+                    _watchGetMessages.Stop();
+                    Log.Debug("DIAG", $"DIAGNOSTICS: Get Messages time {_watchGetMessages.ElapsedMilliseconds} Ms");
                     Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} successed - YOU GET MESSAGES LIST");
 #endif
                     var msgResponse = (GetMessagesResponse)response;
@@ -967,6 +977,8 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                 // Call reservation response
                 case "CallReservationResponse":
 #if DEBUG
+                    _watchCall.Stop();
+                    Log.Debug("DIAG", $"DIAGNOSTICS: Get Extensions time {_watchCall.ElapsedMilliseconds} Ms");
                     Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} successed (Call reservation)");
 #endif
                     var callResponse = (CallReservationResponse)response;

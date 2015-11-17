@@ -70,7 +70,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         protected override void OnResume()
         {
             base.OnResume();
-            RemoveButton.Visibility = ViewStates.Gone;
+            RemoveButton.Visibility = ViewStates.Invisible;
             if ((Helper.SelectedExtension != -1)&&(Helper.SelectedFolder != -1)&&(Helper.SelectedMessage != -1))
             {
                 if (!(Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].MessagesList.Count > Helper.SelectedMessage))
@@ -201,7 +201,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
 
         public override bool OnCreateOptionsMenu(IMenu menu)
         {
-            _menu = menu;
             var inflater = new SupportMenuInflater(this);
             if ((Helper.SelectedExtension != -1) && (Helper.SelectedFolder != -1) && (Helper.SelectedMessage != -1))
                 inflater.Inflate(Resource.Menu.menu_details, menu);

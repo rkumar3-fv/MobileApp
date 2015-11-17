@@ -133,7 +133,7 @@ namespace TestApp
                 File.Delete($"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\\{"file80.pdf"}");
             var resFile = ApiHelper.GetMedia("7607124648", 80, "New", "I161578702", MediaType.Pdf, CancellationToken.None).Result;
             Console.WriteLine($"Get Media method: {resFile.Code}");
-            using (var ms = new MemoryStream())
+            /*using (var ms = new MemoryStream())
             {
                 resFile.Result.CopyTo(ms);
                 var bytes = ms.ToArray();
@@ -146,7 +146,7 @@ namespace TestApp
                     ms.Close();
                 }
                 Console.WriteLine(@"Content from Account=7607124648; x80 - New; I161223944 received: file80.pdf");
-            }
+            }*/
             Console.Write(Environment.NewLine);
 
             resMsg = ApiHelper.GetMesages("7607124648", 80, "New", 10, 1, true).Result;
@@ -215,7 +215,7 @@ namespace TestApp
                 File.Delete($"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\\{"file.pdf"}");
             var res = ApiHelper.GetMedia("7607124648", 80, "New", "I161625181", MediaType.Pdf, CancellationToken.None).Result;
             Console.WriteLine($"Media method: {res.Code}");
-            using (var ms = new MemoryStream())
+            /*using (var ms = new MemoryStream())
              {
                  res.Result.CopyTo(ms);
                  var bytes = ms.ToArray();
@@ -228,7 +228,7 @@ namespace TestApp
                      ms.Close();
                  }
              
-             }
+             }*/
             var files = Directory.GetFiles(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "*.pdf");
             foreach (var file in files)
             {

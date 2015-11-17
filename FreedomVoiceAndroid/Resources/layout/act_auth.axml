@@ -21,7 +21,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_above="@id/authActivity_forgotButton"
         android:layout_marginTop="@dimen/auth_activity_welcome_email_spacing">
         <TextView
             style="@style/AuthLargeLabelText"
