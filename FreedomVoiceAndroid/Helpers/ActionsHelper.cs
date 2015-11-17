@@ -21,6 +21,7 @@ using com.FreedomVoice.MobileApp.Android.Storage;
 using FreedomVoice.Core;
 using Xamarin;
 using Java.Util.Concurrent.Atomic;
+using Pair = Android.Support.V4.Util.Pair;
 using Uri = Android.Net.Uri;
 
 namespace com.FreedomVoice.MobileApp.Android.Helpers
@@ -113,6 +114,8 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         /// </summary>
         private readonly App _app;
 
+        private Pair _accPair;
+
         /// <summary>
         /// Result receiver for service communication
         /// </summary>
@@ -158,6 +161,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                     _userLogin = (string) pair.First;
                     _userPassword = (string) pair.Second;
                 }
+                _accPair = _preferencesHelper.GetAccCaller();
                 if (container != null)
                 {
                     ApiHelper.CookieContainer = container;
@@ -626,6 +630,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 #if DEBUG
             Log.Debug(App.AppPackage, $"PRESENTATION NUMBER SET to {DataFormatUtils.ToPhoneNumber(SelectedAccount.PresentationNumber)}");
 #endif
+            _preferencesHelper.SaveAccCaller(SelectedAccount.AccountName, SelectedAccount.PresentationNumber);
             HelperEvent?.Invoke(this, new ActionsHelperEventArgs(-1, new[] { ActionsHelperEventArgs.ChangePresentation }));
         }
 
@@ -835,8 +840,29 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                         // More than one active accounts
                         default:
                             AccountsList = accsResponse.AccountsList;
-                            intent = new Intent(_app, typeof(SelectAccountActivity));
-                            HelperEvent?.Invoke(this, new ActionsHelperIntentArgs(response.RequestId, intent));
+                            if (_accPair != null)
+                            {
+                                var accName = (string) _accPair.First;
+                                if (!string.IsNullOrEmpty(accName))
+                                { 
+                                    var selAccount = new Account(accName, new List<string>());
+                                    for (var i = 0; i < AccountsList.Count; i++)
+                                    {
+                                        if (!AccountsList[i].Equals(selAccount)) continue;
+                                        SelectedAccount = AccountsList[i];
+                                        break;
+                                    }
+                                }
+                                else
+                                    _accPair = null;
+                            }
+                            if ((SelectedAccount != null) && (AccountsList.Contains(SelectedAccount)))
+                                GetPresentationNumbers();
+                            else
+                            {
+                                intent = new Intent(_app, typeof (SelectAccountActivity));
+                                HelperEvent?.Invoke(this, new ActionsHelperIntentArgs(response.RequestId, intent));
+                            }
                             break;
                     }
                     break;
@@ -864,6 +890,24 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                                 intent = new Intent(_app, typeof (DisclaimerActivity));
                             else
                             {
+                                if (_accPair != null)
+                                {
+                                    var caller = (string) _accPair.Second;
+                                    if (!string.IsNullOrEmpty(caller))
+                                    {
+                                        for (var i = 0; i < SelectedAccount.PresentationNumbers.Count; i++)
+                                        {
+                                            if (SelectedAccount.PresentationNumbers[i] != caller) continue;
+                                            SelectedAccount.SelectedPresentationNumber = i;
+                                            break;
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    _accPair = new Pair(SelectedAccount.AccountName, SelectedAccount.PresentationNumber);
+                                    _preferencesHelper.SaveAccCaller(SelectedAccount.AccountName, SelectedAccount.PresentationNumber);
+                                }
                                 intent = new Intent(_app, typeof(ContentActivity));
                                 intent.AddFlags(ActivityFlags.ClearTop);
                             }
@@ -980,8 +1024,10 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             SelectedExtension = -1;
             SelectedFolder = -1;
             SelectedMessage = -1;
+            _accPair = null;
             RecentsDictionary.Clear();
             _preferencesHelper.ClearCredentials();
+            _preferencesHelper.SaveAccCaller("", "");
             var intent = new Intent(_app, typeof(AuthActivity));
             HelperEvent?.Invoke(this, new ActionsHelperIntentArgs(id, intent));
         }

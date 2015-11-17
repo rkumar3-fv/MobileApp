@@ -100,7 +100,7 @@ namespace com.FreedomVoice.MobileApp.Android.Entities
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == this.GetType() && Equals((Account) obj);
+            return obj.GetType() == GetType() && Equals((Account) obj);
         }
 
         public override int GetHashCode()

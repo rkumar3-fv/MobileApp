@@ -21,6 +21,8 @@ namespace com.FreedomVoice.MobileApp.Android.Storage
         private const string KeyPhoneNumber = "PhoneNumber";
         private const string KeyLogin = "Email";
         private const string KeyToken = "Token";
+        private const string KeyAccount = "Acc";
+        private const string KeyCallerId = "Caller";
 
         private AppPreferencesHelper(Context context)
         {
@@ -76,6 +78,16 @@ namespace com.FreedomVoice.MobileApp.Android.Storage
         }
 
         /// <summary>
+        /// Get account data pair
+        /// </summary>
+        public Pair GetAccCaller()
+        {
+            var account = _preferences.GetString(KeyAccount, "");
+            var caller = _preferences.GetString(KeyCallerId, "");
+            return new Pair(account, caller);
+        }
+
+        /// <summary>
         /// Get cookie
         /// </summary>
         public CookieContainer GetCookieContainer()
@@ -110,9 +122,21 @@ namespace com.FreedomVoice.MobileApp.Android.Storage
         /// </summary>
         public void SavePhoneNumber(string phone)
         {
-            
             var editor = _preferences.Edit();
             editor.PutString(KeyPhoneNumber, phone);
+            editor.Apply();
+        }
+
+        /// <summary>
+        /// Save last account data
+        /// </summary>
+        /// <param name="account">selected account</param>
+        /// <param name="caller">selected caller</param>
+        public void SaveAccCaller(string account, string caller)
+        {
+            var editor = _preferences.Edit();
+            editor.PutString(KeyAccount, account);
+            editor.PutString(KeyCallerId, caller);
             editor.Apply();
         }
 
