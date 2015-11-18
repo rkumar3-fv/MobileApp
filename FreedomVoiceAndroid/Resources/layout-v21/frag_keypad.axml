@@ -437,8 +437,6 @@
             app:elevation="@dimen/fragment_keypad_fab_elevation"
             app:pressedTranslationZ="@dimen/fragment_keypad_fab_translation"
             app:backgroundTint="@color/colorFabPrimary"
-            app:rippleColor="@color/colorFabPressed"
-            android:layout_alignParentBottom="true"
-            android:layout_below="@id/keypadFragment_keysArea" />
+            app:rippleColor="@color/colorFabPressed" />
     </RelativeLayout>
 </android.support.percent.PercentRelativeLayout>

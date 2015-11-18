@@ -69,7 +69,7 @@ namespace FreedomVoice.Core.Utils
 
         public static string NormalizePhone(string phone)
         {
-            return Regex.Replace(phone, "[ )(-]", string.Empty);
+            return Regex.Replace(phone, "[\\s)(-]", string.Empty);
         }
 
         /// <summary>
