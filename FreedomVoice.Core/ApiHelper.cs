@@ -24,11 +24,10 @@ namespace FreedomVoice.Core
             return await MakeAsyncPostRequest<string>("/api/v1/login", postdata, "application/x-www-form-urlencoded", CancellationToken.None);
         }
 
-        public static async Task<BaseResult<string>> Logout()
+        public static Task<BaseResult<string>> Logout()
         {
             CookieContainer = null;
-            var task = Task.Run(() => new BaseResult<string> { Code = ErrorCodes.Ok, Result = "" });
-            return await task;
+            return Task.FromResult(new BaseResult<string> {Code = ErrorCodes.Ok, Result = ""});
         }
 
         public static async Task<BaseResult<string>> PasswordReset(string login)
