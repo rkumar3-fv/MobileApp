@@ -20,6 +20,13 @@ namespace FreedomVoice.iOS.ViewModels
         protected BaseViewModel()
         {
             ProgressControl = ProgressControlType.ActivityIndicator;
+
+            ProceedInitialFormValidation();
+        }
+
+        private void ProceedInitialFormValidation()
+        {
+            Validate();
         }
 
         /// <summary>
