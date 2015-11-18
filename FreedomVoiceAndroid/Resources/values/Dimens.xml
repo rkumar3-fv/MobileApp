@@ -126,10 +126,11 @@
   <dimen name="fragment_keypad_fab_elevation">6dp</dimen>
   <dimen name="fragment_keypad_fab_translation">12dp</dimen>
   <dimen name="fragment_keypad_fab_ripple">64dp</dimen>
-  <dimen name="fragment_keypad_fab_margin">36dp</dimen>
+  <dimen name="fragment_keypad_fab_margin">56dp</dimen>
   <dimen name="fragment_keypad_backspace_margin">8dp</dimen>
   <dimen name="fragment_keypad_backspace_size">40dp</dimen>
   <dimen name="fragment_keypad_keyboard_padding">20dp</dimen>
+  <dimen name="fragment_keypad_key_small_text_padding">-4dp</dimen>
 
   <!-- Recents fragment -->
   <dimen name="fragment_recent_additional_area_width">56dp</dimen>

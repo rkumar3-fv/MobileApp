@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.percent.PercentRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
     <LinearLayout
+        android:id="@+id/recentsFragment_spinnerArea"
+        android:layout_alignParentTop="true"
         android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/fragment_keypad_spinner_size"
+        app:layout_widthPercent="100%"
+        app:layout_heightPercent="10%"
         android:gravity="center"
         android:elevation="@dimen/content_activity_id_elevation"
         android:background="@color/colorCallerId"
@@ -41,6 +43,7 @@
     </LinearLayout>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recentsFragment_recyclerView"
+        android:layout_below="@id/recentsFragment_spinnerArea"
         style="@style/ScrollTheme"
         android:background="@drawable/border"
         android:layout_width="match_parent"
@@ -48,4 +51,4 @@
         android:paddingTop="@dimen/fragment_msg_element_padding"
         android:paddingBottom="@dimen/fragment_msg_element_padding"
         android:clipToPadding="false" />
-</LinearLayout>
+</android.support.percent.PercentRelativeLayout>
