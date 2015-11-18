@@ -28,37 +28,32 @@ namespace FreedomVoice.iOS.Services.Implementations
             var mediaResponse = asyncRes.Result;
 
             var receivedBytes = 0;  
-            var totalBytes = mediaResponse.Length;
+            var totalBytes = mediaResponse.Length;           
 
             using (var stream = mediaResponse.ReceivedStream)
             using (var targetStream = new FileStream(filePath, FileMode.CreateNew, FileAccess.Write))
             {
-                var buffer = new byte[4096];
-
-                do {
-                    if (token.IsCancellationRequested)
+                if (progressReporter == null)
+                {
+                    await stream.CopyToAsync(targetStream, 4096, token);
+                }
+                else
+                {
+                    byte[] buffer = new byte[4096];
+                    int bytesRead;
+                    while ((bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length, token)) != 0)
                     {
-                        if (File.Exists(filePath))
-                            File.Delete(filePath);
-
-                        return null;
+                        await targetStream.WriteAsync(buffer, 0, bytesRead, token);
+                        progressReporter.Report(new DownloadBytesProgress(receivedBytes, totalBytes));
                     }
+                }
+            }
 
-                    var bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length, token);
-                    targetStream.Write(buffer, 0, bytesRead);
-
-                    if (bytesRead == 0)
-                    {
-                        await Task.Yield();
-                        break;
-                    }
-
-                    receivedBytes += bytesRead;
-                    if (progressReporter == null) continue;
-
-                    var args = new DownloadBytesProgress(receivedBytes, totalBytes);
-                    progressReporter.Report(args);
-                } while (true);
+            if (token.IsCancellationRequested)
+            {
+                if (File.Exists(filePath))
+                    File.Delete(filePath);
+                return null;
             }
 
             return new GetMediaResponse(filePath);
