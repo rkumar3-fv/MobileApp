@@ -8,7 +8,8 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/details_activity_image_height"
         android:src="@drawable/logo_voicemail"
-        android:scaleType="centerCrop" />
+        android:scaleType="centerCrop"
+        android:adjustViewBounds="false" />
     <ProgressBar
         android:id="@+id/voicemailActivity_progress"
         android:layout_width="match_parent"

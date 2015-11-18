@@ -67,6 +67,11 @@ namespace FreedomVoice.Core.Utils
             return phoneRegex.IsMatch(unformatted) ? phoneRegex.Replace(unformatted, "($1) $2-$3 x$4") : unformatted;
         }
 
+        public static string NormalizePhone(string phone)
+        {
+            return Regex.Replace(phone, "[ )(-]", string.Empty);
+        }
+
         /// <summary>
         /// Get formatted duration
         /// </summary>

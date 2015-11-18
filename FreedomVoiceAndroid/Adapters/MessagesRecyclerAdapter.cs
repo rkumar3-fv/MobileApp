@@ -31,7 +31,8 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
 
         private void OnClick(int position)
         {
-            ItemClick?.Invoke(this, position);
+            if ((_currentContent != null)&&(position<_currentContent.Count))
+                ItemClick?.Invoke(this, position);
         }
 
         public MessagesRecyclerAdapter(Context context) : this (new List<MessageItem>(), context)
@@ -250,7 +251,7 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
                 ExtensionName = itemView.FindViewById<TextView>(Resource.Id.itemExt_title);
                 ExtensionInfo = itemView.FindViewById<TextView>(Resource.Id.itemExt_info);
                 InfoLayout = itemView.FindViewById<LinearLayout>(Resource.Id.itemExt_back);
-                itemView.Click += (sender, e) => listener(AdapterPosition);
+                itemView.Click += (sender, e) => { if (sender != null) listener(AdapterPosition); };
             }
         }
 
@@ -285,7 +286,7 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
                 FoldersName = itemView.FindViewById<TextView>(Resource.Id.itemFolder_title);
                 FoldersInfo = itemView.FindViewById<TextView>(Resource.Id.itemFolder_info);
                 InfoLayout = itemView.FindViewById<LinearLayout>(Resource.Id.itemFolder_back);
-                itemView.Click += (sender, e) => listener(AdapterPosition);
+                itemView.Click += (sender, e) => { if (sender != null) listener(AdapterPosition); };
             }
         }
 
@@ -320,7 +321,7 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
                 MessageStamp = itemView.FindViewById<TextView>(Resource.Id.itemMessage_messageStamp);
                 MessageDate = itemView.FindViewById<TextView>(Resource.Id.itemMessage_messageDate);
                 MessageFrom = itemView.FindViewById<TextView>(Resource.Id.itemMessage_messageFrom);
-                itemView.Click += (sender, e) => listener(AdapterPosition);
+                itemView.Click += (sender, e) => { if (sender != null) listener(AdapterPosition); };
             }
         }
     }

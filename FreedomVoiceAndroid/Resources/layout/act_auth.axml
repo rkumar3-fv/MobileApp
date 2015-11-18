@@ -22,6 +22,15 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_marginTop="@dimen/auth_activity_welcome_email_spacing">
+        <TextView
+            style="@style/AuthLargeLabelText"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/authActivity_loginTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ActivityAuth_title"
+            android:layout_marginTop="@dimen/auth_activity_welcome_email_spacing"
+            android:layout_alignParentTop="true" />
         <EditText
             android:id="@+id/authActivity_loginField"
             style="@style/AuthEditTextStyle"
@@ -30,7 +39,8 @@
             android:layout_height="wrap_content"
             android:hint="@string/ActivityAuth_loginHint"
             android:inputType="textNoSuggestions|textEmailAddress"
-            android:layout_alignParentTop="true" />
+            android:layout_marginTop="@dimen/auth_activity_welcome_email_spacing"
+            android:layout_below="@id/authActivity_loginTitle" />
         <EditText
             android:id="@+id/authActivity_passwordField"
             style="@style/AuthEditTextStyle"
@@ -103,13 +113,5 @@
             android:adjustViewBounds="true"
             android:scaleType="centerCrop"
             android:layout_gravity="center" />
-        <TextView
-            style="@style/AuthLargeLabelText"
-            android:layout_centerHorizontal="true"
-            android:id="@+id/authActivity_loginTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/ActivityAuth_title"
-            android:layout_marginTop="@dimen/auth_activity_welcome_email_spacing" />
     </LinearLayout>
 </RelativeLayout>

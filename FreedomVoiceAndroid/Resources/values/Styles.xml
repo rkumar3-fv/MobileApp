@@ -340,6 +340,8 @@
     <item name="android:textSize">@dimen/fragment_keypad_key_text_size</item>
     <item name="android:textColor">@color/colorKeyOnKeyboardMain</item>
     <item name="android:fontFamily">sans-serif-light</item>
+    <item name="android:includeFontPadding">false</item>
+    <item name="android:layout_marginBottom">-3dp</item>
   </style>
   
   <!-- Numeric keyboard secondary text style -->
@@ -347,6 +349,7 @@
     <item name="android:textSize">@dimen/fragment_keypad_key_small_text_size</item>
     <item name="android:textColor">@color/colorKeyOnKeyboardSecondary</item>
     <item name="android:fontFamily">sans-serif-light</item>
+    <item name="android:includeFontPadding">false</item>
   </style>
   
   <!-- Message recipient text style -->

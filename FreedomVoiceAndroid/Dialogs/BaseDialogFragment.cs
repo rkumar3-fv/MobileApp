@@ -31,6 +31,7 @@ namespace com.FreedomVoice.MobileApp.Android.Dialogs
         {
             var dialog = base.OnCreateDialog(savedInstanceState);
             dialog.RequestWindowFeature(StyleNoTitle);
+            dialog.SetCanceledOnTouchOutside(false);
             return dialog;
         }
 
