@@ -66,6 +66,7 @@
   <string name="FragmentRecents_title">Recents</string>
   <string name="FragmentContacts_title">Contacts</string>
   <string name="FragmentContacts_hint">Find contacts</string>
+  <string name="FragmentContacts_no">No results</string>
   <string name="ActivityVoice_title">Voicemail</string>
   <string name="ActivityVoice_speaker">Speaker</string>
   <string name="ActivityVoice_callback">Call back</string>

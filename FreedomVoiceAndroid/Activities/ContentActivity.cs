@@ -29,7 +29,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         Icon = "@drawable/ic_launcher",
         Theme = "@style/AppTheme",
         ScreenOrientation = ScreenOrientation.Portrait, 
-        WindowSoftInputMode = SoftInput.StateHidden)]
+        WindowSoftInputMode = SoftInput.AdjustPan)]
     public class ContentActivity : OperationActivity
     {
         private Color _whiteColor;
@@ -84,10 +84,10 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             _tabLayout.SetupWithViewPager(_viewPager);
         }
 
-        protected override void OnResume()
+        protected override void OnStart()
         {
-            base.OnResume();
-            
+            base.OnStart();
+            Window.SetSoftInputMode(SoftInput.StateHidden | SoftInput.AdjustPan);
         }
 
         protected override void OnResumeFragments()

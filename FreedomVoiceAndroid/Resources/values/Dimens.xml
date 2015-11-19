@@ -142,6 +142,7 @@
   <dimen name="fragment_contacts_height">48dp</dimen>
   <dimen name="fragment_contacts_search_elevation">12dp</dimen>
   <dimen name="fragment_contacts_search_height">48dp</dimen>
+  <dimen name="fragment_contacts_no_res_margin">26dp</dimen>
   
   <!-- Dialogs -->
   <dimen name="dlg_elevation">24dp</dimen>

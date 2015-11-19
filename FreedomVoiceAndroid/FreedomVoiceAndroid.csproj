@@ -1320,49 +1320,49 @@
     <AndroidResource Include="Resources\menu\menu_details.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable-hdpi\logo_fax.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\logo_fax.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable-hdpi\logo_record.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\logo_record.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable-hdpi\logo_voicemail.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\logo_voicemail.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable-mdpi\logo_fax.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\logo_fax.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable-mdpi\logo_record.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\logo_record.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable-mdpi\logo_voicemail.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\logo_voicemail.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable-xhdpi\logo_fax.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\logo_fax.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable-xhdpi\logo_record.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\logo_record.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable-xhdpi\logo_voicemail.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\logo_voicemail.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable-xxhdpi\logo_fax.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\logo_fax.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable-xxhdpi\logo_record.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\logo_record.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable-xxhdpi\logo_voicemail.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\logo_voicemail.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable-xxxhdpi\logo_fax.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\logo_fax.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable-xxxhdpi\logo_record.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\logo_record.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable-xxxhdpi\logo_voicemail.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\logo_voicemail.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

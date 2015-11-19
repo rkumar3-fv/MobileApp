@@ -287,6 +287,13 @@
     <item name="android:lines">1</item>
   </style>
 
+  <!-- List background text -->
+  <style name="ListBackgroundText">
+    <item name="android:textColor">@color/colorDlgContent</item>
+    <item name="android:textSize">@dimen/text_main</item>
+    <item name="android:lines">1</item>
+  </style>
+
   <!-- List item main text -->
   <style name="ListItemText">
     <item name="android:textColor">@color/textColorPrimary</item>
