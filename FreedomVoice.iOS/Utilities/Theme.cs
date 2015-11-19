@@ -6,8 +6,8 @@ namespace FreedomVoice.iOS.Utilities
 {
     public static class Theme
     {
-        private static readonly bool _iPhone6 = AppDelegate.CurrentDeviceName == "iPhone 6" || AppDelegate.CurrentDeviceName == "iPhone 6S";
-        private static readonly bool _iPhone6Plus = AppDelegate.CurrentDeviceName == "iPhone 6 Plus" || AppDelegate.CurrentDeviceName == "iPhone 6S Plus";
+        private static readonly bool _iPhone6 = ScreenBounds.Width == 375;
+        private static readonly bool _iPhone6Plus = ScreenBounds.Width == 414;
 
         #region Backgrounds
 

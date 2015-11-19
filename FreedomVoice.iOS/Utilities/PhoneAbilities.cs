@@ -22,12 +22,7 @@ namespace FreedomVoice.iOS.Utilities
 
         public static bool NetworkIsUnreachable => InternetConnectionStatus() == NetworkStatus.NotReachable;
 
-        public static bool IsSimCardInstalled()
-        {
-            var provider = new CTTelephonyNetworkInfo().SubscriberCellularProvider;
-
-            return !string.IsNullOrEmpty(provider?.MobileNetworkCode);
-        }
+        public static bool IsSimCardInstalled => !string.IsNullOrEmpty(new CTTelephonyNetworkInfo().SubscriberCellularProvider?.MobileNetworkCode);
 
         private static NetworkStatus InternetConnectionStatus()
         {

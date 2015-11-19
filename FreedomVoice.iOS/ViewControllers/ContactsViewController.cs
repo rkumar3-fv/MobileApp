@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using CoreGraphics;
+using Foundation;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.TableViewSources;
 using FreedomVoice.iOS.Utilities;
@@ -11,6 +12,7 @@ using FreedomVoice.iOS.Views;
 using FreedomVoice.iOS.Views.Shared;
 using UIKit;
 using Xamarin.Contacts;
+using ContactsHelper = FreedomVoice.iOS.Utilities.Helpers.Contacts;
 
 namespace FreedomVoice.iOS.ViewControllers
 {
@@ -31,6 +33,9 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private bool _hasContactsPermissions;
         private bool _justLoaded;
+
+        private bool IsSearchMode => _contactsSearchBar?.Text.Length > 0;
+        private string SearchText => _contactsSearchBar?.Text;
 
         private static MainTabBarController MainTabBarInstance => MainTabBarController.SharedInstance;
 
@@ -120,11 +125,15 @@ namespace FreedomVoice.iOS.ViewControllers
             if (_hasContactsPermissions && !_justLoaded)
             {
                 _contactList = await AppDelegate.GetContactsListAsync();
-                _contactSource.ContactsList = _contactList;
+                _filteredContactList = IsSearchMode ? GetMatchedContacts(SearchText) : _contactList;
+                _contactSource.ContactsList = _filteredContactList;
+
                 _contactTableView.ReloadData();
+
+                CheckResult(IsSearchMode ? FilteredContactsCount : ContactsCount);
             }
 
-            _justLoaded = true;
+            _justLoaded = false;
 
             NavigationItem.SetRightBarButtonItem(Appearance.GetLogoutBarButton(this), false);
 
@@ -135,6 +144,11 @@ namespace FreedomVoice.iOS.ViewControllers
             base.ViewWillAppear(animated);
         }
 
+        public override void TouchesBegan(NSSet touches, UIEvent evt)
+        {
+            View.EndEditing(true);
+        }
+
         private void SearchBarOnSearchButtonClicked(object sender, EventArgs e)
         {
             _contactsSearchBar.ResignFirstResponder();
@@ -142,16 +156,13 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private void SearchBarOnTextChanged(object sender, UISearchBarTextChangedEventArgs e)
         {
-            _filteredContactList = GetMatchedContacts(e.SearchText);
             _contactSource.SearchText = e.SearchText;
+
+            _filteredContactList = IsSearchMode ? GetMatchedContacts(e.SearchText) : _contactList;
             _contactSource.ContactsList = _filteredContactList;
+
             _contactTableView.ReloadData();
             CheckResult(FilteredContactsCount);
-        }
-
-        private List<Contact> GetMatchedContacts(string searchText)
-        {
-            return _contactList.Where(c => c.DisplayName != null && c.DisplayName.StartsWith(searchText, StringComparison.OrdinalIgnoreCase) || c.LastName != null && c.LastName.StartsWith(searchText, StringComparison.OrdinalIgnoreCase) || c.Phones.Any(p => p.Number.Contains(searchText))).ToList();
         }
 
         private void SearchBarOnCancelButtonClicked(object sender, EventArgs args)
@@ -176,13 +187,15 @@ namespace FreedomVoice.iOS.ViewControllers
             return true;
         }
 
-        private void TableSourceOnRowSelected(object sender, ContactSource.RowSelectedEventArgs e)
+        private async void TableSourceOnRowSelected(object sender, ContactSource.RowSelectedEventArgs e)
         {
             e.TableView.DeselectRow(e.IndexPath, false);
 
             var selectedCallerId = MainTabBarInstance.GetSelectedPresentationNumber().PhoneNumber;
 
-            var person = _contactList.Where(c => c.LastName != null && c.LastName.StartsWith(_contactSource.Keys[e.IndexPath.Section], StringComparison.OrdinalIgnoreCase)).ToList()[e.IndexPath.Row];
+            var person = IsSearchMode ? _filteredContactList.Where(c => ContactsHelper.ContactSearchPredicate(c, ContactSource.Keys[e.IndexPath.Section])).ToList()[e.IndexPath.Row]
+                                      : _contactList.Where(c => ContactsHelper.ContactSearchPredicate(c, ContactSource.Keys[e.IndexPath.Section])).ToList()[e.IndexPath.Row];
+
             var phoneNumbers = person.Phones.ToList();
 
             switch (phoneNumbers.Count)
@@ -193,23 +206,27 @@ namespace FreedomVoice.iOS.ViewControllers
                     PresentViewController(alertController, true, null);
                     return;
                 case 1:
-                    PhoneCall.CreateCallReservation(MainTabBarInstance.SelectedAccount.PhoneNumber, selectedCallerId, phoneNumbers.First().Number, NavigationController);
-                    AddRecent(person.DisplayName, phoneNumbers.First().Number, person.Id);
+                    if (await PhoneCall.CreateCallReservation(MainTabBarInstance.SelectedAccount.PhoneNumber, selectedCallerId, phoneNumbers.First().Number, NavigationController))
+                        AddRecent(person.DisplayName, phoneNumbers.First().Number, person.Id);
                     break;
                 default:
-                    
                     var phoneCallController = UIAlertController.Create("Select number for " + person.DisplayName, null, UIAlertControllerStyle.ActionSheet);
                     foreach (var phone in phoneNumbers)
                     {
-                        phoneCallController.AddAction(UIAlertAction.Create(phone.Number + " \u2013 " + phone.Label, UIAlertActionStyle.Default, a => {
-                            PhoneCall.CreateCallReservation(MainTabBarInstance.SelectedAccount.PhoneNumber, selectedCallerId, phone.Number, NavigationController);
-                            AddRecent(person.DisplayName, phone.Number, person.Id);
+                        phoneCallController.AddAction(UIAlertAction.Create(phone.Number + " \u2013 " + phone.Label, UIAlertActionStyle.Default, async a => {
+                            if (await PhoneCall.CreateCallReservation(MainTabBarInstance.SelectedAccount.PhoneNumber, selectedCallerId, phone.Number, NavigationController))
+                                AddRecent(person.DisplayName, phone.Number, person.Id);
                         }));
                     }
                     phoneCallController.AddAction(UIAlertAction.Create("Cancel", UIAlertActionStyle.Cancel, null));
                     PresentViewController(phoneCallController, true, null);
                     break;
             }
+        }
+
+        private List<Contact> GetMatchedContacts(string searchText)
+        {
+            return _contactList.Where(c => ContactsHelper.ContactMatchPredicate(c, searchText)).ToList();
         }
 
         private static void AddRecent(string title, string phoneNumber, string contactId)

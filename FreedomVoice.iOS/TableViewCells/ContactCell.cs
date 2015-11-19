@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Foundation;
+using FreedomVoice.Core.Utils;
 using FreedomVoice.iOS.Utilities;
 using UIKit;
 using Xamarin.Contacts;
@@ -21,34 +22,43 @@ namespace FreedomVoice.iOS.TableViewCells
             if (string.IsNullOrEmpty(searchText))
                 DetailTextLabel.Text = null;
             else 
-            if (lastName != null || displayName != null)
+            if (!string.IsNullOrEmpty(lastName) || !string.IsNullOrEmpty(displayName) || person.Phones.Any())
             {
-                if (lastName != null && lastName.StartsWith(searchText, StringComparison.Ordinal) || displayName.StartsWith(searchText, StringComparison.Ordinal)) return;
+                if (!string.IsNullOrEmpty(lastName) && lastName.StartsWith(searchText, StringComparison.Ordinal) || !string.IsNullOrEmpty(displayName) && displayName.StartsWith(searchText, StringComparison.Ordinal)) return;
 
-                var phoneNumber = person.Phones.FirstOrDefault(phone => phone.Number.Contains(searchText))?.Number;
+                var normalizedSearchString = DataFormatUtils.NormalizePhone(searchText);
+
+                var phoneNumber = person.Phones.FirstOrDefault(phone => DataFormatUtils.NormalizePhone(phone.Number).Contains(normalizedSearchString))?.Number;
+
                 if (!string.IsNullOrEmpty(phoneNumber))
                 {
-                    var grayColorRange = new NSRange(0, phoneNumber.Length);
-                    var normalColorRange = new NSRange(phoneNumber.IndexOf(searchText, StringComparison.Ordinal), searchText.Length);
+                    var normalizedPhone = DataFormatUtils.NormalizePhone(phoneNumber);
 
-                    var detailTextAttributedString = new NSMutableAttributedString(phoneNumber);
+                    var grayColorRange = new NSRange(0, normalizedPhone.Length);
+                    var normalColorRange = new NSRange(normalizedPhone.IndexOf(normalizedSearchString, StringComparison.Ordinal), normalizedSearchString.Length);
+
+                    var detailTextAttributedString = new NSMutableAttributedString(normalizedPhone);
                     detailTextAttributedString.AddAttribute(UIStringAttributeKey.ForegroundColor, Theme.GrayColor, grayColorRange);
                     detailTextAttributedString.AddAttribute(UIStringAttributeKey.ForegroundColor, Theme.BlackColor, normalColorRange);
 
                     DetailTextLabel.AttributedText = detailTextAttributedString;
                 }
+                else
+                    DetailTextLabel.Text = null;
             }
 
-            if (lastName != null)
+            if (!string.IsNullOrEmpty(displayName))
             {
-                var boldedRange = new NSRange(displayName.IndexOf(lastName, StringComparison.Ordinal), lastName.Length);
+                var boldedRange = string.IsNullOrEmpty(lastName) ? new NSRange(0, displayName.Length)
+                                                                 : new NSRange(displayName.IndexOf(lastName, StringComparison.Ordinal), lastName.Length);
+
                 var textAttributedString = new NSMutableAttributedString(displayName);
                 textAttributedString.AddAttribute(UIStringAttributeKey.Font, UIFont.SystemFontOfSize(17, UIFontWeight.Semibold), boldedRange);
 
                 TextLabel.AttributedText = textAttributedString;
             }
             else
-                TextLabel.Text = displayName;
+                TextLabel.AttributedText = new NSAttributedString(person.Phones.First().Number, new UIStringAttributes { Font = UIFont.SystemFontOfSize(17, UIFontWeight.Semibold) });
         }
     }
 }

@@ -25,9 +25,6 @@ namespace FreedomVoice.iOS
         private static UIStoryboard MainStoryboard => UIStoryboard.FromName("MainStoryboard", NSBundle.MainBundle);
         private NSObject _observer;
 
-        private static string DeviceName { get; set; }
-        public static string CurrentDeviceName => DeviceName ?? (DeviceName = DeviceHardware.GetModel());
-
         public static int SystemVersion => UIDevice.CurrentDevice.CheckSystemVersion(9, 0) ? 9 : 8;
 
         public static async Task<bool> ContactHasAccessPermissionsAsync()

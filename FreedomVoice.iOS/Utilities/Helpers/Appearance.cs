@@ -2,6 +2,7 @@
 using CoreGraphics;
 using FreedomVoice.Core.Entities.Enums;
 using FreedomVoice.Core.Utils;
+using FreedomVoice.iOS.ViewControllers;
 using UIKit;
 
 namespace FreedomVoice.iOS.Utilities.Helpers
@@ -36,12 +37,20 @@ namespace FreedomVoice.iOS.Utilities.Helpers
 
         public static UIBarButtonItem GetLogoutBarButton(UIViewController controller)
         {
-            return new UIBarButtonItem(UIImage.FromFile("logout.png"), UIBarButtonItemStyle.Plain, (s, args) => {
-                var alertController = UIAlertController.Create("Confirm logout?", "Your Recents list will be cleared.", UIAlertControllerStyle.Alert);
-                alertController.AddAction(UIAlertAction.Create("Cancel", UIAlertActionStyle.Default, null));
-                alertController.AddAction(UIAlertAction.Create("Log Out", UIAlertActionStyle.Cancel, a => { (UIApplication.SharedApplication.Delegate as AppDelegate)?.GoToLoginScreen(); }));
-                controller.PresentViewController(alertController, true, null);
-            });
+            return new UIBarButtonItem(UIImage.FromFile("logout.png"), UIBarButtonItemStyle.Plain, (s, args) => { ShowLogoutConfirmationAlert(controller); });
+        }
+
+        private static void ShowLogoutConfirmationAlert(UIViewController controller)
+        {
+            var recentsExists = false;
+            if (MainTabBarController.SharedInstance != null)
+                recentsExists = MainTabBarController.SharedInstance.Recents.Count > 0;
+
+            var alertController = recentsExists ? UIAlertController.Create("Confirm logout?", "Your Recents list will be cleared.", UIAlertControllerStyle.Alert)
+                                                : UIAlertController.Create(null, "Confirm logout?", UIAlertControllerStyle.Alert);
+            alertController.AddAction(UIAlertAction.Create("Cancel", UIAlertActionStyle.Default, null));
+            alertController.AddAction(UIAlertAction.Create("Log Out", UIAlertActionStyle.Cancel, a => { (UIApplication.SharedApplication.Delegate as AppDelegate)?.GoToLoginScreen(); }));
+            controller.PresentViewController(alertController, true, null);
         }
 
         public static void ShowOkAlertWithMessage(UIViewController viewController, AlertMessageType alertMessageType)
@@ -61,6 +70,12 @@ namespace FreedomVoice.iOS.Utilities.Helpers
                     break;
                 case AlertMessageType.EmptyFileDownload:
                     alertMessageText = "Error loading file";
+                    break;
+                case AlertMessageType.CallFailed:
+                    alertMessageText = "Call Failed";
+                    break;
+                case AlertMessageType.IncorrectNumber:
+                    alertMessageText = "Incorrect number";
                     break;
             }
 
@@ -116,7 +131,9 @@ namespace FreedomVoice.iOS.Utilities.Helpers
             NetworkUnreachable,
             CallsUnsuported,
             NoSimCardInstalled,
-            EmptyFileDownload
+            EmptyFileDownload,
+            CallFailed,
+            IncorrectNumber
         }
     }
 }

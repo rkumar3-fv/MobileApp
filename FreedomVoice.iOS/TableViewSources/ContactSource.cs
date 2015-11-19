@@ -5,37 +5,25 @@ using Foundation;
 using FreedomVoice.iOS.TableViewCells;
 using UIKit;
 using Xamarin.Contacts;
+using ContactsHelper = FreedomVoice.iOS.Utilities.Helpers.Contacts;
 
 namespace FreedomVoice.iOS.TableViewSources
 {
     public class ContactSource : UITableViewSource
     {
-        private static readonly string[] Letters = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" };
-
-        private List<Contact> _contactsList;
-        public List<Contact> ContactsList
-        {
-            private get { return _contactsList; }
-            set
-            {
-                _keys = null;
-                _contactsList = value;
-            }
-        }
+        public List<Contact> ContactsList { private get; set; }
 
         public string SearchText;
 
         private bool IsSearchMode => !string.IsNullOrEmpty(SearchText);
-
-        private string[] _keys;
-        public string[] Keys
-        {
-            get { return _keys ?? (_keys = Letters.Where(l => ContactsList.Any(c => ContactSearchPredicate(c, l))).ToArray()); }
-        }
-
+#if DEBUG
+        public static string[] Keys => new[] { "А", "Б", "В", "Г", "Д", "Е", "Ё", "Ж", "З", "И", "Й", "К", "Л", "М", "Н", "О", "П", "Р", "С", "Т", "У", "Ф", "Х", "Ц", "Ч", "Ш", "Щ", "Ъ", "Ы", "Ь", "Э", "Ю", "Я", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "#" };
+#else
+        public static string[] Keys => new[]  { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "#" };
+#endif
         public override nint RowsInSection(UITableView tableview, nint section)
         {
-            return ContactsList.Count(c => ContactSearchPredicate(c, Keys[section]));
+            return ContactsList.Count(c => ContactsHelper.ContactSearchPredicate(c, Keys[section]));
         }
 
         public override string[] SectionIndexTitles(UITableView tableView)
@@ -50,7 +38,7 @@ namespace FreedomVoice.iOS.TableViewSources
 
         public override string TitleForHeader(UITableView tableView, nint section)
         {
-            return IsSearchMode ? null : Keys[section];
+            return IsSearchMode ? null : RowsInSection(tableView, section) > 0 ? Keys[section] : null;
         }
 
         public override string TitleForFooter(UITableView tableView, nint section)
@@ -67,7 +55,7 @@ namespace FreedomVoice.iOS.TableViewSources
         {
             var cell = tableView.DequeueReusableCell(ContactCell.ContactCellId) as ContactCell ?? new ContactCell();
 
-            var person = ContactsList.Where(c => ContactSearchPredicate(c, Keys[indexPath.Section])).ToList()[indexPath.Row];
+            var person = ContactsList.Where(c => ContactsHelper.ContactSearchPredicate(c, Keys[indexPath.Section])).ToList()[indexPath.Row];
             cell.UpdateCell(person, SearchText);
             cell.LayoutSubviews();
 
@@ -78,11 +66,6 @@ namespace FreedomVoice.iOS.TableViewSources
         {
             OnRowSelected?.Invoke(this, new RowSelectedEventArgs(tableView, indexPath));
         }
-
-        private static bool ContactSearchPredicate(Contact c, string firstLetter)
-        {
-            return c.LastName?.StartsWith(firstLetter, StringComparison.OrdinalIgnoreCase) ?? c.DisplayName != null && c.DisplayName.StartsWith(firstLetter, StringComparison.OrdinalIgnoreCase);
-        } 
 
         public class RowSelectedEventArgs : EventArgs
         {

@@ -32,8 +32,6 @@ namespace FreedomVoice.iOS.ViewModels
         /// <returns></returns>
         public async Task GetAccountsListAsync()
         {
-            IsBusy = true;
-
             var requestResult = await _service.ExecuteRequest();
             if (requestResult is ErrorResponse)
                 await ProceedErrorResponse(requestResult);
@@ -43,10 +41,6 @@ namespace FreedomVoice.iOS.ViewModels
                 if (data != null)
                     AccountsList = data.AccountsList;
             }
-
-            IsBusy = false;
-
-            //IsBusy = true;
 
             //int failureThreshold = 1;
 
@@ -71,8 +65,6 @@ namespace FreedomVoice.iOS.ViewModels
 
             //    failureThreshold--;
             //} while (true);
-
-            //IsBusy = false;
         }
     }
 }

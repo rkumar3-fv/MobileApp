@@ -54,9 +54,6 @@ namespace FreedomVoice.iOS.ViewControllers
                 var mainTabBarViewModel = new MainTabBarViewModel(SelectedAccount, NavigationController);
                 await mainTabBarViewModel.GetExtensionsListAsync();
 
-                //TODO: Fix this behaviour later
-                mainTabBarViewModel.IsBusy = false;
-
                 MainTabBarInstance.ExtensionsList = mainTabBarViewModel.ExtensionsList;
                 _extensionsSource.Extensions = mainTabBarViewModel.ExtensionsList;
                 _extensionsTableView.ReloadData();

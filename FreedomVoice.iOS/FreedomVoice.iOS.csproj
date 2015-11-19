@@ -49,9 +49,9 @@
     <ConsolePause>false</ConsolePause>
     <MtouchArch>ARMv7, ARM64</MtouchArch>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
-    <CodesignKey>iPhone Developer</CodesignKey>
+    <CodesignKey>iPhone Developer: Александр Пятаков (TRSB9P63FJ)</CodesignKey>
     <MtouchDebug>true</MtouchDebug>
-    <CodesignProvision>75ddc1d2-9468-4392-b425-3a9c59e84768</CodesignProvision>
+    <CodesignProvision>8169524e-868d-493b-9c13-eda527bf40d2</CodesignProvision>
     <CodesignResourceRules />
     <CodesignExtraArgs />
   </PropertyGroup>
@@ -76,8 +76,8 @@
     <MtouchArch>ARMv7, ARM64</MtouchArch>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
     <BuildIpa>True</BuildIpa>
-    <CodesignProvision>3b2e9d14-a7b0-4264-9b38-c54a20bc72ca</CodesignProvision>
-    <CodesignKey>iPhone Developer: Александр Пятаков (TRSB9P63FJ)</CodesignKey>
+    <CodesignProvision>4758bbac-f984-4e5f-9004-872a824696a0</CodesignProvision>
+    <CodesignKey>iPhone Distribution: WaveAccess (8WX23BUD23)</CodesignKey>
     <CodesignResourceRules />
     <CodesignExtraArgs />
   </PropertyGroup>

@@ -44,6 +44,8 @@ namespace FreedomVoice.iOS.ViewControllers
             _clearPhone = new UIButton(new CGRect(Theme.ScreenBounds.Width - 43, _phoneLabel.Frame.Y + 5, 40, 40));
             _clearPhone.SetBackgroundImage(UIImage.FromFile("keypad_backspace.png"), UIControlState.Normal);
             _clearPhone.TouchUpInside += OnClearPhoneTouchUpInside;
+            _clearPhone.AddGestureRecognizer(new UILongPressGestureRecognizer(this, new ObjCRuntime.Selector("ClearPhoneButtonLongPressed:")));
+            ChangeClearPhoneButtonVisibility();
 
             View.AddSubviews(CallerIdView, keypadLineView, _phoneLabel, _clearPhone);
 
@@ -72,13 +74,10 @@ namespace FreedomVoice.iOS.ViewControllers
                     button.ImageView.ContentMode = UIViewContentMode.Center;                    
                 }                   
 
-                button.TouchUpInside += OnKeypadButtonTouchUpInside(item);
+                button.TouchUpInside += OnKeypadButtonTouchUpInside;
 
                 if (item.DetailedText == KeypadDial.Plus)
-                {
-                    var gestureRecognizer = new UILongPressGestureRecognizer(this, new ObjCRuntime.Selector("HandleLongPress:"));
-                    button.AddGestureRecognizer(gestureRecognizer);
-                }
+                    button.AddGestureRecognizer(new UILongPressGestureRecognizer(this, new ObjCRuntime.Selector("PlusButtonLongPressed:")));
 
                 View.AddSubview(button);
             }
@@ -114,22 +113,31 @@ namespace FreedomVoice.iOS.ViewControllers
             GAI.SharedInstance.DefaultTracker.Send(GAIDictionaryBuilder.CreateScreenView().Build());
         }
 
-        private EventHandler OnKeypadButtonTouchUpInside(DialItem item)
+        private void OnKeypadButtonTouchUpInside(object sender, EventArgs args)
         {
-            return (sender, ea) =>
-            {
-                PhoneNumber += item.Text;
-                _phoneLabel.Text = DataFormatUtils.ToPhoneNumber(PhoneNumber);
-            };
+            PhoneNumber += (sender as RoundedButton)?.TextLabel.Text;
+            _phoneLabel.Text = DataFormatUtils.ToPhoneNumber(PhoneNumber);
+            ChangeClearPhoneButtonVisibility();
         }
 
-        [Export("HandleLongPress:")]
-        public void ButtonLongPressed(UILongPressGestureRecognizer recognizer)
+        [Export("PlusButtonLongPressed:")]
+        public void PlusButtonLongPressed(UILongPressGestureRecognizer recognizer)
         {
-            if (!string.IsNullOrEmpty(PhoneNumber)) return;
+            if (recognizer.State != UIGestureRecognizerState.Began) return;
 
-            PhoneNumber += KeypadDial.Plus;
+            PhoneNumber += "+";
             _phoneLabel.Text = DataFormatUtils.ToPhoneNumber(PhoneNumber);
+            ChangeClearPhoneButtonVisibility();
+        }
+
+        [Export("ClearPhoneButtonLongPressed:")]
+        public void ClearPhoneButtonLongPressed(UILongPressGestureRecognizer recognizer)
+        {
+            if (recognizer.State != UIGestureRecognizerState.Began) return;
+
+            PhoneNumber = string.Empty;
+            _phoneLabel.Text = string.Empty;
+            ChangeClearPhoneButtonVisibility();
         }
 
         private void OnClearPhoneTouchUpInside(object sender, EventArgs args)
@@ -144,9 +152,15 @@ namespace FreedomVoice.iOS.ViewControllers
                 PhoneNumber = PhoneNumber.Substring(0, PhoneNumber.Length - 1);
                 _phoneLabel.Text = DataFormatUtils.ToPhoneNumber(PhoneNumber);
             }
+            ChangeClearPhoneButtonVisibility();
         }
 
-        private void OnKeypadDialTouchUpInside(object sender, EventArgs args)
+        private void ChangeClearPhoneButtonVisibility()
+        {
+            _clearPhone.Hidden = string.IsNullOrEmpty(PhoneNumber);
+        }
+
+        private async void OnKeypadDialTouchUpInside(object sender, EventArgs args)
         {
             string phoneNumberForCallReservation;
 
@@ -161,9 +175,8 @@ namespace FreedomVoice.iOS.ViewControllers
                 phoneNumberForCallReservation = PhoneNumber;
 
             var selectedCallerId = MainTabBarInstance.GetSelectedPresentationNumber().PhoneNumber;
-            PhoneCall.CreateCallReservation(MainTabBarInstance.SelectedAccount.PhoneNumber, selectedCallerId, phoneNumberForCallReservation, NavigationController);
-
-            AddRecent(phoneNumberForCallReservation);
+            if (await PhoneCall.CreateCallReservation(MainTabBarInstance.SelectedAccount.PhoneNumber, selectedCallerId, phoneNumberForCallReservation, NavigationController))
+                AddRecent(phoneNumberForCallReservation);
         }
         
 	    private static void AddRecent(string phoneNumber)

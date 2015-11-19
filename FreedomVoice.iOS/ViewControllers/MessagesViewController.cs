@@ -67,13 +67,13 @@ namespace FreedomVoice.iOS.ViewControllers
             base.ViewDidLoad();
         }
 
-        private void OnSourceRowCallbackClick(object sender, ExpandedCellButtonClickEventArgs e)
+        private async void OnSourceRowCallbackClick(object sender, ExpandedCellButtonClickEventArgs e)
         {
             var selectedCallerId = MainTabBarInstance.GetSelectedPresentationNumber().PhoneNumber;
             var selectedMessagePhoneNumber = e.SelectedMessage.SourceNumber;
 
-            PhoneCall.CreateCallReservation(MainTabBarInstance.SelectedAccount.PhoneNumber, selectedCallerId, selectedMessagePhoneNumber, NavigationController);
-            AddRecent(selectedMessagePhoneNumber);
+            if (await PhoneCall.CreateCallReservation(MainTabBarInstance.SelectedAccount.PhoneNumber, selectedCallerId, selectedMessagePhoneNumber, NavigationController))
+                AddRecent(selectedMessagePhoneNumber);
         }
 
         private static void AddRecent(string phoneNumber)

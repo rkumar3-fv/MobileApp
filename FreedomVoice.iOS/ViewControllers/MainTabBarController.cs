@@ -15,11 +15,6 @@ namespace FreedomVoice.iOS.ViewControllers
 
 	    public bool IsRootController => NavigationController.ViewControllers.Length == 1;
 
-	    readonly UIViewController _recentsTab;
-	    readonly UIViewController _contactsTab;
-	    readonly UIViewController _keypadTab;
-	    readonly UIViewController _messagesTab;
-
 	    public List<Recent> Recents { get; private set; }
 
 	    public static MainTabBarController SharedInstance;
@@ -31,18 +26,18 @@ namespace FreedomVoice.iOS.ViewControllers
             Recents = new List<Recent>();
 
             var recentsViewController = AppDelegate.GetViewController<RecentsViewController>();
-            _recentsTab = GetTabBarItem(recentsViewController, "Recents");
+            var recentsTab = GetTabBarItem(recentsViewController, "Recents");
 
             var contactsViewController = AppDelegate.GetViewController<ContactsViewController>();
-            _contactsTab = GetTabBarItem(contactsViewController, "Contacts");
+            var contactsTab = GetTabBarItem(contactsViewController, "Contacts");
 
             var keypadViewController = AppDelegate.GetViewController<KeypadViewController>();
-            _keypadTab = GetTabBarItem(keypadViewController, "Keypad");
+            var keypadTab = GetTabBarItem(keypadViewController, "Keypad");
 
             var extensionsViewController = AppDelegate.GetViewController<ExtensionsViewController>();
-            _messagesTab = GetTabBarItem(extensionsViewController, "Messages");
+            var messagesTab = GetTabBarItem(extensionsViewController, "Messages");
 
-            ViewControllers = new[] { _recentsTab, _contactsTab, _keypadTab, _messagesTab };
+            ViewControllers = new[] { recentsTab, contactsTab, keypadTab, messagesTab };
         }
 
 	    public override void ViewDidLoad()

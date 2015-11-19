@@ -9,11 +9,11 @@ using Contacts;
 using ContactsUI;
 using CoreGraphics;
 using Foundation;
+using FreedomVoice.Core.Utils;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.TableViewSources;
 using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.Utilities.Helpers;
-using FreedomVoice.iOS.Views;
 using FreedomVoice.iOS.Views.Shared;
 using UIKit;
 using Xamarin.Contacts;
@@ -127,7 +127,7 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private Contact FindContactByNumber(string number)
         {
-            return _contactList?.FirstOrDefault(c => c.Phones.Any(p => Regex.Replace(p.Number, @"[^\d]", "") == Regex.Replace(number, @"[^\d]", "")));
+            return _contactList?.FirstOrDefault(c => c.Phones.Any(p => DataFormatUtils.NormalizePhone(p.Number) == DataFormatUtils.NormalizePhone(number)));
         }
 
         private static List<Recent> GetRecentsOrdered()
@@ -188,6 +188,13 @@ namespace FreedomVoice.iOS.ViewControllers
             base.ViewWillAppear(animated);
         }
 
+        public override void ViewDidDisappear(bool animated)
+        {
+            _recentsTableView.SetEditing(false, false);
+
+            base.ViewDidDisappear(animated);
+        }
+
         private void SetEditMode()
         {
             _recentsTableView.SetEditing(true, true);
@@ -224,24 +231,24 @@ namespace FreedomVoice.iOS.ViewControllers
             PresentViewController(alertController, true, null);
         }
 
-        private void TableSourceOnRowSelected(object sender, RecentsSource.RowSelectedEventArgs e)
+        private async void TableSourceOnRowSelected(object sender, RecentsSource.RowSelectedEventArgs e)
         {
             e.TableView.DeselectRow(e.IndexPath, false);
 
             var recent = GetRecentsOrdered()[e.IndexPath.Row];
             if (recent == null) return;
 
+            var selectedCallerId = MainTabBarInstance.GetSelectedPresentationNumber().PhoneNumber;
+            if (!await PhoneCall.CreateCallReservation(MainTabBarInstance.SelectedAccount.PhoneNumber, selectedCallerId, recent.PhoneNumber, NavigationController)) return;
+
             var newRecent = (Recent)recent.Clone();
             newRecent.DialDate = DateTime.Now;
             AddRecent(newRecent);
 
-            var selectedCallerId = MainTabBarInstance.GetSelectedPresentationNumber().PhoneNumber;
-            PhoneCall.CreateCallReservation(MainTabBarInstance.SelectedAccount.PhoneNumber, selectedCallerId, newRecent.PhoneNumber, NavigationController);
-
             _recentsTableView.BeginUpdates();
 
             _recentSource.SetRecents(GetRecentsOrdered());
-            e.TableView.InsertRows(new[] { NSIndexPath.FromRowSection(e.TableView.NumberOfRowsInSection(0), 0) }, UITableViewRowAnimation.Fade);
+            e.TableView.InsertRows(new[] { NSIndexPath.FromRowSection(0, 0) }, UITableViewRowAnimation.Top);
 
             _recentsTableView.EndUpdates();
         }

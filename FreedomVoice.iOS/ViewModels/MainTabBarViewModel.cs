@@ -47,14 +47,9 @@ namespace FreedomVoice.iOS.ViewModels
         /// <returns></returns>
         public async Task GetExtensionsListAsync()
         {
-            IsBusy = true;
-
             var requestResult = await _extensionsService.ExecuteRequest(_selectedAccount.PhoneNumber);
             if (requestResult is ErrorResponse)
-            {
                 await ProceedErrorResponse(requestResult);
-                IsBusy = false;
-            }
             else
             {
                 var data = requestResult as ExtensionsWithCountResponse;
@@ -95,8 +90,6 @@ namespace FreedomVoice.iOS.ViewModels
                 if (data != null)
                     PresentationNumbers = data.PresentationNumbers;
             }
-
-            IsBusy = false;
         }
 
         private void OnAccountPaymentRequired(object sender, EventArgs eventArgs)

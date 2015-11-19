@@ -28,7 +28,7 @@ namespace FreedomVoice.iOS.Views.Shared
             Initialize(numbers);
         }
 
-        void Initialize(IList<PresentationNumber> numbers)
+        private void Initialize(IList<PresentationNumber> numbers)
         {
             var labelWidth = ((NSString)"Show as Caller ID:").StringSize(UIFont.SystemFontOfSize(17, UIFontWeight.Regular)).Width;
             _labelField = new UILabel(new CGRect(15, 0, labelWidth + 5, 40)) { Text = "Show as Caller ID:", Font = UIFont.SystemFontOfSize(17, UIFontWeight.Regular) };
@@ -38,6 +38,23 @@ namespace FreedomVoice.iOS.Views.Shared
 
             _callerIdPickerModel = new CallerIdPickerViewModel(numbers);
             if (_callerIdPickerModel.Items.Count == 0) return;
+
+            _callerIdTextField = new UITextField
+            {
+                Font = UIFont.SystemFontOfSize(17, UIFontWeight.Medium),
+                Frame = new CGRect(_labelField.Frame.X + _labelField.Frame.Width, 0, 140, 40),
+                Text = _callerIdPickerModel.SelectedItem.FormattedPhoneNumber,
+                UserInteractionEnabled = false,
+                TintColor = UIColor.Clear
+            };
+
+            AddSubviews(_labelField, _callerIdTextField);
+
+            if (_callerIdPickerModel.Items.Count == 1)
+                return;
+
+            _callerIdTextField.UserInteractionEnabled = true;
+            _callerIdTextField.TouchDown += SetPicker;
 
             _callerIdPickerModel.ValueChanged += (s, e) => {
                 _selectedPresentationNumber = _callerIdPickerModel.SelectedItem;
@@ -53,16 +70,6 @@ namespace FreedomVoice.iOS.Views.Shared
             };
 
             _pickerField.Select(_callerIdPickerModel.Items.IndexOf(_selectedPresentationNumber), 0, true);
-
-            _callerIdTextField = new UITextField
-            {
-                Font = UIFont.SystemFontOfSize(17, UIFontWeight.Medium),
-                Frame = new CGRect(_labelField.Frame.X + _labelField.Frame.Width, 0, 140, 40),
-                UserInteractionEnabled = true,
-                Text = _callerIdPickerModel.SelectedItem.FormattedPhoneNumber,
-                TintColor = UIColor.Clear
-            };
-            _callerIdTextField.TouchDown += SetPicker;
 
             _dropdownImage = new UIImageView(new CGRect(_callerIdTextField.Frame.X + _callerIdTextField.Frame.Width + 5, 17, 10, 7)) { Image = UIImage.FromFile("dropdown_arrow.png") };
 
@@ -87,7 +94,7 @@ namespace FreedomVoice.iOS.Views.Shared
             _callerIdTextField.InputView.BackgroundColor = UIColor.White;
             _callerIdTextField.InputAccessoryView = toolbar;
 
-            AddSubviews(_labelField, _callerIdTextField, _dropdownImage);
+            AddSubview(_dropdownImage);
         }
 
         public void UpdatePickerData(PresentationNumber selectedPresentationNumber)
@@ -95,12 +102,15 @@ namespace FreedomVoice.iOS.Views.Shared
             _selectedPresentationNumber = selectedPresentationNumber;
             if (selectedPresentationNumber == null) return;
 
+            _callerIdTextField.Text = selectedPresentationNumber.FormattedPhoneNumber;
+
+            if (_callerIdPickerModel.Items.Count == 1)
+                return;
+
             _pickerField.Select(_callerIdPickerModel.Items.IndexOf(selectedPresentationNumber), 0, true);
 
             var phoneNumberFieldWidth = ((NSString)selectedPresentationNumber.FormattedPhoneNumber).StringSize(UIFont.SystemFontOfSize(17, UIFontWeight.Medium)).Width;
             _dropdownImage.Frame = new CGRect(_labelField.Frame.X + _labelField.Frame.Width + phoneNumberFieldWidth + 5, _dropdownImage.Frame.Y, _dropdownImage.Frame.Width, _dropdownImage.Frame.Height);
-
-            _callerIdTextField.Text = selectedPresentationNumber.FormattedPhoneNumber;
         }
 
         private void SetPicker(object sender, EventArgs e)

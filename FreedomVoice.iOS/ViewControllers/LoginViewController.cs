@@ -52,9 +52,9 @@ namespace FreedomVoice.iOS.ViewControllers
 
             UnsubscribeFromEvents();
             SubscribeToEvents();
-
+#if DEBUG
             FillInLoginData();
-
+#endif
             base.ViewDidLoad();
         }
 
@@ -124,7 +124,7 @@ namespace FreedomVoice.iOS.ViewControllers
 
 	    private async void ProceedLogin()
 	    {
-	        _usernameTextField.ResignFirstResponder();
+            _usernameTextField.ResignFirstResponder();
 	        _passwordTextField.ResignFirstResponder();
 
 	        if (!_loginViewModel.IsValid)
@@ -141,6 +141,7 @@ namespace FreedomVoice.iOS.ViewControllers
             }
 
             UIApplication.SharedApplication.NetworkActivityIndicatorVisible = true;
+	        View.UserInteractionEnabled = false;
             _loginButton.Hidden = true;
 
             await _loginViewModel.LoginAsync();
@@ -150,6 +151,8 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private void OnLoginFailed(object sender, EventArgs args)
         {
+            View.UserInteractionEnabled = true;
+
             _validationFailedLabel.Text = "Incorrect email or password.";
             _validationFailedLabel.Hidden = false;
             _loginButton.Hidden = false;
@@ -157,6 +160,8 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private void OnLoginBadRequest(object sender, EventArgs args)
         {
+            View.UserInteractionEnabled = true;
+
             _validationFailedLabel.Text = "Server is unavailable.";
             _validationFailedLabel.Hidden = false;
             _loginButton.Hidden = false;
@@ -176,8 +181,8 @@ namespace FreedomVoice.iOS.ViewControllers
             AdjustLogoImage(visible);
             AdjustWelcomeLabel(visible);
             AdjustUsernameTextField(visible);
-            AdjustPasswordTextField(visible);
-            AdjustLoginButton(visible);
+            AdjustPasswordTextField();
+            AdjustLoginButton();
             AdjustActivityIndicator();
             AdjustValidationFailedLabel();
             AdjustForgotPasswordButton(height, visible);
@@ -292,6 +297,7 @@ namespace FreedomVoice.iOS.ViewControllers
             _usernameTextField = new UITextField(textFieldFrame)
             {
                 TextColor = Theme.LoginPageTextFieldTextColor,
+                TintColor = Theme.WhiteColor,
                 BackgroundColor = UIColor.Clear,
                 Font = UIFont.SystemFontOfSize(17, UIFontWeight.Regular),
                 BorderStyle = UITextBorderStyle.RoundedRect,
@@ -318,6 +324,7 @@ namespace FreedomVoice.iOS.ViewControllers
             _passwordTextField = new UITextField(textFieldFrame)
             {
                 TextColor = Theme.LoginPageTextFieldTextColor,
+                TintColor = Theme.WhiteColor,
                 BackgroundColor = UIColor.Clear,
                 Font = UIFont.SystemFontOfSize(17, UIFontWeight.Regular),
                 BorderStyle = UITextBorderStyle.RoundedRect,
@@ -423,12 +430,12 @@ namespace FreedomVoice.iOS.ViewControllers
 	        _usernameTextField.Frame = new CGRect(15, _welcomeLabel.Frame.Y + _welcomeLabel.Frame.Height + Theme.UsernameTextFieldTopPadding(keyboardVisible), Theme.ScreenBounds.Width - 30, 44);
 	    }
 
-        private void AdjustPasswordTextField(bool keyboardVisible = false)
+        private void AdjustPasswordTextField()
         {
             _passwordTextField.Frame = new CGRect(15, _usernameTextField.Frame.Y + _usernameTextField.Frame.Height + Theme.PasswordTextFieldPadding, Theme.ScreenBounds.Width - 30, 44);
         }
 
-        private void AdjustLoginButton(bool keyboardVisible = false)
+        private void AdjustLoginButton()
         {
             _loginButton.Frame = new CGRect(15, _passwordTextField.Frame.Y + _passwordTextField.Frame.Height + Theme.PasswordTextFieldPadding, Theme.ScreenBounds.Width - 30, 44);
         }

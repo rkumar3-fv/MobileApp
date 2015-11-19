@@ -22,7 +22,7 @@ namespace FreedomVoice.iOS.ViewModels
         /// <summary>
         /// Constructor, requires an IService
         /// </summary>
-        public ForgotPasswordViewModel(UIViewController viewController, UIActivityIndicatorView activityIndicator)
+        public ForgotPasswordViewModel(UIViewController viewController, UIActivityIndicatorView activityIndicator, string email = "")
         {
             _service = ServiceContainer.Resolve<IForgotPasswordService>();
 
@@ -30,6 +30,8 @@ namespace FreedomVoice.iOS.ViewModels
 
             _viewController = viewController;
             _activityIndicator = activityIndicator;
+
+            if (!string.IsNullOrEmpty(email)) EMail = email;
 
             IsBusyChanged += OnIsBusyChanged;
         }

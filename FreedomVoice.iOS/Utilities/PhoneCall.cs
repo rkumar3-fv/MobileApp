@@ -1,5 +1,6 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Threading.Tasks;
 using Foundation;
+using FreedomVoice.Core.Utils;
 using FreedomVoice.iOS.Utilities.Helpers;
 using FreedomVoice.iOS.ViewModels;
 using UIKit;
@@ -8,31 +9,45 @@ namespace FreedomVoice.iOS.Utilities
 {
     public static class PhoneCall
     {
-        public static async void CreateCallReservation(string systemNumber, string presentationNumber, string destinationNumberFormatted, UIViewController viewController)
+        public static async Task<bool> CreateCallReservation(string systemNumber, string presentationNumber, string destinationNumberFormatted, UIViewController viewController)
         {
             var destinationNumber = FormatPhoneNumber(destinationNumberFormatted);
             var expectedCallerIdNumber = FormatPhoneNumber(UserDefault.AccountPhoneNumber);
 
+            if (!PhoneCapability.IsSimCardInstalled)
+            {
+                Appearance.ShowOkAlertWithMessage(viewController, Appearance.AlertMessageType.NoSimCardInstalled);
+                return false;
+            }
+
             if (PhoneCapability.NetworkIsUnreachable)
             {
                 Appearance.ShowOkAlertWithMessage(viewController, Appearance.AlertMessageType.NetworkUnreachable);
-                return;
+                return false;
             }
 
-            if (!PhoneCapability.IsSimCardInstalled())
+            if (IsEmergencyNumber(destinationNumber))
             {
-                Appearance.ShowOkAlertWithMessage(viewController, Appearance.AlertMessageType.NoSimCardInstalled);
-                return;
+                UIApplication.SharedApplication.OpenUrl(NSUrl.FromString($"tel:{destinationNumber}"));
+                return false;
             }
 
-            if (string.IsNullOrEmpty(expectedCallerIdNumber))
+            if (destinationNumber.Length < 5)
+            {
+                Appearance.ShowOkAlertWithMessage(viewController, Appearance.AlertMessageType.IncorrectNumber);
+                return true;
+            }
+
+            //if (string.IsNullOrEmpty(expectedCallerIdNumber) || expectedCallerIdNumber.Length != 10)
+            //TODO: Only for test purposes, replace later
+            if (string.IsNullOrEmpty(expectedCallerIdNumber) || expectedCallerIdNumber.Length != 10 && expectedCallerIdNumber.Length != 12)
             {
                 var alertController = UIAlertController.Create(null, "To make calls with this app, please enter your device's phone number.", UIAlertControllerStyle.Alert);
                 alertController.AddAction(UIAlertAction.Create("Settings", UIAlertActionStyle.Default, a => UIApplication.SharedApplication.OpenUrl(new NSUrl(UIApplication.OpenSettingsUrlString))));
                 alertController.AddAction(UIAlertAction.Create("Cancel", UIAlertActionStyle.Cancel, null));
                 viewController.PresentViewController(alertController, true, null);
 
-                return;
+                return true;
             }
 
             var callReservationViewModel = new CallReservationViewModel(systemNumber, expectedCallerIdNumber, presentationNumber, destinationNumber, viewController);
@@ -40,11 +55,8 @@ namespace FreedomVoice.iOS.Utilities
 
             if (callReservationViewModel.IsErrorResponseReceived)
             {
-                var alertController = UIAlertController.Create(null, "Call Failed", UIAlertControllerStyle.Alert);
-                alertController.AddAction(UIAlertAction.Create("Ok", UIAlertActionStyle.Cancel, null));
-                viewController.PresentViewController(alertController, true, null);
-
-                return;
+                Appearance.ShowOkAlertWithMessage(viewController, Appearance.AlertMessageType.CallFailed);
+                return true;
             }
 
             var switchboardNumber = callReservationViewModel.Reservation.SwitchboardNumber;
@@ -53,19 +65,15 @@ namespace FreedomVoice.iOS.Utilities
             var phoneNumber = NSUrl.FromString($"tel:{switchboardNumber}");
             if (!UIApplication.SharedApplication.OpenUrl(phoneNumber))
                 Appearance.ShowOkAlertWithMessage(viewController, Appearance.AlertMessageType.CallsUnsuported);
+
+            return true;
         }
+
+        private static bool IsEmergencyNumber(string number) => number == "911"; 
 
         private static string FormatPhoneNumber(string unformattedPhoneNumber)
         {
-            if (string.IsNullOrEmpty(unformattedPhoneNumber))
-                return string.Empty;
-
-            var phoneNumber = Regex.Replace(unformattedPhoneNumber.Replace(" ", ""), @"(?<!^)\+|[^\d+]+", "");
-
-            if (phoneNumber.Length == 11 && phoneNumber.StartsWith("1"))
-                return string.Concat("+", phoneNumber);
-
-            return phoneNumber.Length == 10 ? string.Concat("+1", phoneNumber) : phoneNumber;
+            return string.IsNullOrEmpty(unformattedPhoneNumber) ? string.Empty : DataFormatUtils.NormalizePhone(unformattedPhoneNumber);
         }
     }
 }

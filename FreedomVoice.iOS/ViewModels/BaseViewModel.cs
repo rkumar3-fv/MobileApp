@@ -71,7 +71,7 @@ namespace FreedomVoice.iOS.ViewModels
         /// <summary>
         /// Value inidicating if a spinner should be shown
         /// </summary>
-        public bool IsBusy
+        protected bool IsBusy
         {
             get { return _isBusy; }
             set
@@ -90,8 +90,6 @@ namespace FreedomVoice.iOS.ViewModels
         /// </summary>
         private void OnIsBusyChanged()
         {
-            ViewController.View.UserInteractionEnabled = !IsBusy;
-
             if (IsBusyChanged == null)
                 BaseOnIsBusyChanged();
             else

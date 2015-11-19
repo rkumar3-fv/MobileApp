@@ -53,7 +53,7 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private void InitializeViewModel()
         {
-            _forgotPasswordViewModel = new ForgotPasswordViewModel(NavigationController, _activityIndicator);
+            _forgotPasswordViewModel = new ForgotPasswordViewModel(NavigationController, _activityIndicator, EmailAddress);
         }
 
         private void OnSendButtonTouchUpInside(object sender, EventArgs args)
