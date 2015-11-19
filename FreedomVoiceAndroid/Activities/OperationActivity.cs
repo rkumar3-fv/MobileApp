@@ -2,14 +2,13 @@ using Android.Content;
 using Android.Provider;
 using Android.Support.Design.Widget;
 using Android.Support.V4.Content;
-using Android.Telephony;
 using Android.Views;
 #if DEBUG
 using Android.Util;
-using FreedomVoice.Core.Utils;
 #endif
 using com.FreedomVoice.MobileApp.Android.Dialogs;
 using com.FreedomVoice.MobileApp.Android.Helpers;
+using FreedomVoice.Core.Utils;
 using Java.Lang;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
@@ -38,10 +37,9 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             }
             else if (Appl.ApplicationHelper.GetMyPhoneNumber().Length < 10)
             {
-                var snackPhone = Snackbar.Make(RootLayout, Resource.String.Snack_noPhoneNumber, Snackbar.LengthLong);
-                snackPhone.SetAction(Resource.String.Snack_noPhoneNumberAction, OnSetPhoneClick);
-                snackPhone.SetActionTextColor(ContextCompat.GetColor(this, Resource.Color.colorUndoList));
-                snackPhone.Show();
+                var noPhoneDialog = new NoPhoneDialogFragment();
+                noPhoneDialog.DialogEvent += NoPhoneDialogOnDialogEvent;
+                noPhoneDialog.Show(SupportFragmentManager, GetString(Resource.String.DlgPhone_content));
             }
             else
             {
@@ -63,7 +61,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                     {
                         if (phone.Length > 4)
                         {
-                            var normalizedNumber = PhoneNumberUtils.NormalizeNumber(phone);
+                            var normalizedNumber = DataFormatUtils.NormalizePhone(phone);
 #if DEBUG
                             Log.Debug(App.AppPackage, $"DIAL TO {DataFormatUtils.ToPhoneNumber(phone)}");
 #endif
@@ -81,6 +79,12 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                     }
                 }
             }
+        }
+
+        private void NoPhoneDialogOnDialogEvent(object sender, DialogEventArgs args)
+        {
+            if (args.Result == DialogResult.Ok)
+                StartActivity(new Intent(this, typeof(SetNumberActivityWithBack)));
         }
 
         private void CallerDialogOnDialogEvent(object sender, DialogEventArgs args)
@@ -107,10 +111,9 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                         noCellularDialog.Show(SupportFragmentManager, GetString(Resource.String.DlgCellular_title));
                         break;
                     case ActionsHelperEventArgs.PhoneNumberNotSets:
-                        var snackPhone = Snackbar.Make(RootLayout, Resource.String.Snack_noPhoneNumber, Snackbar.LengthLong);
-                        snackPhone.SetAction(Resource.String.Snack_noPhoneNumberAction, OnSetPhoneClick);
-                        snackPhone.SetActionTextColor(ContextCompat.GetColor(this, Resource.Color.colorUndoList));
-                        snackPhone.Show();
+                        var noPhoneDialog = new NoPhoneDialogFragment();
+                        noPhoneDialog.DialogEvent += NoPhoneDialogOnDialogEvent;
+                        noPhoneDialog.Show(SupportFragmentManager, GetString(Resource.String.DlgPhone_content));
                         break;
                     case ActionsHelperEventArgs.CallPermissionDenied:
                         var snackPerm = Snackbar.Make(RootLayout, Resource.String.Snack_noPhonePermission, Snackbar.LengthLong);
@@ -127,12 +130,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                         break;
                 }
             }
-        }
-
-        private void OnSetPhoneClick(View view)
-        {
-            var intent = new Intent(this, typeof(SetNumberActivityWithBack));
-            StartActivity(intent);
         }
 
         private void OnSetPermission(View view)

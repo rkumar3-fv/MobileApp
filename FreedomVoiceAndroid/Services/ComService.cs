@@ -38,7 +38,10 @@ namespace com.FreedomVoice.MobileApp.Android.Services
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
         {
             if (_receiver == null)
+            {
                 _receiver = intent.GetParcelableExtra(ComServiceResultReceiver.ReceiverTag) as ResultReceiver;
+                if (_receiver == null) return StartCommandResult.NotSticky;
+            }
             var id = intent.GetLongExtra(RequestIdTag, 0);
             var request = intent.GetParcelableExtra(RequestTag) as BaseRequest;
             if (request == null) return StartCommandResult.NotSticky;

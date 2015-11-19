@@ -69,7 +69,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             JavaSystem.Gc();
             try
             {
-                StartActivityForResult(intent, 1);
+                StartActivity(intent);
             }
             catch (ActivityNotFoundException)
             {

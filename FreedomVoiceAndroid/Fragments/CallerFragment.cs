@@ -23,7 +23,10 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             if (Helper.SelectedAccount == null)
             {
                 Helper.GetAccounts();
-                ContentActivity.StartActivity(new Intent(ContentActivity, typeof(LoadingActivity)));
+                var intent = new Intent(ContentActivity, typeof (LoadingActivity));
+                intent.SetFlags(ActivityFlags.NewTask);
+                intent.SetFlags(ActivityFlags.ClearTop);
+                ContentActivity.StartActivity(intent);
             }
             else if (Helper.SelectedAccount.PresentationNumbers == null)
             {

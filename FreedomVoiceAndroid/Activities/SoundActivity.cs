@@ -105,7 +105,12 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         /// </summary>
         private void SpeakerButtonOnClick(object sender, CompoundButton.CheckedChangeEventArgs eventArgs)
         {
-            CheckSoundOutput(eventArgs.IsChecked);
+            if (!_isBinded)
+                CheckSoundOutput(eventArgs.IsChecked);
+            if (!_serviceBinder.AppMediaService.IsInChange)
+                CheckSoundOutput(eventArgs.IsChecked);
+            else
+                SpeakerButton.Checked = !eventArgs.IsChecked;
         }
 
         private void CheckSoundOutput(bool isInSpeaker)

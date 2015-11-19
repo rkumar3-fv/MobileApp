@@ -5,7 +5,6 @@ using Android.Content;
 using Android.Database;
 using Android.Provider;
 using Android.Support.V7.Widget;
-using Android.Telephony;
 using Android.Views;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Entities;
@@ -37,23 +36,29 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
 
         private void OnClick(int position)
         {
-            ItemClick?.Invoke(this, position);
+            if ((_currentContent!=null)&&(position<_currentContent.Count))
+                ItemClick?.Invoke(this, position);
         }
 
         private void OnAditionalClick(int position)
         {
-            var keys = _currentContent.Keys.ToList();
-            var normalizedPhone = PhoneNumberUtils.NormalizeNumber(_currentContent[keys[position]].PhoneNumber);
-            var uri = Uri.WithAppendedPath(ContactsContract.PhoneLookup.ContentFilterUri, Uri.Encode(normalizedPhone));
-            var selection = string.Format("(({0} IS NOT NULL) AND ({0} != '') AND ({1} = '1'))",
-                ContactsContract.Contacts.InterfaceConsts.DisplayName, ContactsContract.Contacts.InterfaceConsts.InVisibleGroup);
-            string[] projection = { ContactsContract.Contacts.InterfaceConsts.Id };
-            var loader = new CursorLoader(_context, uri, projection, selection, null, null);
-            var cursor = loader.LoadInBackground().JavaCast<ICursor>();
-            if (cursor == null) return;
-            if (cursor.MoveToFirst())
-                AdditionalSectorClick?.Invoke(this, cursor.GetString(0));
-            cursor.Close();
+            if ((_currentContent != null) && (position < _currentContent.Count))
+            {
+                var keys = _currentContent.Keys.ToList();
+                var normalizedPhone = DataFormatUtils.NormalizePhone(_currentContent[keys[position]].PhoneNumber);
+                var uri = Uri.WithAppendedPath(ContactsContract.PhoneLookup.ContentFilterUri,
+                    Uri.Encode(normalizedPhone));
+                var selection = string.Format("(({0} IS NOT NULL) AND ({0} != '') AND ({1} = '1'))",
+                    ContactsContract.Contacts.InterfaceConsts.DisplayName,
+                    ContactsContract.Contacts.InterfaceConsts.InVisibleGroup);
+                string[] projection = {ContactsContract.Contacts.InterfaceConsts.Id};
+                var loader = new CursorLoader(_context, uri, projection, selection, null, null);
+                var cursor = loader.LoadInBackground().JavaCast<ICursor>();
+                if (cursor == null) return;
+                if (cursor.MoveToFirst())
+                    AdditionalSectorClick?.Invoke(this, cursor.GetString(0));
+                cursor.Close();
+            }
         }
 
         public RecentsRecyclerAdapter(SortedDictionary<long, Recent> currentContent, Context context)
@@ -168,8 +173,16 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
                 CallDateText = itemView.FindViewById<TextView>(Resource.Id.itemRecent_date);
                 var mainSectorLayout = itemView.FindViewById<RelativeLayout>(Resource.Id.itemRecent_mainArea);
                 AdditionalLayout = itemView.FindViewById<LinearLayout>(Resource.Id.itemRecent_additionalArea);
-                mainSectorLayout.Click += (sender, e) => mainListener(AdapterPosition);
-                AdditionalLayout.Click += (sender, e) => additionalListener(AdapterPosition);
+                mainSectorLayout.Click += (sender, e) => 
+                {
+                    if (sender != null)
+                        mainListener(AdapterPosition);
+                };
+                AdditionalLayout.Click += (sender, e) =>
+                {
+                    if (sender != null)
+                        additionalListener(AdapterPosition);
+                };
             }
         }
     }

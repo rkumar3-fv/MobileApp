@@ -5,7 +5,6 @@ using Android.Content.PM;
 using Android.OS;
 using Android.Support.V7.Widget;
 using Android.Views;
-using Android.Widget;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
 {

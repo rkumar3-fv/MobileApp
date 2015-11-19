@@ -1,4 +1,5 @@
 using System;
+using Android.Content;
 using Android.OS;
 using Android.Support.Design.Widget;
 using Android.Support.V7.App;
@@ -6,6 +7,7 @@ using Android.Support.V7.App;
 using Android.Util;
 #endif
 using Android.Views;
+using com.FreedomVoice.MobileApp.Android.Dialogs;
 using com.FreedomVoice.MobileApp.Android.Helpers;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
@@ -61,8 +63,22 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             var arg = args as ActionsHelperIntentArgs;
             if (arg != null)
             {
-                var intentArg = arg;
-                StartActivity(intentArg.IntentData);
+                var intentArg = arg.IntentData;
+                if (intentArg == null) return;
+                if (intentArg.Action == Intent.ActionCall)
+                {
+                    try
+                    {
+                        StartActivity(intentArg);
+                    }
+                    catch (ActivityNotFoundException)
+                    {
+                        var noCellularDialog = new NoCellularDialogFragment();
+                        noCellularDialog.Show(SupportFragmentManager, GetString(Resource.String.DlgCellular_title));
+                    }
+                }
+                else
+                    StartActivity(intentArg);
             }
             else
                 OnHelperEvent(args as ActionsHelperEventArgs);
