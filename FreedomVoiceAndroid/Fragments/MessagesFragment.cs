@@ -4,14 +4,17 @@ using Android.Support.Design.Widget;
 using Android.Support.V4.Content;
 using Android.Support.V7.Widget;
 using Android.Support.V7.Widget.Helper;
+#if DEBUG
 using Android.Util;
+using com.FreedomVoice.MobileApp.Android.Entities;
+#endif
 using Android.Views;
+using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Activities;
 using com.FreedomVoice.MobileApp.Android.Adapters;
 using com.FreedomVoice.MobileApp.Android.CustomControls;
 using com.FreedomVoice.MobileApp.Android.CustomControls.Callbacks;
 using com.FreedomVoice.MobileApp.Android.CustomControls.CustomEventArgs;
-using com.FreedomVoice.MobileApp.Android.Entities;
 using com.FreedomVoice.MobileApp.Android.Helpers;
 using Message = com.FreedomVoice.MobileApp.Android.Entities.Message;
 
@@ -30,6 +33,8 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         private MessagesRecyclerAdapter _adapter;
         private RecyclerView _recyclerView;
         private ItemTouchHelper _swipeTouchHelper;
+        private TextView _noMessagesTextView;
+
 
         protected override View InitView()
         {
@@ -37,6 +42,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             _recyclerView = view.FindViewById<RecyclerView>(Resource.Id.messagesFragment_recyclerView);
             _recyclerView.SetLayoutManager(new LinearLayoutManager(Activity));
             _recyclerView.AddItemDecoration(new DividerItemDecorator(Activity, Resource.Drawable.divider));
+            _noMessagesTextView = view.FindViewById<TextView>(Resource.Id.messagesFragment_noResultText);
             _adapter = new MessagesRecyclerAdapter(Context);
             _recyclerView.SetAdapter(_adapter);
             _adapter.ItemClick += MessageViewOnClick;
@@ -87,10 +93,12 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         /// </summary>
         private void OnSwipeEvent(object sender, SwipeCallbackEventArgs args)
         {
+#if DEBUG
             Log.Debug(App.AppPackage, $"SWIPED message {args.ElementIndex}");
+#endif
             _remove = true;
             _removedMsgIndex = args.ElementIndex;
-            //_snackbar = Snackbar.Make(View, Resource.String.FragmentMessages_remove, Snackbar.LengthLong).SetAction(Resource.String.FragmentMessages_removeUndo, OnUndoClick)
+            //_snackbar = Snackbar.Make(View, Resource.String.FragmentMessages_remove, 10000).SetAction(Resource.String.FragmentMessages_removeUndo, OnUndoClick)
             //    .SetActionTextColor(ContextCompat.GetColor(ContentActivity, Resource.Color.colorUndoList)).SetCallback(_snackCallback);
             //_snackbar.Show();
             _adapter.RemoveItem(args.ElementIndex);
@@ -104,7 +112,9 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         private void MessageViewOnClick(object sender, int position)
         {
             if (position >= _adapter.CurrentContent.Count) return;
+#if DEBUG
             Log.Debug(App.AppPackage, $"FRAGMENT {GetType().Name}: select item #{position}");
+#endif
             _adapter.CurrentContent = Helper.GetNext(position);
             if (Helper.SelectedMessage != -1)
             {
@@ -136,7 +146,9 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         public override void OnResume()
         {
             base.OnResume();
+#if DEBUG
             TraceContent();
+#endif
             _adapter.CurrentContent = Helper.GetCurrent();
             if (Helper.SelectedFolder != -1)
                 Helper.ForceLoadMessages();
@@ -149,7 +161,9 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                 switch (code)
                 {
                     case ActionsHelperEventArgs.MsgUpdated:
+#if DEBUG
                         TraceContent();
+#endif
                         if (Helper.SelectedExtension == -1)
                         {
                             _swipeTouchHelper.AttachToRecyclerView(null);
@@ -166,11 +180,26 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                             Helper.ForceLoadMessages();
                         }
                         _adapter.CurrentContent = Helper.GetCurrent();
+                        if ((Helper.SelectedFolder != -1) && (Helper.GetCurrent().Count == 0))
+                        {
+                            if (_noMessagesTextView.Visibility == ViewStates.Invisible)
+                                _noMessagesTextView.Visibility = ViewStates.Visible;
+                            if (_recyclerView.Visibility == ViewStates.Visible)
+                                _recyclerView.Visibility = ViewStates.Invisible;
+                        }
+                        else
+                        {
+                            if (_noMessagesTextView.Visibility == ViewStates.Visible)
+                                _noMessagesTextView.Visibility = ViewStates.Invisible;
+                            if (_recyclerView.Visibility == ViewStates.Invisible)
+                                _recyclerView.Visibility = ViewStates.Visible;
+                        }
                         break;
                 }
             }
         }
 
+#if DEBUG
         private void TraceContent()
         {
             foreach (var messageItem in Helper.GetCurrent())
@@ -195,5 +224,6 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                 }
             }
         }
+#endif
     }
 }

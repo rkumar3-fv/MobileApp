@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Android.Support.Design.Widget;
 #if DEBUG
 using Android.Util;
@@ -87,7 +88,14 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         /// </summary>
         private void ButtonDialOnClick(object sender, EventArgs e)
         {
-            ContentActivity.Call(_enteredNumber);
+            if ((_enteredNumber.Length == 0)&&(Helper.RecentsDictionary != null)&&(Helper.RecentsDictionary.Count>0))
+            {
+                var first = Helper.RecentsDictionary.Values.First().PhoneNumber;
+                _enteredNumber = first;
+                SetupNewText();
+            }
+            else
+                ContentActivity.Call(_enteredNumber);
         }
 
         /// <summary>

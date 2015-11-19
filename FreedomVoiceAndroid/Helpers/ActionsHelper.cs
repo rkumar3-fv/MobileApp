@@ -693,7 +693,8 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                                 var key = _waitingRequestArray[response.RequestId].GetType().Name;
                                 var val = $"{DateTime.Now}: CONNECTION LOST - {InetReport()}";
                                 var dict = new Dictionary<string, string> {{key, val}};
-                                Insights.Report(null, dict, Insights.Severity.Error);
+                                var version = _app.PackageManager.GetPackageInfo(App.AppPackage, 0).VersionName;
+                                Insights.Track($"{App.AppPackage} v.{version}", dict);
                             }
                             HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.ConnectionLostError}));
                             break;
@@ -727,7 +728,8 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                                     var keyB = _waitingRequestArray[response.RequestId].GetType().Name;
                                     var valB = $"{DateTime.Now}: BAD REQUEST - {InetReport()}";
                                     var dictB = new Dictionary<string, string> {{keyB, valB}};
-                                    Insights.Report(null, dictB, Insights.Severity.Error);
+                                    var version = _app.PackageManager.GetPackageInfo(App.AppPackage, 0).VersionName;
+                                    Insights.Track($"{App.AppPackage} v.{version}", dictB);
                                 }
                                 HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new []{ActionsHelperEventArgs.AuthLoginError, ActionsHelperEventArgs.RestoreError}));
                             }

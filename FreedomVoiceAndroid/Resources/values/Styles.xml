@@ -287,6 +287,13 @@
     <item name="android:lines">1</item>
   </style>
 
+  <!-- List background text -->
+  <style name="ListBackgroundText">
+    <item name="android:textColor">@color/colorDlgContent</item>
+    <item name="android:textSize">@dimen/text_main</item>
+    <item name="android:lines">1</item>
+  </style>
+
   <!-- List item main text -->
   <style name="ListItemText">
     <item name="android:textColor">@color/textColorPrimary</item>
@@ -341,7 +348,7 @@
     <item name="android:textColor">@color/colorKeyOnKeyboardMain</item>
     <item name="android:fontFamily">sans-serif-light</item>
     <item name="android:includeFontPadding">false</item>
-    <item name="android:layout_marginBottom">-3dp</item>
+    <item name="android:layout_marginBottom">-4dp</item>
   </style>
   
   <!-- Numeric keyboard secondary text style -->

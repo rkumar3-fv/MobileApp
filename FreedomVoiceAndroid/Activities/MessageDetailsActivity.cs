@@ -179,7 +179,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
 
         private void RemoveSnack()
         {
-            _snakForRemoving = Snackbar.Make(RootLayout, Resource.String.FragmentMessages_remove, Snackbar.LengthLong);
+            _snakForRemoving = Snackbar.Make(RootLayout, Resource.String.FragmentMessages_remove, 10000);
             _snakForRemoving.SetAction(Resource.String.FragmentMessages_removeUndo, OnUndoClick);
             _snakForRemoving.SetActionTextColor(ContextCompat.GetColor(this, Resource.Color.colorUndoList));
             _snakForRemoving.SetCallback(_snackCallback);

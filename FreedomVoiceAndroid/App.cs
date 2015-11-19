@@ -73,16 +73,20 @@ namespace com.FreedomVoice.MobileApp.Android
         public override void OnLowMemory()
         {
             base.OnLowMemory();
+            var mi = new ActivityManager.MemoryInfo();
+            var activityManager = GetSystemService(ActivityService).JavaCast<ActivityManager>();
+            activityManager.GetMemoryInfo(mi);
+            var availableMegs = mi.AvailMem / 1048576L;
+            var totalMegs = (int)Build.VERSION.SdkInt > 15 ? $"{mi.TotalMem}" : "API 15";
+#if DEBUG
+            Log.Debug(AppPackage, $"LOW MEMORY: available {totalMegs}Mb / {availableMegs}Mb");
+#endif
             if (_helper.IsInsigthsOn)
             {
-                var mi = new ActivityManager.MemoryInfo();
-                var activityManager = GetSystemService(ActivityService).JavaCast<ActivityManager>();
-                activityManager.GetMemoryInfo(mi);
-                var availableMegs = mi.AvailMem/1048576L;
-                var totalMegs = (int) Build.VERSION.SdkInt > 15 ? $"{mi.TotalMem}" : "API 15";
                 var val = $"{DateTime.Now}: available {totalMegs}Mb / {availableMegs}Mb";
                 var dict = new Dictionary<string, string> {{"LOW MEMORY", val}};
-                Insights.Report(null, dict, Insights.Severity.Critical);
+                var version = PackageManager.GetPackageInfo(AppPackage, 0).VersionName;
+                Insights.Track($"{AppPackage} v.{version}", dict);
             }
         }
 

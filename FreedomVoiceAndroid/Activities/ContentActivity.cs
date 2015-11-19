@@ -10,6 +10,7 @@ using Android.Support.V4.Content;
 using Android.Support.V4.View;
 using Android.Support.V7.Internal.View;
 using Android.Views;
+using Android.Views.InputMethods;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Adapters;
 using com.FreedomVoice.MobileApp.Android.CustomControls;
@@ -29,7 +30,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         Icon = "@drawable/ic_launcher",
         Theme = "@style/AppTheme",
         ScreenOrientation = ScreenOrientation.Portrait, 
-        WindowSoftInputMode = SoftInput.StateHidden)]
+        WindowSoftInputMode = SoftInput.AdjustPan)]
     public class ContentActivity : OperationActivity
     {
         private Color _whiteColor;
@@ -84,10 +85,10 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             _tabLayout.SetupWithViewPager(_viewPager);
         }
 
-        protected override void OnResume()
+        protected override void OnStart()
         {
-            base.OnResume();
-            
+            base.OnStart();
+            Window.SetSoftInputMode(SoftInput.StateHidden | SoftInput.AdjustPan);
         }
 
         protected override void OnResumeFragments()
@@ -287,6 +288,14 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             var param = _toolbar.LayoutParameters.JavaCast<AppBarLayout.LayoutParams>();
             param.ScrollFlags = AppBarLayout.LayoutParams.ScrollFlagScroll | AppBarLayout.LayoutParams.ScrollFlagEnterAlways;
             _tabLayout.Visibility = ViewStates.Visible;
+        }
+
+        public void HideKeyboard()
+        {
+            var imm = GetSystemService(InputMethodService).JavaCast<InputMethodManager>();
+            imm.HideSoftInputFromWindow(RootLayout.WindowToken, 0);
+            var current = CurrentFocus;
+            current?.ClearFocus();
         }
 
         public override void OnBackPressed()
