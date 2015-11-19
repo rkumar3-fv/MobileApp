@@ -48,8 +48,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/contactsFragment_spinnerArea"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="@dimen/fragment_contacts_no_res_margin"
-        android:text="@string/FragmentContacts_no"
+        android:layout_marginTop="@dimen/content_activity_no_res_margin"
         android:visibility="invisible" />
     <android.support.v7.widget.RecyclerView
         android:id="@+id/contactsFragment_recyclerView"
@@ -60,6 +59,5 @@
         app:layout_heightPercent="90%"
         android:paddingTop="@dimen/fragment_msg_element_padding"
         android:paddingBottom="@dimen/fragment_msg_element_padding"
-        android:clipToPadding="false"
-        android:visibility="visible" />
+        android:clipToPadding="false" />
 </android.support.percent.PercentRelativeLayout>

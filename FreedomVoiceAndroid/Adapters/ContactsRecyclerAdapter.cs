@@ -71,6 +71,13 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
             _oldCursor = null;
         }
 
+        public ContactsRecyclerAdapter(Context context)
+        {
+            _context = context;
+            Cursor = null;
+            _oldCursor = null;
+        }
+
         public ICursor Cursor { get; private set; }
 
         public override long GetItemId(int position)

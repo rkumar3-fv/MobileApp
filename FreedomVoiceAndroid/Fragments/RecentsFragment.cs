@@ -26,6 +26,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         private RecyclerView _recentsView;
         private ItemTouchHelper _swipeTouchHelper;
         private RecentsRecyclerAdapter _adapter;
+        private TextView _noRecentsTextView;
         private int _lastClicked;
 
         protected override View InitView()
@@ -37,7 +38,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             _recentsView = view.FindViewById<RecyclerView>(Resource.Id.recentsFragment_recyclerView);
             _recentsView.SetLayoutManager(new LinearLayoutManager(Activity));
             _recentsView.AddItemDecoration(new DividerItemDecorator(Activity, Resource.Drawable.divider));
-
+            _noRecentsTextView = view.FindViewById<TextView>(Resource.Id.recentsFragment_noResultText);
             var swipeListener = new SwipeCallback(0, ItemTouchHelper.Left | ItemTouchHelper.Right, ContentActivity, Resource.Color.colorRemoveList, Resource.Drawable.ic_action_delete);
             swipeListener.SwipeEvent += OnSwipeEvent;
             _swipeTouchHelper = new ItemTouchHelper(swipeListener);
@@ -59,6 +60,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         {
             base.OnResume();
             _adapter.NotifyDataSetChanged();
+            CheckVisibility();
         }
 
         /// <summary>
@@ -95,6 +97,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             Log.Debug(App.AppPackage, $"SWIPED recent {args.ElementIndex}");
 #endif
             _adapter.RemoveItem(args.ElementIndex);
+            CheckVisibility();
         }
 
         protected override void OnHelperEvent(ActionsHelperEventArgs args)
@@ -119,8 +122,27 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                         break;
                     case ActionsHelperEventArgs.ClearRecents:
                         _adapter.NotifyClear();
+                        CheckVisibility();
                         break;
                 }
+            }
+        }
+
+        private void CheckVisibility()
+        {
+            if (_adapter.ItemCount == 0)
+            {
+                if (_recentsView.Visibility == ViewStates.Visible)
+                    _recentsView.Visibility = ViewStates.Invisible;
+                if (_noRecentsTextView.Visibility == ViewStates.Invisible)
+                    _noRecentsTextView.Visibility = ViewStates.Visible;
+            }
+            else
+            {
+                if (_recentsView.Visibility == ViewStates.Invisible)
+                    _recentsView.Visibility = ViewStates.Visible;
+                if (_noRecentsTextView.Visibility == ViewStates.Visible)
+                    _noRecentsTextView.Visibility = ViewStates.Invisible;
             }
         }
     }

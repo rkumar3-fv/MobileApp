@@ -1,9 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/messagesFragment_recyclerView"
-    style="@style/ScrollTheme"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingTop="@dimen/fragment_msg_element_padding"
-    android:paddingBottom="@dimen/fragment_msg_element_padding"
-    android:clipToPadding="false" />
+    android:layout_height="match_parent">
+    <TextView
+        android:id="@+id/messagesFragment_noResultText"
+        style="@style/ListBackgroundText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/colorButton"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/content_activity_no_res_margin"
+        android:text="@string/FragmentMessages_no"
+        android:visibility="invisible" />
+    <RelativeLayout
+        android:id="@+id/messagesFragment_progressLayout"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:clickable="true"
+        android:visibility="gone"
+        android:background="@color/colorBackgroundProgress">
+        <ProgressBar
+            android:id="@+id/messagesFragment_progress"
+            style="@style/InWhiteButtonProgressBar"
+            android:indeterminate="true"
+            android:layout_width="@dimen/select_acc_activity_progress_size"
+            android:layout_height="@dimen/select_acc_activity_progress_size"
+            android:layout_centerInParent="true" />
+    </RelativeLayout>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/messagesFragment_recyclerView"
+        style="@style/ScrollTheme"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingTop="@dimen/fragment_msg_element_padding"
+        android:paddingBottom="@dimen/fragment_msg_element_padding"
+        android:clipToPadding="false" />
+</RelativeLayout>

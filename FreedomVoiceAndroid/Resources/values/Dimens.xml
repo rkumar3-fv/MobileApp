@@ -98,6 +98,7 @@
   <dimen name="content_activity_tab_icon_padding">4dp</dimen>
   <dimen name="content_activity_tab_height">74dp</dimen>
   <dimen name="content_activity_id_elevation">4dp</dimen>
+  <dimen name="content_activity_no_res_margin">26dp</dimen>
   
   <!-- Messages fragment -->
   <dimen name="fragment_msg_element_height">48dp</dimen>
@@ -142,7 +143,6 @@
   <dimen name="fragment_contacts_height">48dp</dimen>
   <dimen name="fragment_contacts_search_elevation">12dp</dimen>
   <dimen name="fragment_contacts_search_height">48dp</dimen>
-  <dimen name="fragment_contacts_no_res_margin">26dp</dimen>
   
   <!-- Dialogs -->
   <dimen name="dlg_elevation">24dp</dimen>

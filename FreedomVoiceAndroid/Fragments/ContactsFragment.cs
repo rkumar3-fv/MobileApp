@@ -42,17 +42,38 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         {
             base.OnActivityCreated(savedInstanceState);
 
+            _adapter = new ContactsRecyclerAdapter(ContentActivity);
+            _adapter.ItemClick += AdapterOnItemClick;
+            _contactsView.SetAdapter(_adapter);
+        }
+
+        public override void OnStart()
+        {
+            base.OnStart();
             var uri = ContactsContract.Contacts.ContentUri;
             string[] projection = { ContactsContract.Contacts.InterfaceConsts.Id, ContactsContract.Contacts.InterfaceConsts.DisplayName,
                 ContactsContract.Contacts.InterfaceConsts.HasPhoneNumber, ContactsContract.Contacts.InterfaceConsts.PhotoUri };
-            var selection = string.Format("(({0} IS NOT NULL) AND ({0} != '') AND ({1} = '1'))", 
+            var selection = string.Format("(({0} IS NOT NULL) AND ({0} != '') AND ({1} = '1'))",
                 ContactsContract.Contacts.InterfaceConsts.DisplayName, ContactsContract.Contacts.InterfaceConsts.InVisibleGroup);
             var sortOrder = $"{ContactsContract.Contacts.InterfaceConsts.DisplayName} COLLATE LOCALIZED ASC";
             var loader = new CursorLoader(ContentActivity, uri, projection, selection, null, sortOrder);
             var cursor = loader.LoadInBackground().JavaCast<ICursor>();
-            _adapter = new ContactsRecyclerAdapter(ContentActivity, cursor);
-            _adapter.ItemClick += AdapterOnItemClick;
-            _contactsView.SetAdapter(_adapter);
+            _adapter.SwapCursor(cursor);
+            if (cursor.Count > 0)
+            {
+                if (_noResTextView.Visibility == ViewStates.Visible)
+                    _noResTextView.Visibility = ViewStates.Invisible;
+                if (_contactsView.Visibility == ViewStates.Invisible)
+                    _contactsView.Visibility = ViewStates.Visible;
+            }
+            else
+            {
+                if (_noResTextView.Visibility == ViewStates.Invisible)
+                    _noResTextView.Visibility = ViewStates.Visible;
+                if (_contactsView.Visibility == ViewStates.Visible)
+                    _contactsView.Visibility = ViewStates.Invisible;
+                _noResTextView.Text = GetString(Resource.String.FragmentContacts_empty);
+            }
         }
 
         public override void OnResume()
@@ -79,6 +100,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                 Log.Debug(App.AppPackage, $"{phone.PhoneNumber} - {phone.TypeCode}");
             }
 #endif
+            ContentActivity.HideKeyboard();
             switch (contact.PhonesList.Count)
             {
                 case 0:
@@ -103,11 +125,22 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
 
         private void SearchListenerOnCancel(object sender, bool b)
         {
-            if (_noResTextView.Visibility == ViewStates.Visible)
-                _noResTextView.Visibility = ViewStates.Invisible;
-            if (_contactsView.Visibility == ViewStates.Invisible)
-                _contactsView.Visibility = ViewStates.Visible;
             _adapter.RestoreCursor();
+            if (_adapter.ItemCount > 0)
+            {
+                if (_noResTextView.Visibility == ViewStates.Visible)
+                    _noResTextView.Visibility = ViewStates.Invisible;
+                if (_contactsView.Visibility == ViewStates.Invisible)
+                    _contactsView.Visibility = ViewStates.Visible;
+            }
+            else
+            {
+                if (_noResTextView.Visibility == ViewStates.Invisible)
+                    _noResTextView.Visibility = ViewStates.Visible;
+                if (_contactsView.Visibility == ViewStates.Visible)
+                    _contactsView.Visibility = ViewStates.Invisible;
+                _noResTextView.Text = GetString(Resource.String.FragmentContacts_empty);
+            }
         }
 
         private void SearchListenerOnApply(object sender, string s)
@@ -126,6 +159,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                     _noResTextView.Visibility = ViewStates.Visible;
                 if (_contactsView.Visibility == ViewStates.Visible)
                     _contactsView.Visibility = ViewStates.Invisible;
+                _noResTextView.Text = GetString(Resource.String.FragmentContacts_no);
             }
             _adapter.AddSearchCursor(resCursor);
         }
@@ -146,6 +180,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                     _noResTextView.Visibility = ViewStates.Visible;
                 if (_contactsView.Visibility == ViewStates.Visible)
                     _contactsView.Visibility = ViewStates.Invisible;
+                _noResTextView.Text = GetString(Resource.String.FragmentContacts_no);
             }
             _adapter.AddSearchCursor(resCursor);
         }

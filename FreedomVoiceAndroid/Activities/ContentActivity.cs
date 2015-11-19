@@ -10,6 +10,7 @@ using Android.Support.V4.Content;
 using Android.Support.V4.View;
 using Android.Support.V7.Internal.View;
 using Android.Views;
+using Android.Views.InputMethods;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Adapters;
 using com.FreedomVoice.MobileApp.Android.CustomControls;
@@ -287,6 +288,14 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             var param = _toolbar.LayoutParameters.JavaCast<AppBarLayout.LayoutParams>();
             param.ScrollFlags = AppBarLayout.LayoutParams.ScrollFlagScroll | AppBarLayout.LayoutParams.ScrollFlagEnterAlways;
             _tabLayout.Visibility = ViewStates.Visible;
+        }
+
+        public void HideKeyboard()
+        {
+            var imm = GetSystemService(InputMethodService).JavaCast<InputMethodManager>();
+            imm.HideSoftInputFromWindow(RootLayout.WindowToken, 0);
+            var current = CurrentFocus;
+            current?.ClearFocus();
         }
 
         public override void OnBackPressed()

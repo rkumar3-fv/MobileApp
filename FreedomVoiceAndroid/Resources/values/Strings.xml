@@ -63,10 +63,13 @@
   <string name="FragmentMessages_morePage">pages</string>
   <string name="FragmentMessages_remove">Message Removed</string>
   <string name="FragmentMessages_removeUndo">UNDO</string>
+  <string name="FragmentMessages_no">There is no messages here</string>
   <string name="FragmentRecents_title">Recents</string>
+  <string name="FragmentRecents_empty">No recents yet</string>
   <string name="FragmentContacts_title">Contacts</string>
   <string name="FragmentContacts_hint">Find contacts</string>
   <string name="FragmentContacts_no">No results</string>
+  <string name="FragmentContacts_empty">No contacts</string>
   <string name="ActivityVoice_title">Voicemail</string>
   <string name="ActivityVoice_speaker">Speaker</string>
   <string name="ActivityVoice_callback">Call back</string>
