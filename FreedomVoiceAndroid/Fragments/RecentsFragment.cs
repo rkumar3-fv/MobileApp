@@ -122,9 +122,9 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                         break;
                     case ActionsHelperEventArgs.ClearRecents:
                         _adapter.NotifyClear();
-                        CheckVisibility();
                         break;
                 }
+                CheckVisibility();
             }
         }
 
