@@ -24,11 +24,10 @@ namespace FreedomVoice.Core
             return await MakeAsyncPostRequest<string>("/api/v1/login", postdata, "application/x-www-form-urlencoded", CancellationToken.None);
         }
 
-        public static async Task<BaseResult<string>> Logout()
+        public static Task<BaseResult<string>> Logout()
         {
             CookieContainer = null;
-            var task = Task.Run(() => new BaseResult<string> { Code = ErrorCodes.Ok, Result = "" });
-            return await task;
+            return Task.FromResult(new BaseResult<string> {Code = ErrorCodes.Ok, Result = ""});
         }
 
         public static async Task<BaseResult<string>> PasswordReset(string login)
@@ -152,33 +151,25 @@ namespace FreedomVoice.Core
         private static async Task<BaseResult<T>> MakeAsyncPostRequest<T>(string url, string postData, string contentType, CancellationToken cts)
         {
             var request = GetRequest(url, "POST", contentType);
-
-            var res = await Task.Factory.FromAsync(
-                request.BeginGetRequestStream, async asyncResult =>
+            BaseResult<T> baseRes;
+            try
+            {
+                using (var resultStream = await request.GetRequestStreamAsync())
                 {
-                    BaseResult<T> baseRes;
-                    try
-                    {
-                        using (var resultStream = request.EndGetRequestStream(asyncResult))
-                        {
-                            SetRequestStreamData(resultStream, GetRequestBytes(postData));
-                            baseRes = await GetResponce<T>(request, cts);
-                        }
-                    }
-                    catch (WebException)
-                    {
-                        baseRes = new BaseResult<T>
-                        {
-                            Code = ErrorCodes.ConnectionLost,
-                            Result = default(T)
-                        };
-                    }
+                    SetRequestStreamData(resultStream, GetRequestBytes(postData));
+                    baseRes = await GetResponce<T>(request, cts);
+                }
+            }
+            catch (WebException)
+            {
+                baseRes = new BaseResult<T>
+                {
+                    Code = ErrorCodes.ConnectionLost,
+                    Result = default(T)
+                };
+            }
 
-                    return baseRes;
-                },
-                null);
-
-            return await res;
+            return baseRes;
         }
 
         public static async Task<BaseResult<T>> MakeAsyncGetRequest<T>(string url, string contentType, CancellationToken cts)
@@ -192,10 +183,9 @@ namespace FreedomVoice.Core
         {
             var request = GetRequest(url, "GET", contentType);
             BaseResult<Stream> retResult = null;
-            var task = Task.Factory.FromAsync<WebResponse>(request.BeginGetResponse, request.EndGetResponse, null);
             try
             {
-                var response = await task;
+                var response = await request.GetResponseAsync();
                 retResult = new BaseResult<Stream>
                 {
                     Code = ErrorCodes.Ok,
@@ -283,10 +273,10 @@ namespace FreedomVoice.Core
         {
             var request = GetRequest(url, "GET", contentType);
             BaseResult<MediaResponse> retResult = null;
-            var task = Task.Factory.FromAsync<WebResponse>(request.BeginGetResponse, request.EndGetResponse, null);
+
             try
             {
-                var response = await task;
+                var response = await request.GetResponseAsync();
                 retResult = new BaseResult<MediaResponse>
                 {
                     Code = ErrorCodes.Ok,
@@ -372,12 +362,10 @@ namespace FreedomVoice.Core
         private static async Task<BaseResult<T>> GetResponce<T>(HttpWebRequest request, CancellationToken ct)
         {
             BaseResult<T> retResult = null;
-
-            var task = Task.Factory.FromAsync<WebResponse>(request.BeginGetResponse, request.EndGetResponse, null);
-
+        
             try
             {
-                var response = await task;
+                var response = await request.GetResponseAsync();
                 ct.ThrowIfCancellationRequested();
                 retResult = new BaseResult<T>
                 {

@@ -137,7 +137,7 @@ namespace com.FreedomVoice.MobileApp.Android.Services
                 if (tokenSource != null)
                 {
                     var token = tokenSource.Token;
-                    Task.Factory.StartNew(() => LoadFile(item, token), token).ContinueWith(
+                    Task.Run(async () => await LoadFile(item, token), token).ContinueWith(
                             t =>
                             {
                                 CancellationTokenSource removingToken;
@@ -154,7 +154,7 @@ namespace com.FreedomVoice.MobileApp.Android.Services
                 StopSelf();
         }
 
-        private void LoadFile(Message msg, CancellationToken token)
+        private async Task LoadFile(Message msg, CancellationToken token)
         {
             var rootDirectory = $"{GetExternalFilesDir(null)}/";
             try
@@ -180,7 +180,7 @@ namespace com.FreedomVoice.MobileApp.Android.Services
 #if DEBUG
             Log.Debug(App.AppPackage, $"MEDIA REQUEST to {msg.AttachUrl}");
 #endif
-            var res = ApiHelper.MakeAsyncFileDownload(msg.AttachUrl, "application/json", token).Result;
+            var res = await ApiHelper.MakeAsyncFileDownload(msg.AttachUrl, "application/json", token);
             if (res == null)
             {
 #if DEBUG
@@ -207,6 +207,7 @@ namespace com.FreedomVoice.MobileApp.Android.Services
             var buffer = new byte[BufferSize];
             try
             {
+                using (var receivedStream = res.Result.ReceivedStream)
                 using (var fs = new FileStream(fullName, FileMode.Create, FileAccess.Write))
                 {
                     int bytesRead;
@@ -218,7 +219,7 @@ namespace com.FreedomVoice.MobileApp.Android.Services
                         new ProgressReport(msg.Id, msg, 0));
                     _receiver.Send(Result.Ok, progressData);
 
-                    while ((bytesRead = res.Result.ReceivedStream.Read(buffer, 0, BufferSize)) > 0)
+                    while ((bytesRead = await receivedStream.ReadAsync(buffer, 0, BufferSize, token)) > 0)
                     {
                         if (token.IsCancellationRequested)
                         {
@@ -234,7 +235,7 @@ namespace com.FreedomVoice.MobileApp.Android.Services
                             return;
                         }
                         totalRead += bytesRead;
-                        fs.Write(buffer, 0, bytesRead);
+                        await fs.WriteAsync(buffer, 0, bytesRead, token);
                         var progress = Convert.ToInt32(totalRead*100/res.Result.Length);
                         if (progress > lastProgress)
                         {
@@ -279,10 +280,6 @@ namespace com.FreedomVoice.MobileApp.Android.Services
                 failData.PutParcelable(AttachmentsServiceResultReceiver.ReceiverDataExtra,
                     new ErrorReport(msg.Id, msg, ErrorReport.ErrorBadRequest));
                 _receiver.Send(Result.Ok, failData);
-            }
-            finally
-            {
-                res.Result.ReceivedStream?.Close();
             }
         }
 
