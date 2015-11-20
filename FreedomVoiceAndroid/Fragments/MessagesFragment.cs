@@ -53,7 +53,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
 
             _snackCallback = new SnackbarCallback();
             _snackCallback.SnackbarEvent += OnSnackbarDissmiss;
-            return _recyclerView;
+            return view;
         }
 
         private void OnSnackbarDissmiss(object sender, EventArgs args)

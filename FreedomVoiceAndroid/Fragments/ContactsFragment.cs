@@ -211,8 +211,8 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                         iDs.Add(id);
                 }
 
-                var uriPhones = Uri.Parse($"content://com.android.contacts/data/phones/filter/{DataFormatUtils.NormalizePhone(query)}");
-                string[] projectionPhones = { ContactsContract.Contacts.InterfaceConsts.Id, ContactsContract.Contacts.InterfaceConsts.DisplayName,
+                var uriPhones = Uri.Parse($"content://com.android.contacts/data/phones/filter/*{DataFormatUtils.NormalizePhone(query)}*");
+                string[] projectionPhones = { "contact_id", ContactsContract.Contacts.InterfaceConsts.DisplayName,
                 ContactsContract.Contacts.InterfaceConsts.HasPhoneNumber, ContactsContract.Contacts.InterfaceConsts.PhotoUri };
                 string selectionPhones;
                 if (iDs.Count == 0)

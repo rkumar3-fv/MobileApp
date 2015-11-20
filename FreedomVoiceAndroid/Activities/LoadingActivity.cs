@@ -1,3 +1,4 @@
+using System.Timers;
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
@@ -5,7 +6,6 @@ using Android.Gms.Analytics;
 using Android.OS;
 using Android.Views;
 using com.FreedomVoice.MobileApp.Android.Helpers;
-using HockeyApp;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
 {
@@ -19,15 +19,20 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         Theme = "@style/AuthAppTheme")]
     public class LoadingActivity : BaseActivity
     {
+        private Timer _timer;
+
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
             SetContentView(Resource.Layout.act_loading);
+            _timer = new Timer { Interval = 20000, AutoReset = false };
+            _timer.Elapsed += TimerOnElapsed;
         }
 
         protected override void OnResume()
         {
             base.OnResume();
+            _timer.Start();
             if (Helper.IsLoggedIn)
             {
                 if ((Helper.AccountsList == null) || (Helper.SelectedAccount == null))
@@ -41,12 +46,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             }
             else
             {
-#if !DEBUG
-#if TRACE
-                if (Appl.ApplicationHelper.IsHockeyAppOn)
-                    Appl.ApplicationHelper.InitHockeyUpdater(this);
-#endif
-#endif
 #if TRACE
                 if (Appl.ApplicationHelper.InitGa(false))
 #else
@@ -55,7 +54,13 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                     Appl.ApplicationHelper.AnalyticsTracker.Send(new HitBuilders.ScreenViewBuilder().Build());
             }
             if (!Appl.ApplicationHelper.IsInternetConnected() || Appl.ApplicationHelper.IsAirplaneModeOn())
-                StartActivity(new Intent(this, typeof(LoginActivity)));
+                StartActivity(new Intent(this, typeof(AuthActivity)));
+        }
+
+        protected override void OnPause()
+        {
+            base.OnPause();
+            _timer.Stop();
         }
 
         /// <summary>
@@ -72,10 +77,18 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                     case ActionsHelperEventArgs.InternalError:
                     case ActionsHelperEventArgs.AuthLoginError:
                     case ActionsHelperEventArgs.AuthPasswdError:
-                        StartActivity(new Intent(this, typeof(LoginActivity)));
+                        StartActivity(new Intent(this, typeof(AuthActivity)));
                         return;
                 }
             }
+        }
+
+        private void TimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
+        {
+            RunOnUiThread(delegate
+            {
+                Helper.GetAccounts();
+            });
         }
     }
 }

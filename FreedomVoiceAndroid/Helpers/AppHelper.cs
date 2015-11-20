@@ -1,7 +1,4 @@
-using System;
-using System.Threading.Tasks;
 using Android;
-using Android.App;
 using Android.Content;
 using Android.Content.PM;
 using Android.Gms.Analytics;
@@ -11,8 +8,6 @@ using Android.Provider;
 using Android.Runtime;
 using Android.Telephony;
 using com.FreedomVoice.MobileApp.Android.Storage;
-using com.FreedomVoice.MobileApp.Android.Utils;
-using HockeyApp;
 using Java.Util;
 using Xamarin;
 using Environment = Android.OS.Environment;
@@ -112,7 +107,6 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         private const string GaFreedomVoiceKey = "UA-587407-95";
         private const string GaWaveAccessKey = "UA-69040520-1";
         private const string InsightsWaveAccessKey = "96308ef2e65dff5994132a9a8b18021948dadc54";
-        private const string HockeyAppWaveAccessKey = "4f540a867b134c62b99fba824046466c";
 
         private bool _isInsightsOn;
 
@@ -125,11 +119,6 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         /// Check Xamarin Insights state
         /// </summary>
         public bool IsInsigthsOn => (_isInsightsOn && CheckFilesPremissions());
-
-        /// <summary>
-        /// Check HockeyApp state
-        /// </summary>
-        public bool IsHockeyAppOn { get; private set; }
 
         /// <summary>
         /// Get GA tracker or NULL if not active
@@ -182,42 +171,6 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             };
             Insights.Initialize(InsightsWaveAccessKey, _context);
             _isInsightsOn = true;
-            return true;
-        }
-
-        /// <summary>
-        /// Initialize HockeyApp tracking & updater
-        /// </summary>
-        /// <returns>HockeyApp tracker state</returns>
-        public bool InitHockeyApp()
-        {
-            if (IsHockeyAppOn) return true;
-            if (CheckInternetPermissions() && CheckWakeLockPermission())
-            {
-                CrashManager.Register(_context, HockeyAppWaveAccessKey);
-                TraceWriter.Initialize();
-                AndroidEnvironment.UnhandledExceptionRaiser += (sender, args) =>
-                {
-                    TraceWriter.WriteTrace(args.Exception);
-                    args.Handled = true;
-                };
-                AppDomain.CurrentDomain.UnhandledException +=
-                    (sender, args) => TraceWriter.WriteTrace(args.ExceptionObject);
-                TaskScheduler.UnobservedTaskException +=
-                    (sender, args) => TraceWriter.WriteTrace(args.Exception);
-                ExceptionSupport.UncaughtTaskExceptionHandler = TraceWriter.WriteTrace;
-                IsHockeyAppOn = true;
-                return true;
-            }
-            IsHockeyAppOn = false;
-            return false;
-        }
-
-        public bool InitHockeyUpdater(Activity activity)
-        {
-            if (!IsHockeyAppOn) return false;
-            if (!CheckFilesPremissions()) return false;
-            UpdateManager.Register(activity, HockeyAppWaveAccessKey);
             return true;
         }
 #endregion
