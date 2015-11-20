@@ -292,7 +292,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
 
         private void TimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
         {
-            if ((_isBinded) && (PlayerSeek.Enabled))
+            if (_isBinded && PlayerSeek.Enabled)
             {
                 RunOnUiThread(delegate
                 {
