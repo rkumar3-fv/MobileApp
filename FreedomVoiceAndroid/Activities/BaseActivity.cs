@@ -1,6 +1,7 @@
 using System;
 using Android.Content;
 using Android.OS;
+using Android.Provider;
 using Android.Support.Design.Widget;
 using Android.Support.V7.App;
 #if DEBUG
@@ -82,6 +83,12 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             }
             else
                 OnHelperEvent(args as ActionsHelperEventArgs);
+        }
+
+        protected void AirplaneDialogOnDialogEvent(object sender, DialogEventArgs args)
+        {
+            if (args.Result == DialogResult.Ok)
+                StartActivityForResult(new Intent(Settings.ActionAirplaneModeSettings), 0);
         }
 
         /// <summary>

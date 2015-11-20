@@ -4,6 +4,7 @@ using Android.Content;
 using Android.Content.PM;
 using Android.Graphics;
 using Android.OS;
+using Android.Support.Design.Widget;
 using Android.Support.V4.Content;
 using Android.Support.V7.Widget;
 #if DEBUG
@@ -12,6 +13,7 @@ using Android.Util;
 using Android.Views;
 using Android.Views.InputMethods;
 using Android.Widget;
+using com.FreedomVoice.MobileApp.Android.Dialogs;
 using com.FreedomVoice.MobileApp.Android.Helpers;
 using com.FreedomVoice.MobileApp.Android.Utils;
 using Java.Interop;
@@ -92,6 +94,20 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             HideErrors();
             var imm = GetSystemService(InputMethodService).JavaCast<InputMethodManager>();
             imm.HideSoftInputFromWindow(RootLayout.WindowToken, 0);
+
+            if (Appl.ApplicationHelper.IsAirplaneModeOn())
+            {
+                var airplaneDialog = new AirplaneDialogFragment();
+                airplaneDialog.DialogEvent += AirplaneDialogOnDialogEvent;
+                airplaneDialog.Show(SupportFragmentManager, GetString(Resource.String.DlgAirplane_content));
+                return;
+            }
+
+            if (!Appl.ApplicationHelper.IsInternetConnected())
+            {
+                Snackbar.Make(RootLayout, Resource.String.Snack_noInternet, Snackbar.LengthLong).Show();
+                return;
+            }
 
             if ((_loginText.Text.Trim().Length < 6)||(!DataValidationUtils.IsEmailValid(_loginText.Text.Trim())))
             {

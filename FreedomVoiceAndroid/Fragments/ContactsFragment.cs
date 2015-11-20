@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Android.Database;
 using Android.OS;
@@ -187,26 +188,46 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
 
         private ICursor Search(string query)
         {
-            string selection;
-            if (Regex.IsMatch(query, @"^\d+$"))
-            {
-                //TODO: inner selection
-                selection = string.Format("(({0} IS NOT NULL) AND ({0} != '') AND ({1} = '1') AND ({0} like '%{2}%'))",
-                ContactsContract.Contacts.InterfaceConsts.DisplayName, ContactsContract.Contacts.InterfaceConsts.InVisibleGroup, query);
-            }
-            else
-            {
-                selection = string.Format("(({0} IS NOT NULL) AND ({0} != '') AND ({1} = '1') AND ({0} like '%{2}%'))",
-                ContactsContract.Contacts.InterfaceConsts.DisplayName, ContactsContract.Contacts.InterfaceConsts.InVisibleGroup, query);
-            }
-            
+            var sortOrder = $"{ContactsContract.Contacts.InterfaceConsts.DisplayName} COLLATE LOCALIZED ASC";
+            ICursor phonesCursor = null;
             var uri = ContactsContract.Contacts.ContentUri;
             string[] projection = { ContactsContract.Contacts.InterfaceConsts.Id, ContactsContract.Contacts.InterfaceConsts.DisplayName,
                 ContactsContract.Contacts.InterfaceConsts.HasPhoneNumber, ContactsContract.Contacts.InterfaceConsts.PhotoUri };
-            var sortOrder = $"{ContactsContract.Contacts.InterfaceConsts.DisplayName} COLLATE LOCALIZED ASC";
+            var selection = string.Format("(({0} IS NOT NULL) AND ({0} != '') AND ({1} = '1') AND ({0} like '%{2}%'))",
+                ContactsContract.Contacts.InterfaceConsts.DisplayName, ContactsContract.Contacts.InterfaceConsts.InVisibleGroup, query);
             var loader = new CursorLoader(ContentActivity, uri, projection, selection, null, sortOrder);
             var namesCursor = loader.LoadInBackground().JavaCast<ICursor>();
-            return namesCursor;
+
+            if (Regex.IsMatch(query, @"^\d+$"))
+            {
+                var iDs = new List<string>();
+                while (namesCursor.MoveToNext())
+                {
+                    var id = namesCursor.GetString(namesCursor.GetColumnIndex(projection[0]));
+                    if (!string.IsNullOrEmpty(id))
+                        iDs.Add(id);
+                }
+                
+                var uriPhones = ContactsContract.CommonDataKinds.Phone.ContentUri;
+                string[] projectionPhones = { ContactsContract.Contacts.InterfaceConsts.Id, ContactsContract.Contacts.InterfaceConsts.DisplayName,
+                ContactsContract.Contacts.InterfaceConsts.HasPhoneNumber, ContactsContract.Contacts.InterfaceConsts.PhotoUri };
+                string selectionPhones;
+                if (iDs.Count == 0)
+                    selectionPhones = string.Format("(({0} IS NOT NULL) AND ({0} != '') AND ({1} = '1') AND ({2} like '%{3}%'))",
+                    ContactsContract.Contacts.InterfaceConsts.DisplayName, ContactsContract.Contacts.InterfaceConsts.InVisibleGroup, ContactsContract.CommonDataKinds.Phone.Number, query);
+                else
+                    selectionPhones = string.Format("(({0} IS NOT NULL) AND ({0} != '') AND ({1} = '1') AND ({2} like '%{3}%') AND ({4} NOT IN ('{5}')))",
+                ContactsContract.Contacts.InterfaceConsts.DisplayName, ContactsContract.Contacts.InterfaceConsts.InVisibleGroup, ContactsContract.CommonDataKinds.Phone.Number, query,
+                "contact_id", string.Join("', '", iDs.ToArray()));
+                var loaderPhones = new CursorLoader(ContentActivity, uriPhones, projectionPhones, selectionPhones, null, sortOrder);
+                phonesCursor = loaderPhones.LoadInBackground().JavaCast<ICursor>();
+            }
+
+            if (phonesCursor == null)
+                return namesCursor;
+            if (namesCursor.Count == 0)
+                return phonesCursor;
+            return new MergeCursor(new[] {phonesCursor, namesCursor});
         }
 
     }

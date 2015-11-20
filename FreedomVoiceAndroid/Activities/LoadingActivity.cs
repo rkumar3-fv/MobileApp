@@ -54,6 +54,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
 #endif
                     Appl.ApplicationHelper.AnalyticsTracker.Send(new HitBuilders.ScreenViewBuilder().Build());
             }
+            if (!Appl.ApplicationHelper.IsInternetConnected() || Appl.ApplicationHelper.IsAirplaneModeOn())
+                StartActivity(new Intent(this, typeof(LoginActivity)));
         }
 
         /// <summary>
@@ -70,8 +72,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                     case ActionsHelperEventArgs.InternalError:
                     case ActionsHelperEventArgs.AuthLoginError:
                     case ActionsHelperEventArgs.AuthPasswdError:
-                        var intent = new Intent(this, typeof(LoginActivity));
-                        StartActivity(intent);
+                        StartActivity(new Intent(this, typeof(LoginActivity)));
                         return;
                 }
             }

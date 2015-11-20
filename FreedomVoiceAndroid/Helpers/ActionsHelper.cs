@@ -794,7 +794,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 #if DEBUG
                     Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} successed: YOU ARE LOGGED IN");
 #endif
-                    if ((IsFirstRun) || (_app.ApplicationHelper.GetMyPhoneNumber() == ""))
+                    if (_app.ApplicationHelper.IsVoicecallsSupported()&&(IsFirstRun || (_app.ApplicationHelper.GetMyPhoneNumber() == "")))
                     {
                         intent = new Intent(_app, typeof(SetNumberActivity));
                         HelperEvent?.Invoke(this, new ActionsHelperIntentArgs(response.RequestId, intent));          

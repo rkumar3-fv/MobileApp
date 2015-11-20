@@ -93,12 +93,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 StartActivityForResult(new Intent(Settings.ActionSettings), 0);
         }
 
-        private void AirplaneDialogOnDialogEvent(object sender, DialogEventArgs args)
-        {
-            if (args.Result == DialogResult.Ok)
-                StartActivityForResult(new Intent(Settings.ActionAirplaneModeSettings), 0);
-        }
-
         protected override void OnHelperEvent(ActionsHelperEventArgs args)
         {
             base.OnHelperEvent(args);
