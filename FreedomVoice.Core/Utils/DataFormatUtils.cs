@@ -93,12 +93,12 @@ namespace FreedomVoice.Core.Utils
             var current = DateTime.Now;
 
             if ((date.DayOfYear == current.DayOfYear) && (date.Year == current.Year))
-                return date.ToString("HH:mm tt");
+                return date.ToString("hh:mm tt");
 
             if ((date.DayOfYear == current.DayOfYear - 1) && (date.Year == current.Year))
-                return $"{yesterdayLabel} {date.ToString("HH:mm tt")}";
+                return $"{yesterdayLabel} {date.ToString("hh:mm tt")}";
 
-            return date.ToString("MM/dd/yyyy HH:mm tt");
+            return date.ToString("MM/dd/yyyy hh:mm tt");
         }
 
         /// <summary>
@@ -112,7 +112,7 @@ namespace FreedomVoice.Core.Utils
             var current = DateTime.Now;
 
             if ((date.DayOfYear == current.DayOfYear) && (date.Year == current.Year))
-                return date.ToString("HH:mm tt");
+                return date.ToString("hh:mm tt");
 
             if ((date.DayOfYear == current.DayOfYear - 1) && (date.Year == current.Year))
                 return yesterdayLabel;
