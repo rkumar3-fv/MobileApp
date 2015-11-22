@@ -17,6 +17,11 @@ using com.FreedomVoice.MobileApp.Android.Dialogs;
 using com.FreedomVoice.MobileApp.Android.Helpers;
 using com.FreedomVoice.MobileApp.Android.Utils;
 using Java.Interop;
+#if !DEBUG
+#if TRACE
+using HockeyApp;
+#endif
+#endif
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
 {
@@ -39,6 +44,26 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         private EditText _passwordText;
         private TextView _errorText;
         private ProgressBar _progressLogin;
+
+#if DEBUG
+        protected override void OnResume()
+        {
+            base.OnResume();
+            _loginText.Text = "freedomvoice.adm.267055@gmail.com";
+            _passwordText.Text = "adm654654";
+        }
+#endif
+
+#if !DEBUG
+#if TRACE
+        protected override void OnStart()
+        {
+            base.OnStart();
+            if (Appl.ApplicationHelper.IsHockeyAppOn)
+                Appl.ApplicationHelper.InitHockeyUpdater(this);
+        }
+#endif
+#endif
 
         protected override void OnCreate(Bundle bundle)
         {
