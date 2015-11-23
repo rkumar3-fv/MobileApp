@@ -36,18 +36,32 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
     public class ActionsHelper : IAppServiceResultReceiver
     {
 #if DEBUG
-        Stopwatch _watchAuth;
-        Stopwatch _watchGetAccs;
-        Stopwatch _watchGetCaller;
-        Stopwatch _watchGetExt;
-        Stopwatch _watchGetFolders;
-        Stopwatch _watchGetMessages;
-        Stopwatch _watchCall;
+        private Stopwatch _watchAuth;
+        private Stopwatch _watchGetAccs;
+        private Stopwatch _watchGetCaller;
+        private Stopwatch _watchGetExt;
+        private Stopwatch _watchGetFolders;
+        private Stopwatch _watchGetMessages;
+        private Stopwatch _watchCall;
 #endif
         /// <summary>
         /// Is first app launch flag
         /// </summary>
         public bool IsFirstRun { get; private set; }
+
+        /// <summary>
+        /// Messages polling interval
+        /// </summary>
+        public double PollingInterval {
+            get
+            {
+                if (!(Math.Abs(_pollingInterval) > 0))
+                    GetPolling();
+                return _pollingInterval;
+            }
+        }
+
+        private double _pollingInterval;
 
         /// <summary>
         /// Last entered user login
@@ -165,6 +179,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                     _userPassword = (string) pair.Second;
                 }
                 _accPair = _preferencesHelper.GetAccCaller();
+                _pollingInterval = _preferencesHelper.GetPollingInterval();
                 if (container != null)
                 {
                     ApiHelper.CookieContainer = container;
@@ -280,6 +295,29 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             }
 #if DEBUG
             Log.Debug(App.AppPackage, "HELPER REQUEST: RestorePassword ID=" + requestId);
+#endif
+            PrepareIntent(requestId, restoreRequest);
+            return requestId;
+        }
+
+        /// <summary>
+        /// Get current polling interval
+        /// </summary>
+        /// <returns>request ID</returns>
+        public long GetPolling()
+        {
+            var requestId = RequestId;
+            if (!CheckRequestAbility(requestId)) return requestId;
+            var restoreRequest = new GetPollingRequest(requestId);
+            foreach (var request in _waitingRequestArray.Where(response => response.Value is GetPollingRequest))
+            {
+#if DEBUG
+                Log.Debug(App.AppPackage, "HELPER REQUEST: Duplicate GetPollingInterval request. Execute ID=" + request.Key);
+#endif
+                return request.Key;
+            }
+#if DEBUG
+            Log.Debug(App.AppPackage, "HELPER REQUEST: GetPollingInterval ID=" + requestId);
 #endif
             PrepareIntent(requestId, restoreRequest);
             return requestId;
@@ -806,9 +844,24 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                 // Restore password response
                 case "RestorePasswordResponse":
 #if DEBUG
-                    Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} failed: BAD LOGIN");
+                    Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} successed: E-MAIL SENT");
 #endif
                     HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.RestoreOk }));
+                    break;
+
+                // Restore password response
+                case "GetPollingResponse":
+#if DEBUG
+                    Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} successed: NEW POLLING INTERVAL APPLIED");
+#endif
+                    var pollingResponse = (GetPollingResponse) response;
+                    if (Math.Abs(pollingResponse.PollingInterval) > 0)
+                    {
+                        _pollingInterval = pollingResponse.PollingInterval;
+                        _preferencesHelper.SavePollingInterval(PollingInterval);
+                    }
+                    else
+                        _pollingInterval = 30000;
                     break;
 
                 // Login action response

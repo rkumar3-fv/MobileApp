@@ -1,4 +1,5 @@
 using System;
+using System.Timers;
 using Android.Content;
 using Android.Support.Design.Widget;
 using Android.Support.V4.Content;
@@ -35,6 +36,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         private ItemTouchHelper _swipeTouchHelper;
         private TextView _noMessagesTextView;
         private RelativeLayout _progressLayout;
+        private Timer _timer;
 
         protected override View InitView()
         {
@@ -54,7 +56,24 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
 
             _snackCallback = new SnackbarCallback();
             _snackCallback.SnackbarEvent += OnSnackbarDissmiss;
+
+            _timer = new Timer();
+            _timer.Elapsed += TimerOnElapsed;
             return view;
+        }
+
+        private void TimerOnElapsed(object sender, ElapsedEventArgs e)
+        {
+#if DEBUG
+            Log.Debug(App.AppPackage, "POLLING INTERVAL ELAPSED");
+#endif
+            _timer.Stop();
+            if (Helper.SelectedExtension == -1)
+                Helper.ForceLoadExtensions();
+            else if (Helper.SelectedFolder == -1)
+                Helper.ForceLoadFolders();
+            else if (Helper.SelectedMessage == -1)
+                Helper.ForceLoadMessages();
         }
 
         private void OnSnackbarDissmiss(object sender, EventArgs args)
@@ -73,6 +92,13 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                     Helper.ExtensionsList[Helper.SelectedExtension].MailsCount--;
                 }
                 Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].MessagesList.RemoveAt(_removedMsgIndex);
+                if (_adapter.ItemCount == 0)
+                {
+                    if (_noMessagesTextView.Visibility == ViewStates.Invisible)
+                        _noMessagesTextView.Visibility = ViewStates.Visible;
+                    if (_recyclerView.Visibility == ViewStates.Visible)
+                        _recyclerView.Visibility = ViewStates.Invisible;
+                }
             }
             else
             {
@@ -175,6 +201,8 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                 switch (code)
                 {
                     case ActionsHelperEventArgs.MsgUpdated:
+                        if (_timer.Enabled)
+                            _timer.Stop();
 #if DEBUG
                         TraceContent();
 #endif
@@ -211,6 +239,14 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                                 _recyclerView.Visibility = ViewStates.Visible;
                             if (_progressLayout.Visibility == ViewStates.Visible)
                                 _progressLayout.Visibility = ViewStates.Gone;
+                        }
+                        if (Math.Abs(_timer.Interval - 100) > -0.5)
+                        {
+                            if (Math.Abs(Helper.PollingInterval) > 0)
+                            {
+                                _timer.Interval = Helper.PollingInterval;
+                                _timer.Start();
+                            }
                         }
                         break;
                 }
