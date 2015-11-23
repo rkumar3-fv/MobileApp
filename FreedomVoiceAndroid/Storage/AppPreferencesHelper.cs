@@ -144,7 +144,7 @@ namespace com.FreedomVoice.MobileApp.Android.Storage
             else if (float.IsNegativeInfinity(result))
                 result = float.MinValue;
             var editor = _preferences.Edit();
-            editor.PutFloat(KeyPhoneNumber, result);
+            editor.PutFloat(KeyPolling, result);
             editor.Apply();
         }
 

@@ -162,8 +162,16 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 {
                     SupportActionBar.Title =
                         $"{Helper.ExtensionsList[Helper.SelectedExtension].Id} - {Helper.ExtensionsList[Helper.SelectedExtension].ExtensionName}";
-                    SupportActionBar.SetDisplayHomeAsUpEnabled(true);
-                    SupportActionBar.SetHomeButtonEnabled(true);
+                    if (Helper.ExtensionsList.Count == 1)
+                    {
+                        SupportActionBar.SetDisplayHomeAsUpEnabled(false);
+                        SupportActionBar.SetHomeButtonEnabled(false);
+                    }
+                    else
+                    {
+                        SupportActionBar.SetDisplayHomeAsUpEnabled(true);
+                        SupportActionBar.SetHomeButtonEnabled(true);
+                    }
                     return;
                 }
             }
@@ -302,6 +310,11 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         {
             if ((_viewPager.CurrentItem == 3) && (Helper.SelectedExtension != -1))
             {
+                if ((Helper.SelectedMessage == -1) && (Helper.SelectedFolder == -1) && (Helper.ExtensionsList.Count == 1))
+                {
+                    MoveTaskToBack(true);
+                    return;
+                }
                 Helper.GetPrevious();
                 SetToolbarContent();
                 return;

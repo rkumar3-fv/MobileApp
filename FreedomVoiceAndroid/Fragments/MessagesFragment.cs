@@ -64,16 +64,19 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
 
         private void TimerOnElapsed(object sender, ElapsedEventArgs e)
         {
-#if DEBUG
-            Log.Debug(App.AppPackage, "POLLING INTERVAL ELAPSED");
-#endif
             _timer.Stop();
-            if (Helper.SelectedExtension == -1)
-                Helper.ForceLoadExtensions();
-            else if (Helper.SelectedFolder == -1)
-                Helper.ForceLoadFolders();
-            else if (Helper.SelectedMessage == -1)
-                Helper.ForceLoadMessages();
+            ContentActivity.RunOnUiThread(delegate
+            {
+#if DEBUG
+                Log.Debug(App.AppPackage, "POLLING INTERVAL ELAPSED");
+#endif
+                if (Helper.SelectedExtension == -1)
+                    Helper.ForceLoadExtensions();
+                else if (Helper.SelectedFolder == -1)
+                    Helper.ForceLoadFolders();
+                else if (Helper.SelectedMessage == -1)
+                    Helper.ForceLoadMessages();
+            });
         }
 
         private void OnSnackbarDissmiss(object sender, EventArgs args)
@@ -192,6 +195,23 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             }
             if (Helper.SelectedFolder != -1)
                 Helper.ForceLoadMessages();
+
+            if (_timer.Enabled) return;
+            if (Math.Abs(_timer.Interval - 100) > -0.5)
+            {
+                if (Math.Abs(Helper.PollingInterval) > 0)
+                {
+                    _timer.Interval = Helper.PollingInterval;
+                    _timer.Start();
+                }
+            }
+        }
+
+        public override void OnPause()
+        {
+            base.OnPause();
+            if (_timer.Enabled)
+                _timer.Stop();
         }
 
         protected override void OnHelperEvent(ActionsHelperEventArgs args)
@@ -240,12 +260,15 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                             if (_progressLayout.Visibility == ViewStates.Visible)
                                 _progressLayout.Visibility = ViewStates.Gone;
                         }
-                        if (Math.Abs(_timer.Interval - 100) > -0.5)
+                        if (!_timer.Enabled)
                         {
-                            if (Math.Abs(Helper.PollingInterval) > 0)
+                            if (Math.Abs(_timer.Interval - 100) > -0.5)
                             {
-                                _timer.Interval = Helper.PollingInterval;
-                                _timer.Start();
+                                if (Math.Abs(Helper.PollingInterval) > 0)
+                                {
+                                    _timer.Interval = Helper.PollingInterval;
+                                    _timer.Start();
+                                }
                             }
                         }
                         break;

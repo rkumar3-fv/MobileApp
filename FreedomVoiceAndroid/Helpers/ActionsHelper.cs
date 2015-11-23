@@ -650,9 +650,12 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             if (SelectedMessage != -1)
                 SelectedMessage = -1;
             else if (SelectedFolder != -1)
-                SelectedFolder = -1;
+                    SelectedFolder = -1;
             else if (SelectedExtension != -1)
-                SelectedExtension = -1;
+            {
+                if (ExtensionsList.Count != 1)
+                    SelectedExtension = -1;
+            }
             HelperEvent?.Invoke(this, new ActionsHelperEventArgs(-1, new[] { ActionsHelperEventArgs.MsgUpdated }));
         }
 
@@ -993,7 +996,13 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                         SelectedFolder = -1;
                         SelectedMessage = -1;
                     }
-                    HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new []{ActionsHelperEventArgs.MsgUpdated}));
+                    if ((ExtensionsList != null) && (ExtensionsList.Count == 1))
+                    {
+                        SelectedExtension = 0;
+                        ForceLoadFolders();
+                    }
+                    else
+                        HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new []{ActionsHelperEventArgs.MsgUpdated}));
                     break;
 
                 // Get folders response
@@ -1095,6 +1104,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             RecentsDictionary.Clear();
             _preferencesHelper.ClearCredentials();
             _preferencesHelper.SaveAccCaller("", "");
+            _preferencesHelper.SavePollingInterval(0);
             var intent = new Intent(_app, typeof(AuthActivity));
             HelperEvent?.Invoke(this, new ActionsHelperIntentArgs(id, intent));
         }
