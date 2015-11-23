@@ -105,8 +105,8 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 
 #region Analytics
         private bool _isInsightsOn;
-        private const string GaFreedomVoiceKey = "UA-587407-95";
-        private const string InsightsWaveAccessKey = "96308ef2e65dff5994132a9a8b18021948dadc54";
+        private const string GaKey = "UA-587407-95";
+        private const string InsightsKey = "5e9bc7544d4c9847578634ad6b040151e9d0329c";
 
         /// <summary>
         /// Check Google Analytics state
@@ -133,7 +133,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             if (CheckInternetPermissions() && CheckWakeLockPermission())
             {
                 var analytics = GoogleAnalytics.GetInstance(_context);
-                AnalyticsTracker = analytics.NewTracker(GaFreedomVoiceKey);
+                AnalyticsTracker = analytics.NewTracker(GaKey);
                 AnalyticsTracker.EnableAutoActivityTracking(true);
                 AnalyticsTracker.EnableExceptionReporting(true);
                 analytics.EnableAutoActivityReports(App.GetApplication(_context));
@@ -166,7 +166,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                 if (isStartupCrash)
                     Insights.PurgePendingCrashReports().Wait();
             };
-            Insights.Initialize(InsightsWaveAccessKey, _context);
+            Insights.Initialize(InsightsKey, _context);
             _isInsightsOn = true;
             return true;
         }
