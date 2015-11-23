@@ -77,13 +77,13 @@ namespace com.FreedomVoice.MobileApp.Android
             var activityManager = GetSystemService(ActivityService).JavaCast<ActivityManager>();
             activityManager.GetMemoryInfo(mi);
             var availableMegs = mi.AvailMem / 1048576L;
-            var totalMegs = (int)Build.VERSION.SdkInt > 15 ? $"{mi.TotalMem}" : "API 15";
+            var totalMegs = (int)Build.VERSION.SdkInt > 15 ? $"{mi.TotalMem / 1048576L}Mb" : "API 15";
 #if DEBUG
-            Log.Debug(AppPackage, $"LOW MEMORY: available {totalMegs}Mb / {availableMegs}Mb");
+            Log.Debug(AppPackage, $"LOW MEMORY: available  {availableMegs}Mb / {totalMegs}");
 #endif
             if (_helper.IsInsigthsOn)
             {
-                var val = $"{DateTime.Now}: available {totalMegs}Mb / {availableMegs}Mb";
+                var val = $"{DateTime.Now}: available {availableMegs}Mb / {totalMegs}";
                 var dict = new Dictionary<string, string> {{"LOW MEMORY", val}};
                 var version = PackageManager.GetPackageInfo(AppPackage, 0).VersionName;
                 Insights.Track($"{AppPackage} v.{version}", dict);

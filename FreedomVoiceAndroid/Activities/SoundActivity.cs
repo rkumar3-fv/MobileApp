@@ -37,6 +37,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         {
             base.OnCreate(bundle);
             _audioManager = GetSystemService(AudioService).JavaCast<AudioManager>();
+            _audioManager.Mode = Mode.Normal;
+            _audioManager.SpeakerphoneOn = true;
         }
 
         protected override void OnStart()
@@ -65,6 +67,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         {
             base.OnStop();
             UnbindService(this);
+            _audioManager.Mode = Mode.Normal;
+            _audioManager.SpeakerphoneOn = true;
         }
 
         private void PlayerButtonOnClick(object sender, EventArgs eventArgs)
@@ -96,8 +100,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             base.OnResume();
             if (_isBinded)
                 CheckSoundOutput(SpeakerButton.Checked);
-            _audioManager.Mode = Mode.Normal;
-            _audioManager.SpeakerphoneOn = true;
         }
 
         /// <summary>
@@ -191,8 +193,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             PlayerButton.SetImageResource(Resource.Drawable.ic_action_play);
             _isPlayed = false;
             _timer.Stop();
-            _audioManager.Mode = Mode.Normal;
-            _audioManager.SpeakerphoneOn = true;
         }
 
         /// <summary>

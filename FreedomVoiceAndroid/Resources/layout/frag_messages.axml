@@ -22,4 +22,23 @@
         android:paddingTop="@dimen/fragment_msg_element_padding"
         android:paddingBottom="@dimen/fragment_msg_element_padding"
         android:clipToPadding="false" />
+    <RelativeLayout
+        android:id="@+id/messagesFragment_progressLayout"
+        android:layout_alignParentTop="true"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:clickable="true"
+        android:visibility="gone"
+        android:background="@color/colorTransparent">
+        <ProgressBar
+            android:id="@+id/messagesFragment_progress"
+            style="@style/InWhiteButtonProgressBar"
+            android:indeterminate="true"
+            android:layout_width="@dimen/select_acc_activity_progress_size"
+            android:layout_height="@dimen/select_acc_activity_progress_size"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true" />
+    </RelativeLayout>
 </RelativeLayout>
