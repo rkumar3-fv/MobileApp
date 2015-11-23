@@ -50,24 +50,9 @@ namespace com.FreedomVoice.MobileApp.Android
         {
             base.OnCreate();
             _helper = new AppHelper(this);
-#if DEBUG
-            ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) =>
-            {
-                Log.Debug(AppPackage, sslPolicyErrors.ToString());
-                return true;
-            };
-#else
             ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
-#endif
-#if TRACE
-#if !DEBUG
-            _helper.InitHockeyApp();
-#endif
-#endif
-#if !TRACE
             if (!_helper.IsInsigthsOn)
                 AppDomain.CurrentDomain.UnhandledException += HandleUnhandledException;
-#endif
         }
 
         public override void OnLowMemory()

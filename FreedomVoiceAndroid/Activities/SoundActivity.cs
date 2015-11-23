@@ -256,7 +256,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             _isCurrent = false;
             PlayerSeek.Enabled = false;
             PlayerSeek.Progress = 0;
-            StartTextView.Text = $"0:00";
+            StartTextView.Text = "0:00";
             EndTextView.Text = $"-{DataFormatUtils.ToDuration(Msg.Length)}";
             PlayerButton.SetImageResource(Resource.Drawable.ic_action_play);
         }

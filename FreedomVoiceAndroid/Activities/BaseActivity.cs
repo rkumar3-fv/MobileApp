@@ -18,6 +18,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
     /// </summary>
     public abstract class BaseActivity : AppCompatActivity
     {
+        private const string AirDlgTag = "AIR_DLG_TAG";
         public ActionsHelper Helper;
         protected App Appl;
         protected View RootLayout;
@@ -88,7 +89,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         protected void AirplaneDialogOnDialogEvent(object sender, DialogEventArgs args)
         {
             if (args.Result == DialogResult.Ok)
-                StartActivityForResult(new Intent(Settings.ActionAirplaneModeSettings), 0);
+                StartActivity(new Intent(Settings.ActionAirplaneModeSettings));
         }
 
         /// <summary>
@@ -112,6 +113,15 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                         return;
                 }
             }
+        }
+
+        protected void AirplaneDialog()
+        {
+            if (SupportFragmentManager.FindFragmentByTag(AirDlgTag) != null)
+                return;
+            var airplaneDialog = new AirplaneDialogFragment();
+            airplaneDialog.DialogEvent += AirplaneDialogOnDialogEvent;
+            airplaneDialog.Show(SupportFragmentManager, AirDlgTag);
         }
     }
 }

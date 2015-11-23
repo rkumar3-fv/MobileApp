@@ -1,8 +1,6 @@
 using System;
 using System.Timers;
 using Android.Content;
-using Android.Support.Design.Widget;
-using Android.Support.V4.Content;
 using Android.Support.V7.Widget;
 using Android.Support.V7.Widget.Helper;
 #if DEBUG
@@ -29,8 +27,6 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         private int _removedMsgIndex;
         private bool _remove;
 
-        private Snackbar _snackbar;
-        private SnackbarCallback _snackCallback;
         private MessagesRecyclerAdapter _adapter;
         private RecyclerView _recyclerView;
         private ItemTouchHelper _swipeTouchHelper;
@@ -54,9 +50,6 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             swipeListener.SwipeEvent += OnSwipeEvent;
             _swipeTouchHelper = new ItemTouchHelper(swipeListener);
 
-            _snackCallback = new SnackbarCallback();
-            _snackCallback.SnackbarEvent += OnSnackbarDissmiss;
-
             _timer = new Timer();
             _timer.Elapsed += TimerOnElapsed;
             return view;
@@ -79,8 +72,18 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             });
         }
 
-        private void OnSnackbarDissmiss(object sender, EventArgs args)
+        /// <summary>
+        /// Message swipe
+        /// </summary>
+        private void OnSwipeEvent(object sender, SwipeCallbackEventArgs args)
         {
+#if DEBUG
+            Log.Debug(App.AppPackage, $"SWIPED message {args.ElementIndex}");
+#endif
+            _remove = true;
+            _removedMsgIndex = args.ElementIndex;
+            _adapter.RemoveItem(args.ElementIndex);
+
             if (_remove)
             {
                 if (Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].FolderName ==
@@ -111,29 +114,6 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                 _remove = false;
                 _adapter.InsertItem(Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].MessagesList[_removedMsgIndex], _removedMsgIndex);
             }
-        }
-
-        private void OnUndoClick(View view)
-        {
-            _remove = false;
-        }
-
-        /// <summary>
-        /// Message swipe
-        /// </summary>
-        private void OnSwipeEvent(object sender, SwipeCallbackEventArgs args)
-        {
-#if DEBUG
-            Log.Debug(App.AppPackage, $"SWIPED message {args.ElementIndex}");
-#endif
-            _remove = true;
-            _removedMsgIndex = args.ElementIndex;
-            //_snackbar = Snackbar.Make(View, Resource.String.FragmentMessages_remove, 10000).SetAction(Resource.String.FragmentMessages_removeUndo, OnUndoClick)
-            //    .SetActionTextColor(ContextCompat.GetColor(ContentActivity, Resource.Color.colorUndoList)).SetCallback(_snackCallback);
-            //_snackbar.Show();
-            _adapter.RemoveItem(args.ElementIndex);
-            //TODO: waiting for update support lib
-            OnSnackbarDissmiss(this, null);
         }
 
         /// <summary>

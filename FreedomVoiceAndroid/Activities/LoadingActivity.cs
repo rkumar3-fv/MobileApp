@@ -46,11 +46,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             }
             else
             {
-#if TRACE
-                if (Appl.ApplicationHelper.InitGa(false))
-#else
-                if (Appl.ApplicationHelper.InitGa(true))
-#endif
+                if (Appl.ApplicationHelper.InitGa())
                     Appl.ApplicationHelper.AnalyticsTracker.Send(new HitBuilders.ScreenViewBuilder().Build());
             }
             if (!Appl.ApplicationHelper.IsInternetConnected() || Appl.ApplicationHelper.IsAirplaneModeOn())

@@ -16,6 +16,9 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
     public abstract class OperationActivity : LogoutActivity
     {
         private const int ContactsPermissionRequestId = 2045;
+        private const string CallerDlgTag = "CALLER_DLG_TAG";
+        private const string CellularDlgTag = "CELLULAR_DLG_TAG";
+        private const string PhoneDlgTag = "PHONE_DLG_TAG";
 
         /// <summary>
         /// Call action
@@ -32,30 +35,23 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             }
             else if (!Appl.ApplicationHelper.IsVoicecallsSupported()||(Appl.ApplicationHelper.GetMyPhoneNumber() == null))
             {
-                var noCellularDialog = new NoCellularDialogFragment();
-                noCellularDialog.Show(SupportFragmentManager, GetString(Resource.String.DlgCellular_title));
+                NoCellularDialog();
             }
             else if (Appl.ApplicationHelper.GetMyPhoneNumber().Length < 10)
             {
-                var noPhoneDialog = new NoPhoneDialogFragment();
-                noPhoneDialog.DialogEvent += NoPhoneDialogOnDialogEvent;
-                noPhoneDialog.Show(SupportFragmentManager, GetString(Resource.String.DlgPhone_content));
+                CreatePhoneDialog();
             }
             else
             {
                 if (Appl.ApplicationHelper.IsAirplaneModeOn())
                 {
-                    var airplaneDialog = new AirplaneDialogFragment();
-                    airplaneDialog.DialogEvent += AirplaneDialogOnDialogEvent;
-                    airplaneDialog.Show(SupportFragmentManager, GetString(Resource.String.DlgAirplane_content));
+                    AirplaneDialog();
                 }
                 else
                 {
                     if (Appl.ApplicationHelper.IsCallerIdHides())
                     {
-                        var callerDialog = new CallerIdDialogFragment();
-                        callerDialog.DialogEvent += CallerDialogOnDialogEvent;
-                        callerDialog.Show(SupportFragmentManager, GetString(Resource.String.DlgCallerId_content));
+                        CallerIdDialog();
                     }
                     else
                     {
@@ -90,7 +86,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         private void CallerDialogOnDialogEvent(object sender, DialogEventArgs args)
         {
             if (args.Result == DialogResult.Ok)
-                StartActivityForResult(new Intent(Settings.ActionSettings), 0);
+                StartActivity(new Intent(Settings.ActionSettings));
         }
 
         protected override void OnHelperEvent(ActionsHelperEventArgs args)
@@ -101,13 +97,10 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 switch (code)
                 {
                     case ActionsHelperEventArgs.CallReservationNotSupports:
-                        var noCellularDialog = new NoCellularDialogFragment();
-                        noCellularDialog.Show(SupportFragmentManager, GetString(Resource.String.DlgCellular_title));
+                        NoCellularDialog();
                         break;
                     case ActionsHelperEventArgs.PhoneNumberNotSets:
-                        var noPhoneDialog = new NoPhoneDialogFragment();
-                        noPhoneDialog.DialogEvent += NoPhoneDialogOnDialogEvent;
-                        noPhoneDialog.Show(SupportFragmentManager, GetString(Resource.String.DlgPhone_content));
+                        CreatePhoneDialog();
                         break;
                     case ActionsHelperEventArgs.CallPermissionDenied:
                         var snackPerm = Snackbar.Make(RootLayout, Resource.String.Snack_noPhonePermission, Snackbar.LengthLong);
@@ -129,6 +122,32 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         private void OnSetPermission(View view)
         {
             RequestPermissions(new[] { AppHelper.MakeCallsPermission }, ContactsPermissionRequestId);
+        }
+
+        private void CallerIdDialog()
+        {
+            if (SupportFragmentManager.FindFragmentByTag(CallerDlgTag) != null)
+                return;
+            var callerDialog = new CallerIdDialogFragment();
+            callerDialog.DialogEvent += CallerDialogOnDialogEvent;
+            callerDialog.Show(SupportFragmentManager, CallerDlgTag);
+        }
+
+        private void NoCellularDialog()
+        {
+            if (SupportFragmentManager.FindFragmentByTag(CellularDlgTag) != null)
+                return;
+            var noCellularDialog = new NoCellularDialogFragment();
+            noCellularDialog.Show(SupportFragmentManager, CellularDlgTag);
+        }
+
+        private void CreatePhoneDialog()
+        {
+            if (SupportFragmentManager.FindFragmentByTag(PhoneDlgTag) != null)
+                return;
+            var noPhoneDialog = new NoPhoneDialogFragment();
+            noPhoneDialog.DialogEvent += NoPhoneDialogOnDialogEvent;
+            noPhoneDialog.Show(SupportFragmentManager, PhoneDlgTag);
         }
     }
 }

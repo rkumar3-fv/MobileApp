@@ -78,11 +78,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 if (!Msg.Equals(Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].MessagesList[Helper.SelectedMessage]))
                     OnBackPressed();
             }
-            //else
-            //{
-                //TODO: change after message refactoring
-                //RemoveButton.Visibility = ViewStates.Invisible;
-            //}
+
             string text;
             _contactsHelper.GetName(Msg.FromNumber, out text);
             SenderText.Text = Msg.FromName.Length > 1 ? Msg.FromName : text;
