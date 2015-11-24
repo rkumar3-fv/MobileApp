@@ -32,6 +32,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         private ItemTouchHelper _swipeTouchHelper;
         private TextView _noMessagesTextView;
         private RelativeLayout _progressLayout;
+        private Button _retryButton;
         private Timer _timer;
 
         protected override View InitView()
@@ -42,6 +43,8 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             _recyclerView.AddItemDecoration(new DividerItemDecorator(Activity, Resource.Drawable.divider));
             _noMessagesTextView = view.FindViewById<TextView>(Resource.Id.messagesFragment_noResultText);
             _progressLayout = view.FindViewById<RelativeLayout>(Resource.Id.messagesFragment_progressLayout);
+            _retryButton = view.FindViewById<Button>(Resource.Id.messagesFragment_retryButton);
+            _retryButton.Click += RetryButtonOnClick;
             _adapter = new MessagesRecyclerAdapter(Context);
             _recyclerView.SetAdapter(_adapter);
             _adapter.ItemClick += MessageViewOnClick;
@@ -101,7 +104,10 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                 if (_adapter.ItemCount == 0)
                 {
                     if (_noMessagesTextView.Visibility == ViewStates.Invisible)
+                    {
+                        _noMessagesTextView.Text = GetString(Resource.String.FragmentMessages_no);
                         _noMessagesTextView.Visibility = ViewStates.Visible;
+                    }
                     if (_recyclerView.Visibility == ViewStates.Visible)
                         _recyclerView.Visibility = ViewStates.Invisible;
                 }
@@ -145,15 +151,17 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                 return;
             }
             ContentActivity.SetToolbarContent();
+            if ((Helper.GetCurrent().Count == 0)&&(_progressLayout.Visibility == ViewStates.Gone))
+                _progressLayout.Visibility = ViewStates.Visible;
+            if ((Helper.GetCurrent().Count > 0) && (_progressLayout.Visibility == ViewStates.Visible))
+                _progressLayout.Visibility = ViewStates.Gone;
             if (Helper.SelectedFolder != -1)
             {
                 Helper.ForceLoadMessages();
                 _swipeTouchHelper.AttachToRecyclerView(_recyclerView);
             }
-            else
+            else if (Helper.SelectedExtension != -1)
                 Helper.ForceLoadFolders();
-            if (_progressLayout.Visibility == ViewStates.Gone)
-                _progressLayout.Visibility = ViewStates.Visible;
         }
 
         public override void OnResume()
@@ -162,6 +170,13 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
 #if DEBUG
             TraceContent();
 #endif
+            if (_retryButton.Visibility == ViewStates.Visible)
+                _retryButton.Visibility = ViewStates.Invisible;
+            if (_noMessagesTextView.Visibility == ViewStates.Visible)
+            {
+                _noMessagesTextView.Visibility = ViewStates.Invisible;
+                _noMessagesTextView.Text = "";
+            }
             _adapter.CurrentContent = Helper.GetCurrent();
             if (_adapter.CurrentContent.Count == 0)
             {
@@ -175,16 +190,10 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             }
             if (Helper.SelectedFolder != -1)
                 Helper.ForceLoadMessages();
-
-            if (_timer.Enabled) return;
-            if (Math.Abs(_timer.Interval - 100) > -0.5)
-            {
-                if (Math.Abs(Helper.PollingInterval) > 0)
-                {
-                    _timer.Interval = Helper.PollingInterval;
-                    _timer.Start();
-                }
-            }
+            else if (Helper.SelectedExtension != -1)
+                Helper.ForceLoadFolders();
+            else
+                Helper.ForceLoadExtensions();
         }
 
         public override void OnPause()
@@ -207,26 +216,19 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
 #if DEBUG
                         TraceContent();
 #endif
-                        if (Helper.SelectedExtension == -1)
-                        {
+                        if ((Helper.SelectedExtension == -1) || (Helper.SelectedFolder == -1))
                             _swipeTouchHelper.AttachToRecyclerView(null);
-                            Helper.ForceLoadExtensions();
-                        }
-                        else if (Helper.SelectedFolder == -1)
-                        {
-                            _swipeTouchHelper.AttachToRecyclerView(null);
-                            Helper.ForceLoadFolders();
-                        }
                         else
-                        {
                             _swipeTouchHelper.AttachToRecyclerView(_recyclerView);
-                            Helper.ForceLoadMessages();
-                        }
+
                         _adapter.CurrentContent = Helper.GetCurrent();
                         if ((Helper.SelectedFolder != -1) && (Helper.GetCurrent().Count == 0))
                         {
                             if (_noMessagesTextView.Visibility == ViewStates.Invisible)
+                            {
+                                _noMessagesTextView.Text = GetString(Resource.String.FragmentMessages_no);
                                 _noMessagesTextView.Visibility = ViewStates.Visible;
+                            }
                             if (_recyclerView.Visibility == ViewStates.Visible)
                                 _recyclerView.Visibility = ViewStates.Invisible;
                             if (_progressLayout.Visibility == ViewStates.Visible)
@@ -235,12 +237,17 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                         else
                         {
                             if (_noMessagesTextView.Visibility == ViewStates.Visible)
+                            {
+                                _noMessagesTextView.Text = "";
                                 _noMessagesTextView.Visibility = ViewStates.Invisible;
+                            }
                             if (_recyclerView.Visibility == ViewStates.Invisible)
                                 _recyclerView.Visibility = ViewStates.Visible;
                             if (_progressLayout.Visibility == ViewStates.Visible)
                                 _progressLayout.Visibility = ViewStates.Gone;
                         }
+                        if (_retryButton.Visibility == ViewStates.Visible)
+                            _retryButton.Visibility = ViewStates.Invisible;
                         if (!_timer.Enabled)
                         {
                             if (Math.Abs(_timer.Interval - 100) > -0.5)
@@ -253,7 +260,58 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                             }
                         }
                         break;
+                    case ActionsHelperEventArgs.MsgUpdateFailed:
+                        if ((_adapter.CurrentContent == null) || (_adapter.CurrentContent.Count == 0))
+                        {
+                            if (_noMessagesTextView.Visibility == ViewStates.Invisible)
+                            {
+                                _noMessagesTextView.Text = GetString(Resource.String.FragmentMessages_connection);
+                                _noMessagesTextView.Visibility = ViewStates.Visible;
+                            }
+                            if (_recyclerView.Visibility == ViewStates.Visible)
+                                _recyclerView.Visibility = ViewStates.Invisible;
+                            if (_progressLayout.Visibility == ViewStates.Visible)
+                                _progressLayout.Visibility = ViewStates.Gone;
+                            if (_retryButton.Visibility == ViewStates.Invisible)
+                                _retryButton.Visibility = ViewStates.Visible;
+                        }
+                        break;
+                    case ActionsHelperEventArgs.MsgUpdateFailedAirplane:
+                        if ((_adapter.CurrentContent == null) || (_adapter.CurrentContent.Count == 0))
+                        {
+                            if (_noMessagesTextView.Visibility == ViewStates.Invisible)
+                            {
+                                _noMessagesTextView.Text = GetString(Resource.String.FragmentMessages_airplane);
+                                _noMessagesTextView.Visibility = ViewStates.Visible;
+                            }
+                            if (_recyclerView.Visibility == ViewStates.Visible)
+                                _recyclerView.Visibility = ViewStates.Invisible;
+                            if (_progressLayout.Visibility == ViewStates.Visible)
+                                _progressLayout.Visibility = ViewStates.Gone;
+                            if (_retryButton.Visibility == ViewStates.Invisible)
+                                _retryButton.Visibility = ViewStates.Visible;
+                        }
+                        break;
                 }
+            }
+        }
+
+        private void RetryButtonOnClick(object sender, EventArgs eventArgs)
+        {
+            if (_retryButton.Visibility == ViewStates.Visible)
+            {
+                if (_progressLayout.Visibility == ViewStates.Gone)
+                    _progressLayout.Visibility = ViewStates.Visible;
+                if (_noMessagesTextView.Visibility == ViewStates.Visible)
+                    _noMessagesTextView.Visibility = ViewStates.Invisible;
+                _noMessagesTextView.Text = "";
+                _retryButton.Visibility = ViewStates.Invisible;
+                if (Helper.SelectedFolder != -1)
+                    Helper.ForceLoadMessages();
+                else if (Helper.SelectedExtension != -1)
+                    Helper.ForceLoadFolders();
+                else
+                    Helper.ForceLoadExtensions();
             }
         }
 

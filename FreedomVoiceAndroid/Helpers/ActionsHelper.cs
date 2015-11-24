@@ -388,7 +388,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         public long ForceLoadExtensions()
         {
             var requestId = RequestId;
-            if (!CheckRequestAbility(requestId)) return requestId;
+            if (!CheckMessageUpdate(requestId)) return requestId;
             var getExtRequest = new GetExtensionsRequest(requestId, SelectedAccount.AccountName);
             foreach (var request in _waitingRequestArray.Where(response => response.Value is GetExtensionsRequest).Where(request => ((GetExtensionsRequest)(request.Value)).Equals(getExtRequest)))
             {
@@ -413,7 +413,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         {
             if (SelectedExtension == -1) return -1;
             var requestId = RequestId;
-            if (!CheckRequestAbility(requestId)) return requestId;
+            if (!CheckMessageUpdate(requestId)) return requestId;
             var getFoldersRequest = new GetFoldersRequest(requestId, SelectedAccount.AccountName, ExtensionsList[SelectedExtension].Id);
             foreach (var request in _waitingRequestArray.Where(response => response.Value is GetFoldersRequest).Where(request => ((GetFoldersRequest)(request.Value)).Equals(getFoldersRequest)))
             {
@@ -438,7 +438,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         {
             if ((SelectedExtension == -1)||(SelectedFolder == -1)) return -1;
             var requestId = RequestId;
-            if (!CheckRequestAbility(requestId)) return requestId;
+            if (!CheckMessageUpdate(requestId)) return requestId;
             var getMsgRequest = new GetMessagesRequest(requestId, SelectedAccount.AccountName, ExtensionsList[SelectedExtension].Id, ExtensionsList[SelectedExtension].Folders[SelectedFolder].FolderName);
             foreach (var request in _waitingRequestArray.Where(response => response.Value is GetMessagesRequest).Where(request => ((GetMessagesRequest)(request.Value)).Equals(getMsgRequest)))
             {
@@ -612,6 +612,23 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             return true;
         }
 
+        private bool CheckMessageUpdate(long requestId)
+        {
+            if (_app.ApplicationHelper.IsAirplaneModeOn())
+            {
+                HelperEvent?.Invoke(this,
+                    new ActionsHelperEventArgs(requestId, new[] { ActionsHelperEventArgs.MsgUpdateFailedAirplane }));
+                return false;
+            }
+            if (!_app.ApplicationHelper.IsInternetConnected())
+            {
+                HelperEvent?.Invoke(this,
+                    new ActionsHelperEventArgs(requestId, new[] { ActionsHelperEventArgs.MsgUpdateFailed }));
+                return false;
+            }
+            return true;
+
+        }
 
         /// <summary>
         /// Get current messages list content
@@ -729,15 +746,19 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 #if DEBUG
                             Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} failed: CONNECTION LOST");
 #endif
+                            var req = _waitingRequestArray[response.RequestId].GetType().Name;
                             if (_app.ApplicationHelper.IsInsigthsOn)
                             {
-                                var key = _waitingRequestArray[response.RequestId].GetType().Name;
+                                
                                 var val = $"{DateTime.Now}: CONNECTION LOST - {InetReport()}";
-                                var dict = new Dictionary<string, string> {{key, val}};
+                                var dict = new Dictionary<string, string> {{req, val}};
                                 var version = _app.PackageManager.GetPackageInfo(App.AppPackage, 0).VersionName;
                                 Insights.Track($"{App.AppPackage} v.{version}", dict);
                             }
-                            HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.ConnectionLostError}));
+                            if ((req == "GetExtensionsRequest")||(req == "GetFoldersRequest")||(req == "GetMessagesRequest"))
+                                HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.MsgUpdateFailed }));
+                            else
+                                HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.ConnectionLostError}));
                             break;
                         // Authorization failed
                         case ErrorResponse.ErrorUnauthorized:
@@ -820,6 +841,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                             HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.InternalError }));
                             break;
                     }
+                    _waitingRequestArray.Remove(response.RequestId);
                     break;
 
                 // Login action response
@@ -835,6 +857,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 #if DEBUG
                     Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} successed: YOU ARE LOGGED IN");
 #endif
+                    _waitingRequestArray.Remove(response.RequestId);
                     if (_app.ApplicationHelper.IsVoicecallsSupported()&&(IsFirstRun || (_app.ApplicationHelper.GetMyPhoneNumber() == "")))
                     {
                         intent = new Intent(_app, typeof(SetNumberActivity));
@@ -849,6 +872,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 #if DEBUG
                     Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} successed: E-MAIL SENT");
 #endif
+                    _waitingRequestArray.Remove(response.RequestId);
                     HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.RestoreOk }));
                     break;
 
@@ -857,6 +881,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 #if DEBUG
                     Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} successed: NEW POLLING INTERVAL APPLIED");
 #endif
+                    _waitingRequestArray.Remove(response.RequestId);
                     var pollingResponse = (GetPollingResponse) response;
                     if (Math.Abs(pollingResponse.PollingInterval) > 0)
                     {
@@ -885,6 +910,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 #if DEBUG
                     Log.Debug(App.AppPackage, $"HELPER EXECUTOR: detect {accsResponse.AccountsList.Count} accounts");
 #endif
+                    _waitingRequestArray.Remove(response.RequestId);
                     switch (accsResponse.AccountsList.Count)
                     {
                         // No one account is active
@@ -941,6 +967,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 #if DEBUG
                     Log.Debug(App.AppPackage, $"HELPER EXECUTOR: detect {numbResponse.NumbersList.Count} numbers");
 #endif
+                    _waitingRequestArray.Remove(response.RequestId);
                     switch (numbResponse.NumbersList.Count)
                     {
                         // No one active presentation numbers
@@ -1003,6 +1030,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                     }
                     else
                         HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new []{ActionsHelperEventArgs.MsgUpdated}));
+                    _waitingRequestArray.Remove(response.RequestId);
                     break;
 
                 // Get folders response
@@ -1019,6 +1047,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                         SelectedFolder = -1;
                         SelectedMessage = -1;
                     }
+                    _waitingRequestArray.Remove(response.RequestId);
                     HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.MsgUpdated }));
                     break;
 
@@ -1035,6 +1064,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                         ExtensionsList[SelectedExtension].Folders[SelectedFolder].MessagesList = msgResponse.MessagesList;
                         SelectedMessage = -1;
                     }
+                    _waitingRequestArray.Remove(response.RequestId);
                     HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.MsgUpdated }));
                     break;
 
@@ -1047,6 +1077,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 #endif
                     var callResponse = (CallReservationResponse)response;
                     SaveRecent(response);
+                    _waitingRequestArray.Remove(response.RequestId);
                     if (callResponse.ServiceNumber.Length > 6)
                     {
                         var callIntent = new Intent(Intent.ActionCall, Uri.Parse("tel:" + callResponse.ServiceNumber));
@@ -1064,6 +1095,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 #if DEBUG
                     Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} successed - MESSAGE REMOVED");
 #endif
+                    _waitingRequestArray.Remove(response.RequestId);
                     HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.MsgMessagesUpdated }));
                     break;
 
@@ -1072,6 +1104,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 #if DEBUG
                     Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} successed - MESSAGE RESTORED");
 #endif
+                    _waitingRequestArray.Remove(response.RequestId);
                     HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.MsgMessagesUpdated }));
                     break;
 
@@ -1080,10 +1113,10 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 #if DEBUG
                     Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} successed - MESSAGE DELETED");
 #endif
+                    _waitingRequestArray.Remove(response.RequestId);
                     HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.MsgMessagesUpdated }));
                     break;
             }
-            _waitingRequestArray.Remove(response.RequestId);
         }
 
         /// <summary>

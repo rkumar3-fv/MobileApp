@@ -10,7 +10,17 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="@dimen/content_activity_no_res_margin"
-        android:text="@string/FragmentMessages_no"
+        android:text=""
+        android:visibility="invisible" />
+    <Button
+        android:id="@+id/messagesFragment_retryButton"
+        style="@style/BorderlessRestoreButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/FragmentMessages_retry"
+        android:textColor="@color/colorDlgButton"
+        android:layout_marginTop="@dimen/content_activity_no_res_margin"
+        android:layout_below="@id/messagesFragment_noResultText"
         android:visibility="invisible" />
     <android.support.v7.widget.RecyclerView
         android:id="@+id/messagesFragment_recyclerView"
