@@ -4,6 +4,7 @@ using Foundation;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.Utilities.Helpers;
+using GoogleAnalytics.iOS;
 using UIKit;
 
 namespace FreedomVoice.iOS.ViewControllers
@@ -18,7 +19,11 @@ namespace FreedomVoice.iOS.ViewControllers
         private UILabel _callCustomerCareLabel;
         private UIButton _callCustomerCareButton;
 
-        public AccountUnavailableViewController (IntPtr handle) : base (handle) { }
+	    public AccountUnavailableViewController(IntPtr handle) : base(handle)
+	    {
+            GAI.SharedInstance.DefaultTracker.Set(GAIConstants.ScreenName, "Account Unavailable Screen");
+            GAI.SharedInstance.DefaultTracker.Send(GAIDictionaryBuilder.CreateScreenView().Build());
+        }
 
         public override void ViewDidLoad()
         {
@@ -30,9 +35,9 @@ namespace FreedomVoice.iOS.ViewControllers
             InitializeCallCustomerCareButton();
 
             if (ParentController?.TopViewController is AccountsViewController)
-                NavigationItem.SetLeftBarButtonItems(Appearance.GetBarButtonWithArrow((s, args) => Theme.TransitionController(ParentController), "Accounts"), true);
+                NavigationItem.SetLeftBarButtonItems(Appearance.GetBarButtonWithArrow((s, args) => Theme.TransitionController(ParentController), "Accounts"), false);
 
-            NavigationItem.SetRightBarButtonItem(Appearance.GetLogoutBarButton(this), true);
+            NavigationItem.SetRightBarButtonItem(Appearance.GetLogoutBarButton(this), false);
 
             base.ViewDidLoad();
         }

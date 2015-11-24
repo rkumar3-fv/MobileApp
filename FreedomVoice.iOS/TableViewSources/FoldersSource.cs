@@ -4,7 +4,6 @@ using Foundation;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.TableViewCells;
 using FreedomVoice.iOS.ViewControllers;
-using FreedomVoice.iOS.ViewModels;
 using UIKit;
 
 namespace FreedomVoice.iOS.TableViewSources
@@ -46,19 +45,15 @@ namespace FreedomVoice.iOS.TableViewSources
             return 44;
         }
 
-        public override async void RowSelected(UITableView tableView, NSIndexPath indexPath)
+        public override void RowSelected(UITableView tableView, NSIndexPath indexPath)
         {
             tableView.DeselectRow(indexPath, false);
             var selectedFolder = Folders[indexPath.Row];
-
-            var messagesViewModel = new MessagesViewModel(_selectedAccount.PhoneNumber, _selectedExtension.ExtensionNumber, selectedFolder.DisplayName, _navigationController);
-            await messagesViewModel.GetMessagesListAsync(selectedFolder.MessageCount);
 
             var messagesController = AppDelegate.GetViewController<MessagesViewController>();
             messagesController.SelectedAccount = _selectedAccount;
             messagesController.SelectedExtension = _selectedExtension;
             messagesController.SelectedFolder = selectedFolder;
-            messagesController.MessagesList = messagesViewModel.MessagesList;
 
             _navigationController.PushViewController(messagesController, false);
         }

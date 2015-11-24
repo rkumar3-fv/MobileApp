@@ -10,6 +10,7 @@ using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.Utilities.Helpers;
 using FreedomVoice.iOS.Views;
 using FreedomVoice.iOS.Views.Shared;
+using GoogleAnalytics.iOS;
 using UIKit;
 using Xamarin.Contacts;
 using ContactsHelper = FreedomVoice.iOS.Utilities.Helpers.Contacts;
@@ -41,6 +42,9 @@ namespace FreedomVoice.iOS.ViewControllers
 
         public ContactsViewController(IntPtr handle) : base(handle)
         {
+            GAI.SharedInstance.DefaultTracker.Set(GAIConstants.ScreenName, "Contacts Screen");
+            GAI.SharedInstance.DefaultTracker.Send(GAIDictionaryBuilder.CreateScreenView().Build());
+
             _contactList = new List<Contact>();
             _filteredContactList = new List<Contact>();
         }
@@ -85,6 +89,7 @@ namespace FreedomVoice.iOS.ViewControllers
             _contactList = await AppDelegate.GetContactsListAsync();
             _contactSource = new ContactSource { ContactsList = _contactList };
             _contactSource.OnRowSelected += TableSourceOnRowSelected;
+            _contactSource.OnDraggingStarted += (sender, args) => View.EndEditing(true);
 
             var headerHeight = Theme.StatusBarHeight + NavigationController.NavigationBarHeight();
             var insets = new UIEdgeInsets(0, 0, headerHeight, 0);
@@ -146,7 +151,7 @@ namespace FreedomVoice.iOS.ViewControllers
 
         public override void TouchesBegan(NSSet touches, UIEvent evt)
         {
-            View.EndEditing(true);
+            _contactsSearchBar.ResignFirstResponder();
         }
 
         private void SearchBarOnSearchButtonClicked(object sender, EventArgs e)
@@ -156,9 +161,10 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private void SearchBarOnTextChanged(object sender, UISearchBarTextChangedEventArgs e)
         {
-            _contactSource.SearchText = e.SearchText;
+            var search = e.SearchText.Trim();
+            _contactSource.SearchText = search;
 
-            _filteredContactList = IsSearchMode ? GetMatchedContacts(e.SearchText) : _contactList;
+            _filteredContactList = IsSearchMode ? GetMatchedContacts(search) : _contactList;
             _contactSource.ContactsList = _filteredContactList;
 
             _contactTableView.ReloadData();
@@ -231,7 +237,7 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private static void AddRecent(string title, string phoneNumber, string contactId)
         {
-            MainTabBarInstance.Recents.Add(new Recent(title, phoneNumber, DateTime.Now, contactId));
+            MainTabBarInstance.AddRecent(new Recent(title, phoneNumber, DateTime.Now, contactId));
         }
 
         private void CheckResult(int contactsCount)

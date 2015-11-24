@@ -5,8 +5,6 @@ namespace FreedomVoice.iOS.Utilities.Helpers
 {
     public static class UserDefault
     {
-        const string AccountPhoneNumberKey = "AccountPhoneNumber";
-
         public static bool IsAuthenticated
         {
             get { return NSUserDefaults.StandardUserDefaults.BoolForKey("IsAuthenticatedUserKey"); }
@@ -29,10 +27,10 @@ namespace FreedomVoice.iOS.Utilities.Helpers
 
         public static string LastUsedAccount
         {
-            get { return NSUserDefaults.StandardUserDefaults.StringForKey("LastUsedAccount"); }
+            get { return NSUserDefaults.StandardUserDefaults.StringForKey("LastUsedAccountKey"); }
             set
             {
-                NSUserDefaults.StandardUserDefaults.SetString(value, "LastUsedAccount");
+                NSUserDefaults.StandardUserDefaults.SetString(value, "LastUsedAccountKey");
                 NSUserDefaults.StandardUserDefaults.Synchronize();
             }
         }
@@ -47,18 +45,30 @@ namespace FreedomVoice.iOS.Utilities.Helpers
             }
         }
 
+        public static string RequestCookie
+        {
+            get { return NSUserDefaults.StandardUserDefaults.StringForKey("RequestCookieKey"); }
+            set
+            {
+                NSUserDefaults.StandardUserDefaults.SetString(value, "RequestCookieKey");
+                NSUserDefaults.StandardUserDefaults.Synchronize();
+            }
+        }
+
         public static string AccountPhoneNumber { get; private set; }
 
         public static void SaveAccountPhoneNumber(string userPhoneNumber)
         {
             AccountPhoneNumber = DataFormatUtils.ToPhoneNumber(userPhoneNumber);
-            NSUserDefaults.StandardUserDefaults.SetString(AccountPhoneNumber, AccountPhoneNumberKey);
+            NSUserDefaults.StandardUserDefaults.SetString(AccountPhoneNumber, "AccountPhoneNumberKey");
             NSUserDefaults.StandardUserDefaults.Synchronize();
         }
 
         public static void UpdateFromPreferences()
         {
-            AccountPhoneNumber = NSUserDefaults.StandardUserDefaults.StringForKey(AccountPhoneNumberKey);
+            var phoneNumber = NSUserDefaults.StandardUserDefaults.StringForKey("AccountPhoneNumberKey");
+            if (!string.IsNullOrEmpty(phoneNumber))
+                AccountPhoneNumber = phoneNumber;
         }
     }
 }

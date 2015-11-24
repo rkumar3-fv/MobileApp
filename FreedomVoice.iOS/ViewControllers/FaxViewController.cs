@@ -3,6 +3,7 @@ using CoreGraphics;
 using Foundation;
 using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.Utilities.Helpers;
+using GoogleAnalytics.iOS;
 using UIKit;
 
 namespace FreedomVoice.iOS.ViewControllers
@@ -14,7 +15,11 @@ namespace FreedomVoice.iOS.ViewControllers
 
         public EventHandler OnBackButtonClicked;
 
-        public FaxViewController(IntPtr handle) : base(handle) { }
+        public FaxViewController(IntPtr handle) : base(handle)
+        {
+            GAI.SharedInstance.DefaultTracker.Set(GAIConstants.ScreenName, "Fax Screen");
+            GAI.SharedInstance.DefaultTracker.Send(GAIDictionaryBuilder.CreateScreenView().Build());
+        }
 
         public override void ViewDidLoad()
         {

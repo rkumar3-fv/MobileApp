@@ -19,7 +19,7 @@ namespace FreedomVoice.iOS.ViewModels
 
         public CallReservation Reservation { get; private set; }
 
-        protected override string LoadingMessage => "Creating Call Reservation...";
+        private readonly UIViewController _viewController;
 
         /// <summary>
         /// Constructor, requires an IService
@@ -28,6 +28,7 @@ namespace FreedomVoice.iOS.ViewModels
         {
             _service = ServiceContainer.Resolve<ICallReservationService>();
 
+            _viewController = viewController;
             ViewController = viewController;
 
             _systemNumber = systemNumber;
@@ -42,11 +43,13 @@ namespace FreedomVoice.iOS.ViewModels
         /// <returns></returns>
         public async Task CreateCallReservationAsync()
         {
-            IsBusy = true;
+            _viewController.View.UserInteractionEnabled = false;
+
+            await RenewCookieIfNeeded();
 
             var requestResult = await _service.ExecuteRequest(_systemNumber, _callerIdNumber, _presentationNumber, _destinationNumber);
             if (requestResult is ErrorResponse)
-                await ProceedErrorResponse(requestResult);
+                ProceedErrorResponse(requestResult);
             else
             {
                 var data = requestResult as CallReservationResponse;
@@ -54,7 +57,7 @@ namespace FreedomVoice.iOS.ViewModels
                     Reservation = data.Reservation;
             }
 
-            IsBusy = false;
+            _viewController.View.UserInteractionEnabled = true;
         }
     }
 }

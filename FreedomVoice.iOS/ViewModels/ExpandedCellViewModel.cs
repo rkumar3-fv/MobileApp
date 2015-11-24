@@ -17,8 +17,6 @@ namespace FreedomVoice.iOS.ViewModels
 
         private static string DestinationFolder => "Trash";
 
-        protected override string LoadingMessage => "Performing operation...";
-
         /// <summary>
         /// Constructor, requires an IService
         /// </summary>
@@ -41,9 +39,11 @@ namespace FreedomVoice.iOS.ViewModels
         {
             IsBusy = true;
 
+            await RenewCookieIfNeeded();
+
             var requestResult = await _service.ExecuteMoveRequest(_systemPhoneNumber, _mailboxNumber, DestinationFolder, new List<string> { _messageId });
             if (requestResult is ErrorResponse)
-                await ProceedErrorResponse(requestResult);
+                ProceedErrorResponse(requestResult);
 
             IsBusy = false;
         }
@@ -56,9 +56,11 @@ namespace FreedomVoice.iOS.ViewModels
         {
             IsBusy = true;
 
+            await RenewCookieIfNeeded();
+
             var requestResult = await _service.ExecuteDeleteRequest(_systemPhoneNumber, _mailboxNumber, new List<string> { _messageId });
             if (requestResult is ErrorResponse)
-                await ProceedErrorResponse(requestResult);
+                ProceedErrorResponse(requestResult);
 
             IsBusy = false;
         }

@@ -5,6 +5,7 @@ using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.Utilities.Extensions;
 using FreedomVoice.iOS.Utilities.Helpers;
 using FreedomVoice.iOS.ViewModels;
+using GoogleAnalytics.iOS;
 using UIKit;
 
 namespace FreedomVoice.iOS.ViewControllers
@@ -24,15 +25,17 @@ namespace FreedomVoice.iOS.ViewControllers
         private UILabel _welcomeLabel;
         private UILabel _validationFailedLabel;
 
-	    private UIActivityIndicatorView _activityIndicator;
-
         #endregion
 
         public event EventHandler OnLoginSuccess;
 
         private LoginViewModel _loginViewModel;
 
-        public LoginViewController(IntPtr handle) : base(handle) { }
+	    public LoginViewController(IntPtr handle) : base(handle)
+	    {
+            GAI.SharedInstance.DefaultTracker.Set(GAIConstants.ScreenName, "Login Screen");
+            GAI.SharedInstance.DefaultTracker.Send(GAIDictionaryBuilder.CreateScreenView().Build());
+        }
 
 	    public override void ViewDidLoad()
 	    {
@@ -44,11 +47,11 @@ namespace FreedomVoice.iOS.ViewControllers
 	        InitializeUsernameTextField();
             InitializePasswordTextField();
 	        InitializeLoginButton();
-	        InitializeActivityIndicator();
 	        InitializeValidationFailedLabel();
             InitializeForgotPasswordButton();
 
             InitializeViewModel();
+            InitializeActivityIndicator();
 
             UnsubscribeFromEvents();
             SubscribeToEvents();
@@ -86,7 +89,7 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private void InitializeViewModel()
         {
-            _loginViewModel = new LoginViewModel(NavigationController, _activityIndicator);
+            _loginViewModel = new LoginViewModel(NavigationController);
         }
 
         private void OnLoginButtonTouchUpInside(object sender, EventArgs args)
@@ -140,13 +143,10 @@ namespace FreedomVoice.iOS.ViewControllers
                 return;
             }
 
-            UIApplication.SharedApplication.NetworkActivityIndicatorVisible = true;
 	        View.UserInteractionEnabled = false;
             _loginButton.Hidden = true;
 
             await _loginViewModel.LoginAsync();
-
-            UIApplication.SharedApplication.NetworkActivityIndicatorVisible = false;
         }
 
         private void OnLoginFailed(object sender, EventArgs args)
@@ -363,19 +363,6 @@ namespace FreedomVoice.iOS.ViewControllers
             View.AddSubview(_loginButton);
         }
 
-	    private void InitializeActivityIndicator()
-	    {
-	        var frame = new CGRect(0, 0, 37, 37);
-	        _activityIndicator = new UIActivityIndicatorView(frame)
-	        {
-	            ActivityIndicatorViewStyle = UIActivityIndicatorViewStyle.WhiteLarge,
-                HidesWhenStopped = true,
-                Center = _loginButton.Center
-	        };
-
-            View.AddSubview(_activityIndicator);
-        }
-
         private void InitializeValidationFailedLabel()
         {
             var labelFrame = new CGRect(15, _loginButton.Frame.Y + _loginButton.Frame.Height + Theme.LoginValidationLabelTopPadding, Theme.ScreenBounds.Width - 30, 20);
@@ -405,6 +392,11 @@ namespace FreedomVoice.iOS.ViewControllers
             _forgotPasswordButton.TouchUpInside += OnForgotPasswordTouchUpInside;
 
             View.AddSubview(_forgotPasswordButton);
+        }
+
+        private void InitializeActivityIndicator()
+        {
+            _loginViewModel.ActivityIndicatorCenter = _loginButton.Center;
         }
 
         #endregion
@@ -442,7 +434,7 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private void AdjustActivityIndicator()
         {
-            _activityIndicator.Center = _loginButton.Center;
+            _loginViewModel.ActivityIndicatorCenter = _loginButton.Center;
         }
 
         private void AdjustValidationFailedLabel()

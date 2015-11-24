@@ -14,20 +14,20 @@ namespace FreedomVoice.iOS.TableViewSources
 {
     public class MessagesSource : UITableViewSource
     {
-        private readonly List<Message> _messagesList;
+        public List<Message> Messages;
 
         private readonly Account _selectedAccount;
 
         private readonly UINavigationController _navigationController;
 
-        private NSIndexPath _selectedRowIndexPath;
-        private NSIndexPath _deletedRowIndexPath;
+        public NSIndexPath SelectedRowIndexPath;
+        public NSIndexPath DeletedRowIndexPath;
 
         private ExpandedCell _expandedCell;
 
         public MessagesSource(List<Message> messages, Account selectedAccount, UINavigationController navigationController)
         {
-            _messagesList = messages;
+            Messages = messages;
             _selectedAccount = selectedAccount;
 
             _navigationController = navigationController;
@@ -35,25 +35,21 @@ namespace FreedomVoice.iOS.TableViewSources
 
         public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
         {
-            var selectedMessage = _messagesList[indexPath.Row];
+            var message = Messages[indexPath.Row];
 
-            if (indexPath.Row == _selectedRowIndexPath?.Row)
+            if (indexPath.Row == SelectedRowIndexPath?.Row)
             {
-                _expandedCell = tableView.DequeueReusableCell(ExpandedCell.ExpandedCellId) as ExpandedCell ?? new ExpandedCell(selectedMessage, _navigationController);
+                _expandedCell = tableView.DequeueReusableCell(ExpandedCell.ExpandedCellId) as ExpandedCell
+                                                                                           ?? new ExpandedCell(message, _navigationController) { SelectionStyle = UITableViewCellSelectionStyle.None };
 
-                var activePlayer = selectedMessage.Type != MessageType.Fax &&
-                                   selectedMessage.Id == AppDelegate.ActivePlayerMessageId
-                    ? AppDelegate.ActivePlayerView
-                    : null;
-
-                _expandedCell.UpdateCell(selectedMessage, _selectedAccount.PhoneNumber, activePlayer);
-                ProceedEventsSubscription(tableView, _selectedRowIndexPath);
+                _expandedCell.UpdateCell(message, _selectedAccount.PhoneNumber);
+                ProceedEventsSubscription(tableView, SelectedRowIndexPath);
 
                 return _expandedCell;
             }
 
             var messageCell = tableView.DequeueReusableCell(MessageCell.MessageCellId) as MessageCell ?? new MessageCell { Accessory = UITableViewCellAccessory.None };
-            messageCell.UpdateCell(selectedMessage);
+            messageCell.UpdateCell(message);
 
             return messageCell;
         }
@@ -66,11 +62,11 @@ namespace FreedomVoice.iOS.TableViewSources
             _expandedCell.OnCallbackClick -= OnCallbackClick(indexPath);
             _expandedCell.OnViewFaxClick -= OnViewFaxClick(indexPath);
             _expandedCell.OnPlayClick -= OnPlayClick(indexPath);
-            _expandedCell.DeleteButton.TouchDown -= OnDeleteMessageClick(tableView);
+            _expandedCell.DeleteButton.TouchUpInside -= OnDeleteMessageClick(tableView);
             _expandedCell.OnCallbackClick += OnCallbackClick(indexPath);
             _expandedCell.OnViewFaxClick += OnViewFaxClick(indexPath);
             _expandedCell.OnPlayClick += OnPlayClick(indexPath);
-            _expandedCell.DeleteButton.TouchDown += OnDeleteMessageClick(tableView);
+            _expandedCell.DeleteButton.TouchUpInside += OnDeleteMessageClick(tableView);
         }
 
         private EventHandler<ExpandedCellButtonClickEventArgs> OnViewFaxClick(NSIndexPath indexPath)
@@ -93,9 +89,7 @@ namespace FreedomVoice.iOS.TableViewSources
             return (sender, args) =>
             {
                 var alertController = UIAlertController.Create("Confirm deletion", "Delete this message?", UIAlertControllerStyle.Alert);
-                alertController.AddAction(UIAlertAction.Create("Delete", UIAlertActionStyle.Default, a => {
-                    DeleteMessageClick(tableView, _deletedRowIndexPath);
-                }));
+                alertController.AddAction(UIAlertAction.Create("Delete", UIAlertActionStyle.Default, a => DeleteMessageClick(tableView, DeletedRowIndexPath)));
                 alertController.AddAction(UIAlertAction.Create("Don't delete", UIAlertActionStyle.Cancel, a => { }));
 
                 _navigationController.PresentViewController(alertController, true, null);
@@ -104,17 +98,19 @@ namespace FreedomVoice.iOS.TableViewSources
 
         public override nint RowsInSection(UITableView tableview, nint section)
         {
-            return _messagesList?.Count ?? 0;
+            return Messages?.Count ?? 0;
         }
 
         public override void RowSelected(UITableView tableView, NSIndexPath indexPath)
         {
-            if (Equals(_selectedRowIndexPath, indexPath))
+            if (Equals(SelectedRowIndexPath, indexPath))
                 return;
 
-            var previousSelectedPath = _selectedRowIndexPath;
-            _selectedRowIndexPath = indexPath;
-            _deletedRowIndexPath = indexPath;
+            AppDelegate.ResetAudioPlayer();
+
+            var previousSelectedPath = SelectedRowIndexPath;
+            SelectedRowIndexPath = indexPath;
+            DeletedRowIndexPath = indexPath;
 
             var indexes = new List<NSIndexPath>();
             if (previousSelectedPath != null && tableView.CellAt(previousSelectedPath) != null && !Equals(previousSelectedPath, indexPath))
@@ -128,7 +124,7 @@ namespace FreedomVoice.iOS.TableViewSources
 
         public override nfloat GetHeightForRow(UITableView tableView, NSIndexPath indexPath)
         {
-            return indexPath.Row == _selectedRowIndexPath?.Row ? (_messagesList[indexPath.Row].Type == MessageType.Fax ? 100 : 138) : 48;
+            return indexPath.Row == SelectedRowIndexPath?.Row ? (Messages[indexPath.Row].Type == MessageType.Fax ? 100 : 138) : 48;
         }
 
         public event EventHandler<ExpandedCellButtonClickEventArgs> OnRowCallbackClick;
@@ -136,51 +132,66 @@ namespace FreedomVoice.iOS.TableViewSources
 
         private void RowPlayClick(NSIndexPath indexPath)
         {
-            _messagesList[indexPath.Row].Unread = false;
+            if (indexPath == null || Messages.Count == 0) return;
+
+            Messages[indexPath.Row].Unread = false;
         }
 
         private void RowViewFaxClick(NSIndexPath indexPath, string filePath)
         {
-            _messagesList[indexPath.Row].Unread = false;
+            if (indexPath == null || Messages.Count == 0) return;
+
+            Messages[indexPath.Row].Unread = false;
             OnRowViewFaxClick?.Invoke(this, new ExpandedCellButtonClickEventArgs(filePath));
         }
 
         private void RowCallbackClick(NSIndexPath indexPath)
         {
-            OnRowCallbackClick?.Invoke(this, new ExpandedCellButtonClickEventArgs(_messagesList[indexPath.Row]));
+            if (indexPath == null || Messages.Count == 0) return;
+
+            OnRowCallbackClick?.Invoke(this, new ExpandedCellButtonClickEventArgs(Messages[indexPath.Row]));
         }
 
         private async void DeleteMessageClick(UITableView tableView, NSIndexPath indexPath)
         {
+            if (indexPath == null || Messages.Count == 0) return;
+
             if (PhoneCapability.NetworkIsUnreachable)
             {
                 Appearance.ShowOkAlertWithMessage(_navigationController, Appearance.AlertMessageType.NetworkUnreachable);
                 return;
             }
 
-            var selectedMessage = _messagesList[indexPath.Row];
+            var selectedMessage = Messages[indexPath.Row];
 
             if (tableView.CellAt(indexPath) is ExpandedCell)
             {
-                _selectedRowIndexPath = null;
+                SelectedRowIndexPath = null;
                 tableView.DeselectRow(indexPath, false);
             }
 
-            if (_selectedRowIndexPath != null && _selectedRowIndexPath.Row > indexPath.Row)
+            if (SelectedRowIndexPath != null && SelectedRowIndexPath.Row > indexPath.Row)
             {
-                _selectedRowIndexPath = NSIndexPath.FromRowSection(_selectedRowIndexPath.Row - 1, 0);
-                _deletedRowIndexPath = _selectedRowIndexPath;
+                SelectedRowIndexPath = NSIndexPath.FromRowSection(SelectedRowIndexPath.Row - 1, 0);
+                DeletedRowIndexPath = SelectedRowIndexPath;
             }
+
+            if (selectedMessage.Id == AppDelegate.ActivePlayerMessageId)
+                AppDelegate.ResetAudioPlayer();
 
             var model = new ExpandedCellViewModel(_selectedAccount.PhoneNumber, selectedMessage.Mailbox, selectedMessage.Id, _navigationController);
             if (selectedMessage.Folder == "Trash")
+            {
                 await model.DeleteMessageAsync();
+            }
             else
+            {
                 await model.MoveMessageToTrashAsync();
+            }
 
             tableView.BeginUpdates();
-            _messagesList.RemoveAt(indexPath.Row);
-            tableView.DeleteRows(new[] { indexPath }, UITableViewRowAnimation.Fade);
+            Messages.RemoveAt(indexPath.Row);
+            tableView.DeleteRows(new[] { indexPath }, UITableViewRowAnimation.Left);
             tableView.EndUpdates();
         }
 

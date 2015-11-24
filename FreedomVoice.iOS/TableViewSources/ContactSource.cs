@@ -36,6 +36,11 @@ namespace FreedomVoice.iOS.TableViewSources
             return Keys.Length;
         }
 
+        public override void DraggingStarted(UIScrollView scrollView)
+        {
+            OnDraggingStarted?.Invoke(null, EventArgs.Empty);
+        }
+
         public override string TitleForHeader(UITableView tableView, nint section)
         {
             return IsSearchMode ? null : RowsInSection(tableView, section) > 0 ? Keys[section] : null;
@@ -80,5 +85,6 @@ namespace FreedomVoice.iOS.TableViewSources
         }
 
         public event EventHandler<RowSelectedEventArgs> OnRowSelected;
+        public event EventHandler OnDraggingStarted;
     }
 }

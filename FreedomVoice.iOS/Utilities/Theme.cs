@@ -190,6 +190,8 @@ namespace FreedomVoice.iOS.Utilities
 
         public static CGRect ScreenBounds => UIScreen.MainScreen.Bounds;
 
+        public static CGPoint ScreenCenter => new CGPoint(ScreenBounds.Width / 2, ScreenBounds.Height / 2);
+
         public static nfloat StatusBarHeight => UIApplication.SharedApplication.StatusBarFrame.Height;
 
         public static nfloat TabBarHeight => 49;

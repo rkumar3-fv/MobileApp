@@ -66,11 +66,12 @@ namespace FreedomVoice.iOS.TableViewCells
 
             _image = AppearanceHelper.GetMessageImageView(48);
             _title = new UILabel(new CGRect(48, 9, Theme.ScreenBounds.Width - 63, 21)) { TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(17) };
-            _length = new UILabel(new CGRect(Theme.ScreenBounds.Width - 75, 30, 60, 15)) { TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(12), TextAlignment = UITextAlignment.Right };
+            _length = new UILabel(new CGRect(Theme.ScreenBounds.Width - 95, 30, 80, 15)) { TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(12), TextAlignment = UITextAlignment.Right };
             _date = new UILabel(new CGRect(48, 30, _length.Frame.X - 53, 15)) { TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(12) };
             
             DeleteButton = new UIButton(new CGRect(Theme.ScreenBounds.Width - 37, IsFaxMessageType ? 60 : 98, 25, 25));
-            DeleteButton.SetBackgroundImage(UIImage.FromFile("delete.png"), UIControlState.Normal);
+            DeleteButton.SetImage(UIImage.FromFile("delete.png"), UIControlState.Normal);
+            DeleteButton.ContentEdgeInsets = new UIEdgeInsets(-10, -10, -10, -10);
 
             AddSubviews(_image, _title, _date, _length, DeleteButton);
         }
@@ -85,7 +86,7 @@ namespace FreedomVoice.iOS.TableViewCells
             Layer.InsertSublayer(gradientLayer, 0);
         }
 
-        public void UpdateCell(Message cellMessage, string systemPhoneNumber, AVPlayerView activePlayer)
+        public void UpdateCell(Message cellMessage, string systemPhoneNumber)
         {
             _message = cellMessage;
             _systemPhoneNumber = systemPhoneNumber;
@@ -102,7 +103,7 @@ namespace FreedomVoice.iOS.TableViewCells
 
             DeleteButton.Frame = new CGRect(DeleteButton.Frame.X, IsFaxMessageType ? 60 : 98, DeleteButton.Frame.Width, DeleteButton.Frame.Height);
 
-            InitSubviews(activePlayer);
+            InitSubviews();
             InitBackground();
             InitCommonStyles();
         }
@@ -113,7 +114,7 @@ namespace FreedomVoice.iOS.TableViewCells
             SetBackground(IsFaxMessageType);
         }
 
-        private void InitSubviews(AVPlayerView activePlayer)
+        private void InitSubviews()
         {
             if (IsFaxMessageType)
             {
@@ -124,14 +125,18 @@ namespace FreedomVoice.iOS.TableViewCells
                 {
                     if (Equals(subView, _player))
                     {
+                        _player?.StopPlayback();
                         _player?.RemoveFromSuperview();
+                        _player = null;
                     }
-                    else if (Equals(subView, _speakerButton))
+                    else
+                    if (Equals(subView, _speakerButton))
                     {
                         _speakerButton?.RemoveFromSuperview();
                         _speakerButton = null;
                     }
-                    else if (Equals(subView, _callBackButton))
+                    else
+                    if (Equals(subView, _callBackButton))
                     {
                         _callBackButton?.RemoveFromSuperview();
                         _callBackButton = null;
@@ -140,38 +145,41 @@ namespace FreedomVoice.iOS.TableViewCells
             }
             else
             {
-                if (Subviews.Any(subView => Equals(subView, _viewFaxButton)))
-                {
-                    _viewFaxButton?.RemoveFromSuperview();
-                    _viewFaxButton = null;
-                }
-
                 foreach (var subView in Subviews)
                 {
-                    if (Equals(subView, _player))
-                    {
-                        _player?.RemoveFromSuperview();
-                    }
-                    else if (Equals(subView, _viewFaxButton))
+                    if (Equals(subView, _viewFaxButton))
                     {
                         _viewFaxButton?.RemoveFromSuperview();
                         _viewFaxButton = null;
                     }
+                    else
+                    if (Equals(subView, _player))
+                    {
+                        _player?.StopPlayback();
+                        _player?.RemoveFromSuperview();
+                        _player = null;
+                    }
+                    else
+                    if (Equals(subView, _speakerButton))
+                    {
+                        _speakerButton?.RemoveFromSuperview();
+                        _speakerButton = null;
+                    }
                 }
-
-                var playerView = GetPlayerView(activePlayer);
-                AddSubview(playerView);
-
-                if (_speakerButton == null)
-                    AddSubview(GetSpeakerButton());
 
                 if (string.IsNullOrEmpty(_message.SourceNumber))
                 {
                     _callBackButton?.RemoveFromSuperview();
                     _callBackButton = null;
                 }
-                else if (_callBackButton == null)
+                else
+                if (_callBackButton == null)
                     AddSubview(GetCallBackButton());
+
+                AddSubview(GetPlayerView());
+
+                if (_speakerButton == null)
+                    AddSubview(GetSpeakerButton());
             }
         }
 
@@ -189,12 +197,17 @@ namespace FreedomVoice.iOS.TableViewCells
 
         private static void BackgroundColorAnimate(UIButton btn, UIColor tapColor)
         {
-            Animate(0.2, 0, UIViewAnimationOptions.Autoreverse, () => { btn.BackgroundColor = tapColor; }, () => { btn.BackgroundColor = UIColor.Clear; });
+            Animate(0.2, 0, UIViewAnimationOptions.BeginFromCurrentState, () => { btn.BackgroundColor = tapColor; }, () => { btn.BackgroundColor = UIColor.Clear; });
         }
 
-        private AVPlayerView GetPlayerView(AVPlayerView activePlayerView)
+        private static void BackgroundColorAnimateOneWay(UIButton btn, UIColor tapColor)
         {
-            _player = activePlayerView ?? new AVPlayerView(new CGRect(40, 48, Theme.ScreenBounds.Width - 55, 30), this) { OnPlayButtonClick = OnPlayerPlayButtonTouchDown };
+            Animate(0.2, 0, UIViewAnimationOptions.BeginFromCurrentState, () => { btn.BackgroundColor = tapColor; }, () => { });
+        }
+
+        private AVPlayerView GetPlayerView()
+        {
+            _player = new AVPlayerView(new CGRect(40, 48, Theme.ScreenBounds.Width - 55, 30), this) { OnPlayButtonClick = OnPlayerPlayButtonTouchUpInside };
             return _player;
         }
 
@@ -205,7 +218,7 @@ namespace FreedomVoice.iOS.TableViewCells
             _viewFaxButton.SetTitleColor(UIColor.FromRGB(198, 242, 138), UIControlState.Normal);
             _viewFaxButton.SetImage(UIImage.FromFile("view_fax.png"), UIControlState.Normal);
             _viewFaxButton.Layer.BorderColor = UIColor.FromRGBA(198, 242, 138, 90).CGColor;
-            _viewFaxButton.TouchDown += OnFaxButtonTouchDown;
+            _viewFaxButton.TouchUpInside += OnFaxButtonTouchUpInside;
 
             return _viewFaxButton;
         }
@@ -215,9 +228,10 @@ namespace FreedomVoice.iOS.TableViewCells
             _speakerButton = new UIButton(new CGRect(43, 98, 98, 28));
             _speakerButton.SetTitle("Speaker", UIControlState.Normal);
             _speakerButton.SetTitleColor(UIColor.FromRGB(119, 229, 246), UIControlState.Normal);
-            _speakerButton.SetImage(UIImage.FromFile("speaker.png"), UIControlState.Normal);            
-            _speakerButton.Layer.BorderColor = UIColor.FromRGBA(119, 229, 246, 110).CGColor;            
-            _speakerButton.TouchDown += OnSpeakerButtonTouchDown;
+            _speakerButton.SetImage(UIImage.FromFile("speaker.png"), UIControlState.Normal);
+            _speakerButton.BackgroundColor = UIColor.FromRGBA(119, 229, 246, 127);
+            _speakerButton.Layer.BorderColor = UIColor.FromRGBA(119, 229, 246, 110).CGColor;
+            _speakerButton.TouchUpInside += OnSpeakerButtonTouchUpInside;
             
             return _speakerButton;
         }
@@ -229,12 +243,12 @@ namespace FreedomVoice.iOS.TableViewCells
             _callBackButton.SetTitleColor(UIColor.FromRGB(198, 242, 138), UIControlState.Normal);
             _callBackButton.SetImage(UIImage.FromFile("call_back.png"), UIControlState.Normal);
             _callBackButton.Layer.BorderColor = UIColor.FromRGBA(198, 242, 138, 110).CGColor;
-            _callBackButton.TouchDown += OnCallBackButtonTouchDown;
+            _callBackButton.TouchUpInside += OnCallBackButtonTouchUpInside;
 
             return _callBackButton;
         }
 
-        private void OnPlayerPlayButtonTouchDown(object sender, EventArgs args)
+        private void OnPlayerPlayButtonTouchUpInside(object sender, EventArgs args)
         {
             AppDelegate.ActivePlayerView = _player;
             AppDelegate.ActivePlayerMessageId = _message.Id;
@@ -242,10 +256,11 @@ namespace FreedomVoice.iOS.TableViewCells
             OnPlayClick?.Invoke(this, new ExpandedCellButtonClickEventArgs());
         }
 
-        private void OnSpeakerButtonTouchDown(object sender, EventArgs args)
+        private void OnSpeakerButtonTouchUpInside(object sender, EventArgs args)
         {
-            BackgroundColorAnimate(_speakerButton, UIColor.FromRGBA(119, 229, 246, 127));
             _player?.ToggleSoundOutput();
+
+            BackgroundColorAnimateOneWay(sender as UIButton, Equals((sender as UIButton)?.BackgroundColor, UIColor.FromRGBA(119, 229, 246, 127)) ? UIColor.Clear : UIColor.FromRGBA(119, 229, 246, 127));
         }
 
         public async Task<string> GetMediaPath(MediaType mediaType)
@@ -257,7 +272,7 @@ namespace FreedomVoice.iOS.TableViewCells
             return viewModel.FilePath;
         }
 
-        private async void OnFaxButtonTouchDown(object sender, EventArgs args)
+        private async void OnFaxButtonTouchUpInside(object sender, EventArgs args)
         {
             if (_message.Length == 0)
             {
@@ -270,9 +285,9 @@ namespace FreedomVoice.iOS.TableViewCells
                 OnViewFaxClick?.Invoke(this, new ExpandedCellButtonClickEventArgs(filePath));
         }
 
-        private void OnCallBackButtonTouchDown(object sender, EventArgs args)
+        private void OnCallBackButtonTouchUpInside(object sender, EventArgs args)
         {
-            BackgroundColorAnimate(_callBackButton, UIColor.FromRGBA(198, 242, 138, 127));
+            BackgroundColorAnimate(sender as UIButton, UIColor.FromRGBA(198, 242, 138, 127));
             OnCallbackClick?.Invoke(this, new ExpandedCellButtonClickEventArgs());
         }
 

@@ -4,7 +4,6 @@ using Foundation;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.TableViewCells;
 using FreedomVoice.iOS.ViewControllers;
-using FreedomVoice.iOS.ViewModels;
 using UIKit;
 
 namespace FreedomVoice.iOS.TableViewSources
@@ -13,14 +12,11 @@ namespace FreedomVoice.iOS.TableViewSources
     {
         public List<ExtensionWithCount> Extensions { private get; set; }
 
-        private readonly Account _selectedAccount;
-
         private readonly UINavigationController _navigationController;
 
-        public ExtensionsSource(List<ExtensionWithCount> extensions, Account selectedAccount, UINavigationController navigationController)
+        public ExtensionsSource(List<ExtensionWithCount> extensions, UINavigationController navigationController)
         {
             Extensions = extensions;
-            _selectedAccount = selectedAccount;
             _navigationController = navigationController;
         }
 
@@ -39,18 +35,13 @@ namespace FreedomVoice.iOS.TableViewSources
             return Extensions?.Count ?? 0;
         }
 
-        public override async void RowSelected(UITableView tableView, NSIndexPath indexPath)
+        public override void RowSelected(UITableView tableView, NSIndexPath indexPath)
         {
             tableView.DeselectRow(indexPath, false);
             var selectedExtension = Extensions[indexPath.Row];
 
-            var foldersViewModel = new FoldersViewModel(_selectedAccount.PhoneNumber, selectedExtension.ExtensionNumber, _navigationController);
-            await foldersViewModel.GetFoldersListAsync();
-
             var foldersController = AppDelegate.GetViewController<FoldersViewController>();
-            foldersController.SelectedAccount = _selectedAccount;
             foldersController.SelectedExtension = selectedExtension;
-            foldersController.FoldersList = foldersViewModel.FoldersList;
 
             _navigationController.PushViewController(foldersController, false);
         }

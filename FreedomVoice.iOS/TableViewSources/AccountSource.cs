@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using CoreGraphics;
 using Foundation;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.TableViewCells;
@@ -54,7 +55,7 @@ namespace FreedomVoice.iOS.TableViewSources
                 return;
             }
 
-            var mainTabBarController = await AppDelegate.GetMainTabBarController(selectedAccount, _navigationController);
+            var mainTabBarController = await AppDelegate.GetMainTabBarController(selectedAccount, _navigationController, CGPoint.Empty);
             if (mainTabBarController != null)
                 _navigationController.PushViewController(mainTabBarController, false);
         }

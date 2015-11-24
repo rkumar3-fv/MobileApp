@@ -5,6 +5,7 @@ using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.Utilities.Extensions;
 using FreedomVoice.iOS.Utilities.Helpers;
 using FreedomVoice.iOS.ViewModels;
+using GoogleAnalytics.iOS;
 using UIKit;
 
 namespace FreedomVoice.iOS.ViewControllers
@@ -20,15 +21,17 @@ namespace FreedomVoice.iOS.ViewControllers
         private UILabel _recoveryInfoLabel;
         private UILabel _emailValidationLabel;
 
-        private UIActivityIndicatorView _activityIndicator;
-
 	    public string EmailAddress { private get; set; }
 
 	    #endregion
 
         private ForgotPasswordViewModel _forgotPasswordViewModel;
 
-        public ForgotPasswordViewController(IntPtr handle) : base(handle) { }
+	    public ForgotPasswordViewController(IntPtr handle) : base(handle)
+	    {
+            GAI.SharedInstance.DefaultTracker.Set(GAIConstants.ScreenName, "Forgot Password Screen");
+            GAI.SharedInstance.DefaultTracker.Send(GAIDictionaryBuilder.CreateScreenView().Build());
+        }
 
         public override void ViewDidLoad()
         {
@@ -36,9 +39,9 @@ namespace FreedomVoice.iOS.ViewControllers
             InitializeEMailTextField();
             InitializeEMailValidationLabel();
             InitializeSendRecoveryButton();
-            InitializeActivityIndicator();
 
             InitializeViewModel();
+            InitializeActivityIndicator();
 
             UnsubscribeFromEvents();
             SubscribeToEvents();
@@ -53,7 +56,7 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private void InitializeViewModel()
         {
-            _forgotPasswordViewModel = new ForgotPasswordViewModel(NavigationController, _activityIndicator, EmailAddress);
+            _forgotPasswordViewModel = new ForgotPasswordViewModel(NavigationController, EmailAddress);
         }
 
         private void OnSendButtonTouchUpInside(object sender, EventArgs args)
@@ -85,12 +88,9 @@ namespace FreedomVoice.iOS.ViewControllers
                 return;
             }
 
-            UIApplication.SharedApplication.NetworkActivityIndicatorVisible = true;
             _sendRecoveryButton.Hidden = true;
 
             await _forgotPasswordViewModel.ForgotPasswordAsync();
-
-            UIApplication.SharedApplication.NetworkActivityIndicatorVisible = false; 
         }
 
         private void OnForgotPasswordSuccess(object sender, EventArgs e)
@@ -272,15 +272,8 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private void InitializeActivityIndicator()
         {
-            var frame = new CGRect(0, 0, 37, 37);
-            _activityIndicator = new UIActivityIndicatorView(frame)
-            {
-                ActivityIndicatorViewStyle = UIActivityIndicatorViewStyle.WhiteLarge,
-                HidesWhenStopped = true,
-                Center = _sendRecoveryButton.Center
-            };
-
-            View.AddSubview(_activityIndicator);
+            var navigationBarHeight = Theme.StatusBarHeight + NavigationController.NavigationBarHeight();
+            _forgotPasswordViewModel.ActivityIndicatorCenter = new CGPoint(_sendRecoveryButton.Center.X, _sendRecoveryButton.Center.Y + navigationBarHeight);
         }
 
         #endregion

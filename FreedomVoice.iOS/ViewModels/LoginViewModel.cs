@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Net;
 using System.Threading.Tasks;
 using FreedomVoice.iOS.Services;
 using FreedomVoice.iOS.Services.Responses;
@@ -18,33 +18,22 @@ namespace FreedomVoice.iOS.ViewModels
         public const string UsernameError = "Error message for username";
         public const string PasswordError = "Error message for password";
 
-        private readonly UIActivityIndicatorView _activityIndicator;
-        private readonly UIViewController _viewController;
-
         /// <summary>
         /// Constructor, requires an IService
         /// </summary>
-        public LoginViewModel(UIViewController viewController, UIActivityIndicatorView activityIndicator)
+        public LoginViewModel(UIViewController viewController)
         {
             _service = ServiceContainer.Resolve<ILoginService>();
 
             ViewController = viewController;
-
-            _viewController = viewController;
-            _activityIndicator = activityIndicator;
-
-            IsBusyChanged += OnIsBusyChanged;
         }
 
         /// <summary>
         /// Constructor for autologin functionality, requires an IService
         /// </summary>
-        public LoginViewModel(string userName, string password, UIViewController viewController)
+        public LoginViewModel(string userName, string password)
         {
             _service = ServiceContainer.Resolve<ILoginService>();
-
-            //TODO: Remove after functional implementation
-            _viewController = viewController;
 
             Username = userName;
             Password = password;
@@ -86,12 +75,23 @@ namespace FreedomVoice.iOS.ViewModels
         {
             IsBusy = true;
 
-            var requestResult = await _service.ExecuteRequest(Username, Password);
-            if (requestResult is ErrorResponse)
-                await ProceedErrorResponse(requestResult);
+            Cookie cookie;
+            if (!Cookies.IsCookieStored(out cookie))
+            {
+                var requestResult = await _service.ExecuteRequest(Username, Password);
+                if (requestResult is ErrorResponse)
+                    ProceedErrorResponse(requestResult);
+                else
+                {
+                    KeyChain.SetPasswordForUsername(Username, Password);
+                    Cookies.SaveCookieToStore();
+
+                    ProceedSuccessResponse();
+                }
+            }
             else
             {
-                KeyChain.SetPasswordForUsername(Username, Password);
+                Cookies.PrepareCookieFromStore(cookie);
                 ProceedSuccessResponse();
             }
 
@@ -104,14 +104,11 @@ namespace FreedomVoice.iOS.ViewModels
         /// <returns></returns>
         public async Task AutoLoginAsync()
         {
-            //TODO: Remove after functional implementation
-            //var alertController = UIAlertController.Create(null, "Auto Login process was executed.", UIAlertControllerStyle.Alert);
-            //alertController.AddAction(UIAlertAction.Create("Ok", UIAlertActionStyle.Cancel, null));
-            //_viewController.PresentViewController(alertController, true, null);
-
             var requestResult = await _service.ExecuteRequest(Username, Password);
             if (requestResult is ErrorResponse)
-                await ProceedErrorResponse(requestResult);
+                ProceedErrorResponse(requestResult);
+            else
+                Cookies.SaveCookieToStore();
         }
 
         /// <summary>
@@ -123,17 +120,6 @@ namespace FreedomVoice.iOS.ViewModels
             ValidateProperty(() => !Validation.IsValidPassword(Password), PasswordError);
 
             base.Validate();
-        }
-
-        private void OnIsBusyChanged(object sender, EventArgs e)
-        {
-            if (!_viewController.IsViewLoaded)
-                return;
-
-            if (IsBusy)
-                _activityIndicator.StartAnimating();
-            else
-                _activityIndicator.StopAnimating();
         }
     }
 }

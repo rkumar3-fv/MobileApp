@@ -1,13 +1,18 @@
 using System;
 using CoreGraphics;
 using FreedomVoice.iOS.Utilities;
+using GoogleAnalytics.iOS;
 using UIKit;
 
 namespace FreedomVoice.iOS.ViewControllers
 {
 	partial class SplashViewController : UIViewController
 	{
-	    public SplashViewController(IntPtr handle) : base(handle) { }
+	    public SplashViewController(IntPtr handle) : base(handle)
+	    {
+            GAI.SharedInstance.DefaultTracker.Set(GAIConstants.ScreenName, "Splash Screen");
+            GAI.SharedInstance.DefaultTracker.Send(GAIDictionaryBuilder.CreateScreenView().Build());
+        }
 
         private UIActivityIndicatorView _activityIndicator;
 
@@ -32,8 +37,8 @@ namespace FreedomVoice.iOS.ViewControllers
             _activityIndicator = new UIActivityIndicatorView(frame)
             {
                 ActivityIndicatorViewStyle = UIActivityIndicatorViewStyle.WhiteLarge,
-                HidesWhenStopped = true,
-                Center = View.Center
+                Center = Theme.ScreenCenter,
+                HidesWhenStopped = true
             };
             _activityIndicator.StartAnimating();
 

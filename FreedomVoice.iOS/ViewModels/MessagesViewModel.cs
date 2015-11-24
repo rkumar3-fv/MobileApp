@@ -41,19 +41,22 @@ namespace FreedomVoice.iOS.ViewModels
         /// Performs an asynchronous Messages request
         /// </summary>
         /// <returns></returns>
-        public async Task GetMessagesListAsync(int messageCount)
+        public async Task GetMessagesListAsync(int messageCount, bool silent = false)
         {
-            if (PhoneCapability.NetworkIsUnreachable)
+            if (PhoneCapability.NetworkIsUnreachable && !silent)
             {
                 Appearance.ShowOkAlertWithMessage(_viewController, Appearance.AlertMessageType.NetworkUnreachable);
                 return;
             }
 
-            IsBusy = true;
+            if (!silent)
+                IsBusy = true;
+
+            await RenewCookieIfNeeded();
 
             var requestResult = await _service.ExecuteRequest(_systemPhoneNumber, _mailboxNumber, _folderName, messageCount);
             if (requestResult is ErrorResponse)
-                await ProceedErrorResponse(requestResult);
+                ProceedErrorResponse(requestResult);
             else
             {
                 var data = requestResult as MessagesResponse;
@@ -61,7 +64,8 @@ namespace FreedomVoice.iOS.ViewModels
                     MessagesList = data.MessagesList;
             }
 
-            IsBusy = false;
+            if (!silent)
+                IsBusy = false;
         }
     }
 }

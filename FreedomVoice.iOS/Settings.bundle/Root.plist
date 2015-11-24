@@ -8,7 +8,7 @@
         <key>DefaultValue</key>
         <string></string>
         <key>Key</key>
-        <string>AccountPhoneNumber</string>
+        <string>AccountPhoneNumberKey</string>
         <key>Title</key>
         <string>Your Phone Number</string>
         <key>Type</key>

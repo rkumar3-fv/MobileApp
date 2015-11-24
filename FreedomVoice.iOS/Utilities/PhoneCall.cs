@@ -52,7 +52,6 @@ namespace FreedomVoice.iOS.Utilities
 
             var callReservationViewModel = new CallReservationViewModel(systemNumber, expectedCallerIdNumber, presentationNumber, destinationNumber, viewController);
             await callReservationViewModel.CreateCallReservationAsync();
-
             if (callReservationViewModel.IsErrorResponseReceived)
             {
                 Appearance.ShowOkAlertWithMessage(viewController, Appearance.AlertMessageType.CallFailed);

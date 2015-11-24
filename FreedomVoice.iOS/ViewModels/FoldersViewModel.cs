@@ -49,9 +49,11 @@ namespace FreedomVoice.iOS.ViewModels
 
             IsBusy = true;
 
+            await RenewCookieIfNeeded();
+
             var requestResult = await _service.ExecuteRequest(_systemPhoneNumber, _mailboxNumber);
             if (requestResult is ErrorResponse)
-                await ProceedErrorResponse(requestResult);
+                ProceedErrorResponse(requestResult);
             else
             {
                 var data = requestResult as FoldersWithCountResponse;

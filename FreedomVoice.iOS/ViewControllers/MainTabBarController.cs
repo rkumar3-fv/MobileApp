@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using FreedomVoice.Core.Utils;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.Utilities.Events;
+using GoogleAnalytics.iOS;
 using UIKit;
 
 namespace FreedomVoice.iOS.ViewControllers
@@ -15,16 +17,24 @@ namespace FreedomVoice.iOS.ViewControllers
 
 	    public bool IsRootController => NavigationController.ViewControllers.Length == 1;
 
-	    public List<Recent> Recents { get; private set; }
+	    private List<Recent> Recents { get; }
 
-	    public static MainTabBarController SharedInstance;
+	    public int RecentsCount => Recents.Count;
+
+        public static MainTabBarController SharedInstance;
 
         public MainTabBarController(IntPtr handle) : base(handle)
         {
             SharedInstance = this;
 
-            Recents = new List<Recent>();
+            GAI.SharedInstance.DefaultTracker.Set(GAIConstants.ScreenName, "Main Tab Bar Screen");
+            GAI.SharedInstance.DefaultTracker.Send(GAIDictionaryBuilder.CreateScreenView().Build());
 
+            Recents = new List<Recent>();
+        }
+
+	    public override void ViewDidLoad()
+	    {
             var recentsViewController = AppDelegate.GetViewController<RecentsViewController>();
             var recentsTab = GetTabBarItem(recentsViewController, "Recents");
 
@@ -34,14 +44,22 @@ namespace FreedomVoice.iOS.ViewControllers
             var keypadViewController = AppDelegate.GetViewController<KeypadViewController>();
             var keypadTab = GetTabBarItem(keypadViewController, "Keypad");
 
-            var extensionsViewController = AppDelegate.GetViewController<ExtensionsViewController>();
-            var messagesTab = GetTabBarItem(extensionsViewController, "Messages");
-
+	        UIViewController messagesTab;
+            if (ExtensionsList.Count > 1)
+	        {
+                var extensionsViewController = AppDelegate.GetViewController<ExtensionsViewController>();
+                messagesTab = GetTabBarItem(extensionsViewController, "Messages");
+            }
+            else
+            {
+                var foldersViewController = AppDelegate.GetViewController<FoldersViewController>();
+                foldersViewController.SelectedExtension = ExtensionsList.First();
+                foldersViewController.IsSingleExtension = true;
+                messagesTab = GetTabBarItem(foldersViewController, "Messages");
+            }
+            
             ViewControllers = new[] { recentsTab, contactsTab, keypadTab, messagesTab };
-        }
 
-	    public override void ViewDidLoad()
-	    {
             SelectedIndex = 2;
             CallerIdEvent.CallerIdChanged += PresentationNumberChanged;
 
@@ -62,10 +80,48 @@ namespace FreedomVoice.iOS.ViewControllers
 
         public PresentationNumber GetSelectedPresentationNumber()
         {
-            if (PresentationNumbers.FirstOrDefault(a => a.IsSelected) == null && PresentationNumbers.Count > 0)
-                PresentationNumbers[0].IsSelected = true;
+            if (PresentationNumbers.Count == 0) return null;
 
-            return PresentationNumbers.FirstOrDefault(a => a.IsSelected);
+            var selectedPresentationNumber = PresentationNumbers.FirstOrDefault(a => a.IsSelected);
+            if (selectedPresentationNumber == null)
+            {
+                selectedPresentationNumber = PresentationNumbers.First();
+                selectedPresentationNumber.IsSelected = true;
+            }
+
+            return selectedPresentationNumber;
+        }
+
+	    public void AddRecent(Recent recent)
+	    {
+            var existingRecent = Recents.FirstOrDefault(r => DataFormatUtils.NormalizePhone(r.PhoneNumber) == DataFormatUtils.NormalizePhone(recent.PhoneNumber));
+            if (existingRecent == null)
+                Recents.Add(recent);
+            else
+            {
+                existingRecent.DialDate = DateTime.Now;
+                existingRecent.CallsQuantity++;
+            }
+        }
+
+	    public void ClearRecents()
+	    {
+	        Recents.Clear();
+	    }
+
+        public void RemoveRecents(Recent recent)
+        {
+            Recents.Remove(recent);
+        }
+
+        public List<Recent> GetRecentsOrdered()
+        {
+            return Recents.OrderByDescending(r => r.DialDate).ToList();
+        }
+
+        public Recent GetLastRecent()
+        {
+            return GetRecentsOrdered().First();
         }
 
         private static UIViewController GetTabBarItem(UIViewController viewController, string tabTitle)

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using FreedomVoice.Core.Entities.Enums;
@@ -22,8 +23,6 @@ namespace FreedomVoice.iOS.ViewModels
         private readonly MediaType _mediaType;
 
         public string FilePath { get; private set; }
-
-        protected override string LoadingMessage => "Downloading file...";
 
         /// <summary>
         /// Constructor, requires an IService
@@ -50,6 +49,15 @@ namespace FreedomVoice.iOS.ViewModels
         /// <returns></returns>
         public async Task GetMediaAsync()
         {
+            var fileName = string.Concat(DateTime.Now.ToString("MMddyyyy_"), _messageId, ".", _mediaType);
+
+            var filePath = Path.Combine(AppDelegate.TempFolderPath, fileName);
+            if (File.Exists(filePath))
+            {
+                FilePath = filePath;
+                return;
+            }
+
             if (PhoneCapability.NetworkIsUnreachable)
             {
                 Appearance.ShowOkAlertWithMessage(_viewController, Appearance.AlertMessageType.NetworkUnreachable);
@@ -57,6 +65,8 @@ namespace FreedomVoice.iOS.ViewModels
             }
 
             IsBusy = true;
+
+            await RenewCookieIfNeeded();
 
             ProgressBar.Progress = 0;
 
@@ -69,7 +79,7 @@ namespace FreedomVoice.iOS.ViewModels
 
             var requestResult = await _service.ExecuteRequest(progressReporter, _systemPhoneNumber, _mailboxNumber, _folderName, _messageId, _mediaType, tokenSource.Token);
             if (requestResult is ErrorResponse)
-                await ProceedErrorResponse(requestResult);
+                ProceedErrorResponse(requestResult);
             else
             {
                 var data = requestResult as GetMediaResponse;

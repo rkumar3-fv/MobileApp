@@ -9,6 +9,11 @@ namespace FreedomVoice.iOS.Utilities.Helpers
             return !string.IsNullOrEmpty(emailAddress) && Regex.Match(emailAddress, @"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$").Success;
         }
 
+        public static bool IsValidPhoneNumber(string phoneNumber)
+        {
+            return !string.IsNullOrEmpty(phoneNumber) && Regex.Match(phoneNumber, @"^\d{10}$").Success;
+        }
+
         public static bool IsValidPassword(string password)
         {
             return !string.IsNullOrEmpty(password);

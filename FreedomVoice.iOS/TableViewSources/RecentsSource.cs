@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using CoreGraphics;
 using Foundation;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.TableViewCells;
-using FreedomVoice.iOS.Utilities;
 using UIKit;
 
 namespace FreedomVoice.iOS.TableViewSources
@@ -28,18 +26,7 @@ namespace FreedomVoice.iOS.TableViewSources
             var recent = _recents[indexPath.Row];
             
             var cell = tableView.DequeueReusableCell(RecentCell.RecentCellId) as RecentCell ?? new RecentCell();
-
-            var dialDateLabelText = recent.FormatedDialDate;
-            var dialDateLabelWidth = ((NSString)dialDateLabelText).StringSize(UIFont.SystemFontOfSize(12)).Width;
-            var dialDatePositionX = Theme.ScreenBounds.Width - dialDateLabelWidth - 45;
-
-            cell.DialDate.Frame = new CGRect(dialDatePositionX, 14, dialDateLabelWidth, 16);
-            cell.PhoneTitle.Frame = new CGRect(15, 11, dialDatePositionX - 20, 22);
-
-            cell.PhoneTitle.Text = recent.TitleOrNumber;
-            cell.DialDate.Text = dialDateLabelText;
-
-            cell.Accessory = string.IsNullOrEmpty(recent.Title) ? UITableViewCellAccessory.None : UITableViewCellAccessory.DetailButton;
+            cell.UpdateCell(recent);
 
             return cell;
         }

@@ -13,14 +13,12 @@ namespace FreedomVoice.iOS.ViewModels
 {
     public class MainTabBarViewModel : BaseViewModel
     {
-        private readonly IExtensionsService _extensionsService;
         private readonly IPresentationNumbersService _presentationNumbersService;
         private readonly IPollingIntervalService _poolingIntervalService;
 
         private readonly Account _selectedAccount;
         private readonly UIViewController _viewController;
 
-        public List<ExtensionWithCount> ExtensionsList { get; private set; }
         public List<PresentationNumber> PresentationNumbers { get; private set; }
 
         /// <summary>
@@ -28,9 +26,6 @@ namespace FreedomVoice.iOS.ViewModels
         /// </summary>
         public MainTabBarViewModel(Account selectedAccount, UIViewController viewController)
         {
-            ExtensionsList = new List<ExtensionWithCount>();
-
-            _extensionsService = ServiceContainer.Resolve<IExtensionsService>();
             _presentationNumbersService = ServiceContainer.Resolve<IPresentationNumbersService>();
             _poolingIntervalService = ServiceContainer.Resolve<IPollingIntervalService>();
 
@@ -42,19 +37,21 @@ namespace FreedomVoice.iOS.ViewModels
         }
 
         /// <summary>
-        /// Performs an asynchronous Extensions With Count request
+        /// Performs an asynchronous request of presentation phones
         /// </summary>
         /// <returns></returns>
-        public async Task GetExtensionsListAsync()
+        public async Task GetPresentationNumbersAsync()
         {
-            var requestResult = await _extensionsService.ExecuteRequest(_selectedAccount.PhoneNumber);
+            IsBusy = true;
+
+            var requestResult = await _presentationNumbersService.ExecuteRequest(_selectedAccount.PhoneNumber);
             if (requestResult is ErrorResponse)
-                await ProceedErrorResponse(requestResult);
+                ProceedErrorResponse(requestResult);
             else
             {
-                var data = requestResult as ExtensionsWithCountResponse;
+                var data = requestResult as PresentationNumbersResponse;
                 if (data != null)
-                    ExtensionsList = data.ExtensionsWithCount;
+                    PresentationNumbers = data.PresentationNumbers;
             }
         }
 
@@ -66,30 +63,18 @@ namespace FreedomVoice.iOS.ViewModels
         {
             var requestResult = await _poolingIntervalService.ExecuteRequest();
             if (requestResult is ErrorResponse)
-                await ProceedErrorResponse(requestResult);
+            {
+                ProceedErrorResponse(requestResult);
+                IsBusy = false;
+            }
             else
             {
                 var data = requestResult as PollingIntervalResponse;
                 if (data != null)
                     UserDefault.PoolingInterval = data.PollingInterval;
             }
-        }
 
-        /// <summary>
-        /// Performs an asynchronous request of presentation phones
-        /// </summary>
-        /// <returns></returns>
-        public async Task GetPresentationNumbersAsync()
-        {
-            var requestResult = await _presentationNumbersService.ExecuteRequest(_selectedAccount.PhoneNumber);
-            if (requestResult is ErrorResponse)
-                await ProceedErrorResponse(requestResult);
-            else
-            {
-                var data = requestResult as PresentationNumbersResponse;
-                if (data != null)
-                    PresentationNumbers = data.PresentationNumbers;
-            }
+            IsBusy = false;
         }
 
         private void OnAccountPaymentRequired(object sender, EventArgs eventArgs)

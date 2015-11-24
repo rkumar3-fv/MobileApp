@@ -17,9 +17,6 @@ namespace FreedomVoice.iOS.Services.Implementations
 
             var filePath = Path.Combine(AppDelegate.TempFolderPath, fileName);
 
-            if (File.Exists(filePath))
-                return new GetMediaResponse(filePath);
-
             var asyncRes = await ApiHelper.MakeAsyncFileDownload($"/api/v1/systems/{systemNumber}/mailboxes/{mailboxNumber}/folders/{folderName}/messages/{messageId}/media/{mediaType}", "application/json", token);
             var errorResponse = CheckErrorResponse(asyncRes.Code);
             if (errorResponse != null)

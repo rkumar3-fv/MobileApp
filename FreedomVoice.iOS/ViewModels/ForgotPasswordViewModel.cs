@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using FreedomVoice.iOS.Services;
 using FreedomVoice.iOS.Services.Responses;
 using FreedomVoice.iOS.Utilities;
@@ -14,26 +13,18 @@ namespace FreedomVoice.iOS.ViewModels
 
         private string _email;
 
-        private readonly UIActivityIndicatorView _activityIndicator;
-        private readonly UIViewController _viewController;
-
         public const string EMailError = "Error message for email";
 
         /// <summary>
         /// Constructor, requires an IService
         /// </summary>
-        public ForgotPasswordViewModel(UIViewController viewController, UIActivityIndicatorView activityIndicator, string email = "")
+        public ForgotPasswordViewModel(UIViewController viewController, string email = "")
         {
             _service = ServiceContainer.Resolve<IForgotPasswordService>();
 
             ViewController = viewController;
 
-            _viewController = viewController;
-            _activityIndicator = activityIndicator;
-
             if (!string.IsNullOrEmpty(email)) EMail = email;
-
-            IsBusyChanged += OnIsBusyChanged;
         }
 
         /// <summary>
@@ -60,7 +51,7 @@ namespace FreedomVoice.iOS.ViewModels
 
             var requestResult = await _service.ExecuteRequest(EMail);
             if (requestResult is ErrorResponse)
-                await ProceedErrorResponse(requestResult);
+                ProceedErrorResponse(requestResult);
             else
                 ProceedSuccessResponse();
 
@@ -75,17 +66,6 @@ namespace FreedomVoice.iOS.ViewModels
             ValidateProperty(() => !Validation.IsValidEmail(EMail), EMailError);
 
             base.Validate();
-        }
-
-        private void OnIsBusyChanged(object sender, EventArgs e)
-        {
-            if (!_viewController.IsViewLoaded)
-                return;
-
-            if (IsBusy)
-                _activityIndicator.StartAnimating();
-            else
-                _activityIndicator.StopAnimating();
         }
     }
 }

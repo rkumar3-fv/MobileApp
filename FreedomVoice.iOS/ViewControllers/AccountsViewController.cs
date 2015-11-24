@@ -4,6 +4,7 @@ using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.TableViewSources;
 using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.Utilities.Helpers;
+using GoogleAnalytics.iOS;
 using UIKit;
 
 namespace FreedomVoice.iOS.ViewControllers
@@ -12,7 +13,11 @@ namespace FreedomVoice.iOS.ViewControllers
 	{
         public List<Account> AccountsList;
 
-        public AccountsViewController(IntPtr handle) : base(handle) { }
+	    public AccountsViewController(IntPtr handle) : base(handle)
+	    {
+            GAI.SharedInstance.DefaultTracker.Set(GAIConstants.ScreenName, "Accounts Screen");
+            GAI.SharedInstance.DefaultTracker.Send(GAIDictionaryBuilder.CreateScreenView().Build());
+        }
 
         public override void ViewDidLoad()
         {
@@ -31,6 +36,8 @@ namespace FreedomVoice.iOS.ViewControllers
         public override void ViewWillAppear(bool animated)
         {
             Title = "Select Account";
+
+            UserDefault.LastUsedAccount = string.Empty;
 
             NavigationItem.SetRightBarButtonItem(Appearance.GetLogoutBarButton(this), true);
             NavigationController.NavigationBarHidden = false;

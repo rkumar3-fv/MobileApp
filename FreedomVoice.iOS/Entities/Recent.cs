@@ -3,16 +3,17 @@ using FreedomVoice.Core.Utils;
 
 namespace FreedomVoice.iOS.Entities
 {
-    public class Recent : ICloneable
+    public class Recent
     {
         public string Title { get; set; }
         public string PhoneNumber { get; }
         public DateTime DialDate { get; set; }
         public string ContactId { get; set; }
+        public int CallsQuantity { get; set; }
 
         public string FormatedDialDate => DataFormatUtils.ToShortFormattedDate("Yesterday", DialDate);
 
-        public string TitleOrNumber => !string.IsNullOrEmpty(Title) ? Title : DataFormatUtils.ToPhoneNumber(PhoneNumber);
+        public string TitleOrNumber => string.Concat(!string.IsNullOrEmpty(Title) ? Title : DataFormatUtils.ToPhoneNumber(PhoneNumber), CallsQuantity > 1 ? " (" + CallsQuantity + ")" : "");
 
         public Recent(string title, string phoneNumber, DateTime dialDate, string contactId = "")
         {
@@ -20,11 +21,7 @@ namespace FreedomVoice.iOS.Entities
             PhoneNumber = phoneNumber;
             DialDate = dialDate;
             ContactId = contactId;
-        }
-
-        public object Clone()
-        {
-            return MemberwiseClone();
+            CallsQuantity = 1;
         }
     }
 }

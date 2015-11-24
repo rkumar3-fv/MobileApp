@@ -15,6 +15,7 @@ using FreedomVoice.iOS.TableViewSources;
 using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.Utilities.Helpers;
 using FreedomVoice.iOS.Views.Shared;
+using GoogleAnalytics.iOS;
 using UIKit;
 using Xamarin.Contacts;
 
@@ -33,16 +34,20 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private static MainTabBarController MainTabBarInstance => MainTabBarController.SharedInstance;
 
-        private static int RecentsCount => MainTabBarInstance.Recents.Count;
+        private static int RecentsCount => MainTabBarInstance.RecentsCount;
 
-        public RecentsViewController(IntPtr handle) : base(handle) { }
+        public RecentsViewController(IntPtr handle) : base(handle)
+        {
+            GAI.SharedInstance.DefaultTracker.Set(GAIConstants.ScreenName, "Recents Screen");
+            GAI.SharedInstance.DefaultTracker.Send(GAIDictionaryBuilder.CreateScreenView().Build());
+        }
 
         public override async void ViewDidLoad()
         {
             CallerIdView = new CallerIdView(new RectangleF(0, 0, (float)Theme.ScreenBounds.Width, 40), MainTabBarInstance.GetPresentationNumbers());
             View.AddSubview(CallerIdView);
 
-            _recentSource = new RecentsSource(GetRecentsOrdered());
+            _recentSource = new RecentsSource(MainTabBarInstance.GetRecentsOrdered());
 
             var insets = new UIEdgeInsets(0, 0, Theme.StatusBarHeight + NavigationController.NavigationBarHeight(), 0);
 
@@ -130,14 +135,9 @@ namespace FreedomVoice.iOS.ViewControllers
             return _contactList?.FirstOrDefault(c => c.Phones.Any(p => DataFormatUtils.NormalizePhone(p.Number) == DataFormatUtils.NormalizePhone(number)));
         }
 
-        private static List<Recent> GetRecentsOrdered()
-        {
-            return MainTabBarInstance.Recents.OrderByDescending(o => o.DialDate).ToList();
-        }
-
         private List<Recent> GetRecentsUpdatedAndOrdered()
         {
-            List<Recent> res = GetRecentsOrdered();
+            List<Recent> res = MainTabBarInstance.GetRecentsOrdered();
 
             foreach (var item in res)
             {
@@ -153,20 +153,15 @@ namespace FreedomVoice.iOS.ViewControllers
             return res;
         }
 
-        private static void AddRecent(Recent recent)
-        {
-            MainTabBarInstance.Recents.Add(recent);
-        }
-
         private void ClearRecent()
         {
-            MainTabBarInstance.Recents.Clear();
+            MainTabBarInstance.ClearRecents();
             CheckResult(RecentsCount);
         }
 
         private void RemoveRecent(Recent recent)
         {
-            MainTabBarInstance.Recents.Remove(recent);
+            MainTabBarInstance.RemoveRecents(recent);
             CheckResult(RecentsCount);
         }
 
@@ -235,20 +230,19 @@ namespace FreedomVoice.iOS.ViewControllers
         {
             e.TableView.DeselectRow(e.IndexPath, false);
 
-            var recent = GetRecentsOrdered()[e.IndexPath.Row];
+            var recent = MainTabBarInstance.GetRecentsOrdered()[e.IndexPath.Row];
             if (recent == null) return;
 
             var selectedCallerId = MainTabBarInstance.GetSelectedPresentationNumber().PhoneNumber;
             if (!await PhoneCall.CreateCallReservation(MainTabBarInstance.SelectedAccount.PhoneNumber, selectedCallerId, recent.PhoneNumber, NavigationController)) return;
 
-            var newRecent = (Recent)recent.Clone();
-            newRecent.DialDate = DateTime.Now;
-            AddRecent(newRecent);
+            MainTabBarInstance.AddRecent(recent);
 
             _recentsTableView.BeginUpdates();
 
-            _recentSource.SetRecents(GetRecentsOrdered());
-            e.TableView.InsertRows(new[] { NSIndexPath.FromRowSection(0, 0) }, UITableViewRowAnimation.Top);
+            _recentSource.SetRecents(MainTabBarInstance.GetRecentsOrdered());
+            e.TableView.MoveRow(e.IndexPath, NSIndexPath.FromRowSection(0, 0));
+            _recentsTableView.ReloadData();
 
             _recentsTableView.EndUpdates();
         }
@@ -257,16 +251,16 @@ namespace FreedomVoice.iOS.ViewControllers
         {
             e.TableView.DeselectRow(e.IndexPath, false);
 
-            var recent = GetRecentsOrdered()[e.IndexPath.Row];
+            var recent = MainTabBarInstance.GetRecentsOrdered()[e.IndexPath.Row];
             if (recent == null) return;
-
-            _recentsTableView.BeginUpdates();
 
             RemoveRecent(recent);
 
-            _recentSource.SetRecents(GetRecentsOrdered());
+            _recentsTableView.BeginUpdates();
 
-            _recentsTableView.DeleteRows(new[] { e.IndexPath }, UITableViewRowAnimation.Fade);
+            _recentSource.SetRecents(MainTabBarInstance.GetRecentsOrdered());
+            _recentsTableView.DeleteRows(new[] { e.IndexPath }, UITableViewRowAnimation.Left);
+
             _recentsTableView.EndUpdates();
         }
 

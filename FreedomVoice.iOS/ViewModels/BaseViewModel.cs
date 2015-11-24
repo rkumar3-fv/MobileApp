@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using CoreGraphics;
 using FreedomVoice.iOS.Services.Responses;
 using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.Utilities.Events;
+using FreedomVoice.iOS.Utilities.Helpers;
 using UIKit;
 
 namespace FreedomVoice.iOS.ViewModels
@@ -11,11 +13,6 @@ namespace FreedomVoice.iOS.ViewModels
     public class BaseViewModel : PropertyChangedBase
     {
         protected UIViewController ViewController { private get; set; }
-
-        /// <summary>
-        /// Event for when IsBusy changes
-        /// </summary>
-        public event EventHandler IsBusyChanged;
 
         protected BaseViewModel()
         {
@@ -73,7 +70,7 @@ namespace FreedomVoice.iOS.ViewModels
         /// </summary>
         protected bool IsBusy
         {
-            get { return _isBusy; }
+            private get { return _isBusy; }
             set
             {
                 if (_isBusy == value) return;
@@ -83,17 +80,6 @@ namespace FreedomVoice.iOS.ViewModels
                 OnPropertyChanged("IsBusy");
                 OnIsBusyChanged();
             }
-        }
-
-        /// <summary>
-        /// Other viewmodels can override this if something should be done when busy
-        /// </summary>
-        private void OnIsBusyChanged()
-        {
-            if (IsBusyChanged == null)
-                BaseOnIsBusyChanged();
-            else
-                IsBusyChanged.Invoke(this, EventArgs.Empty);
         }
 
         public event EventHandler OnUnauthorizedResponse;
@@ -107,7 +93,7 @@ namespace FreedomVoice.iOS.ViewModels
 
         public bool IsErrorResponseReceived;
 
-        protected async Task ProceedErrorResponse(BaseResponse baseResponse)
+        protected void ProceedErrorResponse(BaseResponse baseResponse)
         {
             var response = baseResponse as ErrorResponse;
             if (response == null) return;
@@ -124,10 +110,7 @@ namespace FreedomVoice.iOS.ViewModels
                     OnErrorConnectionResponse?.Invoke(null, EventArgs.Empty);
                     return;
                 case ErrorResponse.ErrorUnauthorized:
-                    if (OnUnauthorizedResponse != null)
-                        OnUnauthorizedResponse.Invoke(null, EventArgs.Empty);
-                    else
-                        await AppDelegate.ProceedAutoLogin(ViewController);
+                    OnUnauthorizedResponse?.Invoke(null, EventArgs.Empty);
                     return;
                 case ErrorResponse.ErrorBadRequest:
                     OnBadRequestResponse?.Invoke(null, EventArgs.Empty);
@@ -151,42 +134,53 @@ namespace FreedomVoice.iOS.ViewModels
             OnSuccessResponse?.Invoke(null, EventArgs.Empty);
         }
 
-        protected virtual string LoadingMessage => "Loading Data...";
+        protected static async Task RenewCookieIfNeeded()
+        {
+            if (Cookies.IsCookieStored())
+                return;
+
+            var appDelegate = UIApplication.SharedApplication.Delegate as AppDelegate;
+            if (appDelegate != null)
+                await appDelegate.ProceedAutoLogin();
+        }
 
         protected ProgressControlType ProgressControl { private get; set; }
 
-        private LoadingOverlay _loadingOverlay;
+        private LoadingIndicator _loadingIndicator;
 
         private UIActivityIndicatorView _activityIndicator;
+
+        public CGPoint ActivityIndicatorCenter { private get; set; }
+
         protected UIProgressView ProgressBar;
         protected UIButton CancelDownloadButton;
 
-        private void BaseOnIsBusyChanged()
+        private void OnIsBusyChanged()
         {
             if (!ViewController.IsViewLoaded)
                 return;
 
             if (IsBusy)
             {
-                _loadingOverlay =  new LoadingOverlay(Theme.ScreenBounds, ProgressControl, LoadingMessage);
+                UIApplication.SharedApplication.NetworkActivityIndicatorVisible = true;
 
-                ProgressBar = _loadingOverlay.ProgressBar;
-                CancelDownloadButton = _loadingOverlay.CancelDownloadButton;
-                _activityIndicator = _loadingOverlay.ActivityIndicator;
+                _loadingIndicator = new LoadingIndicator(Theme.ScreenBounds, ProgressControl, ActivityIndicatorCenter);
 
-                UIApplication.SharedApplication.KeyWindow.AddSubview(_loadingOverlay);
+                ProgressBar = _loadingIndicator.ProgressBar;
+                CancelDownloadButton = _loadingIndicator.CancelDownloadButton;
+
+                _activityIndicator = _loadingIndicator.ActivityIndicator;
+                _activityIndicator?.StartAnimating();
+
+                UIApplication.SharedApplication.KeyWindow.AddSubview(_loadingIndicator);
             }
             else
             {
-                _activityIndicator?.StopAnimating();
-                _loadingOverlay?.Hide();
-            }
-        }
+                UIApplication.SharedApplication.NetworkActivityIndicatorVisible = false;
 
-        public enum ProgressControlType
-        {
-            ProgressBar,
-            ActivityIndicator
+                _activityIndicator?.StopAnimating();
+                _loadingIndicator?.Hide();
+            }
         }
     }
 }

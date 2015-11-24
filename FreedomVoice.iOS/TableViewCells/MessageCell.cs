@@ -26,7 +26,7 @@ namespace FreedomVoice.iOS.TableViewCells
         {
             _image = AppearanceHelper.GetMessageImageView(48);
             _title = new UILabel(new CGRect(48, 9, Theme.ScreenBounds.Width - 63, 21)) { Font = UIFont.SystemFontOfSize(17) };
-            _length = new UILabel(new CGRect(Theme.ScreenBounds.Width - 75, 30, 60, 15)) { Font = UIFont.SystemFontOfSize(12), TextAlignment = UITextAlignment.Right };
+            _length = new UILabel(new CGRect(Theme.ScreenBounds.Width - 95, 30, 80, 15)) { Font = UIFont.SystemFontOfSize(12), TextAlignment = UITextAlignment.Right };
             _date = new UILabel(new CGRect(48, 30, _length.Frame.X - 53, 15)) { Font = UIFont.SystemFontOfSize(12) };
 
             AddSubviews(_image, _title, _date, _length);

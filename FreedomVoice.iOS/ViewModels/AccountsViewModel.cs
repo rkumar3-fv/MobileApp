@@ -32,39 +32,17 @@ namespace FreedomVoice.iOS.ViewModels
         /// <returns></returns>
         public async Task GetAccountsListAsync()
         {
+            await RenewCookieIfNeeded();
+
             var requestResult = await _service.ExecuteRequest();
             if (requestResult is ErrorResponse)
-                await ProceedErrorResponse(requestResult);
+                ProceedErrorResponse(requestResult);
             else
             {
                 var data = requestResult as AccountsResponse;
                 if (data != null)
                     AccountsList = data.AccountsList;
             }
-
-            //int failureThreshold = 1;
-
-            //do
-            //{
-            //    var requestResult = await _service.ExecuteRequest();
-            //    if (requestResult is ErrorResponse)
-            //        await ProceedErrorResponse(requestResult);
-            //    else
-            //    {
-            //        failureThreshold = 0;
-            //        var data = requestResult as AccountsResponse;
-            //        if (data != null)
-            //            AccountsList = data.AccountsList;
-            //    }
-
-            //    if (failureThreshold == 0)
-            //    {
-            //        await Task.Yield();
-            //        break;
-            //    }
-
-            //    failureThreshold--;
-            //} while (true);
         }
     }
 }

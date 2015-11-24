@@ -3,6 +3,7 @@ using CoreGraphics;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.Utilities.Helpers;
+using GoogleAnalytics.iOS;
 using UIKit;
 
 namespace FreedomVoice.iOS.ViewControllers
@@ -16,7 +17,11 @@ namespace FreedomVoice.iOS.ViewControllers
         private UILabel _emergencyDisclaimerLabel;
 	    private UIButton _understandButton;
 
-        public EmergencyDisclaimerViewController(IntPtr handle) : base(handle) { }
+        public EmergencyDisclaimerViewController(IntPtr handle) : base(handle)
+	    {
+            GAI.SharedInstance.DefaultTracker.Set(GAIConstants.ScreenName, "Emergency Disclaimer Screen");
+            GAI.SharedInstance.DefaultTracker.Send(GAIDictionaryBuilder.CreateScreenView().Build());
+        }
 
 	    public override void ViewDidLoad()
         {
@@ -33,11 +38,17 @@ namespace FreedomVoice.iOS.ViewControllers
 	    {
 	        UserDefault.IsLaunchedBefore = true;
 
-            var mainTabBarController = await AppDelegate.GetMainTabBarController(SelectedAccount, ParentController);
-            if (mainTabBarController == null) return;
+            _understandButton.Hidden = true;
 
-            var controller = ParentController as UINavigationController;
-            if (controller == null) return;
+            var navigationBarHeight = Theme.StatusBarHeight + NavigationController.NavigationBarHeight();
+
+            var mainTabBarController = await AppDelegate.GetMainTabBarController(SelectedAccount, ParentController, new CGPoint(_understandButton.Center.X, _understandButton.Center.Y + navigationBarHeight));
+            var controller = (UINavigationController)ParentController;
+            if (mainTabBarController == null || controller == null)
+            {
+                _understandButton.Hidden = false;
+                return;
+            }
 
             controller.PushViewController(mainTabBarController, false);
             Theme.TransitionController(controller);

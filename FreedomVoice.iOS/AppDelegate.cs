@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using CoreGraphics;
 using Foundation;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.Utilities;
@@ -57,10 +58,10 @@ namespace FreedomVoice.iOS
             ServiceContainer.Register(Window);
             ServiceContainer.Register<ISynchronizeInvoke>(() => new SynchronizeInvoke());
 
+            _observer = NSNotificationCenter.DefaultCenter.AddObserver((NSString)"NSUserDefaultsDidChangeNotification", DefaultsChanged);
+
             InitializeGoogleAnalytics();
             Theme.Apply();
-
-            _observer = NSNotificationCenter.DefaultCenter.AddObserver((NSString)"NSUserDefaultsDidChangeNotification", DefaultsChanged);
 
             if (UserDefault.IsAuthenticated)
                 ProceedWithAuthenticatedUser();
@@ -80,15 +81,14 @@ namespace FreedomVoice.iOS
         public void GoToLoginScreen()
         {
             UserDefault.IsAuthenticated = false;
+            UserDefault.RequestCookie = string.Empty;
             UserDefault.LastUsedAccount = string.Empty;
 
-            ActivePlayerView?.StopPlayback();
-            ActivePlayerView = null;
-            ActivePlayerMessageId = string.Empty;
-
+            ResetAudioPlayer();
             RemoveTmpFiles();
 
-            KeyChain.DeletePasswordForUsername(KeyChain.GetUsername());
+            var username = KeyChain.GetUsername();
+            KeyChain.DeletePasswordForUsername(username);
 
             PassToAuthentificationProcess();
         }
@@ -104,7 +104,6 @@ namespace FreedomVoice.iOS
             var accountsViewModel = new AccountsViewModel(Window.RootViewController);
 
             await accountsViewModel.GetAccountsListAsync();
-
             if (accountsViewModel.IsErrorResponseReceived)
                 return;
 
@@ -131,7 +130,7 @@ namespace FreedomVoice.iOS
                     return;
                 }
 
-                var mainTabController = await GetMainTabBarController(account, Window.RootViewController);
+                var mainTabController = await GetMainTabBarController(account, Window.RootViewController, CGPoint.Empty);
                 if (mainTabController != null)
                 {
                     navigationController = new UINavigationController(mainTabController);
@@ -148,7 +147,7 @@ namespace FreedomVoice.iOS
                 if (account == null)
                     Theme.TransitionController(navigationController);
 
-                var mainTabController = await GetMainTabBarController(account, Window.RootViewController);
+                var mainTabController = await GetMainTabBarController(account, Window.RootViewController, CGPoint.Empty);
                 if (mainTabController != null)
                 {
                     navigationController.PushViewController(mainTabController, false);
@@ -191,12 +190,12 @@ namespace FreedomVoice.iOS
 
             Window.MakeKeyAndVisible();
 
-            await ProceedAutoLogin(splashViewController);
+            await ProceedAutoLogin();
 
             await ProceedGetAccountsList();
         }
 
-        public static async Task ProceedAutoLogin(UIViewController viewController)
+        public async Task ProceedAutoLogin()
         {
             string password = null;
 
@@ -204,9 +203,10 @@ namespace FreedomVoice.iOS
             if (userName != null)
                 password = KeyChain.GetPasswordForUsername(userName);
 
-            if (string.IsNullOrEmpty(userName) || string.IsNullOrEmpty(password)) return;
+            if (string.IsNullOrEmpty(userName) || string.IsNullOrEmpty(password))
+                PassToAuthentificationProcess();
 
-            var loginViewModel = new LoginViewModel(userName, password, viewController);
+            var loginViewModel = new LoginViewModel(userName, password);
 
             await loginViewModel.AutoLoginAsync();
         }
@@ -223,7 +223,14 @@ namespace FreedomVoice.iOS
                 Console.Write(error);
         }
 
-        public static async Task<MainTabBarController> GetMainTabBarController(Account selectedAccount, UIViewController viewController)
+        public static void ResetAudioPlayer()
+        {
+            ActivePlayerView?.StopPlayback();
+            ActivePlayerView = null;
+            ActivePlayerMessageId = string.Empty;
+        }
+
+        public static async Task<MainTabBarController> GetMainTabBarController(Account selectedAccount, UIViewController viewController, CGPoint activityIndicatorCenter)
         {
             if (PhoneCapability.NetworkIsUnreachable)
             {
@@ -231,22 +238,30 @@ namespace FreedomVoice.iOS
                 return null;
             }
 
-            var mainTabBarViewModel = new MainTabBarViewModel(selectedAccount, viewController);
-            await mainTabBarViewModel.GetExtensionsListAsync();
+            var mainTabBarViewModel = new MainTabBarViewModel(selectedAccount, viewController) { ActivityIndicatorCenter = activityIndicatorCenter };
+
+            await mainTabBarViewModel.GetPresentationNumbersAsync();
             if (mainTabBarViewModel.IsErrorResponseReceived) return null;
 
             await mainTabBarViewModel.GetPoolingIntervalAsync();
             if (mainTabBarViewModel.IsErrorResponseReceived) return null;
 
-            await mainTabBarViewModel.GetPresentationNumbersAsync();
-            if (mainTabBarViewModel.IsErrorResponseReceived) return null;
+            var extensionsViewModel = new ExtensionsViewModel(selectedAccount, viewController) { ActivityIndicatorCenter = activityIndicatorCenter };
+
+            await extensionsViewModel.GetExtensionsListAsync();
+            if (extensionsViewModel.IsErrorResponseReceived) return null;
 
             var mainTabController = GetViewController<MainTabBarController>();
             mainTabController.SelectedAccount = selectedAccount;
             mainTabController.PresentationNumbers = mainTabBarViewModel.PresentationNumbers;
-            mainTabController.ExtensionsList = mainTabBarViewModel.ExtensionsList;
+            mainTabController.ExtensionsList = extensionsViewModel.ExtensionsList;
 
             return mainTabController;
+        }
+
+        private static void DefaultsChanged(NSNotification obj)
+        {
+            UserDefault.UpdateFromPreferences();
         }
 
         // This method is invoked when the application is about to move from active to inactive state.
@@ -270,19 +285,13 @@ namespace FreedomVoice.iOS
             _observer = null;
         }
 
-        public IGAITracker Tracker;
         private const string TrackingId = "UA-587407-96";
 
-        private void InitializeGoogleAnalytics()
+        private static void InitializeGoogleAnalytics()
         {
-            GAI.SharedInstance.DispatchInterval = 20;                        
-            GAI.SharedInstance.TrackUncaughtExceptions = true;                        
-            Tracker = GAI.SharedInstance.GetTracker(TrackingId);            
-        }
-
-        private static void DefaultsChanged(NSNotification obj)
-        {
-            UserDefault.UpdateFromPreferences();
+            GAI.SharedInstance.DispatchInterval = 20;
+            GAI.SharedInstance.TrackUncaughtExceptions = true;
+            GAI.SharedInstance.GetTracker(TrackingId);
         }
     }
 }

@@ -130,7 +130,7 @@ namespace FreedomVoice.iOS.Views
             ChangeAudioSessionState(false);
             ChangeAudioSessionState(true);
 
-            if (_player.Play())
+            if (_player.PrepareToPlay() && _player.Play())
                 UpdateViewForPlayerState(sender, EventArgs.Empty);
             else
                 Console.WriteLine($"Could not play the file {_player.Url}");
@@ -148,11 +148,6 @@ namespace FreedomVoice.iOS.Views
         public void StopPlayback()
         {
             _player?.Stop();
-
-            if (_player != null)
-                _player.CurrentTime = 0;
-
-            ChangeAudioSessionState(false);
         }
 
         private void OnPlayerFinishedPlaying(object sender, AVStatusEventArgs e)
@@ -160,7 +155,8 @@ namespace FreedomVoice.iOS.Views
             if (!e.Status)
                 Console.WriteLine(@"Did not complete successfully");
 
-            _player.CurrentTime = 0;
+            if (_player != null)
+                _player.CurrentTime = 0;
 
             ChangeAudioSessionState(false);
 
