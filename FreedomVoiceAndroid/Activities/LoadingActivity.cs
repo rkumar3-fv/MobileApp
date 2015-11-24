@@ -13,6 +13,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         MainLauncher = true,
         Label = "@string/ApplicationName",
         Icon = "@mipmap/ic_launcher",
+        LaunchMode = LaunchMode.SingleTop,
         ScreenOrientation = ScreenOrientation.Portrait,
         WindowSoftInputMode = SoftInput.StateAlwaysHidden,
         NoHistory = true,
@@ -23,9 +24,14 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
 
         protected override void OnCreate(Bundle bundle)
         {
+            if (!IsTaskRoot)
+            {
+                Finish();
+                return;
+            }
             base.OnCreate(bundle);
             SetContentView(Resource.Layout.act_loading);
-            _timer = new Timer { Interval = 20000, AutoReset = false };
+            _timer = new Timer { Interval = 7000, AutoReset = false };
             _timer.Elapsed += TimerOnElapsed;
         }
 
@@ -50,13 +56,18 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                     Appl.ApplicationHelper.AnalyticsTracker.Send(new HitBuilders.ScreenViewBuilder().Build());
             }
             if (!Appl.ApplicationHelper.IsInternetConnected() || Appl.ApplicationHelper.IsAirplaneModeOn())
-                StartActivity(new Intent(this, typeof(AuthActivity)));
+            {
+                if (_timer.Enabled)
+                    _timer.Stop();
+                StartActivity(new Intent(this, typeof (AuthActivity)));
+            }
         }
 
         protected override void OnPause()
         {
             base.OnPause();
-            _timer.Stop();
+            if (_timer.Enabled)
+                _timer.Stop();
         }
 
         /// <summary>
