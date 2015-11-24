@@ -144,6 +144,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                 StartActivity(intent);
                 return;
             }
+            ContentActivity.SetToolbarContent();
             if (Helper.SelectedFolder != -1)
             {
                 Helper.ForceLoadMessages();
@@ -153,7 +154,6 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                 Helper.ForceLoadFolders();
             if (_progressLayout.Visibility == ViewStates.Gone)
                 _progressLayout.Visibility = ViewStates.Visible;
-            ContentActivity.SetToolbarContent();
         }
 
         public override void OnResume()
@@ -203,6 +203,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                     case ActionsHelperEventArgs.MsgUpdated:
                         if (_timer.Enabled)
                             _timer.Stop();
+                        ContentActivity.SetToolbarContent();
 #if DEBUG
                         TraceContent();
 #endif

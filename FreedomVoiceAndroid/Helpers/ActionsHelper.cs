@@ -650,7 +650,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             if (SelectedMessage != -1)
                 SelectedMessage = -1;
             else if (SelectedFolder != -1)
-                    SelectedFolder = -1;
+                SelectedFolder = -1;
             else if (SelectedExtension != -1)
             {
                 if (ExtensionsList.Count != 1)

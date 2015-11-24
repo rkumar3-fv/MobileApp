@@ -106,7 +106,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 #region Analytics
         private bool _isInsightsOn;
         private const string GaKey = "UA-587407-95";
-        private const string InsightsKey = "5e9bc7544d4c9847578634ad6b040151e9d0329c";
+        private const string InsightsKey = "d8bf081e25b6c01b8a852a950d1f7b446d33662d";
 
         /// <summary>
         /// Check Google Analytics state

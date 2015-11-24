@@ -39,6 +39,13 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         private TextView _errorText;
         private ProgressBar _progressLogin;
 
+        protected override void OnResume()
+        {
+            base.OnResume();
+            _loginText.Text = "freedomvoice.adm.267055@gmail.com";
+            _passwordText.Text = "adm654654";
+        }
+
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
