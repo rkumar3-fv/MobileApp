@@ -1,7 +1,9 @@
 using System;
 using Android.Support.V4.View;
 using Android.Support.V7.Widget;
+#if DEBUG
 using Android.Util;
+#endif
 using Android.Views;
 using Object = Java.Lang.Object;
 

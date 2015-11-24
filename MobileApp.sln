@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreedomVoiceAndroid", "Free
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreedomVoice.Core", "FreedomVoice.Core\FreedomVoice.Core.csproj", "{F4FC9F9F-082C-4F29-977A-DA7EC449BA56}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp", "TestApp\TestApp.csproj", "{4749737D-B1DA-43C0-A869-DCD70848FD5C}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreedomVoice.iOS", "FreedomVoice.iOS\FreedomVoice.iOS.csproj", "{42B6DC7E-903E-495B-9BEF-053D35506CBB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreedomVoice.ApiTests", "FreedomVoice.ApiTests\FreedomVoice.ApiTests.csproj", "{200F3399-6907-4195-92A2-06C69E0D354C}"
@@ -113,38 +111,6 @@ Global
 		{F4FC9F9F-082C-4F29-977A-DA7EC449BA56}.Trace|iPhoneSimulator.Build.0 = Trace|Any CPU
 		{F4FC9F9F-082C-4F29-977A-DA7EC449BA56}.Trace|Mixed Platforms.ActiveCfg = Trace|Any CPU
 		{F4FC9F9F-082C-4F29-977A-DA7EC449BA56}.Trace|Mixed Platforms.Build.0 = Trace|Any CPU
-		{4749737D-B1DA-43C0-A869-DCD70848FD5C}.Ad-Hoc|Any CPU.ActiveCfg = Release|Any CPU
-		{4749737D-B1DA-43C0-A869-DCD70848FD5C}.Ad-Hoc|Any CPU.Build.0 = Release|Any CPU
-		{4749737D-B1DA-43C0-A869-DCD70848FD5C}.Ad-Hoc|iPhone.ActiveCfg = Release|Any CPU
-		{4749737D-B1DA-43C0-A869-DCD70848FD5C}.Ad-Hoc|iPhoneSimulator.ActiveCfg = Release|Any CPU
-		{4749737D-B1DA-43C0-A869-DCD70848FD5C}.Ad-Hoc|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{4749737D-B1DA-43C0-A869-DCD70848FD5C}.Ad-Hoc|Mixed Platforms.Build.0 = Release|Any CPU
-		{4749737D-B1DA-43C0-A869-DCD70848FD5C}.AppStore|Any CPU.ActiveCfg = Release|Any CPU
-		{4749737D-B1DA-43C0-A869-DCD70848FD5C}.AppStore|Any CPU.Build.0 = Release|Any CPU
-		{4749737D-B1DA-43C0-A869-DCD70848FD5C}.AppStore|iPhone.ActiveCfg = Release|Any CPU
-		{4749737D-B1DA-43C0-A869-DCD70848FD5C}.AppStore|iPhoneSimulator.ActiveCfg = Release|Any CPU
-		{4749737D-B1DA-43C0-A869-DCD70848FD5C}.AppStore|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{4749737D-B1DA-43C0-A869-DCD70848FD5C}.AppStore|Mixed Platforms.Build.0 = Release|Any CPU
-		{4749737D-B1DA-43C0-A869-DCD70848FD5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4749737D-B1DA-43C0-A869-DCD70848FD5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4749737D-B1DA-43C0-A869-DCD70848FD5C}.Debug|iPhone.ActiveCfg = Debug|Any CPU
-		{4749737D-B1DA-43C0-A869-DCD70848FD5C}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
-		{4749737D-B1DA-43C0-A869-DCD70848FD5C}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{4749737D-B1DA-43C0-A869-DCD70848FD5C}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{4749737D-B1DA-43C0-A869-DCD70848FD5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4749737D-B1DA-43C0-A869-DCD70848FD5C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4749737D-B1DA-43C0-A869-DCD70848FD5C}.Release|iPhone.ActiveCfg = Release|Any CPU
-		{4749737D-B1DA-43C0-A869-DCD70848FD5C}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
-		{4749737D-B1DA-43C0-A869-DCD70848FD5C}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{4749737D-B1DA-43C0-A869-DCD70848FD5C}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{4749737D-B1DA-43C0-A869-DCD70848FD5C}.Trace|Any CPU.ActiveCfg = Trace|Any CPU
-		{4749737D-B1DA-43C0-A869-DCD70848FD5C}.Trace|Any CPU.Build.0 = Trace|Any CPU
-		{4749737D-B1DA-43C0-A869-DCD70848FD5C}.Trace|iPhone.ActiveCfg = Trace|Any CPU
-		{4749737D-B1DA-43C0-A869-DCD70848FD5C}.Trace|iPhone.Build.0 = Trace|Any CPU
-		{4749737D-B1DA-43C0-A869-DCD70848FD5C}.Trace|iPhoneSimulator.ActiveCfg = Trace|Any CPU
-		{4749737D-B1DA-43C0-A869-DCD70848FD5C}.Trace|iPhoneSimulator.Build.0 = Trace|Any CPU
-		{4749737D-B1DA-43C0-A869-DCD70848FD5C}.Trace|Mixed Platforms.ActiveCfg = Trace|Any CPU
-		{4749737D-B1DA-43C0-A869-DCD70848FD5C}.Trace|Mixed Platforms.Build.0 = Trace|Any CPU
 		{42B6DC7E-903E-495B-9BEF-053D35506CBB}.Ad-Hoc|Any CPU.ActiveCfg = Ad-Hoc|iPhone
 		{42B6DC7E-903E-495B-9BEF-053D35506CBB}.Ad-Hoc|iPhone.ActiveCfg = Ad-Hoc|iPhone
 		{42B6DC7E-903E-495B-9BEF-053D35506CBB}.Ad-Hoc|iPhone.Build.0 = Ad-Hoc|iPhone
