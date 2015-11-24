@@ -146,6 +146,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         public void SetToolbarContent()
         {
             _toolbar.Menu.Clear();
+            if (_tabLayout.Visibility == ViewStates.Gone)
+                _tabLayout.Visibility = ViewStates.Visible;
             if (_viewPager.CurrentItem == 3)
             {
                 _toolbar.InflateMenu(Resource.Menu.menu_content);
@@ -182,6 +184,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             {
                 case 0:
                     _toolbar.InflateMenu(Resource.Menu.menu_recents);
+                    ExpandToolbar();
                     break;
                 case 1:
                     _toolbar.InflateMenu(Resource.Menu.menu_contacts);

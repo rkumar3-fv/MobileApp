@@ -82,7 +82,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             string text;
             _contactsHelper.GetName(Msg.FromNumber, out text);
             SenderText.Text = Msg.FromName.Length > 1 ? Msg.FromName : text;
-            MessageDate.Text = DataFormatUtils.ToFormattedDate(GetString(Resource.String.Timestamp_yesterday), Msg.MessageDate);
+            MessageDate.Text = DataFormatUtils.ToFullFormattedDate(Msg.MessageDate);
             Appl.ApplicationHelper.AttachmentsHelper.OnFinish += AttachmentsHelperOnFinishLoading;
             Appl.ApplicationHelper.AttachmentsHelper.OnProgressLoading += AttachmentsHelperOnProgressLoading;
             Appl.ApplicationHelper.AttachmentsHelper.FailLoadingEvent += AttachmentsHelperOnFailLoadingEvent;
