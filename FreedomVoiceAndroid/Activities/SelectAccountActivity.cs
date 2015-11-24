@@ -9,11 +9,11 @@ using Android.Views;
 using Android.Widget;
 #if DEBUG
 using Android.Util;
+using FreedomVoice.Core.Utils;
 #endif
 using com.FreedomVoice.MobileApp.Android.Adapters;
 using com.FreedomVoice.MobileApp.Android.CustomControls;
 using com.FreedomVoice.MobileApp.Android.Helpers;
-using FreedomVoice.Core.Utils;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
 {
@@ -34,6 +34,11 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
 
         protected override void OnCreate(Bundle bundle)
         {
+            if ((Intent.Flags & ActivityFlags.BroughtToFront) != 0)
+            {
+                Finish();
+                return;
+            }
             base.OnCreate(bundle);
             SetContentView(Resource.Layout.act_select);
             RootLayout = FindViewById(Resource.Id.selectAccountActivity_root);
@@ -76,6 +81,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             var intent = (Helper.IsFirstRun)
                 ? new Intent(this, typeof (DisclaimerActivity))
                 : new Intent(this, typeof (ContentActivity));
+            intent.AddFlags(ActivityFlags.ClearTop);
             StartActivity(intent);
         }
 

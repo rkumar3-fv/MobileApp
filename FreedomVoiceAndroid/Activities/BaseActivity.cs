@@ -4,9 +4,9 @@ using Android.OS;
 using Android.Provider;
 using Android.Support.Design.Widget;
 using Android.Support.V7.App;
-#if DEBUG
+//#if DEBUG
 using Android.Util;
-#endif
+//#endif
 using Android.Views;
 using com.FreedomVoice.MobileApp.Android.Dialogs;
 using com.FreedomVoice.MobileApp.Android.Helpers;
@@ -26,6 +26,9 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
+//#if DEBUG
+            Log.Debug(App.AppPackage, $"ACTIVITY {GetType().Name} created");
+//#endif
             Appl = App.GetApplication(this);
             if (Appl.ApplicationHelper == null)
                 return;
@@ -35,18 +38,19 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         protected override void OnPause()
         {
             base.OnPause();
-#if DEBUG
+//#if DEBUG
             Log.Debug(App.AppPackage, $"ACTIVITY {GetType().Name} paused");
-#endif
+//#endif
             Helper.HelperEvent -= OnHelperEvent;
         }
 
         protected override void OnResume()
         {
             base.OnResume();
-#if DEBUG
+//#if DEBUG
             Log.Debug(App.AppPackage, $"ACTIVITY {GetType().Name} resumed");
-#else
+            //#else
+#if !DEBUG
             Appl.ApplicationHelper.InitInsights();
 #endif
             Helper.HelperEvent += OnHelperEvent;

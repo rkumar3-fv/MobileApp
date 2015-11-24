@@ -24,12 +24,12 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
 
         protected override void OnCreate(Bundle bundle)
         {
+            base.OnCreate(bundle);
             if (!IsTaskRoot)
             {
                 Finish();
                 return;
             }
-            base.OnCreate(bundle);
             SetContentView(Resource.Layout.act_loading);
             _timer = new Timer { Interval = 7000, AutoReset = false };
             _timer.Elapsed += TimerOnElapsed;
