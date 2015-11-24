@@ -78,15 +78,11 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 if (!Msg.Equals(Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].MessagesList[Helper.SelectedMessage]))
                     OnBackPressed();
             }
-            //else
-            //{
-                //TODO: change after message refactoring
-                //RemoveButton.Visibility = ViewStates.Invisible;
-            //}
+
             string text;
             _contactsHelper.GetName(Msg.FromNumber, out text);
             SenderText.Text = Msg.FromName.Length > 1 ? Msg.FromName : text;
-            MessageDate.Text = DataFormatUtils.ToFormattedDate(GetString(Resource.String.Timestamp_yesterday), Msg.MessageDate);
+            MessageDate.Text = DataFormatUtils.ToFullFormattedDate(Msg.MessageDate);
             Appl.ApplicationHelper.AttachmentsHelper.OnFinish += AttachmentsHelperOnFinishLoading;
             Appl.ApplicationHelper.AttachmentsHelper.OnProgressLoading += AttachmentsHelperOnProgressLoading;
             Appl.ApplicationHelper.AttachmentsHelper.FailLoadingEvent += AttachmentsHelperOnFailLoadingEvent;

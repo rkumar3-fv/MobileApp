@@ -1,7 +1,6 @@
 using System;
+using System.Timers;
 using Android.Content;
-using Android.Support.Design.Widget;
-using Android.Support.V4.Content;
 using Android.Support.V7.Widget;
 using Android.Support.V7.Widget.Helper;
 #if DEBUG
@@ -28,13 +27,13 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         private int _removedMsgIndex;
         private bool _remove;
 
-        private Snackbar _snackbar;
-        private SnackbarCallback _snackCallback;
         private MessagesRecyclerAdapter _adapter;
         private RecyclerView _recyclerView;
         private ItemTouchHelper _swipeTouchHelper;
         private TextView _noMessagesTextView;
-
+        private RelativeLayout _progressLayout;
+        private Button _retryButton;
+        private Timer _timer;
 
         protected override View InitView()
         {
@@ -43,6 +42,9 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             _recyclerView.SetLayoutManager(new LinearLayoutManager(Activity));
             _recyclerView.AddItemDecoration(new DividerItemDecorator(Activity, Resource.Drawable.divider));
             _noMessagesTextView = view.FindViewById<TextView>(Resource.Id.messagesFragment_noResultText);
+            _progressLayout = view.FindViewById<RelativeLayout>(Resource.Id.messagesFragment_progressLayout);
+            _retryButton = view.FindViewById<Button>(Resource.Id.messagesFragment_retryButton);
+            _retryButton.Click += RetryButtonOnClick;
             _adapter = new MessagesRecyclerAdapter(Context);
             _recyclerView.SetAdapter(_adapter);
             _adapter.ItemClick += MessageViewOnClick;
@@ -51,13 +53,40 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             swipeListener.SwipeEvent += OnSwipeEvent;
             _swipeTouchHelper = new ItemTouchHelper(swipeListener);
 
-            _snackCallback = new SnackbarCallback();
-            _snackCallback.SnackbarEvent += OnSnackbarDissmiss;
-            return _recyclerView;
+            _timer = new Timer();
+            _timer.Elapsed += TimerOnElapsed;
+            return view;
         }
 
-        private void OnSnackbarDissmiss(object sender, EventArgs args)
+        private void TimerOnElapsed(object sender, ElapsedEventArgs e)
         {
+            _timer.Stop();
+            ContentActivity.RunOnUiThread(delegate
+            {
+#if DEBUG
+                Log.Debug(App.AppPackage, "POLLING INTERVAL ELAPSED");
+#endif
+                if (Helper.SelectedExtension == -1)
+                    Helper.ForceLoadExtensions();
+                else if (Helper.SelectedFolder == -1)
+                    Helper.ForceLoadFolders();
+                else if (Helper.SelectedMessage == -1)
+                    Helper.ForceLoadMessages();
+            });
+        }
+
+        /// <summary>
+        /// Message swipe
+        /// </summary>
+        private void OnSwipeEvent(object sender, SwipeCallbackEventArgs args)
+        {
+#if DEBUG
+            Log.Debug(App.AppPackage, $"SWIPED message {args.ElementIndex}");
+#endif
+            _remove = true;
+            _removedMsgIndex = args.ElementIndex;
+            _adapter.RemoveItem(args.ElementIndex);
+
             if (_remove)
             {
                 if (Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].FolderName ==
@@ -72,6 +101,16 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                     Helper.ExtensionsList[Helper.SelectedExtension].MailsCount--;
                 }
                 Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].MessagesList.RemoveAt(_removedMsgIndex);
+                if (_adapter.ItemCount == 0)
+                {
+                    if (_noMessagesTextView.Visibility == ViewStates.Invisible)
+                    {
+                        _noMessagesTextView.Text = GetString(Resource.String.FragmentMessages_no);
+                        _noMessagesTextView.Visibility = ViewStates.Visible;
+                    }
+                    if (_recyclerView.Visibility == ViewStates.Visible)
+                        _recyclerView.Visibility = ViewStates.Invisible;
+                }
             }
             else
             {
@@ -81,29 +120,6 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                 _remove = false;
                 _adapter.InsertItem(Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].MessagesList[_removedMsgIndex], _removedMsgIndex);
             }
-        }
-
-        private void OnUndoClick(View view)
-        {
-            _remove = false;
-        }
-
-        /// <summary>
-        /// Message swipe
-        /// </summary>
-        private void OnSwipeEvent(object sender, SwipeCallbackEventArgs args)
-        {
-#if DEBUG
-            Log.Debug(App.AppPackage, $"SWIPED message {args.ElementIndex}");
-#endif
-            _remove = true;
-            _removedMsgIndex = args.ElementIndex;
-            //_snackbar = Snackbar.Make(View, Resource.String.FragmentMessages_remove, 10000).SetAction(Resource.String.FragmentMessages_removeUndo, OnUndoClick)
-            //    .SetActionTextColor(ContextCompat.GetColor(ContentActivity, Resource.Color.colorUndoList)).SetCallback(_snackCallback);
-            //_snackbar.Show();
-            _adapter.RemoveItem(args.ElementIndex);
-            //TODO: waiting for update support lib
-            OnSnackbarDissmiss(this, null);
         }
 
         /// <summary>
@@ -132,15 +148,20 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                         break;
                 }
                 StartActivity(intent);
+                return;
             }
-            else if (Helper.SelectedFolder != -1)
+            ContentActivity.SetToolbarContent();
+            if ((Helper.GetCurrent().Count == 0)&&(_progressLayout.Visibility == ViewStates.Gone))
+                _progressLayout.Visibility = ViewStates.Visible;
+            if ((Helper.GetCurrent().Count > 0) && (_progressLayout.Visibility == ViewStates.Visible))
+                _progressLayout.Visibility = ViewStates.Gone;
+            if (Helper.SelectedFolder != -1)
             {
                 Helper.ForceLoadMessages();
                 _swipeTouchHelper.AttachToRecyclerView(_recyclerView);
             }
-            else
+            else if (Helper.SelectedExtension != -1)
                 Helper.ForceLoadFolders();
-            ContentActivity.SetToolbarContent();
         }
 
         public override void OnResume()
@@ -149,9 +170,37 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
 #if DEBUG
             TraceContent();
 #endif
+            if (_retryButton.Visibility == ViewStates.Visible)
+                _retryButton.Visibility = ViewStates.Invisible;
+            if (_noMessagesTextView.Visibility == ViewStates.Visible)
+            {
+                _noMessagesTextView.Visibility = ViewStates.Invisible;
+                _noMessagesTextView.Text = "";
+            }
             _adapter.CurrentContent = Helper.GetCurrent();
+            if (_adapter.CurrentContent.Count == 0)
+            {
+                if (_progressLayout.Visibility == ViewStates.Gone)
+                    _progressLayout.Visibility = ViewStates.Visible;
+            }
+            else
+            {
+                if (_progressLayout.Visibility == ViewStates.Visible)
+                    _progressLayout.Visibility = ViewStates.Gone;
+            }
             if (Helper.SelectedFolder != -1)
                 Helper.ForceLoadMessages();
+            else if (Helper.SelectedExtension != -1)
+                Helper.ForceLoadFolders();
+            else
+                Helper.ForceLoadExtensions();
+        }
+
+        public override void OnPause()
+        {
+            base.OnPause();
+            if (_timer.Enabled)
+                _timer.Stop();
         }
 
         protected override void OnHelperEvent(ActionsHelperEventArgs args)
@@ -161,41 +210,108 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                 switch (code)
                 {
                     case ActionsHelperEventArgs.MsgUpdated:
+                        if (_timer.Enabled)
+                            _timer.Stop();
+                        ContentActivity.SetToolbarContent();
 #if DEBUG
                         TraceContent();
 #endif
-                        if (Helper.SelectedExtension == -1)
-                        {
+                        if ((Helper.SelectedExtension == -1) || (Helper.SelectedFolder == -1))
                             _swipeTouchHelper.AttachToRecyclerView(null);
-                            Helper.ForceLoadExtensions();
-                        }
-                        else if (Helper.SelectedFolder == -1)
-                        {
-                            _swipeTouchHelper.AttachToRecyclerView(null);
-                            Helper.ForceLoadFolders();
-                        }
                         else
-                        {
                             _swipeTouchHelper.AttachToRecyclerView(_recyclerView);
-                            Helper.ForceLoadMessages();
-                        }
+
                         _adapter.CurrentContent = Helper.GetCurrent();
                         if ((Helper.SelectedFolder != -1) && (Helper.GetCurrent().Count == 0))
                         {
                             if (_noMessagesTextView.Visibility == ViewStates.Invisible)
+                            {
+                                _noMessagesTextView.Text = GetString(Resource.String.FragmentMessages_no);
                                 _noMessagesTextView.Visibility = ViewStates.Visible;
+                            }
                             if (_recyclerView.Visibility == ViewStates.Visible)
                                 _recyclerView.Visibility = ViewStates.Invisible;
+                            if (_progressLayout.Visibility == ViewStates.Visible)
+                                _progressLayout.Visibility = ViewStates.Gone;
                         }
                         else
                         {
                             if (_noMessagesTextView.Visibility == ViewStates.Visible)
+                            {
+                                _noMessagesTextView.Text = "";
                                 _noMessagesTextView.Visibility = ViewStates.Invisible;
+                            }
                             if (_recyclerView.Visibility == ViewStates.Invisible)
                                 _recyclerView.Visibility = ViewStates.Visible;
+                            if (_progressLayout.Visibility == ViewStates.Visible)
+                                _progressLayout.Visibility = ViewStates.Gone;
+                        }
+                        if (_retryButton.Visibility == ViewStates.Visible)
+                            _retryButton.Visibility = ViewStates.Invisible;
+                        if (!_timer.Enabled)
+                        {
+                            if (Math.Abs(_timer.Interval - 100) > -0.5)
+                            {
+                                if (Math.Abs(Helper.PollingInterval) > 0)
+                                {
+                                    _timer.Interval = Helper.PollingInterval;
+                                    _timer.Start();
+                                }
+                            }
+                        }
+                        break;
+                    case ActionsHelperEventArgs.MsgUpdateFailed:
+                        if ((_adapter.CurrentContent == null) || (_adapter.CurrentContent.Count == 0))
+                        {
+                            if (_noMessagesTextView.Visibility == ViewStates.Invisible)
+                            {
+                                _noMessagesTextView.Text = GetString(Resource.String.FragmentMessages_connection);
+                                _noMessagesTextView.Visibility = ViewStates.Visible;
+                            }
+                            if (_recyclerView.Visibility == ViewStates.Visible)
+                                _recyclerView.Visibility = ViewStates.Invisible;
+                            if (_progressLayout.Visibility == ViewStates.Visible)
+                                _progressLayout.Visibility = ViewStates.Gone;
+                            if (_retryButton.Visibility == ViewStates.Invisible)
+                                _retryButton.Visibility = ViewStates.Visible;
+                        }
+                        break;
+                    case ActionsHelperEventArgs.MsgUpdateFailedAirplane:
+                        if ((_adapter.CurrentContent == null) || (_adapter.CurrentContent.Count == 0))
+                        {
+                            if (_noMessagesTextView.Visibility == ViewStates.Invisible)
+                            {
+                                _noMessagesTextView.Text = GetString(Resource.String.FragmentMessages_airplane);
+                                _noMessagesTextView.Visibility = ViewStates.Visible;
+                            }
+                            if (_recyclerView.Visibility == ViewStates.Visible)
+                                _recyclerView.Visibility = ViewStates.Invisible;
+                            if (_progressLayout.Visibility == ViewStates.Visible)
+                                _progressLayout.Visibility = ViewStates.Gone;
+                            if (_retryButton.Visibility == ViewStates.Invisible)
+                                _retryButton.Visibility = ViewStates.Visible;
                         }
                         break;
                 }
+            }
+        }
+
+        private void RetryButtonOnClick(object sender, EventArgs eventArgs)
+        {
+            if (_retryButton.Visibility == ViewStates.Visible)
+            {
+                if (_progressLayout.Visibility == ViewStates.Gone)
+                    _progressLayout.Visibility = ViewStates.Visible;
+                if (_noMessagesTextView.Visibility == ViewStates.Visible)
+                    _noMessagesTextView.Visibility = ViewStates.Invisible;
+                _noMessagesTextView.Text = "";
+                _retryButton.Visibility = ViewStates.Invisible;
+                if (Helper.SelectedFolder != -1)
+                    Helper.ForceLoadMessages();
+                else if (Helper.SelectedExtension != -1)
+                    Helper.ForceLoadFolders();
+                else
+                    Helper.ForceLoadExtensions();
             }
         }
 

@@ -46,7 +46,8 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>
+    </DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AndroidUseSharedRuntime>False</AndroidUseSharedRuntime>
@@ -91,9 +92,6 @@
     <DevInstrumentationEnabled>True</DevInstrumentationEnabled>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="HockeyApp.Android">
-      <HintPath>..\Components\hockeyappandroid-3.6.2.0\lib\android\HockeyApp.Android.dll</HintPath>
-    </Reference>
     <Reference Include="Mono.Android" />
     <Reference Include="Mono.Android.Export" />
     <Reference Include="mscorlib" />
@@ -163,6 +161,7 @@
     <Compile Include="Actions\Requests\GetExtensionsRequest.cs" />
     <Compile Include="Actions\Requests\GetFoldersRequest.cs" />
     <Compile Include="Actions\Requests\GetMessagesRequest.cs" />
+    <Compile Include="Actions\Requests\GetPollingRequest.cs" />
     <Compile Include="Actions\Requests\GetPresentationNumbersRequest.cs" />
     <Compile Include="Actions\Requests\LoginRequest.cs" />
     <Compile Include="Actions\Requests\LogoutRequest.cs" />
@@ -177,6 +176,7 @@
     <Compile Include="Actions\Responses\GetExtensionsResponse.cs" />
     <Compile Include="Actions\Responses\GetFoldersResponse.cs" />
     <Compile Include="Actions\Responses\GetMessagesResponse.cs" />
+    <Compile Include="Actions\Responses\GetPollingResponse.cs" />
     <Compile Include="Actions\Responses\GetPresentationNumbersResponse.cs" />
     <Compile Include="Actions\Responses\LoginResponse.cs" />
     <Compile Include="Actions\Responses\LogoutResponse.cs" />
@@ -400,6 +400,9 @@
       <SubType>AndroidResource</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\dlg_no_phone.axml">
+      <SubType>AndroidResource</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout-v19\act_auth.axml">
       <SubType>AndroidResource</SubType>
     </AndroidResource>
   </ItemGroup>
@@ -1051,12 +1054,6 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable-xxxhdpi\ic_notification_playback.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <XamarinComponentReference Include="hockeyappandroid">
-      <Visible>False</Visible>
-      <Version>3.6.2.0</Version>
-    </XamarinComponentReference>
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\button_selector_white.xml" />

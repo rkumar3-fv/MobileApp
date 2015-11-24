@@ -1,7 +1,9 @@
 using System;
 using Android.OS;
 using Android.Support.V4.App;
+#if DEBUG
 using Android.Util;
+#endif
 using Android.Views;
 using com.FreedomVoice.MobileApp.Android.Activities;
 using com.FreedomVoice.MobileApp.Android.Helpers;
@@ -53,14 +55,18 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         public override void OnPause()
         {
             base.OnPause();
+#if DEBUG
             Log.Debug(App.AppPackage, $"FRAGMENT {GetType().Name} paused");
+#endif
             Helper.HelperEvent -= OnHelperEvent;
         }
 
         public override void OnResume()
         {
             base.OnResume();
+#if DEBUG
             Log.Debug(App.AppPackage, $"FRAGMENT {GetType().Name} resumed");
+#endif
             Helper.HelperEvent += OnHelperEvent;
         }
 

@@ -85,6 +85,16 @@ namespace FreedomVoice.Core.Utils
         /// <summary>
         /// Date formatter
         /// </summary>
+        /// <param name="date">date for formatting</param>
+        /// <returns>formatted date</returns>
+        public static string ToFullFormattedDate( DateTime date)
+        {
+            return date.ToString("MM/dd/yyyy hh:mm tt");
+        }
+
+        /// <summary>
+        /// Date formatter
+        /// </summary>
         /// <param name="yesterdayLabel">label for "yesterday"</param>
         /// <param name="date">date for formatting</param>
         /// <returns>formatted date</returns>

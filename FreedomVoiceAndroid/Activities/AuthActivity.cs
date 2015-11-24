@@ -4,6 +4,7 @@ using Android.Content;
 using Android.Content.PM;
 using Android.Graphics;
 using Android.OS;
+using Android.Support.Design.Widget;
 using Android.Support.V4.Content;
 using Android.Support.V7.Widget;
 #if DEBUG
@@ -22,7 +23,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
     /// Authorization activity
     /// </summary>
     [Activity(
-        Label = "@string/ApplicationTitle",
+        Label = "@string/ApplicationName",
         Icon = "@mipmap/ic_launcher",
         ScreenOrientation = ScreenOrientation.Portrait,
         WindowSoftInputMode = SoftInput.AdjustResize,
@@ -40,14 +41,12 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
 
         protected override void OnCreate(Bundle bundle)
         {
-            base.OnCreate(bundle);
-
             if ((Intent.Flags & ActivityFlags.BroughtToFront) != 0)
             {
                 Finish();
                 return;
             }
-
+            base.OnCreate(bundle);
             SetContentView(Resource.Layout.act_auth);
             RootLayout = FindViewById(Resource.Id.authActivity_root);
             _authButton = FindViewById<CardView>(Resource.Id.authActivity_loginButton);
@@ -68,15 +67,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             _progressLogin.ProgressDrawable?.SetColorFilter(progressColor, PorterDuff.Mode.SrcIn);
         }
 
-#if DEBUG
-        protected override void OnStart()
-        {
-            base.OnStart();
-            _loginText.Text = "freedomvoice.adm.267055@gmail.com";
-            _passwordText.Text = "adm654654";
-        }
-#endif
-
         private void FieldOnFocusChange(object sender, View.FocusChangeEventArgs focusChangeEventArgs)
         {
             if ((sender != _loginText) && (sender != _passwordText)) return;
@@ -92,6 +82,18 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             HideErrors();
             var imm = GetSystemService(InputMethodService).JavaCast<InputMethodManager>();
             imm.HideSoftInputFromWindow(RootLayout.WindowToken, 0);
+
+            if (Appl.ApplicationHelper.IsAirplaneModeOn())
+            {
+                AirplaneDialog();
+                return;
+            }
+
+            if (!Appl.ApplicationHelper.IsInternetConnected())
+            {
+                Snackbar.Make(RootLayout, Resource.String.Snack_noInternet, Snackbar.LengthLong).Show();
+                return;
+            }
 
             if ((_loginText.Text.Trim().Length < 6)||(!DataValidationUtils.IsEmailValid(_loginText.Text.Trim())))
             {

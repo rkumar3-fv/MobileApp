@@ -9,16 +9,49 @@ using FreedomVoice.Core.Entities;
 using FreedomVoice.Core.Entities.Base;
 using FreedomVoice.Core.Entities.Enums;
 using Newtonsoft.Json;
+using System.Net.Http;
+using System;
+using ModernHttpClient;
 
 namespace FreedomVoice.Core
 {
     public static class ApiHelper
     {
-        public static CookieContainer CookieContainer { get; set; }
+        public static CookieContainer CookieContainer {
+            get
+            {
+                return _clientHandler?.CookieContainer;
+            }
+            set
+            {
+                if (_clientHandler != null)
+                    _clientHandler.CookieContainer = value;
+            }
+        }
+
+        private static NativeMessageHandler _clientHandler;
+
+        private static HttpClient Client { get; set; }
+
+        static ApiHelper()
+        {
+            InitNewContext();
+        }
+
+        private static void InitNewContext()
+        {   
+            _clientHandler = new NativeMessageHandler();
+            if (_clientHandler.SupportsAutomaticDecompression)
+            {
+                _clientHandler.AutomaticDecompression = DecompressionMethods.GZip |
+                                                 DecompressionMethods.Deflate;
+            }
+            Client = new HttpClient(_clientHandler);
+        }
 
         public static async Task<BaseResult<string>> Login(string login, string password)
         {
-            CookieContainer = new CookieContainer();
+            InitNewContext();
 
             var postdata = $"UserName={login}&Password={password}";
             return await MakeAsyncPostRequest<string>("/api/v1/login", postdata, "application/x-www-form-urlencoded", CancellationToken.None);
@@ -26,7 +59,8 @@ namespace FreedomVoice.Core
 
         public static Task<BaseResult<string>> Logout()
         {
-            CookieContainer = null;
+            InitNewContext();
+
             return Task.FromResult(new BaseResult<string> {Code = ErrorCodes.Ok, Result = ""});
         }
 
@@ -139,26 +173,20 @@ namespace FreedomVoice.Core
                 token);
         }
 
-        private static HttpWebRequest GetRequest(string url, string method, string contentType)
+        private static string MakeFullApiUrl(string url)
         {
-            var request = (HttpWebRequest)WebRequest.Create(WebResources.AppUrl + url);
-            request.ContentType = contentType;
-            request.CookieContainer = CookieContainer;
-            request.Method = method;
-            return request;
+            return WebResources.AppUrl + url;
         }
 
         private static async Task<BaseResult<T>> MakeAsyncPostRequest<T>(string url, string postData, string contentType, CancellationToken cts)
         {
-            var request = GetRequest(url, "POST", contentType);
+            
             BaseResult<T> baseRes;
             try
             {
-                using (var resultStream = await request.GetRequestStreamAsync())
-                {
-                    SetRequestStreamData(resultStream, GetRequestBytes(postData));
-                    baseRes = await GetResponce<T>(request, cts);
-                }
+                var postResp = Client.PostAsync(MakeFullApiUrl(url), new StringContent(postData, Encoding.UTF8, contentType), cts);
+
+                baseRes = await GetResponse<T>(postResp, cts);
             }
             catch (WebException)
             {
@@ -174,96 +202,40 @@ namespace FreedomVoice.Core
 
         public static async Task<BaseResult<T>> MakeAsyncGetRequest<T>(string url, string contentType, CancellationToken cts)
         {
-            var request = GetRequest(url, "GET", contentType);
-
-            return await GetResponce<T>(request, cts);
+            var getResp = Client.GetAsync(MakeFullApiUrl(url), cts);
+            return await GetResponse<T>(getResp, cts);
         }
 
         public static async Task<BaseResult<Stream>> MakeAsyncFileDownload(string url, string contentType, string messageId, CancellationToken ct)
         {
-            var request = GetRequest(url, "GET", contentType);
             BaseResult<Stream> retResult = null;
             try
             {
-                var response = await request.GetResponseAsync();
+
+                if (ct.IsCancellationRequested)
+                    return new BaseResult<Stream> { Code = ErrorCodes.Cancelled };
+
+                var getRep = Client.GetAsync(MakeFullApiUrl(url));
+
+
+
+                var h = getRep.Result.Headers.FirstOrDefault(x => x.Key.Equals("Content-Length"));
+
+                var streamResp = getRep.Result.Content.ReadAsStreamAsync();
                 retResult = new BaseResult<Stream>
                 {
                     Code = ErrorCodes.Ok,
-                    Result = response.GetResponseStream()
+                    Result = await streamResp
                 };
-            }
-            catch (WebException ex)
-            {
-                var resp = (HttpWebResponse)ex.Response;
-                if (resp != null)
-                {
-                    switch (resp.StatusCode)
-                    {
-                        case HttpStatusCode.Unauthorized:
-                            {
-                                retResult = new BaseResult<Stream>
-                                {
-                                    Code = ErrorCodes.Unauthorized,
-                                    Result = null
-                                };
-                                break;
-                            }
-                        case HttpStatusCode.Forbidden:
-                            {
-                                retResult = new BaseResult<Stream>
-                                {
-                                    Code = ErrorCodes.Forbidden,
-                                    Result = null
-                                };
-                                break;
-                            }
-                        case HttpStatusCode.BadRequest:
-                            {
-                                retResult = new BaseResult<Stream>
-                                {
-                                    Code = ErrorCodes.BadRequest,
-                                    Result = null
-                                };
-                                break;
-                            }
-                        case HttpStatusCode.NotFound:
-                            {
-                                retResult = new BaseResult<Stream>
-                                {
-                                    Code = ErrorCodes.NotFound,
-                                    Result = null
-                                };
-                                break;
-                            }
-                        case HttpStatusCode.PaymentRequired:
-                            {
-                                retResult = new BaseResult<Stream>
-                                {
-                                    Code = ErrorCodes.PaymentRequired,
-                                    Result = null
-                                };
-                                break;
-                            }
-                        case HttpStatusCode.InternalServerError:
-                            {
-                                retResult = new BaseResult<Stream>
-                                {
-                                    Code = ErrorCodes.InternalServerError,
-                                    Result = null
-                                };
-                                break;
-                            }
-                    }
-                }
 
-                if (ct.IsCancellationRequested)
+            }
+            catch (Exception ex)
+            {
+                return new BaseResult<Stream>
                 {
-                    retResult = new BaseResult<Stream>
-                    {
-                        Code = ErrorCodes.Cancelled,
-                        Result = null
-                    };
-                }
+                    Code = ErrorCodes.Unknown,
+                    ErrorText = ex.Message
+                };
             }
 
             return retResult;
@@ -271,183 +243,156 @@ namespace FreedomVoice.Core
 
         public static async Task<BaseResult<MediaResponse>> MakeAsyncFileDownload(string url, string contentType, CancellationToken ct)
         {
-            var request = GetRequest(url, "GET", contentType);
+            
             BaseResult<MediaResponse> retResult = null;
 
             try
             {
-                var response = await request.GetResponseAsync();
+                if (ct.IsCancellationRequested)
+                    return new BaseResult<MediaResponse> { Code = ErrorCodes.Cancelled };
+
+                var streamResp = Client.GetStreamAsync(MakeFullApiUrl(url));
+
+                var stream = await streamResp;
                 retResult = new BaseResult<MediaResponse>
                 {
                     Code = ErrorCodes.Ok,
-                    Result = new MediaResponse(response.ContentLength, response.GetResponseStream())
+                    Result = new MediaResponse(stream.Length, stream)
                 };
-            }
-            catch (WebException ex)
-            {
-                var resp = (HttpWebResponse)ex.Response;
-                if (resp != null)
-                {
-                    switch (resp.StatusCode)
-                    {
-                        case HttpStatusCode.Unauthorized:
-                            {
-                                retResult = new BaseResult<MediaResponse>
-                                {
-                                    Code = ErrorCodes.Unauthorized,
-                                    Result = null
-                                };
-                                break;
-                            }
-                        case HttpStatusCode.Forbidden:
-                            {
-                                retResult = new BaseResult<MediaResponse>
-                                {
-                                    Code = ErrorCodes.Forbidden,
-                                    Result = null
-                                };
-                                break;
-                            }
-                        case HttpStatusCode.BadRequest:
-                            {
-                                retResult = new BaseResult<MediaResponse>
-                                {
-                                    Code = ErrorCodes.BadRequest,
-                                    Result = null
-                                };
-                                break;
-                            }
-                        case HttpStatusCode.NotFound:
-                            {
-                                retResult = new BaseResult<MediaResponse>
-                                {
-                                    Code = ErrorCodes.NotFound,
-                                    Result = null
-                                };
-                                break;
-                            }
-                        case HttpStatusCode.PaymentRequired:
-                            {
-                                retResult = new BaseResult<MediaResponse>
-                                {
-                                    Code = ErrorCodes.PaymentRequired,
-                                    Result = null
-                                };
-                                break;
-                            }
-                        case HttpStatusCode.InternalServerError:
-                            {
-                                retResult = new BaseResult<MediaResponse>
-                                {
-                                    Code = ErrorCodes.InternalServerError,
-                                    Result = null
-                                };
-                                break;
-                            }
-                    }
-                }
 
-                if (ct.IsCancellationRequested)
+            }
+            catch (Exception ex)
+            {
+                return new BaseResult<MediaResponse>
                 {
-                    retResult = new BaseResult<MediaResponse>
-                    {
-                        Code = ErrorCodes.Cancelled,
-                        Result = null
-                    };
-                }
+                    Code = ErrorCodes.Unknown,
+                    ErrorText = ex.Message
+                };
             }
             return retResult;
         }
 
-        private static async Task<BaseResult<T>> GetResponce<T>(HttpWebRequest request, CancellationToken ct)
+        //private static async Task<BaseResult<T>> GetResponse<T>(HttpWebRequest request, CancellationToken ct)
+
+        private static async Task<BaseResult<T>> GetResponse<T>(Task<HttpResponseMessage> r, CancellationToken ct)
         {
             BaseResult<T> retResult = null;
-        
+
             try
             {
-                var response = await request.GetResponseAsync();
-                ct.ThrowIfCancellationRequested();
-                retResult = new BaseResult<T>
-                {
-                    Code = ErrorCodes.Ok,
-                    Result = JsonConvert.DeserializeObject<T>(ReadStreamFromResponse(response))
-                };
-            }
-            catch (WebException ex)
-            {
-                var resp = (HttpWebResponse)ex.Response;
-                if (resp != null)
-                {
-                    switch (resp.StatusCode)
+                using (var response = await r)
+                {     
+                    try
                     {
-                        case HttpStatusCode.Unauthorized:
-                            {
-                                retResult = new BaseResult<T>
-                                {
-                                    Code = ErrorCodes.Unauthorized,
-                                    Result = default(T)
-                                };
-                                break;
-                            }
-                        case HttpStatusCode.Forbidden:
-                            {
-                                retResult = new BaseResult<T>
-                                {
-                                    Code = ErrorCodes.Forbidden,
-                                    Result = default(T)
-                                };
-                                break;
-                            }
-                        case HttpStatusCode.BadRequest:
-                            {
-                                retResult = new BaseResult<T>
-                                {
-                                    Code = ErrorCodes.BadRequest,
-                                    Result = default(T)
-                                };
-                                break;
-                            }
-                        case HttpStatusCode.NotFound:
-                            {
-                                retResult = new BaseResult<T>
-                                {
-                                    Code = ErrorCodes.NotFound,
-                                    Result = default(T)
-                                };
-                                break;
-                            }
-                        case HttpStatusCode.PaymentRequired:
-                            {
-                                retResult = new BaseResult<T>
-                                {
-                                    Code = ErrorCodes.PaymentRequired,
-                                    Result = default(T)
-                                };
-                                break;
-                            }
-                        case HttpStatusCode.InternalServerError:
-                            {
-                                retResult = new BaseResult<T>
-                                {
-                                    Code = ErrorCodes.InternalServerError,
-                                    Result = default(T)
-                                };
-                                break;
-                            }
+                        if(ct.IsCancellationRequested)
+                            return new BaseResult<T> { Code = ErrorCodes.Cancelled };
+
+                        response.EnsureSuccessStatusCode();
+
+                        string content = await response.Content.ReadAsStringAsync();
+                        retResult = new BaseResult<T>
+                        {
+                            Code = ErrorCodes.Ok,
+                            //Result = JsonConvert.DeserializeObject<T>(ReadStreamFromResponse(response))
+                            Result = JsonConvert.DeserializeObject<T>(content)
+                        };
+                    }
+                    catch (HttpRequestException ex) {
+                        return HandleErrorState<T>(response.StatusCode, ex);
+
                     }
                 }
+            }
+            catch (Exception ex2) {
 
-                if (ct.IsCancellationRequested)
+                retResult = new BaseResult<T>
                 {
-                    retResult = new BaseResult<T>
-                    {
-                        Code = ErrorCodes.Cancelled,
-                        Result = default(T)
-                    };
-                }
+                    Code = ErrorCodes.Unknown,
+                    Result = default(T),
+                    ErrorText = ex2.Message
+                };
             }
 
             return retResult;
+        }
+
+        private static BaseResult<T> HandleErrorState<T>(HttpStatusCode code, Exception ex)
+        {
+            string msg = string.Empty;
+
+            if (ex != null)
+                msg = ex.Message;
+
+            switch (code)
+            {
+                case HttpStatusCode.Unauthorized:
+                    {
+                        return new BaseResult<T>
+                        {
+                            Code = ErrorCodes.Unauthorized,
+                            Result = default(T),
+                            ErrorText = msg
+                        };
+                        
+                    }
+                case HttpStatusCode.Forbidden:
+                    {
+                        return new BaseResult<T>
+                        {
+                            Code = ErrorCodes.Forbidden,
+                            Result = default(T),
+                            ErrorText = msg
+                        };
+                       
+                    }
+                case HttpStatusCode.BadRequest:
+                    {
+                        return new BaseResult<T>
+                        {
+                            Code = ErrorCodes.BadRequest,
+                            Result = default(T),
+                            ErrorText = msg
+                        };
+                        
+                    }
+                case HttpStatusCode.NotFound:
+                    {
+                        return new BaseResult<T>
+                        {
+                            Code = ErrorCodes.NotFound,
+                            Result = default(T),
+                            ErrorText = msg
+                        };
+                        
+                    }
+                case HttpStatusCode.PaymentRequired:
+                    {
+                        return new BaseResult<T>
+                        {
+                            Code = ErrorCodes.PaymentRequired,
+                            Result = default(T),
+                            ErrorText = msg
+                        };
+                       
+                    }
+                case HttpStatusCode.InternalServerError:
+                    {
+                        return new BaseResult<T>
+                        {
+                            Code = ErrorCodes.InternalServerError,
+                            Result = default(T),
+                            ErrorText = msg
+                        };
+                        
+                    }
+            }
+
+            return new BaseResult<T>
+                {
+                    Code = ErrorCodes.Unknown,
+                    Result = default(T),
+                    ErrorText = msg
+            };
         }
 
         private static void SetRequestStreamData(Stream response, byte[] postData)

@@ -23,6 +23,7 @@ namespace com.FreedomVoice.MobileApp.Android.Storage
         private const string KeyToken = "Token";
         private const string KeyAccount = "Acc";
         private const string KeyCallerId = "Caller";
+        private const string KeyPolling = "PollingTime";
 
         private AppPreferencesHelper(Context context)
         {
@@ -60,6 +61,11 @@ namespace com.FreedomVoice.MobileApp.Android.Storage
         {
             return _preferences.GetString(KeyPhoneNumber, "");
         }
+
+        /// <summary>
+        /// Get saved polling interval
+        /// </summary>
+        public double GetPollingInterval() => _preferences.GetFloat(KeyPolling, 0);
 
         /// <summary>
         /// Get credentials pair
@@ -124,6 +130,21 @@ namespace com.FreedomVoice.MobileApp.Android.Storage
         {
             var editor = _preferences.Edit();
             editor.PutString(KeyPhoneNumber, phone);
+            editor.Apply();
+        }
+
+        /// <summary>
+        /// Save current polling interval
+        /// </summary>
+        public void SavePollingInterval(double polling)
+        {
+            var result = (float)polling;
+            if (float.IsPositiveInfinity(result))
+                result = float.MaxValue;
+            else if (float.IsNegativeInfinity(result))
+                result = float.MinValue;
+            var editor = _preferences.Edit();
+            editor.PutFloat(KeyPolling, result);
             editor.Apply();
         }
 

@@ -32,7 +32,7 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
         {
             if (Cursor == null) return;
             if (!Cursor.MoveToPosition(position)) return;
-            var id = Cursor.GetString(Cursor.GetColumnIndex(ContactsContract.Contacts.InterfaceConsts.Id));
+            var id = Cursor.GetString(0);
             var name = Cursor.GetString(Cursor.GetColumnIndex(ContactsContract.Contacts.InterfaceConsts.DisplayName));
             var hasPhone = Cursor.GetString(Cursor.GetColumnIndex(ContactsContract.Contacts.InterfaceConsts.HasPhoneNumber));
             if (hasPhone.Equals("0"))

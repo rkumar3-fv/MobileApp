@@ -33,7 +33,6 @@ namespace com.FreedomVoice.MobileApp.Android.Services
         private AudioManager _audioManager;
         private MediaPlayer _mediaPlayer;
         private string _path;
-        private bool _isVoiceCallType;
 
         private bool _isPlaying;
         private int _position;
@@ -74,7 +73,6 @@ namespace com.FreedomVoice.MobileApp.Android.Services
             switch (intent.Action)
             {
                 case MediaActionPlay:
-                    if (IsInChange) break;
                     var message = (Message)intent.GetParcelableExtra(MediaMsgTag);
                     var path = intent.GetStringExtra(MediaPathTag);
                     if ((!message.Equals(Msg))||(path != _path))
@@ -102,31 +100,7 @@ namespace com.FreedomVoice.MobileApp.Android.Services
                     break;
                 case MediaActionChangeOut:
                     var type = intent.GetBooleanExtra(MediaOutputTag, false);
-                    if (!IsInChange)
-                    {
-                        IsInChange = true;
-                        _isVoiceCallType = type;
-                        if (type)
-                        {
-                            _audioManager.Mode = Mode.InCall;
-                            _audioManager.SpeakerphoneOn = false;
-                        }
-                        else
-                        {
-                            _audioManager.Mode = Mode.Normal;
-                            _audioManager.SpeakerphoneOn = true;
-                        }
-#if DEBUG
-                        Log.Debug(App.AppPackage, $"CHANGE OUTPUT TO {(type ? ("VOICECALL") : ("MUSIC"))}");
-#endif
-                        if (_mediaPlayer != null)
-                        {
-                            _isPlaying = _mediaPlayer.IsPlaying;
-                            _position = _mediaPlayer.CurrentPosition;
-                            _mediaPlayer.Release();
-                            PreparePlayer();
-                        }
-                    }
+                    _audioManager.SpeakerphoneOn = !type;
                     break;
                 case MediaActionPause:
                     if (IsInChange) break;
@@ -164,7 +138,7 @@ namespace com.FreedomVoice.MobileApp.Android.Services
         private void PreparePlayer()
         {
             _mediaPlayer = new MediaPlayer();
-            _mediaPlayer.SetAudioStreamType(_isVoiceCallType ? Stream.VoiceCall : Stream.Music);
+            _mediaPlayer.SetAudioStreamType(Stream.VoiceCall);
             _mediaPlayer.SetOnPreparedListener(this);
             _mediaPlayer.Looping = false;
             _mediaPlayer.SetOnCompletionListener(this);

@@ -1,6 +1,7 @@
 using System;
 using Android.Content;
 using Android.OS;
+using Android.Provider;
 using Android.Support.Design.Widget;
 using Android.Support.V7.App;
 #if DEBUG
@@ -17,6 +18,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
     /// </summary>
     public abstract class BaseActivity : AppCompatActivity
     {
+        private const string AirDlgTag = "AIR_DLG_TAG";
         public ActionsHelper Helper;
         protected App Appl;
         protected View RootLayout;
@@ -33,18 +35,13 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         protected override void OnPause()
         {
             base.OnPause();
-#if DEBUG
-            Log.Debug(App.AppPackage, $"ACTIVITY {GetType().Name} paused");
-#endif
             Helper.HelperEvent -= OnHelperEvent;
         }
 
         protected override void OnResume()
         {
             base.OnResume();
-#if DEBUG
-            Log.Debug(App.AppPackage, $"ACTIVITY {GetType().Name} resumed");
-#else
+#if !DEBUG
             Appl.ApplicationHelper.InitInsights();
 #endif
             Helper.HelperEvent += OnHelperEvent;
@@ -84,6 +81,12 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 OnHelperEvent(args as ActionsHelperEventArgs);
         }
 
+        protected void AirplaneDialogOnDialogEvent(object sender, DialogEventArgs args)
+        {
+            if (args.Result == DialogResult.Ok)
+                StartActivity(new Intent(Settings.ActionAirplaneModeSettings));
+        }
+
         /// <summary>
         /// Helper event callback action
         /// </summary>
@@ -105,6 +108,15 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                         return;
                 }
             }
+        }
+
+        protected void AirplaneDialog()
+        {
+            if (SupportFragmentManager.FindFragmentByTag(AirDlgTag) != null)
+                return;
+            var airplaneDialog = new AirplaneDialogFragment();
+            airplaneDialog.DialogEvent += AirplaneDialogOnDialogEvent;
+            airplaneDialog.Show(SupportFragmentManager, AirDlgTag);
         }
     }
 }
