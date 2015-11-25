@@ -218,6 +218,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             }
             eventTracker.SetAction(name);
             eventTracker.SetLabel(result);
+            eventTracker.SetValue(1);
             AnalyticsTracker.Send(eventTracker.Build());
             return true;
         }

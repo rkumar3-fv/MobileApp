@@ -6,8 +6,12 @@ using System.Reflection;
 // associated with an assembly.
 [assembly: AssemblyTitle("FreedomVoice.Core")]
 [assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+#if DEBUG
+[assembly: AssemblyConfiguration("Debug")]
+#else
+[assembly: AssemblyConfiguration("Release")]
+#endif
+[assembly: AssemblyCompany("FreedomVoice")]
 [assembly: AssemblyProduct("FreedomVoice.Core")]
 [assembly: AssemblyCopyright("Copyright ©  2015")]
 [assembly: AssemblyTrademark("")]
@@ -24,5 +28,5 @@ using System.Reflection;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.9.14")]
-[assembly: AssemblyFileVersion("0.9.14")]
+[assembly: AssemblyVersion("0.10.3")]
+[assembly: AssemblyFileVersion("0.10.3")]
