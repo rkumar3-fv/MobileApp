@@ -61,8 +61,7 @@ namespace FreedomVoice.iOS
 
             _observer = NSNotificationCenter.DefaultCenter.AddObserver((NSString)"NSUserDefaultsDidChangeNotification", DefaultsChanged);
 
-            InitializeGoogleAnalytics();
-            Insights.Initialize("d3d8eb1b7ea6654b812ec9a8dea5fb8224e3a2b5");
+            InitializeAnalytics();
 
             Theme.Apply();
 
@@ -140,7 +139,8 @@ namespace FreedomVoice.iOS
                     Theme.TransitionController(navigationController, false);
                 }
             }
-            else if (!string.IsNullOrEmpty(UserDefault.LastUsedAccount))
+            else
+            if (!string.IsNullOrEmpty(UserDefault.LastUsedAccount))
             {
                 var accountsController = GetViewController<AccountsViewController>();
                 accountsController.AccountsList = accountsList;
@@ -203,7 +203,7 @@ namespace FreedomVoice.iOS
             string password = null;
 
             var userName = KeyChain.GetUsername();
-            if (userName != null)
+            if (!string.IsNullOrEmpty(userName))
                 password = KeyChain.GetPasswordForUsername(userName);
 
             if (string.IsNullOrEmpty(userName) || string.IsNullOrEmpty(password))
@@ -281,20 +281,30 @@ namespace FreedomVoice.iOS
 
         public override void WillTerminate(UIApplication application)
         {
-            base.WillTerminate(application);
             if (_observer == null) return;
 
             NSNotificationCenter.DefaultCenter.RemoveObserver(_observer);
             _observer = null;
         }
 
-        private const string TrackingId = "UA-587407-96";
+        private static void InitializeAnalytics()
+        {
+            InitializeGoogleAnalytics();
+            InitializeXamarinInsights();
+        }
 
+        private const string GoogleAnalyticsTrackingId = "UA-587407-96";
         private static void InitializeGoogleAnalytics()
         {
             GAI.SharedInstance.DispatchInterval = 20;
             GAI.SharedInstance.TrackUncaughtExceptions = true;
-            GAI.SharedInstance.GetTracker(TrackingId);
+            GAI.SharedInstance.GetTracker(GoogleAnalyticsTrackingId);
+        }
+
+        private const string InsightsApiKey = "d3d8eb1b7ea6654b812ec9a8dea5fb8224e3a2b5";
+        private static void InitializeXamarinInsights()
+        {
+            Insights.Initialize(InsightsApiKey);
         }
     }
 }

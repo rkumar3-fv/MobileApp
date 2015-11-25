@@ -9,6 +9,7 @@
         public const int ErrorNotFound = 5;
         public const int ErrorPaymentRequired = 6;
         public const int Forbidden = 7;
+        public const int ErrorInternal = 8;
         public const int ErrorUnknown = 0;
 
         public ErrorResponse(int errorCode)

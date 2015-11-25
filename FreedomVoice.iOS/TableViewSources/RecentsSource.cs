@@ -33,7 +33,12 @@ namespace FreedomVoice.iOS.TableViewSources
 
         public override nint RowsInSection(UITableView tableview, nint section)
         {
-            return _recents.Count;
+            var recentsCount = _recents.Count;
+
+            tableview.SeparatorStyle = recentsCount == 0 ? UITableViewCellSeparatorStyle.None : UITableViewCellSeparatorStyle.SingleLine;
+            tableview.BackgroundView.Hidden = recentsCount != 0;
+
+            return recentsCount;
         }
 
         public override nfloat GetHeightForRow(UITableView tableView, NSIndexPath indexPath)

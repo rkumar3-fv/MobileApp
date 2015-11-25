@@ -9,7 +9,7 @@ namespace FreedomVoice.iOS.Services.Implementations
         public async Task<BaseResponse> ExecuteRequest()
         {
             var asyncRes = await ApiHelper.GetPollingInterval();
-            var errorResponse = CheckErrorResponse(asyncRes.Code);
+            var errorResponse = CheckErrorResponse(asyncRes);
             if (errorResponse != null)
                 return errorResponse;
 

@@ -9,7 +9,7 @@ namespace FreedomVoice.iOS.Services.Implementations
         public async Task<BaseResponse> ExecuteRequest(string userName, string password)
         {
             var asyncRes = await ApiHelper.Login(userName, password);
-            var errorResponse = CheckErrorResponse(asyncRes.Code);
+            var errorResponse = CheckErrorResponse(asyncRes, false);
             if (errorResponse != null)
                 return errorResponse;
 

@@ -10,7 +10,7 @@ namespace FreedomVoice.iOS.Services.Implementations
         public async Task<BaseResponse> ExecuteMoveRequest(string systemNumber, int mailboxNumber, string destinationFolder, List<string> messageIds)
         {
             var asyncRes = await ApiHelper.MoveMessages(systemNumber, mailboxNumber, destinationFolder, messageIds);
-            var errorResponse = CheckErrorResponse(asyncRes.Code);
+            var errorResponse = CheckErrorResponse(asyncRes, false);
             if (errorResponse != null)
                 return errorResponse;
 
@@ -20,7 +20,7 @@ namespace FreedomVoice.iOS.Services.Implementations
         public async Task<BaseResponse> ExecuteDeleteRequest(string systemNumber, int mailboxNumber, List<string> messageIds)
         {
             var asyncRes = await ApiHelper.DeleteMessages(systemNumber, mailboxNumber, messageIds);
-            var errorResponse = CheckErrorResponse(asyncRes.Code);
+            var errorResponse = CheckErrorResponse(asyncRes, false);
             if (errorResponse != null)
                 return errorResponse;
 

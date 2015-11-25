@@ -62,11 +62,11 @@ namespace FreedomVoice.iOS.TableViewSources
             _expandedCell.OnCallbackClick -= OnCallbackClick(indexPath);
             _expandedCell.OnViewFaxClick -= OnViewFaxClick(indexPath);
             _expandedCell.OnPlayClick -= OnPlayClick(indexPath);
-            _expandedCell.DeleteButton.TouchUpInside -= OnDeleteMessageClick(tableView);
+            _expandedCell.DeleteButton.TouchDown -= OnDeleteMessageClick(tableView);
             _expandedCell.OnCallbackClick += OnCallbackClick(indexPath);
             _expandedCell.OnViewFaxClick += OnViewFaxClick(indexPath);
             _expandedCell.OnPlayClick += OnPlayClick(indexPath);
-            _expandedCell.DeleteButton.TouchUpInside += OnDeleteMessageClick(tableView);
+            _expandedCell.DeleteButton.TouchDown += OnDeleteMessageClick(tableView);
         }
 
         private EventHandler<ExpandedCellButtonClickEventArgs> OnViewFaxClick(NSIndexPath indexPath)
@@ -98,7 +98,15 @@ namespace FreedomVoice.iOS.TableViewSources
 
         public override nint RowsInSection(UITableView tableview, nint section)
         {
-            return Messages?.Count ?? 0;
+            var messagesCount = Messages?.Count ?? 0;
+
+            if (tableview.BackgroundView != null)
+            {
+                tableview.SeparatorStyle = messagesCount == 0 ? UITableViewCellSeparatorStyle.None : UITableViewCellSeparatorStyle.SingleLine;
+                tableview.BackgroundView.Hidden = messagesCount != 0;
+            }
+
+            return messagesCount;
         }
 
         public override void RowSelected(UITableView tableView, NSIndexPath indexPath)

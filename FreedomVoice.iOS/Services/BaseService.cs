@@ -1,14 +1,20 @@
-﻿using FreedomVoice.Core.Entities.Enums;
+﻿using FreedomVoice.Core.Entities.Base;
+using FreedomVoice.Core.Entities.Enums;
 using FreedomVoice.iOS.Services.Responses;
 
 namespace FreedomVoice.iOS.Services
 {
     public abstract class BaseService
     {
-        protected static ErrorResponse CheckErrorResponse(ErrorCodes errorCode)
+        protected static ErrorResponse CheckErrorResponse<T>(BaseResult<T> baseResult, bool checkOnNullResult = true)
         {
-            switch (errorCode)
+            if (checkOnNullResult && baseResult.Result == null)
+                return new ErrorResponse(ErrorResponse.ErrorInternal);
+
+            switch (baseResult.Code)
             {
+                case ErrorCodes.Ok:
+                    return null;
                 case ErrorCodes.BadRequest:
                     return new ErrorResponse(ErrorResponse.ErrorBadRequest);
                 case ErrorCodes.Cancelled:
@@ -23,10 +29,10 @@ namespace FreedomVoice.iOS.Services
                     return new ErrorResponse(ErrorResponse.ErrorPaymentRequired);
                 case ErrorCodes.Forbidden:
                     return new ErrorResponse(ErrorResponse.Forbidden);
-                case ErrorCodes.Unknown:
-                    return new ErrorResponse(ErrorResponse.ErrorUnknown);
+                case ErrorCodes.InternalServerError:
+                    return new ErrorResponse(ErrorResponse.ErrorInternal);
                 default:
-                    return null;
+                    return new ErrorResponse(ErrorResponse.ErrorUnknown);
             }
         }
     }

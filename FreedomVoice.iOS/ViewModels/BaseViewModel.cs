@@ -90,6 +90,7 @@ namespace FreedomVoice.iOS.ViewModels
         public event EventHandler OnNotFoundResponse;
         public event EventHandler OnCanceledResponse;
         public event EventHandler OnForbiddenResponse;
+        public event EventHandler OnInternalErrorResponse;
 
         public bool IsErrorResponseReceived;
 
@@ -102,29 +103,34 @@ namespace FreedomVoice.iOS.ViewModels
 
             switch (response.ErrorCode)
             {
-                case ErrorResponse.ErrorPaymentRequired:
-                    OnPaymentRequiredResponse?.Invoke(null, EventArgs.Empty);
+                case ErrorResponse.ErrorBadRequest:
+                    OnBadRequestResponse?.Invoke(null, EventArgs.Empty);
+                    return;
+                case ErrorResponse.ErrorCancelled:
+                    OnCanceledResponse?.Invoke(null, EventArgs.Empty);
                     return;
                 case ErrorResponse.ErrorConnection:
-                    new UIAlertView("Service is unavailable", "Please try again later.", null, "OK", null).Show();
+                    if (OnErrorConnectionResponse != null)
+                        new UIAlertView("Service is unavailable", "Please try again later.", null, "OK", null).Show();
                     OnErrorConnectionResponse?.Invoke(null, EventArgs.Empty);
                     return;
                 case ErrorResponse.ErrorUnauthorized:
                     OnUnauthorizedResponse?.Invoke(null, EventArgs.Empty);
                     return;
-                case ErrorResponse.ErrorBadRequest:
-                    OnBadRequestResponse?.Invoke(null, EventArgs.Empty);
-                    return;
                 case ErrorResponse.ErrorNotFound:
                     OnNotFoundResponse?.Invoke(null, EventArgs.Empty);
                     return;
-                case ErrorResponse.ErrorCancelled:
-                    OnCanceledResponse?.Invoke(null, EventArgs.Empty);
+                case ErrorResponse.ErrorPaymentRequired:
+                    OnPaymentRequiredResponse?.Invoke(null, EventArgs.Empty);
                     return;
                 case ErrorResponse.Forbidden:
                     OnForbiddenResponse?.Invoke(null, EventArgs.Empty);
                     return;
+                case ErrorResponse.ErrorInternal:
                 case ErrorResponse.ErrorUnknown:
+                    if (OnInternalErrorResponse != null)
+                        new UIAlertView("Internal server error", "Please try again later.", null, "OK", null).Show();
+                    OnInternalErrorResponse?.Invoke(null, EventArgs.Empty);
                     return;
             }
         }

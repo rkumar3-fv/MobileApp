@@ -69,8 +69,7 @@ namespace FreedomVoice.iOS.ViewControllers
                     DetailTextLabel = { Text = item.DetailedText, Font = UIFont.SystemFontOfSize(9, UIFontWeight.Regular) },
                     CornerRadius = RoundedButton.MaxValue,
                     BorderWidth = 1,
-                    ContentColor = UIColor.Black,
-                    ContentAnimateToColor = Theme.KeypadBorderColor
+                    ContentColor = UIColor.Black
                 };
 
                 if (!string.IsNullOrEmpty(item.Image))
@@ -80,7 +79,6 @@ namespace FreedomVoice.iOS.ViewControllers
                 }
 
                 button.TouchUpInside += OnKeypadButtonTouchUpInside;
-                button.AddGestureRecognizer(new UITapGestureRecognizer(() => OnKeypadButtonDoubleTouch(button)) { NumberOfTapsRequired = 2, DelaysTouchesBegan = true });
 
                 if (item.DetailedText == KeypadDial.Plus)
                     button.AddGestureRecognizer(new UILongPressGestureRecognizer(PlusButtonLongPressed));
@@ -111,16 +109,12 @@ namespace FreedomVoice.iOS.ViewControllers
             base.ViewWillAppear(animated);
         }
 
-        private void OnKeypadButtonDoubleTouch(RoundedButton button)
-        {
-            PhoneNumber += button.TextLabel.Text + button.TextLabel.Text;
-            _phoneLabel.Text = DataFormatUtils.ToPhoneNumber(PhoneNumber);
-            ChangeClearPhoneButtonVisibility();
-        }
-
         private void OnKeypadButtonTouchUpInside(object sender, EventArgs args)
         {
-            PhoneNumber += (sender as RoundedButton)?.TextLabel.Text;
+            var button = sender as RoundedButton;
+            if (button == null) return;
+
+            PhoneNumber += button.TextLabel.Text;
             _phoneLabel.Text = DataFormatUtils.ToPhoneNumber(PhoneNumber);
             ChangeClearPhoneButtonVisibility();
         }

@@ -9,7 +9,7 @@ namespace FreedomVoice.iOS.Services.Implementations
         public async Task<BaseResponse> ExecuteRequest(string systemNumber, int mailboxNumber)
         {
             var asyncRes = await ApiHelper.GetFoldersWithCount(systemNumber, mailboxNumber);
-            var errorResponse = CheckErrorResponse(asyncRes.Code);
+            var errorResponse = CheckErrorResponse(asyncRes);
             if (errorResponse != null)
                 return errorResponse;
 

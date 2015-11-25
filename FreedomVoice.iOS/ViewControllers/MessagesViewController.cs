@@ -21,9 +21,6 @@ namespace FreedomVoice.iOS.ViewControllers
         public FolderWithCount SelectedFolder { private get; set; }
 	    private List<Message> MessagesList { get; set; }
 
-	    private int MessagesCount => MessagesList.Count;
-
-        private UILabel _noMessagesLabel;
 	    private UITableView _messagesTableView;
 	    private MessagesSource _messagesSource;
 
@@ -42,7 +39,16 @@ namespace FreedomVoice.iOS.ViewControllers
         public override async void ViewDidLoad()
         {
             var headerHeight = Theme.StatusBarHeight + NavigationController.NavigationBarHeight();
-            var insets = new UIEdgeInsets(0, 0, headerHeight + Theme.TabBarHeight, 0);
+            var insets = new UIEdgeInsets(0, 0, Theme.TabBarHeight, 0);
+
+            var noMessagesLabel = new UILabel
+            {
+                Frame = new CGRect(15, Theme.ScreenBounds.Height / 2 - headerHeight - 15, Theme.ScreenBounds.Width - 30, 30),
+                Text = "No messages",
+                Font = UIFont.SystemFontOfSize(28),
+                TextColor = Theme.GrayColor,
+                TextAlignment = UITextAlignment.Center
+            };
 
             _messagesSource = new MessagesSource(MessagesList, SelectedAccount, NavigationController);
             _messagesSource.OnRowCallbackClick += OnSourceRowCallbackClick;
@@ -50,7 +56,7 @@ namespace FreedomVoice.iOS.ViewControllers
 
             _messagesTableView = new UITableView
             {
-                Frame = Theme.ScreenBounds,
+                Frame = new CGRect(0, 0, Theme.ScreenBounds.Width, Theme.ScreenBounds.Height - headerHeight),
                 TableFooterView = new UIView(CGRect.Empty),
                 Source = _messagesSource,
                 ContentInset = insets,
@@ -63,22 +69,9 @@ namespace FreedomVoice.iOS.ViewControllers
 
             MessagesList = messagesViewModel.MessagesList;
             _messagesSource.Messages = MessagesList;
+
+            _messagesTableView.BackgroundView = noMessagesLabel;
             _messagesTableView.ReloadData();
-
-            var frame = new CGRect(15, 0, Theme.ScreenBounds.Width - 30, 30);
-            _noMessagesLabel = new UILabel(frame)
-            {
-                Text = "No messages",
-                Font = UIFont.SystemFontOfSize(28),
-                TextColor = Theme.GrayColor,
-                TextAlignment = UITextAlignment.Center,
-                Center = new CGPoint(View.Center.X, View.Center.Y - headerHeight),
-                Hidden = true
-            };
-
-            View.Add(_noMessagesLabel);
-
-            CheckIfTableEmpty(MessagesCount);
 
             base.ViewDidLoad();
         }
@@ -121,9 +114,9 @@ namespace FreedomVoice.iOS.ViewControllers
             _updateTimer = NSTimer.CreateRepeatingScheduledTimer(UserDefault.PoolingInterval, delegate { UpdateMessageTable(); });
 
             base.ViewWillAppear(animated);
-	    }
+        }
 
-        public override void ViewDidDisappear(bool animated)
+	    public override void ViewDidDisappear(bool animated)
         {
             AppDelegate.ResetAudioPlayer();
             _updateTimer.Invalidate();
@@ -131,6 +124,15 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private async void UpdateMessageTable()
         {
+            var foldersViewModel = new FoldersViewModel(SelectedAccount.PhoneNumber, SelectedExtension.ExtensionNumber, NavigationController);
+            await foldersViewModel.GetFoldersListAsync(true);
+
+            var currentFolder = foldersViewModel.FoldersList.FirstOrDefault(f => f.DisplayName == SelectedFolder.DisplayName);
+            if (currentFolder == null)
+                return;
+
+            SelectedFolder = currentFolder;
+
             var messagesViewModel = new MessagesViewModel(SelectedAccount.PhoneNumber, SelectedExtension.ExtensionNumber, SelectedFolder.DisplayName, NavigationController);
             await messagesViewModel.GetMessagesListAsync(SelectedFolder.MessageCount, true);
 
@@ -151,20 +153,6 @@ namespace FreedomVoice.iOS.ViewControllers
             _messagesSource.SelectedRowIndexPath = _messagesSource.DeletedRowIndexPath = selectedMessageIndex != -1 ? NSIndexPath.FromRowSection(selectedMessageIndex, 0) : null;
 
             _messagesTableView.ReloadData();
-        }
-
-        private void CheckIfTableEmpty(int messagesCount)
-        {
-            if (messagesCount == 0)
-            {
-                _noMessagesLabel.Hidden = false;
-                _messagesTableView.SeparatorStyle = UITableViewCellSeparatorStyle.None;
-            }
-            else
-            {
-                _noMessagesLabel.Hidden = true;
-                _messagesTableView.SeparatorStyle = UITableViewCellSeparatorStyle.SingleLine;
-            }
         }
     }
 }

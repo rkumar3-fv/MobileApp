@@ -82,6 +82,8 @@
     <CodesignKey>iPhone Distribution: WaveAccess (8WX23BUD23)</CodesignKey>
     <CodesignResourceRules />
     <CodesignExtraArgs />
+    <IpaIncludeArtwork>True</IpaIncludeArtwork>
+    <IpaPackageName>FreedomVoice-1.0.6</IpaPackageName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|iPhone' ">
     <DebugType>none</DebugType>

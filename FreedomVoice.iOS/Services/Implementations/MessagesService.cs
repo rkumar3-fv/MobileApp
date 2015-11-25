@@ -19,7 +19,7 @@ namespace FreedomVoice.iOS.Services.Implementations
             for (int i = 0; i < pagesTotal; i++)
             {
                 var asyncRes = await ApiHelper.GetMesages(systemNumber, mailboxNumber, folderName, PageSize, i + 1, false);
-                var errorResponse = CheckErrorResponse(asyncRes.Code);
+                var errorResponse = CheckErrorResponse(asyncRes);
                 if (errorResponse != null)
                     return errorResponse;
 

@@ -73,13 +73,16 @@ namespace FreedomVoice.iOS.ViewControllers
         public override void ViewWillAppear(bool animated)
         {
             NavigationController.NavigationBar.Hidden = true;
+            View.UserInteractionEnabled = true;
+            _loginButton.Hidden = false;
+
             base.ViewWillAppear(animated);
         }
 
 	    public override void ViewWillDisappear(bool animated)
 	    {
-            base.ViewWillDisappear(animated);
             NavigationController.NavigationBar.Hidden = false;
+            base.ViewWillDisappear(animated);
         }
 
         public override void TouchesBegan(NSSet touches, UIEvent evt)
@@ -143,28 +146,45 @@ namespace FreedomVoice.iOS.ViewControllers
                 return;
             }
 
-	        View.UserInteractionEnabled = false;
-            _loginButton.Hidden = true;
+	        DisableUserInteraction();
 
             await _loginViewModel.LoginAsync();
         }
 
         private void OnLoginFailed(object sender, EventArgs args)
         {
-            View.UserInteractionEnabled = true;
-
             _validationFailedLabel.Text = "Incorrect email or password.";
             _validationFailedLabel.Hidden = false;
-            _loginButton.Hidden = false;
+
+            EnableUserInteraction();
         }
 
         private void OnLoginBadRequest(object sender, EventArgs args)
         {
-            View.UserInteractionEnabled = true;
-
             _validationFailedLabel.Text = "Server is unavailable.";
             _validationFailedLabel.Hidden = false;
+
+            EnableUserInteraction();
+        }
+
+        private void OnLoginUnknownError(object sender, EventArgs args)
+        {
+            _validationFailedLabel.Text = "Internal server error.";
+            _validationFailedLabel.Hidden = false;
+
+            EnableUserInteraction();
+        }
+
+	    private void EnableUserInteraction()
+	    {
+            View.UserInteractionEnabled = true;
             _loginButton.Hidden = false;
+        }
+
+        private void DisableUserInteraction()
+        {
+            View.UserInteractionEnabled = false;
+            _loginButton.Hidden = true;
         }
 
         protected override void Dispose(bool disposing)
@@ -195,6 +215,7 @@ namespace FreedomVoice.iOS.ViewControllers
             _loginViewModel.OnSuccessResponse -= OnLoginSuccess;
             _loginViewModel.OnUnauthorizedResponse -= OnLoginFailed;
             _loginViewModel.OnBadRequestResponse -= OnLoginBadRequest;
+            _loginViewModel.OnInternalErrorResponse -= OnLoginUnknownError;
         }
 
         private void SubscribeToEvents()
@@ -202,6 +223,7 @@ namespace FreedomVoice.iOS.ViewControllers
             _loginViewModel.OnSuccessResponse += OnLoginSuccess;
             _loginViewModel.OnUnauthorizedResponse += OnLoginFailed;
             _loginViewModel.OnBadRequestResponse += OnLoginBadRequest;
+            _loginViewModel.OnInternalErrorResponse += OnLoginUnknownError;
         }
 
         #endregion

@@ -4,6 +4,7 @@ using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.Services;
 using FreedomVoice.iOS.Services.Responses;
 using FreedomVoice.iOS.Utilities;
+using FreedomVoice.iOS.Utilities.Helpers;
 using UIKit;
 
 namespace FreedomVoice.iOS.ViewModels
@@ -11,6 +12,8 @@ namespace FreedomVoice.iOS.ViewModels
     public class ExtensionsViewModel : BaseViewModel
     {
         private readonly IExtensionsService _service;
+        private readonly UIViewController _viewController;
+
         private readonly Account _selectedAccount;
 
         public List<ExtensionWithCount> ExtensionsList { get; private set; }
@@ -23,9 +26,11 @@ namespace FreedomVoice.iOS.ViewModels
             ExtensionsList = new List<ExtensionWithCount>();
 
             _service = ServiceContainer.Resolve<IExtensionsService>();
-            _selectedAccount = selectedAccount;
 
             ViewController = viewController;
+            _viewController = viewController;
+
+            _selectedAccount = selectedAccount;
         }
 
         /// <summary>
@@ -34,6 +39,12 @@ namespace FreedomVoice.iOS.ViewModels
         /// <returns></returns>
         public async Task GetExtensionsListAsync()
         {
+            if (PhoneCapability.NetworkIsUnreachable)
+            {
+                Appearance.ShowOkAlertWithMessage(_viewController, Appearance.AlertMessageType.NetworkUnreachable);
+                return;
+            }
+
             IsBusy = true;
 
             await RenewCookieIfNeeded();

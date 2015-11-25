@@ -39,15 +39,16 @@ namespace FreedomVoice.iOS.ViewModels
         /// Performs an asynchronous Folders With Count request
         /// </summary>
         /// <returns></returns>
-        public async Task GetFoldersListAsync()
+        public async Task GetFoldersListAsync(bool silent = false)
         {
-            if (PhoneCapability.NetworkIsUnreachable)
+            if (PhoneCapability.NetworkIsUnreachable && !silent)
             {
                 Appearance.ShowOkAlertWithMessage(_viewController, Appearance.AlertMessageType.NetworkUnreachable);
                 return;
             }
 
-            IsBusy = true;
+            if (!silent)
+                IsBusy = true;
 
             await RenewCookieIfNeeded();
 
@@ -61,7 +62,8 @@ namespace FreedomVoice.iOS.ViewModels
                     FoldersList = data.FoldersWithCount;
             }
 
-            IsBusy = false;
+            if (!silent)
+                IsBusy = false;
         }
     }
 }
