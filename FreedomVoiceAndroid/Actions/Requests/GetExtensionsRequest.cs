@@ -39,7 +39,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
             dest.WriteString(AccountName);
         }
 
-        public async override Task<BaseResponse> ExecuteRequest()
+        public override async Task<BaseResponse> ExecuteRequest()
         {
 #if DEBUG
             Log.Debug(App.AppPackage, $"{GetType().Name} executes request");
@@ -48,7 +48,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
 #if DEBUG
             Log.Debug(App.AppPackage, $"{GetType().Name} GetResponse {(asyncRes == null ? "NULL" : "NOT NULL")}");
 #endif
-            if (asyncRes == null) return new ErrorResponse(Id, ErrorResponse.ErrorConnection);
+            if (asyncRes == null) return new ErrorResponse(Id, ErrorResponse.ErrorInternal);
             var errorResponse = CheckErrorResponse(Id, asyncRes.Code);
             if (errorResponse != null)
                 return errorResponse;

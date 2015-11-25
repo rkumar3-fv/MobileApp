@@ -32,7 +32,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
 #if DEBUG
             Log.Debug(App.AppPackage, $"{GetType().Name} GetResponse {(asyncRes == null ? "NULL" : "NOT NULL")}");
 #endif
-            if (asyncRes == null) return new ErrorResponse(Id, ErrorResponse.ErrorConnection);
+            if (asyncRes == null) return new ErrorResponse(Id, ErrorResponse.ErrorInternal);
             var errorResponse = CheckErrorResponse(Id, asyncRes.Code);
             if (errorResponse != null)
                 return errorResponse;
