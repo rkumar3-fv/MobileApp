@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Net;
 using Android.App;
 using Android.Content;
@@ -9,7 +8,8 @@ using Android.Runtime;
 using Android.Util;
 #endif
 using com.FreedomVoice.MobileApp.Android.Helpers;
-using Xamarin;
+using FreedomVoice.Core.Utils;
+using Java.Lang;
 using Process = System.Diagnostics.Process;
 
 namespace com.FreedomVoice.MobileApp.Android
@@ -49,6 +49,7 @@ namespace com.FreedomVoice.MobileApp.Android
         public override void OnCreate()
         {
             base.OnCreate();
+            JavaSystem.SetProperty("http.keepAlive", "true");
             _helper = new AppHelper(this);
             ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
             if (!_helper.IsInsigthsOn)
@@ -66,13 +67,7 @@ namespace com.FreedomVoice.MobileApp.Android
 #if DEBUG
             Log.Debug(AppPackage, $"LOW MEMORY: available  {availableMegs}Mb / {totalMegs}");
 #endif
-            if (_helper.IsInsigthsOn)
-            {
-                var val = $"{DateTime.Now}: available {availableMegs}Mb / {totalMegs}";
-                var dict = new Dictionary<string, string> {{"LOW MEMORY", val}};
-                var version = PackageManager.GetPackageInfo(AppPackage, 0).VersionName;
-                Insights.Track($"{AppPackage} v.{version}", dict);
-            }
+            ApplicationHelper.ReportEvent(SpecialEvent.LowMemory, DataFormatUtils.ToFullFormattedDate(DateTime.Now), $"{availableMegs}Mb / {totalMegs}");
         }
 
         protected void HandleUnhandledException(object sender, UnhandledExceptionEventArgs args)

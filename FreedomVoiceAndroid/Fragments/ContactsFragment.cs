@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Android.Database;
-using Android.Net;
 using Android.OS;
 using Android.Provider;
 using Android.Runtime;
@@ -17,6 +16,7 @@ using com.FreedomVoice.MobileApp.Android.CustomControls;
 using com.FreedomVoice.MobileApp.Android.Dialogs;
 using com.FreedomVoice.MobileApp.Android.Entities;
 using FreedomVoice.Core.Utils;
+using Uri = Android.Net.Uri;
 
 namespace com.FreedomVoice.MobileApp.Android.Fragments
 {
@@ -60,9 +60,17 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                 ContactsContract.Contacts.InterfaceConsts.DisplayName, ContactsContract.Contacts.InterfaceConsts.InVisibleGroup);
             var sortOrder = $"{ContactsContract.Contacts.InterfaceConsts.DisplayName} COLLATE LOCALIZED ASC";
             var loader = new CursorLoader(ContentActivity, uri, projection, selection, null, sortOrder);
-            var cursor = loader.LoadInBackground().JavaCast<ICursor>();
+            ICursor cursor;
+            try
+            {
+                cursor = loader.LoadInBackground().JavaCast<ICursor>();
+            }
+            catch (Java.Lang.RuntimeException)
+            {
+                cursor = null;
+            }
             _adapter.SwapCursor(cursor);
-            if (cursor.Count > 0)
+            if ((cursor != null)&&(cursor.Count > 0))
             {
                 if (_noResTextView.Visibility == ViewStates.Visible)
                     _noResTextView.Visibility = ViewStates.Invisible;
@@ -199,16 +207,27 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             var selection = string.Format("(({0} IS NOT NULL) AND ({0} != '') AND ({1} = '1') AND ({0} like '%{2}%'))",
                 ContactsContract.Contacts.InterfaceConsts.DisplayName, ContactsContract.Contacts.InterfaceConsts.InVisibleGroup, query);
             var loader = new CursorLoader(ContentActivity, uri, projection, selection, null, sortOrder);
-            var namesCursor = loader.LoadInBackground().JavaCast<ICursor>();
+            ICursor namesCursor;
+            try
+            {
+                namesCursor = loader.LoadInBackground().JavaCast<ICursor>();
+            }
+            catch (Java.Lang.RuntimeException)
+            {
+                namesCursor = null;
+            }
 
             if (Regex.IsMatch(query, @"^[0-9+()\-\s]+$"))
             {
                 var iDs = new List<string>();
-                while (namesCursor.MoveToNext())
+                if ((namesCursor != null) && (namesCursor.Count > 0))
                 {
-                    var id = namesCursor.GetString(namesCursor.GetColumnIndex(projection[0]));
-                    if (!string.IsNullOrEmpty(id))
-                        iDs.Add(id);
+                    while (namesCursor.MoveToNext())
+                    {
+                        var id = namesCursor.GetString(namesCursor.GetColumnIndex(projection[0]));
+                        if (!string.IsNullOrEmpty(id))
+                            iDs.Add(id);
+                    }
                 }
 
                 var uriPhones = Uri.Parse($"content://com.android.contacts/data/phones/filter/*{DataFormatUtils.NormalizePhone(query)}*");
@@ -222,12 +241,19 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                     selectionPhones = string.Format("(({0} IS NOT NULL) AND ({0} != '') AND ({1} = '1') AND ({2} NOT IN ('{3}')))",
                 ContactsContract.Contacts.InterfaceConsts.DisplayName, ContactsContract.Contacts.InterfaceConsts.InVisibleGroup, "contact_id", string.Join("', '", iDs.ToArray()));
                 var loaderPhones = new CursorLoader(ContentActivity, uriPhones, projectionPhones, selectionPhones, null, sortOrder);
-                phonesCursor = loaderPhones.LoadInBackground().JavaCast<ICursor>();
+                try
+                {
+                    phonesCursor = loaderPhones.LoadInBackground().JavaCast<ICursor>();
+                }
+                catch (Java.Lang.RuntimeException)
+                {
+                    phonesCursor = null;
+                }
             }
 
             if (phonesCursor == null)
                 return namesCursor;
-            if (namesCursor.Count == 0)
+            if ((namesCursor == null)||(namesCursor.Count == 0))
                 return phonesCursor;
             return new MergeCursor(new[] {phonesCursor, namesCursor});
         }

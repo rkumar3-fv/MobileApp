@@ -188,12 +188,15 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                 if (_progressLayout.Visibility == ViewStates.Visible)
                     _progressLayout.Visibility = ViewStates.Gone;
             }
-            if (Helper.SelectedFolder != -1)
-                Helper.ForceLoadMessages();
-            else if (Helper.SelectedExtension != -1)
-                Helper.ForceLoadFolders();
-            else
-                Helper.ForceLoadExtensions();
+            if (Helper.SelectedAccount != null)
+            {
+                if (Helper.SelectedFolder != -1)
+                    Helper.ForceLoadMessages();
+                else if (Helper.SelectedExtension != -1)
+                    Helper.ForceLoadFolders();
+                else
+                    Helper.ForceLoadExtensions();
+            }
         }
 
         public override void OnPause()
