@@ -19,7 +19,6 @@ using com.FreedomVoice.MobileApp.Android.Entities;
 using com.FreedomVoice.MobileApp.Android.Services;
 using com.FreedomVoice.MobileApp.Android.Storage;
 using FreedomVoice.Core;
-using Xamarin;
 using Java.Util.Concurrent.Atomic;
 using Pair = Android.Support.V4.Util.Pair;
 using Uri = Android.Net.Uri;
@@ -141,6 +140,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 
         private readonly AtomicLong _idCounter;
         private readonly AppPreferencesHelper _preferencesHelper;
+        private long _storageTime;
 
         /// <summary>
         /// Set actions helper for current context
@@ -168,6 +168,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             var telephony = _app.GetSystemService(Context.TelephonyService).JavaCast<TelephonyManager>();
             if (!IsFirstRun)
             {
+                var watcherLoading = Stopwatch.StartNew();
                 var container = _preferencesHelper.GetCookieContainer();
                 var pair = _preferencesHelper.GetLoginPass(telephony!=null ? telephony.DeviceId : "00");
                 if (pair != null)
@@ -177,6 +178,8 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                 }
                 _accPair = _preferencesHelper.GetAccCaller();
                 _pollingInterval = _preferencesHelper.GetPollingInterval();
+                watcherLoading.Stop();
+                _storageTime = watcherLoading.ElapsedMilliseconds;
                 if (container != null)
                 {
                     ApiHelper.CookieContainer = container;
@@ -303,7 +306,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         public long GetPolling()
         {
             var requestId = RequestId;
-            if (!CheckRequestAbility(requestId)) return requestId;
+            if (!CheckRequestAbility(requestId)) return requestId;        
             var restoreRequest = new GetPollingRequest(requestId);
             foreach (var request in _waitingRequestArray.Where(response => response.Value is GetPollingRequest))
             {
@@ -714,6 +717,11 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                     var requestName = _waitingRequestArray[response.RequestId].GetType().Name;
                     var responseName = response.GetType().Name;
                     _app.ApplicationHelper.ReportTime(TimingEvent.Request, requestName, responseName, time);
+                    if (_storageTime != 0)
+                    {
+                        _app.ApplicationHelper.ReportTime(TimingEvent.LongAction, "LOADING FROM STORAGE", "", _storageTime);
+                        _storageTime = 0;
+                    }
                 }
                 ResponseResultActionExecutor(response);
             }
@@ -750,14 +758,6 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 #endif
                             if (!_waitingRequestArray.ContainsKey(response.RequestId)) break;
                             var req = _waitingRequestArray[response.RequestId].GetType().Name;
-                            if (_app.ApplicationHelper.IsInsigthsOn)
-                            {
-                                
-                                var val = $"{DateTime.Now}: CONNECTION LOST - {InetReport()}";
-                                var dict = new Dictionary<string, string> {{req, val}};
-                                var version = _app.PackageManager.GetPackageInfo(App.AppPackage, 0).VersionName;
-                                Insights.Track($"{App.AppPackage} v.{version}", dict);
-                            }
                             if ((req == "GetExtensionsRequest")||(req == "GetFoldersRequest")||(req == "GetMessagesRequest"))
                                 HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.MsgUpdateFailed }));
                             else if (req == "GetPollingRequest")
@@ -790,14 +790,6 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 #if DEBUG
                                 Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} failed: BAD LOGIN FORMAT");
 #endif
-                                if (_app.ApplicationHelper.IsInsigthsOn)
-                                {
-                                    var keyB = _waitingRequestArray[response.RequestId].GetType().Name;
-                                    var valB = $"{DateTime.Now}: BAD REQUEST - {InetReport()}";
-                                    var dictB = new Dictionary<string, string> {{keyB, valB}};
-                                    var version = _app.PackageManager.GetPackageInfo(App.AppPackage, 0).VersionName;
-                                    Insights.Track($"{App.AppPackage} v.{version}", dictB);
-                                }
                                 HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new []{ActionsHelperEventArgs.AuthLoginError, ActionsHelperEventArgs.RestoreError}));
                             }
                             // Call reservation bad request
@@ -1156,17 +1148,6 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             if (keyForRemove != -1)
                 RecentsDictionary.Remove(keyForRemove);
             RecentsDictionary.Add(response.RequestId, recent);
-        }
-
-        private string InetReport()
-        {
-            var conMgr = _app?.GetSystemService(Context.ConnectivityService).JavaCast<ConnectivityManager>();
-            var info = conMgr?.ActiveNetworkInfo;
-            var isAvailable = info?.IsAvailable ?? false;
-            var isConnected = info?.IsConnected ?? false;
-            var name = info?.TypeName ?? "no name";
-            var subname = info?.SubtypeName ?? "no subname";
-            return $"{name} ({subname}) {((isConnected)?("connected"):("not connected"))} & {((isAvailable) ? ("available") : ("unavailable"))}";
         }
     }
 }

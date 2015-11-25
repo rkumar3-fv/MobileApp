@@ -21,6 +21,11 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         LongAction
     }
 
+    public enum SpecialEvent
+    {
+        LowMemory
+    }
+
     /// <summary>
     /// Main application helper
     /// </summary>
@@ -112,12 +117,14 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 
 #region Analytics
         private bool _isInsightsOn;
+        private const int GaUpdatePeriod = 180;
         private const string GaKey = "UA-587407-95";
         private const string InsightsKey = "d8bf081e25b6c01b8a852a950d1f7b446d33662d";
         private const string RequestKey = "API_REQUEST";
         private const string LoadingKey = "LOADING_FILE";
         private const string ActionKey = "LONG_ACTION";
         private const string OtherKey = "OTHER";
+        private const string LowMemoryKey = "LOW_MEMORY";
 
         /// <summary>
         /// Check Google Analytics state
@@ -144,9 +151,11 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             if (CheckInternetPermissions() && CheckWakeLockPermission())
             {
                 var analytics = GoogleAnalytics.GetInstance(_context);
+                analytics.SetLocalDispatchPeriod(GaUpdatePeriod);
                 AnalyticsTracker = analytics.NewTracker(GaKey);
                 AnalyticsTracker.EnableAutoActivityTracking(false);
                 AnalyticsTracker.EnableExceptionReporting(true);
+                AnalyticsTracker.EnableAdvertisingIdCollection(false);
                 var pInfo = _context.PackageManager.GetPackageInfo(App.AppPackage, 0);
                 AnalyticsTracker.SetAppName(_context.GetString(Resource.String.ApplicationName));
                 AnalyticsTracker.SetAppVersion($"{pInfo.VersionCode} ({pInfo.VersionName})");
@@ -159,6 +168,13 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             return false;
         }
 
+        /// <summary>
+        /// Time reporting via GA
+        /// </summary>
+        /// <param name="type">action type</param>
+        /// <param name="name">action name</param>
+        /// <param name="result">action result</param>
+        /// <param name="time">action duration</param>
         public bool ReportTime(TimingEvent type, string name, string result, long time)
         {
             if (!IsGoogleAnalyticsOn) return false;
@@ -186,6 +202,26 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             return true;
         }
 
+        public bool ReportEvent(SpecialEvent type, string name, string result)
+        {
+            if (!IsGoogleAnalyticsOn) return false;
+            if (AnalyticsTracker == null) return false;
+            var eventTracker = new HitBuilders.EventBuilder();
+            switch (type)
+            {
+                case SpecialEvent.LowMemory:
+                    eventTracker.SetCategory(LowMemoryKey);
+                    break;
+                default:
+                    eventTracker.SetCategory(OtherKey);
+                    break;
+            }
+            eventTracker.SetAction(name);
+            eventTracker.SetLabel(result);
+            AnalyticsTracker.Send(eventTracker.Build());
+            return true;
+        }
+
         /// <summary>
         /// Initialize Xamarin Insights tracking
         /// </summary>
@@ -208,10 +244,9 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             return true;
         }
 
-        #endregion
+#endregion
 
-        #region Device State
-
+#region Device State
         private string _phoneNumber;
 
         /// <summary>
