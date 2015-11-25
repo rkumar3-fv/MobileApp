@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Android.App;
 using Android.Content;
-using Android.Net;
 using Android.OS;
 using Android.Runtime;
 using Android.Telephony;
@@ -1027,14 +1026,12 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                 // Get folders response
                 case "GetFoldersResponse":
                     var foldersResponse = (GetFoldersResponse)response;
-                    if ((SelectedExtension != -1)&&(!ExtensionsList[SelectedExtension].Folders.Equals(foldersResponse.FoldersList)))
+                    if ((SelectedExtension != -1)&&!ExtensionsList[SelectedExtension].Folders.Equals(foldersResponse.FoldersList)&&(SelectedMessage == -1)&&(SelectedFolder == -1))
                     {
                         ExtensionsList[SelectedExtension].Folders = foldersResponse.FoldersList;
-                        SelectedFolder = -1;
-                        SelectedMessage = -1;
+                        HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.MsgUpdated }));
                     }
                     _waitingRequestArray.Remove(response.RequestId);
-                    HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.MsgUpdated }));
                     break;
 
                 // Get messages response

@@ -263,7 +263,6 @@
     <Compile Include="Services\IAppServiceResultReceiver.cs" />
     <Compile Include="Services\MediaService.cs" />
     <Compile Include="Services\MediaServiceBinder.cs" />
-    <Compile Include="Storage\AppDbHelper.cs" />
     <Compile Include="Storage\AppPreferencesHelper.cs" />
     <Compile Include="Utils\ContactsHelper.cs" />
     <Compile Include="Utils\ContactsObserver.cs" />

@@ -48,11 +48,6 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         /// </summary>
         public AppPreferencesHelper PreferencesHelper { get; }
 
-        /// <summary>
-        /// App DB helper
-        /// </summary>
-        public AppDbHelper DbHelper { get; }
-
 #region Permissions
         public const string MakeCallsPermission = Manifest.Permission.CallPhone;
         public const string ReadContactsPermission = Manifest.Permission.ReadContacts;
@@ -375,7 +370,6 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             ActionsHelper = new ActionsHelper(App.GetApplication(context));
             AttachmentsHelper = new AttachmentsHelper(context);
             PreferencesHelper = AppPreferencesHelper.Instance(_context);
-            DbHelper = new AppDbHelper(_context);
         }
     }
 }
