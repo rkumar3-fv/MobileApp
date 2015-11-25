@@ -42,7 +42,15 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
                 string[] projection = { ContactsContract.Contacts.InterfaceConsts.Id, ContactsContract.CommonDataKinds.Phone.Number, "data2" };
                 var loader = new CursorLoader(_context, ContactsContract.CommonDataKinds.Phone.ContentUri, projection,
                     $"contact_id={id}", null, null);
-                var cursor = loader.LoadInBackground().JavaCast<ICursor>();
+                ICursor cursor;
+                try
+                {
+                    cursor = loader.LoadInBackground().JavaCast<ICursor>();
+                }
+                catch (Java.Lang.RuntimeException)
+                {
+                    cursor = null;
+                }
                 if (cursor != null)
                 {
                     var phonesDict = new Dictionary<string, Phone>();
