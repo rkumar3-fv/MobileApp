@@ -14,6 +14,7 @@ using FreedomVoice.iOS.ViewModels;
 using FreedomVoice.iOS.Views;
 using UIKit;
 using GoogleAnalytics.iOS;
+using Xamarin;
 using Xamarin.Contacts;
 
 namespace FreedomVoice.iOS
@@ -61,6 +62,8 @@ namespace FreedomVoice.iOS
             _observer = NSNotificationCenter.DefaultCenter.AddObserver((NSString)"NSUserDefaultsDidChangeNotification", DefaultsChanged);
 
             InitializeGoogleAnalytics();
+            Insights.Initialize("d3d8eb1b7ea6654b812ec9a8dea5fb8224e3a2b5");
+
             Theme.Apply();
 
             if (UserDefault.IsAuthenticated)
