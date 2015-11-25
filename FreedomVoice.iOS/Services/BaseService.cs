@@ -8,7 +8,7 @@ namespace FreedomVoice.iOS.Services
     {
         protected static ErrorResponse CheckErrorResponse<T>(BaseResult<T> baseResult, bool checkOnNullResult = true)
         {
-            if (checkOnNullResult && baseResult.Result == null)
+            if (baseResult.Code == ErrorCodes.Ok && checkOnNullResult && baseResult.Result == null)
                 return new ErrorResponse(ErrorResponse.ErrorInternal);
 
             switch (baseResult.Code)
