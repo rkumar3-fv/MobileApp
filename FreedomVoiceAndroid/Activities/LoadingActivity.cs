@@ -1,8 +1,8 @@
+using System.Diagnostics;
 using System.Timers;
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
-using Android.Gms.Analytics;
 using Android.OS;
 using Android.Views;
 using com.FreedomVoice.MobileApp.Android.Helpers;
@@ -21,6 +21,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
     public class LoadingActivity : BaseActivity
     {
         private Timer _timer;
+        private Stopwatch _watcher;
 
         protected override void OnCreate(Bundle bundle)
         {
@@ -33,6 +34,22 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             SetContentView(Resource.Layout.act_loading);
             _timer = new Timer { Interval = 7000, AutoReset = false };
             _timer.Elapsed += TimerOnElapsed;
+        }
+
+        protected override void OnStart()
+        {
+            base.OnStart();
+            _watcher = Stopwatch.StartNew();
+        }
+
+        protected override void OnStop()
+        {
+            base.OnStop();
+            if ((_watcher != null)&&(_watcher.IsRunning))
+            {
+                _watcher.Stop();
+                Appl.ApplicationHelper.ReportTime(TimingEvent.LongAction, "LoadingScreen", "", _watcher.ElapsedMilliseconds);
+            }
         }
 
         protected override void OnResume()
@@ -49,11 +66,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 if ((Helper.SelectedAccount.PresentationNumbers == null) ||
                     (string.IsNullOrEmpty(Helper.SelectedAccount.PresentationNumber)))
                     Helper.GetPresentationNumbers();
-            }
-            else
-            {
-                if (Appl.ApplicationHelper.InitGa())
-                    Appl.ApplicationHelper.AnalyticsTracker.Send(new HitBuilders.ScreenViewBuilder().Build());
             }
             if (!Appl.ApplicationHelper.IsInternetConnected() || Appl.ApplicationHelper.IsAirplaneModeOn())
             {

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -12,6 +13,7 @@ using Android.Support.V4.App;
 using Android.Util;
 #endif
 using com.FreedomVoice.MobileApp.Android.Actions.Reports;
+using com.FreedomVoice.MobileApp.Android.Helpers;
 using com.FreedomVoice.MobileApp.Android.Utils;
 using FreedomVoice.Core;
 using FreedomVoice.Core.Entities.Enums;
@@ -34,6 +36,7 @@ namespace com.FreedomVoice.MobileApp.Android.Services
         public const string ActionStartTag = "ActionTypeStart";
         public const string ActionStopTag = "ActionTypeStop";
 
+        private AppHelper _helper;
         private ResultReceiver _receiver;
         private bool _isInWork;
         private ConcurrentQueue<Message> _downloadingUrls;
@@ -47,6 +50,8 @@ namespace com.FreedomVoice.MobileApp.Android.Services
 #if DEBUG
             Log.Debug(App.AppPackage, "DOWNLOADING FOREGROUND SERVICE STARTED");
 #endif
+            var app = App.GetApplication(this);
+            _helper = app.ApplicationHelper;
             _downloadingUrls = new ConcurrentQueue<Message>();
             _cancellationTokens = new ConcurrentDictionary<int, CancellationTokenSource>();
 
@@ -137,11 +142,19 @@ namespace com.FreedomVoice.MobileApp.Android.Services
                 if (tokenSource != null)
                 {
                     var token = tokenSource.Token;
+                    var watcher = Stopwatch.StartNew();
                     Task.Run(async () => await LoadFile(item, token), token).ContinueWith(
                             t =>
                             {
                                 CancellationTokenSource removingToken;
                                 _cancellationTokens.TryRemove(item.Id, out removingToken);
+                                if (watcher != null)
+                                {
+                                    if (watcher.IsRunning)
+                                        watcher.Stop();
+                                    _helper.ReportTime(TimingEvent.FileLoading, item.MessageType == 0 ? "FAX" : "AUDIO", 
+                                        removingToken.IsCancellationRequested ? "LOADED" : "CANCELED", watcher.ElapsedMilliseconds);
+                                }
                                 _isInWork = false;
                                 StopForeground(true);
                                 Start();
@@ -184,7 +197,7 @@ namespace com.FreedomVoice.MobileApp.Android.Services
             if (res == null)
             {
 #if DEBUG
-                Log.Debug(App.AppPackage, $"MEDIA REQUEST FAILED : CONNECTION LOST");
+                Log.Debug(App.AppPackage, "MEDIA REQUEST FAILED : CONNECTION LOST");
 #endif
                 var failData = new Bundle();
                 failData.PutParcelable(AttachmentsServiceResultReceiver.ReceiverDataExtra, new ErrorReport(msg.Id, msg, ErrorCodes.ConnectionLost));

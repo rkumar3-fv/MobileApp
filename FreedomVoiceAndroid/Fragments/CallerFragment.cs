@@ -36,7 +36,11 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             else if (IdSpinner != null)
             {
                 var adapter = new CallerIdSpinnerAdapter(Context, Helper.SelectedAccount.PresentationNumbers);
-                IdSpinner.ItemSelected += (sender, args) => Helper.SetPresentationNumber(args.Position);
+                IdSpinner.ItemSelected += (sender, args) =>
+                {
+                    IdSpinner.SetSelection(args.Position);
+                    Helper.SetPresentationNumber(args.Position);
+                };
                 IdSpinner.Adapter = adapter;
             }
         }

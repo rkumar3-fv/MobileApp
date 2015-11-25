@@ -10,8 +10,8 @@ using Android.Telephony;
 #if DEBUG
 using Android.Util;
 using FreedomVoice.Core.Utils;
-using System.Diagnostics;
 #endif
+using System.Diagnostics;
 using com.FreedomVoice.MobileApp.Android.Actions.Requests;
 using com.FreedomVoice.MobileApp.Android.Actions.Responses;
 using com.FreedomVoice.MobileApp.Android.Activities;
@@ -35,15 +35,6 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 
     public class ActionsHelper : IAppServiceResultReceiver
     {
-#if DEBUG
-        private Stopwatch _watchAuth;
-        private Stopwatch _watchGetAccs;
-        private Stopwatch _watchGetCaller;
-        private Stopwatch _watchGetExt;
-        private Stopwatch _watchGetFolders;
-        private Stopwatch _watchGetMessages;
-        private Stopwatch _watchCall;
-#endif
         /// <summary>
         /// Is first app launch flag
         /// </summary>
@@ -139,9 +130,14 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         private readonly ComServiceResultReceiver _receiver;
 
         /// <summary>
-        /// Waiting requests queue
+        /// Waiting requests dictionary
         /// </summary>
         private readonly Dictionary<long, BaseRequest> _waitingRequestArray;
+
+        /// <summary>
+        /// Watchers dictionary
+        /// </summary>
+        private readonly Dictionary<long, Stopwatch> _watchersDictionary; 
 
         private readonly AtomicLong _idCounter;
         private readonly AppPreferencesHelper _preferencesHelper;
@@ -155,6 +151,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             _app = app;
             _idCounter = new AtomicLong();
             _waitingRequestArray = new Dictionary<long, BaseRequest>();
+            _watchersDictionary = new Dictionary<long, Stopwatch>();
             _receiver = new ComServiceResultReceiver(new Handler());
             _receiver.SetListener(this);
             _preferencesHelper = AppPreferencesHelper.Instance(_app);
@@ -247,7 +244,6 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             _userLogin = login;
             _userPassword = password;
 #if DEBUG
-            _watchAuth = Stopwatch.StartNew();
             Log.Debug(App.AppPackage, "HELPER REQUEST: Authorize ID="+requestId);
 #endif
             PrepareIntent(requestId, loginRequest);
@@ -339,7 +335,6 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                 return request.Key;
             }
 #if DEBUG
-            _watchGetAccs = Stopwatch.StartNew();
             Log.Debug(App.AppPackage, "HELPER REQUEST: GetAccounts ID=" + requestId);
 #endif
             PrepareIntent(requestId, getAccsRequest);  
@@ -363,7 +358,6 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                 return request.Key;
             }
 #if DEBUG
-            _watchGetCaller = Stopwatch.StartNew();
             Log.Debug(App.AppPackage, "HELPER REQUEST: GetPresentationNumbers ID=" + requestId);
 #endif
             PrepareIntent(requestId, getPresNumbersRequest);
@@ -398,7 +392,6 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                 return request.Key;
             }
 #if DEBUG
-            _watchGetExt = Stopwatch.StartNew();
             Log.Debug(App.AppPackage, "HELPER REQUEST: ForceLoadExtensions ID=" + requestId);
 #endif
             PrepareIntent(requestId, getExtRequest);
@@ -423,7 +416,6 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                 return request.Key;
             }
 #if DEBUG
-            _watchGetFolders = Stopwatch.StartNew();
             Log.Debug(App.AppPackage, "HELPER REQUEST: ForceLoadFolders ID=" + requestId);
 #endif
             PrepareIntent(requestId, getFoldersRequest);
@@ -448,7 +440,6 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                 return request.Key;
             }
 #if DEBUG
-            _watchGetMessages = Stopwatch.StartNew();
             Log.Debug(App.AppPackage, "HELPER REQUEST: ForceLoadMessages ID=" + requestId);
 #endif
             PrepareIntent(requestId, getMsgRequest);
@@ -496,7 +487,6 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                         return request.Key;
                     }
 #if DEBUG
-                    _watchCall = Stopwatch.StartNew();
                     Log.Debug(App.AppPackage, $"HELPER REQUEST: Call ID={requestId}");
                     Log.Debug(App.AppPackage,
                         $"Call from {reserveCallRequest.Account} (shows as {reserveCallRequest.PresentationNumber}) to {reserveCallRequest.DialingNumber} using SIM {reserveCallRequest.RealSimNumber}");
@@ -598,6 +588,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 #if DEBUG
             Log.Debug(App.AppPackage, "HELPER INTENT CREATED: request ID="+requestId);
 #endif
+            _watchersDictionary.Add(requestId, Stopwatch.StartNew());
             _app.StartService(intent);
         }
 
@@ -713,7 +704,19 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             if (resultCode != (int)Result.Ok) return;
             var response = resultData.GetParcelable(ComServiceResultReceiver.ReceiverDataExtra) as BaseResponse;
             if (response != null)
+            {
+                if (_watchersDictionary.ContainsKey(response.RequestId)&&(_watchersDictionary[response.RequestId] != null))
+                {
+                    if (_watchersDictionary[response.RequestId].IsRunning)
+                        _watchersDictionary[response.RequestId].Stop();
+                    var time = _watchersDictionary[response.RequestId].ElapsedMilliseconds;
+                    _watchersDictionary.Remove(response.RequestId);
+                    var requestName = _waitingRequestArray[response.RequestId].GetType().Name;
+                    var responseName = response.GetType().Name;
+                    _app.ApplicationHelper.ReportTime(TimingEvent.Request, requestName, responseName, time);
+                }
                 ResponseResultActionExecutor(response);
+            }
         }
 
         /// <summary>
@@ -727,7 +730,6 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             if (!_waitingRequestArray.ContainsKey(response.RequestId))
 #if DEBUG
             {
-
                 Log.Debug(App.AppPackage, $"HELPER EXECUTOR: NOT WAITED response for request with ID={response.RequestId}, Type is {type}");
                 return;
             }
@@ -853,10 +855,6 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 
                 // Login action response
                 case "LoginResponse":
-#if DEBUG
-                    _watchAuth.Stop();
-                    Log.Debug("DIAG", $"DIAGNOSTICS: Authorize time {_watchAuth.ElapsedMilliseconds} Ms");
-#endif
                     IsLoggedIn = true;
                     var telephony = _app.GetSystemService(Context.TelephonyService).JavaCast<TelephonyManager>();
                     _preferencesHelper.SaveCredentials(_userLogin, _userPassword, telephony != null ? telephony.DeviceId : "00");
@@ -906,15 +904,13 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 #if DEBUG
                     Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} successed: YOU ARE LOGGED OUT");
 #endif
+                    if (_waitingRequestArray.ContainsKey(response.RequestId))
+                        _waitingRequestArray.Remove(response.RequestId);
                     DoLogout(response.RequestId);
                     break;
 
                 // GetAccounts action response
                 case "GetAccountsResponse":
-#if DEBUG
-                    _watchGetAccs.Stop();
-                    Log.Debug("DIAG", $"DIAGNOSTICS: Get Accounts time {_watchGetAccs.ElapsedMilliseconds} Ms");
-#endif
                     var accsResponse = (GetAccountsResponse) response;
 #if DEBUG
                     Log.Debug(App.AppPackage, $"HELPER EXECUTOR: detect {accsResponse.AccountsList.Count} accounts");
@@ -969,10 +965,6 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 
                 // Get presentation numbers response
                 case "GetPresentationNumbersResponse":
-#if DEBUG
-                    _watchGetCaller.Stop();
-                    Log.Debug("DIAG", $"DIAGNOSTICS: Get caller ID time {_watchGetCaller.ElapsedMilliseconds} Ms");
-#endif
                     var numbResponse = (GetPresentationNumbersResponse)response;
 #if DEBUG
                     Log.Debug(App.AppPackage, $"HELPER EXECUTOR: detect {numbResponse.NumbersList.Count} numbers");
@@ -1021,11 +1013,6 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 
                 // Get extensions response
                 case "GetExtensionsResponse":
-#if DEBUG
-                    _watchGetExt.Stop();
-                    Log.Debug("DIAG", $"DIAGNOSTICS: Get Extensions time {_watchGetExt.ElapsedMilliseconds} Ms");
-                    Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} successed - YOU GET EXTENSIONS LIST");
-#endif
                     var extResponse = (GetExtensionsResponse)response;
                     if (!ExtensionsList.Equals(extResponse.ExtensionsList))
                     {
@@ -1047,11 +1034,6 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 
                 // Get folders response
                 case "GetFoldersResponse":
-#if DEBUG
-                    _watchGetFolders.Stop();
-                    Log.Debug("DIAG", $"DIAGNOSTICS: Get Folders time {_watchGetFolders.ElapsedMilliseconds} Ms");
-                    Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} successed - YOU GET FOLDERS LIST");
-#endif
                     var foldersResponse = (GetFoldersResponse)response;
                     if ((SelectedExtension != -1)&&(!ExtensionsList[SelectedExtension].Folders.Equals(foldersResponse.FoldersList)))
                     {
@@ -1065,11 +1047,6 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 
                 // Get messages response
                 case "GetMessagesResponse":
-#if DEBUG
-                    _watchGetMessages.Stop();
-                    Log.Debug("DIAG", $"DIAGNOSTICS: Get Messages time {_watchGetMessages.ElapsedMilliseconds} Ms");
-                    Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} successed - YOU GET MESSAGES LIST");
-#endif
                     var msgResponse = (GetMessagesResponse)response;
                     if ((SelectedExtension != -1)&&(SelectedFolder != -1)&&(!ExtensionsList[SelectedExtension].Folders[SelectedFolder].MessagesList.Equals(msgResponse.MessagesList)))
                     {
@@ -1083,11 +1060,6 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 
                 // Call reservation response
                 case "CallReservationResponse":
-#if DEBUG
-                    _watchCall.Stop();
-                    Log.Debug("DIAG", $"DIAGNOSTICS: Get Extensions time {_watchCall.ElapsedMilliseconds} Ms");
-                    Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} successed (Call reservation)");
-#endif
                     var callResponse = (CallReservationResponse)response;
                     SaveRecent(response);
                     if (_waitingRequestArray.ContainsKey(response.RequestId))
@@ -1155,6 +1127,11 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             _preferencesHelper.ClearCredentials();
             _preferencesHelper.SaveAccCaller("", "");
             _preferencesHelper.SavePollingInterval(0);
+            foreach (var stopwatch in _watchersDictionary.Where(stopwatch => (stopwatch.Value!=null)&&(stopwatch.Value.IsRunning)))
+            {
+                stopwatch.Value.Stop();
+            }
+            _watchersDictionary.Clear();
             var intent = new Intent(_app, typeof(AuthActivity));
             HelperEvent?.Invoke(this, new ActionsHelperIntentArgs(id, intent));
         }
