@@ -4,8 +4,6 @@ using System.Linq;
 using Android.App;
 using Android.Content;
 using Android.OS;
-using Android.Runtime;
-using Android.Telephony;
 #if DEBUG
 using Android.Util;
 using FreedomVoice.Core.Utils;
@@ -164,7 +162,6 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             SelectedFolder = -1;
             SelectedMessage = -1;
 
-            var telephony = _app.GetSystemService(Context.TelephonyService).JavaCast<TelephonyManager>();
             if (!IsFirstRun)
             {
                 var intentLoading = new Intent(_app, typeof(LoadingActivity));
@@ -174,7 +171,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 
                 var watcherLoading = Stopwatch.StartNew();
                 var container = _preferencesHelper.GetCookieContainer();
-                var pair = _preferencesHelper.GetLoginPass(telephony!=null ? telephony.DeviceId : "00");
+                var pair = _preferencesHelper.GetLoginPass(AppHelper.InsightsKey);
                 if (pair != null)
                 {
                     _userLogin = (string) pair.First;
@@ -852,8 +849,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                 // Login action response
                 case "LoginResponse":
                     IsLoggedIn = true;
-                    var telephony = _app.GetSystemService(Context.TelephonyService).JavaCast<TelephonyManager>();
-                    _preferencesHelper.SaveCredentials(_userLogin, _userPassword, telephony != null ? telephony.DeviceId : "00");
+                    _preferencesHelper.SaveCredentials(_userLogin, _userPassword, AppHelper.InsightsKey);
                     _preferencesHelper.SaveCookie(ApiHelper.CookieContainer);
 #if DEBUG
                     Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} successed: YOU ARE LOGGED IN");

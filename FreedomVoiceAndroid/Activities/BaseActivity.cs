@@ -73,8 +73,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             {
                 var intentArg = arg.IntentData;
                 if (intentArg == null) return;
-                var actArray = intentArg.Component.ShortClassName.Split('.');
-                if (actArray.Length > 0)
+                var actArray = intentArg.Component?.ShortClassName.Split('.');
+                if (actArray?.Length > 0)
                 {
                     var act = actArray[actArray.Length - 1];
 #if DEBUG

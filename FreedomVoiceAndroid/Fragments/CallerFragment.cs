@@ -70,7 +70,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                return true;
             if ((Helper.SelectedAccount == null)||(Helper.AccountsList == null))
                 Helper.GetAccounts();
-            else if (Helper.SelectedAccount.PresentationNumbers == null)
+            else if ((Helper.SelectedAccount.PresentationNumbers == null)||(Helper.SelectedAccount.PresentationNumbers.Count == 0))
                 Helper.GetPresentationNumbers();
             var intent = new Intent(ContentActivity, typeof(LoadingActivity));
             intent.SetFlags(ActivityFlags.NewTask);

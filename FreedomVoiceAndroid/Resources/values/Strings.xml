@@ -106,6 +106,9 @@
   <string name="DlgPhone_ok">EDIT NUMBER</string>
   <string name="Timestamp_yesterday">Yesterday</string>
   <string name="Snack_noPhonePermission">Application Needs Permission For Making Calls</string>
+  <string name="Snack_noStatePermission">Application Needs Permission For Check Your Phone Number</string>
+  <string name="Snack_noContactsPermission">FreedomVoice would like to access your Contacts</string>
+  <string name="Snack_noStoragePermission">Application Needs Permission For Saving Fax</string>
   <string name="Snack_noPhonePermissionAction">CHANGE</string>
   <string name="Snack_noInternet">No Internet Connection</string>
   <string name="Snack_connectionLost">Server Unavailable</string>

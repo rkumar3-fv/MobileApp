@@ -45,6 +45,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         {
             base.OnStart();
             SpeakerButton.CheckedChange += SpeakerButtonOnClick;
+            SpeakerButton.Checked = _audioManager.SpeakerphoneOn;
             CallBackButton.Click += CallBackButtonOnClick;
             if (Msg.FromNumber.Length < 2)
                 CallBackButton.Enabled = false;
@@ -66,23 +67,28 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         protected override void OnStop()
         {
             base.OnStop();
+            if (!_isPlayed)
+            {
+                _audioManager.Mode = Mode.Normal;
+                _audioManager.SpeakerphoneOn = true;
+            }
             UnbindService(this);
-            _audioManager.Mode = Mode.Normal;
-            _audioManager.SpeakerphoneOn = true;
         }
 
         private void PlayerButtonOnClick(object sender, EventArgs eventArgs)
         {
+            PlayerButton.Enabled = false;
             if (string.IsNullOrEmpty(_soundPath))
                 AttachmentId = Appl.ApplicationHelper.AttachmentsHelper.LoadAttachment(Msg);
             else
                 PlayerAction();
+            PlayerButton.Enabled = true;
         }
 
         private void PlayerSeekOnProgressChanged(object sender, SeekBar.ProgressChangedEventArgs progressChangedEventArgs)
         {
             if (!_isSeeking) return;
-            if ((_isBinded) && (_isCurrent))
+            if (_isBinded && _isCurrent)
             {
                 var progress = progressChangedEventArgs.Progress;
                 EndTextView.Text = $"-{DataFormatUtils.ToDuration(Msg.Length - progress)}";
@@ -99,7 +105,16 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         {
             base.OnResume();
             if (_isBinded)
+            {
                 CheckSoundOutput(SpeakerButton.Checked);
+                if (Msg.Equals(_serviceBinder.AppMediaService.Msg))
+                {
+                    _isCurrent = true;
+                    _isPlayed = _serviceBinder.AppMediaService.IsPlaying;
+                }
+                else
+                    _isCurrent = false;
+            }
         }
 
         /// <summary>
@@ -142,10 +157,12 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         /// </summary>
         private void CallBackButtonOnClick(object sender, EventArgs eventArgs)
         {
+            CallBackButton.Enabled = false;
             if (MarkForRemove != (-1))
                 MarkForRemove = -1;
             Pause();
             Call(Msg.FromNumber);
+            CallBackButton.Enabled = true;
         }
 
         private void PlayerAction()
@@ -184,8 +201,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         /// </summary>
         private void Pause()
         {
-            if (!_isBinded) return;
-            if (!_serviceBinder.AppMediaService.IsPlaying) return;
             var intent = new Intent(this, typeof (MediaService));
             intent.SetAction(MediaService.MediaActionPause);
             intent.PutExtra(MediaService.MediaIdTag, Msg.Id);

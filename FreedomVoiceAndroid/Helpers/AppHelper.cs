@@ -56,6 +56,17 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         public const string WakeLockStatePermission = Manifest.Permission.WakeLock;
         public const string AccessNetworkStatePermission = Manifest.Permission.AccessNetworkState;
         public const string InternetPermission = Manifest.Permission.Internet;
+        public const string ReadPhoneStatePermission = Manifest.Permission.ReadPhoneState;
+
+        /// <summary>
+        /// Check CALL_PHONE permission
+        /// </summary>
+        public bool CheckReadPhoneState()
+        {
+            if ((int)Build.VERSION.SdkInt < 23)
+                return true;
+            return _context.CheckSelfPermission(ReadPhoneStatePermission) == Permission.Granted;
+        }
 
         /// <summary>
         /// Check WAKE_LOCK permission
@@ -114,7 +125,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         private bool _isInsightsOn;
         private const int GaUpdatePeriod = 180;
         private const string GaKey = "UA-587407-95";
-        private const string InsightsKey = "d8bf081e25b6c01b8a852a950d1f7b446d33662d";
+        public const string InsightsKey = "d8bf081e25b6c01b8a852a950d1f7b446d33662d";
         private const string RequestKey = "API_REQUEST";
         private const string LoadingKey = "LOADING_FILE";
         private const string ActionKey = "LONG_ACTION";
@@ -326,13 +337,17 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             }
             _phoneNumber = PreferencesHelper.GetPhoneNumber();
             var telephony = _context.GetSystemService(Context.TelephonyService).JavaCast<TelephonyManager>();
-            if ((telephony?.Line1Number == null) || (telephony.SimSerialNumber == null) || (telephony.SimSerialNumber.Length == 0))
+            if (!CheckReadPhoneState())
             {
-                _phoneNumber = null;
-                PreferencesHelper.SavePhoneNumber("");
-                return null;
+                if ((telephony?.Line1Number == null) || (telephony.SimSerialNumber == null) ||
+                    (telephony.SimSerialNumber.Length == 0))
+                {
+                    _phoneNumber = null;
+                    PreferencesHelper.SavePhoneNumber("");
+                    return null;
+                }
             }
-            if ((_phoneNumber != telephony.Line1Number) && (telephony.Line1Number.Length > 1) && (_phoneNumber.Length != 10))
+            if (CheckReadPhoneState()&&(_phoneNumber != telephony.Line1Number) && (telephony.Line1Number.Length > 1) && (_phoneNumber.Length != 10))
             {
                 if (telephony.Line1Number.StartsWith("1") && (telephony.Line1Number.Length == 11))
                     _phoneNumber = telephony.Line1Number.Substring(1);

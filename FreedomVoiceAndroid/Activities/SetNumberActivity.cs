@@ -4,6 +4,7 @@ using Android.Content.PM;
 using Android.Graphics;
 using Android.OS;
 using Android.Runtime;
+using Android.Support.Design.Widget;
 using Android.Support.V4.Content;
 using Android.Support.V7.Widget;
 using Android.Views;
@@ -155,6 +156,13 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             if (string.IsNullOrEmpty(phone)) return;
             _phoneText.Text = phone;
             _phoneText.SetSelection(_phoneText.Text.Length);
+            if (!Appl.ApplicationHelper.CheckReadPhoneState())
+            { 
+                var snackPerm = Snackbar.Make(RootLayout, Resource.String.Snack_noStatePermission, Snackbar.LengthLong);
+                snackPerm.SetAction(Resource.String.Snack_noPhonePermissionAction, OnSetStatePermission);
+                snackPerm.SetActionTextColor(ContextCompat.GetColor(this, Resource.Color.colorUndoList));
+                snackPerm.Show();
+            }
         }
 
         protected override void OnHelperEvent(ActionsHelperEventArgs args)
