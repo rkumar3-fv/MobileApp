@@ -6,38 +6,27 @@ namespace FreedomVoice.iOS.Utilities.Helpers
 {
     public static class Cookies
     {
+        public static bool IsCookieStored => !(string.IsNullOrEmpty(UserDefault.RequestCookie) || Cookie.Expired);
+
+        public static bool HasActiveCookieInContainer()
+        {
+            var cookies = ApiHelper.CookieContainer?.GetCookies(new Uri(WebResources.AppUrl));
+            var activeCookie = cookies?.Count > 0 ? cookies[0] : null;
+
+            return activeCookie != null && !activeCookie.Expired;
+        }
+
         public static void SaveCookieToStore()
         {
             var cookies = ApiHelper.CookieContainer?.GetCookies(new Uri(WebResources.AppUrl));
-            UserDefault.RequestCookie = cookies?.Count > 0 ? cookies[0].Value : null;
+            UserDefault.RequestCookie = cookies?.Count > 0 ? cookies[0].Value : string.Empty;
         }
 
-        public static bool IsCookieStored()
-        {
-            if (CookieIsNotPresentInStorage)
-                return false;
-
-            return !Cookie.Expired;
-        }
-
-        public static bool IsCookieStored(out Cookie cookie)
-        {
-            cookie = null;
-
-            if (CookieIsNotPresentInStorage)
-                return false;
-
-            cookie = Cookie;
-            return !cookie.Expired;
-        }
-
-        public static void PrepareCookieFromStore(Cookie cookie)
+        public static void PutStoredCookieToContainer()
         {
             ApiHelper.CookieContainer = new CookieContainer();
-            ApiHelper.CookieContainer.Add(cookie);
+            ApiHelper.CookieContainer.Add(Cookie);
         }
-
-        private static bool CookieIsNotPresentInStorage => string.IsNullOrEmpty(UserDefault.RequestCookie);
 
         private static Cookie Cookie => new Cookie(".AspNet.ApplicationCookie", UserDefault.RequestCookie, "/", "api.freedomvoice.com");
     }

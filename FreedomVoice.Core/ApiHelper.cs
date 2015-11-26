@@ -17,11 +17,9 @@ namespace FreedomVoice.Core
 {
     public static class ApiHelper
     {
-        public static CookieContainer CookieContainer {
-            get
-            {
-                return _clientHandler?.CookieContainer;
-            }
+        public static CookieContainer CookieContainer
+        {
+            get { return _clientHandler?.CookieContainer; }
             set
             {
                 if (_clientHandler != null)
@@ -39,20 +37,16 @@ namespace FreedomVoice.Core
         }
 
         private static void InitNewContext()
-        {   
+        {
             _clientHandler = new NativeMessageHandler();
             if (_clientHandler.SupportsAutomaticDecompression)
-            {
-                _clientHandler.AutomaticDecompression = DecompressionMethods.GZip |
-                                                 DecompressionMethods.Deflate;
-            }
+                _clientHandler.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
+
             Client = new HttpClient(_clientHandler);
         }
 
         public static async Task<BaseResult<string>> Login(string login, string password)
         {
-            InitNewContext();
-
             var postdata = $"UserName={login}&Password={password}";
             return await MakeAsyncPostRequest<string>("/api/v1/login", postdata, "application/x-www-form-urlencoded", CancellationToken.None);
         }
@@ -61,7 +55,7 @@ namespace FreedomVoice.Core
         {
             InitNewContext();
 
-            return Task.FromResult(new BaseResult<string> {Code = ErrorCodes.Ok, Result = ""});
+            return Task.FromResult(new BaseResult<string> { Code = ErrorCodes.Ok, Result = "" });
         }
 
         public static async Task<BaseResult<string>> PasswordReset(string login)
@@ -180,7 +174,6 @@ namespace FreedomVoice.Core
 
         private static async Task<BaseResult<T>> MakeAsyncPostRequest<T>(string url, string postData, string contentType, CancellationToken cts)
         {
-            
             BaseResult<T> baseRes;
             try
             {
@@ -208,16 +201,13 @@ namespace FreedomVoice.Core
 
         public static async Task<BaseResult<Stream>> MakeAsyncFileDownload(string url, string contentType, string messageId, CancellationToken ct)
         {
-            BaseResult<Stream> retResult = null;
+            BaseResult<Stream> retResult;
             try
             {
-
                 if (ct.IsCancellationRequested)
                     return new BaseResult<Stream> { Code = ErrorCodes.Cancelled };
 
                 var getRep = Client.GetAsync(MakeFullApiUrl(url));
-
-
 
                 var h = getRep.Result.Headers.FirstOrDefault(x => x.Key.Equals("Content-Length"));
 
@@ -227,7 +217,6 @@ namespace FreedomVoice.Core
                     Code = ErrorCodes.Ok,
                     Result = await streamResp
                 };
-
             }
             catch (Exception ex)
             {
@@ -243,8 +232,7 @@ namespace FreedomVoice.Core
 
         public static async Task<BaseResult<MediaResponse>> MakeAsyncFileDownload(string url, string contentType, CancellationToken ct)
         {
-            
-            BaseResult<MediaResponse> retResult = null;
+            BaseResult<MediaResponse> retResult;
 
             try
             {
@@ -259,7 +247,6 @@ namespace FreedomVoice.Core
                     Code = ErrorCodes.Ok,
                     Result = new MediaResponse(stream.Length, stream)
                 };
-
             }
             catch (Exception ex)
             {
@@ -272,19 +259,17 @@ namespace FreedomVoice.Core
             return retResult;
         }
 
-        //private static async Task<BaseResult<T>> GetResponse<T>(HttpWebRequest request, CancellationToken ct)
-
         private static async Task<BaseResult<T>> GetResponse<T>(Task<HttpResponseMessage> r, CancellationToken ct)
         {
-            BaseResult<T> retResult = null;
+            BaseResult<T> retResult;
 
             try
             {
                 using (var response = await r)
-                {     
+                {
                     try
                     {
-                        if(ct.IsCancellationRequested)
+                        if (ct.IsCancellationRequested)
                             return new BaseResult<T> { Code = ErrorCodes.Cancelled };
 
                         response.EnsureSuccessStatusCode();
@@ -293,18 +278,17 @@ namespace FreedomVoice.Core
                         retResult = new BaseResult<T>
                         {
                             Code = ErrorCodes.Ok,
-                            //Result = JsonConvert.DeserializeObject<T>(ReadStreamFromResponse(response))
                             Result = JsonConvert.DeserializeObject<T>(content)
                         };
                     }
-                    catch (HttpRequestException ex) {
+                    catch (HttpRequestException ex)
+                    {
                         return HandleErrorState<T>(response.StatusCode, ex);
-
                     }
                 }
             }
-            catch (Exception ex2) {
-
+            catch (Exception ex2)
+            {
                 retResult = new BaseResult<T>
                 {
                     Code = ErrorCodes.Unknown,
@@ -333,7 +317,6 @@ namespace FreedomVoice.Core
                             Result = default(T),
                             ErrorText = msg
                         };
-                        
                     }
                 case HttpStatusCode.Forbidden:
                     {
@@ -343,7 +326,6 @@ namespace FreedomVoice.Core
                             Result = default(T),
                             ErrorText = msg
                         };
-                       
                     }
                 case HttpStatusCode.BadRequest:
                     {
@@ -353,7 +335,6 @@ namespace FreedomVoice.Core
                             Result = default(T),
                             ErrorText = msg
                         };
-                        
                     }
                 case HttpStatusCode.NotFound:
                     {
@@ -363,7 +344,6 @@ namespace FreedomVoice.Core
                             Result = default(T),
                             ErrorText = msg
                         };
-                        
                     }
                 case HttpStatusCode.PaymentRequired:
                     {
@@ -373,7 +353,6 @@ namespace FreedomVoice.Core
                             Result = default(T),
                             ErrorText = msg
                         };
-                       
                     }
                 case HttpStatusCode.InternalServerError:
                     {
@@ -383,15 +362,14 @@ namespace FreedomVoice.Core
                             Result = default(T),
                             ErrorText = msg
                         };
-                        
                     }
             }
 
             return new BaseResult<T>
-                {
-                    Code = ErrorCodes.Unknown,
-                    Result = default(T),
-                    ErrorText = msg
+            {
+                Code = ErrorCodes.Unknown,
+                Result = default(T),
+                ErrorText = msg
             };
         }
 

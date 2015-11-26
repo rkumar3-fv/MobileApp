@@ -193,13 +193,20 @@ namespace FreedomVoice.iOS
 
             Window.MakeKeyAndVisible();
 
-            await ProceedAutoLogin();
-
             await ProceedGetAccountsList();
         }
 
-        public async Task ProceedAutoLogin()
+        public async Task PrepareAuthentificationCookie()
         {
+            if (Cookies.HasActiveCookieInContainer())
+                return;
+
+            if (Cookies.IsCookieStored)
+            {
+                Cookies.PutStoredCookieToContainer();
+                return;
+            }
+
             string password = null;
 
             var userName = KeyChain.GetUsername();
@@ -210,8 +217,10 @@ namespace FreedomVoice.iOS
                 PassToAuthentificationProcess();
 
             var loginViewModel = new LoginViewModel(userName, password);
-
             await loginViewModel.AutoLoginAsync();
+
+            if (loginViewModel.IsErrorResponseReceived)
+                PassToAuthentificationProcess();
         }
 
         private static void RemoveTmpFiles()

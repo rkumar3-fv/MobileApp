@@ -5,7 +5,6 @@ using CoreGraphics;
 using FreedomVoice.iOS.Services.Responses;
 using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.Utilities.Events;
-using FreedomVoice.iOS.Utilities.Helpers;
 using UIKit;
 
 namespace FreedomVoice.iOS.ViewModels
@@ -142,12 +141,9 @@ namespace FreedomVoice.iOS.ViewModels
 
         protected static async Task RenewCookieIfNeeded()
         {
-            if (Cookies.IsCookieStored())
-                return;
-
             var appDelegate = UIApplication.SharedApplication.Delegate as AppDelegate;
             if (appDelegate != null)
-                await appDelegate.ProceedAutoLogin();
+                await appDelegate.PrepareAuthentificationCookie();
         }
 
         protected ProgressControlType ProgressControl { private get; set; }

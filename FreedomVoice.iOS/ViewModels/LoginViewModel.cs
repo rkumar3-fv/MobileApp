@@ -75,23 +75,14 @@ namespace FreedomVoice.iOS.ViewModels
         {
             IsBusy = true;
 
-            Cookie cookie;
-            if (!Cookies.IsCookieStored(out cookie))
-            {
-                var requestResult = await _service.ExecuteRequest(Username, Password);
-                if (requestResult is ErrorResponse)
-                    ProceedErrorResponse(requestResult);
-                else
-                {
-                    KeyChain.SetPasswordForUsername(Username, Password);
-                    Cookies.SaveCookieToStore();
-
-                    ProceedSuccessResponse();
-                }
-            }
+            var requestResult = await _service.ExecuteRequest(Username, Password);
+            if (requestResult is ErrorResponse)
+                ProceedErrorResponse(requestResult);
             else
             {
-                Cookies.PrepareCookieFromStore(cookie);
+                KeyChain.SetPasswordForUsername(Username, Password);
+                Cookies.SaveCookieToStore();
+
                 ProceedSuccessResponse();
             }
 

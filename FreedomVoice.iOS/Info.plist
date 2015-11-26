@@ -7,9 +7,9 @@
 	<key>CFBundleIdentifier</key>
 	<string>com.freedomvoice</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0.7</string>
+	<string>1.0.8</string>
 	<key>CFBundleVersion</key>
-	<string>1.0.7</string>
+	<string>1.0.8</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>MinimumOSVersion</key>
@@ -42,7 +42,7 @@
 	<array>
 		<dict>
 			<key>UILaunchImageMinimumOSVersion</key>
-			<string>7.0</string>
+			<string>8.0</string>
 			<key>UILaunchImageName</key>
 			<string>Default-568h</string>
 			<key>UILaunchImageOrientation</key>

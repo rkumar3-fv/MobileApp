@@ -83,7 +83,7 @@
     <CodesignResourceRules />
     <CodesignExtraArgs />
     <IpaIncludeArtwork>True</IpaIncludeArtwork>
-    <IpaPackageName>FreedomVoice-1.0.7</IpaPackageName>
+    <IpaPackageName>FreedomVoice-1.0.8</IpaPackageName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|iPhone' ">
     <DebugType>none</DebugType>
