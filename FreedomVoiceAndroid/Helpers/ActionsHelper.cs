@@ -167,6 +167,11 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             var telephony = _app.GetSystemService(Context.TelephonyService).JavaCast<TelephonyManager>();
             if (!IsFirstRun)
             {
+                var intentLoading = new Intent(_app, typeof(LoadingActivity));
+                intentLoading.SetFlags(ActivityFlags.NewTask);
+                intentLoading.SetFlags(ActivityFlags.ClearTop);
+                HelperEvent?.Invoke(this, new ActionsHelperIntentArgs(-2, intentLoading));
+
                 var watcherLoading = Stopwatch.StartNew();
                 var container = _preferencesHelper.GetCookieContainer();
                 var pair = _preferencesHelper.GetLoginPass(telephony!=null ? telephony.DeviceId : "00");

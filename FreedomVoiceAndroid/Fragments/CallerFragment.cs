@@ -20,35 +20,21 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         public override void OnActivityCreated(Bundle savedInstanceState)
         {
             base.OnActivityCreated(savedInstanceState);
-            if (Helper.SelectedAccount == null)
+            if (!CheckLoading()) return;
+            if (IdSpinner == null) return;
+            var adapter = new CallerIdSpinnerAdapter(Context, Helper.SelectedAccount.PresentationNumbers);
+            IdSpinner.ItemSelected += (sender, args) =>
             {
-                Helper.GetAccounts();
-                var intent = new Intent(ContentActivity, typeof (LoadingActivity));
-                intent.SetFlags(ActivityFlags.NewTask);
-                intent.SetFlags(ActivityFlags.ClearTop);
-                ContentActivity.StartActivity(intent);
-            }
-            else if (Helper.SelectedAccount.PresentationNumbers == null)
-            {
-                Helper.GetPresentationNumbers();
-                ContentActivity.StartActivity(new Intent(ContentActivity, typeof(LoadingActivity)));
-            }
-            else if (IdSpinner != null)
-            {
-                var adapter = new CallerIdSpinnerAdapter(Context, Helper.SelectedAccount.PresentationNumbers);
-                IdSpinner.ItemSelected += (sender, args) =>
-                {
-                    IdSpinner.SetSelection(args.Position);
-                    Helper.SetPresentationNumber(args.Position);
-                };
-                IdSpinner.Adapter = adapter;
-            }
+                IdSpinner.SetSelection(args.Position);
+                Helper.SetPresentationNumber(args.Position);
+            };
+            IdSpinner.Adapter = adapter;
         }
 
         public override void OnResume()
         {
             base.OnResume();
-            if (Helper.SelectedAccount?.PresentationNumbers == null) return;
+            if (!CheckLoading()) return;
             if (Helper.SelectedAccount.PresentationNumbers.Count == 1)
             {
                 IdSpinner.Visibility = ViewStates.Invisible;
@@ -76,6 +62,21 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                         break;
                 }
             }
+        }
+
+        private bool CheckLoading()
+        {
+            if (Helper.SelectedAccount?.PresentationNumbers != null)
+               return true;
+            if ((Helper.SelectedAccount == null)||(Helper.AccountsList == null))
+                Helper.GetAccounts();
+            else if (Helper.SelectedAccount.PresentationNumbers == null)
+                Helper.GetPresentationNumbers();
+            var intent = new Intent(ContentActivity, typeof(LoadingActivity));
+            intent.SetFlags(ActivityFlags.NewTask);
+            intent.SetFlags(ActivityFlags.ClearTop);
+            ContentActivity.StartActivity(intent);
+            return false;
         }
     }
 }
