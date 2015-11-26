@@ -1,5 +1,4 @@
 using Android.App;
-using Android.Content;
 using Android.Content.PM;
 using Android.Gms.Analytics;
 using Android.Graphics;
@@ -43,6 +42,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         private TabLayout _tabLayout;
         private string _request;
 
+        private ContactsFragment _contactsFragment;
+
         /// <summary>
         /// Contacts search listener
         /// </summary>
@@ -66,7 +67,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             SetSupportActionBar(_toolbar);
             SupportActionBar.SetHomeAsUpIndicator(Resource.Drawable.ic_action_back);
             _pagerAdapter = new ContentPagerAdapter(SupportFragmentManager, this);
-            var contactsFragment = new ContactsFragment();
+            _contactsFragment = new ContactsFragment();
             var keypadFragment = new KeypadFragment();
             var messagesFragment = new MessagesFragment();
             var recentsFragment = new RecentsFragment();
@@ -75,7 +76,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 _viewPager.AllowSwipe = false;
                 _viewPager.OffscreenPageLimit = 1;
                 _pagerAdapter.AddFragment(recentsFragment, Resource.String.FragmentRecents_title, Resource.Drawable.ic_tab_history);
-                _pagerAdapter.AddFragment(contactsFragment, Resource.String.FragmentContacts_title, Resource.Drawable.ic_tab_contacts);
+                _pagerAdapter.AddFragment(_contactsFragment, Resource.String.FragmentContacts_title, Resource.Drawable.ic_tab_contacts);
                 _pagerAdapter.AddFragment(keypadFragment, Resource.String.FragmentKeypad_title, Resource.Drawable.ic_tab_keypad);
                 _pagerAdapter.AddFragment(messagesFragment, Resource.String.FragmentMessages_title, Resource.Drawable.ic_tab_messages);
                 _viewPager.Adapter = _pagerAdapter;
@@ -137,6 +138,13 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         private void ViewPagerOnPageSelected(object sender, ViewPager.PageSelectedEventArgs pageSelectedEventArgs)
         {
             SetToolbarContent();
+            if ((_viewPager.CurrentItem == 1)&&(!Appl.ApplicationHelper.CheckContactsPermission()))
+            {
+                var snackPerm = Snackbar.Make(RootLayout, Resource.String.Snack_noContactsPermission, Snackbar.LengthLong);
+                snackPerm.SetAction(Resource.String.Snack_noPhonePermissionAction, OnSetContactsPermission);
+                snackPerm.SetActionTextColor(ContextCompat.GetColor(this, Resource.Color.colorUndoList));
+                snackPerm.Show();
+            }
             if (!Appl.ApplicationHelper.IsGoogleAnalyticsOn) return;
             Appl.ApplicationHelper.AnalyticsTracker.SetScreenName(
                     $"Activity {GetType().Name}, Screen {_pagerAdapter.GetItem(_viewPager.CurrentItem).GetType().Name}");
@@ -187,18 +195,14 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                     ExpandToolbar();
                     break;
                 case 1:
-                    _toolbar.InflateMenu(Resource.Menu.menu_contacts);
-                    var menu = _toolbar.Menu;
-                    var searchView = MenuItemCompat.GetActionView(menu.FindItem(Resource.Id.menu_action_search)).JavaCast<SearchView>();
-                    var menuItem = menu.FindItem(Resource.Id.menu_action_search);
-                    if ((menuItem != null) && (searchView != null))
+                    if (!Appl.ApplicationHelper.CheckContactsPermission())
                     {
-                        MenuItemCompat.SetOnActionExpandListener(menuItem, SearchListener);
-                        MenuItemCompat.SetActionView(menuItem, searchView);
-                        searchView.SetOnQueryTextListener(SearchListener);
-                        var editText = searchView.FindViewById<EditText>(Resource.Id.search_src_text);
-                        editText.SetTextColor(_whiteColor);
-                        editText.SetHintTextColor(_grayColor);
+                        _toolbar.InflateMenu(Resource.Menu.menu_content);
+                        ExpandToolbar();
+                    }
+                    else
+                    {
+                        ContactsBarRestore();
                     }
                     break;
                 case 2:
@@ -222,21 +226,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 case global::Android.Resource.Id.Home:
                     Helper.GetPrevious();
                     SetToolbarContent();
-                    return true;
-                case Resource.Id.menu_action_phone:
-                    if (Appl.ApplicationHelper.IsVoicecallsSupported() == false)
-                    {
-                        var noCellularDialog = new NoCellularDialogFragment();
-                        noCellularDialog.Show(SupportFragmentManager, GetString(Resource.String.DlgCellular_title));
-                    }
-                    else
-                    {
-                        var intent = new Intent(this, typeof(SetNumberActivityWithBack));
-                        StartActivity(intent);
-                    }
-                    return true;
-                case Resource.Id.menu_action_logout:
-                    LogoutAction();
                     return true;
                 case Resource.Id.menu_action_clear:
                     var clearDialog = new ClearRecentsDialogFragment();
@@ -335,6 +324,42 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 }
             }
             MoveTaskToBack(true);
+        }
+
+        public override void OnRequestPermissionsResult(int requestCode, string[] permissions, Permission[] grantResults)
+        {
+            switch (requestCode)
+            {
+                case ContactsPermissionRequestId:
+                    if (grantResults[0] == Permission.Granted)
+                    {
+                        ContactsBarRestore();
+                        _contactsFragment?.ReloadContacts();
+                    }
+                    break;
+                default:
+                    base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+                    break;
+            }
+        }
+
+        private void ContactsBarRestore()
+        {
+            _toolbar.InflateMenu(Resource.Menu.menu_contacts);
+            var menu = _toolbar.Menu;
+            var searchView =
+                MenuItemCompat.GetActionView(menu.FindItem(Resource.Id.menu_action_search))
+                    .JavaCast<SearchView>();
+            var menuItem = menu.FindItem(Resource.Id.menu_action_search);
+            if ((menuItem != null) && (searchView != null))
+            {
+                MenuItemCompat.SetOnActionExpandListener(menuItem, SearchListener);
+                MenuItemCompat.SetActionView(menuItem, searchView);
+                searchView.SetOnQueryTextListener(SearchListener);
+                var editText = searchView.FindViewById<EditText>(Resource.Id.search_src_text);
+                editText.SetTextColor(_whiteColor);
+                editText.SetHintTextColor(_grayColor);
+            }
         }
     }
 }

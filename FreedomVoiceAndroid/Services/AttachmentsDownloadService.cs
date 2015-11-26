@@ -17,6 +17,7 @@ using com.FreedomVoice.MobileApp.Android.Helpers;
 using com.FreedomVoice.MobileApp.Android.Utils;
 using FreedomVoice.Core;
 using FreedomVoice.Core.Entities.Enums;
+using Environment = System.Environment;
 using Message = com.FreedomVoice.MobileApp.Android.Entities.Message;
 using NotificationCompat = Android.Support.V7.App.NotificationCompat;
 
@@ -169,7 +170,7 @@ namespace com.FreedomVoice.MobileApp.Android.Services
 
         private async Task LoadFile(Message msg, CancellationToken token)
         {
-            var rootDirectory = $"{GetExternalFilesDir(null)}/";
+            var rootDirectory = msg.MessageType == 0 ? $"{GetExternalFilesDir(null)}/" : $"{Environment.GetFolderPath(Environment.SpecialFolder.Personal)}/";
             try
             {
                 if (!Directory.Exists(rootDirectory))

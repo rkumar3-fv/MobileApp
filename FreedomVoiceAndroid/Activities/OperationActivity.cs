@@ -2,7 +2,6 @@ using Android.Content;
 using Android.Provider;
 using Android.Support.Design.Widget;
 using Android.Support.V4.Content;
-using Android.Views;
 #if DEBUG
 using Android.Util;
 #endif
@@ -15,7 +14,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
 {
     public abstract class OperationActivity : LogoutActivity
     {
-        private const int ContactsPermissionRequestId = 2045;
         private const string CallerDlgTag = "CALLER_DLG_TAG";
         private const string CellularDlgTag = "CELLULAR_DLG_TAG";
         private const string PhoneDlgTag = "PHONE_DLG_TAG";
@@ -29,7 +27,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             if (Appl.ApplicationHelper.CheckCallsPermission() == false)
             {
                 var snackPerm = Snackbar.Make(RootLayout, Resource.String.Snack_noPhonePermission, Snackbar.LengthLong);
-                snackPerm.SetAction(Resource.String.Snack_noPhonePermissionAction, OnSetPermission);
+                snackPerm.SetAction(Resource.String.Snack_noPhonePermissionAction, OnSetCallsPermission);
                 snackPerm.SetActionTextColor(ContextCompat.GetColor(this, Resource.Color.colorUndoList));
                 snackPerm.Show();
             }
@@ -104,7 +102,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                         break;
                     case ActionsHelperEventArgs.CallPermissionDenied:
                         var snackPerm = Snackbar.Make(RootLayout, Resource.String.Snack_noPhonePermission, Snackbar.LengthLong);
-                        snackPerm.SetAction(Resource.String.Snack_noPhonePermissionAction, OnSetPermission);
+                        snackPerm.SetAction(Resource.String.Snack_noPhonePermissionAction, OnSetCallsPermission);
                         snackPerm.SetActionTextColor(ContextCompat.GetColor(this, Resource.Color.colorUndoList));
                         snackPerm.Show();
                         break;
@@ -117,11 +115,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                         break;
                 }
             }
-        }
-
-        private void OnSetPermission(View view)
-        {
-            RequestPermissions(new[] { AppHelper.MakeCallsPermission }, ContactsPermissionRequestId);
         }
 
         private void CallerIdDialog()

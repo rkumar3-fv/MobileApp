@@ -104,7 +104,7 @@ namespace com.FreedomVoice.MobileApp.Android.Services
                     break;
                 case MediaActionPause:
                     if (IsInChange) break;
-                    if ((Msg != null) && (!string.IsNullOrEmpty(_path)))
+                    if ((Msg != null) && !string.IsNullOrEmpty(_path))
                     {
 #if DEBUG
                         Log.Debug(App.AppPackage, $"PAUSE ON {DataFormatUtils.ToDuration(_mediaPlayer.CurrentPosition/1000)}");
