@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using CoreGraphics;
-using Foundation;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.TableViewSources;
 using FreedomVoice.iOS.Utilities;
@@ -89,7 +88,7 @@ namespace FreedomVoice.iOS.ViewControllers
             _contactList = await AppDelegate.GetContactsListAsync();
             _contactSource = new ContactSource { ContactsList = _contactList };
             _contactSource.OnRowSelected += TableSourceOnRowSelected;
-            _contactSource.OnDraggingStarted += (sender, args) => View.EndEditing(true);
+            _contactSource.OnDraggingStarted += TableSourceOnDraggingStarted;
 
             var headerHeight = Theme.StatusBarHeight + NavigationController.NavigationBarHeight();
             var insets = new UIEdgeInsets(0, 0, headerHeight, 0);
@@ -149,14 +148,14 @@ namespace FreedomVoice.iOS.ViewControllers
             base.ViewWillAppear(animated);
         }
 
-        public override void TouchesBegan(NSSet touches, UIEvent evt)
-        {
-            _contactsSearchBar.ResignFirstResponder();
-        }
-
         private void SearchBarOnSearchButtonClicked(object sender, EventArgs e)
         {
-            _contactsSearchBar.ResignFirstResponder();
+            HideKeyboard();
+        }
+
+        private void TableSourceOnDraggingStarted(object sender, EventArgs e)
+        {
+            HideKeyboard();
         }
 
         private void SearchBarOnTextChanged(object sender, UISearchBarTextChangedEventArgs e)
@@ -173,11 +172,13 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private void SearchBarOnCancelButtonClicked(object sender, EventArgs args)
         {
+            HideKeyboard();
+
             _contactsSearchBar.Text = string.Empty;
-            _contactsSearchBar.ResignFirstResponder();
             _contactSource.SearchText = string.Empty;
             _contactSource.ContactsList = _contactList;
             _contactTableView.ReloadData();
+
             CheckResult(ContactsCount);
         }
 
@@ -228,6 +229,11 @@ namespace FreedomVoice.iOS.ViewControllers
                     PresentViewController(phoneCallController, true, null);
                     break;
             }
+        }
+
+        private void HideKeyboard()
+        {
+            View.EndEditing(true);
         }
 
         private List<Contact> GetMatchedContacts(string searchText)

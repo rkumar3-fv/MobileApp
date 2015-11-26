@@ -16,11 +16,9 @@ namespace FreedomVoice.iOS.TableViewSources
         public string SearchText;
 
         private bool IsSearchMode => !string.IsNullOrEmpty(SearchText);
-#if DEBUG
-        public static string[] Keys => new[] { "А", "Б", "В", "Г", "Д", "Е", "Ё", "Ж", "З", "И", "Й", "К", "Л", "М", "Н", "О", "П", "Р", "С", "Т", "У", "Ф", "Х", "Ц", "Ч", "Ш", "Щ", "Ъ", "Ы", "Ь", "Э", "Ю", "Я", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "#" };
-#else
+
         public static string[] Keys => new[]  { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "#" };
-#endif
+
         public override nint RowsInSection(UITableView tableview, nint section)
         {
             return ContactsList.Count(c => ContactsHelper.ContactSearchPredicate(c, Keys[section]));

@@ -4,6 +4,7 @@ using CoreGraphics;
 using FreedomVoice.Core.Utils;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.Utilities;
+using FreedomVoice.iOS.Utilities.Extensions;
 using FreedomVoice.iOS.Utilities.Helpers;
 using FreedomVoice.iOS.Views.Shared;
 using GoogleAnalytics.iOS;
@@ -37,8 +38,9 @@ namespace FreedomVoice.iOS.ViewControllers
 
             var keypadLineView = new LineView(new RectangleF(0, (float)(CallerIdView.Frame.Y + CallerIdView.Frame.Height), (float)Theme.ScreenBounds.Width, 0.5f));
 
-            _phoneLabel = new UILabel(new CGRect(40, keypadLineView.Frame.Y, Theme.ScreenBounds.Width - 80, 52))
+            _phoneLabel = new UILabel
             {
+                Frame = new CGRect(40, keypadLineView.Frame.Y, Theme.ScreenBounds.Width - 80, 52),
                 Font = UIFont.SystemFontOfSize(30, UIFontWeight.Thin),
                 TextAlignment = UITextAlignment.Center,
                 LineBreakMode = UILineBreakMode.HeadTruncation,

@@ -48,7 +48,7 @@ namespace FreedomVoice.iOS.ViewControllers
 
             var noItemsLabel = new UILabel
             {
-                Frame = new CGRect(15, 100, Theme.ScreenBounds.Width - 30, 30), //Theme.ScreenBounds.Height / 2 - headerHeight - 15
+                Frame = new CGRect(15, Theme.ScreenBounds.Height / 2 - headerHeight - 15, Theme.ScreenBounds.Width - 30, 30),
                 Text = "No Items",
                 Font = UIFont.SystemFontOfSize(28),
                 TextColor = Theme.GrayColor,
@@ -125,7 +125,7 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private Contact FindContactByNumber(string number)
         {
-            return _contactList?.FirstOrDefault(c => c.Phones.Any(p => DataFormatUtils.NormalizePhone(p.Number) == DataFormatUtils.NormalizePhone(number)));
+            return _contactList.FirstOrDefault(c => c.Phones.Any(p => DataFormatUtils.NormalizePhone(p.Number) == DataFormatUtils.NormalizePhone(number)));
         }
 
         private List<Recent> GetRecentsUpdatedAndOrdered()

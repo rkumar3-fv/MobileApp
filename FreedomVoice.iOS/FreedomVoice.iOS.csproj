@@ -83,7 +83,7 @@
     <CodesignResourceRules />
     <CodesignExtraArgs />
     <IpaIncludeArtwork>True</IpaIncludeArtwork>
-    <IpaPackageName>FreedomVoice-1.0.6</IpaPackageName>
+    <IpaPackageName>FreedomVoice-1.0.7</IpaPackageName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|iPhone' ">
     <DebugType>none</DebugType>
@@ -109,6 +109,7 @@
     <Compile Include="Services\Responses\EmptyResponse.cs" />
     <Compile Include="Services\Responses\PollingIntervalResponse.cs" />
     <Compile Include="Utilities\DeviceHardware.cs" />
+    <Compile Include="Utilities\Extensions\CopyPasteLabel.cs" />
     <Compile Include="Utilities\Helpers\Cookies.cs" />
     <Compile Include="ViewControllers\SplashViewController.cs" />
     <Compile Include="ViewControllers\SplashViewController.designer.cs">

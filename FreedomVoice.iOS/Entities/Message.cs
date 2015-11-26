@@ -47,7 +47,7 @@ namespace FreedomVoice.iOS.Entities
             if (!string.IsNullOrEmpty(SourceNumber))
             {
                 var contact = FindContactByNumber(SourceNumber);
-                if (contact != null)
+                if (!string.IsNullOrEmpty(contact?.DisplayName))
                     return contact.DisplayName;
             }
 
@@ -61,7 +61,7 @@ namespace FreedomVoice.iOS.Entities
         {
             var numberToCompareWith = Regex.Replace(number, @"[^\d]", "");
 
-            return ContactList?.FirstOrDefault(c => c.Phones.Any(p => Regex.Replace(p.Number, @"[^\d]", "").EndsWith(numberToCompareWith)));
+            return ContactList.FirstOrDefault(c => c.Phones.Any(p => Regex.Replace(p.Number, @"[^\d]", "").EndsWith(numberToCompareWith)));
         }
     }
 }

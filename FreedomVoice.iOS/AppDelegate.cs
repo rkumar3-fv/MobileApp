@@ -29,17 +29,17 @@ namespace FreedomVoice.iOS
 
         public static int SystemVersion => UIDevice.CurrentDevice.CheckSystemVersion(9, 0) ? 9 : 8;
 
+        private static bool? HasContactsPermissions { get; set; }
         public static async Task<bool> ContactHasAccessPermissionsAsync()
         {
-            return await new Xamarin.Contacts.AddressBook().RequestPermission();
+            return HasContactsPermissions ?? (HasContactsPermissions = await new Xamarin.Contacts.AddressBook().RequestPermission()).Value;
         }
 
         public async static Task<List<Contact>> GetContactsListAsync()
         {
             if (await ContactHasAccessPermissionsAsync()) return new Xamarin.Contacts.AddressBook().ToList();
 
-            new UIAlertView("Permission denied", "User has denied this app access to their contacts", null, "Close").Show();
-            return null;
+            return new List<Contact>();
         }
 
         public static AVPlayerView ActivePlayerView;
