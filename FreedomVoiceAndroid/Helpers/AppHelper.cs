@@ -112,7 +112,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         /// <summary>
         /// Check WRITE_EXTERNAL_STORAGE & READ_EXTERNAL_STORAGE permissions
         /// </summary>
-        public bool CheckFilesPremissions()
+        public bool CheckFilesPermissions()
         {
             if ((int)Build.VERSION.SdkInt < 23)
                 return true;
@@ -140,7 +140,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         /// <summary>
         /// Check Xamarin Insights state
         /// </summary>
-        public bool IsInsigthsOn => (_isInsightsOn && CheckFilesPremissions());
+        public bool IsInsigthsOn => (_isInsightsOn && CheckFilesPermissions());
 
         /// <summary>
         /// Get GA tracker or NULL if not active
@@ -236,7 +236,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         public bool InitInsights()
         {
             if (IsInsigthsOn) return true;
-            if (!CheckInternetPermissions() || !CheckFilesPremissions())
+            if (!CheckInternetPermissions() || !CheckFilesPermissions())
             {
                 _isInsightsOn = false;
                 return false;
@@ -305,7 +305,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         /// </summary>
         public bool IsStorageAvailable()
         {
-            if (!CheckFilesPremissions()) return false;
+            if (!CheckFilesPermissions()) return false;
             var state = Environment.ExternalStorageState;
             return state == Environment.MediaMounted;
         }

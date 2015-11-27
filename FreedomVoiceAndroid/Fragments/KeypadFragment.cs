@@ -123,7 +123,6 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         /// </summary>
         private void ButtonZeroOnLongClick(object sender, View.LongClickEventArgs longClickEventArgs)
         {
-            //if (_enteredNumber.Length != 0) return;
 #if DEBUG
             Log.Debug(App.AppPackage, "KEYPAD: + added");
 #endif

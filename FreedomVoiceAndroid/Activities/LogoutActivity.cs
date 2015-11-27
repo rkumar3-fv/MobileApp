@@ -94,22 +94,26 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
 
         protected void OnSetCallsPermission(View view)
         {
-            RequestPermissions(new[] { AppHelper.MakeCallsPermission }, CallsPermissionRequestId);
+            if (!Appl.ApplicationHelper.CheckCallsPermission())
+                RequestPermissions(new[] { AppHelper.MakeCallsPermission }, CallsPermissionRequestId);
         }
 
         protected void OnSetStatePermission(View view)
         {
-            RequestPermissions(new[] { AppHelper.ReadPhoneStatePermission }, StatePermissionRequestId);
+            if (!Appl.ApplicationHelper.CheckReadPhoneState())
+                RequestPermissions(new[] { AppHelper.ReadPhoneStatePermission }, StatePermissionRequestId);
         }
 
         protected void OnSetContactsPermission(View view)
         {
-            RequestPermissions(new[] { AppHelper.ReadContactsPermission }, ContactsPermissionRequestId);
+            if (!Appl.ApplicationHelper.CheckContactsPermission())
+                RequestPermissions(new[] { AppHelper.ReadContactsPermission }, ContactsPermissionRequestId);
         }
 
         protected void OnSetStoragePermission(View view)
         {
-            RequestPermissions(new[] { AppHelper.WriteStoragePermission }, StoragePermissionRequestId);
+            if (!Appl.ApplicationHelper.CheckFilesPermissions())
+                RequestPermissions(new[] { AppHelper.WriteStoragePermission }, StoragePermissionRequestId);
         }
 
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, Permission[] grantResults)

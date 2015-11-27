@@ -459,7 +459,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         {
             var requestId = RequestId;
             if (!CheckRequestAbility(requestId)) return requestId;
-            if (!_app.ApplicationHelper.CheckContactsPermission())
+            if (!_app.ApplicationHelper.CheckCallsPermission())
             {
                 HelperEvent?.Invoke(this, new ActionsHelperEventArgs(requestId, new[] {ActionsHelperEventArgs.CallPermissionDenied}));
             }
@@ -996,6 +996,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                                 }
                                 intent = new Intent(_app, typeof(ContentActivity));
                                 intent.AddFlags(ActivityFlags.ClearTop);
+                                HelperEvent?.Invoke(this, new ActionsHelperEventArgs(-1, new[] { ActionsHelperEventArgs.ChangePresentation }));
                             }
                             ForceLoadExtensions();
                             break;

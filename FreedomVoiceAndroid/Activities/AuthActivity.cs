@@ -64,13 +64,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             _progressLogin.ProgressDrawable?.SetColorFilter(progressColor, PorterDuff.Mode.SrcIn);
         }
 
-        protected override void OnResume()
-        {
-            base.OnResume();
-            _loginText.Text = "freedomvoice.adm.267055@gmail.com";
-            _passwordText.Text = "adm654654";
-        }
-
         private void FieldOnFocusChange(object sender, View.FocusChangeEventArgs focusChangeEventArgs)
         {
             if ((sender != _loginText) && (sender != _passwordText)) return;

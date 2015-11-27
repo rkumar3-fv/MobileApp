@@ -36,8 +36,19 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         {
             base.OnResume();
             if (!CheckLoading()) return;
-            if ((IdSpinner.Count == 0) && (_adapter != null))
-                _adapter.NumbersList = Helper.SelectedAccount.PresentationNumbers;
+            if (_adapter == null)
+            {
+                _adapter = new CallerIdSpinnerAdapter(Context, Helper.SelectedAccount.PresentationNumbers);
+                IdSpinner.Adapter = _adapter;
+            }
+            else
+            {
+                if (IdSpinner.Count == 0)
+                {
+                    _adapter.NumbersList = Helper.SelectedAccount.PresentationNumbers;
+                    _adapter.NotifyDataSetChanged();
+                }
+            }     
             if (Helper.SelectedAccount.PresentationNumbers.Count == 1)
             {
                 IdSpinner.Visibility = ViewStates.Invisible;
@@ -60,7 +71,12 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                 switch (code)
                 {
                     case ActionsHelperEventArgs.ChangePresentation:
-                        if (IdSpinner.SelectedItemPosition != Helper.SelectedAccount.SelectedPresentationNumber)
+                        if ((Helper.SelectedAccount!=null)&&(_adapter?.Count == 0))
+                        {
+                            _adapter.NumbersList = Helper.SelectedAccount.PresentationNumbers;
+                            _adapter.NotifyDataSetChanged();
+                        }
+                        if ((IdSpinner != null)&&(Helper.SelectedAccount != null)&&(IdSpinner.SelectedItemPosition != Helper.SelectedAccount.SelectedPresentationNumber))
                             IdSpinner.SetSelection(Helper.SelectedAccount.SelectedPresentationNumber);
                         break;
                 }

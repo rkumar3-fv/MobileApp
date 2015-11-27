@@ -52,7 +52,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         /// </summary>
         private void OpenFaxButtonOnClick(object sender, EventArgs eventArgs)
         {
-            if (Appl.ApplicationHelper.CheckFilesPremissions())
+            if (Appl.ApplicationHelper.CheckFilesPermissions())
                 AttachmentId = Appl.ApplicationHelper.AttachmentsHelper.LoadAttachment(Msg);
             else
             {
