@@ -4,6 +4,7 @@ using Android.Content;
 using Android.Media;
 using Android.OS;
 using Android.Runtime;
+using Android.Util;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Helpers;
 using com.FreedomVoice.MobileApp.Android.Services;
@@ -17,6 +18,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
     /// </summary>
     public abstract class SoundActivity : MessageDetailsActivity, IServiceConnection
     {
+        private const long FireTime = 1000000;
         private bool _isBinded;
         private MediaServiceBinder _serviceBinder;
         private string _soundPath;
@@ -32,10 +34,14 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         private bool _isPlayed;
         private bool _isCurrent;
         private Timer _timer;
+        private DateTime _callbackPrevious;
+        private DateTime _playPrevious;
 
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
+            _callbackPrevious = DateTime.Now;
+            _playPrevious = DateTime.Now;
             _audioManager = GetSystemService(AudioService).JavaCast<AudioManager>();
             _audioManager.Mode = Mode.Normal;
             _audioManager.SpeakerphoneOn = true;
@@ -77,12 +83,12 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
 
         private void PlayerButtonOnClick(object sender, EventArgs eventArgs)
         {
-            PlayerButton.Enabled = false;
+            if (_playPrevious.ToFileTime() + FireTime > DateTime.Now.ToFileTime()) return;
+                _playPrevious = DateTime.Now;
             if (string.IsNullOrEmpty(_soundPath))
                 AttachmentId = Appl.ApplicationHelper.AttachmentsHelper.LoadAttachment(Msg);
             else
                 PlayerAction();
-            PlayerButton.Enabled = true;
         }
 
         private void PlayerSeekOnProgressChanged(object sender, SeekBar.ProgressChangedEventArgs progressChangedEventArgs)
@@ -157,12 +163,15 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         /// </summary>
         private void CallBackButtonOnClick(object sender, EventArgs eventArgs)
         {
-            CallBackButton.Enabled = false;
+            var prev = _callbackPrevious.ToFileTime();
+            var curr = DateTime.Now.ToFileTime();
+            Log.Debug(App.AppPackage, $"Previous - {prev}; Current - {curr}");
+            if (prev+FireTime > curr) return;
+            _callbackPrevious = DateTime.Now;
             if (MarkForRemove != (-1))
                 MarkForRemove = -1;
             Pause();
             Call(Msg.FromNumber);
-            CallBackButton.Enabled = true;
         }
 
         private void PlayerAction()

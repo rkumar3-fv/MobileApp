@@ -15,6 +15,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         protected const int StatePermissionRequestId = 2046;
         protected const int ContactsPermissionRequestId = 2047;
         protected const int StoragePermissionRequestId = 2048;
+        private bool _needPhoneRedirection;
 
         public override bool OnCreateOptionsMenu(IMenu menu)
         {
@@ -31,6 +32,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 case Resource.Id.menu_action_phone:
                     if (Appl.ApplicationHelper.CheckCallsPermission() == false)
                     {
+                        _needPhoneRedirection = true;
                         var snackPerm = Snackbar.Make(RootLayout, Resource.String.Snack_noPhonePermission, Snackbar.LengthLong);
                         snackPerm.SetAction(Resource.String.Snack_noPhonePermissionAction, OnSetCallsPermission);
                         snackPerm.SetActionTextColor(ContextCompat.GetColor(this, Resource.Color.colorUndoList));
@@ -115,8 +117,13 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             switch (requestCode)
             {
                 case CallsPermissionRequestId:
-                    if (grantResults[0] == Permission.Granted)
+                    if ((grantResults[0] == Permission.Granted) && _needPhoneRedirection)
+                    {
+                        _needPhoneRedirection = false;
                         SetPhone();
+                    }
+                    else
+                        _needPhoneRedirection = false;
                     break;
                 default:
                     base.OnRequestPermissionsResult(requestCode, permissions, grantResults);

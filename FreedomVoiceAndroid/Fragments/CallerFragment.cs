@@ -16,25 +16,28 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
     {
         protected Spinner IdSpinner;
         protected TextView SingleId;
+        private CallerIdSpinnerAdapter _adapter;
 
         public override void OnActivityCreated(Bundle savedInstanceState)
         {
             base.OnActivityCreated(savedInstanceState);
             if (!CheckLoading()) return;
             if (IdSpinner == null) return;
-            var adapter = new CallerIdSpinnerAdapter(Context, Helper.SelectedAccount.PresentationNumbers);
+            _adapter = new CallerIdSpinnerAdapter(Context, Helper.SelectedAccount.PresentationNumbers);
             IdSpinner.ItemSelected += (sender, args) =>
             {
                 IdSpinner.SetSelection(args.Position);
                 Helper.SetPresentationNumber(args.Position);
             };
-            IdSpinner.Adapter = adapter;
+            IdSpinner.Adapter = _adapter;
         }
 
         public override void OnResume()
         {
             base.OnResume();
             if (!CheckLoading()) return;
+            if ((IdSpinner.Count == 0) && (_adapter != null))
+                _adapter.NumbersList = Helper.SelectedAccount.PresentationNumbers;
             if (Helper.SelectedAccount.PresentationNumbers.Count == 1)
             {
                 IdSpinner.Visibility = ViewStates.Invisible;
