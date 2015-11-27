@@ -101,6 +101,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         private void MultiPhonesDialogOnPhoneClick(object sender, Phone phone)
         {
             ContentActivity.Call(phone.PhoneNumber);
+            _contactsView.RequestFocus();
         }
 
         private void SearchListenerOnCancel(object sender, bool b)
