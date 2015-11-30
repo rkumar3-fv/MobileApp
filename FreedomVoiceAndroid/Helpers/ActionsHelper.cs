@@ -817,6 +817,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                         case ErrorResponse.ErrorNotPaid:
                             intent = AccountsList.Count > 1 ? new Intent(_app, typeof(InactiveActivityWithBack)) : new Intent(_app, typeof(InactiveActivity));
                             intent.PutExtra(InactiveActivity.InactiveAccontTag, SelectedAccount.AccountName);
+                            SelectedAccount.AccountState = false;
                             SelectedAccount = null;
                             HelperEvent?.Invoke(this, new ActionsHelperIntentArgs(response.RequestId, intent));
                             break;
