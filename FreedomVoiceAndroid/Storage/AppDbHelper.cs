@@ -11,6 +11,8 @@ namespace com.FreedomVoice.MobileApp.Android.Storage
     /// </summary>
     public class AppDbHelper : SQLiteOpenHelper
     {
+        private static volatile AppDbHelper _instance;
+        private static readonly object DbLocker = new object();
         private const string DbName = "fvdb.db";
         private const int DbVersion = 2;
 
@@ -29,15 +31,30 @@ namespace com.FreedomVoice.MobileApp.Android.Storage
         private const string ColumnPhone = "phone";
         private const string ColumnDate = "date";
 
-        public AppDbHelper(Context context) : base(context, DbName, null, DbVersion)
+        /// <summary>
+        /// Get application DB helper instance
+        /// </summary>
+        public static AppDbHelper Instance(Context context)
+        {
+            if (_instance != null) return _instance;
+            lock (DbLocker)
+            {
+                if (_instance == null)
+                    _instance = new AppDbHelper(context);
+            }
+            return _instance;
+        }
+
+
+        private AppDbHelper(Context context) : base(context, DbName, null, DbVersion)
         {}
 
         public override void OnCreate(SQLiteDatabase db)
         {
-            var accTableScript = $"create table {TableNameAccounts} ({ColumnPk} integer primary key autoencrement, {ColumnAccountName} integer not null, {ColumnAccountState} integer not null);";
-            var callerTableScript = $"create table {TableNameCallerId} ({ColumnPk} integer primary key autoencrement, {ColumnCallerId} integer not null);";
-            var accCallerLinkTableScript = $"create table {TableNameAccountCallerLink} ({ColumnPk} integer primary key autoencrement, {ColumnAccountLink} integer not null, {ColumnCallerIdLink} integer not null);";
-            var recentsTableScript = $"create table {TableRecents} ({ColumnPk} integer primary key autoencrement, {ColumnPhone} integer not null, {ColumnDate} integer not null, {ColumnAccountLink} integer not null);";
+            var accTableScript = $"create table {TableNameAccounts} ({ColumnPk} integer primary key autoincrement, {ColumnAccountName} integer not null, {ColumnAccountState} integer not null);";
+            var callerTableScript = $"create table {TableNameCallerId} ({ColumnPk} integer primary key autoincrement, {ColumnCallerId} integer not null);";
+            var accCallerLinkTableScript = $"create table {TableNameAccountCallerLink} ({ColumnPk} integer primary key autoincrement, {ColumnAccountLink} integer not null, {ColumnCallerIdLink} integer not null);";
+            var recentsTableScript = $"create table {TableRecents} ({ColumnPk} integer primary key autoincrement, {ColumnPhone} integer not null, {ColumnDate} integer not null, {ColumnAccountLink} integer not null);";
             db.ExecSQL(accTableScript);
             db.ExecSQL(callerTableScript);
             db.ExecSQL(accCallerLinkTableScript);
@@ -47,19 +64,6 @@ namespace com.FreedomVoice.MobileApp.Android.Storage
         public override void OnUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
         {
             if (newVersion == oldVersion) return;
-            DropCache(db);
-            OnCreate(db);
-        }
-
-        public void DropCache()
-        {
-            var db = WritableDatabase;
-            DropCache(db);
-            db.Close();
-        }
-
-        private void DropCache(SQLiteDatabase db)
-        {
             var dropAccCallerScript = $"drop table if exists {TableNameAccountCallerLink};";
             var dropRecentsScript = $"drop table if exists {TableRecents};";
             var dropAccScript = $"drop table if exists {TableNameAccounts};";
@@ -68,7 +72,26 @@ namespace com.FreedomVoice.MobileApp.Android.Storage
             db.ExecSQL(dropRecentsScript);
             db.ExecSQL(dropAccScript);
             db.ExecSQL(dropCallerScript);
+            OnCreate(db);
         }
+
+        /// <summary>
+        /// Drop saved cache
+        /// </summary>
+        public void DropCache()
+        {
+            var db = WritableDatabase;
+            var dropAccCallerScript = $"delete from {TableNameAccountCallerLink};";
+            var dropRecentsScript = $"delete from {TableRecents};";
+            var dropAccScript = $"delete from {TableNameAccounts};";
+            var dropCallerScript = $"delete from {TableNameCallerId};";
+            db.ExecSQL(dropAccCallerScript);
+            db.ExecSQL(dropRecentsScript);
+            db.ExecSQL(dropAccScript);
+            db.ExecSQL(dropCallerScript);
+            db.Close();
+        }
+
 
         /// <summary>
         /// Insert new accounts or update old
@@ -131,7 +154,7 @@ namespace com.FreedomVoice.MobileApp.Android.Storage
             var content = new ContentValues();
             content.Put(ColumnAccountName, account.AccountName);
             content.Put(ColumnAccountState, account.AccountState?1:0);
-            var selection = $"SELECT * FROM {TableNameAccounts} WHERE {ColumnAccountState}={account.AccountName}";
+            var selection = $"SELECT * FROM {TableNameAccounts} WHERE {ColumnAccountName}='{account.AccountName}'";
             var cursor = db.RawQuery(selection, null);
             long index;
             if ((cursor == null) || (cursor.Count == 0))
