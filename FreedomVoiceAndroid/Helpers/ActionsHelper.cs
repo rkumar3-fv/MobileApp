@@ -8,7 +8,6 @@ using Android.OS;
 using Android.Util;
 #endif
 using System.Diagnostics;
-using System.Threading.Tasks;
 using com.FreedomVoice.MobileApp.Android.Actions.Requests;
 using com.FreedomVoice.MobileApp.Android.Actions.Responses;
 using com.FreedomVoice.MobileApp.Android.Activities;
@@ -16,6 +15,8 @@ using com.FreedomVoice.MobileApp.Android.Entities;
 using com.FreedomVoice.MobileApp.Android.Services;
 using com.FreedomVoice.MobileApp.Android.Storage;
 using FreedomVoice.Core;
+using FreedomVoice.Core.Cache;
+using FreedomVoice.Core.Utils;
 using Java.Util.Concurrent.Atomic;
 using Pair = Android.Support.V4.Util.Pair;
 using Uri = Android.Net.Uri;
@@ -158,6 +159,8 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 #if DEBUG
             Log.Debug(App.AppPackage, "HELPER: " + (IsFirstRun ? "First run" : "Not first run"));
 #endif
+            var cacheImpl = new PclCacheImpl(_app);
+            ServiceContainer.Register<IDeviceCacheStorage>(() => cacheImpl);
             RecentsDictionary = new SortedDictionary<long, Recent>(Comparer<long>.Create((x, y) => y.CompareTo(x)));
             ExtensionsList = new List<Extension>();
             SelectedExtension = -1;
@@ -1112,7 +1115,6 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         /// <param name="id">request ID</param>
         private void DoLogout(long id)
         {
-            Task.Factory.StartNew(() => { _dbHelper.DropCache(); });
             if (_waitingRequestArray.ContainsKey(id))
                 _waitingRequestArray.Remove(id);
             _userLogin = "";
@@ -1145,12 +1147,23 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         {
             var callReservation = (CallReservationRequest)_waitingRequestArray[response.RequestId];
             var recent = new Recent(callReservation.DialingNumber);
-            if (RecentsDictionary.Count > 0)
+            var values = RecentsDictionary.Values.ToList();
+            var keys = RecentsDictionary.Keys.ToList();
+            long keyForRemove = -1;
+            var counter = 1;
+            for (var i = 0; i < values.Count; i++)
             {
-                var kvp = RecentsDictionary.First();
-                if (kvp.Value.Equals(recent))
-                    RecentsDictionary.Remove(kvp.Key);
+                if (!values[i].Equals(recent)) continue;
+                keyForRemove = keys[i];
+                break;
             }
+            if (keyForRemove != -1)
+            {
+                counter = RecentsDictionary[keyForRemove].Count + 1;
+                RecentsDictionary.Remove(keyForRemove);
+            }
+            if (counter > 1)
+                recent.Count = counter;
             RecentsDictionary.Add(response.RequestId, recent);
         }
     }

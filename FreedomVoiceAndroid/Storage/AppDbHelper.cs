@@ -14,7 +14,7 @@ namespace com.FreedomVoice.MobileApp.Android.Storage
         private static volatile AppDbHelper _instance;
         private static readonly object DbLocker = new object();
         private const string DbName = "fvdb.db";
-        private const int DbVersion = 2;
+        private const int DbVersion = 3;
 
         private const string TableNameAccounts = "Accounts";
         private const string TableNameCallerId = "CallerIDs";
@@ -30,6 +30,7 @@ namespace com.FreedomVoice.MobileApp.Android.Storage
 
         private const string ColumnPhone = "phone";
         private const string ColumnDate = "date";
+        private const string ColumnCount = "count";
 
         /// <summary>
         /// Get application DB helper instance
@@ -54,7 +55,7 @@ namespace com.FreedomVoice.MobileApp.Android.Storage
             var accTableScript = $"create table {TableNameAccounts} ({ColumnPk} integer primary key autoincrement, {ColumnAccountName} integer not null, {ColumnAccountState} integer not null);";
             var callerTableScript = $"create table {TableNameCallerId} ({ColumnPk} integer primary key autoincrement, {ColumnCallerId} integer not null);";
             var accCallerLinkTableScript = $"create table {TableNameAccountCallerLink} ({ColumnPk} integer primary key autoincrement, {ColumnAccountLink} integer not null, {ColumnCallerIdLink} integer not null);";
-            var recentsTableScript = $"create table {TableRecents} ({ColumnPk} integer primary key autoincrement, {ColumnPhone} integer not null, {ColumnDate} integer not null, {ColumnAccountLink} integer not null);";
+            var recentsTableScript = $"create table {TableRecents} ({ColumnPk} integer primary key autoincrement, {ColumnPhone} integer not null, {ColumnDate} integer not null, {ColumnCount} integer not null, {ColumnAccountLink} integer not null);";
             db.ExecSQL(accTableScript);
             db.ExecSQL(callerTableScript);
             db.ExecSQL(accCallerLinkTableScript);
@@ -119,7 +120,23 @@ namespace com.FreedomVoice.MobileApp.Android.Storage
             db.Close();
         }
 
-        private void InsertPresentationNumbers(Account account, List<string> presentationNumbers, SQLiteDatabase db)
+        /// <summary>
+        /// Insertion without link
+        /// </summary>
+        /// <param name="presentationNumbers">presentation numbers list</param>
+        public void InsertPresentationNumbers(IEnumerable<string> presentationNumbers)
+        {
+            var db = WritableDatabase;
+            foreach (var presentationNumber in presentationNumbers)
+            {
+                var content = new ContentValues();
+                content.Put(ColumnCallerId, presentationNumber);
+                db.Insert(TableNameCallerId, null, content);
+            }
+            db.Close();
+        }
+
+        private void InsertPresentationNumbers(Account account, IEnumerable<string> presentationNumbers, SQLiteDatabase db)
         {
             var selection = $"SELECT * FROM {TableNameAccounts} WHERE {ColumnAccountState}={account.AccountName}";
             var cursor = db.RawQuery(selection, null);
@@ -226,12 +243,37 @@ namespace com.FreedomVoice.MobileApp.Android.Storage
                     var accountState = accountsCursor.GetLong(accountsCursor.GetColumnIndex(ColumnAccountState)) == 1;
                     var callerIds = GetCallerIds(db, accountId);
                     accountsList.Add(new Account(accountName, callerIds, accountState));
+                    accountsCursor.MoveToNext();
                 }
             }
             accountsCursor?.Close();
             db.Close();
             return accountsList;
         }
+
+        /// <summary>
+        /// Get all caller IDs
+        /// </summary>
+        /// <returns>caller IDs list</returns>
+        public List<string> GetCallerIds()
+        {
+            var selectionQuery = $"select * from {TableNameCallerId}";
+            var iDsList = new List<string>();
+            var db = ReadableDatabase;
+            var cursor = db.RawQuery(selectionQuery, null);
+            if ((cursor != null) && (cursor.Count > 0))
+            {
+                cursor.MoveToFirst();
+                while (!cursor.IsAfterLast)
+                {
+                    iDsList.Add(cursor.GetString(cursor.GetColumnIndex(ColumnCallerId)));
+                    cursor.MoveToNext();
+                }
+            }
+            cursor?.Close();
+            db.Close();
+            return iDsList;
+        } 
 
         /// <summary>
         /// Get caller IDs for selected account
@@ -260,6 +302,10 @@ namespace com.FreedomVoice.MobileApp.Android.Storage
             return res;
         }
 
+        /// <summary>
+        /// Remove caller IDs by account
+        /// </summary>
+        /// <param name="accountName">account name</param>
         public void RemoveCallerIds(string accountName)
         {
             var db = WritableDatabase;
@@ -278,6 +324,19 @@ namespace com.FreedomVoice.MobileApp.Android.Storage
             db.Close();
         }
 
+        /// <summary>
+        /// Drop caller IDs with links
+        /// </summary>
+        public void DropCallerIds()
+        {
+            var db = WritableDatabase;
+            var removeQuery = $"delete from {TableNameCallerId};";
+            var removeLinksQurey = $"delete from {TableNameAccountCallerLink};";
+            db.ExecSQL(removeQuery);
+            db.ExecSQL(removeLinksQurey);
+            db.Close();
+        }
+
         private List<string> GetCallerIds(SQLiteDatabase db, long accountId)
         {
             var result = new List<string>();
@@ -289,6 +348,7 @@ namespace com.FreedomVoice.MobileApp.Android.Storage
                 while (!callerCursor.IsAfterLast)
                 {
                     result.Add(callerCursor.GetString(callerCursor.GetColumnIndex(ColumnCallerId)));
+                    callerCursor.MoveToNext();
                 }
             }
             callerCursor?.Close();

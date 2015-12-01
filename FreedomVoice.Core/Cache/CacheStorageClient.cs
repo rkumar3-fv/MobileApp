@@ -39,7 +39,7 @@ namespace FreedomVoice.Core.Cache
             });
         }
 
-        public async void SaveAccounts(IEnumerable<string> items)
+        public async Task SaveAccounts(IEnumerable<string> items)
         {
             await Task.Run(() =>
             {
@@ -48,11 +48,20 @@ namespace FreedomVoice.Core.Cache
             });
         }
 
-        public async void SavePresentationPhones(IEnumerable<string> items)
+        public async Task SavePresentationPhones(IEnumerable<string> items)
         {
             await Task.Run(() =>
             {
+                _cacheStorage.DeleteCacheValue(PresentationPhonesCacheKey);
                 _cacheStorage.SetCacheValue(PresentationPhonesCacheKey, items);
+            });
+        }
+
+        public async Task DropCache()
+        {
+            await Task.Run(() =>
+            {
+                _cacheStorage.DropCache();
             });
         }
     }
