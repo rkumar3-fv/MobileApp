@@ -65,13 +65,6 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         {
             if (_cacheDictionary.ContainsKey(msg.Id))
             {
-#if DEBUG
-                var files = Directory.GetFiles("/storage/emulated/0/Android/data/com.FreedomVoice.MobileApp.Android/files/");
-                foreach (var file in files)
-                {
-                    Log.Debug(App.AppPackage, "IN DIRECTORY: " + file);
-                }
-#endif
                 if (File.Exists(_cacheDictionary[msg.Id]))
                 {
 #if DEBUG

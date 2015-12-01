@@ -53,38 +53,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         public override void OnStart()
         {
             base.OnStart();
-            var uri = ContactsContract.Contacts.ContentUri;
-            string[] projection = { ContactsContract.Contacts.InterfaceConsts.Id, ContactsContract.Contacts.InterfaceConsts.DisplayName,
-                ContactsContract.Contacts.InterfaceConsts.HasPhoneNumber, ContactsContract.Contacts.InterfaceConsts.PhotoUri };
-            var selection = string.Format("(({0} IS NOT NULL) AND ({0} != '') AND ({1} = '1'))",
-                ContactsContract.Contacts.InterfaceConsts.DisplayName, ContactsContract.Contacts.InterfaceConsts.InVisibleGroup);
-            var sortOrder = $"{ContactsContract.Contacts.InterfaceConsts.DisplayName} COLLATE LOCALIZED ASC";
-            var loader = new CursorLoader(ContentActivity, uri, projection, selection, null, sortOrder);
-            ICursor cursor;
-            try
-            {
-                cursor = loader.LoadInBackground().JavaCast<ICursor>();
-            }
-            catch (Java.Lang.RuntimeException)
-            {
-                cursor = null;
-            }
-            _adapter.SwapCursor(cursor);
-            if ((cursor != null)&&(cursor.Count > 0))
-            {
-                if (_noResTextView.Visibility == ViewStates.Visible)
-                    _noResTextView.Visibility = ViewStates.Invisible;
-                if (_contactsView.Visibility == ViewStates.Invisible)
-                    _contactsView.Visibility = ViewStates.Visible;
-            }
-            else
-            {
-                if (_noResTextView.Visibility == ViewStates.Invisible)
-                    _noResTextView.Visibility = ViewStates.Visible;
-                if (_contactsView.Visibility == ViewStates.Visible)
-                    _contactsView.Visibility = ViewStates.Invisible;
-                _noResTextView.Text = GetString(Resource.String.FragmentContacts_empty);
-            }
+            ReloadContacts();
         }
 
         public override void OnResume()
@@ -132,6 +101,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         private void MultiPhonesDialogOnPhoneClick(object sender, Phone phone)
         {
             ContentActivity.Call(phone.PhoneNumber);
+            _contactsView.RequestFocus();
         }
 
         private void SearchListenerOnCancel(object sender, bool b)
@@ -258,5 +228,44 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             return new MergeCursor(new[] {phonesCursor, namesCursor});
         }
 
+
+        public void ReloadContacts()
+        {
+            var uri = ContactsContract.Contacts.ContentUri;
+            string[] projection = { ContactsContract.Contacts.InterfaceConsts.Id, ContactsContract.Contacts.InterfaceConsts.DisplayName,
+                ContactsContract.Contacts.InterfaceConsts.HasPhoneNumber, ContactsContract.Contacts.InterfaceConsts.PhotoUri };
+            var selection = string.Format("(({0} IS NOT NULL) AND ({0} != '') AND ({1} = '1'))",
+                ContactsContract.Contacts.InterfaceConsts.DisplayName, ContactsContract.Contacts.InterfaceConsts.InVisibleGroup);
+            var sortOrder = $"{ContactsContract.Contacts.InterfaceConsts.DisplayName} COLLATE LOCALIZED ASC";
+            var loader = new CursorLoader(ContentActivity, uri, projection, selection, null, sortOrder);
+            ICursor cursor;
+            try
+            {
+                cursor = loader.LoadInBackground().JavaCast<ICursor>();
+            }
+            catch (Java.Lang.RuntimeException)
+            {
+                cursor = null;
+            }
+            _adapter?.SwapCursor(cursor);
+            if ((_noResTextView != null) && (_contactsView != null))
+            {
+                if ((cursor != null) && (cursor.Count > 0))
+                {
+                    if (_noResTextView.Visibility == ViewStates.Visible)
+                        _noResTextView.Visibility = ViewStates.Invisible;
+                    if (_contactsView.Visibility == ViewStates.Invisible)
+                        _contactsView.Visibility = ViewStates.Visible;
+                }
+                else
+                {
+                    if (_noResTextView.Visibility == ViewStates.Invisible)
+                        _noResTextView.Visibility = ViewStates.Visible;
+                    if (_contactsView.Visibility == ViewStates.Visible)
+                        _contactsView.Visibility = ViewStates.Invisible;
+                    _noResTextView.Text = GetString(Resource.String.FragmentContacts_empty);
+                }
+            }
+        }
     }
 }

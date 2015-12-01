@@ -16,39 +16,39 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
     {
         protected Spinner IdSpinner;
         protected TextView SingleId;
+        private CallerIdSpinnerAdapter _adapter;
 
         public override void OnActivityCreated(Bundle savedInstanceState)
         {
             base.OnActivityCreated(savedInstanceState);
-            if (Helper.SelectedAccount == null)
+            if (!CheckLoading()) return;
+            if (IdSpinner == null) return;
+            _adapter = new CallerIdSpinnerAdapter(Context, Helper.SelectedAccount.PresentationNumbers);
+            IdSpinner.ItemSelected += (sender, args) =>
             {
-                Helper.GetAccounts();
-                var intent = new Intent(ContentActivity, typeof (LoadingActivity));
-                intent.SetFlags(ActivityFlags.NewTask);
-                intent.SetFlags(ActivityFlags.ClearTop);
-                ContentActivity.StartActivity(intent);
-            }
-            else if (Helper.SelectedAccount.PresentationNumbers == null)
-            {
-                Helper.GetPresentationNumbers();
-                ContentActivity.StartActivity(new Intent(ContentActivity, typeof(LoadingActivity)));
-            }
-            else if (IdSpinner != null)
-            {
-                var adapter = new CallerIdSpinnerAdapter(Context, Helper.SelectedAccount.PresentationNumbers);
-                IdSpinner.ItemSelected += (sender, args) =>
-                {
-                    IdSpinner.SetSelection(args.Position);
-                    Helper.SetPresentationNumber(args.Position);
-                };
-                IdSpinner.Adapter = adapter;
-            }
+                IdSpinner.SetSelection(args.Position);
+                Helper.SetPresentationNumber(args.Position);
+            };
+            IdSpinner.Adapter = _adapter;
         }
 
         public override void OnResume()
         {
             base.OnResume();
-            if (Helper.SelectedAccount?.PresentationNumbers == null) return;
+            if (!CheckLoading()) return;
+            if (_adapter == null)
+            {
+                _adapter = new CallerIdSpinnerAdapter(Context, Helper.SelectedAccount.PresentationNumbers);
+                IdSpinner.Adapter = _adapter;
+            }
+            else
+            {
+                if (IdSpinner.Count == 0)
+                {
+                    _adapter.NumbersList = Helper.SelectedAccount.PresentationNumbers;
+                    _adapter.NotifyDataSetChanged();
+                }
+            }     
             if (Helper.SelectedAccount.PresentationNumbers.Count == 1)
             {
                 IdSpinner.Visibility = ViewStates.Invisible;
@@ -71,11 +71,31 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                 switch (code)
                 {
                     case ActionsHelperEventArgs.ChangePresentation:
-                        if (IdSpinner.SelectedItemPosition != Helper.SelectedAccount.SelectedPresentationNumber)
+                        if ((Helper.SelectedAccount!=null)&&(_adapter?.Count == 0))
+                        {
+                            _adapter.NumbersList = Helper.SelectedAccount.PresentationNumbers;
+                            _adapter.NotifyDataSetChanged();
+                        }
+                        if ((IdSpinner != null)&&(Helper.SelectedAccount != null)&&(IdSpinner.SelectedItemPosition != Helper.SelectedAccount.SelectedPresentationNumber))
                             IdSpinner.SetSelection(Helper.SelectedAccount.SelectedPresentationNumber);
                         break;
                 }
             }
+        }
+
+        private bool CheckLoading()
+        {
+            if (Helper.SelectedAccount?.PresentationNumbers != null)
+               return true;
+            if ((Helper.SelectedAccount == null)||(Helper.AccountsList == null))
+                Helper.GetAccounts();
+            else if ((Helper.SelectedAccount.PresentationNumbers == null)||(Helper.SelectedAccount.PresentationNumbers.Count == 0))
+                Helper.GetPresentationNumbers();
+            var intent = new Intent(ContentActivity, typeof(LoadingActivity));
+            intent.SetFlags(ActivityFlags.NewTask);
+            intent.SetFlags(ActivityFlags.ClearTop);
+            ContentActivity.StartActivity(intent);
+            return false;
         }
     }
 }

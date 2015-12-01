@@ -52,7 +52,15 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         /// </summary>
         private void OpenFaxButtonOnClick(object sender, EventArgs eventArgs)
         {
-            AttachmentId = Appl.ApplicationHelper.AttachmentsHelper.LoadAttachment(Msg);
+            if (Appl.ApplicationHelper.CheckFilesPermissions())
+                AttachmentId = Appl.ApplicationHelper.AttachmentsHelper.LoadAttachment(Msg);
+            else
+            {
+                var snackPerm = Snackbar.Make(RootLayout, Resource.String.Snack_noStoragePermission, Snackbar.LengthLong);
+                snackPerm.SetAction(Resource.String.Snack_noPhonePermissionAction, OnSetStoragePermission);
+                snackPerm.SetActionTextColor(ContextCompat.GetColor(this, Resource.Color.colorUndoList));
+                snackPerm.Show();
+            }
         }
 
         protected override void AttachmentsHelperOnFinishLoading(object sender, AttachmentHelperEventArgs<string> args)
@@ -113,6 +121,20 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             base.AttachmentsHelperOnFailLoadingEvent(sender, args);
             if (!_openFaxButton.Activated)
                 _openFaxButton.Activated = true;
+        }
+
+        public override void OnRequestPermissionsResult(int requestCode, string[] permissions, Permission[] grantResults)
+        {
+            switch (requestCode)
+            {
+                case StoragePermissionRequestId:
+                    if (grantResults[0] == Permission.Granted)
+                        AttachmentId = Appl.ApplicationHelper.AttachmentsHelper.LoadAttachment(Msg);
+                    break;
+                default:
+                    base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+                    break;
+            }
         }
     }
 }

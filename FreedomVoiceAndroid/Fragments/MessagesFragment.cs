@@ -3,10 +3,6 @@ using System.Timers;
 using Android.Content;
 using Android.Support.V7.Widget;
 using Android.Support.V7.Widget.Helper;
-#if DEBUG
-using Android.Util;
-using com.FreedomVoice.MobileApp.Android.Entities;
-#endif
 using Android.Views;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Activities;
@@ -25,7 +21,6 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
     public class MessagesFragment : BasePagerFragment
     {
         private int _removedMsgIndex;
-        private bool _remove;
 
         private MessagesRecyclerAdapter _adapter;
         private RecyclerView _recyclerView;
@@ -63,9 +58,6 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             _timer.Stop();
             ContentActivity.RunOnUiThread(delegate
             {
-#if DEBUG
-                Log.Debug(App.AppPackage, "POLLING INTERVAL ELAPSED");
-#endif
                 if (Helper.SelectedExtension == -1)
                     Helper.ForceLoadExtensions();
                 else if (Helper.SelectedFolder == -1)
@@ -80,15 +72,8 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         /// </summary>
         private void OnSwipeEvent(object sender, SwipeCallbackEventArgs args)
         {
-#if DEBUG
-            Log.Debug(App.AppPackage, $"SWIPED message {args.ElementIndex}");
-#endif
-            _remove = true;
             _removedMsgIndex = args.ElementIndex;
             _adapter.RemoveItem(args.ElementIndex);
-
-            if (_remove)
-            {
                 if (Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].FolderName ==
                     GetString(Resource.String.FragmentMessages_folderTrash))
                     Helper.DeleteMessage(_removedMsgIndex);
@@ -111,15 +96,6 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                     if (_recyclerView.Visibility == ViewStates.Visible)
                         _recyclerView.Visibility = ViewStates.Invisible;
                 }
-            }
-            else
-            {
-#if DEBUG
-                Log.Debug(App.AppPackage, $"UNDO message {_removedMsgIndex}");
-#endif
-                _remove = false;
-                _adapter.InsertItem(Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].MessagesList[_removedMsgIndex], _removedMsgIndex);
-            }
         }
 
         /// <summary>
@@ -128,9 +104,6 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         private void MessageViewOnClick(object sender, int position)
         {
             if (position >= _adapter.CurrentContent.Count) return;
-#if DEBUG
-            Log.Debug(App.AppPackage, $"FRAGMENT {GetType().Name}: select item #{position}");
-#endif
             _adapter.CurrentContent = Helper.GetNext(position);
             if (Helper.SelectedMessage != -1)
             {
@@ -167,9 +140,6 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         public override void OnResume()
         {
             base.OnResume();
-#if DEBUG
-            TraceContent();
-#endif
             if (_retryButton.Visibility == ViewStates.Visible)
                 _retryButton.Visibility = ViewStates.Invisible;
             if (_noMessagesTextView.Visibility == ViewStates.Visible)
@@ -216,9 +186,6 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                         if (_timer.Enabled)
                             _timer.Stop();
                         ContentActivity.SetToolbarContent();
-#if DEBUG
-                        TraceContent();
-#endif
                         if ((Helper.SelectedExtension == -1) || (Helper.SelectedFolder == -1))
                             _swipeTouchHelper.AttachToRecyclerView(null);
                         else
@@ -317,32 +284,5 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                     Helper.ForceLoadExtensions();
             }
         }
-
-#if DEBUG
-        private void TraceContent()
-        {
-            foreach (var messageItem in Helper.GetCurrent())
-            {
-                switch (messageItem.GetType().Name)
-                {
-                    case "Extension":
-                        var ext = (Extension)messageItem;
-                        Log.Debug(App.AppPackage,
-                            $"Extension {ext.ExtensionName} ({ext.Id}) - {ext.MailsCount} unread");
-                        break;
-                    case "Folder":
-                        var fold = (Folder)messageItem;
-                        Log.Debug(App.AppPackage,
-                            $"Folder {fold.FolderName} - {fold.MailsCount} mails");
-                        break;
-                    case "Message":
-                        var msg = (Message)messageItem;
-                        Log.Debug(App.AppPackage,
-                            $"Message {msg.Name} ({(msg.Unread?"Unread":"Old")}) - from: {msg.FromNumber} received {msg.MessageDate}");
-                        break;
-                }
-            }
-        }
-#endif
     }
 }

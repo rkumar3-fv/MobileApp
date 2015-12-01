@@ -46,7 +46,16 @@ namespace com.FreedomVoice.MobileApp.Android.Utils
                 {
                     using (var reader = new StreamReader(stream, Encoding.Unicode))
                     {
-                        return reader.ReadToEnd();
+                        string res;
+                        try
+                        {
+                            res = reader.ReadToEnd();
+                        }
+                        catch (Exception)
+                        {
+                            res = "";
+                        }
+                        return res;
                     }
                 }
             }

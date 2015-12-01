@@ -1,12 +1,22 @@
 using Android.Content;
+using Android.Content.PM;
+using Android.Support.Design.Widget;
+using Android.Support.V4.Content;
 using Android.Support.V7.Internal.View;
 using Android.Views;
 using com.FreedomVoice.MobileApp.Android.Dialogs;
+using com.FreedomVoice.MobileApp.Android.Helpers;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
 {
     public abstract class LogoutActivity : BaseActivity
     {
+        protected const int CallsPermissionRequestId = 2045;
+        protected const int StatePermissionRequestId = 2046;
+        protected const int ContactsPermissionRequestId = 2047;
+        protected const int StoragePermissionRequestId = 2048;
+        private bool _needPhoneRedirection;
+
         public override bool OnCreateOptionsMenu(IMenu menu)
         {
             base.OnCreateOptionsMenu(menu);
@@ -20,16 +30,16 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             switch (item.ItemId)
             {
                 case Resource.Id.menu_action_phone:
-                    if (!Appl.ApplicationHelper.IsVoicecallsSupported())
+                    if (Appl.ApplicationHelper.CheckCallsPermission() == false)
                     {
-                        var noCellularDialog = new NoCellularDialogFragment();
-                        noCellularDialog.Show(SupportFragmentManager, GetString(Resource.String.DlgCellular_title));
+                        _needPhoneRedirection = true;
+                        var snackPerm = Snackbar.Make(RootLayout, Resource.String.Snack_noPhonePermission, Snackbar.LengthLong);
+                        snackPerm.SetAction(Resource.String.Snack_noPhonePermissionAction, OnSetCallsPermission);
+                        snackPerm.SetActionTextColor(ContextCompat.GetColor(this, Resource.Color.colorUndoList));
+                        snackPerm.Show();
                     }
                     else
-                    {
-                        var intent = new Intent(this, typeof(SetNumberActivityWithBack));
-                        StartActivity(intent);
-                    }
+                         SetPhone();
                     return true;
                 case Resource.Id.menu_action_logout:
                     LogoutAction();
@@ -66,6 +76,63 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             var logoutDialog = new LogoutDialogFragment(hasRecents);
             logoutDialog.DialogEvent += OnDialogEvent;
             logoutDialog.Show(SupportFragmentManager, GetString(Resource.String.DlgLogout_title));
+        }
+
+        private void SetPhone()
+        {
+            if (!Appl.ApplicationHelper.IsVoicecallsSupported())
+            {
+                var noCellularDialog = new NoCellularDialogFragment();
+                noCellularDialog.Show(SupportFragmentManager, GetString(Resource.String.DlgCellular_title));
+            }
+            else
+            {
+                var intent = new Intent(this, typeof(SetNumberActivityWithBack));
+                StartActivity(intent);
+            }
+        }
+
+        protected void OnSetCallsPermission(View view)
+        {
+            if (!Appl.ApplicationHelper.CheckCallsPermission())
+                RequestPermissions(new[] { AppHelper.MakeCallsPermission }, CallsPermissionRequestId);
+        }
+
+        protected void OnSetStatePermission(View view)
+        {
+            if (!Appl.ApplicationHelper.CheckReadPhoneState())
+                RequestPermissions(new[] { AppHelper.ReadPhoneStatePermission }, StatePermissionRequestId);
+        }
+
+        protected void OnSetContactsPermission(View view)
+        {
+            if (!Appl.ApplicationHelper.CheckContactsPermission())
+                RequestPermissions(new[] { AppHelper.ReadContactsPermission }, ContactsPermissionRequestId);
+        }
+
+        protected void OnSetStoragePermission(View view)
+        {
+            if (!Appl.ApplicationHelper.CheckFilesPermissions())
+                RequestPermissions(new[] { AppHelper.WriteStoragePermission }, StoragePermissionRequestId);
+        }
+
+        public override void OnRequestPermissionsResult(int requestCode, string[] permissions, Permission[] grantResults)
+        {
+            switch (requestCode)
+            {
+                case CallsPermissionRequestId:
+                    if ((grantResults[0] == Permission.Granted) && _needPhoneRedirection)
+                    {
+                        _needPhoneRedirection = false;
+                        SetPhone();
+                    }
+                    else
+                        _needPhoneRedirection = false;
+                    break;
+                default:
+                    base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+                    break;
+            }
         }
     }
 }
