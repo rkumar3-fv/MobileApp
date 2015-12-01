@@ -51,6 +51,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApiHelper.cs" />
+    <Compile Include="Cache\CacheStorageClient.cs" />
+    <Compile Include="Cache\IDeviceCacheStorage.cs" />
     <Compile Include="Entities\Base\BaseResult.cs" />
     <Compile Include="Entities\CreateCallReservationSetting.cs" />
     <Compile Include="Entities\MediaResponse.cs" />
@@ -67,6 +69,7 @@
     <Compile Include="Entities\DefaultPhoneNumbers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils\DataFormatUtils.cs" />
+    <Compile Include="Utils\ServiceContainer.cs" />
     <Compile Include="WebResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -89,6 +92,7 @@
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
