@@ -1,18 +1,15 @@
 using System;
 using CoreGraphics;
 using FreedomVoice.iOS.Utilities;
-using GoogleAnalytics.iOS;
 using UIKit;
 
 namespace FreedomVoice.iOS.ViewControllers
 {
-	partial class SplashViewController : UIViewController
+	partial class SplashViewController : BaseViewController
 	{
-	    public SplashViewController(IntPtr handle) : base(handle)
-	    {
-            GAI.SharedInstance.DefaultTracker.Set(GAIConstants.ScreenName, "Splash Screen");
-            GAI.SharedInstance.DefaultTracker.Send(GAIDictionaryBuilder.CreateScreenView().Build());
-        }
+	    protected override string PageName => "Splash Screen";
+
+	    public SplashViewController(IntPtr handle) : base(handle) { }
 
         private UIActivityIndicatorView _activityIndicator;
 

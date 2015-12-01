@@ -6,13 +6,14 @@ using FreedomVoice.iOS.TableViewSources;
 using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.Utilities.Helpers;
 using FreedomVoice.iOS.ViewModels;
-using GoogleAnalytics.iOS;
 using UIKit;
 
 namespace FreedomVoice.iOS.ViewControllers
 {
     partial class ExtensionsViewController : BaseViewController
     {
+        protected override string PageName => "Extensions Screen";
+
         private static MainTabBarController MainTabBarInstance => MainTabBarController.SharedInstance;
 
         private static Account SelectedAccount => MainTabBarInstance.SelectedAccount;
@@ -25,9 +26,6 @@ namespace FreedomVoice.iOS.ViewControllers
         public ExtensionsViewController(IntPtr handle) : base(handle)
         {
             ExtensionsList = new List<ExtensionWithCount>();
-
-            GAI.SharedInstance.DefaultTracker.Set(GAIConstants.ScreenName, "Extensions Screen");
-            GAI.SharedInstance.DefaultTracker.Send(GAIDictionaryBuilder.CreateScreenView().Build());
         }
 
         public override void ViewDidLoad()

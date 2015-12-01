@@ -6,13 +6,14 @@ using FreedomVoice.iOS.TableViewSources;
 using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.Utilities.Helpers;
 using FreedomVoice.iOS.ViewModels;
-using GoogleAnalytics.iOS;
 using UIKit;
 
 namespace FreedomVoice.iOS.ViewControllers
 {
 	partial class FoldersViewController : BaseViewController
     {
+        protected override string PageName => "Folders Screen";
+
         public bool IsSingleExtension { private get; set; }
         public ExtensionWithCount SelectedExtension { private get; set; }
 	    private List<FolderWithCount> FoldersList { get; set; }
@@ -29,9 +30,6 @@ namespace FreedomVoice.iOS.ViewControllers
 	    public FoldersViewController(IntPtr handle) : base(handle)
 	    {
             FoldersList = new List<FolderWithCount>();
-
-            GAI.SharedInstance.DefaultTracker.Set(GAIConstants.ScreenName, "Folders Screen");
-            GAI.SharedInstance.DefaultTracker.Send(GAIDictionaryBuilder.CreateScreenView().Build());
         }
 
         public override void ViewDidLoad()

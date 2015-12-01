@@ -1,5 +1,6 @@
 ﻿using System;
 using Foundation;
+using GoogleAnalytics.iOS;
 using UIKit;
 
 namespace FreedomVoice.iOS.ViewControllers
@@ -14,11 +15,16 @@ namespace FreedomVoice.iOS.ViewControllers
         /// </param>
         protected BaseViewController(IntPtr handle) : base(handle)
         {
+            GAI.SharedInstance.DefaultTracker.Set(GAIConstants.ScreenName, PageName);
+            GAI.SharedInstance.DefaultTracker.Send(GAIDictionaryBuilder.CreateScreenView().Build());
+
             if (!HandlesKeyboardNotifications) return;
 
             NSNotificationCenter.DefaultCenter.AddObserver(UIKeyboard.WillHideNotification, OnKeyboardNotification);
             NSNotificationCenter.DefaultCenter.AddObserver(UIKeyboard.WillShowNotification, OnKeyboardNotification);
         }
+
+        protected virtual string PageName { get; } = string.Empty;
 
         protected virtual bool HandlesKeyboardNotifications => false;
 

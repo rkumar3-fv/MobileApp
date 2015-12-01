@@ -8,6 +8,6 @@ namespace FreedomVoice.iOS.Services
         /// <summary>
         /// Asynchronous retrieving of presentation phone numbers
         /// </summary>
-        Task<BaseResponse> ExecuteRequest(string systemNumber);
+        Task<BaseResponse> ExecuteRequest(string systemNumber, bool noCache);
     }
 }

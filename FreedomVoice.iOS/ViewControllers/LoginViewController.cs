@@ -5,16 +5,17 @@ using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.Utilities.Extensions;
 using FreedomVoice.iOS.Utilities.Helpers;
 using FreedomVoice.iOS.ViewModels;
-using GoogleAnalytics.iOS;
 using UIKit;
 
 namespace FreedomVoice.iOS.ViewControllers
 {
 	partial class LoginViewController : BaseViewController
     {
+        protected override string PageName => "Login Screen";
+
         #region Controls
 
-	    private UIImageView _logoImage;
+        private UIImageView _logoImage;
 
         private UITextField _usernameTextField;
         private UITextField _passwordTextField;
@@ -31,11 +32,7 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private LoginViewModel _loginViewModel;
 
-	    public LoginViewController(IntPtr handle) : base(handle)
-	    {
-            GAI.SharedInstance.DefaultTracker.Set(GAIConstants.ScreenName, "Login Screen");
-            GAI.SharedInstance.DefaultTracker.Send(GAIDictionaryBuilder.CreateScreenView().Build());
-        }
+	    public LoginViewController(IntPtr handle) : base(handle) { }
 
 	    public override void ViewDidLoad()
 	    {

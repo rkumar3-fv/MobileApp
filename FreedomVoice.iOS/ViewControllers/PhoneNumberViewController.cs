@@ -4,13 +4,14 @@ using Foundation;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.Utilities.Helpers;
-using GoogleAnalytics.iOS;
 using UIKit;
 
 namespace FreedomVoice.iOS.ViewControllers
 {
 	partial class PhoneNumberViewController : BaseViewController
 	{
+        protected override string PageName => "Phone Number Screen";
+
         #region Controls
 
         private UIButton _continuedButton;
@@ -28,11 +29,7 @@ namespace FreedomVoice.iOS.ViewControllers
         public Account SelectedAccount { private get; set; }
         public UIViewController ParentController { private get; set; }
 
-	    public PhoneNumberViewController(IntPtr handle) : base(handle)
-	    {
-            GAI.SharedInstance.DefaultTracker.Set(GAIConstants.ScreenName, "Phone Number Screen");
-            GAI.SharedInstance.DefaultTracker.Send(GAIDictionaryBuilder.CreateScreenView().Build());
-        }
+	    public PhoneNumberViewController(IntPtr handle) : base(handle) { }
 
 	    public override void ViewDidLoad()
 	    {

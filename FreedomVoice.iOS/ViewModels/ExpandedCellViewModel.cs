@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using FreedomVoice.Core.Utils;
 using FreedomVoice.iOS.Services;
 using FreedomVoice.iOS.Services.Responses;
-using FreedomVoice.iOS.Utilities;
 using UIKit;
 
 namespace FreedomVoice.iOS.ViewModels

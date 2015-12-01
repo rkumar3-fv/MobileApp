@@ -1,5 +1,8 @@
-﻿using FreedomVoice.iOS.Services;
+﻿using FreedomVoice.Core.Cache;
+using FreedomVoice.Core.Utils;
+using FreedomVoice.iOS.Services;
 using FreedomVoice.iOS.Services.Implementations;
+using FreedomVoice.iOS.Utilities.Helpers;
 
 namespace FreedomVoice.iOS.Utilities
 {
@@ -24,6 +27,7 @@ namespace FreedomVoice.iOS.Utilities
             ServiceContainer.Register<ICallReservationService>(() => new CallReservationService());
             ServiceContainer.Register<IMediaService>(() => new MediaService());
             ServiceContainer.Register<IMessageOperationsService>(() => new MessageOperationsService());
+            ServiceContainer.Register<IDeviceCacheStorage>(() => new DeviceCacheStorage());
         }
     }
 }

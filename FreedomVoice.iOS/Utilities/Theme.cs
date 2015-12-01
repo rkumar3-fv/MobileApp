@@ -1,13 +1,14 @@
 ﻿using System;
 using CoreGraphics;
+using FreedomVoice.Core.Utils;
 using UIKit;
 
 namespace FreedomVoice.iOS.Utilities
 {
     public static class Theme
     {
-        private static readonly bool _iPhone6 = ScreenBounds.Width == 375;
-        private static readonly bool _iPhone6Plus = ScreenBounds.Width == 414;
+        private static readonly bool IPhone6 = ScreenBounds.Width == 375;
+        private static readonly bool IPhone6Plus = ScreenBounds.Width == 414;
 
         #region Backgrounds
 
@@ -24,22 +25,22 @@ namespace FreedomVoice.iOS.Utilities
         /// <summary>
         /// Login page background image
         /// </summary>
-        static readonly Lazy<UIImage> loginBackgroundImage = new Lazy<UIImage>(() => UIImage.FromFile($"Login-{(_iPhone6Plus ? "736h" : _iPhone6 ? "667h" : "568h")}.png"));
+        static readonly Lazy<UIImage> loginBackgroundImage = new Lazy<UIImage>(() => UIImage.FromFile($"Login-{(IPhone6Plus ? "736h" : IPhone6 ? "667h" : "568h")}.png"));
         public static UIImage LoginBackgroundImage => loginBackgroundImage.Value;
 
         /// <summary>
         /// Splash screen background image
         /// </summary>
-        static readonly Lazy<UIImage> splashScreenImage = new Lazy<UIImage>(() => UIImage.FromFile($"Default-{(_iPhone6Plus ? "736h" : _iPhone6 ? "667h" : "568h")}.png"));
+        static readonly Lazy<UIImage> splashScreenImage = new Lazy<UIImage>(() => UIImage.FromFile($"Default-{(IPhone6Plus ? "736h" : IPhone6 ? "667h" : "568h")}.png"));
         public static UIImage SplashScreenImage => splashScreenImage.Value;
 
         /// <summary>
         /// Keypad Dial image
         /// </summary>
-        private static readonly Lazy<UIImage> keypadDialImage = new Lazy<UIImage>(() => UIImage.FromFile($"keypad_call{(_iPhone6 ? "_big" : "")}.png"));
+        private static readonly Lazy<UIImage> keypadDialImage = new Lazy<UIImage>(() => UIImage.FromFile($"keypad_call{(IPhone6 ? "_big" : "")}.png"));
         public static UIImage KeypadDialImage => keypadDialImage.Value;
 
-        public static UIImage LoginLogoImage(bool keyboardVisible) => UIImage.FromFile($"logo_freedomvoice{(!_iPhone6 && !_iPhone6Plus && keyboardVisible ? "_small" : "")}_white.png");
+        public static UIImage LoginLogoImage(bool keyboardVisible) => UIImage.FromFile($"logo_freedomvoice{(!IPhone6 && !IPhone6Plus && keyboardVisible ? "_small" : "")}_white.png");
 
         #endregion
 
@@ -204,37 +205,37 @@ namespace FreedomVoice.iOS.Utilities
             return wideLabel ? 110 : 98;
         }
 
-        public static nfloat LogoImageTopPadding(bool keyboardVisible) => !_iPhone6 && !_iPhone6Plus && keyboardVisible ? 10 : 35;
+        public static nfloat LogoImageTopPadding(bool keyboardVisible) => !IPhone6 && !IPhone6Plus && keyboardVisible ? 10 : 35;
 
-        public static nfloat LogoImageWidth(bool keyboardVisible = false) => !_iPhone6 && !_iPhone6Plus && keyboardVisible ? 184 : 263;
+        public static nfloat LogoImageWidth(bool keyboardVisible = false) => !IPhone6 && !IPhone6Plus && keyboardVisible ? 184 : 263;
 
-        public static nfloat LogoImageHeight(bool keyboardVisible = false) => !_iPhone6 && !_iPhone6Plus && keyboardVisible ? 29 : 42;
+        public static nfloat LogoImageHeight(bool keyboardVisible = false) => !IPhone6 && !IPhone6Plus && keyboardVisible ? 29 : 42;
 
-        public static nfloat WelcomeLabelTopPadding(bool keyboardVisible = false) => _iPhone6Plus ? (keyboardVisible ? 32 : 118) : _iPhone6 ? (keyboardVisible ? 15 : 94) : (keyboardVisible ? 4 : 57);
+        public static nfloat WelcomeLabelTopPadding(bool keyboardVisible = false) => IPhone6Plus ? (keyboardVisible ? 32 : 118) : IPhone6 ? (keyboardVisible ? 15 : 94) : (keyboardVisible ? 4 : 57);
 
-        public static UIFont WelcomeLabelFont(bool keyboardVisible) => UIFont.SystemFontOfSize((!_iPhone6 && !_iPhone6Plus && keyboardVisible ? 24 : 36), UIFontWeight.Thin);
+        public static UIFont WelcomeLabelFont(bool keyboardVisible) => UIFont.SystemFontOfSize((!IPhone6 && !IPhone6Plus && keyboardVisible ? 24 : 36), UIFontWeight.Thin);
 
-        public static nfloat WelcomeLabelHeight(bool keyboardVisible = false) => !_iPhone6 && !_iPhone6Plus && keyboardVisible ? 18 : 30;
+        public static nfloat WelcomeLabelHeight(bool keyboardVisible = false) => !IPhone6 && !IPhone6Plus && keyboardVisible ? 18 : 30;
 
-        public static nfloat UsernameTextFieldTopPadding(bool keyboardVisible = false) => !_iPhone6 && !_iPhone6Plus && keyboardVisible ? 10 : 28;
+        public static nfloat UsernameTextFieldTopPadding(bool keyboardVisible = false) => !IPhone6 && !IPhone6Plus && keyboardVisible ? 10 : 28;
 
-        public static nfloat PasswordTextFieldPadding => _iPhone6Plus ? 33 : 27;
+        public static nfloat PasswordTextFieldPadding => IPhone6Plus ? 33 : 27;
 
-        public static nfloat LoginValidationLabelTopPadding => _iPhone6Plus ? 17 : 10;
+        public static nfloat LoginValidationLabelTopPadding => IPhone6Plus ? 17 : 10;
 
         public static nfloat BackButtonLabelWidth => AppDelegate.SystemVersion == 9 ? 86 : 91;
 
-        public static nfloat KeypadButtonDiameter => _iPhone6 || _iPhone6Plus ? 75 : 65;
+        public static nfloat KeypadButtonDiameter => IPhone6 || IPhone6Plus ? 75 : 65;
 
-        public static nfloat KeypadDistanceX => _iPhone6 || _iPhone6Plus ? 28 : 16;
+        public static nfloat KeypadDistanceX => IPhone6 || IPhone6Plus ? 28 : 16;
 
-        public static nfloat KeypadDistanceY => _iPhone6 || _iPhone6Plus ? 15 : 8;
+        public static nfloat KeypadDistanceY => IPhone6 || IPhone6Plus ? 15 : 8;
 
         public static nfloat KeypadWidth => KeypadButtonDiameter * 3 + KeypadDistanceX * 2;
 
         public static nfloat KeypadHeight => (KeypadButtonDiameter + KeypadDistanceY) * 4;
 
-        public static nfloat KeypadTopPadding => _iPhone6Plus ? 44 : _iPhone6 ? 17 : 0;
+        public static nfloat KeypadTopPadding => IPhone6Plus ? 44 : IPhone6 ? 17 : 0;
 
         public static nfloat KeypadDialButtonDiameter => KeypadButtonDiameter - 3;
 

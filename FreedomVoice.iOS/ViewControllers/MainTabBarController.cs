@@ -13,7 +13,7 @@ namespace FreedomVoice.iOS.ViewControllers
 	{
         public Account SelectedAccount { get; set; }
         public List<PresentationNumber> PresentationNumbers { private get; set; }
-	    public List<ExtensionWithCount> ExtensionsList { get; set; }
+	    public List<ExtensionWithCount> ExtensionsList { private get; set; }
 
 	    public bool IsRootController => NavigationController.ViewControllers.Length == 1;
 

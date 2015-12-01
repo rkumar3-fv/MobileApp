@@ -11,30 +11,36 @@ namespace FreedomVoice.iOS.Utilities
     {
         public static async Task<bool> CreateCallReservation(string systemNumber, string presentationNumber, string destinationNumberFormatted, UIViewController viewController)
         {
+            viewController.View.UserInteractionEnabled = false;
+
             var destinationNumber = FormatPhoneNumber(destinationNumberFormatted);
             var expectedCallerIdNumber = FormatPhoneNumber(UserDefault.AccountPhoneNumber);
 
             if (!PhoneCapability.IsSimCardInstalled)
             {
                 Appearance.ShowOkAlertWithMessage(viewController, Appearance.AlertMessageType.NoSimCardInstalled);
+                viewController.View.UserInteractionEnabled = true;
                 return false;
             }
 
             if (PhoneCapability.NetworkIsUnreachable)
             {
                 Appearance.ShowOkAlertWithMessage(viewController, Appearance.AlertMessageType.NetworkUnreachable);
+                viewController.View.UserInteractionEnabled = true;
                 return false;
             }
 
             if (IsEmergencyNumber(destinationNumber))
             {
                 UIApplication.SharedApplication.OpenUrl(NSUrl.FromString($"tel:{destinationNumber}"));
+                viewController.View.UserInteractionEnabled = true;
                 return false;
             }
 
             if (destinationNumber.Length < 5)
             {
                 Appearance.ShowOkAlertWithMessage(viewController, Appearance.AlertMessageType.IncorrectNumber);
+                viewController.View.UserInteractionEnabled = true;
                 return true;
             }
 
@@ -42,6 +48,8 @@ namespace FreedomVoice.iOS.Utilities
             //TODO: Only for test purposes, replace later
             if (string.IsNullOrEmpty(expectedCallerIdNumber) || expectedCallerIdNumber.Length != 10 && expectedCallerIdNumber.Length != 12)
             {
+                viewController.View.UserInteractionEnabled = true;
+
                 var alertController = UIAlertController.Create(null, "To make calls with this app, please enter your device's phone number.", UIAlertControllerStyle.Alert);
                 alertController.AddAction(UIAlertAction.Create("Settings", UIAlertActionStyle.Default, a => UIApplication.SharedApplication.OpenUrl(new NSUrl(UIApplication.OpenSettingsUrlString))));
                 alertController.AddAction(UIAlertAction.Create("Cancel", UIAlertActionStyle.Cancel, null));
@@ -55,6 +63,7 @@ namespace FreedomVoice.iOS.Utilities
             if (callReservationViewModel.IsErrorResponseReceived)
             {
                 Appearance.ShowOkAlertWithMessage(viewController, Appearance.AlertMessageType.CallFailed);
+                viewController.View.UserInteractionEnabled = true;
                 return true;
             }
 
@@ -65,6 +74,7 @@ namespace FreedomVoice.iOS.Utilities
             if (!UIApplication.SharedApplication.OpenUrl(phoneNumber))
                 Appearance.ShowOkAlertWithMessage(viewController, Appearance.AlertMessageType.CallsUnsuported);
 
+            viewController.View.UserInteractionEnabled = true;
             return true;
         }
 

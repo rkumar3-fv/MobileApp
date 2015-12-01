@@ -9,15 +9,16 @@ using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.Utilities.Helpers;
 using FreedomVoice.iOS.Views;
 using FreedomVoice.iOS.Views.Shared;
-using GoogleAnalytics.iOS;
 using UIKit;
 using Xamarin.Contacts;
 using ContactsHelper = FreedomVoice.iOS.Utilities.Helpers.Contacts;
 
 namespace FreedomVoice.iOS.ViewControllers
 {
-    partial class ContactsViewController : UIViewController
+    partial class ContactsViewController : BaseViewController
     {
+        protected override string PageName => "Contacts Screen";
+
         private List<Contact> _contactList;
         private List<Contact> _filteredContactList;
 
@@ -41,9 +42,6 @@ namespace FreedomVoice.iOS.ViewControllers
 
         public ContactsViewController(IntPtr handle) : base(handle)
         {
-            GAI.SharedInstance.DefaultTracker.Set(GAIConstants.ScreenName, "Contacts Screen");
-            GAI.SharedInstance.DefaultTracker.Send(GAIDictionaryBuilder.CreateScreenView().Build());
-
             _contactList = new List<Contact>();
             _filteredContactList = new List<Contact>();
         }

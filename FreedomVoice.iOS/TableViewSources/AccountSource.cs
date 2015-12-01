@@ -55,7 +55,7 @@ namespace FreedomVoice.iOS.TableViewSources
                 return;
             }
 
-            var mainTabBarController = await AppDelegate.GetMainTabBarController(selectedAccount, _navigationController, CGPoint.Empty);
+            var mainTabBarController = await AppDelegate.GetMainTabBarController(selectedAccount, _navigationController, CGPoint.Empty, true);
             if (mainTabBarController != null)
                 _navigationController.PushViewController(mainTabBarController, false);
         }

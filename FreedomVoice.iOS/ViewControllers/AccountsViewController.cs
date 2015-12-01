@@ -4,20 +4,17 @@ using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.TableViewSources;
 using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.Utilities.Helpers;
-using GoogleAnalytics.iOS;
 using UIKit;
 
 namespace FreedomVoice.iOS.ViewControllers
 {
 	partial class AccountsViewController : BaseViewController
 	{
+        protected override string PageName => "Accounts Screen";
+
         public List<Account> AccountsList;
 
-	    public AccountsViewController(IntPtr handle) : base(handle)
-	    {
-            GAI.SharedInstance.DefaultTracker.Set(GAIConstants.ScreenName, "Accounts Screen");
-            GAI.SharedInstance.DefaultTracker.Send(GAIDictionaryBuilder.CreateScreenView().Build());
-        }
+	    public AccountsViewController(IntPtr handle) : base(handle) { }
 
         public override void ViewDidLoad()
         {

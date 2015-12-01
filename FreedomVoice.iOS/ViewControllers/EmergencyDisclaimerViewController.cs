@@ -3,25 +3,22 @@ using CoreGraphics;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.Utilities.Helpers;
-using GoogleAnalytics.iOS;
 using UIKit;
 
 namespace FreedomVoice.iOS.ViewControllers
 {
-	partial class EmergencyDisclaimerViewController : UIViewController
+	partial class EmergencyDisclaimerViewController : BaseViewController
 	{
-	    public Account SelectedAccount { private get; set; }
+        protected override string PageName => "Emergency Disclaimer Screen";
+
+        public Account SelectedAccount { private get; set; }
         public UIViewController ParentController { private get; set; }
 
         private UIImageView _emergencyDisclaimerImage;
         private UILabel _emergencyDisclaimerLabel;
 	    private UIButton _understandButton;
 
-        public EmergencyDisclaimerViewController(IntPtr handle) : base(handle)
-	    {
-            GAI.SharedInstance.DefaultTracker.Set(GAIConstants.ScreenName, "Emergency Disclaimer Screen");
-            GAI.SharedInstance.DefaultTracker.Send(GAIDictionaryBuilder.CreateScreenView().Build());
-        }
+        public EmergencyDisclaimerViewController(IntPtr handle) : base(handle) { }
 
 	    public override void ViewDidLoad()
         {
@@ -42,7 +39,7 @@ namespace FreedomVoice.iOS.ViewControllers
 
             var navigationBarHeight = Theme.StatusBarHeight + NavigationController.NavigationBarHeight();
 
-            var mainTabBarController = await AppDelegate.GetMainTabBarController(SelectedAccount, ParentController, new CGPoint(_understandButton.Center.X, _understandButton.Center.Y + navigationBarHeight));
+            var mainTabBarController = await AppDelegate.GetMainTabBarController(SelectedAccount, ParentController, new CGPoint(_understandButton.Center.X, _understandButton.Center.Y + navigationBarHeight), true);
             var controller = (UINavigationController)ParentController;
             if (mainTabBarController == null || controller == null)
             {

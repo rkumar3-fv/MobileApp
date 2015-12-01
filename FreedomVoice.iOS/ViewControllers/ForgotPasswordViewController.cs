@@ -5,13 +5,14 @@ using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.Utilities.Extensions;
 using FreedomVoice.iOS.Utilities.Helpers;
 using FreedomVoice.iOS.ViewModels;
-using GoogleAnalytics.iOS;
 using UIKit;
 
 namespace FreedomVoice.iOS.ViewControllers
 {
-	partial class ForgotPasswordViewController : UIViewController
+	partial class ForgotPasswordViewController : BaseViewController
 	{
+        protected override string PageName => "Forgot Password Screen";
+
         #region Controls
 
         private UITextField _emailTextField;
@@ -27,11 +28,7 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private ForgotPasswordViewModel _forgotPasswordViewModel;
 
-	    public ForgotPasswordViewController(IntPtr handle) : base(handle)
-	    {
-            GAI.SharedInstance.DefaultTracker.Set(GAIConstants.ScreenName, "Forgot Password Screen");
-            GAI.SharedInstance.DefaultTracker.Send(GAIDictionaryBuilder.CreateScreenView().Build());
-        }
+	    public ForgotPasswordViewController(IntPtr handle) : base(handle) { }
 
         public override void ViewDidLoad()
         {
