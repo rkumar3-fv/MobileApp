@@ -6,7 +6,6 @@ using Android.Content;
 using Android.OS;
 #if DEBUG
 using Android.Util;
-using FreedomVoice.Core.Utils;
 #endif
 using System.Diagnostics;
 using System.Threading.Tasks;

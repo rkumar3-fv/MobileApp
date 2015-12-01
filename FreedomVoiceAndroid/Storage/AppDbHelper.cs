@@ -162,10 +162,10 @@ namespace com.FreedomVoice.MobileApp.Android.Storage
             else
             {
                 cursor.MoveToFirst();
-                index = cursor.GetColumnIndex(ColumnPk);
-                cursor.Close();
+                index = cursor.GetColumnIndex(ColumnPk);  
                 db.Update(TableNameAccounts, content, $"{ColumnPk}={index}", null);
             }
+            cursor?.Close();
             if ((account.PresentationNumbers == null) || (account.PresentationNumbers.Count <= 0) || index == -1)
                 return;
             foreach (var presentationNumber in account.PresentationNumbers)
@@ -182,7 +182,99 @@ namespace com.FreedomVoice.MobileApp.Android.Storage
         /// <param name="db">Writable database</param>
         private void InsertSingleCallerId(long accountId, string callerId, SQLiteDatabase db)
         {
-            
+            var content = new ContentValues();
+            content.Put(ColumnCallerId, callerId);
+            var selection = $"SELECT * FROM {TableNameCallerId} WHERE {ColumnCallerId}='{callerId}'";
+            var cursor = db.RawQuery(selection, null);
+            long index;
+            if ((cursor == null) || (cursor.Count == 0))
+                index = db.Insert(TableNameCallerId, null, content);
+            else
+            {
+                cursor.MoveToFirst();
+                index = cursor.GetColumnIndex(ColumnPk);
+                db.Update(TableNameCallerId, content, $"{ColumnPk}={index}", null);
+            }
+            cursor?.Close();
+            var contentLink = new ContentValues();
+            contentLink.Put(ColumnAccountLink, accountId);
+            contentLink.Put(ColumnCallerIdLink, index);
+            var linkSelection = $"SELECT * FROM {TableNameAccountCallerLink} WHERE ({ColumnAccountLink}={accountId}) AND ({ColumnCallerIdLink}={index})";
+            var cursorLink = db.RawQuery(linkSelection, null);
+            if ((cursorLink == null) || (cursorLink.Count == 0))
+                db.Insert(TableNameAccountCallerLink, null, content);
+            cursorLink?.Close();
         }
+
+        /// <summary>
+        /// Get accounts list
+        /// </summary>
+        /// <returns>Accounts list</returns>
+        public List<Account> GetAccounts()
+        {
+            var selectionQuery = $"select * from {TableNameAccounts}";
+            var accountsList = new List<Account>();
+            var db = ReadableDatabase;
+            var accountsCursor = db.RawQuery(selectionQuery, null);
+            if ((accountsCursor != null) && (accountsCursor.Count > 0))
+            {
+                accountsCursor.MoveToFirst();
+                while (!accountsCursor.IsAfterLast)
+                {
+                    var accountId = accountsCursor.GetLong(accountsCursor.GetColumnIndex(ColumnPk));
+                    var accountName = accountsCursor.GetString(accountsCursor.GetColumnIndex(ColumnAccountName));
+                    var accountState = accountsCursor.GetLong(accountsCursor.GetColumnIndex(ColumnAccountState)) == 1;
+                    var callerIds = GetCallerIds(db, accountId);
+                    accountsList.Add(new Account(accountName, callerIds, accountState));
+                }
+            }
+            accountsCursor?.Close();
+            db.Close();
+            return accountsList;
+        }
+
+        /// <summary>
+        /// Get caller IDs for selected account
+        /// </summary>
+        /// <param name="accountName">selected account name</param>
+        /// <returns>List of caller IDs</returns>
+        public List<string> GetCallerIds(string accountName)
+        {
+            List<string> res;
+            var db = ReadableDatabase;
+            var selectionQuery = $"select * from {TableNameAccounts} where {ColumnAccountName}={accountName}";
+            var cursor = db.RawQuery(selectionQuery, null);
+            if ((cursor != null) && (cursor.Count > 0))
+            {
+                cursor.MoveToFirst();
+                var id = cursor.GetLong(cursor.GetColumnIndex(ColumnPk));
+                cursor.Close();
+                res = GetCallerIds(db, id);
+            }
+            else
+            {
+                cursor?.Close();
+                res = new List<string>();
+            }
+            db.Close();
+            return res;
+        }
+
+        private List<string> GetCallerIds(SQLiteDatabase db, long accountId)
+        {
+            var result = new List<string>();
+            var selectionQuery = $"select * from {TableNameCallerId} where {ColumnPk} IN (select {ColumnCallerIdLink} from {TableNameAccountCallerLink} where {ColumnAccountLink}={accountId})";
+            var callerCursor = db.RawQuery(selectionQuery, null);
+            if ((callerCursor != null) && (callerCursor.Count > 0))
+            {
+                callerCursor.MoveToFirst();
+                while (!callerCursor.IsAfterLast)
+                {
+                    result.Add(callerCursor.GetString(callerCursor.GetColumnIndex(ColumnCallerId)));
+                }
+            }
+            callerCursor?.Close();
+            return result;
+        } 
     }
 }
