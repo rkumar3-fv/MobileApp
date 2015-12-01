@@ -11,6 +11,8 @@ using FreedomVoice.Core.Entities.Enums;
 using Newtonsoft.Json;
 using System.Net.Http;
 using System;
+using FreedomVoice.Core.Cache;
+using FreedomVoice.Core.Utils;
 using ModernHttpClient;
 
 namespace FreedomVoice.Core
@@ -26,6 +28,8 @@ namespace FreedomVoice.Core
                     _clientHandler.CookieContainer = value;
             }
         }
+
+        private static CacheStorageClient CacheStorage { get; set; }
 
         private static NativeMessageHandler _clientHandler;
 
@@ -43,6 +47,7 @@ namespace FreedomVoice.Core
                 _clientHandler.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
 
             Client = new HttpClient(_clientHandler);
+            CacheStorage = new CacheStorageClient(ServiceContainer.Resolve<IDeviceCacheStorage>());
         }
 
         public static async Task<BaseResult<string>> Login(string login, string password)
@@ -69,17 +74,34 @@ namespace FreedomVoice.Core
             return await MakeAsyncGetRequest<PollingInterval>("/api/v1/settings/pollingInterval", "application/json", CancellationToken.None);
         }
 
-        public static async Task<BaseResult<DefaultPhoneNumbers>> GetSystems()
+        public static async Task<BaseResult<DefaultPhoneNumbers>> GetSystems(bool noCache = false)
         {
-            return await MakeAsyncGetRequest<DefaultPhoneNumbers>("/api/v1/systems", "application/json", CancellationToken.None);
+            BaseResult<DefaultPhoneNumbers> data = null;
+            if (!noCache)
+                data = await CacheStorage.GetAccounts();
+
+            if (data != null && data.Result.PhoneNumbers.Length != 0) return data;
+
+            data = await MakeAsyncGetRequest<DefaultPhoneNumbers>("/api/v1/systems", "application/json", CancellationToken.None);
+            if (data?.Result != null && data.Code == ErrorCodes.Ok)
+                CacheStorage.SaveAccounts(data.Result.PhoneNumbers);
+
+            return data;
         }
 
-        public static async Task<BaseResult<PresentationPhoneNumbers>> GetPresentationPhoneNumbers(string systemPhoneNumber)
+        public static async Task<BaseResult<PresentationPhoneNumbers>> GetPresentationPhoneNumbers(string systemPhoneNumber, bool noCache = false)
         {
-            return await MakeAsyncGetRequest<PresentationPhoneNumbers>(
-                $"/api/v1/systems/{systemPhoneNumber}/presentationPhoneNumbers",
-                "application/json",
-                CancellationToken.None);
+            BaseResult<PresentationPhoneNumbers> data = null;
+            if (!noCache)
+                data = await CacheStorage.GetPresentationPhones();
+
+            if (data != null && data.Result.PhoneNumbers.Length != 0) return data;
+
+            data = await MakeAsyncGetRequest<PresentationPhoneNumbers>($"/api/v1/systems/{systemPhoneNumber}/presentationPhoneNumbers", "application/json", CancellationToken.None);
+            if (data?.Result != null && data.Code == ErrorCodes.Ok)
+                CacheStorage.SavePresentationPhones(data.Result.PhoneNumbers);
+
+            return data;
         }
 
         public static async Task<BaseResult<CreateCallReservationSetting>> CreateCallReservation(string systemPhoneNumber, string expectedCallerIdNumber, string presentationPhoneNumber, string destinationPhoneNumber)
@@ -97,34 +119,23 @@ namespace FreedomVoice.Core
 
         public static async Task<BaseResult<List<Mailbox>>> GetMailboxes(string systemPhoneNumber)
         {
-            return await MakeAsyncGetRequest<List<Mailbox>>(
-                $"/api/v1/systems/{systemPhoneNumber}/mailboxes",
-                "application/json",
-                CancellationToken.None);
+            return await MakeAsyncGetRequest<List<Mailbox>>($"/api/v1/systems/{systemPhoneNumber}/mailboxes","application/json",CancellationToken.None);
         }
 
         public static async Task<BaseResult<List<MailboxWithCount>>> GetMailboxesWithCounts(string systemPhoneNumber)
         {
-            return await MakeAsyncGetRequest<List<MailboxWithCount>>(
-                $"/api/v1/systems/{systemPhoneNumber}/mailboxesWithCounts",
-                "application/json",
-                CancellationToken.None);
+            return await MakeAsyncGetRequest<List<MailboxWithCount>>($"/api/v1/systems/{systemPhoneNumber}/mailboxesWithCounts","application/json",CancellationToken.None);
         }
 
         public static async Task<BaseResult<List<Folder>>> GetFolders(string systemPhoneNumber, int mailboxNumber)
         {
-            return await MakeAsyncGetRequest<List<Folder>>(
-                $"/api/v1/systems/{systemPhoneNumber}/mailboxes/{mailboxNumber}/folders",
-                "application/json",
-                CancellationToken.None);
+            return await MakeAsyncGetRequest<List<Folder>>($"/api/v1/systems/{systemPhoneNumber}/mailboxes/{mailboxNumber}/folders","application/json",CancellationToken.None);
         }
 
         public static async Task<BaseResult<List<MessageFolderWithCounts>>> GetFoldersWithCount(string systemPhoneNumber, int mailboxNumber)
         {
             return await MakeAsyncGetRequest<List<MessageFolderWithCounts>>(
-                $"/api/v1/systems/{systemPhoneNumber}/mailboxes/{mailboxNumber}/foldersWithCounts",
-                "application/json",
-                CancellationToken.None);
+                $"/api/v1/systems/{systemPhoneNumber}/mailboxes/{mailboxNumber}/foldersWithCounts","application/json",CancellationToken.None);
         }
 
         public static async Task<BaseResult<List<Message>>> GetMesages(string systemPhoneNumber, int mailboxNumber, string folderName, int pageSize, int pageNumber, bool asc)
@@ -172,14 +183,14 @@ namespace FreedomVoice.Core
             return WebResources.AppUrl + url;
         }
 
-        private static async Task<BaseResult<T>> MakeAsyncPostRequest<T>(string url, string postData, string contentType, CancellationToken cts)
+        private static async Task<BaseResult<T>> MakeAsyncPostRequest<T>(string url, string postData, string contentType, CancellationToken ct)
         {
             BaseResult<T> baseRes;
             try
             {
-                var postResp = Client.PostAsync(MakeFullApiUrl(url), new StringContent(postData, Encoding.UTF8, contentType), cts);
+                var postResp = Client.PostAsync(MakeFullApiUrl(url), new StringContent(postData, Encoding.UTF8, contentType), ct);
 
-                baseRes = await GetResponse<T>(postResp, cts);
+                baseRes = await GetResponse<T>(postResp, ct);
             }
             catch (WebException)
             {
@@ -193,10 +204,10 @@ namespace FreedomVoice.Core
             return baseRes;
         }
 
-        public static async Task<BaseResult<T>> MakeAsyncGetRequest<T>(string url, string contentType, CancellationToken cts)
+        public static async Task<BaseResult<T>> MakeAsyncGetRequest<T>(string url, string contentType, CancellationToken ct)
         {
-            var getResp = Client.GetAsync(MakeFullApiUrl(url), cts);
-            return await GetResponse<T>(getResp, cts);
+            var getResp = Client.GetAsync(MakeFullApiUrl(url), ct);
+            return await GetResponse<T>(getResp, ct);
         }
 
         public static async Task<BaseResult<Stream>> MakeAsyncFileDownload(string url, string contentType, string messageId, CancellationToken ct)
@@ -207,11 +218,11 @@ namespace FreedomVoice.Core
                 if (ct.IsCancellationRequested)
                     return new BaseResult<Stream> { Code = ErrorCodes.Cancelled };
 
-                var getRep = Client.GetAsync(MakeFullApiUrl(url));
+                var getResp = Client.GetAsync(MakeFullApiUrl(url), ct);
 
-                var h = getRep.Result.Headers.FirstOrDefault(x => x.Key.Equals("Content-Length"));
+                var h = getResp.Result.Headers.FirstOrDefault(x => x.Key.Equals("Content-Length"));
 
-                var streamResp = getRep.Result.Content.ReadAsStreamAsync();
+                var streamResp = getResp.Result.Content.ReadAsStreamAsync();
                 retResult = new BaseResult<Stream>
                 {
                     Code = ErrorCodes.Ok,
@@ -371,25 +382,6 @@ namespace FreedomVoice.Core
                 Result = default(T),
                 ErrorText = msg
             };
-        }
-
-        private static void SetRequestStreamData(Stream response, byte[] postData)
-        {
-            response.Write(postData, 0, postData.Length);
-        }
-
-        private static byte[] GetRequestBytes(string postData)
-        {
-            return string.IsNullOrEmpty(postData) ? new byte[0] : Encoding.UTF8.GetBytes(postData);
-        }
-
-        private static string ReadStreamFromResponse(WebResponse response)
-        {
-            using (var responseStream = response.GetResponseStream())
-            using (var sr = new StreamReader(responseStream))
-            {
-                return sr.ReadToEnd();
-            }
         }
     }
 }
