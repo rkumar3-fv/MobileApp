@@ -228,6 +228,15 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             _preferencesHelper.SetNotIsFirstRun();
         }
 
+        public long Authorize()
+        {
+            if (!string.IsNullOrEmpty(_userLogin) && !string.IsNullOrEmpty(_userPassword))
+                return Authorize(_userLogin, _userPassword);
+            if ((_accPair != null) && (!string.IsNullOrEmpty((string) _accPair.First)) && (!string.IsNullOrEmpty((string) _accPair.Second)))
+                return Authorize((string) _accPair.First, (string) _accPair.Second);
+            return -100;
+        }
+
         /// <summary>
         /// Authorization action
         /// </summary>
@@ -811,6 +820,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                             SelectedAccount = null;
                             HelperEvent?.Invoke(this, new ActionsHelperIntentArgs(response.RequestId, intent));
                             break;
+                        //Forbidden 403
                         case ErrorResponse.Forbidden:
                             // Call reservation bad destination phone
                             if (_waitingRequestArray.ContainsKey(response.RequestId) && _waitingRequestArray[response.RequestId] is CallReservationRequest)
@@ -819,8 +829,10 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                                 Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} failed: FORBIDDEN");
 #endif
                                 SaveRecent(response);
-                                HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.CallReservationWrong }));
+                                HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] {ActionsHelperEventArgs.CallReservationWrong}));
                             }
+                            else
+                                DoLogout(response.RequestId);
                             break;
                         case ErrorResponse.ErrorInternal:
                         case ErrorResponse.ErrorUnknown:
@@ -887,8 +899,6 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 #if DEBUG
                     Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} successed: YOU ARE LOGGED OUT");
 #endif
-                    if (_waitingRequestArray.ContainsKey(response.RequestId))
-                        _waitingRequestArray.Remove(response.RequestId);
                     DoLogout(response.RequestId);
                     break;
 
@@ -1103,6 +1113,8 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         private void DoLogout(long id)
         {
             Task.Factory.StartNew(() => { _dbHelper.DropCache(); });
+            if (_waitingRequestArray.ContainsKey(id))
+                _waitingRequestArray.Remove(id);
             _userLogin = "";
             _userPassword = "";
             IsLoggedIn = false;
@@ -1133,17 +1145,12 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         {
             var callReservation = (CallReservationRequest)_waitingRequestArray[response.RequestId];
             var recent = new Recent(callReservation.DialingNumber);
-            var values = RecentsDictionary.Values.ToList();
-            var keys = RecentsDictionary.Keys.ToList();
-            long keyForRemove = -1;
-            for (var i = 0; i < values.Count; i++)
+            if (RecentsDictionary.Count > 0)
             {
-                if (!values[i].Equals(recent)) continue;
-                keyForRemove = keys[i];
-                break;
+                var kvp = RecentsDictionary.First();
+                if (kvp.Value.Equals(recent))
+                    RecentsDictionary.Remove(kvp.Key);
             }
-            if (keyForRemove != -1)
-                RecentsDictionary.Remove(keyForRemove);
             RecentsDictionary.Add(response.RequestId, recent);
         }
     }

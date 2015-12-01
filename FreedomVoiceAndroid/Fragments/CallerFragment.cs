@@ -71,13 +71,38 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                 switch (code)
                 {
                     case ActionsHelperEventArgs.ChangePresentation:
-                        if ((Helper.SelectedAccount!=null)&&(_adapter?.Count == 0))
+                        if (Helper.SelectedAccount != null)
                         {
-                            _adapter.NumbersList = Helper.SelectedAccount.PresentationNumbers;
-                            _adapter.NotifyDataSetChanged();
+                            if (_adapter?.Count == 0)
+                            {
+                                _adapter.NumbersList = Helper.SelectedAccount.PresentationNumbers;
+                                _adapter.NotifyDataSetChanged();
+                            }
+                            if (IdSpinner != null)
+                            {
+                                if (Helper.SelectedAccount.PresentationNumbers.Count == 1)
+                                {
+                                    if (IdSpinner.Visibility == ViewStates.Visible)
+                                        IdSpinner.Visibility = ViewStates.Invisible;
+                                    if (SingleId.Visibility == ViewStates.Invisible)
+                                    {
+                                        SingleId.Text = DataFormatUtils.ToPhoneNumber(Helper.SelectedAccount.PresentationNumber);
+                                        SingleId.Visibility = ViewStates.Visible;
+                                    }
+                                }
+                                else
+                                {
+                                    if (IdSpinner.Visibility == ViewStates.Invisible)
+                                    {
+                                        IdSpinner.Visibility = ViewStates.Visible;
+                                        if (IdSpinner.SelectedItemPosition != Helper.SelectedAccount.SelectedPresentationNumber)
+                                            IdSpinner.SetSelection(Helper.SelectedAccount.SelectedPresentationNumber);
+                                    }
+                                    if (SingleId.Visibility == ViewStates.Visible)
+                                        SingleId.Visibility = ViewStates.Invisible;
+                                }
+                            }
                         }
-                        if ((IdSpinner != null)&&(Helper.SelectedAccount != null)&&(IdSpinner.SelectedItemPosition != Helper.SelectedAccount.SelectedPresentationNumber))
-                            IdSpinner.SetSelection(Helper.SelectedAccount.SelectedPresentationNumber);
                         break;
                 }
             }

@@ -20,6 +20,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         Theme = "@style/AuthAppTheme")]
     public class LoadingActivity : BaseActivity
     {
+        private const int TimeOut = 7;
         private Timer _timer;
         private Stopwatch _watcher;
 
@@ -32,7 +33,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 return;
             }
             SetContentView(Resource.Layout.act_loading);
-            _timer = new Timer { Interval = 7000, AutoReset = false };
+            _timer = new Timer { Interval = TimeOut*1000, AutoReset = false };
             _timer.Elapsed += TimerOnElapsed;
         }
 
@@ -106,7 +107,25 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         {
             RunOnUiThread(delegate
             {
-                Helper.GetAccounts();
+                if ((Helper.SelectedAccount != null) && (Helper.SelectedAccount.PresentationNumbers.Count > 0))
+                {
+                    Helper.ForceLoadExtensions();
+                    var intent = new Intent(this, typeof(ContentActivity));
+                    intent.SetFlags(ActivityFlags.NewTask);
+                    intent.AddFlags(ActivityFlags.ClearTop);
+                    StartActivity(intent);
+                }
+                else if ((Helper.AccountsList != null) && (Helper.AccountsList.Count > 0))
+                    Helper.GetExtensions();
+                else if (Helper.IsLoggedIn)
+                    Helper.GetAccounts();
+                else if (Helper.Authorize() == -100)
+                {
+                    var intent = new Intent(this, typeof(AuthActivity));
+                    intent.SetFlags(ActivityFlags.NewTask);
+                    intent.AddFlags(ActivityFlags.ClearTop);
+                    StartActivity(intent);
+                }
             });
         }
     }
