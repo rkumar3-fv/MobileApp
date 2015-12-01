@@ -51,16 +51,24 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             }     
             if (Helper.SelectedAccount.PresentationNumbers.Count == 1)
             {
-                IdSpinner.Visibility = ViewStates.Invisible;
-                SingleId.Text = DataFormatUtils.ToPhoneNumber(Helper.SelectedAccount.PresentationNumber);
-                SingleId.Visibility = ViewStates.Visible;
+                if (IdSpinner.Visibility == ViewStates.Visible)
+                    IdSpinner.Visibility = ViewStates.Invisible;
+                if (SingleId.Visibility == ViewStates.Invisible)
+                {
+                    SingleId.Text = DataFormatUtils.ToPhoneNumber(Helper.SelectedAccount.PresentationNumber);
+                    SingleId.Visibility = ViewStates.Visible;
+                }
             }
             else
             {
-                IdSpinner.Visibility = ViewStates.Visible;
-                SingleId.Visibility = ViewStates.Invisible;
-                if (IdSpinner.SelectedItemPosition != Helper.SelectedAccount.SelectedPresentationNumber)
-                    IdSpinner.SetSelection(Helper.SelectedAccount.SelectedPresentationNumber);
+                if (SingleId.Visibility == ViewStates.Visible)
+                    SingleId.Visibility = ViewStates.Invisible;
+                if (IdSpinner.Visibility == ViewStates.Invisible)
+                {
+                    IdSpinner.Visibility = ViewStates.Visible;
+                    if (IdSpinner.SelectedItemPosition != Helper.SelectedAccount.SelectedPresentationNumber)
+                        IdSpinner.SetSelection(Helper.SelectedAccount.SelectedPresentationNumber);
+                }
             }
         }
 

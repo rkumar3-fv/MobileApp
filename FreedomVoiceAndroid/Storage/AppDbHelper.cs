@@ -260,6 +260,24 @@ namespace com.FreedomVoice.MobileApp.Android.Storage
             return res;
         }
 
+        public void RemoveCallerIds(string accountName)
+        {
+            var db = WritableDatabase;
+            var selectionQuery = $"select {ColumnPk} from {TableNameAccounts} where {ColumnAccountName}='{accountName}'";
+            var cursor = db.RawQuery(selectionQuery, null);
+            if ((cursor!=null) && (cursor.Count>0))
+            {
+                cursor.MoveToFirst();
+                var index = cursor.GetLong(cursor.GetColumnIndex(ColumnPk));
+                var removeQuery = $"delete from {TableNameCallerId} where {ColumnPk} in (select {ColumnCallerIdLink} from {TableNameAccountCallerLink} where {ColumnAccountLink}={index});";
+                var removeLinksQurey = $"delete from {TableNameAccountCallerLink} where {ColumnAccountLink}={index};";
+                db.ExecSQL(removeQuery);
+                db.ExecSQL(removeLinksQurey);
+            }
+            cursor?.Close();
+            db.Close();
+        }
+
         private List<string> GetCallerIds(SQLiteDatabase db, long accountId)
         {
             var result = new List<string>();

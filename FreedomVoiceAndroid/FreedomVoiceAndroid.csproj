@@ -265,6 +265,7 @@
     <Compile Include="Services\MediaServiceBinder.cs" />
     <Compile Include="Storage\AppDbHelper.cs" />
     <Compile Include="Storage\AppPreferencesHelper.cs" />
+    <Compile Include="Storage\PclCacheImpl.cs" />
     <Compile Include="Utils\ContactsHelper.cs" />
     <Compile Include="Utils\ContactsObserver.cs" />
     <Compile Include="Utils\CookieSerializer.cs" />
