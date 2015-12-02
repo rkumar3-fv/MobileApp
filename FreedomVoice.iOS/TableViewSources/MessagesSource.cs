@@ -156,7 +156,7 @@ namespace FreedomVoice.iOS.TableViewSources
         private void RowDeleteClick(UITableView tableView, NSIndexPath indexPath)
         {
             var alertController = UIAlertController.Create("Confirm Deletion", "Delete this message?", UIAlertControllerStyle.Alert);
-            alertController.AddAction(UIAlertAction.Create("Don't delete", UIAlertActionStyle.Cancel, a => { }));
+            alertController.AddAction(UIAlertAction.Create("Don't delete", UIAlertActionStyle.Cancel, a => ProceedEventsSubscription(tableView, indexPath)));
             alertController.AddAction(UIAlertAction.Create("Delete", UIAlertActionStyle.Default, a => DeleteMessageClick(tableView, indexPath)));
 
             _navigationController.PresentViewController(alertController, true, null);

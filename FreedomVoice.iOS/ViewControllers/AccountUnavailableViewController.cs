@@ -43,9 +43,9 @@ namespace FreedomVoice.iOS.ViewControllers
 	    {
             var url = new NSUrl("tel:+18004771477");
 
-            if (!UIApplication.SharedApplication.CanOpenUrl(url))
+            if (!UIApplication.SharedApplication.OpenUrl(url))
                 Appearance.ShowOkAlertWithMessage(Appearance.AlertMessageType.CallsUnsuported);
-        }
+	    }
 
         #region Controls Initialization
 

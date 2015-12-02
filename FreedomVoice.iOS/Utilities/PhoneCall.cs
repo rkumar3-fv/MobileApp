@@ -42,7 +42,7 @@ namespace FreedomVoice.iOS.Utilities
             {
                 Appearance.ShowOkAlertWithMessage(Appearance.AlertMessageType.IncorrectNumber);
                 viewController.View.UserInteractionEnabled = true;
-                return true;
+                return false;
             }
 
             //if (string.IsNullOrEmpty(expectedCallerIdNumber) || expectedCallerIdNumber.Length != 10)

@@ -22,10 +22,7 @@ namespace FreedomVoice.iOS.Utilities.Helpers
             SecStatusCode resultCode;
             var data = SecKeyChain.QueryAsRecord(existingRecord, out resultCode);
 
-            if (resultCode == SecStatusCode.Success)
-                return NSString.FromData(data.Account, NSStringEncoding.UTF8);
-
-            return null;
+            return resultCode == SecStatusCode.Success ? NSString.FromData(data.Account, NSStringEncoding.UTF8) : null;
         }
 
         /// <summary>
@@ -94,7 +91,7 @@ namespace FreedomVoice.iOS.Utilities.Helpers
             SecStatusCode resultCode;
             var data = SecKeyChain.QueryAsRecord(existingRecord, out resultCode);
 
-            return resultCode != SecStatusCode.Success ? null : NSString.FromData(data.ValueData, NSStringEncoding.UTF8);
+            return resultCode == SecStatusCode.Success ? NSString.FromData(data.ValueData, NSStringEncoding.UTF8) : null;
         }
 
         /// <summary>

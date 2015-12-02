@@ -67,7 +67,7 @@ namespace FreedomVoice.iOS.TableViewCells
 
             AddSubviews(_image, _title, _date, _length);
 
-            RemoveCurrentSubscriptions();
+            RemoveCurrentEventsSubscriptions();
         }
 
         private void SetBackground(bool isFaxMessageType)
@@ -300,9 +300,10 @@ namespace FreedomVoice.iOS.TableViewCells
         private void OnDeleteButtonTouchUpInside(object sender, EventArgs args)
         {
             OnDeleteMessageClick?.Invoke(this, new ExpandedCellButtonClickEventArgs());
+            RemoveCurrentEventsSubscriptions();
         }
 
-        private void RemoveCurrentSubscriptions()
+        private void RemoveCurrentEventsSubscriptions()
         {
             OnCallbackClick = null;
             OnPlayClick = null;

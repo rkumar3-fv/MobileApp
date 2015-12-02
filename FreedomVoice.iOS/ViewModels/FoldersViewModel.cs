@@ -50,7 +50,10 @@ namespace FreedomVoice.iOS.ViewModels
 
             var requestResult = await _service.ExecuteRequest(_systemPhoneNumber, _mailboxNumber);
             if (requestResult is ErrorResponse)
-                ProceedErrorResponse(requestResult);
+            {
+                if (!silent)
+                    ProceedErrorResponse(requestResult);
+            }
             else
             {
                 var data = requestResult as FoldersWithCountResponse;
