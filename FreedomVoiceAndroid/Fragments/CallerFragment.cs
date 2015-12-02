@@ -64,11 +64,9 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                 if (SingleId.Visibility == ViewStates.Visible)
                     SingleId.Visibility = ViewStates.Invisible;
                 if (IdSpinner.Visibility == ViewStates.Invisible)
-                {
                     IdSpinner.Visibility = ViewStates.Visible;
-                    if (IdSpinner.SelectedItemPosition != Helper.SelectedAccount.SelectedPresentationNumber)
-                        IdSpinner.SetSelection(Helper.SelectedAccount.SelectedPresentationNumber);
-                }
+                if (IdSpinner.SelectedItemPosition != Helper.SelectedAccount.SelectedPresentationNumber)
+                    IdSpinner.SetSelection(Helper.SelectedAccount.SelectedPresentationNumber);
             }
         }
 
@@ -101,13 +99,11 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                                 else
                                 {
                                     if (IdSpinner.Visibility == ViewStates.Invisible)
-                                    {
                                         IdSpinner.Visibility = ViewStates.Visible;
-                                        if (IdSpinner.SelectedItemPosition != Helper.SelectedAccount.SelectedPresentationNumber)
-                                            IdSpinner.SetSelection(Helper.SelectedAccount.SelectedPresentationNumber);
-                                    }
                                     if (SingleId.Visibility == ViewStates.Visible)
                                         SingleId.Visibility = ViewStates.Invisible;
+                                    if (IdSpinner.SelectedItemPosition != Helper.SelectedAccount.SelectedPresentationNumber)
+                                        IdSpinner.SetSelection(Helper.SelectedAccount.SelectedPresentationNumber);
                                 }
                             }
                         }

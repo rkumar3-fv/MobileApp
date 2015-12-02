@@ -92,6 +92,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             {
                 switch (code)
                 {
+                    case ActionsHelperEventArgs.NoInternetConnection:
+                    case ActionsHelperEventArgs.NoInternetPermission:
                     case ActionsHelperEventArgs.ConnectionLostError:
                     case ActionsHelperEventArgs.InternalError:
                     case ActionsHelperEventArgs.AuthLoginError:
