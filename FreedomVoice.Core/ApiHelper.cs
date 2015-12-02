@@ -19,6 +19,8 @@ namespace FreedomVoice.Core
 {
     public static class ApiHelper
     {
+        private const int TimeOut = 20;
+
         public static CookieContainer CookieContainer
         {
             get { return _clientHandler?.CookieContainer; }
@@ -45,8 +47,7 @@ namespace FreedomVoice.Core
             _clientHandler = new NativeMessageHandler();
             if (_clientHandler.SupportsAutomaticDecompression)
                 _clientHandler.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
-
-            Client = new HttpClient(_clientHandler);
+            Client = new HttpClient(_clientHandler) {Timeout = new TimeSpan(0, 0, TimeOut)};
             CacheStorage = new CacheStorageClient(ServiceContainer.Resolve<IDeviceCacheStorage>());
         }
 
@@ -188,8 +189,9 @@ namespace FreedomVoice.Core
             BaseResult<T> baseRes;
             try
             {
-                var postResp = Client.PostAsync(MakeFullApiUrl(url), new StringContent(postData, Encoding.UTF8, contentType), ct);
-
+                var content = new StringContent(postData, Encoding.UTF8, contentType);
+                content.Headers.Add("Keep-Alive", "true");
+                var postResp = Client.PostAsync(MakeFullApiUrl(url), content, ct);
                 baseRes = await GetResponse<T>(postResp, ct);
             }
             catch (WebException)
@@ -206,7 +208,13 @@ namespace FreedomVoice.Core
 
         public static async Task<BaseResult<T>> MakeAsyncGetRequest<T>(string url, string contentType, CancellationToken ct)
         {
-            var getResp = Client.GetAsync(MakeFullApiUrl(url), ct);
+            var request = new HttpRequestMessage
+            {
+                RequestUri = new Uri(MakeFullApiUrl(url)),
+                Method = HttpMethod.Get
+            };
+            request.Headers.Add("Connection", new [] { "Keep-Alive" });
+            var getResp = Client.SendAsync(request, ct);
             return await GetResponse<T>(getResp, ct);
         }
 
