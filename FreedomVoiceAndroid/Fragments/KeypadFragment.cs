@@ -32,6 +32,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         private Button _buttonStar;
         private Button _buttonHash;
         private FloatingActionButton _buttonDial;
+        private bool _cleanOnRestore;
 
         protected override View InitView()
         {
@@ -70,6 +71,15 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             _buttonDial = view.FindViewById<FloatingActionButton>(Resource.Id.keypadFragment_buttonDial);
             _buttonDial.Click += ButtonDialOnClick;
             return view;
+        }
+
+        public override void OnResume()
+        {
+            base.OnResume();
+            if (!_cleanOnRestore) return;
+            _enteredNumber = "";
+            SetupNewText();
+            _cleanOnRestore = false;
         }
 
         /// <summary>
@@ -115,7 +125,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             }
 #if DEBUG
             else
-                Log.Debug(App.AppPackage, $"KEYPAD: nothing to remove");
+                Log.Debug(App.AppPackage, "KEYPAD: nothing to remove");
 #endif
         }
 
@@ -137,7 +147,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         private void BackspaceButtonOnLongClick(object sender, View.LongClickEventArgs longClickEventArgs)
         {
 #if DEBUG
-            Log.Debug(App.AppPackage, $"KEYPAD: clear phone");
+            Log.Debug(App.AppPackage, "KEYPAD: clear phone");
 #endif
             _enteredNumber = "";
             SetupNewText();
@@ -156,8 +166,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                 switch (code)
                 {
                     case ActionsHelperEventArgs.CallReservationOk:
-                        _enteredNumber = "";
-                        _dialEdit.Text = "";
+                        _cleanOnRestore = true;
                         break;
                 }
             }
