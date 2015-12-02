@@ -1,4 +1,5 @@
 using Android.OS;
+using Android.Runtime;
 using Java.Interop;
 using Object = Java.Lang.Object;
 
@@ -8,6 +9,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Responses
     /// Move from trash action response
     /// <see href="https://api.freedomvoice.com/Help/Api/POST-api-v1-systems-systemPhoneNumber-mailboxes-mailboxNumber-moveMessages">API - Move message request</see>
     /// </summary>
+    [Preserve(AllMembers = true)]
     public class RestoreMessageResponse : BaseResponse
     {
         public RestoreMessageResponse(long requestId) : base(requestId)

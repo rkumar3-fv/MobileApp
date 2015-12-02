@@ -1,11 +1,13 @@
 using System;
 using Android.OS;
+using Android.Runtime;
 
 namespace com.FreedomVoice.MobileApp.Android.Entities
 {
     /// <summary>
     /// Abstract item for messages tab
     /// </summary>
+    [Preserve(AllMembers = true)]
     public abstract class MessageItem : Entity, IEquatable<MessageItem>
     {
         /// <summary>

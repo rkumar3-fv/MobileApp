@@ -1,5 +1,6 @@
 using System;
 using Android.OS;
+using Android.Runtime;
 using Java.Interop;
 using Object = Java.Lang.Object;
 
@@ -9,6 +10,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Responses
     /// Accounts list response
     /// <see href="https://api.freedomvoice.com/Help/Api/POST-api-v1-systems-systemPhoneNumber-createCallReservation">API - Create call reservation</see>
     /// </summary>
+    [Preserve(AllMembers = true)]
     public class CallReservationResponse : BaseResponse, IEquatable<CallReservationResponse>
     {
         /// <summary>

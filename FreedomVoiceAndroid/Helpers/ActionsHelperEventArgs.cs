@@ -22,6 +22,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         public const int MsgMessagesUpdated = 33;
         public const int MsgUpdateFailed = 34;
         public const int MsgUpdateFailedAirplane = 35;
+        public const int MsgUpdateFailedInternal = 36;
         public const int CallReservationOk = 41;            //CallReservation - phone
         public const int CallReservationFail = 42;          //CallReservation - BadRequest or empty
         public const int CallReservationWrong = 43;         //CallReservation - Wrong destination number

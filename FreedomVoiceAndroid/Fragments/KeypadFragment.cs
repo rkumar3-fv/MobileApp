@@ -6,6 +6,7 @@ using Android.Util;
 #endif
 using Android.Views;
 using Android.Widget;
+using com.FreedomVoice.MobileApp.Android.Helpers;
 using FreedomVoice.Core.Utils;
 
 namespace com.FreedomVoice.MobileApp.Android.Fragments
@@ -145,6 +146,21 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         private void SetupNewText()
         {
             _dialEdit.Text = DataFormatUtils.ToPhoneNumber(_enteredNumber);
+        }
+
+        protected override void OnHelperEvent(ActionsHelperEventArgs args)
+        {
+            base.OnHelperEvent(args);
+            foreach (var code in args.Codes)
+            {
+                switch (code)
+                {
+                    case ActionsHelperEventArgs.CallReservationOk:
+                        _enteredNumber = "";
+                        _dialEdit.Text = "";
+                        break;
+                }
+            }
         }
     }
 }

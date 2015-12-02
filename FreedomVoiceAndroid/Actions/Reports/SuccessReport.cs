@@ -1,4 +1,5 @@
 using Android.OS;
+using Android.Runtime;
 using Java.Interop;
 using Object = Java.Lang.Object;
 using Message = com.FreedomVoice.MobileApp.Android.Entities.Message;
@@ -8,6 +9,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Reports
     /// <summary>
     /// Success file operation
     /// </summary>
+    [Preserve(AllMembers = true)]
     public class SuccessReport : BaseReport
     {
         /// <summary>

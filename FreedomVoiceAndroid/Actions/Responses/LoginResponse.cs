@@ -1,4 +1,5 @@
 using Android.OS;
+using Android.Runtime;
 using Java.Interop;
 using Object = Java.Lang.Object;
 
@@ -8,6 +9,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Responses
     /// Successful login action response
     /// <see href="https://api.freedomvoice.com/Help/Api/POST-api-v1-login">API - Login request</see>
     /// </summary>
+    [Preserve(AllMembers = true)]
     public class LoginResponse : BaseResponse
     {
         public LoginResponse(long requestId) : base(requestId)

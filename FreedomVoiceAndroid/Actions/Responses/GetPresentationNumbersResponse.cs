@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Android.OS;
+using Android.Runtime;
 using Java.Interop;
 using Java.Lang;
 using Object = Java.Lang.Object;
@@ -11,6 +12,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Responses
     /// Presentation numbers list response
     /// <see href="https://api.freedomvoice.com/Help/Api/GET-api-v1-systems-systemPhoneNumber-presentationPhoneNumbers">API - Get accounts request</see>
     /// </summary>
+    [Preserve(AllMembers = true)]
     public class GetPresentationNumbersResponse : BaseResponse, IEquatable<GetPresentationNumbersResponse>
     {
         /// <summary>

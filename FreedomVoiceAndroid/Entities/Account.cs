@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Android.OS;
+using Android.Runtime;
 using Java.Interop;
 using Java.Lang;
 using Object = Java.Lang.Object;
@@ -10,6 +11,7 @@ namespace com.FreedomVoice.MobileApp.Android.Entities
     /// <summary>
     /// Account entity
     /// </summary>
+    [Preserve(AllMembers = true)]
     public class Account : Entity, IEquatable<Account>
     {
         private int _selectedNumber;

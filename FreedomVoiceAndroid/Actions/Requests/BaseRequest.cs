@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Android.OS;
+using Android.Runtime;
 using com.FreedomVoice.MobileApp.Android.Actions.Responses;
 using FreedomVoice.Core.Entities.Enums;
 
@@ -10,6 +11,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
     /// Abstract request action
     /// <see href="https://api.freedomvoice.com/Help">FreedomVoice REST API</see>
     /// </summary>
+    [Preserve(AllMembers = true)]
     public abstract class BaseRequest : BaseAction, IEquatable<BaseRequest>
     {
         public long Id { get; }

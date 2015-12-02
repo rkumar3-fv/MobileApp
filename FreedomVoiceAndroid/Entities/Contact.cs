@@ -1,7 +1,12 @@
 using System.Collections.Generic;
+using Android.Runtime;
 
 namespace com.FreedomVoice.MobileApp.Android.Entities
 {
+    /// <summary>
+    /// Contact entity
+    /// </summary>
+    [Preserve(AllMembers = true)]
     public class Contact
     {
         /// <summary>

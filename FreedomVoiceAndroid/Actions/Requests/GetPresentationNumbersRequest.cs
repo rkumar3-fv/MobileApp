@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Android.OS;
+using Android.Runtime;
 #if DEBUG
 using Android.Util;
 #endif
@@ -14,6 +15,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
     /// Presentation numbers list request
     /// <see href="https://api.freedomvoice.com/Help/Api/GET-api-v1-systems-systemPhoneNumber-presentationPhoneNumbers">API - Get presentation numbers</see>
     /// </summary>
+    [Preserve(AllMembers = true)]
     public class GetPresentationNumbersRequest : BaseRequest
     {
         public string Account { get; }

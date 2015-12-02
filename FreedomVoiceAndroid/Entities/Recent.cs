@@ -1,10 +1,12 @@
 using System;
+using Android.Runtime;
 
 namespace com.FreedomVoice.MobileApp.Android.Entities
 {
     /// <summary>
     /// Recent entity
     /// </summary>
+    [Preserve(AllMembers = true)]
     public class Recent : IEquatable<Recent>
     {
         private int _count;

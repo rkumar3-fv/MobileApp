@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Android.OS;
+using Android.Runtime;
 using com.FreedomVoice.MobileApp.Android.Actions.Responses;
 using FreedomVoice.Core;
 using Java.Interop;
@@ -10,6 +11,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
     /// <summary>
     /// Logout action
     /// </summary>
+    [Preserve(AllMembers = true)]
     public class LogoutRequest : BaseRequest
     {
         public LogoutRequest(long id) : base(id)

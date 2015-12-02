@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Android.OS;
+using Android.Runtime;
 #if DEBUG
 using Android.Util;
 #endif
@@ -15,6 +16,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
     /// Delete message action
     /// <see href="https://api.freedomvoice.com/Help/Api/POST-api-v1-systems-systemPhoneNumber-mailboxes-mailboxNumber-deleteMessages">API - Delete message request</see>
     /// </summary>
+    [Preserve(AllMembers = true)]
     public class DeleteMessageRequest : RemoveMessageRequest
     {
         public DeleteMessageRequest(long id, string account, int extension, string message) : base(id, account, extension, message)

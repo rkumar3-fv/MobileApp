@@ -1,4 +1,5 @@
 using Android.OS;
+using Android.Runtime;
 using FreedomVoice.Core.Entities.Enums;
 using Java.Interop;
 using Java.Lang;
@@ -9,6 +10,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Reports
     /// <summary>
     /// Error in file loading
     /// </summary>
+    [Preserve(AllMembers = true)]
     public class ErrorReport : BaseReport
     {
         public const int ErrorBadRequest = 1;

@@ -844,7 +844,9 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 #endif
                             if (!_waitingRequestArray.ContainsKey(response.RequestId)) break;
                             var reqErr = _waitingRequestArray[response.RequestId].GetType().Name;
-                            if (reqErr != "GetPollingRequest")
+                            if ((reqErr == "GetExtensionsRequest")||(reqErr == "GetFoldersRequest")||(reqErr == "GetMessagesRequest"))
+                                HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.MsgUpdateFailedInternal}));
+                            else if (reqErr != "GetPollingRequest")
                                 HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.InternalError }));
                             break;
                     }
@@ -1067,6 +1069,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 #endif
                         if (_waitingRequestArray.ContainsKey(response.RequestId))
                             _waitingRequestArray.Remove(response.RequestId);
+                        HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.CallReservationOk }));
                         HelperEvent?.Invoke(this, new ActionsHelperIntentArgs(response.RequestId, callIntent));
                     }
                     else

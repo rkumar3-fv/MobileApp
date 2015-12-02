@@ -1,6 +1,7 @@
 
 using System.Threading.Tasks;
 using Android.OS;
+using Android.Runtime;
 #if DEBUG
 using Android.Util;
 #endif
@@ -15,6 +16,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
     /// Polling interval request
     /// <see href="https://api.freedomvoice.com/Help/Api/GET-api-v1-settings-pollingInterval">API - Get polling interval</see>
     /// </summary>
+    [Preserve(AllMembers = true)]
     public class GetPollingRequest : BaseRequest
     {
         public GetPollingRequest(long id) : base(id)

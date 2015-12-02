@@ -246,6 +246,22 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                                 _retryButton.Visibility = ViewStates.Visible;
                         }
                         break;
+                    case ActionsHelperEventArgs.MsgUpdateFailedInternal:
+                        if ((_adapter.CurrentContent == null) || (_adapter.CurrentContent.Count == 0))
+                        {
+                            if (_noMessagesTextView.Visibility == ViewStates.Invisible)
+                            {
+                                _noMessagesTextView.Text = GetString(Resource.String.FragmentMessages_internal);
+                                _noMessagesTextView.Visibility = ViewStates.Visible;
+                            }
+                            if (_recyclerView.Visibility == ViewStates.Visible)
+                                _recyclerView.Visibility = ViewStates.Invisible;
+                            if (_progressLayout.Visibility == ViewStates.Visible)
+                                _progressLayout.Visibility = ViewStates.Gone;
+                            if (_retryButton.Visibility == ViewStates.Invisible)
+                                _retryButton.Visibility = ViewStates.Visible;
+                        }
+                        break;
                     case ActionsHelperEventArgs.MsgUpdateFailedAirplane:
                         if ((_adapter.CurrentContent == null) || (_adapter.CurrentContent.Count == 0))
                         {

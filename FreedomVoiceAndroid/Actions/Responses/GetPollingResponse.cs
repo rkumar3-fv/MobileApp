@@ -1,5 +1,6 @@
 using System;
 using Android.OS;
+using Android.Runtime;
 using Java.Interop;
 using Object = Java.Lang.Object;
 
@@ -9,6 +10,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Responses
     /// Polling interval response
     /// <see href="https://api.freedomvoice.com/Help/Api/GET-api-v1-settings-pollingInterval">API - Get polling interval</see>
     /// </summary>
+    [Preserve(AllMembers = true)]
     public class GetPollingResponse : BaseResponse, IEquatable<GetPollingResponse>
     {
         /// <summary>

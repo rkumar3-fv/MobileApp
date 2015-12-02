@@ -1,8 +1,11 @@
+using Android.Runtime;
+
 namespace com.FreedomVoice.MobileApp.Android.Entities
 {
     /// <summary>
     /// Phone entity
     /// </summary>
+    [Preserve(AllMembers = true)]
     public class Phone
     {
         /// <summary>

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Android.OS;
+using Android.Runtime;
 #if DEBUG
 using Android.Util;
 #endif
@@ -16,6 +17,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
     /// Restore message from trash action
     /// <see href="https://api.freedomvoice.com/Help/Api/POST-api-v1-systems-systemPhoneNumber-mailboxes-mailboxNumber-moveMessages">API - Move message request</see>
     /// </summary>
+    [Preserve(AllMembers = true)]
     public class RestoreMessageRequest : RemoveMessageRequest, IEquatable<RestoreMessageRequest>
     {
         /// <summary>

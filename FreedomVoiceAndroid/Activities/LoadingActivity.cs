@@ -64,8 +64,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                     Helper.GetAccounts();
                     return;
                 }
-                if ((Helper.SelectedAccount.PresentationNumbers == null) ||
-                    (string.IsNullOrEmpty(Helper.SelectedAccount.PresentationNumber)))
+                if ((Helper.SelectedAccount?.PresentationNumbers == null) || (string.IsNullOrEmpty(Helper.SelectedAccount.PresentationNumber)))
                     Helper.GetPresentationNumbers();
             }
             if (!Appl.ApplicationHelper.IsInternetConnected() || Appl.ApplicationHelper.IsAirplaneModeOn())

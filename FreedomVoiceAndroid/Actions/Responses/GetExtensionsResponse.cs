@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Android.OS;
+using Android.Runtime;
 using com.FreedomVoice.MobileApp.Android.Entities;
 using Java.Interop;
 using Java.Lang;
@@ -12,6 +13,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Responses
     /// Extensions list response
     /// <see href="https://api.freedomvoice.com/Help/Api/GET-api-v1-systems-systemPhoneNumber-mailboxesWithCounts">API - Get extensions request</see>
     /// </summary>
+    [Preserve(AllMembers = true)]
     public class GetExtensionsResponse : BaseResponse, IEquatable<GetExtensionsResponse>
     {
         /// <summary>

@@ -1,4 +1,5 @@
 using Android.OS;
+using Android.Runtime;
 using Java.Interop;
 using Object = Java.Lang.Object;
 
@@ -8,6 +9,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Responses
     /// Sucessful password restoration action
     /// <see href="https://api.freedomvoice.com/Help/Api/POST-api-v1-passwordReset">API - Restore password request</see>
     /// </summary>
+    [Preserve(AllMembers = true)]
     public class RestorePasswordResponse : BaseResponse
     {
         public RestorePasswordResponse(long requestId) : base(requestId)

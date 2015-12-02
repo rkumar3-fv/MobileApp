@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Android.OS;
+using Android.Runtime;
 using com.FreedomVoice.MobileApp.Android.Entities;
 using Java.Interop;
 using Java.Lang;
@@ -12,6 +13,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Responses
     /// Folders list response
     /// <see href="https://api.freedomvoice.com/Help/Api/GET-api-v1-systems-systemPhoneNumber-mailboxes-mailboxNumber-folders">API - Get folders request</see>
     /// </summary>
+    [Preserve(AllMembers = true)]
     public class GetFoldersResponse : BaseResponse, IEquatable<GetFoldersResponse>
     {
         /// <summary>

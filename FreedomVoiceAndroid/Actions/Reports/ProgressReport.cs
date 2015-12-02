@@ -1,4 +1,5 @@
 using Android.OS;
+using Android.Runtime;
 using Java.Interop;
 using Java.Lang;
 using Message = com.FreedomVoice.MobileApp.Android.Entities.Message;
@@ -10,6 +11,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Reports
         /// <summary>
         /// Progress value
         /// </summary>
+        [Preserve(AllMembers = true)]
         public int ProgressValue { get; }
 
         public ProgressReport(int id, Message msg, int progress) : base(id, msg)
