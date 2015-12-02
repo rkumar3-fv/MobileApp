@@ -130,8 +130,7 @@ namespace FreedomVoice.iOS.ViewControllers
         {
             if (recognizer.State != UIGestureRecognizerState.Began) return;
 
-            PhoneNumber = string.Empty;
-            _phoneLabel.Text = string.Empty;
+            ClearEnteredPhone();
             ChangeClearPhoneButtonVisibility();
         }
 
@@ -139,8 +138,7 @@ namespace FreedomVoice.iOS.ViewControllers
         {
             if (string.IsNullOrEmpty(PhoneNumber) || PhoneNumber.Length <= 1)
             {
-                PhoneNumber = string.Empty;
-                _phoneLabel.Text = string.Empty;
+                ClearEnteredPhone();
             }
             else
             {
@@ -153,6 +151,12 @@ namespace FreedomVoice.iOS.ViewControllers
         private void ChangeClearPhoneButtonVisibility()
         {
             _clearPhone.Hidden = string.IsNullOrEmpty(PhoneNumber);
+        }
+
+        private void ClearEnteredPhone()
+        {
+            PhoneNumber = string.Empty;
+            _phoneLabel.Text = string.Empty;
         }
 
         private async void OnKeypadDialTouchUpInside(object sender, EventArgs args)
@@ -169,7 +173,11 @@ namespace FreedomVoice.iOS.ViewControllers
 
             var selectedCallerId = MainTabBarInstance.GetSelectedPresentationNumber().PhoneNumber;
             if (await PhoneCall.CreateCallReservation(MainTabBarInstance.SelectedAccount.PhoneNumber, selectedCallerId, PhoneNumber, NavigationController))
+            {
+                ClearEnteredPhone();
+                ChangeClearPhoneButtonVisibility();
                 AddRecent(PhoneNumber);
+            }
         }
         
 	    private static void AddRecent(string phoneNumber)

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Diagnostics;
+using System.Threading.Tasks;
 using Foundation;
 using FreedomVoice.Core.Utils;
 using FreedomVoice.iOS.Utilities.Helpers;
@@ -18,14 +19,14 @@ namespace FreedomVoice.iOS.Utilities
 
             if (!PhoneCapability.IsSimCardInstalled)
             {
-                Appearance.ShowOkAlertWithMessage(viewController, Appearance.AlertMessageType.NoSimCardInstalled);
+                Appearance.ShowOkAlertWithMessage(Appearance.AlertMessageType.NoSimCardInstalled);
                 viewController.View.UserInteractionEnabled = true;
                 return false;
             }
 
             if (PhoneCapability.NetworkIsUnreachable)
             {
-                Appearance.ShowOkAlertWithMessage(viewController, Appearance.AlertMessageType.NetworkUnreachable);
+                Appearance.ShowOkAlertWithMessage(Appearance.AlertMessageType.NetworkUnreachable);
                 viewController.View.UserInteractionEnabled = true;
                 return false;
             }
@@ -39,7 +40,7 @@ namespace FreedomVoice.iOS.Utilities
 
             if (destinationNumber.Length < 5)
             {
-                Appearance.ShowOkAlertWithMessage(viewController, Appearance.AlertMessageType.IncorrectNumber);
+                Appearance.ShowOkAlertWithMessage(Appearance.AlertMessageType.IncorrectNumber);
                 viewController.View.UserInteractionEnabled = true;
                 return true;
             }
@@ -58,11 +59,16 @@ namespace FreedomVoice.iOS.Utilities
                 return true;
             }
 
-            var callReservationViewModel = new CallReservationViewModel(systemNumber, expectedCallerIdNumber, presentationNumber, destinationNumber, viewController);
+            var callReservationViewModel = new CallReservationViewModel(systemNumber, expectedCallerIdNumber, presentationNumber, destinationNumber);
+
+            var watcher = Stopwatch.StartNew();
             await callReservationViewModel.CreateCallReservationAsync();
+            watcher.Stop();
+            Log.ReportTime(Log.EventCategory.Request, "CreateCallReservation", "", watcher.ElapsedMilliseconds);
+
             if (callReservationViewModel.IsErrorResponseReceived)
             {
-                Appearance.ShowOkAlertWithMessage(viewController, Appearance.AlertMessageType.CallFailed);
+                Appearance.ShowOkAlertWithMessage(Appearance.AlertMessageType.CallFailed);
                 viewController.View.UserInteractionEnabled = true;
                 return true;
             }
@@ -72,7 +78,7 @@ namespace FreedomVoice.iOS.Utilities
 
             var phoneNumber = NSUrl.FromString($"tel:{switchboardNumber}");
             if (!UIApplication.SharedApplication.OpenUrl(phoneNumber))
-                Appearance.ShowOkAlertWithMessage(viewController, Appearance.AlertMessageType.CallsUnsuported);
+                Appearance.ShowOkAlertWithMessage(Appearance.AlertMessageType.CallsUnsuported);
 
             viewController.View.UserInteractionEnabled = true;
             return true;

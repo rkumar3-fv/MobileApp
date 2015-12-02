@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using FreedomVoice.Core.Cache;
 
 namespace FreedomVoice.iOS.Utilities.Helpers

@@ -39,12 +39,12 @@ namespace FreedomVoice.iOS.ViewControllers
             base.ViewDidLoad();
         }
 
-        private void OnCallCustomerCareTouchUpInside(object sender, EventArgs args)
+        private static void OnCallCustomerCareTouchUpInside(object sender, EventArgs args)
 	    {
             var url = new NSUrl("tel:+18004771477");
 
-            if (!UIApplication.SharedApplication.OpenUrl(url))
-                Appearance.ShowOkAlertWithMessage(this, Appearance.AlertMessageType.CallsUnsuported);
+            if (!UIApplication.SharedApplication.CanOpenUrl(url))
+                Appearance.ShowOkAlertWithMessage(Appearance.AlertMessageType.CallsUnsuported);
         }
 
         #region Controls Initialization

@@ -58,6 +58,8 @@ namespace FreedomVoice.iOS.TableViewSources
             var mainTabBarController = await AppDelegate.GetMainTabBarController(selectedAccount, _navigationController, CGPoint.Empty, true);
             if (mainTabBarController != null)
                 _navigationController.PushViewController(mainTabBarController, false);
+            else
+                (UIApplication.SharedApplication.Delegate as AppDelegate)?.PassToAuthentificationProcess();
         }
     }
 }

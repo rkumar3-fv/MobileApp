@@ -3,7 +3,6 @@ using FreedomVoice.Core.Utils;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.Services;
 using FreedomVoice.iOS.Services.Responses;
-using UIKit;
 
 namespace FreedomVoice.iOS.ViewModels
 {
@@ -18,17 +17,12 @@ namespace FreedomVoice.iOS.ViewModels
 
         public CallReservation Reservation { get; private set; }
 
-        private readonly UIViewController _viewController;
-
         /// <summary>
         /// Constructor, requires an IService
         /// </summary>
-        public CallReservationViewModel(string systemNumber, string callerIdNumber, string presentationNumber, string destinationNumber, UIViewController viewController)
+        public CallReservationViewModel(string systemNumber, string callerIdNumber, string presentationNumber, string destinationNumber)
         {
             _service = ServiceContainer.Resolve<ICallReservationService>();
-
-            _viewController = viewController;
-            ViewController = viewController;
 
             _systemNumber = systemNumber;
             _callerIdNumber = callerIdNumber;
@@ -42,8 +36,6 @@ namespace FreedomVoice.iOS.ViewModels
         /// <returns></returns>
         public async Task CreateCallReservationAsync()
         {
-            _viewController.View.UserInteractionEnabled = false;
-
             await RenewCookieIfNeeded();
 
             var requestResult = await _service.ExecuteRequest(_systemNumber, _callerIdNumber, _presentationNumber, _destinationNumber);
@@ -55,8 +47,6 @@ namespace FreedomVoice.iOS.ViewModels
                 if (data != null)
                     Reservation = data.Reservation;
             }
-
-            _viewController.View.UserInteractionEnabled = true;
         }
     }
 }

@@ -6,14 +6,12 @@ using FreedomVoice.iOS.Services;
 using FreedomVoice.iOS.Services.Responses;
 using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.Utilities.Helpers;
-using UIKit;
 
 namespace FreedomVoice.iOS.ViewModels
 {
     public class MessagesViewModel : BaseViewModel
     {
         private readonly IMessagesService _service;
-        private readonly UIViewController _viewController;
 
         private readonly string _systemPhoneNumber;
         private readonly int _mailboxNumber;
@@ -24,14 +22,11 @@ namespace FreedomVoice.iOS.ViewModels
         /// <summary>
         /// Constructor, requires an IService
         /// </summary>
-        public MessagesViewModel(string systemPhoneNumber, int mailboxNumber, string folderName, UIViewController viewController)
+        public MessagesViewModel(string systemPhoneNumber, int mailboxNumber, string folderName)
         {
             MessagesList = new List<Message>();
 
             _service = ServiceContainer.Resolve<IMessagesService>();
-
-            ViewController = viewController;
-            _viewController = viewController;
 
             _systemPhoneNumber = systemPhoneNumber;
             _mailboxNumber = mailboxNumber;
@@ -46,7 +41,7 @@ namespace FreedomVoice.iOS.ViewModels
         {
             if (PhoneCapability.NetworkIsUnreachable && !silent)
             {
-                Appearance.ShowOkAlertWithMessage(_viewController, Appearance.AlertMessageType.NetworkUnreachable);
+                Appearance.ShowOkAlertWithMessage(Appearance.AlertMessageType.NetworkUnreachable);
                 return;
             }
 

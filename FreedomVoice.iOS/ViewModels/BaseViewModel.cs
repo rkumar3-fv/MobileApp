@@ -11,8 +11,6 @@ namespace FreedomVoice.iOS.ViewModels
 {
     public class BaseViewModel : PropertyChangedBase
     {
-        protected UIViewController ViewController { private get; set; }
-
         protected BaseViewModel()
         {
             ProgressControl = ProgressControlType.ActivityIndicator;
@@ -159,7 +157,7 @@ namespace FreedomVoice.iOS.ViewModels
 
         private void OnIsBusyChanged()
         {
-            if (!ViewController.IsViewLoaded)
+            if (!UIApplication.SharedApplication.KeyWindow.RootViewController.IsViewLoaded)
                 return;
 
             if (IsBusy)

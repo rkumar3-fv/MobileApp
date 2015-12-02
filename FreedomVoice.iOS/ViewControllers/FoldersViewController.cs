@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using CoreGraphics;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.TableViewSources;
@@ -53,8 +54,12 @@ namespace FreedomVoice.iOS.ViewControllers
 
             NavigationItem.SetRightBarButtonItem(Appearance.GetLogoutBarButton(this), false);
 
-            var foldersViewModel = new FoldersViewModel(SelectedAccount.PhoneNumber, SelectedExtension.ExtensionNumber, NavigationController);
+            var foldersViewModel = new FoldersViewModel(SelectedAccount.PhoneNumber, SelectedExtension.ExtensionNumber);
+
+            var watcher = Stopwatch.StartNew();
             await foldersViewModel.GetFoldersListAsync();
+            watcher.Stop();
+            Log.ReportTime(Log.EventCategory.Request, "GetFolders", "", watcher.ElapsedMilliseconds);
 
             FoldersList = foldersViewModel.FoldersList;
             _foldersSource.Folders = FoldersList;

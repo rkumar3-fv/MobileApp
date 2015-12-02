@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using CoreGraphics;
 using Foundation;
 using FreedomVoice.iOS.Entities;
@@ -62,8 +64,12 @@ namespace FreedomVoice.iOS.ViewControllers
             };
             View.Add(_messagesTableView);
 
-            var messagesViewModel = new MessagesViewModel(SelectedAccount.PhoneNumber, SelectedExtension.ExtensionNumber, SelectedFolder.DisplayName, NavigationController);
+            var messagesViewModel = new MessagesViewModel(SelectedAccount.PhoneNumber, SelectedExtension.ExtensionNumber, SelectedFolder.DisplayName);
+
+            var watcher = Stopwatch.StartNew();
             await messagesViewModel.GetMessagesListAsync(SelectedFolder.MessageCount);
+            watcher.Stop();
+            Log.ReportTime(Log.EventCategory.Request, "GetMessages", "", watcher.ElapsedMilliseconds);
 
             MessagesList = messagesViewModel.MessagesList;
             _messagesSource.Messages = MessagesList;
@@ -122,35 +128,51 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private async void UpdateMessageTable()
         {
-            var foldersViewModel = new FoldersViewModel(SelectedAccount.PhoneNumber, SelectedExtension.ExtensionNumber, NavigationController);
-            await foldersViewModel.GetFoldersListAsync(true);
+            var needToReloadTable = false;
 
-            var currentFolder = foldersViewModel.FoldersList.FirstOrDefault(f => f.DisplayName == SelectedFolder.DisplayName);
-            if (currentFolder == null)
-                return;
+            await Task.Run(async () => 
+            {
+                var foldersViewModel = new FoldersViewModel(SelectedAccount.PhoneNumber, SelectedExtension.ExtensionNumber);
 
-            SelectedFolder = currentFolder;
+                var watcher = Stopwatch.StartNew();
+                await foldersViewModel.GetFoldersListAsync(true);
+                watcher.Stop();
+                Log.ReportTime(Log.EventCategory.Request, "GetFolders", "", watcher.ElapsedMilliseconds);
 
-            var messagesViewModel = new MessagesViewModel(SelectedAccount.PhoneNumber, SelectedExtension.ExtensionNumber, SelectedFolder.DisplayName, NavigationController);
-            await messagesViewModel.GetMessagesListAsync(SelectedFolder.MessageCount, true);
+                var currentFolder = foldersViewModel.FoldersList.FirstOrDefault(f => f.DisplayName == SelectedFolder.DisplayName);
+                if (currentFolder == null)
+                    return;
 
-            var recievedMessages = messagesViewModel.MessagesList;
+                SelectedFolder = currentFolder;
 
-            var messagesToAdd = recievedMessages.Where(message => !MessagesList.Exists(m => m.Id == message.Id)).ToList();
-            var messagesToRemove = MessagesList.Where(message => !recievedMessages.Exists(m => m.Id == message.Id)).ToList();
+                var messagesViewModel = new MessagesViewModel(SelectedAccount.PhoneNumber, SelectedExtension.ExtensionNumber, SelectedFolder.DisplayName);
 
-            if (messagesToAdd.Count == 0 && messagesToRemove.Count == 0)
-                return;
+                watcher = Stopwatch.StartNew();
+                await messagesViewModel.GetMessagesListAsync(SelectedFolder.MessageCount, true);
+                watcher.Stop();
+                Log.ReportTime(Log.EventCategory.Request, "GetMessages", "", watcher.ElapsedMilliseconds);
 
-            var selectedMessage = _messagesSource.SelectedRowIndexPath != null ? MessagesList[_messagesSource.SelectedRowIndexPath.Row] : null;
+                var recievedMessages = messagesViewModel.MessagesList;
 
-            var selectedMessageIndex = recievedMessages.FindIndex(m => m.Id == selectedMessage?.Id);
+                var messagesToAdd = recievedMessages.Where(message => !MessagesList.Exists(m => m.Id == message.Id)).ToList();
+                var messagesToRemove = MessagesList.Where(message => !recievedMessages.Exists(m => m.Id == message.Id)).ToList();
 
-            MessagesList = recievedMessages;
-            _messagesSource.Messages = MessagesList;
-            _messagesSource.SelectedRowIndexPath = _messagesSource.DeletedRowIndexPath = selectedMessageIndex != -1 ? NSIndexPath.FromRowSection(selectedMessageIndex, 0) : null;
+                if (messagesToAdd.Count == 0 && messagesToRemove.Count == 0)
+                    return;
 
-            _messagesTableView.ReloadData();
+                var selectedMessage = _messagesSource.SelectedRowIndexPath != null ? MessagesList[_messagesSource.SelectedRowIndexPath.Row] : null;
+
+                var selectedMessageIndex = recievedMessages.FindIndex(m => m.Id == selectedMessage?.Id);
+
+                MessagesList = recievedMessages;
+                _messagesSource.Messages = MessagesList;
+                _messagesSource.SelectedRowIndexPath = _messagesSource.DeletedRowIndexPath = selectedMessageIndex != -1 ? NSIndexPath.FromRowSection(selectedMessageIndex, 0) : null;
+
+                needToReloadTable = true;
+            });
+
+            if (needToReloadTable)
+                _messagesTableView.ReloadData();
         }
     }
 }

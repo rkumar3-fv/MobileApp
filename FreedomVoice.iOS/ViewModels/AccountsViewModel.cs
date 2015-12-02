@@ -4,7 +4,6 @@ using FreedomVoice.Core.Utils;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.Services;
 using FreedomVoice.iOS.Services.Responses;
-using UIKit;
 
 namespace FreedomVoice.iOS.ViewModels
 {
@@ -19,13 +18,11 @@ namespace FreedomVoice.iOS.ViewModels
         /// <summary>
         /// Constructor, requires an IService
         /// </summary>
-        public AccountsViewModel(UIViewController viewController)
+        public AccountsViewModel()
         {
             AccountsList = new List<Account>();
 
             _service = ServiceContainer.Resolve<IAccountsService>();
-
-            ViewController = viewController;
         }
 
         /// <summary>

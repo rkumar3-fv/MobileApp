@@ -32,8 +32,7 @@ namespace FreedomVoice.iOS.TableViewCells
         private UIButton _callBackButton;
         private UIButton _speakerButton;
         private UIButton _viewFaxButton;
-
-        public readonly UIButton DeleteButton;
+        private UIButton _deleteButton;
 
         #endregion
 
@@ -49,18 +48,15 @@ namespace FreedomVoice.iOS.TableViewCells
 
         private Message _message;
 
-        private readonly UINavigationController _navigationController;
-
         private string _systemPhoneNumber;
 
         private bool IsFaxMessageType => _message?.Type == MessageType.Fax;
 
         #endregion
 
-        public ExpandedCell(Message cellMessage, UINavigationController navigationController) : base (UITableViewCellStyle.Default, ExpandedCellId)
+        public ExpandedCell(Message cellMessage) : base (UITableViewCellStyle.Default, ExpandedCellId)
         {
             _message = cellMessage;
-            _navigationController = navigationController;
 
             SetBackground(IsFaxMessageType);
 
@@ -68,12 +64,10 @@ namespace FreedomVoice.iOS.TableViewCells
             _title = new UILabel(new CGRect(48, 9, Theme.ScreenBounds.Width - 63, 21)) { TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(17) };
             _length = new UILabel(new CGRect(Theme.ScreenBounds.Width - 95, 30, 80, 15)) { TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(12), TextAlignment = UITextAlignment.Right };
             _date = new UILabel(new CGRect(48, 30, _length.Frame.X - 53, 15)) { TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(12) };
-            
-            DeleteButton = new UIButton(new CGRect(Theme.ScreenBounds.Width - 37, IsFaxMessageType ? 60 : 98, 25, 25));
-            DeleteButton.SetImage(UIImage.FromFile("delete.png"), UIControlState.Normal);
-            DeleteButton.ContentEdgeInsets = new UIEdgeInsets(-10, -10, -10, -10);
 
-            AddSubviews(_image, _title, _date, _length, DeleteButton);
+            AddSubviews(_image, _title, _date, _length);
+
+            RemoveCurrentSubscriptions();
         }
 
         private void SetBackground(bool isFaxMessageType)
@@ -101,8 +95,6 @@ namespace FreedomVoice.iOS.TableViewCells
             _length.Center = new CGPoint(_length.Center.X, 35);
             _date.Center = new CGPoint(_date.Center.X, 35);
 
-            DeleteButton.Frame = new CGRect(DeleteButton.Frame.X, IsFaxMessageType ? 60 : 98, DeleteButton.Frame.Width, DeleteButton.Frame.Height);
-
             InitSubviews();
             InitBackground();
             InitCommonStyles();
@@ -116,6 +108,10 @@ namespace FreedomVoice.iOS.TableViewCells
 
         private void InitSubviews()
         {
+            _deleteButton?.RemoveFromSuperview();
+            _deleteButton = null;
+            AddSubview(GetDeleteButton());
+
             if (IsFaxMessageType)
             {
                 if (_viewFaxButton == null)
@@ -248,6 +244,16 @@ namespace FreedomVoice.iOS.TableViewCells
             return _callBackButton;
         }
 
+        private UIButton GetDeleteButton()
+        {
+            _deleteButton = new UIButton(new CGRect(Theme.ScreenBounds.Width - 55, IsFaxMessageType ? 45 : 83, 55, 55));
+            _deleteButton.SetImage(UIImage.FromFile("delete.png"), UIControlState.Normal);
+            _deleteButton.ImageEdgeInsets = new UIEdgeInsets(15, 18, 15, 12);
+            _deleteButton.TouchUpInside += OnDeleteButtonTouchUpInside;
+
+            return _deleteButton;
+        }
+
         private void OnPlayerPlayButtonTouchUpInside(object sender, EventArgs args)
         {
             AppDelegate.ActivePlayerView = _player;
@@ -265,7 +271,7 @@ namespace FreedomVoice.iOS.TableViewCells
 
         public async Task<string> GetMediaPath(MediaType mediaType)
         {
-            var viewModel = new MediaViewModel(_systemPhoneNumber, _message.Mailbox, _message.Folder, _message.Id, mediaType, _navigationController);
+            var viewModel = new MediaViewModel(_systemPhoneNumber, _message.Mailbox, _message.Folder, _message.Id, mediaType);
 
             await viewModel.GetMediaAsync();
 
@@ -276,7 +282,7 @@ namespace FreedomVoice.iOS.TableViewCells
         {
             if (_message.Length == 0)
             {
-                AppearanceHelper.ShowOkAlertWithMessage(_navigationController, AppearanceHelper.AlertMessageType.EmptyFileDownload);
+                AppearanceHelper.ShowOkAlertWithMessage(AppearanceHelper.AlertMessageType.EmptyFileDownload);
                 return;
             }
 
@@ -291,8 +297,22 @@ namespace FreedomVoice.iOS.TableViewCells
             OnCallbackClick?.Invoke(this, new ExpandedCellButtonClickEventArgs());
         }
 
+        private void OnDeleteButtonTouchUpInside(object sender, EventArgs args)
+        {
+            OnDeleteMessageClick?.Invoke(this, new ExpandedCellButtonClickEventArgs());
+        }
+
+        private void RemoveCurrentSubscriptions()
+        {
+            OnCallbackClick = null;
+            OnPlayClick = null;
+            OnViewFaxClick = null;
+            OnDeleteMessageClick = null;
+        }
+
         public event EventHandler<ExpandedCellButtonClickEventArgs> OnCallbackClick;
         public event EventHandler<ExpandedCellButtonClickEventArgs> OnPlayClick;
         public event EventHandler<ExpandedCellButtonClickEventArgs> OnViewFaxClick;
+        public event EventHandler<ExpandedCellButtonClickEventArgs> OnDeleteMessageClick;
     }
 }

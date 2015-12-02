@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using CoreGraphics;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.TableViewSources;
@@ -48,6 +49,8 @@ namespace FreedomVoice.iOS.ViewControllers
 
         public override async void ViewWillAppear(bool animated)
         {
+            base.ViewWillAppear(animated);
+
             NavigationItem.Title = SelectedAccount.FormattedPhoneNumber;
 
             if (!MainTabBarInstance.IsRootController)
@@ -55,14 +58,16 @@ namespace FreedomVoice.iOS.ViewControllers
 
             NavigationItem.SetRightBarButtonItem(Appearance.GetLogoutBarButton(this), false);
 
-            var extensionsViewModel = new ExtensionsViewModel(SelectedAccount, NavigationController);
+            var extensionsViewModel = new ExtensionsViewModel(SelectedAccount);
+
+            var watcher = Stopwatch.StartNew();
             await extensionsViewModel.GetExtensionsListAsync();
+            watcher.Stop();
+            Log.ReportTime(Log.EventCategory.Request, "GetExtensions", "", watcher.ElapsedMilliseconds);
 
             ExtensionsList = extensionsViewModel.ExtensionsList;
             _extensionsSource.Extensions = ExtensionsList;
             _extensionsTableView.ReloadData();
-
-            base.ViewWillAppear(animated);
         }
 
         public override void ViewDidDisappear(bool animated)

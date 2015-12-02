@@ -6,14 +6,12 @@ using FreedomVoice.iOS.Services;
 using FreedomVoice.iOS.Services.Responses;
 using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.Utilities.Helpers;
-using UIKit;
 
 namespace FreedomVoice.iOS.ViewModels
 {
     public class ExtensionsViewModel : BaseViewModel
     {
         private readonly IExtensionsService _service;
-        private readonly UIViewController _viewController;
 
         private readonly Account _selectedAccount;
 
@@ -22,14 +20,11 @@ namespace FreedomVoice.iOS.ViewModels
         /// <summary>
         /// Constructor, requires an IService
         /// </summary>
-        public ExtensionsViewModel(Account selectedAccount, UIViewController viewController)
+        public ExtensionsViewModel(Account selectedAccount)
         {
             ExtensionsList = new List<ExtensionWithCount>();
 
             _service = ServiceContainer.Resolve<IExtensionsService>();
-
-            ViewController = viewController;
-            _viewController = viewController;
 
             _selectedAccount = selectedAccount;
         }
@@ -42,7 +37,7 @@ namespace FreedomVoice.iOS.ViewModels
         {
             if (PhoneCapability.NetworkIsUnreachable)
             {
-                Appearance.ShowOkAlertWithMessage(_viewController, Appearance.AlertMessageType.NetworkUnreachable);
+                Appearance.ShowOkAlertWithMessage(Appearance.AlertMessageType.NetworkUnreachable);
                 return;
             }
 

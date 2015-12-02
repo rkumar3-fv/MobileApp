@@ -53,7 +53,7 @@ namespace FreedomVoice.iOS.Utilities.Helpers
             controller.PresentViewController(alertController, true, null);
         }
 
-        public static void ShowOkAlertWithMessage(UIViewController viewController, AlertMessageType alertMessageType)
+        public static void ShowOkAlertWithMessage(AlertMessageType alertMessageType)
         {
             var alertMessageText = string.Empty;
 
@@ -81,7 +81,7 @@ namespace FreedomVoice.iOS.Utilities.Helpers
 
             var alertController = UIAlertController.Create(null, alertMessageText, UIAlertControllerStyle.Alert);
             alertController.AddAction(UIAlertAction.Create("Ok", UIAlertActionStyle.Cancel, null));
-            viewController.PresentViewController(alertController, true, null);
+            UIApplication.SharedApplication.KeyWindow.RootViewController?.PresentViewController(alertController, true, null);
         }
 
         public static UIImageView GetMessageImageView(int cellHeight)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Foundation;
 using FreedomVoice.Core.Entities.Enums;
 using FreedomVoice.iOS.Entities;
@@ -39,8 +40,7 @@ namespace FreedomVoice.iOS.TableViewSources
 
             if (indexPath.Row == SelectedRowIndexPath?.Row)
             {
-                _expandedCell = tableView.DequeueReusableCell(ExpandedCell.ExpandedCellId) as ExpandedCell
-                                                                                           ?? new ExpandedCell(message, _navigationController) { SelectionStyle = UITableViewCellSelectionStyle.None };
+                _expandedCell = tableView.DequeueReusableCell(ExpandedCell.ExpandedCellId) as ExpandedCell ?? new ExpandedCell(message) { SelectionStyle = UITableViewCellSelectionStyle.None };
 
                 _expandedCell.UpdateCell(message, _selectedAccount.PhoneNumber);
                 ProceedEventsSubscription(tableView, SelectedRowIndexPath);
@@ -62,11 +62,11 @@ namespace FreedomVoice.iOS.TableViewSources
             _expandedCell.OnCallbackClick -= OnCallbackClick(indexPath);
             _expandedCell.OnViewFaxClick -= OnViewFaxClick(indexPath);
             _expandedCell.OnPlayClick -= OnPlayClick(indexPath);
-            _expandedCell.DeleteButton.TouchDown -= OnDeleteMessageClick(tableView);
+            _expandedCell.OnDeleteMessageClick -= OnDeleteMessageClick(tableView);
             _expandedCell.OnCallbackClick += OnCallbackClick(indexPath);
             _expandedCell.OnViewFaxClick += OnViewFaxClick(indexPath);
             _expandedCell.OnPlayClick += OnPlayClick(indexPath);
-            _expandedCell.DeleteButton.TouchDown += OnDeleteMessageClick(tableView);
+            _expandedCell.OnDeleteMessageClick += OnDeleteMessageClick(tableView);
         }
 
         private EventHandler<ExpandedCellButtonClickEventArgs> OnViewFaxClick(NSIndexPath indexPath)
@@ -84,16 +84,9 @@ namespace FreedomVoice.iOS.TableViewSources
             return (sender, args) => RowCallbackClick(indexPath);
         }
 
-        private EventHandler OnDeleteMessageClick(UITableView tableView)
+        private EventHandler<ExpandedCellButtonClickEventArgs> OnDeleteMessageClick(UITableView tableView)
         {
-            return (sender, args) =>
-            {
-                var alertController = UIAlertController.Create("Confirm deletion", "Delete this message?", UIAlertControllerStyle.Alert);
-                alertController.AddAction(UIAlertAction.Create("Delete", UIAlertActionStyle.Default, a => DeleteMessageClick(tableView, DeletedRowIndexPath)));
-                alertController.AddAction(UIAlertAction.Create("Don't delete", UIAlertActionStyle.Cancel, a => { }));
-
-                _navigationController.PresentViewController(alertController, true, null);
-            };
+            return (sender, args) => RowDeleteClick(tableView, DeletedRowIndexPath);
         }
 
         public override nint RowsInSection(UITableView tableview, nint section)
@@ -160,13 +153,22 @@ namespace FreedomVoice.iOS.TableViewSources
             OnRowCallbackClick?.Invoke(this, new ExpandedCellButtonClickEventArgs(Messages[indexPath.Row]));
         }
 
+        private void RowDeleteClick(UITableView tableView, NSIndexPath indexPath)
+        {
+            var alertController = UIAlertController.Create("Confirm Deletion", "Delete this message?", UIAlertControllerStyle.Alert);
+            alertController.AddAction(UIAlertAction.Create("Don't delete", UIAlertActionStyle.Cancel, a => { }));
+            alertController.AddAction(UIAlertAction.Create("Delete", UIAlertActionStyle.Default, a => DeleteMessageClick(tableView, indexPath)));
+
+            _navigationController.PresentViewController(alertController, true, null);
+        }
+
         private async void DeleteMessageClick(UITableView tableView, NSIndexPath indexPath)
         {
             if (indexPath == null || Messages.Count == 0) return;
 
             if (PhoneCapability.NetworkIsUnreachable)
             {
-                Appearance.ShowOkAlertWithMessage(_navigationController, Appearance.AlertMessageType.NetworkUnreachable);
+                Appearance.ShowOkAlertWithMessage(Appearance.AlertMessageType.NetworkUnreachable);
                 return;
             }
 
@@ -187,14 +189,20 @@ namespace FreedomVoice.iOS.TableViewSources
             if (selectedMessage.Id == AppDelegate.ActivePlayerMessageId)
                 AppDelegate.ResetAudioPlayer();
 
-            var model = new ExpandedCellViewModel(_selectedAccount.PhoneNumber, selectedMessage.Mailbox, selectedMessage.Id, _navigationController);
+            var model = new ExpandedCellViewModel(_selectedAccount.PhoneNumber, selectedMessage.Mailbox, selectedMessage.Id);
             if (selectedMessage.Folder == "Trash")
             {
+                var watcher = Stopwatch.StartNew();
                 await model.DeleteMessageAsync();
+                watcher.Stop();
+                Log.ReportTime(Log.EventCategory.Request, "DeleteMessage", "", watcher.ElapsedMilliseconds);
             }
             else
             {
+                var watcher = Stopwatch.StartNew();
                 await model.MoveMessageToTrashAsync();
+                watcher.Stop();
+                Log.ReportTime(Log.EventCategory.Request, "MoveMessageToTrash", "", watcher.ElapsedMilliseconds);
             }
 
             tableView.BeginUpdates();

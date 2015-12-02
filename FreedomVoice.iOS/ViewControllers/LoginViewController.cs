@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using CoreGraphics;
 using Foundation;
 using FreedomVoice.iOS.Utilities;
@@ -89,7 +90,7 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private void InitializeViewModel()
         {
-            _loginViewModel = new LoginViewModel(NavigationController);
+            _loginViewModel = new LoginViewModel();
         }
 
         private void OnLoginButtonTouchUpInside(object sender, EventArgs args)
@@ -139,13 +140,16 @@ namespace FreedomVoice.iOS.ViewControllers
 
             if (PhoneCapability.NetworkIsUnreachable)
             {
-                Appearance.ShowOkAlertWithMessage(NavigationController, Appearance.AlertMessageType.NetworkUnreachable);
+                Appearance.ShowOkAlertWithMessage(Appearance.AlertMessageType.NetworkUnreachable);
                 return;
             }
 
 	        DisableUserInteraction();
 
+            var watcher = Stopwatch.StartNew();
             await _loginViewModel.LoginAsync();
+            watcher.Stop();
+            Log.ReportTime(Log.EventCategory.Request, "Login", "", watcher.ElapsedMilliseconds);
         }
 
         private void OnLoginFailed(object sender, EventArgs args)

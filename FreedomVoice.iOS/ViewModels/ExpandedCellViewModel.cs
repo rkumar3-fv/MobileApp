@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using FreedomVoice.Core.Utils;
 using FreedomVoice.iOS.Services;
 using FreedomVoice.iOS.Services.Responses;
-using UIKit;
 
 namespace FreedomVoice.iOS.ViewModels
 {
@@ -20,11 +19,9 @@ namespace FreedomVoice.iOS.ViewModels
         /// <summary>
         /// Constructor, requires an IService
         /// </summary>
-        public ExpandedCellViewModel(string systemPhoneNumber, int mailboxNumber, string messageId, UIViewController viewController)
+        public ExpandedCellViewModel(string systemPhoneNumber, int mailboxNumber, string messageId)
         {
             _service = ServiceContainer.Resolve<IMessageOperationsService>();
-
-            ViewController = viewController;
 
             _systemPhoneNumber = systemPhoneNumber;
             _mailboxNumber = mailboxNumber;

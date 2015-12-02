@@ -6,14 +6,12 @@ using FreedomVoice.iOS.Services;
 using FreedomVoice.iOS.Services.Responses;
 using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.Utilities.Helpers;
-using UIKit;
 
 namespace FreedomVoice.iOS.ViewModels
 {
     public class FoldersViewModel : BaseViewModel
     {
         private readonly IFoldersService _service;
-        private readonly UIViewController _viewController;
 
         private readonly string _systemPhoneNumber;
         private readonly int _mailboxNumber;
@@ -23,14 +21,11 @@ namespace FreedomVoice.iOS.ViewModels
         /// <summary>
         /// Constructor, requires an IService
         /// </summary>
-        public FoldersViewModel(string systemPhoneNumber, int mailboxNumber, UIViewController viewController)
+        public FoldersViewModel(string systemPhoneNumber, int mailboxNumber)
         {
             FoldersList = new List<FolderWithCount>();
 
             _service = ServiceContainer.Resolve<IFoldersService>();
-
-            ViewController = viewController;
-            _viewController = viewController;
 
             _systemPhoneNumber = systemPhoneNumber;
             _mailboxNumber = mailboxNumber;
@@ -44,7 +39,7 @@ namespace FreedomVoice.iOS.ViewModels
         {
             if (PhoneCapability.NetworkIsUnreachable && !silent)
             {
-                Appearance.ShowOkAlertWithMessage(_viewController, Appearance.AlertMessageType.NetworkUnreachable);
+                Appearance.ShowOkAlertWithMessage(Appearance.AlertMessageType.NetworkUnreachable);
                 return;
             }
 

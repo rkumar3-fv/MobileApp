@@ -3,7 +3,6 @@ using FreedomVoice.Core.Utils;
 using FreedomVoice.iOS.Services;
 using FreedomVoice.iOS.Services.Responses;
 using FreedomVoice.iOS.Utilities.Helpers;
-using UIKit;
 
 namespace FreedomVoice.iOS.ViewModels
 {
@@ -18,11 +17,9 @@ namespace FreedomVoice.iOS.ViewModels
         /// <summary>
         /// Constructor, requires an IService
         /// </summary>
-        public ForgotPasswordViewModel(UIViewController viewController, string email = "")
+        public ForgotPasswordViewModel(string email = "")
         {
             _service = ServiceContainer.Resolve<IForgotPasswordService>();
-
-            ViewController = viewController;
 
             if (!string.IsNullOrEmpty(email)) EMail = email;
         }

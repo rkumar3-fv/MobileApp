@@ -34,7 +34,6 @@ namespace FreedomVoice.iOS.ViewModels
 
             _selectedAccount = selectedAccount;
             _viewController = viewController;
-            ViewController = viewController;
 
             OnPaymentRequiredResponse += OnAccountPaymentRequired;
         }

@@ -47,8 +47,6 @@ namespace FreedomVoice.iOS
         public static AVPlayerView ActivePlayerView;
         public static string ActivePlayerMessageId;
 
-        private Stopwatch _watcher;
-
         public static string TempFolderPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments, Environment.SpecialFolderOption.DoNotVerify), "..", "tmp");
 
         public static T GetViewController<T>() where T : UIViewController
@@ -84,35 +82,51 @@ namespace FreedomVoice.iOS
             await ProceedGetAccountsList(true);
         }
 
-        public void GoToLoginScreen()
+        private async void ProceedWithAuthenticatedUser()
         {
-            UserDefault.IsAuthenticated = false;
-            UserDefault.RequestCookie = string.Empty;
-            UserDefault.LastUsedAccount = string.Empty;
-            UserDefault.AccountsCache = string.Empty;
-            UserDefault.PresentationPhonesCache = string.Empty;
+            var splashViewController = GetViewController<SplashViewController>();
 
-            ResetAudioPlayer();
-            RemoveTmpFiles();
+            var navigationController = new UINavigationController(splashViewController);
+            Theme.TransitionController(navigationController, false);
 
-            var username = KeyChain.GetUsername();
-            KeyChain.DeletePasswordForUsername(username);
+            Window.MakeKeyAndVisible();
 
-            PassToAuthentificationProcess();
+            var watcher = Stopwatch.StartNew();
+
+            await ProceedGetAccountsList(false);
+
+            watcher.Stop();
+            Log.ReportTime(Log.EventCategory.LongAction, "LoadingScreen", "", watcher.ElapsedMilliseconds);
+        }
+
+        public void PassToAuthentificationProcess()
+        {
+            var loginViewController = GetViewController<LoginViewController>();
+            loginViewController.OnLoginSuccess -= OnLoginSuccess;
+            loginViewController.OnLoginSuccess += OnLoginSuccess;
+
+            var navigationController = new UINavigationController(loginViewController);
+            Theme.TransitionController(navigationController, false);
+
+            Window.MakeKeyAndVisible();
         }
 
         private async Task ProceedGetAccountsList(bool noCache)
         {
             if (PhoneCapability.NetworkIsUnreachable)
             {
-                Appearance.ShowOkAlertWithMessage(Window.RootViewController, Appearance.AlertMessageType.NetworkUnreachable);
+                Appearance.ShowOkAlertWithMessage(Appearance.AlertMessageType.NetworkUnreachable);
                 PassToAuthentificationProcess();
                 return;
             }
 
-            var accountsViewModel = new AccountsViewModel(Window.RootViewController) { DoNotUseCache = noCache };
+            var accountsViewModel = new AccountsViewModel { DoNotUseCache = noCache };
 
+            var watcher = Stopwatch.StartNew();
             await accountsViewModel.GetAccountsListAsync();
+            watcher.Stop();
+            Log.ReportTime(Log.EventCategory.Request, "GetAccounts", "", watcher.ElapsedMilliseconds);
+
             if (accountsViewModel.IsErrorResponseReceived)
             {
                 PassToAuthentificationProcess();
@@ -190,35 +204,6 @@ namespace FreedomVoice.iOS
             return (from account in accountsList let phoneNumber = account.PhoneNumber where phoneNumber == lastUsedAccount select account).FirstOrDefault();
         }
 
-        private void PassToAuthentificationProcess()
-        {
-            var loginViewController = GetViewController<LoginViewController>();
-            loginViewController.OnLoginSuccess -= OnLoginSuccess;
-            loginViewController.OnLoginSuccess += OnLoginSuccess;
-
-            var navigationController = new UINavigationController(loginViewController);
-            Theme.TransitionController(navigationController, false);
-
-            Window.MakeKeyAndVisible();
-        }
-
-        private async void ProceedWithAuthenticatedUser()
-        {
-            var splashViewController = GetViewController<SplashViewController>();
-
-            var navigationController = new UINavigationController(splashViewController);
-            Theme.TransitionController(navigationController, false);
-
-            Window.MakeKeyAndVisible();
-
-            _watcher = Stopwatch.StartNew();
-
-            await ProceedGetAccountsList(false);
-
-            _watcher.Stop();
-            Log.ReportTime(Log.EventCategory.LongAction, "LoadingScreen", "", _watcher.ElapsedMilliseconds);
-        }
-
         public async Task PrepareAuthentificationCookie()
         {
             if (Cookies.HasActiveCookieInContainer())
@@ -244,9 +229,30 @@ namespace FreedomVoice.iOS
 
             var loginViewModel = new LoginViewModel(userName, password);
 
+            var watcher = Stopwatch.StartNew();
             await loginViewModel.AutoLoginAsync();
+            watcher.Stop();
+            Log.ReportTime(Log.EventCategory.Request, "Login", "", watcher.ElapsedMilliseconds);
+
             if (loginViewModel.IsErrorResponseReceived)
                 PassToAuthentificationProcess();
+        }
+
+        public void GoToLoginScreen()
+        {
+            UserDefault.IsAuthenticated = false;
+            UserDefault.RequestCookie = string.Empty;
+            UserDefault.LastUsedAccount = string.Empty;
+            UserDefault.AccountsCache = string.Empty;
+            UserDefault.PresentationPhonesCache = string.Empty;
+
+            ResetAudioPlayer();
+            RemoveTmpFiles();
+
+            var username = KeyChain.GetUsername();
+            KeyChain.DeletePasswordForUsername(username);
+
+            PassToAuthentificationProcess();
         }
 
         private static void RemoveTmpFiles()
@@ -272,21 +278,30 @@ namespace FreedomVoice.iOS
         {
             if (PhoneCapability.NetworkIsUnreachable)
             {
-                Appearance.ShowOkAlertWithMessage(viewController, Appearance.AlertMessageType.NetworkUnreachable);
+                Appearance.ShowOkAlertWithMessage(Appearance.AlertMessageType.NetworkUnreachable);
                 return null;
             }
 
             var mainTabBarViewModel = new MainTabBarViewModel(selectedAccount, viewController) { DoNotUseCache = noCache, ActivityIndicatorCenter = activityIndicatorCenter };
 
+            var watcher = Stopwatch.StartNew();
             await mainTabBarViewModel.GetPresentationNumbersAsync();
+            watcher.Stop();
+            Log.ReportTime(Log.EventCategory.Request, "GetPresentationNumbers", "", watcher.ElapsedMilliseconds);
             if (mainTabBarViewModel.IsErrorResponseReceived) return null;
 
+            watcher = Stopwatch.StartNew();
             await mainTabBarViewModel.GetPoolingIntervalAsync();
+            watcher.Stop();
+            Log.ReportTime(Log.EventCategory.Request, "GetPoolingInterval", "", watcher.ElapsedMilliseconds);
             if (mainTabBarViewModel.IsErrorResponseReceived) return null;
 
-            var extensionsViewModel = new ExtensionsViewModel(selectedAccount, viewController) { ActivityIndicatorCenter = activityIndicatorCenter };
+            var extensionsViewModel = new ExtensionsViewModel(selectedAccount) { ActivityIndicatorCenter = activityIndicatorCenter };
 
+            watcher = Stopwatch.StartNew();
             await extensionsViewModel.GetExtensionsListAsync();
+            watcher.Stop();
+            Log.ReportTime(Log.EventCategory.Request, "GetExtensions", "", watcher.ElapsedMilliseconds);
             if (extensionsViewModel.IsErrorResponseReceived) return null;
 
             var mainTabController = GetViewController<MainTabBarController>();
