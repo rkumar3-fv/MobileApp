@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Android.OS;
+using Android.Runtime;
 #if DEBUG
 using Android.Util;
 #endif
@@ -15,6 +16,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
     /// Restore password action
     /// <see href="https://api.freedomvoice.com/Help/Api/POST-api-v1-passwordReset">API - Restore password request</see>
     /// </summary>
+    [Preserve(AllMembers = true)]
     public class RestorePasswordRequest : BaseRequest, IEquatable<RestorePasswordRequest>
     {
         private readonly string _email;

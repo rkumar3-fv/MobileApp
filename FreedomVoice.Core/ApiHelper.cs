@@ -56,11 +56,11 @@ namespace FreedomVoice.Core
             return await MakeAsyncPostRequest<string>("/api/v1/login", postdata, "application/x-www-form-urlencoded", CancellationToken.None);
         }
 
-        public static Task<BaseResult<string>> Logout()
+        public static async Task<BaseResult<string>> Logout()
         {
             InitNewContext();
-
-            return Task.FromResult(new BaseResult<string> { Code = ErrorCodes.Ok, Result = "" });
+            await CacheStorage.DropCache();
+            return await Task.FromResult(new BaseResult<string> { Code = ErrorCodes.Ok, Result = "" });
         }
 
         public static async Task<BaseResult<string>> PasswordReset(string login)
@@ -84,7 +84,7 @@ namespace FreedomVoice.Core
 
             data = await MakeAsyncGetRequest<DefaultPhoneNumbers>("/api/v1/systems", "application/json", CancellationToken.None);
             if (data?.Result != null && data.Code == ErrorCodes.Ok)
-                CacheStorage.SaveAccounts(data.Result.PhoneNumbers);
+                await CacheStorage.SaveAccounts(data.Result.PhoneNumbers);
 
             return data;
         }
@@ -99,7 +99,7 @@ namespace FreedomVoice.Core
 
             data = await MakeAsyncGetRequest<PresentationPhoneNumbers>($"/api/v1/systems/{systemPhoneNumber}/presentationPhoneNumbers", "application/json", CancellationToken.None);
             if (data?.Result != null && data.Code == ErrorCodes.Ok)
-                CacheStorage.SavePresentationPhones(data.Result.PhoneNumbers);
+                await CacheStorage.SavePresentationPhones(data.Result.PhoneNumbers);
 
             return data;
         }

@@ -66,6 +66,7 @@
   <string name="FragmentMessages_no">No Messages</string>
   <string name="FragmentMessages_airplane">Your Device In Airplane Mode</string>
   <string name="FragmentMessages_connection">No Internet Connection</string>
+  <string name="FragmentMessages_internal">Internal Server Error</string>
   <string name="FragmentMessages_retry">Try Again</string>
   <string name="FragmentRecents_title">Recents</string>
   <string name="FragmentRecents_empty">No Items</string>

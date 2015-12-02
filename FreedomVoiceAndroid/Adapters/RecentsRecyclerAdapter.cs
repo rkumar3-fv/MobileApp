@@ -132,7 +132,14 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
             if (viewHolder == null) return;
             string text;
             viewHolder.AdditionalLayout.Visibility = !_helper.GetName(_currentContent[keys[position]].PhoneNumber, out text) ? ViewStates.Invisible : ViewStates.Visible;
-            viewHolder.DestinationNumberText.Text = text;
+            string countText;
+            if (_currentContent[keys[position]].Count > 99)
+                countText = " (99+)";
+            else if (_currentContent[keys[position]].Count < 2)
+                countText = "";
+            else
+                countText = $" ({_currentContent[keys[position]].Count})";
+            viewHolder.DestinationNumberText.Text = $"{text}{countText}";
             viewHolder.CallDateText.Text =
                 DataFormatUtils.ToShortFormattedDate(_context.GetString(Resource.String.Timestamp_yesterday),
                     _currentContent[keys[position]].CallDate);

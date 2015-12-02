@@ -1,5 +1,6 @@
 using System;
 using Android.OS;
+using Android.Runtime;
 using Java.Interop;
 using Object = Java.Lang.Object;
 
@@ -9,6 +10,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Responses
     /// Response with error code
     /// <see href="https://api.freedomvoice.com/Help">FreedomVoice REST API</see>
     /// </summary>
+    [Preserve(AllMembers = true)]
     public class ErrorResponse : BaseResponse, IEquatable<ErrorResponse>
     {
         public const int ErrorBadRequest = 1;

@@ -1,4 +1,5 @@
 using Android.OS;
+using Android.Runtime;
 using Java.Interop;
 using Object = Java.Lang.Object;
 
@@ -7,6 +8,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Responses
     /// <summary>
     /// Response for logout request
     /// </summary>
+    [Preserve(AllMembers = true)]
     public class LogoutResponse : BaseResponse
     {
         public LogoutResponse(long requestId) : base(requestId)

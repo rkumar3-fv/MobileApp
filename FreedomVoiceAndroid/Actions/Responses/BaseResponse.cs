@@ -1,5 +1,6 @@
 using System;
 using Android.OS;
+using Android.Runtime;
 
 namespace com.FreedomVoice.MobileApp.Android.Actions.Responses
 {
@@ -7,6 +8,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Responses
     /// Abstract response action
     /// <see href="https://api.freedomvoice.com/Help">FreedomVoice REST API</see>
     /// </summary>
+    [Preserve(AllMembers = true)]
     public abstract class BaseResponse : BaseAction, IEquatable<BaseResponse>
     {
         protected BaseResponse(long requestId)

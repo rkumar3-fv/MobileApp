@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Android.OS;
+using Android.Runtime;
 #if DEBUG
 using Android.Util;
 #endif
@@ -14,6 +15,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
     /// Call reservation request
     /// <see href="https://api.freedomvoice.com/Help/Api/POST-api-v1-systems-systemPhoneNumber-createCallReservation">API - Create call reservation</see>
     /// </summary>
+    [Preserve(AllMembers = true)]
     public class CallReservationRequest : BaseRequest
     {
         /// <summary>

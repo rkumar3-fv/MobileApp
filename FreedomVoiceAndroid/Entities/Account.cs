@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Android.OS;
+using Android.Runtime;
 using Java.Interop;
 using Java.Lang;
 using Object = Java.Lang.Object;
@@ -10,6 +11,7 @@ namespace com.FreedomVoice.MobileApp.Android.Entities
     /// <summary>
     /// Account entity
     /// </summary>
+    [Preserve(AllMembers = true)]
     public class Account : Entity, IEquatable<Account>
     {
         private int _selectedNumber;
@@ -19,6 +21,11 @@ namespace com.FreedomVoice.MobileApp.Android.Entities
         /// Account name
         /// </summary>
         public string AccountName { get; }
+
+        /// <summary>
+        /// Account state
+        /// </summary>
+        public bool AccountState { get; set; }
 
         /// <summary>
         /// Presentation numbers
@@ -53,21 +60,27 @@ namespace com.FreedomVoice.MobileApp.Android.Entities
         /// </summary>
         public string PresentationNumber => PresentationNumbers[SelectedPresentationNumber];
 
-        public Account(string name, List<string> numbers)
+        public Account(string name, List<string> numbers, bool state)
         {
             AccountName = name;
+            AccountState = state;
             PresentationNumbers = numbers;
         }
+
+        public Account(string name, List<string> numbers) : this (name, numbers, true)
+        {}
 
         private Account(Parcel parcel)
         {
             AccountName = parcel.ReadString();
+            AccountState = parcel.ReadByte() == 1;
             parcel.ReadList(PresentationNumbers, ClassLoader.SystemClassLoader);
         }
 
         public override void WriteToParcel(Parcel dest, ParcelableWriteFlags flags)
         {
             dest.WriteString(AccountName);
+            dest.WriteByte(AccountState ? (sbyte)1 : (sbyte)0);
             dest.WriteList(PresentationNumbers);
         }
 
@@ -93,7 +106,8 @@ namespace com.FreedomVoice.MobileApp.Android.Entities
         public bool Equals(Account other)
         {
             if (ReferenceEquals(null, other)) return false;
-            return ReferenceEquals(this, other) || string.Equals(AccountName, other.AccountName);
+            if (ReferenceEquals(this, other)) return true;
+            return string.Equals(AccountName, other.AccountName) && AccountState == other.AccountState;
         }
 
         public override bool Equals(object obj)
@@ -107,7 +121,9 @@ namespace com.FreedomVoice.MobileApp.Android.Entities
         {
             unchecked
             {
-                return (base.GetHashCode()*397) ^ (AccountName?.GetHashCode() ?? 0);
+                var hashCode = base.GetHashCode();
+                hashCode = (hashCode*397) ^ (AccountName?.GetHashCode() ?? 0);
+                return hashCode;
             }
         }
     }

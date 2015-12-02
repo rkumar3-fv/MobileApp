@@ -8,6 +8,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Reports
     /// <summary>
     /// Base file action state report
     /// </summary>
+    [Preserve(AllMembers = true)]
     public abstract class BaseReport : BaseAction
     {
         /// <summary>

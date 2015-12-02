@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Android.OS;
+using Android.Runtime;
 #if DEBUG
 using Android.Util;
 #endif
@@ -16,6 +17,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
     /// Folders list request
     /// <see href="https://api.freedomvoice.com/Help/Api/GET-api-v1-systems-systemPhoneNumber-mailboxes-mailboxNumber-foldersWithCounts">API - Get folders with count request</see>
     /// </summary>
+    [Preserve(AllMembers = true)]
     public class GetFoldersRequest : BaseRequest
     {
         /// <summary>

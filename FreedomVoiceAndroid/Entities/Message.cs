@@ -1,10 +1,15 @@
 using System;
 using Android.OS;
+using Android.Runtime;
 using Java.Interop;
 using Object = Java.Lang.Object;
 
 namespace com.FreedomVoice.MobileApp.Android.Entities
 {
+    /// <summary>
+    /// Message entity
+    /// </summary>
+    [Preserve(AllMembers = true)]
     public class Message : MessageItem, IEquatable<Message>
     {
         public const int TypeFax = 0;

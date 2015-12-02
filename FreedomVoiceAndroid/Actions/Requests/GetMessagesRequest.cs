@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Android.OS;
+using Android.Runtime;
 #if DEBUG
 using Android.Util;
 #endif
@@ -18,6 +19,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
     /// Messages list request
     /// <see href="https://api.freedomvoice.com/Help/Api/GET-api-v1-systems-systemPhoneNumber-mailboxes-mailboxNumber-folders-folderName-messages_PageSize_PageNumber_SortAsc">API - Get messages request</see>
     /// </summary>
+    [Preserve(AllMembers = true)]
     public class GetMessagesRequest : BaseRequest
     {
         /// <summary>

@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Android.OS;
+using Android.Runtime;
 #if DEBUG
 using Android.Util;
 #endif
@@ -14,6 +15,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
     /// Accounts list request
     /// <see href="https://api.freedomvoice.com/Help/Api/GET-api-v1-systems">API - Get accounts request</see>
     /// </summary>
+    [Preserve(AllMembers = true)]
     public class GetAccountsRequest : BaseRequest
     {
         public GetAccountsRequest(long id) : base(id)
