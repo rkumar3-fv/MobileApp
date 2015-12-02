@@ -109,7 +109,7 @@ namespace FreedomVoice.iOS.ViewModels
                     OnCanceledResponse?.Invoke(null, EventArgs.Empty);
                     return;
                 case ErrorResponse.ErrorConnection:
-                    if (OnErrorConnectionResponse != null)
+                    if (OnErrorConnectionResponse == null)
                         new UIAlertView("Service is unavailable", "Please try again later.", null, "OK", null).Show();
                     OnErrorConnectionResponse?.Invoke(null, EventArgs.Empty);
                     return;
@@ -127,7 +127,7 @@ namespace FreedomVoice.iOS.ViewModels
                     return;
                 case ErrorResponse.ErrorInternal:
                 case ErrorResponse.ErrorUnknown:
-                    if (OnInternalErrorResponse != null)
+                    if (OnInternalErrorResponse == null)
                         new UIAlertView("Internal server error", "Please try again later.", null, "OK", null).Show();
                     OnInternalErrorResponse?.Invoke(null, EventArgs.Empty);
                     return;

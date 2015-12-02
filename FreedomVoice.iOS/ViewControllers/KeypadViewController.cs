@@ -4,17 +4,17 @@ using CoreGraphics;
 using FreedomVoice.Core.Utils;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.Utilities;
-using FreedomVoice.iOS.Utilities.Extensions;
 using FreedomVoice.iOS.Utilities.Helpers;
 using FreedomVoice.iOS.Views.Shared;
-using GoogleAnalytics.iOS;
 using MRoundedButton;
 using UIKit;
 
 namespace FreedomVoice.iOS.ViewControllers
 {
-    partial class KeypadViewController : UIViewController
+    partial class KeypadViewController : BaseViewController
     {
+        protected override string PageName => "Keypad Screen";
+
         private UILabel _phoneLabel;
 
         private UIButton _clearPhone;
@@ -26,11 +26,7 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private static MainTabBarController MainTabBarInstance => MainTabBarController.SharedInstance;
 
-        public KeypadViewController(IntPtr handle) : base(handle)
-        {
-            GAI.SharedInstance.DefaultTracker.Set(GAIConstants.ScreenName, "Keypad Screen");
-            GAI.SharedInstance.DefaultTracker.Send(GAIDictionaryBuilder.CreateScreenView().Build());
-        }
+        public KeypadViewController(IntPtr handle) : base(handle) { }
 
         public override void ViewDidLoad()
         {

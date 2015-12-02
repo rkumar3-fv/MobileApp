@@ -3,23 +3,20 @@ using CoreGraphics;
 using Foundation;
 using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.Utilities.Helpers;
-using GoogleAnalytics.iOS;
 using UIKit;
 
 namespace FreedomVoice.iOS.ViewControllers
 {
     partial class FaxViewController : BaseViewController
     {
+        protected override string PageName => "Fax Screen";
+
         public string FilePath { private get; set; }
         public string SelectedFolderTitle { private get; set; }
 
         public EventHandler OnBackButtonClicked;
 
-        public FaxViewController(IntPtr handle) : base(handle)
-        {
-            GAI.SharedInstance.DefaultTracker.Set(GAIConstants.ScreenName, "Fax Screen");
-            GAI.SharedInstance.DefaultTracker.Send(GAIDictionaryBuilder.CreateScreenView().Build());
-        }
+        public FaxViewController(IntPtr handle) : base(handle) { }
 
         public override void ViewDidLoad()
         {

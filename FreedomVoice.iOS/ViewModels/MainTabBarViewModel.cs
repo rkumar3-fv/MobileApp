@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using FreedomVoice.Core.Utils;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.Services;
 using FreedomVoice.iOS.Services.Responses;
@@ -20,6 +21,8 @@ namespace FreedomVoice.iOS.ViewModels
         private readonly UIViewController _viewController;
 
         public List<PresentationNumber> PresentationNumbers { get; private set; }
+
+        public bool DoNotUseCache { private get; set; }
 
         /// <summary>
         /// Constructor, requires an IService
@@ -44,9 +47,12 @@ namespace FreedomVoice.iOS.ViewModels
         {
             IsBusy = true;
 
-            var requestResult = await _presentationNumbersService.ExecuteRequest(_selectedAccount.PhoneNumber);
+            var requestResult = await _presentationNumbersService.ExecuteRequest(_selectedAccount.PhoneNumber, DoNotUseCache);
             if (requestResult is ErrorResponse)
+            {
                 ProceedErrorResponse(requestResult);
+                IsBusy = false;
+            }
             else
             {
                 var data = requestResult as PresentationNumbersResponse;

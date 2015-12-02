@@ -9,13 +9,14 @@ using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.Utilities.Events;
 using FreedomVoice.iOS.Utilities.Helpers;
 using FreedomVoice.iOS.ViewModels;
-using GoogleAnalytics.iOS;
 using UIKit;
 
 namespace FreedomVoice.iOS.ViewControllers
 {
 	partial class MessagesViewController : BaseViewController
     {
+        protected override string PageName => "Messages Screen";
+
         public Account SelectedAccount { private get; set; }
         public ExtensionWithCount SelectedExtension { private get; set; }
         public FolderWithCount SelectedFolder { private get; set; }
@@ -31,9 +32,6 @@ namespace FreedomVoice.iOS.ViewControllers
 	    public MessagesViewController(IntPtr handle) : base(handle)
 	    {
             MessagesList = new List<Message>();
-
-            GAI.SharedInstance.DefaultTracker.Set(GAIConstants.ScreenName, "Messages Screen");
-            GAI.SharedInstance.DefaultTracker.Send(GAIDictionaryBuilder.CreateScreenView().Build());
         }
 
         public override async void ViewDidLoad()

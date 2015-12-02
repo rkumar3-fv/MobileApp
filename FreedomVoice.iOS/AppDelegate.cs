@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using CoreGraphics;
 using Foundation;
+using FreedomVoice.Core.Utils;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.Utilities.Helpers;
@@ -45,6 +47,8 @@ namespace FreedomVoice.iOS
         public static AVPlayerView ActivePlayerView;
         public static string ActivePlayerMessageId;
 
+        private Stopwatch _watcher;
+
         public static string TempFolderPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments, Environment.SpecialFolderOption.DoNotVerify), "..", "tmp");
 
         public static T GetViewController<T>() where T : UIViewController
@@ -77,7 +81,7 @@ namespace FreedomVoice.iOS
         {
             UserDefault.IsAuthenticated = true;
 
-            await ProceedGetAccountsList();
+            await ProceedGetAccountsList(true);
         }
 
         public void GoToLoginScreen()
@@ -85,6 +89,8 @@ namespace FreedomVoice.iOS
             UserDefault.IsAuthenticated = false;
             UserDefault.RequestCookie = string.Empty;
             UserDefault.LastUsedAccount = string.Empty;
+            UserDefault.AccountsCache = string.Empty;
+            UserDefault.PresentationPhonesCache = string.Empty;
 
             ResetAudioPlayer();
             RemoveTmpFiles();
@@ -95,24 +101,28 @@ namespace FreedomVoice.iOS
             PassToAuthentificationProcess();
         }
 
-        private async Task ProceedGetAccountsList()
+        private async Task ProceedGetAccountsList(bool noCache)
         {
             if (PhoneCapability.NetworkIsUnreachable)
             {
                 Appearance.ShowOkAlertWithMessage(Window.RootViewController, Appearance.AlertMessageType.NetworkUnreachable);
+                PassToAuthentificationProcess();
                 return;
             }
 
-            var accountsViewModel = new AccountsViewModel(Window.RootViewController);
+            var accountsViewModel = new AccountsViewModel(Window.RootViewController) { DoNotUseCache = noCache };
 
             await accountsViewModel.GetAccountsListAsync();
             if (accountsViewModel.IsErrorResponseReceived)
+            {
+                PassToAuthentificationProcess();
                 return;
+            }
 
-            await PrepareRootView(accountsViewModel.AccountsList);
+            await PrepareRootView(accountsViewModel.AccountsList, noCache);
         }
 
-        private async Task PrepareRootView(List<Account> accountsList)
+        private async Task PrepareRootView(List<Account> accountsList, bool noCache)
         {
             UINavigationController navigationController;
 
@@ -128,16 +138,18 @@ namespace FreedomVoice.iOS
 
                     navigationController = new UINavigationController(phoneNumberController);
                     Theme.TransitionController(navigationController);
-
                     return;
                 }
 
-                var mainTabController = await GetMainTabBarController(account, Window.RootViewController, CGPoint.Empty);
-                if (mainTabController != null)
+                var mainTabController = await GetMainTabBarController(account, Window.RootViewController, CGPoint.Empty, noCache);
+                if (mainTabController == null)
                 {
-                    navigationController = new UINavigationController(mainTabController);
-                    Theme.TransitionController(navigationController, false);
+                    PassToAuthentificationProcess();
+                    return;
                 }
+
+                navigationController = new UINavigationController(mainTabController);
+                Theme.TransitionController(navigationController, false);
             }
             else
             if (!string.IsNullOrEmpty(UserDefault.LastUsedAccount))
@@ -148,14 +160,20 @@ namespace FreedomVoice.iOS
 
                 var account = GetLastSelectedAccount(accountsList);
                 if (account == null)
-                    Theme.TransitionController(navigationController);
-
-                var mainTabController = await GetMainTabBarController(account, Window.RootViewController, CGPoint.Empty);
-                if (mainTabController != null)
                 {
-                    navigationController.PushViewController(mainTabController, false);
-                    Theme.TransitionController(navigationController, false);
+                    Theme.TransitionController(navigationController);
+                    return;
                 }
+
+                var mainTabController = await GetMainTabBarController(account, Window.RootViewController, CGPoint.Empty, noCache);
+                if (mainTabController == null)
+                {
+                    PassToAuthentificationProcess();
+                    return;
+                }
+
+                navigationController.PushViewController(mainTabController, false);
+                Theme.TransitionController(navigationController, false);
             }
             else
             {
@@ -193,7 +211,12 @@ namespace FreedomVoice.iOS
 
             Window.MakeKeyAndVisible();
 
-            await ProceedGetAccountsList();
+            _watcher = Stopwatch.StartNew();
+
+            await ProceedGetAccountsList(false);
+
+            _watcher.Stop();
+            Log.ReportTime(Log.EventCategory.LongAction, "LoadingScreen", "", _watcher.ElapsedMilliseconds);
         }
 
         public async Task PrepareAuthentificationCookie()
@@ -214,11 +237,14 @@ namespace FreedomVoice.iOS
                 password = KeyChain.GetPasswordForUsername(userName);
 
             if (string.IsNullOrEmpty(userName) || string.IsNullOrEmpty(password))
+            {
                 PassToAuthentificationProcess();
+                return;
+            }
 
             var loginViewModel = new LoginViewModel(userName, password);
-            await loginViewModel.AutoLoginAsync();
 
+            await loginViewModel.AutoLoginAsync();
             if (loginViewModel.IsErrorResponseReceived)
                 PassToAuthentificationProcess();
         }
@@ -242,7 +268,7 @@ namespace FreedomVoice.iOS
             ActivePlayerMessageId = string.Empty;
         }
 
-        public static async Task<MainTabBarController> GetMainTabBarController(Account selectedAccount, UIViewController viewController, CGPoint activityIndicatorCenter)
+        public static async Task<MainTabBarController> GetMainTabBarController(Account selectedAccount, UIViewController viewController, CGPoint activityIndicatorCenter, bool noCache)
         {
             if (PhoneCapability.NetworkIsUnreachable)
             {
@@ -250,7 +276,7 @@ namespace FreedomVoice.iOS
                 return null;
             }
 
-            var mainTabBarViewModel = new MainTabBarViewModel(selectedAccount, viewController) { ActivityIndicatorCenter = activityIndicatorCenter };
+            var mainTabBarViewModel = new MainTabBarViewModel(selectedAccount, viewController) { DoNotUseCache = noCache, ActivityIndicatorCenter = activityIndicatorCenter };
 
             await mainTabBarViewModel.GetPresentationNumbersAsync();
             if (mainTabBarViewModel.IsErrorResponseReceived) return null;

@@ -4,13 +4,14 @@ using Foundation;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.Utilities.Helpers;
-using GoogleAnalytics.iOS;
 using UIKit;
 
 namespace FreedomVoice.iOS.ViewControllers
 {
-	partial class AccountUnavailableViewController : UIViewController
-	{
+	partial class AccountUnavailableViewController : BaseViewController
+    {
+        protected override string PageName => "Account Unavailable Screen";
+
         public Account SelectedAccount { private get; set; }
 	    public UINavigationController ParentController { private get; set; }
 
@@ -19,11 +20,7 @@ namespace FreedomVoice.iOS.ViewControllers
         private UILabel _callCustomerCareLabel;
         private UIButton _callCustomerCareButton;
 
-	    public AccountUnavailableViewController(IntPtr handle) : base(handle)
-	    {
-            GAI.SharedInstance.DefaultTracker.Set(GAIConstants.ScreenName, "Account Unavailable Screen");
-            GAI.SharedInstance.DefaultTracker.Send(GAIDictionaryBuilder.CreateScreenView().Build());
-        }
+	    public AccountUnavailableViewController(IntPtr handle) : base(handle) { }
 
         public override void ViewDidLoad()
         {

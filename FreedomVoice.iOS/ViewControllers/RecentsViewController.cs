@@ -15,14 +15,15 @@ using FreedomVoice.iOS.TableViewSources;
 using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.Utilities.Helpers;
 using FreedomVoice.iOS.Views.Shared;
-using GoogleAnalytics.iOS;
 using UIKit;
 using Xamarin.Contacts;
 
 namespace FreedomVoice.iOS.ViewControllers
 {
-    partial class RecentsViewController : UIViewController
+    partial class RecentsViewController : BaseViewController
     {
+        protected override string PageName => "Recents Screen";
+
         private RecentsSource _recentSource;
 
         private List<Contact> _contactList;
@@ -32,11 +33,7 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private static MainTabBarController MainTabBarInstance => MainTabBarController.SharedInstance;
 
-        public RecentsViewController(IntPtr handle) : base(handle)
-        {
-            GAI.SharedInstance.DefaultTracker.Set(GAIConstants.ScreenName, "Recents Screen");
-            GAI.SharedInstance.DefaultTracker.Send(GAIDictionaryBuilder.CreateScreenView().Build());
-        }
+        public RecentsViewController(IntPtr handle) : base(handle) { }
 
         public override async void ViewDidLoad()
         {

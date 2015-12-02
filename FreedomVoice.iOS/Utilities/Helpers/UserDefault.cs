@@ -15,6 +15,16 @@ namespace FreedomVoice.iOS.Utilities.Helpers
             }
         }
 
+        public static bool IsLaunchedBefore
+        {
+            get { return NSUserDefaults.StandardUserDefaults.BoolForKey("IsLaunchedBeforeKey"); }
+            set
+            {
+                NSUserDefaults.StandardUserDefaults.SetBool(value, "IsLaunchedBeforeKey");
+                NSUserDefaults.StandardUserDefaults.Synchronize();
+            }
+        }
+
         public static int PoolingInterval
         {
             get { return (int)NSUserDefaults.StandardUserDefaults.IntForKey("PoolingIntervalKey"); }
@@ -25,22 +35,32 @@ namespace FreedomVoice.iOS.Utilities.Helpers
             }
         }
 
+        public static string AccountsCache
+        {
+            get { return NSUserDefaults.StandardUserDefaults.StringForKey("AccountsCacheKey"); }
+            set
+            {
+                NSUserDefaults.StandardUserDefaults.SetString(value, "AccountsCacheKey");
+                NSUserDefaults.StandardUserDefaults.Synchronize();
+            }
+        }
+
+        public static string PresentationPhonesCache
+        {
+            get { return NSUserDefaults.StandardUserDefaults.StringForKey("PresentationPhonesCacheKey"); }
+            set
+            {
+                NSUserDefaults.StandardUserDefaults.SetString(value, "PresentationPhonesCacheKey");
+                NSUserDefaults.StandardUserDefaults.Synchronize();
+            }
+        }
+
         public static string LastUsedAccount
         {
             get { return NSUserDefaults.StandardUserDefaults.StringForKey("LastUsedAccountKey"); }
             set
             {
                 NSUserDefaults.StandardUserDefaults.SetString(value, "LastUsedAccountKey");
-                NSUserDefaults.StandardUserDefaults.Synchronize();
-            }
-        }
-
-        public static bool IsLaunchedBefore
-        {
-            get { return NSUserDefaults.StandardUserDefaults.BoolForKey("IsLaunchedBeforeKey"); }
-            set
-            {
-                NSUserDefaults.StandardUserDefaults.SetBool(value, "IsLaunchedBeforeKey");
                 NSUserDefaults.StandardUserDefaults.Synchronize();
             }
         }
