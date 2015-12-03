@@ -38,6 +38,8 @@ namespace FreedomVoice.iOS.ViewModels
             _folderName = folderName;
             _messageId = messageId;
             _mediaType = mediaType;
+
+            AppDelegate.ActiveDownloadCancelationToken = new CancellationTokenSource();
         }
 
         /// <summary>
@@ -72,11 +74,9 @@ namespace FreedomVoice.iOS.ViewModels
             var progressReporter = new Progress<DownloadBytesProgress>();
             progressReporter.ProgressChanged += (s, args) => ProgressBar.Progress = args.PercentComplete;
 
-            var tokenSource = new CancellationTokenSource();
+            CancelDownloadButton.TouchUpInside += (sender, args) => AppDelegate.CancelActiveDownload();
 
-            CancelDownloadButton.TouchUpInside += (sender, args) => tokenSource.Cancel();
-
-            var requestResult = await _service.ExecuteRequest(progressReporter, _systemPhoneNumber, _mailboxNumber, _folderName, _messageId, _mediaType, tokenSource.Token);
+            var requestResult = await _service.ExecuteRequest(progressReporter, _systemPhoneNumber, _mailboxNumber, _folderName, _messageId, _mediaType, AppDelegate.ActiveDownloadCancelationToken.Token);
             watcher.Stop();
             Log.ReportTime(Log.EventCategory.FileLoading, "GetMedia", "", watcher.ElapsedMilliseconds);
 

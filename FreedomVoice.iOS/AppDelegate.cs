@@ -18,6 +18,7 @@ using UIKit;
 using GoogleAnalytics.iOS;
 using Xamarin;
 using Xamarin.Contacts;
+using System.Threading;
 
 namespace FreedomVoice.iOS
 {
@@ -46,6 +47,8 @@ namespace FreedomVoice.iOS
 
         public static AVPlayerView ActivePlayerView;
         public static string ActivePlayerMessageId;
+
+        public static CancellationTokenSource ActiveDownloadCancelationToken;
 
         public static string TempFolderPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments, Environment.SpecialFolderOption.DoNotVerify), "..", "tmp");
 
@@ -272,6 +275,12 @@ namespace FreedomVoice.iOS
             ActivePlayerView?.StopPlayback();
             ActivePlayerView = null;
             ActivePlayerMessageId = string.Empty;
+        }
+
+        public static void CancelActiveDownload()
+        {
+            ActiveDownloadCancelationToken?.Cancel();
+            ActiveDownloadCancelationToken = null;
         }
 
         public static async Task<MainTabBarController> GetMainTabBarController(Account selectedAccount, UIViewController viewController, CGPoint activityIndicatorCenter, bool noCache)

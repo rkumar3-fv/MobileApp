@@ -120,9 +120,11 @@ namespace FreedomVoice.iOS.ViewControllers
             base.ViewWillAppear(animated);
         }
 
-	    public override void ViewDidDisappear(bool animated)
-        {
+	    public override void ViewWillDisappear(bool animated)
+	    {
             AppDelegate.ResetAudioPlayer();
+            AppDelegate.CancelActiveDownload();
+
             _updateTimer.Invalidate();
         }
 
