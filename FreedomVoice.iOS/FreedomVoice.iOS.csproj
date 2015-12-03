@@ -120,6 +120,7 @@
     <Compile Include="Services\Responses\EmptyResponse.cs" />
     <Compile Include="Services\Responses\PollingIntervalResponse.cs" />
     <Compile Include="Utilities\DeviceHardware.cs" />
+    <Compile Include="Utilities\DownloadIndicator.cs" />
     <Compile Include="Utilities\Extensions\CopyPasteLabel.cs" />
     <Compile Include="Utilities\Helpers\DeviceCacheStorage.cs" />
     <Compile Include="Utilities\Helpers\Cookies.cs" />
@@ -137,7 +138,7 @@
       <DependentUpon>FaxViewController.cs</DependentUpon>
     </Compile>
     <Compile Include="Utilities\Events\ExpandedCellButtonClickEventArgs.cs" />
-    <Compile Include="Utilities\LoadingIndicator.cs" />
+    <Compile Include="Utilities\ActivityIndicator.cs" />
     <Compile Include="Services\IMediaService.cs" />
     <Compile Include="Services\IMessageOperationsService.cs" />
     <Compile Include="Services\Implementations\CallReservationService.cs" />

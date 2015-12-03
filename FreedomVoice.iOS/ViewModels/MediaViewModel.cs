@@ -24,14 +24,14 @@ namespace FreedomVoice.iOS.ViewModels
 
         public string FilePath { get; private set; }
 
+        protected override ProgressControlType ProgressControl => ProgressControlType.ProgressBar;
+
         /// <summary>
         /// Constructor, requires an IService
         /// </summary>
         public MediaViewModel(string systemPhoneNumber, int mailboxNumber, string folderName, string messageId, MediaType mediaType)
         {
             _service = ServiceContainer.Resolve<IMediaService>();
-
-            ProgressControl = ProgressControlType.ProgressBar;
 
             _systemPhoneNumber = systemPhoneNumber;
             _mailboxNumber = mailboxNumber;
@@ -69,12 +69,10 @@ namespace FreedomVoice.iOS.ViewModels
 
             await RenewCookieIfNeeded();
 
-            ProgressBar.Progress = 0;
+            AppDelegate.DownloadIndicator.SetDownloadProgress(0);
 
             var progressReporter = new Progress<DownloadBytesProgress>();
-            progressReporter.ProgressChanged += (s, args) => ProgressBar.Progress = args.PercentComplete;
-
-            CancelDownloadButton.TouchUpInside += (sender, args) => AppDelegate.CancelActiveDownload();
+            progressReporter.ProgressChanged += (s, args) => AppDelegate.DownloadIndicator.SetDownloadProgress(args.PercentComplete);
 
             var requestResult = await _service.ExecuteRequest(progressReporter, _systemPhoneNumber, _mailboxNumber, _folderName, _messageId, _mediaType, AppDelegate.ActiveDownloadCancelationToken.Token);
             watcher.Stop();

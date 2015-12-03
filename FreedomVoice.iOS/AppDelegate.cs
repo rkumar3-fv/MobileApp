@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using CoreGraphics;
 using Foundation;
 using FreedomVoice.Core.Utils;
 using FreedomVoice.iOS.Entities;
@@ -49,6 +48,12 @@ namespace FreedomVoice.iOS
         public static string ActivePlayerMessageId;
 
         public static CancellationTokenSource ActiveDownloadCancelationToken;
+
+        private static DownloadIndicator _downloadIndicator;
+        public static DownloadIndicator DownloadIndicator => _downloadIndicator ?? (_downloadIndicator = new DownloadIndicator(Theme.ScreenBounds));
+
+        private static ActivityIndicator _activityIndicator;
+        public static ActivityIndicator ActivityIndicator => _activityIndicator ?? (_activityIndicator = new ActivityIndicator(Theme.ScreenBounds));
 
         public static string TempFolderPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments, Environment.SpecialFolderOption.DoNotVerify), "..", "tmp");
 
@@ -158,7 +163,7 @@ namespace FreedomVoice.iOS
                     return;
                 }
 
-                var mainTabController = await GetMainTabBarController(account, Window.RootViewController, CGPoint.Empty, noCache);
+                var mainTabController = await GetMainTabBarController(account, Window.RootViewController, noCache);
                 if (mainTabController == null)
                 {
                     PassToAuthentificationProcess();
@@ -182,7 +187,7 @@ namespace FreedomVoice.iOS
                     return;
                 }
 
-                var mainTabController = await GetMainTabBarController(account, Window.RootViewController, CGPoint.Empty, noCache);
+                var mainTabController = await GetMainTabBarController(account, Window.RootViewController, noCache);
                 if (mainTabController == null)
                 {
                     PassToAuthentificationProcess();
@@ -283,7 +288,7 @@ namespace FreedomVoice.iOS
             ActiveDownloadCancelationToken = null;
         }
 
-        public static async Task<MainTabBarController> GetMainTabBarController(Account selectedAccount, UIViewController viewController, CGPoint activityIndicatorCenter, bool noCache)
+        public static async Task<MainTabBarController> GetMainTabBarController(Account selectedAccount, UIViewController viewController, bool noCache)
         {
             if (PhoneCapability.NetworkIsUnreachable)
             {
@@ -291,7 +296,7 @@ namespace FreedomVoice.iOS
                 return null;
             }
 
-            var mainTabBarViewModel = new MainTabBarViewModel(selectedAccount, viewController) { DoNotUseCache = noCache, ActivityIndicatorCenter = activityIndicatorCenter };
+            var mainTabBarViewModel = new MainTabBarViewModel(selectedAccount, viewController) { DoNotUseCache = noCache };
 
             var watcher = Stopwatch.StartNew();
             await mainTabBarViewModel.GetPresentationNumbersAsync();
@@ -305,7 +310,7 @@ namespace FreedomVoice.iOS
             Log.ReportTime(Log.EventCategory.Request, "GetPoolingInterval", "", watcher.ElapsedMilliseconds);
             if (mainTabBarViewModel.IsErrorResponseReceived) return null;
 
-            var extensionsViewModel = new ExtensionsViewModel(selectedAccount) { ActivityIndicatorCenter = activityIndicatorCenter };
+            var extensionsViewModel = new ExtensionsViewModel(selectedAccount);
 
             watcher = Stopwatch.StartNew();
             await extensionsViewModel.GetExtensionsListAsync();

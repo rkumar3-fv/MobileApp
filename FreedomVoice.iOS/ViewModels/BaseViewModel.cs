@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using CoreGraphics;
 using FreedomVoice.iOS.Services.Responses;
-using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.Utilities.Events;
 using UIKit;
 
@@ -13,8 +11,6 @@ namespace FreedomVoice.iOS.ViewModels
     {
         protected BaseViewModel()
         {
-            ProgressControl = ProgressControlType.ActivityIndicator;
-
             ProceedInitialFormValidation();
         }
 
@@ -144,16 +140,7 @@ namespace FreedomVoice.iOS.ViewModels
                 await appDelegate.PrepareAuthentificationCookie();
         }
 
-        protected ProgressControlType ProgressControl { private get; set; }
-
-        private LoadingIndicator _loadingIndicator;
-
-        private UIActivityIndicatorView _activityIndicator;
-
-        public CGPoint ActivityIndicatorCenter { private get; set; }
-
-        protected UIProgressView ProgressBar;
-        protected UIButton CancelDownloadButton;
+        protected virtual ProgressControlType ProgressControl => ProgressControlType.ActivityIndicator;
 
         private void OnIsBusyChanged()
         {
@@ -164,23 +151,32 @@ namespace FreedomVoice.iOS.ViewModels
             {
                 UIApplication.SharedApplication.NetworkActivityIndicatorVisible = true;
 
-                _loadingIndicator = new LoadingIndicator(Theme.ScreenBounds, ProgressControl, ActivityIndicatorCenter);
-
-                ProgressBar = _loadingIndicator.ProgressBar;
-                CancelDownloadButton = _loadingIndicator.CancelDownloadButton;
-
-                _activityIndicator = _loadingIndicator.ActivityIndicator;
-                _activityIndicator?.StartAnimating();
-
-                UIApplication.SharedApplication.KeyWindow.AddSubview(_loadingIndicator);
+                if (ProgressControl == ProgressControlType.ActivityIndicator)
+                {
+                    UIApplication.SharedApplication.KeyWindow.AddSubview(AppDelegate.ActivityIndicator);
+                    AppDelegate.ActivityIndicator.Show();
+                }
+                else
+                {
+                    UIApplication.SharedApplication.KeyWindow.AddSubview(AppDelegate.DownloadIndicator);
+                    AppDelegate.DownloadIndicator.Show();
+                }
             }
             else
             {
                 UIApplication.SharedApplication.NetworkActivityIndicatorVisible = false;
 
-                _activityIndicator?.StopAnimating();
-                _loadingIndicator?.Hide();
+                if (ProgressControl == ProgressControlType.ActivityIndicator)
+                    AppDelegate.ActivityIndicator.Hide();
+                else
+                    AppDelegate.DownloadIndicator.Hide();
             }
         }
+    }
+
+    public enum ProgressControlType
+    {
+        ProgressBar,
+        ActivityIndicator
     }
 }

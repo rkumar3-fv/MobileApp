@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FreedomVoice.Core.Utils;
 using FreedomVoice.iOS.Entities;
+using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.Utilities.Events;
 using GoogleAnalytics.iOS;
 using UIKit;
@@ -60,8 +61,11 @@ namespace FreedomVoice.iOS.ViewControllers
             
             ViewControllers = new[] { recentsTab, contactsTab, keypadTab, messagesTab };
 
-            SelectedIndex = 2;
+            AppDelegate.ActivityIndicator.SetActivityIndicatorCenter(Theme.ScreenCenter);
+
             CallerIdEvent.CallerIdChanged += PresentationNumberChanged;
+
+            SelectedIndex = 2;
 
             base.ViewDidLoad();
         }

@@ -39,6 +39,8 @@ namespace FreedomVoice.iOS.ViewControllers
             NavigationItem.SetRightBarButtonItem(Appearance.GetLogoutBarButton(this), true);
             NavigationController.NavigationBarHidden = false;
 
+            AppDelegate.ActivityIndicator.SetActivityIndicatorCenter(Theme.ScreenCenter);
+
             base.ViewWillAppear(animated);
         }
     }

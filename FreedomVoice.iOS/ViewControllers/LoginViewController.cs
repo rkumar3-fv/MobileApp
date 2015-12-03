@@ -49,7 +49,6 @@ namespace FreedomVoice.iOS.ViewControllers
             InitializeForgotPasswordButton();
 
             InitializeViewModel();
-            InitializeActivityIndicator();
 
             UnsubscribeFromEvents();
             SubscribeToEvents();
@@ -73,6 +72,8 @@ namespace FreedomVoice.iOS.ViewControllers
             NavigationController.NavigationBar.Hidden = true;
             View.UserInteractionEnabled = true;
             _loginButton.Hidden = false;
+
+            InitializeActivityIndicator();
 
             base.ViewWillAppear(animated);
         }
@@ -419,7 +420,7 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private void InitializeActivityIndicator()
         {
-            _loginViewModel.ActivityIndicatorCenter = _loginButton.Center;
+            AppDelegate.ActivityIndicator.SetActivityIndicatorCenter(_loginButton.Center);
         }
 
         #endregion
@@ -457,7 +458,7 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private void AdjustActivityIndicator()
         {
-            _loginViewModel.ActivityIndicatorCenter = _loginButton.Center;
+            AppDelegate.ActivityIndicator.SetActivityIndicatorCenter(_loginButton.Center);
         }
 
         private void AdjustValidationFailedLabel()

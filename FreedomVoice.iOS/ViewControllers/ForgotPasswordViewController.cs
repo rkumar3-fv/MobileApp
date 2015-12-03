@@ -274,7 +274,7 @@ namespace FreedomVoice.iOS.ViewControllers
         private void InitializeActivityIndicator()
         {
             var navigationBarHeight = Theme.StatusBarHeight + NavigationController.NavigationBarHeight();
-            _forgotPasswordViewModel.ActivityIndicatorCenter = new CGPoint(_sendRecoveryButton.Center.X, _sendRecoveryButton.Center.Y + navigationBarHeight);
+            AppDelegate.ActivityIndicator.SetActivityIndicatorCenter(new CGPoint(_sendRecoveryButton.Center.X, _sendRecoveryButton.Center.Y + navigationBarHeight));
         }
 
         #endregion

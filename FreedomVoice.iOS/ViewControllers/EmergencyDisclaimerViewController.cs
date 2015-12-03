@@ -39,7 +39,9 @@ namespace FreedomVoice.iOS.ViewControllers
 
             var navigationBarHeight = Theme.StatusBarHeight + NavigationController.NavigationBarHeight();
 
-            var mainTabBarController = await AppDelegate.GetMainTabBarController(SelectedAccount, ParentController, new CGPoint(_understandButton.Center.X, _understandButton.Center.Y + navigationBarHeight), true);
+            AppDelegate.ActivityIndicator.SetActivityIndicatorCenter(new CGPoint(_understandButton.Center.X, _understandButton.Center.Y + navigationBarHeight));
+
+            var mainTabBarController = await AppDelegate.GetMainTabBarController(SelectedAccount, ParentController, true);
             var controller = (UINavigationController)ParentController;
             if (mainTabBarController == null || controller == null)
             {
