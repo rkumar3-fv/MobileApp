@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using CoreGraphics;
+using Foundation;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.TableViewSources;
 using FreedomVoice.iOS.Utilities;
@@ -13,6 +15,8 @@ namespace FreedomVoice.iOS.ViewControllers
 	partial class FoldersViewController : BaseViewController
     {
         protected override string PageName => "Folders Screen";
+
+        private NSTimer _updateTimer;
 
         public bool IsSingleExtension { private get; set; }
         public ExtensionWithCount SelectedExtension { private get; set; }
@@ -60,6 +64,8 @@ namespace FreedomVoice.iOS.ViewControllers
             _foldersSource.Folders = FoldersList;
             _foldersTableView.ReloadData();
 
+            _updateTimer = NSTimer.CreateRepeatingScheduledTimer(UserDefault.PoolingInterval, delegate { UpdateFoldersTable(); });
+
             base.ViewWillAppear(animated);
         }
 
@@ -68,6 +74,28 @@ namespace FreedomVoice.iOS.ViewControllers
             FoldersList = new List<FolderWithCount>();
             _foldersSource.Folders = FoldersList;
             _foldersTableView.ReloadData();
+
+            _updateTimer.Invalidate();
+        }
+
+        private async void UpdateFoldersTable()
+        {
+            var needToReloadTable = false;
+
+            await Task.Run(async () =>
+            {
+                var foldersViewModel = new FoldersViewModel(SelectedAccount.PhoneNumber, SelectedExtension.ExtensionNumber);
+                await foldersViewModel.GetFoldersListAsync(true);
+                if (foldersViewModel.IsErrorResponseReceived) return;
+
+                FoldersList = foldersViewModel.FoldersList;
+                _foldersSource.Folders = FoldersList;
+
+                needToReloadTable = true;
+            });
+
+            if (needToReloadTable)
+                _foldersTableView.ReloadData();
         }
 
         private void InitializeTableView()

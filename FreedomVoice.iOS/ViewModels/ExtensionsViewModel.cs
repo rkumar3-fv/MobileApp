@@ -39,7 +39,7 @@ namespace FreedomVoice.iOS.ViewModels
         /// Performs an asynchronous Extensions With Count request
         /// </summary>
         /// <returns></returns>
-        public async Task GetExtensionsListAsync()
+        public async Task GetExtensionsListAsync(bool silent = false)
         {
             if (PhoneCapability.NetworkIsUnreachable)
             {
@@ -47,7 +47,8 @@ namespace FreedomVoice.iOS.ViewModels
                 return;
             }
 
-            IsBusy = true;
+            if (!silent)
+                IsBusy = true;
 
             StartWatcher();
 
@@ -56,7 +57,10 @@ namespace FreedomVoice.iOS.ViewModels
             var errorResponse = string.Empty;
             var requestResult = await _service.ExecuteRequest(_selectedAccount.PhoneNumber);
             if (requestResult is ErrorResponse)
-                errorResponse = ProceedErrorResponse(requestResult);
+            {
+                if (!silent)
+                    errorResponse = ProceedErrorResponse(requestResult);
+            }
             else
             {
                 var data = requestResult as ExtensionsWithCountResponse;
@@ -66,7 +70,8 @@ namespace FreedomVoice.iOS.ViewModels
             
             StopWatcher(errorResponse);
 
-            IsBusy = false;
+            if (!silent)
+                IsBusy = false;
         }
     }
 }

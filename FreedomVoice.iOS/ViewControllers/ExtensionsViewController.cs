@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using CoreGraphics;
+using Foundation;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.TableViewSources;
 using FreedomVoice.iOS.Utilities;
@@ -14,14 +16,15 @@ namespace FreedomVoice.iOS.ViewControllers
     {
         protected override string PageName => "Extensions Screen";
 
-        private static MainTabBarController MainTabBarInstance => MainTabBarController.SharedInstance;
-
-        private static Account SelectedAccount => MainTabBarInstance.SelectedAccount;
-
         private List<ExtensionWithCount> ExtensionsList { get; set; }
 
         private UITableView _extensionsTableView;
         private ExtensionsSource _extensionsSource;
+
+        private static MainTabBarController MainTabBarInstance => MainTabBarController.SharedInstance;
+        private static Account SelectedAccount => MainTabBarInstance.SelectedAccount;
+
+        private NSTimer _updateTimer;
 
         public ExtensionsViewController(IntPtr handle) : base(handle)
         {
@@ -63,6 +66,29 @@ namespace FreedomVoice.iOS.ViewControllers
             ExtensionsList = extensionsViewModel.ExtensionsList;
             _extensionsSource.Extensions = ExtensionsList;
             _extensionsTableView.ReloadData();
+
+            _updateTimer = NSTimer.CreateRepeatingScheduledTimer(UserDefault.PoolingInterval, delegate { UpdateExtensionsTable(); });
+        }
+
+        private async void UpdateExtensionsTable()
+        {
+            var needToReloadTable = false;
+
+            await Task.Run(async () =>
+            {
+                var extensionsViewModel = new ExtensionsViewModel(SelectedAccount);
+                await extensionsViewModel.GetExtensionsListAsync(true);
+                if (extensionsViewModel.IsErrorResponseReceived) return;
+
+                ExtensionsList = extensionsViewModel.ExtensionsList;
+
+                _extensionsSource.Extensions = ExtensionsList;
+
+                needToReloadTable = true;
+            });
+
+            if (needToReloadTable)
+                _extensionsTableView.ReloadData();
         }
 
         public override void ViewDidDisappear(bool animated)
@@ -70,6 +96,8 @@ namespace FreedomVoice.iOS.ViewControllers
             ExtensionsList = new List<ExtensionWithCount>();
             _extensionsSource.Extensions = ExtensionsList;
             _extensionsTableView.ReloadData();
+
+            _updateTimer.Invalidate();
         }
     }
 }
