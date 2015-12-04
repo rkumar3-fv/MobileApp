@@ -355,6 +355,24 @@ namespace FreedomVoice.Core
                             ErrorText = msg
                         };
                     }
+                case HttpStatusCode.RequestTimeout:
+                    {
+                        return new BaseResult<T>
+                        {
+                            Code = ErrorCodes.RequestTimeout,
+                            Result = default(T),
+                            ErrorText = msg
+                        };
+                    }
+                case HttpStatusCode.GatewayTimeout:
+                    {
+                        return new BaseResult<T>
+                        {
+                            Code = ErrorCodes.GatewayTimeout,
+                            Result = default(T),
+                            ErrorText = msg
+                        };
+                    }
                 case HttpStatusCode.NotFound:
                     {
                         return new BaseResult<T>

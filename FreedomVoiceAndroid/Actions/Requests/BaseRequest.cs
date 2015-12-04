@@ -51,7 +51,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
                 case ErrorCodes.PaymentRequired:
                     return new ErrorResponse(requestId, ErrorResponse.ErrorNotPaid);
                 case ErrorCodes.Forbidden:
-                    return new ErrorResponse(requestId, ErrorResponse.Forbidden);
+                    return new ErrorResponse(requestId, ErrorResponse.ErrorForbidden);
                 case ErrorCodes.InternalServerError:
                     return new ErrorResponse(requestId, ErrorResponse.ErrorInternal);
                 default:

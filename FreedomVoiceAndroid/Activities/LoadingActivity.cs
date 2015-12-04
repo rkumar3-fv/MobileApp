@@ -46,6 +46,10 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         protected override void OnStop()
         {
             base.OnStop();
+#if !DEBUG
+            if (!Appl.ApplicationHelper.IsInsigthsOn)
+                Appl.ApplicationHelper.InitInsights();
+#endif
             if ((_watcher != null)&&(_watcher.IsRunning))
             {
                 _watcher.Stop();

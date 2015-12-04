@@ -52,9 +52,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         protected override void OnResume()
         {
             base.OnResume();
-#if !DEBUG
-            Appl.ApplicationHelper.InitInsights();
-#endif
             Helper.HelperEvent += OnHelperEvent;
         }
 
