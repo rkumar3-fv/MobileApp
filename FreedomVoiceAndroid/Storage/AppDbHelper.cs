@@ -6,13 +6,6 @@ using com.FreedomVoice.MobileApp.Android.Entities;
 
 namespace com.FreedomVoice.MobileApp.Android.Storage
 {
-    public enum DatabaseState
-    {
-        Free,
-        Read,
-        Write
-    }
-
     /// <summary>
     /// Database cache helper
     /// </summary>
@@ -38,8 +31,6 @@ namespace com.FreedomVoice.MobileApp.Android.Storage
         private const string ColumnPhone = "phone";
         private const string ColumnDate = "date";
         private const string ColumnCount = "count";
-
-        private volatile DatabaseState _state;
 
         /// <summary>
         /// Get application DB helper instance
@@ -69,7 +60,6 @@ namespace com.FreedomVoice.MobileApp.Android.Storage
             db.ExecSQL(callerTableScript);
             db.ExecSQL(accCallerLinkTableScript);
             db.ExecSQL(recentsTableScript);
-            _state = DatabaseState.Free;
         }
 
         public override void OnUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
@@ -363,21 +353,6 @@ namespace com.FreedomVoice.MobileApp.Android.Storage
             }
             callerCursor?.Close();
             return result;
-        }
-
-        private SQLiteDatabase GetReadable()
-        {
-            return ReadableDatabase;
-        }
-
-        private SQLiteDatabase GetWritable()
-        {
-            return WritableDatabase;
-        }
-
-        private void CloseIfNotUsed(SQLiteDatabase db)
-        {
-            db.Close();
         }
     }
 }
