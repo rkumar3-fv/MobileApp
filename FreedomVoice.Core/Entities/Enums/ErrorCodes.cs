@@ -11,6 +11,8 @@
         NotFound,
         Forbidden, 
         PaymentRequired,
-        InternalServerError
+        InternalServerError,
+        RequestTimeout,
+        GatewayTimeout
     }
 }

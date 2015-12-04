@@ -139,7 +139,8 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         private readonly AppDbHelper _dbHelper;
         private readonly AtomicLong _idCounter;
         private readonly AppPreferencesHelper _preferencesHelper;
-        private long _storageTime;
+        private long _preferencesTime;
+        private long _initHelperTime;
 
         /// <summary>
         /// Set actions helper for current context
@@ -147,6 +148,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         /// <param name="app">app base context</param>
         public ActionsHelper(App app)
         {
+            var watcher = Stopwatch.StartNew();
             _app = app;
             _dbHelper = AppDbHelper.Instance(app);
             _idCounter = new AtomicLong();
@@ -185,7 +187,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                 _accPair = _preferencesHelper.GetAccCaller();
                 _pollingInterval = _preferencesHelper.GetPollingInterval();
                 watcherLoading.Stop();
-                _storageTime = watcherLoading.ElapsedMilliseconds;
+                _preferencesTime = watcherLoading.ElapsedMilliseconds;
                 if (container != null)
                 {
                     ApiHelper.CookieContainer = container;
@@ -193,27 +195,42 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                     if ((AccountsList == null) || (SelectedAccount == null))
                     {
                         GetAccounts();
+                        if (watcher.IsRunning)
+                            watcher.Stop();
+                        _initHelperTime = watcher.ElapsedMilliseconds;
                         return;
                     }
                     if ((SelectedAccount.PresentationNumbers == null) ||
                         (string.IsNullOrEmpty(SelectedAccount.PresentationNumber)))
                     {
                         GetPresentationNumbers();
+                        if (watcher.IsRunning)
+                            watcher.Stop();
+                        _initHelperTime = watcher.ElapsedMilliseconds;
                         return;
                     }
                     var intent = new Intent(_app, typeof(ContentActivity));
                     intent.SetFlags(ActivityFlags.NewTask);
+                    if (watcher.IsRunning)
+                        watcher.Stop();
+                    _initHelperTime = watcher.ElapsedMilliseconds;
                     _app.StartActivity(intent);
                     return;
                 }
                 if (!string.IsNullOrEmpty(_userLogin) && !string.IsNullOrEmpty(_userPassword))
                 {
                     Authorize(_userLogin, _userPassword);
+                    if (watcher.IsRunning)
+                        watcher.Stop();
+                    _initHelperTime = watcher.ElapsedMilliseconds;
                     return;
                 }
             }
             var authIntent = new Intent(_app, typeof(AuthActivity));
             authIntent.SetFlags(ActivityFlags.NewTask);
+            if (watcher.IsRunning)
+                watcher.Stop();
+            _initHelperTime = watcher.ElapsedMilliseconds;
              _app.StartActivity(authIntent);
         }
 
@@ -726,11 +743,59 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                     _watchersDictionary.Remove(response.RequestId);
                     var requestName = _waitingRequestArray[response.RequestId].GetType().Name;
                     var responseName = response.GetType().Name;
-                    _app.ApplicationHelper.ReportTime(TimingEvent.Request, requestName, responseName, time);
-                    if (_storageTime != 0)
+                    if (responseName == "ErrorResponse")
                     {
-                        _app.ApplicationHelper.ReportTime(TimingEvent.LongAction, "LOADING FROM STORAGE", "", _storageTime);
-                        _storageTime = 0;
+                        var errorResponse = (ErrorResponse)response;
+                        string postfix;
+                        switch (errorResponse.ErrorCode)
+                        {
+                            case ErrorResponse.ErrorInternal:
+                                postfix = "500 - Internal Server Error";
+                                break;
+                            case ErrorResponse.ErrorBadRequest:
+                                postfix = "400 - Bad Request";
+                                break;
+                            case ErrorResponse.ErrorCancelled:
+                                postfix = "Cancelled";
+                                break;
+                            case ErrorResponse.ErrorConnection:
+                                postfix = "Connection Lost";
+                                break;
+                            case ErrorResponse.ErrorGatewayTimeout:
+                                postfix = "504 - Gateway Timeout";
+                                break;
+                            case ErrorResponse.ErrorRequestTimeout:
+                                postfix = "408 - Request Timeout";
+                                break;
+                            case ErrorResponse.ErrorNotFound:
+                                postfix = "404 - Not Found";
+                                break;
+                            case ErrorResponse.ErrorNotPaid:
+                                postfix = "402 - Payment Required";
+                                break;
+                            case ErrorResponse.ErrorUnauthorized:
+                                postfix = "401 - Unauthorized";
+                                break;
+                            case ErrorResponse.ErrorForbidden:
+                                postfix = "403 - Forbidden";
+                                break;
+                            default:
+                                postfix = "Unknown Error";
+                                break;
+                        }
+                        _app.ApplicationHelper.ReportTime(TimingEvent.Request, requestName, $"{responseName}: {postfix}", time);
+                    }
+                    else
+                        _app.ApplicationHelper.ReportTime(TimingEvent.Request, requestName, responseName, time);
+                    if (_preferencesTime != 0)
+                    {
+                        _app.ApplicationHelper.ReportTime(TimingEvent.LongAction, "LOADING FROM STORAGE", "", _preferencesTime);
+                        _preferencesTime = 0;
+                    }
+                    if (_initHelperTime != 0)
+                    {
+                        _app.ApplicationHelper.ReportTime(TimingEvent.LongAction, "APP HELPER RESTORATION", "", _initHelperTime);
+                        _initHelperTime = 0;
                     }
                 }
                 ResponseResultActionExecutor(response);
@@ -756,6 +821,8 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                     {
                         // Connection lost
                         case ErrorResponse.ErrorConnection:
+                        case ErrorResponse.ErrorGatewayTimeout:
+                        case ErrorResponse.ErrorRequestTimeout:
 #if DEBUG
                             Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} failed: CONNECTION LOST");
 #endif
@@ -824,7 +891,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                             HelperEvent?.Invoke(this, new ActionsHelperIntentArgs(response.RequestId, intent));
                             break;
                         //Forbidden 403
-                        case ErrorResponse.Forbidden:
+                        case ErrorResponse.ErrorForbidden:
                             // Call reservation bad destination phone
                             if (_waitingRequestArray.ContainsKey(response.RequestId) && _waitingRequestArray[response.RequestId] is CallReservationRequest)
                             {
