@@ -67,7 +67,7 @@ namespace FreedomVoice.iOS.ViewControllers
             var messagesViewModel = new MessagesViewModel(SelectedAccount.PhoneNumber, SelectedExtension.ExtensionNumber, SelectedFolder.DisplayName);
 
             var watcher = Stopwatch.StartNew();
-            await messagesViewModel.GetMessagesListAsync(SelectedFolder.MessageCount);
+            await messagesViewModel.GetMessagesListAsync();
             watcher.Stop();
             Log.ReportTime(Log.EventCategory.Request, "GetMessages", "", watcher.ElapsedMilliseconds);
 
@@ -134,23 +134,10 @@ namespace FreedomVoice.iOS.ViewControllers
 
             await Task.Run(async () => 
             {
-                var foldersViewModel = new FoldersViewModel(SelectedAccount.PhoneNumber, SelectedExtension.ExtensionNumber);
-
-                var watcher = Stopwatch.StartNew();
-                await foldersViewModel.GetFoldersListAsync(true);
-                watcher.Stop();
-                Log.ReportTime(Log.EventCategory.Request, "GetFolders", "", watcher.ElapsedMilliseconds);
-
-                var currentFolder = foldersViewModel.FoldersList.FirstOrDefault(f => f.DisplayName == SelectedFolder.DisplayName);
-                if (currentFolder == null)
-                    return;
-
-                SelectedFolder = currentFolder;
-
                 var messagesViewModel = new MessagesViewModel(SelectedAccount.PhoneNumber, SelectedExtension.ExtensionNumber, SelectedFolder.DisplayName);
 
-                watcher = Stopwatch.StartNew();
-                await messagesViewModel.GetMessagesListAsync(SelectedFolder.MessageCount, true);
+                var watcher = Stopwatch.StartNew();
+                await messagesViewModel.GetMessagesListAsync(true);
                 watcher.Stop();
                 Log.ReportTime(Log.EventCategory.Request, "GetMessages", "", watcher.ElapsedMilliseconds);
 

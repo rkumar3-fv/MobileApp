@@ -6,16 +6,14 @@ using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.Services;
 using FreedomVoice.iOS.Services.Responses;
 using FreedomVoice.iOS.Utilities;
-using FreedomVoice.iOS.Utilities.Helpers;
 using FreedomVoice.iOS.ViewControllers;
 using UIKit;
 
 namespace FreedomVoice.iOS.ViewModels
 {
-    public class MainTabBarViewModel : BaseViewModel
+    public class PresentationPhonesViewModel : BaseViewModel
     {
         private readonly IPresentationNumbersService _presentationNumbersService;
-        private readonly IPollingIntervalService _poolingIntervalService;
 
         private readonly Account _selectedAccount;
         private readonly UIViewController _viewController;
@@ -27,10 +25,9 @@ namespace FreedomVoice.iOS.ViewModels
         /// <summary>
         /// Constructor, requires an IService
         /// </summary>
-        public MainTabBarViewModel(Account selectedAccount, UIViewController viewController)
+        public PresentationPhonesViewModel(Account selectedAccount, UIViewController viewController)
         {
             _presentationNumbersService = ServiceContainer.Resolve<IPresentationNumbersService>();
-            _poolingIntervalService = ServiceContainer.Resolve<IPollingIntervalService>();
 
             _selectedAccount = selectedAccount;
             _viewController = viewController;
@@ -48,35 +45,12 @@ namespace FreedomVoice.iOS.ViewModels
 
             var requestResult = await _presentationNumbersService.ExecuteRequest(_selectedAccount.PhoneNumber, DoNotUseCache);
             if (requestResult is ErrorResponse)
-            {
                 ProceedErrorResponse(requestResult);
-                IsBusy = false;
-            }
             else
             {
                 var data = requestResult as PresentationNumbersResponse;
                 if (data != null)
                     PresentationNumbers = data.PresentationNumbers;
-            }
-        }
-
-        /// <summary>
-        /// Performs an asynchronous Extensions With Count request
-        /// </summary>
-        /// <returns></returns>
-        public async Task GetPoolingIntervalAsync()
-        {
-            var requestResult = await _poolingIntervalService.ExecuteRequest();
-            if (requestResult is ErrorResponse)
-            {
-                ProceedErrorResponse(requestResult);
-                IsBusy = false;
-            }
-            else
-            {
-                var data = requestResult as PollingIntervalResponse;
-                if (data != null)
-                    UserDefault.PoolingInterval = data.PollingInterval;
             }
 
             IsBusy = false;

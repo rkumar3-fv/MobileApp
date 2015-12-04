@@ -94,7 +94,7 @@
     <CodesignResourceRules />
     <CodesignExtraArgs />
     <IpaIncludeArtwork>True</IpaIncludeArtwork>
-    <IpaPackageName>FreedomVoice-1.0.11</IpaPackageName>
+    <IpaPackageName>FreedomVoice-1.0.13</IpaPackageName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|iPhone' ">
     <DebugType>none</DebugType>
@@ -183,6 +183,7 @@
     <Compile Include="ViewModels\ExpandedCellViewModel.cs" />
     <Compile Include="ViewModels\ExtensionsViewModel.cs" />
     <Compile Include="ViewModels\MediaViewModel.cs" />
+    <Compile Include="ViewModels\PoolingIntervalViewModel.cs" />
     <Compile Include="Views\AVPlayerView.cs" />
     <Compile Include="Views\NoAccessToContactsView.cs" />
     <Compile Include="Views\Shared\LineView.cs" />
@@ -221,7 +222,7 @@
     <Compile Include="ViewModels\AccountsViewModel.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="ViewModels\CallerIdPickerViewModel.cs" />
-    <Compile Include="ViewModels\MainTabBarViewModel.cs" />
+    <Compile Include="ViewModels\PresentationPhonesViewModel.cs" />
     <Compile Include="ViewModels\FoldersViewModel.cs" />
     <Compile Include="ViewModels\ForgotPasswordViewModel.cs" />
     <Compile Include="ViewModels\LoginViewModel.cs" />

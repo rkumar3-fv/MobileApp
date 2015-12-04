@@ -37,8 +37,12 @@ namespace FreedomVoice.iOS
             return HasContactsPermissions ?? (HasContactsPermissions = await new Xamarin.Contacts.AddressBook().RequestPermission()).Value;
         }
 
+        public static bool ContactsRequested { get; set; }
+
         public async static Task<List<Contact>> GetContactsListAsync()
         {
+            ContactsRequested = true;
+
             if (await ContactHasAccessPermissionsAsync()) return new Xamarin.Contacts.AddressBook().ToList();
 
             return new List<Contact>();
@@ -86,6 +90,12 @@ namespace FreedomVoice.iOS
         private async void OnLoginSuccess(object sender, EventArgs e)
         {
             UserDefault.IsAuthenticated = true;
+
+            var viewModel = new PoolingIntervalViewModel();
+            var watcher = Stopwatch.StartNew();
+            await viewModel.GetPoolingIntervalAsync();
+            watcher.Stop();
+            Log.ReportTime(Log.EventCategory.Request, "GetPoolingInterval", "", watcher.ElapsedMilliseconds);
 
             await ProceedGetAccountsList(true);
         }
@@ -296,18 +306,12 @@ namespace FreedomVoice.iOS
                 return null;
             }
 
-            var mainTabBarViewModel = new MainTabBarViewModel(selectedAccount, viewController) { DoNotUseCache = noCache };
+            var mainTabBarViewModel = new PresentationPhonesViewModel(selectedAccount, viewController) { DoNotUseCache = noCache };
 
             var watcher = Stopwatch.StartNew();
             await mainTabBarViewModel.GetPresentationNumbersAsync();
             watcher.Stop();
             Log.ReportTime(Log.EventCategory.Request, "GetPresentationNumbers", "", watcher.ElapsedMilliseconds);
-            if (mainTabBarViewModel.IsErrorResponseReceived) return null;
-
-            watcher = Stopwatch.StartNew();
-            await mainTabBarViewModel.GetPoolingIntervalAsync();
-            watcher.Stop();
-            Log.ReportTime(Log.EventCategory.Request, "GetPoolingInterval", "", watcher.ElapsedMilliseconds);
             if (mainTabBarViewModel.IsErrorResponseReceived) return null;
 
             var extensionsViewModel = new ExtensionsViewModel(selectedAccount);

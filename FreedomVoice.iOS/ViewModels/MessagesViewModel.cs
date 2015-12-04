@@ -37,7 +37,7 @@ namespace FreedomVoice.iOS.ViewModels
         /// Performs an asynchronous Messages request
         /// </summary>
         /// <returns></returns>
-        public async Task GetMessagesListAsync(int messageCount, bool silent = false)
+        public async Task GetMessagesListAsync(bool silent = false)
         {
             if (PhoneCapability.NetworkIsUnreachable && !silent)
             {
@@ -50,7 +50,7 @@ namespace FreedomVoice.iOS.ViewModels
 
             await RenewCookieIfNeeded();
 
-            var requestResult = await _service.ExecuteRequest(_systemPhoneNumber, _mailboxNumber, _folderName, messageCount);
+            var requestResult = await _service.ExecuteRequest(_systemPhoneNumber, _mailboxNumber, _folderName);
             if (requestResult is ErrorResponse)
             {
                 if (!silent)

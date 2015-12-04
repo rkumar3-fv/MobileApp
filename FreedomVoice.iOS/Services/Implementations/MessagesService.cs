@@ -10,21 +10,23 @@ namespace FreedomVoice.iOS.Services.Implementations
     {
         private const int PageSize = 30;
 
-        public async Task<BaseResponse> ExecuteRequest(string systemNumber, int mailboxNumber, string folderName, int messageCount)
+        public async Task<BaseResponse> ExecuteRequest(string systemNumber, int mailboxNumber, string folderName)
         {            
-            int pagesTotal = (messageCount + PageSize - 1) / PageSize;  
-                      
-            var result = new List<Message>();
+            int messageCount;
+            var pageNumber = 1;
 
-            for (int i = 0; i < pagesTotal; i++)
+            var result = new List<Message>();
+            do
             {
-                var asyncRes = await ApiHelper.GetMesages(systemNumber, mailboxNumber, folderName, PageSize, i + 1, false);
+                var asyncRes = await ApiHelper.GetMesages(systemNumber, mailboxNumber, folderName, PageSize, pageNumber, false);
                 var errorResponse = CheckErrorResponse(asyncRes);
                 if (errorResponse != null)
                     return errorResponse;
 
+                messageCount = asyncRes.Result.Count;
                 result.AddRange(asyncRes.Result);
-            }
+                pageNumber++;
+            } while (messageCount == PageSize);
 
             var contactList = await AppDelegate.GetContactsListAsync();
 

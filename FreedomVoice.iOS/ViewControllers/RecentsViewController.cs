@@ -26,8 +26,6 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private RecentsSource _recentSource;
 
-        private List<Contact> _contactList;
-
         private CallerIdView CallerIdView { get; set; }
         private UITableView _recentsTableView;
 
@@ -76,7 +74,8 @@ namespace FreedomVoice.iOS.ViewControllers
             var recentLineView = new LineView(new RectangleF(0, (float)(CallerIdView.Frame.Y + CallerIdView.Frame.Height), (float)Theme.ScreenBounds.Width, 0.5f));
             View.AddSubviews(recentLineView);
 
-            _contactList = await AppDelegate.GetContactsListAsync();
+            if (!AppDelegate.ContactsRequested)
+                MainTabBarInstance.Contacts = await AppDelegate.GetContactsListAsync();
 
             base.ViewDidLoad();
         }
@@ -120,12 +119,12 @@ namespace FreedomVoice.iOS.ViewControllers
             NavigationController.PushViewController(viewController, true);
         }
 
-        private Contact FindContactByNumber(string number)
+        private static Contact FindContactByNumber(string number)
         {
-            return _contactList.FirstOrDefault(c => c.Phones.Any(p => DataFormatUtils.NormalizePhone(p.Number) == DataFormatUtils.NormalizePhone(number)));
+            return MainTabBarInstance.Contacts.FirstOrDefault(c => c.Phones.Any(p => DataFormatUtils.NormalizePhone(p.Number) == DataFormatUtils.NormalizePhone(number)));
         }
 
-        private List<Recent> GetRecentsUpdatedAndOrdered()
+        private static List<Recent> GetRecentsUpdatedAndOrdered()
         {
             List<Recent> res = MainTabBarInstance.GetRecentsOrdered();
 

@@ -19,10 +19,8 @@ namespace FreedomVoice.iOS.ViewControllers
     {
         protected override string PageName => "Contacts Screen";
 
-        private List<Contact> _contactList;
         private List<Contact> _filteredContactList;
 
-        private int ContactsCount => _contactList.Count;
         private int FilteredContactsCount => _filteredContactList.Count;
 
         private ContactSource _contactSource;
@@ -42,7 +40,6 @@ namespace FreedomVoice.iOS.ViewControllers
 
         public ContactsViewController(IntPtr handle) : base(handle)
         {
-            _contactList = new List<Contact>();
             _filteredContactList = new List<Contact>();
         }
 
@@ -83,8 +80,8 @@ namespace FreedomVoice.iOS.ViewControllers
             headerView.AddSubviews(_contactsSearchBar, CallerIdView, lineView);
             View.AddSubview(headerView);
 
-            _contactList = await AppDelegate.GetContactsListAsync();
-            _contactSource = new ContactSource { ContactsList = _contactList };
+            MainTabBarInstance.Contacts = await AppDelegate.GetContactsListAsync();
+            _contactSource = new ContactSource { ContactsList = MainTabBarInstance.Contacts };
             _contactSource.OnRowSelected += TableSourceOnRowSelected;
             _contactSource.OnDraggingStarted += TableSourceOnDraggingStarted;
 
@@ -115,7 +112,7 @@ namespace FreedomVoice.iOS.ViewControllers
             };
             View.Add(_noResultsLabel);
 
-            CheckResult(ContactsCount);
+            CheckResult(MainTabBarInstance.ContactsCount);
 
             base.ViewDidLoad();
         }
@@ -126,13 +123,13 @@ namespace FreedomVoice.iOS.ViewControllers
 
             if (_hasContactsPermissions && !_justLoaded)
             {
-                _contactList = await AppDelegate.GetContactsListAsync();
-                _filteredContactList = IsSearchMode ? GetMatchedContacts(SearchText) : _contactList;
+                MainTabBarInstance.Contacts = await AppDelegate.GetContactsListAsync();
+                _filteredContactList = IsSearchMode ? GetMatchedContacts(SearchText) : MainTabBarInstance.Contacts;
                 _contactSource.ContactsList = _filteredContactList;
 
                 _contactTableView.ReloadData();
 
-                CheckResult(IsSearchMode ? FilteredContactsCount : ContactsCount);
+                CheckResult(IsSearchMode ? FilteredContactsCount : MainTabBarInstance.ContactsCount);
             }
 
             _justLoaded = false;
@@ -161,7 +158,7 @@ namespace FreedomVoice.iOS.ViewControllers
             var search = e.SearchText.Trim();
             _contactSource.SearchText = search;
 
-            _filteredContactList = IsSearchMode ? GetMatchedContacts(search) : _contactList;
+            _filteredContactList = IsSearchMode ? GetMatchedContacts(search) : MainTabBarInstance.Contacts;
             _contactSource.ContactsList = _filteredContactList;
 
             _contactTableView.ReloadData();
@@ -174,10 +171,10 @@ namespace FreedomVoice.iOS.ViewControllers
 
             _contactsSearchBar.Text = string.Empty;
             _contactSource.SearchText = string.Empty;
-            _contactSource.ContactsList = _contactList;
+            _contactSource.ContactsList = MainTabBarInstance.Contacts;
             _contactTableView.ReloadData();
 
-            CheckResult(ContactsCount);
+            CheckResult(MainTabBarInstance.ContactsCount);
         }
 
         private bool SearchBarOnShouldEndEditing(UISearchBar searchBar)
@@ -199,7 +196,7 @@ namespace FreedomVoice.iOS.ViewControllers
             var selectedCallerId = MainTabBarInstance.GetSelectedPresentationNumber().PhoneNumber;
 
             var person = IsSearchMode ? _filteredContactList.Where(c => ContactsHelper.ContactSearchPredicate(c, ContactSource.Keys[e.IndexPath.Section])).ToList()[e.IndexPath.Row]
-                                      : _contactList.Where(c => ContactsHelper.ContactSearchPredicate(c, ContactSource.Keys[e.IndexPath.Section])).ToList()[e.IndexPath.Row];
+                                      : MainTabBarInstance.Contacts.Where(c => ContactsHelper.ContactSearchPredicate(c, ContactSource.Keys[e.IndexPath.Section])).ToList()[e.IndexPath.Row];
 
             var phoneNumbers = person.Phones.ToList();
 
@@ -234,9 +231,9 @@ namespace FreedomVoice.iOS.ViewControllers
             View.EndEditing(true);
         }
 
-        private List<Contact> GetMatchedContacts(string searchText)
+        private static List<Contact> GetMatchedContacts(string searchText)
         {
-            return _contactList.Where(c => ContactsHelper.ContactMatchPredicate(c, searchText)).ToList();
+            return MainTabBarInstance.Contacts.Where(c => ContactsHelper.ContactMatchPredicate(c, searchText)).ToList();
         }
 
         private static void AddRecent(string title, string phoneNumber, string contactId)

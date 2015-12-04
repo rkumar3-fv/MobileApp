@@ -7,6 +7,7 @@ using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.Utilities.Events;
 using GoogleAnalytics.iOS;
 using UIKit;
+using Xamarin.Contacts;
 
 namespace FreedomVoice.iOS.ViewControllers
 {
@@ -19,10 +20,12 @@ namespace FreedomVoice.iOS.ViewControllers
 	    public bool IsRootController => NavigationController.ViewControllers.Length == 1;
 
 	    private List<Recent> Recents { get; }
+	    public List<Contact> Contacts { get; set; }
 
 	    public int RecentsCount => Recents.Count;
+        public int ContactsCount => Contacts.Count;
 
-        public static MainTabBarController SharedInstance;
+	    public static MainTabBarController SharedInstance;
 
         public MainTabBarController(IntPtr handle) : base(handle)
         {
@@ -32,6 +35,7 @@ namespace FreedomVoice.iOS.ViewControllers
             GAI.SharedInstance.DefaultTracker.Send(GAIDictionaryBuilder.CreateScreenView().Build());
 
             Recents = new List<Recent>();
+            Contacts = new List<Contact>();
         }
 
 	    public override void ViewDidLoad()

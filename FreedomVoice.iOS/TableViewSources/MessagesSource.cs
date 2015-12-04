@@ -133,14 +133,14 @@ namespace FreedomVoice.iOS.TableViewSources
 
         private void RowPlayClick(NSIndexPath indexPath)
         {
-            if (indexPath == null || Messages.Count == 0) return;
+            if (IndexPathIsInvalid(indexPath)) return;
 
             Messages[indexPath.Row].Unread = false;
         }
 
         private void RowViewFaxClick(NSIndexPath indexPath, string filePath)
         {
-            if (indexPath == null || Messages.Count == 0) return;
+            if (IndexPathIsInvalid(indexPath)) return;
 
             Messages[indexPath.Row].Unread = false;
             OnRowViewFaxClick?.Invoke(this, new ExpandedCellButtonClickEventArgs(filePath));
@@ -148,7 +148,7 @@ namespace FreedomVoice.iOS.TableViewSources
 
         private void RowCallbackClick(NSIndexPath indexPath)
         {
-            if (indexPath == null || Messages.Count == 0) return;
+            if (IndexPathIsInvalid(indexPath)) return;
 
             OnRowCallbackClick?.Invoke(this, new ExpandedCellButtonClickEventArgs(Messages[indexPath.Row]));
         }
@@ -164,7 +164,7 @@ namespace FreedomVoice.iOS.TableViewSources
 
         private async void DeleteMessageClick(UITableView tableView, NSIndexPath indexPath)
         {
-            if (indexPath == null || Messages.Count == 0) return;
+            if (IndexPathIsInvalid(indexPath)) return;
 
             if (PhoneCapability.NetworkIsUnreachable)
             {
@@ -209,6 +209,11 @@ namespace FreedomVoice.iOS.TableViewSources
             Messages.RemoveAt(indexPath.Row);
             tableView.DeleteRows(new[] { indexPath }, UITableViewRowAnimation.Left);
             tableView.EndUpdates();
+        }
+
+        private bool IndexPathIsInvalid(NSIndexPath indexPath)
+        {
+            return indexPath == null || indexPath.Row < 0 || Messages.Count == 0 || Messages.Count == indexPath.Row;
         }
 
         public override void CommitEditingStyle(UITableView tableView, UITableViewCellEditingStyle editingStyle, NSIndexPath indexPath)
