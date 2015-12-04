@@ -27,7 +27,6 @@ namespace FreedomVoice.iOS
         public override UIWindow Window { get; set; }
 
         private static UIStoryboard MainStoryboard => UIStoryboard.FromName("MainStoryboard", NSBundle.MainBundle);
-        private NSObject _observer;
 
         public static int SystemVersion => UIDevice.CurrentDevice.CheckSystemVersion(9, 0) ? 9 : 8;
 
@@ -72,8 +71,6 @@ namespace FreedomVoice.iOS
 
             ServiceContainer.Register(Window);
             ServiceContainer.Register<ISynchronizeInvoke>(() => new SynchronizeInvoke());
-
-            _observer = NSNotificationCenter.DefaultCenter.AddObserver((NSString)"NSUserDefaultsDidChangeNotification", DefaultsChanged);
 
             InitializeAnalytics();
 
@@ -294,8 +291,6 @@ namespace FreedomVoice.iOS
             }
 
             var mainTabBarViewModel = new PresentationPhonesViewModel(selectedAccount, viewController) { DoNotUseCache = noCache };
-
-            
             await mainTabBarViewModel.GetPresentationNumbersAsync();
             if (mainTabBarViewModel.IsErrorResponseReceived) return null;
 
@@ -311,14 +306,30 @@ namespace FreedomVoice.iOS
             return mainTabController;
         }
 
-        private static void DefaultsChanged(NSNotification obj)
+        private static UIViewController GetVisibleViewController(UIViewController rootViewController)
         {
-            UserDefault.UpdateFromPreferences();
+            if (rootViewController == null)
+                return null;
+
+            var rootNavigationController = rootViewController as UINavigationController;
+            if (rootNavigationController == null) return rootViewController;
+
+            var tabBarController = rootNavigationController.TopViewController as UITabBarController;
+            var navigationController = tabBarController?.SelectedViewController as UINavigationController;
+
+            return navigationController != null ? navigationController.TopViewController : rootNavigationController.TopViewController;
         }
 
         // This method is invoked when the application is about to move from active to inactive state.
         // OpenGL applications should use this method to pause.
-        public override void OnResignActivation(UIApplication application) { }
+        public override void OnResignActivation(UIApplication application)
+        {
+            NSUserDefaults.StandardUserDefaults.Synchronize();
+
+            var visibleViewController = GetVisibleViewController(application.KeyWindow.RootViewController);
+            if (visibleViewController != null)
+                visibleViewController.View.UserInteractionEnabled = true;
+        }
 
         // This method should be used to release shared resources and it should store the application state.
         // If your application supports background exection this method is called instead of WillTerminate
@@ -328,13 +339,7 @@ namespace FreedomVoice.iOS
         /// This method is called as part of the transiton from background to active state.
         public override void WillEnterForeground(UIApplication application) { }
 
-        public override void WillTerminate(UIApplication application)
-        {
-            if (_observer == null) return;
-
-            NSNotificationCenter.DefaultCenter.RemoveObserver(_observer);
-            _observer = null;
-        }
+        public override void WillTerminate(UIApplication application) { }
 
         private static void InitializeAnalytics()
         {

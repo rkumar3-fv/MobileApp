@@ -208,7 +208,7 @@ namespace FreedomVoice.iOS.ViewControllers
                     PresentViewController(alertController, true, null);
                     return;
                 case 1:
-                    if (await PhoneCall.CreateCallReservation(MainTabBarInstance.SelectedAccount.PhoneNumber, selectedCallerId, phoneNumbers.First().Number, NavigationController))
+                    if (await PhoneCall.CreateCallReservation(MainTabBarInstance.SelectedAccount.PhoneNumber, selectedCallerId, phoneNumbers.First().Number, this))
                         AddRecent(person.DisplayName, phoneNumbers.First().Number, person.Id);
                     break;
                 default:
@@ -216,7 +216,7 @@ namespace FreedomVoice.iOS.ViewControllers
                     foreach (var phone in phoneNumbers)
                     {
                         phoneCallController.AddAction(UIAlertAction.Create(phone.Number + " \u2013 " + phone.Label, UIAlertActionStyle.Default, async a => {
-                            if (await PhoneCall.CreateCallReservation(MainTabBarInstance.SelectedAccount.PhoneNumber, selectedCallerId, phone.Number, NavigationController))
+                            if (await PhoneCall.CreateCallReservation(MainTabBarInstance.SelectedAccount.PhoneNumber, selectedCallerId, phone.Number, this))
                                 AddRecent(person.DisplayName, phone.Number, person.Id);
                         }));
                     }

@@ -49,7 +49,7 @@ namespace FreedomVoice.iOS.ViewControllers
                 TextAlignment = UITextAlignment.Center
             };
 
-            _messagesSource = new MessagesSource(MessagesList, SelectedAccount, NavigationController);
+            _messagesSource = new MessagesSource(MessagesList, SelectedAccount, this);
             _messagesSource.OnRowCallbackClick += OnSourceRowCallbackClick;
             _messagesSource.OnRowViewFaxClick += OnSourceRowViewFaxClick;
 
@@ -80,7 +80,7 @@ namespace FreedomVoice.iOS.ViewControllers
             var selectedCallerId = MainTabBarInstance.GetSelectedPresentationNumber().PhoneNumber;
             var selectedMessagePhoneNumber = e.SelectedMessage.SourceNumber;
 
-            if (await PhoneCall.CreateCallReservation(MainTabBarInstance.SelectedAccount.PhoneNumber, selectedCallerId, selectedMessagePhoneNumber, NavigationController))
+            if (await PhoneCall.CreateCallReservation(MainTabBarInstance.SelectedAccount.PhoneNumber, selectedCallerId, selectedMessagePhoneNumber, this))
                 AddRecent(selectedMessagePhoneNumber);
         }
 

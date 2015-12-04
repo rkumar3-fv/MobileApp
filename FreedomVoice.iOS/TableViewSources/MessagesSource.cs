@@ -18,19 +18,19 @@ namespace FreedomVoice.iOS.TableViewSources
 
         private readonly Account _selectedAccount;
 
-        private readonly UINavigationController _navigationController;
+        private readonly UIViewController _viewController;
 
         public NSIndexPath SelectedRowIndexPath;
         public NSIndexPath DeletedRowIndexPath;
 
         private ExpandedCell _expandedCell;
 
-        public MessagesSource(List<Message> messages, Account selectedAccount, UINavigationController navigationController)
+        public MessagesSource(List<Message> messages, Account selectedAccount, UIViewController viewController)
         {
             Messages = messages;
             _selectedAccount = selectedAccount;
 
-            _navigationController = navigationController;
+            _viewController = viewController;
         }
 
         public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
@@ -58,10 +58,6 @@ namespace FreedomVoice.iOS.TableViewSources
             if (_expandedCell == null)
                 return;
 
-            _expandedCell.OnCallbackClick -= OnCallbackClick(indexPath);
-            _expandedCell.OnViewFaxClick -= OnViewFaxClick(indexPath);
-            _expandedCell.OnPlayClick -= OnPlayClick(indexPath);
-            _expandedCell.OnDeleteMessageClick -= OnDeleteMessageClick(tableView);
             _expandedCell.OnCallbackClick += OnCallbackClick(indexPath);
             _expandedCell.OnViewFaxClick += OnViewFaxClick(indexPath);
             _expandedCell.OnPlayClick += OnPlayClick(indexPath);
@@ -158,7 +154,7 @@ namespace FreedomVoice.iOS.TableViewSources
             alertController.AddAction(UIAlertAction.Create("Don't delete", UIAlertActionStyle.Cancel, a => ProceedEventsSubscription(tableView, indexPath)));
             alertController.AddAction(UIAlertAction.Create("Delete", UIAlertActionStyle.Default, a => DeleteMessageClick(tableView, indexPath)));
 
-            _navigationController.PresentViewController(alertController, true, null);
+            _viewController.PresentViewController(alertController, true, null);
         }
 
         private async void DeleteMessageClick(UITableView tableView, NSIndexPath indexPath)
@@ -198,6 +194,9 @@ namespace FreedomVoice.iOS.TableViewSources
             Messages.RemoveAt(indexPath.Row);
             tableView.DeleteRows(new[] { indexPath }, UITableViewRowAnimation.Left);
             tableView.EndUpdates();
+
+            if (SelectedRowIndexPath != null)
+                tableView.ReloadRows(new[] { SelectedRowIndexPath }, UITableViewRowAnimation.None);
         }
 
         private bool IndexPathIsInvalid(NSIndexPath indexPath)

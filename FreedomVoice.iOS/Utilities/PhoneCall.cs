@@ -72,9 +72,11 @@ namespace FreedomVoice.iOS.Utilities
 
             var phoneNumber = NSUrl.FromString($"tel:{switchboardNumber}");
             if (!UIApplication.SharedApplication.OpenUrl(phoneNumber))
+            {
                 Appearance.ShowOkAlertWithMessage(Appearance.AlertMessageType.CallsUnsuported);
+                viewController.View.UserInteractionEnabled = true;
+            }
 
-            viewController.View.UserInteractionEnabled = true;
             return true;
         }
 

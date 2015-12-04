@@ -219,7 +219,7 @@ namespace FreedomVoice.iOS.ViewControllers
             if (recent == null) return;
 
             var selectedCallerId = MainTabBarInstance.GetSelectedPresentationNumber().PhoneNumber;
-            if (!await PhoneCall.CreateCallReservation(MainTabBarInstance.SelectedAccount.PhoneNumber, selectedCallerId, recent.PhoneNumber, NavigationController)) return;
+            if (!await PhoneCall.CreateCallReservation(MainTabBarInstance.SelectedAccount.PhoneNumber, selectedCallerId, recent.PhoneNumber, this)) return;
 
             MainTabBarInstance.AddRecent(recent);
 

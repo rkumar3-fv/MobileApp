@@ -66,8 +66,6 @@ namespace FreedomVoice.iOS.TableViewCells
             _date = new UILabel(new CGRect(48, 30, _length.Frame.X - 53, 15)) { TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(12) };
 
             AddSubviews(_image, _title, _date, _length);
-
-            RemoveCurrentEventsSubscriptions();
         }
 
         private void SetBackground(bool isFaxMessageType)
@@ -94,6 +92,8 @@ namespace FreedomVoice.iOS.TableViewCells
             _title.Center = new CGPoint(_title.Center.X, 16);
             _length.Center = new CGPoint(_length.Center.X, 35);
             _date.Center = new CGPoint(_date.Center.X, 35);
+
+            RemoveCurrentEventsSubscriptions();
 
             InitSubviews();
             InitBackground();

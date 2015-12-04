@@ -61,7 +61,7 @@ namespace FreedomVoice.iOS.ViewControllers
             if (!PhoneNumberValidate(phoneNumber))
                 return;
 
-            UserDefault.SaveAccountPhoneNumber(phoneNumber);
+            UserDefault.AccountPhoneNumber = phoneNumber;
 
             MoveToEmergencyDisclaimerViewController();
         }
