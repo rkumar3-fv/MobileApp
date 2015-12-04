@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using CoreGraphics;
@@ -64,12 +63,8 @@ namespace FreedomVoice.iOS.ViewControllers
             };
             View.Add(_messagesTableView);
 
-            var messagesViewModel = new MessagesViewModel(SelectedAccount.PhoneNumber, SelectedExtension.ExtensionNumber, SelectedFolder.DisplayName);
-
-            var watcher = Stopwatch.StartNew();
+            var messagesViewModel = new MessagesViewModel(SelectedAccount.PhoneNumber, SelectedExtension.ExtensionNumber, SelectedFolder.DisplayName, MainTabBarInstance.Contacts);
             await messagesViewModel.GetMessagesListAsync();
-            watcher.Stop();
-            Log.ReportTime(Log.EventCategory.Request, "GetMessages", "", watcher.ElapsedMilliseconds);
 
             MessagesList = messagesViewModel.MessagesList;
             _messagesSource.Messages = MessagesList;
@@ -134,13 +129,9 @@ namespace FreedomVoice.iOS.ViewControllers
 
             await Task.Run(async () => 
             {
-                var messagesViewModel = new MessagesViewModel(SelectedAccount.PhoneNumber, SelectedExtension.ExtensionNumber, SelectedFolder.DisplayName);
+                var messagesViewModel = new MessagesViewModel(SelectedAccount.PhoneNumber, SelectedExtension.ExtensionNumber, SelectedFolder.DisplayName, MainTabBarInstance.Contacts);
 
-                var watcher = Stopwatch.StartNew();
                 await messagesViewModel.GetMessagesListAsync(true);
-                watcher.Stop();
-                Log.ReportTime(Log.EventCategory.Request, "GetMessages", "", watcher.ElapsedMilliseconds);
-
                 var recievedMessages = messagesViewModel.MessagesList;
 
                 var messagesToAdd = recievedMessages.Where(message => !MessagesList.Exists(m => m.Id == message.Id)).ToList();

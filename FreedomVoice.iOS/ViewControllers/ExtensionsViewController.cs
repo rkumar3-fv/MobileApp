@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using CoreGraphics;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.TableViewSources;
@@ -59,11 +58,7 @@ namespace FreedomVoice.iOS.ViewControllers
             NavigationItem.SetRightBarButtonItem(Appearance.GetLogoutBarButton(this), false);
 
             var extensionsViewModel = new ExtensionsViewModel(SelectedAccount);
-
-            var watcher = Stopwatch.StartNew();
             await extensionsViewModel.GetExtensionsListAsync();
-            watcher.Stop();
-            Log.ReportTime(Log.EventCategory.Request, "GetExtensions", "", watcher.ElapsedMilliseconds);
 
             ExtensionsList = extensionsViewModel.ExtensionsList;
             _extensionsSource.Extensions = ExtensionsList;

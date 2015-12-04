@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Foundation;
 using FreedomVoice.Core.Utils;
 using FreedomVoice.iOS.Utilities.Helpers;
@@ -60,12 +59,7 @@ namespace FreedomVoice.iOS.Utilities
             }
 
             var callReservationViewModel = new CallReservationViewModel(systemNumber, expectedCallerIdNumber, presentationNumber, destinationNumber);
-
-            var watcher = Stopwatch.StartNew();
             await callReservationViewModel.CreateCallReservationAsync();
-            watcher.Stop();
-            Log.ReportTime(Log.EventCategory.Request, "CreateCallReservation", "", watcher.ElapsedMilliseconds);
-
             if (callReservationViewModel.IsErrorResponseReceived)
             {
                 Appearance.ShowOkAlertWithMessage(Appearance.AlertMessageType.CallFailed);

@@ -13,6 +13,12 @@ namespace FreedomVoice.iOS.ViewModels
 {
     public class PresentationPhonesViewModel : BaseViewModel
     {
+        protected override string ResponseName
+        {
+            get { return "GetPresentationNumbers"; }
+            set { }
+        }
+
         private readonly IPresentationNumbersService _presentationNumbersService;
 
         private readonly Account _selectedAccount;
@@ -43,15 +49,20 @@ namespace FreedomVoice.iOS.ViewModels
         {
             IsBusy = true;
 
+            StartWatcher();
+
+            var errorResponse = string.Empty;
             var requestResult = await _presentationNumbersService.ExecuteRequest(_selectedAccount.PhoneNumber, DoNotUseCache);
             if (requestResult is ErrorResponse)
-                ProceedErrorResponse(requestResult);
+                errorResponse = ProceedErrorResponse(requestResult);
             else
             {
                 var data = requestResult as PresentationNumbersResponse;
                 if (data != null)
                     PresentationNumbers = data.PresentationNumbers;
             }
+
+            StopWatcher(errorResponse);
 
             IsBusy = false;
         }

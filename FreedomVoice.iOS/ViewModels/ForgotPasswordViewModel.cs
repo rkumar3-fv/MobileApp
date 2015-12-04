@@ -8,11 +8,17 @@ namespace FreedomVoice.iOS.ViewModels
 {
     public class ForgotPasswordViewModel : BaseViewModel
     {
+        public const string EMailError = "Error message for email";
+
+        protected override string ResponseName
+        {
+            get { return "ForgotPassword"; }
+            set { }
+        }
+
         private readonly IForgotPasswordService _service;
 
         private string _email;
-
-        public const string EMailError = "Error message for email";
 
         /// <summary>
         /// Constructor, requires an IService
@@ -46,11 +52,16 @@ namespace FreedomVoice.iOS.ViewModels
         {
             IsBusy = true;
 
+            StartWatcher();
+
+            var errorResponse = string.Empty;
             var requestResult = await _service.ExecuteRequest(EMail);
             if (requestResult is ErrorResponse)
-                ProceedErrorResponse(requestResult);
+                errorResponse = ProceedErrorResponse(requestResult);
             else
                 ProceedSuccessResponse();
+
+            StopWatcher(errorResponse);
 
             IsBusy = false;
         }

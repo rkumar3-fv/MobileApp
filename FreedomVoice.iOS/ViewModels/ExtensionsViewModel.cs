@@ -11,6 +11,12 @@ namespace FreedomVoice.iOS.ViewModels
 {
     public class ExtensionsViewModel : BaseViewModel
     {
+        protected override string ResponseName
+        {
+            get { return "GetExtensions"; }
+            set { }
+        }
+
         private readonly IExtensionsService _service;
 
         private readonly Account _selectedAccount;
@@ -43,17 +49,22 @@ namespace FreedomVoice.iOS.ViewModels
 
             IsBusy = true;
 
+            StartWatcher();
+
             await RenewCookieIfNeeded();
 
+            var errorResponse = string.Empty;
             var requestResult = await _service.ExecuteRequest(_selectedAccount.PhoneNumber);
             if (requestResult is ErrorResponse)
-                ProceedErrorResponse(requestResult);
+                errorResponse = ProceedErrorResponse(requestResult);
             else
             {
                 var data = requestResult as ExtensionsWithCountResponse;
                 if (data != null)
                     ExtensionsList = data.ExtensionsWithCount;
             }
+            
+            StopWatcher(errorResponse);
 
             IsBusy = false;
         }

@@ -8,6 +8,12 @@ namespace FreedomVoice.iOS.ViewModels
 {
     public class CallReservationViewModel : BaseViewModel
     {
+        protected override string ResponseName
+        {
+            get { return "CreateCallReservation"; }
+            set { }
+        }
+
         private readonly ICallReservationService _service;
 
         private readonly string _systemNumber;
@@ -36,17 +42,22 @@ namespace FreedomVoice.iOS.ViewModels
         /// <returns></returns>
         public async Task CreateCallReservationAsync()
         {
+            StartWatcher();
+
             await RenewCookieIfNeeded();
 
+            var errorResponse = string.Empty;
             var requestResult = await _service.ExecuteRequest(_systemNumber, _callerIdNumber, _presentationNumber, _destinationNumber);
             if (requestResult is ErrorResponse)
-                ProceedErrorResponse(requestResult);
+                errorResponse = ProceedErrorResponse(requestResult);
             else
             {
                 var data = requestResult as CallReservationResponse;
                 if (data != null)
                     Reservation = data.Reservation;
             }
+
+            StopWatcher(errorResponse);
         }
     }
 }

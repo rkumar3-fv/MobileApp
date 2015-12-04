@@ -1,14 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using FreedomVoice.iOS.Services.Responses;
 using FreedomVoice.iOS.Utilities.Events;
+using FreedomVoice.iOS.Utilities.Helpers;
 using UIKit;
 
 namespace FreedomVoice.iOS.ViewModels
 {
-    public class BaseViewModel : PropertyChangedBase
+    public abstract class BaseViewModel : PropertyChangedBase
     {
+        protected abstract string ResponseName { get; set; }
+
         protected BaseViewModel()
         {
             ProceedInitialFormValidation();
@@ -87,10 +91,10 @@ namespace FreedomVoice.iOS.ViewModels
 
         public bool IsErrorResponseReceived;
 
-        protected void ProceedErrorResponse(BaseResponse baseResponse)
+        protected string ProceedErrorResponse(BaseResponse baseResponse)
         {
             var response = baseResponse as ErrorResponse;
-            if (response == null) return;
+            if (response == null) return string.Empty;
 
             IsErrorResponseReceived = true;
 
@@ -98,34 +102,50 @@ namespace FreedomVoice.iOS.ViewModels
             {
                 case ErrorResponse.ErrorBadRequest:
                     OnBadRequestResponse?.Invoke(null, EventArgs.Empty);
-                    return;
+                    return "400 - Bad Request";
                 case ErrorResponse.ErrorCancelled:
                     OnCanceledResponse?.Invoke(null, EventArgs.Empty);
-                    return;
+                    return "Cancelled";
                 case ErrorResponse.ErrorConnection:
+                case ErrorResponse.ErrorGatewayTimeout:
+                case ErrorResponse.ErrorRequestTimeout:
                     if (OnErrorConnectionResponse == null)
                         new UIAlertView("Service is unavailable", "Please try again later.", null, "OK", null).Show();
                     OnErrorConnectionResponse?.Invoke(null, EventArgs.Empty);
-                    return;
+                    return response.ErrorCode == ErrorResponse.ErrorConnection ? "Connection Lost" : response.ErrorCode == ErrorResponse.ErrorGatewayTimeout ? "504 - Gateway Timeout" : "408 - Request Timeout";
                 case ErrorResponse.ErrorUnauthorized:
                     OnUnauthorizedResponse?.Invoke(null, EventArgs.Empty);
-                    return;
-                case ErrorResponse.ErrorNotFound:
-                    OnNotFoundResponse?.Invoke(null, EventArgs.Empty);
-                    return;
+                    return "401 - Unauthorized";
                 case ErrorResponse.ErrorPaymentRequired:
                     OnPaymentRequiredResponse?.Invoke(null, EventArgs.Empty);
-                    return;
-                case ErrorResponse.Forbidden:
+                    return "402 - Payment Required";
+                case ErrorResponse.ErrorForbidden:
                     OnForbiddenResponse?.Invoke(null, EventArgs.Empty);
-                    return;
+                    return "403 - Forbidden";
+                case ErrorResponse.ErrorNotFound:
+                    OnNotFoundResponse?.Invoke(null, EventArgs.Empty);
+                    return "404 - Not Found";
                 case ErrorResponse.ErrorInternal:
                 case ErrorResponse.ErrorUnknown:
                     if (OnInternalErrorResponse == null)
                         new UIAlertView("Internal server error", "Please try again later.", null, "OK", null).Show();
                     OnInternalErrorResponse?.Invoke(null, EventArgs.Empty);
-                    return;
+                    return response.ErrorCode == ErrorResponse.ErrorInternal ? "500 - Internal Server Error" : "Unknown Error";
+                default:
+                    return "Unknown Error";
             }
+        }
+
+        private Stopwatch _watcher;
+        protected void StartWatcher()
+        {
+            _watcher = Stopwatch.StartNew();
+        }
+
+        protected void StopWatcher(string errorResponse)
+        {
+            _watcher.Stop();
+            Log.ReportTime(Log.EventCategory.Request, ResponseName, string.IsNullOrEmpty(errorResponse) ? ResponseName : $"{ResponseName}: {errorResponse}", _watcher.ElapsedMilliseconds);
         }
 
         protected void ProceedSuccessResponse()

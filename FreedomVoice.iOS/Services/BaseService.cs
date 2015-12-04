@@ -28,9 +28,13 @@ namespace FreedomVoice.iOS.Services
                 case ErrorCodes.PaymentRequired:
                     return new ErrorResponse(ErrorResponse.ErrorPaymentRequired);
                 case ErrorCodes.Forbidden:
-                    return new ErrorResponse(ErrorResponse.Forbidden);
+                    return new ErrorResponse(ErrorResponse.ErrorForbidden);
                 case ErrorCodes.InternalServerError:
                     return new ErrorResponse(ErrorResponse.ErrorInternal);
+                case ErrorCodes.GatewayTimeout:
+                    return new ErrorResponse(ErrorResponse.ErrorGatewayTimeout);
+                case ErrorCodes.RequestTimeout:
+                    return new ErrorResponse(ErrorResponse.ErrorRequestTimeout);
                 default:
                     return new ErrorResponse(ErrorResponse.ErrorUnknown);
             }

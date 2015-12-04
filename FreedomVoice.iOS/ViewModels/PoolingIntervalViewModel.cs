@@ -8,6 +8,12 @@ namespace FreedomVoice.iOS.ViewModels
 {
     public class PoolingIntervalViewModel : BaseViewModel
     {
+        protected override string ResponseName
+        {
+            get { return "GetPoolingInterval"; }
+            set { }
+        }
+
         private readonly IPollingIntervalService _poolingIntervalService;
 
         public PoolingIntervalViewModel()
@@ -23,15 +29,20 @@ namespace FreedomVoice.iOS.ViewModels
         {
             IsBusy = true;
 
+            StartWatcher();
+
+            var errorResponse = string.Empty;
             var requestResult = await _poolingIntervalService.ExecuteRequest();
             if (requestResult is ErrorResponse)
-                ProceedErrorResponse(requestResult);
+                errorResponse = ProceedErrorResponse(requestResult);
             else
             {
                 var data = requestResult as PollingIntervalResponse;
                 if (data != null)
                     UserDefault.PoolingInterval = data.PollingInterval;
             }
+
+            StopWatcher(errorResponse);
 
             IsBusy = false;
         }

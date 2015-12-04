@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using Foundation;
 using FreedomVoice.Core.Entities.Enums;
 using FreedomVoice.iOS.Entities;
@@ -191,19 +190,9 @@ namespace FreedomVoice.iOS.TableViewSources
 
             var model = new ExpandedCellViewModel(_selectedAccount.PhoneNumber, selectedMessage.Mailbox, selectedMessage.Id);
             if (selectedMessage.Folder == "Trash")
-            {
-                var watcher = Stopwatch.StartNew();
                 await model.DeleteMessageAsync();
-                watcher.Stop();
-                Log.ReportTime(Log.EventCategory.Request, "DeleteMessage", "", watcher.ElapsedMilliseconds);
-            }
             else
-            {
-                var watcher = Stopwatch.StartNew();
                 await model.MoveMessageToTrashAsync();
-                watcher.Stop();
-                Log.ReportTime(Log.EventCategory.Request, "MoveMessageToTrash", "", watcher.ElapsedMilliseconds);
-            }
 
             tableView.BeginUpdates();
             Messages.RemoveAt(indexPath.Row);

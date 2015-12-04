@@ -37,7 +37,7 @@ namespace FreedomVoice.iOS
             return HasContactsPermissions ?? (HasContactsPermissions = await new Xamarin.Contacts.AddressBook().RequestPermission()).Value;
         }
 
-        public static bool ContactsRequested { get; set; }
+        public static bool ContactsRequested { get; private set; }
 
         public async static Task<List<Contact>> GetContactsListAsync()
         {
@@ -92,10 +92,7 @@ namespace FreedomVoice.iOS
             UserDefault.IsAuthenticated = true;
 
             var viewModel = new PoolingIntervalViewModel();
-            var watcher = Stopwatch.StartNew();
             await viewModel.GetPoolingIntervalAsync();
-            watcher.Stop();
-            Log.ReportTime(Log.EventCategory.Request, "GetPoolingInterval", "", watcher.ElapsedMilliseconds);
 
             await ProceedGetAccountsList(true);
         }
@@ -139,12 +136,7 @@ namespace FreedomVoice.iOS
             }
 
             var accountsViewModel = new AccountsViewModel { DoNotUseCache = noCache };
-
-            var watcher = Stopwatch.StartNew();
             await accountsViewModel.GetAccountsListAsync();
-            watcher.Stop();
-            Log.ReportTime(Log.EventCategory.Request, "GetAccounts", "", watcher.ElapsedMilliseconds);
-
             if (accountsViewModel.IsErrorResponseReceived)
             {
                 PassToAuthentificationProcess();
@@ -246,12 +238,7 @@ namespace FreedomVoice.iOS
             }
 
             var loginViewModel = new LoginViewModel(userName, password);
-
-            var watcher = Stopwatch.StartNew();
             await loginViewModel.AutoLoginAsync();
-            watcher.Stop();
-            Log.ReportTime(Log.EventCategory.Request, "Login", "", watcher.ElapsedMilliseconds);
-
             if (loginViewModel.IsErrorResponseReceived)
                 PassToAuthentificationProcess();
         }
@@ -308,18 +295,12 @@ namespace FreedomVoice.iOS
 
             var mainTabBarViewModel = new PresentationPhonesViewModel(selectedAccount, viewController) { DoNotUseCache = noCache };
 
-            var watcher = Stopwatch.StartNew();
+            
             await mainTabBarViewModel.GetPresentationNumbersAsync();
-            watcher.Stop();
-            Log.ReportTime(Log.EventCategory.Request, "GetPresentationNumbers", "", watcher.ElapsedMilliseconds);
             if (mainTabBarViewModel.IsErrorResponseReceived) return null;
 
             var extensionsViewModel = new ExtensionsViewModel(selectedAccount);
-
-            watcher = Stopwatch.StartNew();
             await extensionsViewModel.GetExtensionsListAsync();
-            watcher.Stop();
-            Log.ReportTime(Log.EventCategory.Request, "GetExtensions", "", watcher.ElapsedMilliseconds);
             if (extensionsViewModel.IsErrorResponseReceived) return null;
 
             var mainTabController = GetViewController<MainTabBarController>();

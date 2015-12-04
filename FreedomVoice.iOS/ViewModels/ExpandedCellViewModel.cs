@@ -8,13 +8,15 @@ namespace FreedomVoice.iOS.ViewModels
 {
     public class ExpandedCellViewModel : BaseViewModel
     {
+        protected override string ResponseName { get; set; }
+
+        private static string DestinationFolder => "Trash";
+
         private readonly IMessageOperationsService _service;
 
         private readonly string _systemPhoneNumber;
         private readonly int _mailboxNumber;
         private readonly string _messageId;
-
-        private static string DestinationFolder => "Trash";
 
         /// <summary>
         /// Constructor, requires an IService
@@ -36,11 +38,17 @@ namespace FreedomVoice.iOS.ViewModels
         {
             IsBusy = true;
 
+            ResponseName = "MoveMessageToTrash";
+            StartWatcher();
+
             await RenewCookieIfNeeded();
 
+            var errorResponse = string.Empty;
             var requestResult = await _service.ExecuteMoveRequest(_systemPhoneNumber, _mailboxNumber, DestinationFolder, new List<string> { _messageId });
             if (requestResult is ErrorResponse)
-                ProceedErrorResponse(requestResult);
+                errorResponse = ProceedErrorResponse(requestResult);
+
+            StopWatcher(errorResponse);
 
             IsBusy = false;
         }
@@ -53,11 +61,17 @@ namespace FreedomVoice.iOS.ViewModels
         {
             IsBusy = true;
 
+            ResponseName = "DeleteMessage";
+            StartWatcher();
+
             await RenewCookieIfNeeded();
 
+            var errorResponse = string.Empty;
             var requestResult = await _service.ExecuteDeleteRequest(_systemPhoneNumber, _mailboxNumber, new List<string> { _messageId });
             if (requestResult is ErrorResponse)
-                ProceedErrorResponse(requestResult);
+                errorResponse = ProceedErrorResponse(requestResult);
+
+            StopWatcher(errorResponse);
 
             IsBusy = false;
         }

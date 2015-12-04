@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,6 +13,12 @@ namespace FreedomVoice.iOS.ViewModels
 {
     public class MediaViewModel : BaseViewModel
     {
+        protected override string ResponseName
+        {
+            get { return "GetMedia"; }
+            set { }
+        }
+
         private readonly IMediaService _service;
 
         private readonly string _systemPhoneNumber;
@@ -65,7 +70,7 @@ namespace FreedomVoice.iOS.ViewModels
 
             IsBusy = true;
 
-            var watcher = Stopwatch.StartNew();
+            StartWatcher();
 
             await RenewCookieIfNeeded();
 
@@ -74,18 +79,18 @@ namespace FreedomVoice.iOS.ViewModels
             var progressReporter = new Progress<DownloadBytesProgress>();
             progressReporter.ProgressChanged += (s, args) => AppDelegate.DownloadIndicator.SetDownloadProgress(args.PercentComplete);
 
+            var errorResponse = string.Empty;
             var requestResult = await _service.ExecuteRequest(progressReporter, _systemPhoneNumber, _mailboxNumber, _folderName, _messageId, _mediaType, AppDelegate.ActiveDownloadCancelationToken.Token);
-            watcher.Stop();
-            Log.ReportTime(Log.EventCategory.FileLoading, "GetMedia", "", watcher.ElapsedMilliseconds);
-
             if (requestResult is ErrorResponse)
-                ProceedErrorResponse(requestResult);
+                errorResponse = ProceedErrorResponse(requestResult);
             else
             {
                 var data = requestResult as GetMediaResponse;
                 if (data != null)
                     FilePath = data.FilePath;
             }
+
+            StopWatcher(errorResponse);
 
             IsBusy = false;
         }

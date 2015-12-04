@@ -11,6 +11,12 @@ namespace FreedomVoice.iOS.ViewModels
 {
     public class FoldersViewModel : BaseViewModel
     {
+        protected override string ResponseName
+        {
+            get { return "GetFolders"; }
+            set { }
+        }
+
         private readonly IFoldersService _service;
 
         private readonly string _systemPhoneNumber;
@@ -46,13 +52,16 @@ namespace FreedomVoice.iOS.ViewModels
             if (!silent)
                 IsBusy = true;
 
+            StartWatcher();
+
             await RenewCookieIfNeeded();
 
+            var errorResponse = string.Empty;
             var requestResult = await _service.ExecuteRequest(_systemPhoneNumber, _mailboxNumber);
             if (requestResult is ErrorResponse)
             {
                 if (!silent)
-                    ProceedErrorResponse(requestResult);
+                    errorResponse = ProceedErrorResponse(requestResult);
             }
             else
             {
@@ -60,6 +69,8 @@ namespace FreedomVoice.iOS.ViewModels
                 if (data != null)
                     FoldersList = data.FoldersWithCount;
             }
+
+            StopWatcher(errorResponse);
 
             if (!silent)
                 IsBusy = false;

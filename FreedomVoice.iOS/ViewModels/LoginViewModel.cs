@@ -8,6 +8,12 @@ namespace FreedomVoice.iOS.ViewModels
 {
     public class LoginViewModel : BaseViewModel
     {
+        protected override string ResponseName
+        {
+            get { return "Login"; }
+            set { }
+        }
+
         private readonly ILoginService _service;
 
         private string _username;
@@ -71,9 +77,12 @@ namespace FreedomVoice.iOS.ViewModels
         {
             IsBusy = true;
 
+            StartWatcher();
+
+            var errorResponse = string.Empty;
             var requestResult = await _service.ExecuteRequest(Username, Password);
             if (requestResult is ErrorResponse)
-                ProceedErrorResponse(requestResult);
+                errorResponse = ProceedErrorResponse(requestResult);
             else
             {
                 KeyChain.SetPasswordForUsername(Username, Password);
@@ -81,6 +90,8 @@ namespace FreedomVoice.iOS.ViewModels
 
                 ProceedSuccessResponse();
             }
+
+            StopWatcher(errorResponse);
 
             IsBusy = false;
         }
@@ -91,11 +102,16 @@ namespace FreedomVoice.iOS.ViewModels
         /// <returns></returns>
         public async Task AutoLoginAsync()
         {
+            StartWatcher();
+
+            var errorResponse = string.Empty;
             var requestResult = await _service.ExecuteRequest(Username, Password);
             if (requestResult is ErrorResponse)
-                ProceedErrorResponse(requestResult);
+                errorResponse = ProceedErrorResponse(requestResult);
             else
                 Cookies.SaveCookieToStore();
+
+            StopWatcher(errorResponse);
         }
 
         /// <summary>

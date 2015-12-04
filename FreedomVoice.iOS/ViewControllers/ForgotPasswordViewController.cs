@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 using CoreGraphics;
 using Foundation;
 using FreedomVoice.iOS.Utilities;
@@ -87,11 +86,8 @@ namespace FreedomVoice.iOS.ViewControllers
             }
 
             _sendRecoveryButton.Hidden = true;
-
-            var watcher = Stopwatch.StartNew();
+            
             await _forgotPasswordViewModel.ForgotPasswordAsync();
-            watcher.Stop();
-            Log.ReportTime(Log.EventCategory.Request, "ForgotPassword", "", watcher.ElapsedMilliseconds);
         }
 
         private void OnForgotPasswordSuccess(object sender, EventArgs e)
