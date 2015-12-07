@@ -19,6 +19,19 @@ namespace FreedomVoice.iOS.TableViewCells
             var displayName = person.DisplayName;
             var lastName = person.LastName;
 
+            if (!string.IsNullOrEmpty(displayName))
+            {
+                var boldedRange = string.IsNullOrEmpty(lastName) ? new NSRange(0, displayName.Length)
+                                                                 : new NSRange(displayName.IndexOf(lastName, StringComparison.Ordinal), lastName.Length);
+
+                var textAttributedString = new NSMutableAttributedString(displayName);
+                textAttributedString.AddAttribute(UIStringAttributeKey.Font, UIFont.SystemFontOfSize(17, UIFontWeight.Semibold), boldedRange);
+
+                TextLabel.AttributedText = textAttributedString;
+            }
+            else
+                TextLabel.AttributedText = new NSAttributedString(person.Phones.First().Number, new UIStringAttributes { Font = UIFont.SystemFontOfSize(17, UIFontWeight.Semibold) });
+
             if (string.IsNullOrEmpty(searchText))
                 DetailTextLabel.Text = null;
             else 
@@ -46,19 +59,6 @@ namespace FreedomVoice.iOS.TableViewCells
                 else
                     DetailTextLabel.Text = null;
             }
-
-            if (!string.IsNullOrEmpty(displayName))
-            {
-                var boldedRange = string.IsNullOrEmpty(lastName) ? new NSRange(0, displayName.Length)
-                                                                 : new NSRange(displayName.IndexOf(lastName, StringComparison.Ordinal), lastName.Length);
-
-                var textAttributedString = new NSMutableAttributedString(displayName);
-                textAttributedString.AddAttribute(UIStringAttributeKey.Font, UIFont.SystemFontOfSize(17, UIFontWeight.Semibold), boldedRange);
-
-                TextLabel.AttributedText = textAttributedString;
-            }
-            else
-                TextLabel.AttributedText = new NSAttributedString(person.Phones.First().Number, new UIStringAttributes { Font = UIFont.SystemFontOfSize(17, UIFontWeight.Semibold) });
         }
     }
 }

@@ -233,7 +233,7 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private static List<Contact> GetMatchedContacts(string searchText)
         {
-            return MainTabBarInstance.Contacts.Where(c => ContactsHelper.ContactMatchPredicate(c, searchText)).ToList();
+            return MainTabBarInstance.Contacts.Where(c => ContactsHelper.ContactMatchPredicate(c, searchText)).Distinct().ToList();
         }
 
         private static void AddRecent(string title, string phoneNumber, string contactId)
