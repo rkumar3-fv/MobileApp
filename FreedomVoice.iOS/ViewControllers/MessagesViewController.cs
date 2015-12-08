@@ -120,6 +120,8 @@ namespace FreedomVoice.iOS.ViewControllers
             AppDelegate.ResetAudioPlayer();
             AppDelegate.CancelActiveDownload();
 
+            _messagesSource.ReloadSelectedRow(_messagesTableView);
+
             _updateTimer.Invalidate();
         }
 

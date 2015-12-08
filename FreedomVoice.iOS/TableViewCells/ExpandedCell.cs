@@ -110,73 +110,86 @@ namespace FreedomVoice.iOS.TableViewCells
         {
             _deleteButton?.RemoveFromSuperview();
             _deleteButton = null;
+
             AddSubview(GetDeleteButton());
 
             if (IsFaxMessageType)
-            {
-                if (_viewFaxButton == null)
-                    AddSubview(GetFaxButton());
-
-                foreach (var subView in Subviews)
-                {
-                    if (Equals(subView, _player))
-                    {
-                        _player?.StopPlayback();
-                        _player?.RemoveFromSuperview();
-                        _player = null;
-                    }
-                    else
-                    if (Equals(subView, _speakerButton))
-                    {
-                        _speakerButton?.RemoveFromSuperview();
-                        _speakerButton = null;
-                    }
-                    else
-                    if (Equals(subView, _callBackButton))
-                    {
-                        _callBackButton?.RemoveFromSuperview();
-                        _callBackButton = null;
-                    }
-                }
-            }
+                InitFaxMessageSubview();
             else
-            {
-                foreach (var subView in Subviews)
-                {
-                    if (Equals(subView, _viewFaxButton))
-                    {
-                        _viewFaxButton?.RemoveFromSuperview();
-                        _viewFaxButton = null;
-                    }
-                    else
-                    if (Equals(subView, _player))
-                    {
-                        _player?.StopPlayback();
-                        _player?.RemoveFromSuperview();
-                        _player = null;
-                    }
-                    else
-                    if (Equals(subView, _speakerButton))
-                    {
-                        _speakerButton?.RemoveFromSuperview();
-                        _speakerButton = null;
-                    }
-                }
+                InitRecordMessageSubview();
+        }
 
-                if (string.IsNullOrEmpty(_message.SourceNumber))
+        private void InitFaxMessageSubview()
+        {
+            if (_viewFaxButton == null)
+                AddSubview(GetFaxButton());
+
+            foreach (var subView in Subviews)
+            {
+                if (Equals(subView, _player))
+                {
+                    _player?.StopPlayback();
+                    _player?.RemoveFromSuperview();
+                    _player = null;
+                }
+                else
+                if (Equals(subView, _speakerButton))
+                {
+                    _speakerButton?.RemoveFromSuperview();
+                    _speakerButton = null;
+                }
+                else
+                if (Equals(subView, _callBackButton))
                 {
                     _callBackButton?.RemoveFromSuperview();
                     _callBackButton = null;
                 }
-                else
-                if (_callBackButton == null)
-                    AddSubview(GetCallBackButton());
-
-                AddSubview(GetPlayerView());
-
-                if (_speakerButton == null)
-                    AddSubview(GetSpeakerButton());
             }
+        }
+
+        private void InitRecordMessageSubview()
+        {
+            foreach (var subView in Subviews)
+            {
+                if (Equals(subView, _viewFaxButton))
+                {
+                    _viewFaxButton?.RemoveFromSuperview();
+                    _viewFaxButton = null;
+                }
+                else
+                if (Equals(subView, _speakerButton))
+                {
+                    _speakerButton?.RemoveFromSuperview();
+                    _speakerButton = null;
+                }
+                else
+                if (Equals(subView, _player))
+                {
+                    _player?.RemoveFromSuperview();
+
+                    if (_message.Id == AppDelegate.ActivePlayerMessageId) continue;
+
+                    _player?.StopPlayback();
+                    _player = null;
+                }
+            }
+
+            if (string.IsNullOrEmpty(_message.SourceNumber))
+            {
+                _callBackButton?.RemoveFromSuperview();
+                _callBackButton = null;
+            }
+            else
+            if (_callBackButton == null)
+                AddSubview(GetCallBackButton());
+
+            if (_message.Id != AppDelegate.ActivePlayerMessageId)
+                AddSubview(GetPlayerView());
+            else
+                AddSubview(_player = AppDelegate.ActivePlayerView);
+
+            if (_speakerButton == null)
+                AddSubview(GetSpeakerButton());
         }
 
         private void InitCommonStyles()
