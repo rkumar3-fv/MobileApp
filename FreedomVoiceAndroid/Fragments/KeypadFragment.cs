@@ -101,11 +101,11 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         {
             if ((_enteredNumber.Length == 0)&&(Helper.RecentsDictionary != null)&&(Helper.RecentsDictionary.Count>0))
             {
-                var first = Helper.RecentsDictionary.Values.First().PhoneNumber;
+                var first = Helper.RecentsDictionary.Values.First().SingleRecent.PhoneNumber;
                 _enteredNumber = first;
                 SetupNewText();
             }
-            else
+            else if (_enteredNumber.Length != 0)
                 ContentActivity.Call(_enteredNumber);
         }
 

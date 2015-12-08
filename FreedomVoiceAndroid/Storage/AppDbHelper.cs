@@ -14,7 +14,7 @@ namespace com.FreedomVoice.MobileApp.Android.Storage
         private static volatile AppDbHelper _instance;
         private static readonly object DbLocker = new object();
         private const string DbName = "fvdb.db";
-        private const int DbVersion = 3;
+        private const int DbVersion = 4;
 
         private const string TableNameAccounts = "Accounts";
         private const string TableNameCallerId = "CallerIDs";
@@ -30,7 +30,6 @@ namespace com.FreedomVoice.MobileApp.Android.Storage
 
         private const string ColumnPhone = "phone";
         private const string ColumnDate = "date";
-        private const string ColumnCount = "count";
 
         /// <summary>
         /// Get application DB helper instance
@@ -55,7 +54,7 @@ namespace com.FreedomVoice.MobileApp.Android.Storage
             var accTableScript = $"create table {TableNameAccounts} ({ColumnPk} integer primary key autoincrement, {ColumnAccountName} integer not null, {ColumnAccountState} integer not null);";
             var callerTableScript = $"create table {TableNameCallerId} ({ColumnPk} integer primary key autoincrement, {ColumnCallerId} integer not null);";
             var accCallerLinkTableScript = $"create table {TableNameAccountCallerLink} ({ColumnPk} integer primary key autoincrement, {ColumnAccountLink} integer not null, {ColumnCallerIdLink} integer not null);";
-            var recentsTableScript = $"create table {TableRecents} ({ColumnPk} integer primary key autoincrement, {ColumnPhone} integer not null, {ColumnDate} integer not null, {ColumnCount} integer not null, {ColumnAccountLink} integer not null);";
+            var recentsTableScript = $"create table {TableRecents} ({ColumnPk} integer primary key autoincrement, {ColumnPhone} integer not null, {ColumnDate} integer not null, {ColumnAccountLink} integer not null);";
             db.ExecSQL(accTableScript);
             db.ExecSQL(callerTableScript);
             db.ExecSQL(accCallerLinkTableScript);
@@ -93,6 +92,64 @@ namespace com.FreedomVoice.MobileApp.Android.Storage
             db.Close();
         }
 
+        /// <summary>
+        /// Single recent insertion
+        /// </summary>
+        /// <param name="accountName">selected account</param>
+        /// <param name="recent">single recent</param>
+        public void InsertRecent(string accountName, Recent recent)
+        {
+            var selection = $"SELECT {ColumnPk} FROM {TableNameAccounts} WHERE {ColumnAccountName}='{accountName}'";
+            var content = new ContentValues();
+            content.Put(ColumnPhone, recent.PhoneNumber);
+            content.Put(ColumnDate, recent.CallDate.ToFileTimeUtc());
+            var db = WritableDatabase;
+            var cursor = db.RawQuery(selection, null);
+            if ((cursor == null) || (cursor.Count == 0))
+            {
+                cursor?.Close();
+                return;
+            }
+            cursor.MoveToFirst();
+            var index = cursor.GetLong(cursor.GetColumnIndex(ColumnPk));
+            if (index != -1)
+            {
+                content.Put(ColumnAccountLink, index);
+                db.Insert(TableRecents, null, content);
+            }
+            db.Close();
+        }
+
+        /// <summary>
+        /// Insert list of recents
+        /// </summary>
+        /// <param name="accountName">account</param>
+        /// <param name="recents">recents list</param>
+        public void InsertRecents(string accountName, IEnumerable<Recent> recents)
+        {
+            var selection = $"SELECT {ColumnPk} FROM {TableNameAccounts} WHERE {ColumnAccountName}='{accountName}'";
+            var db = WritableDatabase;
+            var cursor = db.RawQuery(selection, null);
+            if ((cursor == null) || (cursor.Count == 0))
+            {
+                cursor?.Close();
+                return;
+            }
+            cursor.MoveToFirst();
+            var index = cursor.GetLong(cursor.GetColumnIndex(ColumnPk));
+            if (index != -1)
+            {
+                foreach (var recent in recents)
+                {
+                    var content = new ContentValues();
+                    content.Put(ColumnPhone, recent.PhoneNumber);
+                    content.Put(ColumnDate, recent.CallDate.ToFileTimeUtc());
+                    content.Put(ColumnAccountLink, index);
+                    db.Insert(TableRecents, null, content);
+                }             
+            }
+            db.Close();
+        }
 
         /// <summary>
         /// Insert new accounts or update old
@@ -321,6 +378,37 @@ namespace com.FreedomVoice.MobileApp.Android.Storage
                 db.ExecSQL(removeLinksQurey);
             }
             cursor?.Close();
+            db.Close();
+        }
+
+        /// <summary>
+        /// Remove recents for selected account
+        /// </summary>
+        /// <param name="accountName">Account name</param>
+        public void RemoveRecents(string accountName)
+        {
+            var db = WritableDatabase;
+            var selectionQuery = $"select {ColumnPk} from {TableNameAccounts} where {ColumnAccountName}='{accountName}'";
+            var cursor = db.RawQuery(selectionQuery, null);
+            if ((cursor != null) && (cursor.Count > 0))
+            {
+                cursor.MoveToFirst();
+                var index = cursor.GetLong(cursor.GetColumnIndex(ColumnPk));
+                var removeQuery = $"delete from {TableRecents} where {ColumnAccountLink}={index};";
+                db.ExecSQL(removeQuery);
+            }
+            cursor?.Close();
+            db.Close();
+        }
+
+        /// <summary>
+        /// Drop all recents in database
+        /// </summary>
+        public void DropRecents()
+        {
+            var db = WritableDatabase;
+            var removeQuery = $"delete from {TableRecents};";
+            db.ExecSQL(removeQuery);
             db.Close();
         }
 
