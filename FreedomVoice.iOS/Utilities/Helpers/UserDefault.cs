@@ -23,6 +23,12 @@ namespace FreedomVoice.iOS.Utilities.Helpers
             set { NSUserDefaults.StandardUserDefaults.SetInt(value, "PoolingIntervalKey"); }
         }
 
+        public static string RecentsCache
+        {
+            get { return NSUserDefaults.StandardUserDefaults.StringForKey("RecentsCacheKey"); }
+            set { NSUserDefaults.StandardUserDefaults.SetString(value, "RecentsCacheKey"); }
+        }
+
         public static string AccountsCache
         {
             get { return NSUserDefaults.StandardUserDefaults.StringForKey("AccountsCacheKey"); }
