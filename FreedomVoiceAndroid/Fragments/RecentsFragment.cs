@@ -96,6 +96,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
 #if DEBUG
             Log.Debug(App.AppPackage, $"SWIPED recent {args.ElementIndex}");
 #endif
+            Helper.RemoveRecent(_adapter.GetContentItem(args.ElementIndex));
             _adapter.RemoveItem(args.ElementIndex);
             CheckVisibility();
         }

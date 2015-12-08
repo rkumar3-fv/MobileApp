@@ -100,7 +100,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         /// <summary>
         /// Recents list
         /// </summary>
-        public SortedDictionary<long, RecentHolder> RecentsDictionary { get; }
+        public SortedDictionary<long, RecentHolder> RecentsDictionary { get; private set; }
 
         public SortedDictionary<long, RecentHolder> GetRecents()
         {
@@ -701,11 +701,17 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             HelperEvent?.Invoke(this, new ActionsHelperEventArgs(-1, new[] { ActionsHelperEventArgs.MsgUpdated }));
         }
 
+        public void RemoveRecent(RecentHolder holder)
+        {
+            _dbHelper.RemoveRecent(SelectedAccount.AccountName, holder.SingleRecent.PhoneNumber);
+        }
+
         /// <summary>
         /// ClearRecents
         /// </summary>
         public void ClearAllRecents()
         {
+            _dbHelper.RemoveRecents(SelectedAccount.AccountName);
             HelperEvent?.Invoke(this, new ActionsHelperEventArgs(-1, new[] { ActionsHelperEventArgs.ClearRecents }));
         }
 
@@ -1046,6 +1052,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                         // One or more presentation numbers
                         default:
                             SelectedAccount.PresentationNumbers = numbResponse.NumbersList;
+                            RestoreRecents(_dbHelper.GetRecents(SelectedAccount.AccountName));
                             if (IsFirstRun)
                                 intent = new Intent(_app, typeof (DisclaimerActivity));
                             else
@@ -1075,6 +1082,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                             ForceLoadExtensions();
                             break;
                     }
+
                     _dbHelper.InsertAccounts(AccountsList);
                     HelperEvent?.Invoke(this, new ActionsHelperIntentArgs(response.RequestId, intent));
                     break;
@@ -1241,6 +1249,24 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             if (task.IsCompleted)
                 return;
             task.Wait();
+        }
+
+        private void RestoreRecents(IEnumerable<Recent> recents)
+        {
+            var index = -1;
+            var dict = new Dictionary<string, RecentHolder>();
+            foreach (var recent in recents)
+            {
+                if (dict.ContainsKey(recent.PhoneNumber))
+                    dict[recent.PhoneNumber].Count++;
+                else
+                    dict.Add(recent.PhoneNumber, new RecentHolder(recent));
+            }
+            foreach (var recentHolder in dict)
+            {
+                RecentsDictionary.Add(index, recentHolder.Value);
+                index--;
+            }
         }
     }
 }
