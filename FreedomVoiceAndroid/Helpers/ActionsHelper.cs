@@ -8,6 +8,7 @@ using Android.OS;
 using Android.Util;
 #endif
 using System.Diagnostics;
+using System.Threading.Tasks;
 using com.FreedomVoice.MobileApp.Android.Actions.Requests;
 using com.FreedomVoice.MobileApp.Android.Actions.Responses;
 using com.FreedomVoice.MobileApp.Android.Activities;
@@ -99,9 +100,9 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         /// <summary>
         /// Recents list
         /// </summary>
-        public SortedDictionary<long, Recent> RecentsDictionary { get; }
+        public SortedDictionary<long, RecentHolder> RecentsDictionary { get; private set; }
 
-        public SortedDictionary<long, Recent> GetRecents()
+        public SortedDictionary<long, RecentHolder> GetRecents()
         {
 #if DEBUG
             Log.Debug(App.AppPackage, RecentsDictionary.Count.ToString());
@@ -163,7 +164,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 #endif
             var cacheImpl = new PclCacheImpl(_app);
             ServiceContainer.Register<IDeviceCacheStorage>(() => cacheImpl);
-            RecentsDictionary = new SortedDictionary<long, Recent>(Comparer<long>.Create((x, y) => y.CompareTo(x)));
+            RecentsDictionary = new SortedDictionary<long, RecentHolder>(Comparer<long>.Create((x, y) => y.CompareTo(x)));
             ExtensionsList = new List<Extension>();
             SelectedExtension = -1;
             SelectedFolder = -1;
@@ -700,11 +701,17 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             HelperEvent?.Invoke(this, new ActionsHelperEventArgs(-1, new[] { ActionsHelperEventArgs.MsgUpdated }));
         }
 
+        public void RemoveRecent(RecentHolder holder)
+        {
+            _dbHelper.RemoveRecent(SelectedAccount.AccountName, holder.SingleRecent.PhoneNumber);
+        }
+
         /// <summary>
         /// ClearRecents
         /// </summary>
         public void ClearAllRecents()
         {
+            _dbHelper.RemoveRecents(SelectedAccount.AccountName);
             HelperEvent?.Invoke(this, new ActionsHelperEventArgs(-1, new[] { ActionsHelperEventArgs.ClearRecents }));
         }
 
@@ -1045,6 +1052,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                         // One or more presentation numbers
                         default:
                             SelectedAccount.PresentationNumbers = numbResponse.NumbersList;
+                            RestoreRecents(_dbHelper.GetRecents(SelectedAccount.AccountName));
                             if (IsFirstRun)
                                 intent = new Intent(_app, typeof (DisclaimerActivity));
                             else
@@ -1074,6 +1082,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                             ForceLoadExtensions();
                             break;
                     }
+
                     _dbHelper.InsertAccounts(AccountsList);
                     HelperEvent?.Invoke(this, new ActionsHelperIntentArgs(response.RequestId, intent));
                     break;
@@ -1217,13 +1226,17 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         {
             var callReservation = (CallReservationRequest)_waitingRequestArray[response.RequestId];
             var recent = new Recent(callReservation.DialingNumber);
+            var task = Task.Run(() =>
+            {
+                _dbHelper.InsertRecent(SelectedAccount.AccountName, recent);
+            });
             var values = RecentsDictionary.Values.ToList();
             var keys = RecentsDictionary.Keys.ToList();
             long keyForRemove = -1;
             var counter = 1;
             for (var i = 0; i < values.Count; i++)
             {
-                if (!values[i].Equals(recent)) continue;
+                if (!values[i].SingleRecent.Equals(recent)) continue;
                 keyForRemove = keys[i];
                 break;
             }
@@ -1232,9 +1245,28 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                 counter = RecentsDictionary[keyForRemove].Count + 1;
                 RecentsDictionary.Remove(keyForRemove);
             }
-            if (counter > 1)
-                recent.Count = counter;
-            RecentsDictionary.Add(response.RequestId, recent);
+            RecentsDictionary.Add(response.RequestId, new RecentHolder(recent, counter));
+            if (task.IsCompleted)
+                return;
+            task.Wait();
+        }
+
+        private void RestoreRecents(IEnumerable<Recent> recents)
+        {
+            var index = -1;
+            var dict = new Dictionary<string, RecentHolder>();
+            foreach (var recent in recents)
+            {
+                if (dict.ContainsKey(recent.PhoneNumber))
+                    dict[recent.PhoneNumber].Count++;
+                else
+                    dict.Add(recent.PhoneNumber, new RecentHolder(recent));
+            }
+            foreach (var recentHolder in dict)
+            {
+                RecentsDictionary.Add(index, recentHolder.Value);
+                index--;
+            }
         }
     }
 }

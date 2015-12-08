@@ -21,7 +21,7 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
     public class RecentsRecyclerAdapter : RecyclerView.Adapter
     {
         private readonly Context _context;
-        private readonly SortedDictionary<long, Recent> _currentContent;
+        private readonly SortedDictionary<long, RecentHolder> _currentContent;
         private readonly ContactsHelper _helper;
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
             if ((_currentContent != null) && (position < _currentContent.Count))
             {
                 var keys = _currentContent.Keys.ToList();
-                var normalizedPhone = DataFormatUtils.NormalizePhone(_currentContent[keys[position]].PhoneNumber);
+                var normalizedPhone = DataFormatUtils.NormalizePhone(_currentContent[keys[position]].SingleRecent.PhoneNumber);
                 var uri = Uri.WithAppendedPath(ContactsContract.PhoneLookup.ContentFilterUri,
                     Uri.Encode(normalizedPhone));
                 var selection = string.Format("(({0} IS NOT NULL) AND ({0} != '') AND ({1} = '1'))",
@@ -61,7 +61,7 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
             }
         }
 
-        public RecentsRecyclerAdapter(SortedDictionary<long, Recent> currentContent, Context context)
+        public RecentsRecyclerAdapter(SortedDictionary<long, RecentHolder> currentContent, Context context)
         {
             _context = context;
             _currentContent = currentContent;
@@ -119,7 +119,7 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
         /// </summary>
         /// <param name="position">position number</param>
         /// <returns>recent item</returns>
-        public Recent GetContentItem(int position)
+        public RecentHolder GetContentItem(int position)
         {
             var keys = _currentContent.Keys.ToList();
             return (_currentContent.Count < position) ? null : _currentContent[keys[position]];
@@ -131,7 +131,7 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
             var keys = _currentContent.Keys.ToList();
             if (viewHolder == null) return;
             string text;
-            viewHolder.AdditionalLayout.Visibility = !_helper.GetName(_currentContent[keys[position]].PhoneNumber, out text) ? ViewStates.Invisible : ViewStates.Visible;
+            viewHolder.AdditionalLayout.Visibility = !_helper.GetName(_currentContent[keys[position]].SingleRecent.PhoneNumber, out text) ? ViewStates.Invisible : ViewStates.Visible;
             string countText;
             if (_currentContent[keys[position]].Count > 99)
                 countText = " (99+)";
@@ -142,7 +142,7 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
             viewHolder.DestinationNumberText.Text = $"{text}{countText}";
             viewHolder.CallDateText.Text =
                 DataFormatUtils.ToShortFormattedDate(_context.GetString(Resource.String.Timestamp_yesterday),
-                    _currentContent[keys[position]].CallDate);
+                    _currentContent[keys[position]].SingleRecent.CallDate);
         }
 
         public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)

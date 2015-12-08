@@ -234,6 +234,7 @@
     <Compile Include="Entities\MessageItem.cs" />
     <Compile Include="Entities\Phone.cs" />
     <Compile Include="Entities\Recent.cs" />
+    <Compile Include="Entities\RecentHolder.cs" />
     <Compile Include="Fragments\CallerFragment.cs" />
     <Compile Include="Fragments\ContactsFragment.cs" />
     <Compile Include="Activities\ContentActivity.cs" />

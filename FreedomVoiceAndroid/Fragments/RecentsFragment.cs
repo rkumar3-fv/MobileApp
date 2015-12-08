@@ -83,7 +83,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             var keys = Helper.RecentsDictionary.Keys.ToList();
             if ((l < keys.Count) && (l != -1))
             {
-                ContentActivity.Call(Helper.RecentsDictionary[keys[l]].PhoneNumber);
+                ContentActivity.Call(Helper.RecentsDictionary[keys[l]].SingleRecent.PhoneNumber);
                 _lastClicked = l;
             }
         }
@@ -96,6 +96,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
 #if DEBUG
             Log.Debug(App.AppPackage, $"SWIPED recent {args.ElementIndex}");
 #endif
+            Helper.RemoveRecent(_adapter.GetContentItem(args.ElementIndex));
             _adapter.RemoveItem(args.ElementIndex);
             CheckVisibility();
         }

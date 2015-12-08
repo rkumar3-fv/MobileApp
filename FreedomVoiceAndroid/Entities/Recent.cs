@@ -9,18 +9,6 @@ namespace com.FreedomVoice.MobileApp.Android.Entities
     [Preserve(AllMembers = true)]
     public class Recent : IEquatable<Recent>
     {
-        private int _count;
-
-        /// <summary>
-        /// CallReservation - OK
-        /// </summary>
-        public const int ResultOk = 1;
-
-        /// <summary>
-        /// CallReservation - BadRequest
-        /// </summary>
-        public const int ResultFail = 0;
-
         /// <summary>
         /// Destination phone number
         /// </summary>
@@ -32,26 +20,21 @@ namespace com.FreedomVoice.MobileApp.Android.Entities
         public DateTime CallDate { get; }
 
         /// <summary>
-        /// Recents counter
+        /// Create recent
         /// </summary>
-        public int Count {
-            get { return _count; }
-            set
-            {
-                if (_count < value)
-                    _count = value;
-            }
-        }
+        /// <param name="phoneNumber">Destination phone number</param>
+        public Recent(string phoneNumber) : this (phoneNumber, DateTime.Now)
+        {}
 
         /// <summary>
         /// Create recent
         /// </summary>
         /// <param name="phoneNumber">Destination phone number</param>
-        public Recent(string phoneNumber)
+        /// <param name="date">call date</param>
+        public Recent(string phoneNumber, DateTime date)
         {
             PhoneNumber = phoneNumber;
-            CallDate = DateTime.Now;
-            Count = 1;
+            CallDate = date;
         }
 
         public bool Equals(Recent other)
