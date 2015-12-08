@@ -18,6 +18,7 @@ using GoogleAnalytics.iOS;
 using Xamarin;
 using Xamarin.Contacts;
 using System.Threading;
+using Newtonsoft.Json;
 
 namespace FreedomVoice.iOS
 {
@@ -25,8 +26,6 @@ namespace FreedomVoice.iOS
     public class AppDelegate : UIApplicationDelegate
     {
         public override UIWindow Window { get; set; }
-
-        private static UIStoryboard MainStoryboard => UIStoryboard.FromName("MainStoryboard", NSBundle.MainBundle);
 
         public static int SystemVersion => UIDevice.CurrentDevice.CheckSystemVersion(9, 0) ? 9 : 8;
 
@@ -47,18 +46,20 @@ namespace FreedomVoice.iOS
             return new List<Contact>();
         }
 
+        public static int RecentsCount => Recents.Count;
+        public static List<Recent> Recents { get; private set; }
+
         public static AVPlayerView ActivePlayerView;
         public static string ActivePlayerMessageId;
 
         public static CancellationTokenSource ActiveDownloadCancelationToken;
 
-        private static DownloadIndicator _downloadIndicator;
-        public static DownloadIndicator DownloadIndicator => _downloadIndicator ?? (_downloadIndicator = new DownloadIndicator(Theme.ScreenBounds));
-
-        private static ActivityIndicator _activityIndicator;
-        public static ActivityIndicator ActivityIndicator => _activityIndicator ?? (_activityIndicator = new ActivityIndicator(Theme.ScreenBounds));
+        public static DownloadIndicator DownloadIndicator { get; private set; }
+        public static ActivityIndicator ActivityIndicator { get; private set; }
 
         public static string TempFolderPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments, Environment.SpecialFolderOption.DoNotVerify), "..", "tmp");
+
+        private static UIStoryboard MainStoryboard => UIStoryboard.FromName("MainStoryboard", NSBundle.MainBundle);
 
         public static T GetViewController<T>() where T : UIViewController
         {
@@ -68,6 +69,11 @@ namespace FreedomVoice.iOS
         public override bool FinishedLaunching(UIApplication application, NSDictionary launchOptions)
         {
             Window = new UIWindow(UIScreen.MainScreen.Bounds);
+
+            DownloadIndicator = new DownloadIndicator(Theme.ScreenBounds);
+            ActivityIndicator = new ActivityIndicator(Theme.ScreenBounds);
+
+            RestoreRecentsFromCache();
 
             ServiceContainer.Register(Window);
             ServiceContainer.Register<ISynchronizeInvoke>(() => new SynchronizeInvoke());
@@ -244,8 +250,12 @@ namespace FreedomVoice.iOS
             UserDefault.IsAuthenticated = false;
             UserDefault.RequestCookie = string.Empty;
             UserDefault.LastUsedAccount = string.Empty;
+
+            UserDefault.RecentsCache = string.Empty;
             UserDefault.AccountsCache = string.Empty;
             UserDefault.PresentationPhonesCache = string.Empty;
+
+            NSUserDefaults.StandardUserDefaults.Synchronize();
 
             ResetAudioPlayer();
             RemoveTmpFiles();
@@ -319,26 +329,42 @@ namespace FreedomVoice.iOS
             return navigationController != null ? navigationController.TopViewController : rootNavigationController.TopViewController;
         }
 
-        // This method is invoked when the application is about to move from active to inactive state.
-        // OpenGL applications should use this method to pause.
-        public override void OnResignActivation(UIApplication application)
+        public override void OnActivated(UIApplication application)
         {
-            NSUserDefaults.StandardUserDefaults.Synchronize();
-
             var visibleViewController = GetVisibleViewController(application.KeyWindow.RootViewController);
             if (visibleViewController != null)
                 visibleViewController.View.UserInteractionEnabled = true;
         }
 
+        // This method is invoked when the application is about to move from active to inactive state.
+        public override void OnResignActivation(UIApplication application) { }
+
         // This method should be used to release shared resources and it should store the application state.
-        // If your application supports background exection this method is called instead of WillTerminate
-        // when the user quits.
-        public override void DidEnterBackground(UIApplication application) { }
+        // If your application supports background exection this method is called instead of WillTerminate when the user quits.
+        public override void DidEnterBackground(UIApplication application)
+        {
+            StoreRecentsToCache();
+
+            NSUserDefaults.StandardUserDefaults.Synchronize();
+        }
 
         /// This method is called as part of the transiton from background to active state.
-        public override void WillEnterForeground(UIApplication application) { }
+        public override void WillEnterForeground(UIApplication application)
+        {
+            RestoreRecentsFromCache();
+        }
 
-        public override void WillTerminate(UIApplication application) { }
+        private static void StoreRecentsToCache()
+        {
+            UserDefault.RecentsCache = Recents.Count != 0 ? JsonConvert.SerializeObject(Recents) : string.Empty;
+        }
+
+        private static void RestoreRecentsFromCache()
+        {
+            var recentsCache = UserDefault.RecentsCache;
+
+            Recents = string.IsNullOrEmpty(recentsCache) ? new List<Recent>() : JsonConvert.DeserializeObject<List<Recent>>(recentsCache);
+        }
 
         private static void InitializeAnalytics()
         {

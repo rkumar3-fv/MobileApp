@@ -163,7 +163,7 @@ namespace FreedomVoice.iOS.ViewControllers
         {
             if (string.IsNullOrEmpty(PhoneNumber))
             {
-                if (MainTabBarInstance.RecentsCount == 0) return;
+                if (AppDelegate.RecentsCount == 0) return;
 
                 PhoneNumber = MainTabBarInstance.GetLastRecent().PhoneNumber;
                 _phoneLabel.Text = DataFormatUtils.ToPhoneNumber(PhoneNumber);

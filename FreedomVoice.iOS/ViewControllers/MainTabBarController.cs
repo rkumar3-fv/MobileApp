@@ -19,10 +19,8 @@ namespace FreedomVoice.iOS.ViewControllers
 
 	    public bool IsRootController => NavigationController.ViewControllers.Length == 1;
 
-	    private List<Recent> Recents { get; }
 	    public List<Contact> Contacts { get; set; }
 
-	    public int RecentsCount => Recents.Count;
         public int ContactsCount => Contacts.Count;
 
 	    public static MainTabBarController SharedInstance;
@@ -34,7 +32,6 @@ namespace FreedomVoice.iOS.ViewControllers
             GAI.SharedInstance.DefaultTracker.Set(GAIConstants.ScreenName, "Main Tab Bar Screen");
             GAI.SharedInstance.DefaultTracker.Send(GAIDictionaryBuilder.CreateScreenView().Build());
 
-            Recents = new List<Recent>();
             Contacts = new List<Contact>();
         }
 
@@ -102,9 +99,9 @@ namespace FreedomVoice.iOS.ViewControllers
 
 	    public void AddRecent(Recent recent)
 	    {
-            var existingRecent = Recents.FirstOrDefault(r => DataFormatUtils.NormalizePhone(r.PhoneNumber) == DataFormatUtils.NormalizePhone(recent.PhoneNumber));
+            var existingRecent = AppDelegate.Recents.FirstOrDefault(r => DataFormatUtils.NormalizePhone(r.PhoneNumber) == DataFormatUtils.NormalizePhone(recent.PhoneNumber));
             if (existingRecent == null)
-                Recents.Add(recent);
+                AppDelegate.Recents.Add(recent);
             else
             {
                 existingRecent.DialDate = DateTime.Now;
@@ -114,17 +111,17 @@ namespace FreedomVoice.iOS.ViewControllers
 
 	    public void ClearRecents()
 	    {
-	        Recents.Clear();
+            AppDelegate.Recents.Clear();
 	    }
 
         public void RemoveRecents(Recent recent)
         {
-            Recents.Remove(recent);
+            AppDelegate.Recents.Remove(recent);
         }
 
         public List<Recent> GetRecentsOrdered()
         {
-            return Recents.OrderByDescending(r => r.DialDate).ToList();
+            return AppDelegate.Recents.OrderByDescending(r => r.DialDate).ToList();
         }
 
         public Recent GetLastRecent()
