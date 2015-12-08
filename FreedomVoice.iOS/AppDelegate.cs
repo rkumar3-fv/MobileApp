@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Foundation;
 using FreedomVoice.Core.Utils;
@@ -13,12 +14,11 @@ using FreedomVoice.iOS.Utilities.Helpers;
 using FreedomVoice.iOS.ViewControllers;
 using FreedomVoice.iOS.ViewModels;
 using FreedomVoice.iOS.Views;
-using UIKit;
 using GoogleAnalytics.iOS;
+using Newtonsoft.Json;
+using UIKit;
 using Xamarin;
 using Xamarin.Contacts;
-using System.Threading;
-using Newtonsoft.Json;
 
 namespace FreedomVoice.iOS
 {
@@ -251,7 +251,9 @@ namespace FreedomVoice.iOS
             UserDefault.RequestCookie = string.Empty;
             UserDefault.LastUsedAccount = string.Empty;
 
+            Recents = new List<Recent>();
             UserDefault.RecentsCache = string.Empty;
+
             UserDefault.AccountsCache = string.Empty;
             UserDefault.PresentationPhonesCache = string.Empty;
 
