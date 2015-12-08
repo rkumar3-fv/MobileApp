@@ -155,7 +155,6 @@ namespace FreedomVoice.iOS
                 {
                     var phoneNumberController = GetViewController<PhoneNumberViewController>();
                     phoneNumberController.SelectedAccount = account;
-                    phoneNumberController.ParentController = Window.RootViewController;
 
                     navigationController = new UINavigationController(phoneNumberController);
                     Theme.TransitionController(navigationController);

@@ -43,14 +43,22 @@ namespace FreedomVoice.iOS.ViewControllers
 
             var mainTabBarController = await AppDelegate.GetMainTabBarController(SelectedAccount, ParentController, true);
             var controller = (UINavigationController)ParentController;
-            if (mainTabBarController == null || controller == null)
+            if (mainTabBarController == null)
             {
                 _understandButton.Hidden = false;
                 return;
             }
 
-            controller.PushViewController(mainTabBarController, false);
-            Theme.TransitionController(controller);
+            if (controller != null)
+            {
+                controller.PushViewController(mainTabBarController, false);
+                Theme.TransitionController(controller);
+            }
+            else
+            {
+                var navigationController = new UINavigationController(mainTabBarController);
+                Theme.TransitionController(navigationController);
+            }
 	    }
 
         #region Controls Initialization
