@@ -168,11 +168,10 @@ namespace FreedomVoice.iOS.ViewControllers
             base.ViewWillAppear(animated);
         }
 
-        public override void ViewDidDisappear(bool animated)
+        public override void ViewWillDisappear(bool animated)
         {
             _recentsTableView.SetEditing(false, false);
-
-            base.ViewDidDisappear(animated);
+            base.ViewWillDisappear(animated);
         }
 
         private void SetEditMode()
