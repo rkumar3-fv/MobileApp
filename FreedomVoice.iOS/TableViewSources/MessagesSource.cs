@@ -172,14 +172,12 @@ namespace FreedomVoice.iOS.TableViewSources
             if (tableView.CellAt(indexPath) is ExpandedCell)
             {
                 SelectedRowIndexPath = null;
+                DeletedRowIndexPath = null;
                 tableView.DeselectRow(indexPath, false);
             }
 
             if (SelectedRowIndexPath != null && SelectedRowIndexPath.Row > indexPath.Row)
-            {
                 SelectedRowIndexPath = NSIndexPath.FromRowSection(SelectedRowIndexPath.Row - 1, 0);
-                DeletedRowIndexPath = SelectedRowIndexPath;
-            }
 
             if (selectedMessage.Id == AppDelegate.ActivePlayerMessageId)
                 AppDelegate.ResetAudioPlayer();
@@ -195,12 +193,14 @@ namespace FreedomVoice.iOS.TableViewSources
             tableView.DeleteRows(new[] { indexPath }, UITableViewRowAnimation.Left);
             ReloadSelectedRow(tableView);
             tableView.EndUpdates();
+
+            DeletedRowIndexPath = SelectedRowIndexPath;
         }
 
         public void ReloadSelectedRow(UITableView tableView)
         {
-            if (SelectedRowIndexPath != null)
-                tableView.ReloadRows(new[] { SelectedRowIndexPath }, UITableViewRowAnimation.None);
+            if (DeletedRowIndexPath != null)
+                tableView.ReloadRows(new[] { DeletedRowIndexPath }, UITableViewRowAnimation.None);
         }
 
         private bool IndexPathIsInvalid(NSIndexPath indexPath)
