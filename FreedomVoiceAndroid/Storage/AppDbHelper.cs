@@ -305,7 +305,7 @@ namespace com.FreedomVoice.MobileApp.Android.Storage
             var linkSelection = $"SELECT * FROM {TableNameAccountCallerLink} WHERE ({ColumnAccountLink}={accountId}) AND ({ColumnCallerIdLink}={index})";
             var cursorLink = db.RawQuery(linkSelection, null);
             if ((cursorLink == null) || (cursorLink.Count == 0))
-                db.Insert(TableNameAccountCallerLink, null, content);
+                db.Insert(TableNameAccountCallerLink, null, contentLink);
             cursorLink?.Close();
         }
 
