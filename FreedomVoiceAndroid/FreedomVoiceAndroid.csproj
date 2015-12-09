@@ -269,6 +269,7 @@
     <Compile Include="Storage\PclCacheImpl.cs" />
     <Compile Include="Utils\ContactsHelper.cs" />
     <Compile Include="Utils\ContactsObserver.cs" />
+    <Compile Include="Utils\CookieHelper.cs" />
     <Compile Include="Utils\CookieSerializer.cs" />
     <Compile Include="Utils\DataValidationUtils.cs" />
     <Compile Include="Utils\ExceptionSupport.cs" />

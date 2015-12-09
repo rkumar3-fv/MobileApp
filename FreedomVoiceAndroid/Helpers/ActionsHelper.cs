@@ -15,6 +15,7 @@ using com.FreedomVoice.MobileApp.Android.Activities;
 using com.FreedomVoice.MobileApp.Android.Entities;
 using com.FreedomVoice.MobileApp.Android.Services;
 using com.FreedomVoice.MobileApp.Android.Storage;
+using com.FreedomVoice.MobileApp.Android.Utils;
 using FreedomVoice.Core;
 using FreedomVoice.Core.Cache;
 using FreedomVoice.Core.Utils;
@@ -100,15 +101,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         /// <summary>
         /// Recents list
         /// </summary>
-        public SortedDictionary<long, RecentHolder> RecentsDictionary { get; private set; }
-
-        public SortedDictionary<long, RecentHolder> GetRecents()
-        {
-#if DEBUG
-            Log.Debug(App.AppPackage, RecentsDictionary.Count.ToString());
-#endif
-            return RecentsDictionary;
-        } 
+        public SortedDictionary<long, RecentHolder> RecentsDictionary { get; }
 
         /// <summary>
         /// Event for activity or fragment handling
@@ -191,33 +184,49 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                 _preferencesTime = watcherLoading.ElapsedMilliseconds;
                 if (container != null)
                 {
-                    ApiHelper.CookieContainer = container;
-                    IsLoggedIn = true;
-                    if ((AccountsList == null) || (SelectedAccount == null))
+                    var expireFlag = false;
+                    var collection = CookieHelper.GetAllCookies(container);
+                    if (collection != null)
                     {
-                        GetAccounts();
+                        if (collection.Any(cookie => cookie.Expired))
+                            expireFlag = true; 
+                    }
+                    if (!expireFlag)
+                    {
+                        ApiHelper.CookieContainer = container;
+                        IsLoggedIn = true;
+                        if ((AccountsList == null) || (SelectedAccount == null))
+                        {
+                            GetAccounts();
+                            if (watcher.IsRunning)
+                                watcher.Stop();
+                            _initHelperTime = watcher.ElapsedMilliseconds;
+                            return;
+                        }
+                        if ((SelectedAccount.PresentationNumbers == null) ||
+                            (string.IsNullOrEmpty(SelectedAccount.PresentationNumber)))
+                        {
+                            GetPresentationNumbers();
+                            if (watcher.IsRunning)
+                                watcher.Stop();
+                            _initHelperTime = watcher.ElapsedMilliseconds;
+                            return;
+                        }
+                        var intent = new Intent(_app, typeof (ContentActivity));
+                        intent.SetFlags(ActivityFlags.NewTask);
                         if (watcher.IsRunning)
                             watcher.Stop();
                         _initHelperTime = watcher.ElapsedMilliseconds;
+                        _app.StartActivity(intent);
                         return;
                     }
-                    if ((SelectedAccount.PresentationNumbers == null) ||
-                        (string.IsNullOrEmpty(SelectedAccount.PresentationNumber)))
-                    {
-                        GetPresentationNumbers();
-                        if (watcher.IsRunning)
-                            watcher.Stop();
-                        _initHelperTime = watcher.ElapsedMilliseconds;
-                        return;
-                    }
-                    var intent = new Intent(_app, typeof(ContentActivity));
-                    intent.SetFlags(ActivityFlags.NewTask);
-                    if (watcher.IsRunning)
-                        watcher.Stop();
-                    _initHelperTime = watcher.ElapsedMilliseconds;
-                    _app.StartActivity(intent);
-                    return;
                 }
+#if DEBUG
+                else
+                {
+                    Log.Debug(App.AppPackage, "EXPIRED COOKIE");
+                }
+#endif
                 if (!string.IsNullOrEmpty(_userLogin) && !string.IsNullOrEmpty(_userPassword))
                 {
                     Authorize(_userLogin, _userPassword);
