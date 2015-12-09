@@ -50,6 +50,7 @@ namespace FreedomVoice.iOS
         public static List<Recent> Recents { get; private set; }
 
         public static AVPlayerView ActivePlayerView;
+        public static UIButton ActiveSpeakerButton;
         public static string ActivePlayerMessageId;
 
         public static CancellationTokenSource ActiveDownloadCancelationToken;
@@ -284,6 +285,7 @@ namespace FreedomVoice.iOS
         {
             ActivePlayerView?.StopPlayback();
             ActivePlayerView = null;
+            ActiveSpeakerButton = null;
             ActivePlayerMessageId = string.Empty;
         }
 

@@ -157,9 +157,12 @@ namespace FreedomVoice.iOS.TableViewCells
                     _viewFaxButton = null;
                 }
                 else
-                if (Equals(subView, _speakerButton) && _message.Id != AppDelegate.ActivePlayerMessageId)
+                if (Equals(subView, _speakerButton))
                 {
                     _speakerButton?.RemoveFromSuperview();
+
+                    if (_message.Id == AppDelegate.ActivePlayerMessageId) continue;
+
                     _speakerButton = null;
                 }
                 else
@@ -184,12 +187,15 @@ namespace FreedomVoice.iOS.TableViewCells
                 AddSubview(GetCallBackButton());
 
             if (_message.Id != AppDelegate.ActivePlayerMessageId)
+            {
                 AddSubview(GetPlayerView());
-            else
-                AddSubview(_player = AppDelegate.ActivePlayerView);
-
-            if (_speakerButton == null)
                 AddSubview(GetSpeakerButton());
+            }
+            else
+            {
+                AddSubview(_player = AppDelegate.ActivePlayerView);
+                AddSubview(_speakerButton = AppDelegate.ActiveSpeakerButton);
+            }
         }
 
         private void InitCommonStyles()
@@ -211,7 +217,7 @@ namespace FreedomVoice.iOS.TableViewCells
 
         private static void BackgroundColorAnimateOneWay(UIButton btn, UIColor tapColor)
         {
-            Animate(0.2, 0, UIViewAnimationOptions.BeginFromCurrentState, () => { btn.BackgroundColor = tapColor; }, () => { });
+            Animate(0.2, 0, UIViewAnimationOptions.BeginFromCurrentState, () => { btn.BackgroundColor = tapColor; }, () => { AppDelegate.ActiveSpeakerButton = btn; });
         }
 
         private AVPlayerView GetPlayerView()
