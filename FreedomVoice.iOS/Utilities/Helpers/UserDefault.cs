@@ -47,10 +47,10 @@ namespace FreedomVoice.iOS.Utilities.Helpers
             set { NSUserDefaults.StandardUserDefaults.SetString(value, "LastUsedAccountKey"); }
         }
 
-        public static string RequestCookie
+        public static string[] RequestCookie
         {
-            get { return NSUserDefaults.StandardUserDefaults.StringForKey("RequestCookieKey"); }
-            set { NSUserDefaults.StandardUserDefaults.SetString(value, "RequestCookieKey"); }
+            get { return NSUserDefaults.StandardUserDefaults.StringArrayForKey("RequestCookieKey"); }
+            set { NSUserDefaults.StandardUserDefaults["RequestCookieKey"] = NSArray.FromStrings(value); }
         }
 
         public static string AccountPhoneNumber

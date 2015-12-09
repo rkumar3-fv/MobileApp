@@ -248,8 +248,8 @@ namespace FreedomVoice.iOS
         public void GoToLoginScreen()
         {
             UserDefault.IsAuthenticated = false;
-            UserDefault.RequestCookie = string.Empty;
             UserDefault.LastUsedAccount = string.Empty;
+            UserDefault.RequestCookie = new string[] { };
 
             Recents = new List<Recent>();
             UserDefault.RecentsCache = string.Empty;
