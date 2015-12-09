@@ -157,7 +157,7 @@ namespace FreedomVoice.iOS.TableViewCells
                     _viewFaxButton = null;
                 }
                 else
-                if (Equals(subView, _speakerButton))
+                if (Equals(subView, _speakerButton) && _message.Id != AppDelegate.ActivePlayerMessageId)
                 {
                     _speakerButton?.RemoveFromSuperview();
                     _speakerButton = null;
