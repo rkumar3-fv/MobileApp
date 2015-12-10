@@ -295,14 +295,8 @@ namespace FreedomVoice.iOS.Utilities
         {
             var window = ServiceContainer.Resolve<UIWindow>();
 
-            //Return if it's already the root controller
-            if (window.RootViewController == controller)
-                return;
-
-            //Set the root controller
             window.RootViewController = controller;
 
-            //Peform an animation, note that null is not allowed as a callback, so I use delegate { }
             if (animated)
                 UIView.Transition(window, .3, UIViewAnimationOptions.TransitionCrossDissolve, delegate { }, delegate { });
         }
