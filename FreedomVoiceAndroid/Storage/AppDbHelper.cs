@@ -106,7 +106,7 @@ namespace com.FreedomVoice.MobileApp.Android.Storage
                 while (!cursor.IsAfterLast)
                 {
                     var phone = cursor.GetString(phoneColumnIndex);
-                    var date = DateTime.FromFileTimeUtc(cursor.GetLong(dateColumnIndex));
+                    var date = DateTime.FromFileTime(cursor.GetLong(dateColumnIndex));
                     res.Add(new Recent(phone, date));
                     cursor.MoveToNext();
                 }
@@ -126,7 +126,7 @@ namespace com.FreedomVoice.MobileApp.Android.Storage
             var selection = $"SELECT {ColumnPk} FROM {TableNameAccounts} WHERE {ColumnAccountName}='{accountName}'";
             var content = new ContentValues();
             content.Put(ColumnPhone, recent.PhoneNumber);
-            content.Put(ColumnDate, recent.CallDate.ToFileTimeUtc());
+            content.Put(ColumnDate, recent.CallDate.ToFileTime());
             var db = WritableDatabase;
             var cursor = db.RawQuery(selection, null);
             if ((cursor == null) || (cursor.Count == 0))
@@ -172,7 +172,7 @@ namespace com.FreedomVoice.MobileApp.Android.Storage
                 {
                     var content = new ContentValues();
                     content.Put(ColumnPhone, recent.PhoneNumber);
-                    content.Put(ColumnDate, recent.CallDate.ToFileTimeUtc());
+                    content.Put(ColumnDate, recent.CallDate.ToFileTime());
                     content.Put(ColumnAccountLink, index);
                     db.Insert(TableRecents, null, content);
                 }             

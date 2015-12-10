@@ -69,7 +69,8 @@ namespace FreedomVoice.Core.Utils
 
         public static string NormalizePhone(string phone)
         {
-            return Regex.Replace(phone, @"[\s)(-]", string.Empty);
+            var r = new Regex("(?:[^0-9+]|(?<=['\"])s)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+            return r.Replace(phone, string.Empty);
         }
 
         /// <summary>
