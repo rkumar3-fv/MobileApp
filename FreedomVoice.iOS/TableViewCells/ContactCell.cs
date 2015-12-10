@@ -37,18 +37,22 @@ namespace FreedomVoice.iOS.TableViewCells
             else 
             if (!string.IsNullOrEmpty(lastName) || !string.IsNullOrEmpty(displayName) || person.Phones.Any())
             {
-                if (!string.IsNullOrEmpty(lastName) && lastName.StartsWith(searchText, StringComparison.Ordinal) || !string.IsNullOrEmpty(displayName) && displayName.StartsWith(searchText, StringComparison.Ordinal)) return;
+                if (!string.IsNullOrEmpty(lastName) && lastName.StartsWith(searchText, StringComparison.Ordinal)
+                    || !string.IsNullOrEmpty(displayName) && displayName.StartsWith(searchText, StringComparison.Ordinal))
+                {
+                    DetailTextLabel.Text = null;
+                    return;
+                }
 
-                var normalizedSearchString = DataFormatUtils.NormalizePhone(searchText);
-
-                var phoneNumber = person.Phones.FirstOrDefault(phone => DataFormatUtils.NormalizePhone(phone.Number).Contains(normalizedSearchString))?.Number;
+                var normalizedSearchText = DataFormatUtils.NormalizePhone(searchText);
+                var phoneNumber = person.Phones.FirstOrDefault(p => !string.IsNullOrEmpty(normalizedSearchText) && DataFormatUtils.NormalizePhone(p.Number).Contains(normalizedSearchText))?.Number;
 
                 if (!string.IsNullOrEmpty(phoneNumber))
                 {
                     var normalizedPhone = DataFormatUtils.NormalizePhone(phoneNumber);
 
                     var grayColorRange = new NSRange(0, normalizedPhone.Length);
-                    var normalColorRange = new NSRange(normalizedPhone.IndexOf(normalizedSearchString, StringComparison.Ordinal), normalizedSearchString.Length);
+                    var normalColorRange = new NSRange(normalizedPhone.IndexOf(normalizedSearchText, StringComparison.Ordinal), normalizedSearchText.Length);
 
                     var detailTextAttributedString = new NSMutableAttributedString(normalizedPhone);
                     detailTextAttributedString.AddAttribute(UIStringAttributeKey.ForegroundColor, Theme.GrayColor, grayColorRange);

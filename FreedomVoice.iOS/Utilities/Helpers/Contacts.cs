@@ -11,7 +11,8 @@ namespace FreedomVoice.iOS.Utilities.Helpers
 
         public static bool ContactMatchPredicate(Contact c, string searchText)
         {
-            if (c.Phones.Any(p => DataFormatUtils.NormalizePhone(p.Number).Contains(DataFormatUtils.NormalizePhone(searchText))))
+            var normalizedSearchText = DataFormatUtils.NormalizePhone(searchText);
+            if (c.Phones.Any(p => !string.IsNullOrEmpty(normalizedSearchText) && DataFormatUtils.NormalizePhone(p.Number).Contains(normalizedSearchText)))
                 return true;
 
             if (string.IsNullOrEmpty(c.DisplayName)) return false;
