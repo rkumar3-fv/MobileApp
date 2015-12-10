@@ -79,12 +79,15 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
 
         protected void SkipButtonOnClick(object sender, EventArgs eventArgs)
         {
+            if (SkipButton.Visibility != ViewStates.Visible) return;
             _phoneText.Background.ClearColorFilter();
             _phoneErrorText.Visibility = ViewStates.Invisible;
             if (_skipProgressBar.Visibility == ViewStates.Invisible)
                 _skipProgressBar.Visibility = ViewStates.Visible;
             if (_skipLabel.Visibility == ViewStates.Visible)
                 _skipLabel.Visibility = ViewStates.Invisible;
+            if (_applyButton.Enabled)
+                _applyButton.Enabled = false;
             Helper.GetAccounts();
         }
 
@@ -97,6 +100,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 _applyProgressBar.Visibility = ViewStates.Visible;
             if (_applyLabel.Visibility == ViewStates.Visible)
                 _applyLabel.Visibility = ViewStates.Invisible;
+            if ((SkipButton.Visibility == ViewStates.Visible)&&(SkipButton.Enabled))
+                SkipButton.Enabled = false;
             Helper.GetAccounts();
         }
 
@@ -176,6 +181,10 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 _applyLabel.Visibility = ViewStates.Visible;
             if ((_skipLabel.Visibility == ViewStates.Invisible)&&(SkipButton.Visibility == ViewStates.Visible))
                 _skipLabel.Visibility = ViewStates.Visible;
+            if ((SkipButton.Visibility == ViewStates.Visible)&&(!SkipButton.Enabled))
+                SkipButton.Enabled = true;
+            if (!_applyButton.Enabled)
+                _applyButton.Enabled = true;
         }
 
         public override void OnBackPressed()

@@ -36,6 +36,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         private Timer _timer;
         private DateTime _callbackPrevious;
         private DateTime _playPrevious;
+        private bool _isBacked;
 
         protected override void OnCreate(Bundle bundle)
         {
@@ -44,14 +45,14 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             _playPrevious = DateTime.Now;
             _audioManager = GetSystemService(AudioService).JavaCast<AudioManager>();
             _audioManager.Mode = Mode.Normal;
-            _audioManager.SpeakerphoneOn = true;
+            _audioManager.SpeakerphoneOn = false;
         }
 
         protected override void OnStart()
         {
             base.OnStart();
-            SpeakerButton.CheckedChange += SpeakerButtonOnClick;
             SpeakerButton.Checked = _audioManager.SpeakerphoneOn;
+            SpeakerButton.CheckedChange += SpeakerButtonOnClick;
             CallBackButton.Click += CallBackButtonOnClick;
             if (Msg.FromNumber.Length < 2)
                 CallBackButton.Enabled = false;
@@ -76,7 +77,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             if (!_isPlayed)
             {
                 _audioManager.Mode = Mode.Normal;
-                _audioManager.SpeakerphoneOn = true;
+                _audioManager.SpeakerphoneOn = _isBacked;
             }
             UnbindService(this);
         }
@@ -110,6 +111,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         protected override void OnResume()
         {
             base.OnResume();
+            _isBacked = false;
             if (_isBinded)
             {
                 CheckSoundOutput(SpeakerButton.Checked);
@@ -296,6 +298,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             if (_timer.Enabled)
                 _timer.Stop();
             var intent = new Intent(this, typeof(MediaService));
+            _isBacked = true;
             StopService(intent);
             base.OnBackPressed();
         }
