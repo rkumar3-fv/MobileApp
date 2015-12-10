@@ -194,7 +194,7 @@ namespace FreedomVoice.iOS.TableViewCells
             else
             {
                 AddSubview(_player = AppDelegate.ActivePlayerView);
-                AddSubview(_speakerButton = AppDelegate.ActiveSpeakerButton);
+                AddSubview(_speakerButton = AppDelegate.ActiveSpeakerButton ?? GetSpeakerButton());
             }
         }
 
@@ -247,7 +247,7 @@ namespace FreedomVoice.iOS.TableViewCells
             _speakerButton.BackgroundColor = UIColor.FromRGBA(119, 229, 246, 127);
             _speakerButton.Layer.BorderColor = UIColor.FromRGBA(119, 229, 246, 110).CGColor;
             _speakerButton.TouchUpInside += OnSpeakerButtonTouchUpInside;
-            
+
             return _speakerButton;
         }
 
