@@ -56,7 +56,7 @@
     <CodesignProvision>8169524e-868d-493b-9c13-eda527bf40d2</CodesignProvision>
     <CodesignResourceRules />
     <CodesignExtraArgs />
-    <MtouchSdkVersion>9.1</MtouchSdkVersion>
+    <MtouchSdkVersion>9.2</MtouchSdkVersion>
     <MtouchLink>SdkOnly</MtouchLink>
     <MtouchProfiling>False</MtouchProfiling>
     <MtouchFastDev>False</MtouchFastDev>
