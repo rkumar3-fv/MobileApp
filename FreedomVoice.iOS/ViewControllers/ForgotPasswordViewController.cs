@@ -46,7 +46,14 @@ namespace FreedomVoice.iOS.ViewControllers
             base.ViewDidLoad();
         }
 
-        public override void TouchesBegan(NSSet touches, UIEvent evt)
+	    public override void ViewWillAppear(bool animated)
+	    {
+            NavigationItem.SetLeftBarButtonItems(Appearance.GetBarButtonWithArrow((s, args) => ReturnToLogin(), "Login"), false);
+
+            base.ViewWillAppear(animated);
+	    }
+
+	    public override void TouchesBegan(NSSet touches, UIEvent evt)
         {
             View.EndEditing(true);
         }
@@ -111,7 +118,7 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private void ReturnToLogin()
         {
-            NavigationController.PopViewController(true);
+            DismissViewController(false, () => { });
         }
 
         protected override void Dispose(bool disposing)

@@ -11,9 +11,8 @@ namespace FreedomVoice.iOS.ViewControllers
 	    public SplashViewController(IntPtr handle) : base(handle) { }
 
         public override void ViewWillAppear(bool animated)
-	    {
-	        NavigationController.NavigationBar.Hidden = true;
+        {
             View.BackgroundColor = UIColor.FromPatternImage(Theme.SplashScreenImage);
-	    }
+        }
     }
 }

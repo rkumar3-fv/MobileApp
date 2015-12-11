@@ -68,19 +68,12 @@ namespace FreedomVoice.iOS.ViewControllers
 
         public override void ViewWillAppear(bool animated)
         {
-            NavigationController.NavigationBar.Hidden = true;
             View.UserInteractionEnabled = true;
             _loginButton.Hidden = false;
 
             InitializeActivityIndicator();
 
             base.ViewWillAppear(animated);
-        }
-
-	    public override void ViewWillDisappear(bool animated)
-	    {
-            NavigationController.NavigationBar.Hidden = false;
-            base.ViewWillDisappear(animated);
         }
 
         public override void TouchesBegan(NSSet touches, UIEvent evt)
@@ -106,8 +99,9 @@ namespace FreedomVoice.iOS.ViewControllers
             _passwordTextField.Layer.BorderColor = Theme.LoginPageTextFieldBorderColor.ToCGColor();
 
             var forgotPasswordController = AppDelegate.GetViewController<ForgotPasswordViewController>();
+            var navigationController = new UINavigationController(forgotPasswordController);
             forgotPasswordController.EmailAddress = _usernameTextField.Text;
-            NavigationController.PushViewController(forgotPasswordController, true);
+            PresentViewController(navigationController, false, () => { });
         }
 
 	    private bool OnUsernameReturn(UITextField textField)

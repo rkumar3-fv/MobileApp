@@ -104,9 +104,7 @@ namespace FreedomVoice.iOS
         private async void ProceedWithAuthenticatedUser()
         {
             var splashViewController = GetViewController<SplashViewController>();
-
-            var navigationController = new UINavigationController(splashViewController);
-            Theme.TransitionController(navigationController, false);
+            Theme.TransitionController(splashViewController, false);
 
             Window.MakeKeyAndVisible();
 
@@ -124,8 +122,7 @@ namespace FreedomVoice.iOS
             loginViewController.OnLoginSuccess -= OnLoginSuccess;
             loginViewController.OnLoginSuccess += OnLoginSuccess;
 
-            var navigationController = new UINavigationController(loginViewController);
-            Theme.TransitionController(navigationController, false);
+            Theme.TransitionController(loginViewController, false);
 
             Window.MakeKeyAndVisible();
         }
