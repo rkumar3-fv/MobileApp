@@ -1,17 +1,21 @@
 ﻿using System;
 using System.Globalization;
+using System.IO;
 using System.Net;
+using System.Runtime.Serialization.Formatters.Binary;
 using FreedomVoice.Core;
 
 namespace FreedomVoice.iOS.Utilities.Helpers
 {
     public static class Cookies
     {
+        private static readonly Uri AppUrl = new Uri(WebResources.AppUrl);
+
         public static bool IsCookieStored => !IsExpired();
 
-        public static bool HasActiveCookieInContainer()
+        public static bool HasActiveCookie()
         {
-            var cookies = ApiHelper.CookieContainer?.GetCookies(new Uri(WebResources.AppUrl));
+            var cookies = ApiHelper.CookieContainer?.GetCookies(AppUrl);
             var activeCookie = cookies?.Count > 0 ? cookies[0] : null;
 
             return !IsExpired(activeCookie);
@@ -19,37 +23,35 @@ namespace FreedomVoice.iOS.Utilities.Helpers
 
         public static void SaveCookieToStore()
         {
-            var cookies = ApiHelper.CookieContainer?.GetCookies(new Uri(WebResources.AppUrl));
+            var cookieContainer = ApiHelper.CookieContainer;
+
+            var cookies = cookieContainer?.GetCookies(AppUrl);
             if (cookies?.Count > 0)
             {
-                var cookie = cookies[0];
-                UserDefault.RequestCookie = new[] { cookie.Expires.ToString("O"), cookie.Name, cookie.Value, cookie.Path, cookie.Domain };
+                UserDefault.RequestCookieExpires = cookies[0].Expires.ToString("O");
+                UserDefault.RequestCookie = SerializeCookieContainer(cookieContainer);
 
                 return;
             }
 
-            UserDefault.RequestCookie = new string[] { };
+            UserDefault.RequestCookieExpires = string.Empty;
+            UserDefault.RequestCookie = string.Empty;
         }
 
-        public static void PutStoredCookieToContainer()
+        public static void RestoreCookieFromStore()
         {
-            if (ApiHelper.CookieContainer == null)
-                ApiHelper.CookieContainer = new CookieContainer();
-
-            ApiHelper.CookieContainer.Add(Cookie);
+            ApiHelper.CookieContainer = GetStoredCookieContainer();
         }
-
-        private static Cookie Cookie => GetStoredCookie();
 
         private static bool IsExpired()
         {
-            if (UserDefault.RequestCookie.Length == 0)
+            if (string.IsNullOrEmpty(UserDefault.RequestCookieExpires))
                 return true;
 
-            if (string.IsNullOrEmpty(UserDefault.RequestCookie[0]))
+            if (string.IsNullOrEmpty(UserDefault.RequestCookie))
                 return true;
 
-            var cookieDateTime = DateTime.ParseExact(UserDefault.RequestCookie[0], "O", CultureInfo.InvariantCulture);
+            var cookieDateTime = DateTime.ParseExact(UserDefault.RequestCookieExpires, "O", CultureInfo.InvariantCulture);
 
             return cookieDateTime < DateTime.Now;
         }
@@ -59,10 +61,32 @@ namespace FreedomVoice.iOS.Utilities.Helpers
             return cookie == null || cookie.Expires < DateTime.Now;
         }
 
-        private static Cookie GetStoredCookie()
+        private static CookieContainer GetStoredCookieContainer()
         {
             var cookie = UserDefault.RequestCookie;
-            return new Cookie(cookie[1], cookie[2], cookie[3], cookie[4]) { Expires = DateTime.ParseExact(cookie[0], "O", CultureInfo.InvariantCulture) };
+
+            return DeserializeCookieContainer(cookie);
+        }
+
+        private static string SerializeCookieContainer(CookieContainer container)
+        {
+            using (var memoryStream = new MemoryStream())
+            {
+                var formatter = new BinaryFormatter();
+                formatter.Serialize(memoryStream, container);
+
+                return Convert.ToBase64String(memoryStream.ToArray());
+            }
+        }
+
+        private static CookieContainer DeserializeCookieContainer(string serializedCookieContainer)
+        {
+            var cookieContainerBytes = Convert.FromBase64String(serializedCookieContainer);
+            using (var memoryStream = new MemoryStream(cookieContainerBytes))
+            {
+                var formatter = new BinaryFormatter();
+                return (CookieContainer)formatter.Deserialize(memoryStream);
+            }
         }
     }
 }

@@ -219,12 +219,12 @@ namespace FreedomVoice.iOS
 
         public async Task PrepareAuthentificationCookie()
         {
-            if (Cookies.HasActiveCookieInContainer())
+            if (Cookies.HasActiveCookie())
                 return;
 
             if (Cookies.IsCookieStored)
             {
-                Cookies.PutStoredCookieToContainer();
+                Cookies.RestoreCookieFromStore();
                 return;
             }
 
@@ -250,7 +250,9 @@ namespace FreedomVoice.iOS
         {
             UserDefault.IsAuthenticated = false;
             UserDefault.LastUsedAccount = string.Empty;
-            UserDefault.RequestCookie = new string[] { };
+
+            UserDefault.RequestCookie = string.Empty;
+            UserDefault.RequestCookieExpires = string.Empty;
 
             Recents = new List<Recent>();
             UserDefault.RecentsCache = string.Empty;

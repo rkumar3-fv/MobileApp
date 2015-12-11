@@ -47,12 +47,14 @@ namespace FreedomVoice.Core
             _clientHandler = new NativeMessageHandler();
             if (_clientHandler.SupportsAutomaticDecompression)
                 _clientHandler.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
+
             Client = new HttpClient(_clientHandler) {Timeout = new TimeSpan(0, 0, TimeOut)};
             CacheStorage = new CacheStorageClient(ServiceContainer.Resolve<IDeviceCacheStorage>());
         }
 
         public static async Task<BaseResult<string>> Login(string login, string password)
         {
+            InitNewContext();
             var postdata = $"UserName={login}&Password={password}";
             return await MakeAsyncPostRequest<string>("/api/v1/login", postdata, "application/x-www-form-urlencoded", CancellationToken.None);
         }
