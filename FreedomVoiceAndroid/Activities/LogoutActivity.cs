@@ -2,7 +2,7 @@ using Android.Content;
 using Android.Content.PM;
 using Android.Support.Design.Widget;
 using Android.Support.V4.Content;
-using Android.Support.V7.Internal.View;
+using Android.Support.V7.View;
 using Android.Views;
 using com.FreedomVoice.MobileApp.Android.Dialogs;
 using com.FreedomVoice.MobileApp.Android.Helpers;

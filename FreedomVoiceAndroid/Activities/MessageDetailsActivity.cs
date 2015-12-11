@@ -3,7 +3,7 @@ using Android.Graphics;
 using Android.OS;
 using Android.Support.Design.Widget;
 using Android.Support.V4.Content;
-using Android.Support.V7.Internal.View;
+using Android.Support.V7.View;
 #if DEBUG
 using Android.Util;
 #endif
