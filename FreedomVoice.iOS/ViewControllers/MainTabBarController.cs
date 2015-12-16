@@ -99,9 +99,9 @@ namespace FreedomVoice.iOS.ViewControllers
 
 	    public void AddRecent(Recent recent)
 	    {
-            var existingRecent = AppDelegate.Recents.FirstOrDefault(r => DataFormatUtils.NormalizePhone(r.PhoneNumber) == DataFormatUtils.NormalizePhone(recent.PhoneNumber));
+            var existingRecent = AppDelegate.RecentsList.FirstOrDefault(r => DataFormatUtils.NormalizePhone(r.PhoneNumber) == DataFormatUtils.NormalizePhone(recent.PhoneNumber));
             if (existingRecent == null)
-                AppDelegate.Recents.Add(recent);
+                AppDelegate.RecentsList.Add(recent);
             else
             {
                 existingRecent.DialDate = DateTime.Now;
@@ -111,17 +111,17 @@ namespace FreedomVoice.iOS.ViewControllers
 
 	    public void ClearRecents()
 	    {
-            AppDelegate.Recents.Clear();
+            AppDelegate.RecentsList.Clear();
 	    }
 
         public void RemoveRecents(Recent recent)
         {
-            AppDelegate.Recents.Remove(recent);
+            AppDelegate.RecentsList.Remove(recent);
         }
 
         public List<Recent> GetRecentsOrdered()
         {
-            return AppDelegate.Recents.OrderByDescending(r => r.DialDate).ToList();
+            return AppDelegate.RecentsList.OrderByDescending(r => r.DialDate).ToList();
         }
 
         public Recent GetLastRecent()

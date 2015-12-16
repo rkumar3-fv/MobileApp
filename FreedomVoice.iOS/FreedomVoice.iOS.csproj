@@ -94,7 +94,7 @@
     <CodesignResourceRules />
     <CodesignExtraArgs />
     <IpaIncludeArtwork>True</IpaIncludeArtwork>
-    <IpaPackageName>FreedomVoice-1.0.16</IpaPackageName>
+    <IpaPackageName>FreedomVoice-1.0.17</IpaPackageName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|iPhone' ">
     <DebugType>none</DebugType>
@@ -125,6 +125,7 @@
     <Compile Include="Utilities\Helpers\DeviceCacheStorage.cs" />
     <Compile Include="Utilities\Helpers\Cookies.cs" />
     <Compile Include="Utilities\Helpers\Log.cs" />
+    <Compile Include="Utilities\Helpers\Recents.cs" />
     <Compile Include="ViewControllers\SplashViewController.cs" />
     <Compile Include="ViewControllers\SplashViewController.designer.cs">
       <DependentUpon>SplashViewController.cs</DependentUpon>

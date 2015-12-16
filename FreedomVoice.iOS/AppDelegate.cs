@@ -15,7 +15,6 @@ using FreedomVoice.iOS.ViewControllers;
 using FreedomVoice.iOS.ViewModels;
 using FreedomVoice.iOS.Views;
 using GoogleAnalytics.iOS;
-using Newtonsoft.Json;
 using UIKit;
 using Xamarin;
 using Xamarin.Contacts;
@@ -46,8 +45,8 @@ namespace FreedomVoice.iOS
             return new List<Contact>();
         }
 
-        public static int RecentsCount => Recents.Count;
-        public static List<Recent> Recents { get; private set; }
+        public static int RecentsCount => RecentsList.Count;
+        public static List<Recent> RecentsList { get; set; }
 
         public static AVPlayerView ActivePlayerView;
         public static UIButton ActiveSpeakerButton;
@@ -74,7 +73,7 @@ namespace FreedomVoice.iOS
             DownloadIndicator = new DownloadIndicator(Theme.ScreenBounds);
             ActivityIndicator = new ActivityIndicator(Theme.ScreenBounds);
 
-            RestoreRecentsFromCache();
+            Recents.RestoreRecentsFromCache();
 
             ServiceContainer.Register(Window);
             ServiceContainer.Register<ISynchronizeInvoke>(() => new SynchronizeInvoke());
@@ -251,8 +250,7 @@ namespace FreedomVoice.iOS
             UserDefault.RequestCookie = string.Empty;
             UserDefault.RequestCookieExpires = string.Empty;
 
-            Recents = new List<Recent>();
-            UserDefault.RecentsCache = string.Empty;
+            Recents.ClearRecents();
 
             UserDefault.AccountsCache = string.Empty;
             UserDefault.PresentationPhonesCache = string.Empty;
@@ -346,7 +344,7 @@ namespace FreedomVoice.iOS
         // If your application supports background exection this method is called instead of WillTerminate when the user quits.
         public override void DidEnterBackground(UIApplication application)
         {
-            StoreRecentsToCache();
+            Recents.StoreRecentsToCache();
 
             NSUserDefaults.StandardUserDefaults.Synchronize();
         }
@@ -354,19 +352,7 @@ namespace FreedomVoice.iOS
         /// This method is called as part of the transiton from background to active state.
         public override void WillEnterForeground(UIApplication application)
         {
-            RestoreRecentsFromCache();
-        }
-
-        private static void StoreRecentsToCache()
-        {
-            UserDefault.RecentsCache = Recents.Count != 0 ? JsonConvert.SerializeObject(Recents) : string.Empty;
-        }
-
-        private static void RestoreRecentsFromCache()
-        {
-            var recentsCache = UserDefault.RecentsCache;
-
-            Recents = string.IsNullOrEmpty(recentsCache) ? new List<Recent>() : JsonConvert.DeserializeObject<List<Recent>>(recentsCache);
+            Recents.RestoreRecentsFromCache();
         }
 
         private static void InitializeAnalytics()
