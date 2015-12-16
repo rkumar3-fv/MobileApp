@@ -41,7 +41,7 @@ namespace FreedomVoice.iOS
             ContactsRequested = true;
 
             if (await ContactHasAccessPermissionsAsync())
-                return new Xamarin.Contacts.AddressBook().Where(c => c.Phones.Any()).OrderBy(c => c.DisplayName ?? c.Phones.First().Number).ToList();
+                return new Xamarin.Contacts.AddressBook().Where(c => c.Phones.Any()).OrderBy(c => c.LastName ?? (c.FirstName ?? c.Phones.First().Number)).ToList();
 
             return new List<Contact>();
         }
