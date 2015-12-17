@@ -110,6 +110,11 @@ namespace com.FreedomVoice.MobileApp.Android.Storage
             editor.Apply();
         }
 
+        public void ClearCookie()
+        {
+            CookieSerializer.ClearCookies(_cookiePath);
+        }
+
         /// <summary>
         /// Set not is first run flag
         /// </summary>

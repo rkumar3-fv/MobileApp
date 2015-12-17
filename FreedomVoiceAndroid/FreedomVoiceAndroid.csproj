@@ -267,6 +267,7 @@
     <Compile Include="Storage\AppDbHelper.cs" />
     <Compile Include="Storage\AppPreferencesHelper.cs" />
     <Compile Include="Storage\PclCacheImpl.cs" />
+    <Compile Include="Storage\PclCookieImpl.cs" />
     <Compile Include="Utils\ContactsHelper.cs" />
     <Compile Include="Utils\ContactsObserver.cs" />
     <Compile Include="Utils\CookieHelper.cs" />
