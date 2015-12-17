@@ -53,6 +53,8 @@
     <Compile Include="ApiHelper.cs" />
     <Compile Include="Cache\CacheStorageClient.cs" />
     <Compile Include="Cache\IDeviceCacheStorage.cs" />
+    <Compile Include="Cookies\CookieStorageClient.cs" />
+    <Compile Include="Cookies\IDeviceCookieStorage.cs" />
     <Compile Include="Entities\Base\BaseResult.cs" />
     <Compile Include="Entities\CreateCallReservationSetting.cs" />
     <Compile Include="Entities\MediaResponse.cs" />

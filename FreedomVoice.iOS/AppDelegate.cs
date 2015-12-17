@@ -110,9 +110,11 @@ namespace FreedomVoice.iOS
 
             var watcher = Stopwatch.StartNew();
 
+            await PrepareAuthentificationCookie();
             await ProceedGetAccountsList(false);
 
             watcher.Stop();
+
             Log.ReportTime(Log.EventCategory.LongAction, "LoadingScreen", "", watcher.ElapsedMilliseconds);
         }
 
@@ -214,16 +216,10 @@ namespace FreedomVoice.iOS
             return (from account in accountsList let phoneNumber = account.PhoneNumber where phoneNumber == lastUsedAccount select account).FirstOrDefault();
         }
 
-        public async Task PrepareAuthentificationCookie()
+        private async Task PrepareAuthentificationCookie()
         {
             if (Cookies.HasActiveCookie())
                 return;
-
-            if (Cookies.IsCookieStored)
-            {
-                Cookies.RestoreCookieFromStore();
-                return;
-            }
 
             string password = null;
 
@@ -248,9 +244,6 @@ namespace FreedomVoice.iOS
             UserDefault.IsAuthenticated = false;
             UserDefault.LastUsedAccount = string.Empty;
 
-            UserDefault.RequestCookie = string.Empty;
-            UserDefault.RequestCookieExpires = string.Empty;
-
             Recents.ClearRecents();
 
             UserDefault.AccountsCache = string.Empty;
@@ -261,8 +254,7 @@ namespace FreedomVoice.iOS
             ResetAudioPlayer();
             RemoveTmpFiles();
 
-            var username = KeyChain.GetUsername();
-            KeyChain.DeletePasswordForUsername(username);
+            KeyChain.DeletePasswordForUsername(KeyChain.GetUsername());
 
             PassToAuthentificationProcess();
         }
@@ -351,8 +343,10 @@ namespace FreedomVoice.iOS
         }
 
         /// This method is called as part of the transiton from background to active state.
-        public override void WillEnterForeground(UIApplication application)
+        public override async void WillEnterForeground(UIApplication application)
         {
+            await PrepareAuthentificationCookie();
+
             Recents.RestoreRecentsFromCache();
         }
 

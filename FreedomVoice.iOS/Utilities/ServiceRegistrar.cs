@@ -1,4 +1,5 @@
 ﻿using FreedomVoice.Core.Cache;
+using FreedomVoice.Core.Cookies;
 using FreedomVoice.Core.Utils;
 using FreedomVoice.iOS.Services;
 using FreedomVoice.iOS.Services.Implementations;
@@ -28,6 +29,7 @@ namespace FreedomVoice.iOS.Utilities
             ServiceContainer.Register<IMediaService>(() => new MediaService());
             ServiceContainer.Register<IMessageOperationsService>(() => new MessageOperationsService());
             ServiceContainer.Register<IDeviceCacheStorage>(() => new DeviceCacheStorage());
+            ServiceContainer.Register<IDeviceCookieStorage>(() => new DeviceCookieStorage());
         }
     }
 }

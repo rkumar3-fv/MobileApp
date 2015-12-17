@@ -41,8 +41,6 @@ namespace FreedomVoice.iOS.ViewModels
             ResponseName = "MoveMessageToTrash";
             StartWatcher();
 
-            await RenewCookieIfNeeded();
-
             var errorResponse = string.Empty;
             var requestResult = await _service.ExecuteMoveRequest(_systemPhoneNumber, _mailboxNumber, DestinationFolder, new List<string> { _messageId });
             if (requestResult is ErrorResponse)
@@ -63,8 +61,6 @@ namespace FreedomVoice.iOS.ViewModels
 
             ResponseName = "DeleteMessage";
             StartWatcher();
-
-            await RenewCookieIfNeeded();
 
             var errorResponse = string.Empty;
             var requestResult = await _service.ExecuteDeleteRequest(_systemPhoneNumber, _mailboxNumber, new List<string> { _messageId });

@@ -37,9 +37,9 @@ namespace FreedomVoice.iOS.ViewModels
         /// <returns></returns>
         public async Task GetAccountsListAsync()
         {
-            StartWatcher();
+            IsBusy = true;
 
-            await RenewCookieIfNeeded();
+            StartWatcher();
 
             var errorResponse = string.Empty;
             var requestResult = await _service.ExecuteRequest(DoNotUseCache);
@@ -53,6 +53,8 @@ namespace FreedomVoice.iOS.ViewModels
             }
 
             StopWatcher(errorResponse);
+
+            IsBusy = false;
         }
     }
 }

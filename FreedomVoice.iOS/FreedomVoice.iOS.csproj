@@ -124,6 +124,7 @@
     <Compile Include="Utilities\Extensions\CopyPasteLabel.cs" />
     <Compile Include="Utilities\Helpers\DeviceCacheStorage.cs" />
     <Compile Include="Utilities\Helpers\Cookies.cs" />
+    <Compile Include="Utilities\Helpers\DeviceCookieStorage.cs" />
     <Compile Include="Utilities\Helpers\Log.cs" />
     <Compile Include="Utilities\Helpers\Recents.cs" />
     <Compile Include="ViewControllers\SplashViewController.cs" />

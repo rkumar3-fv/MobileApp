@@ -153,13 +153,6 @@ namespace FreedomVoice.iOS.ViewModels
             OnSuccessResponse?.Invoke(null, EventArgs.Empty);
         }
 
-        protected static async Task RenewCookieIfNeeded()
-        {
-            var appDelegate = UIApplication.SharedApplication.Delegate as AppDelegate;
-            if (appDelegate != null)
-                await appDelegate.PrepareAuthentificationCookie();
-        }
-
         protected virtual ProgressControlType ProgressControl => ProgressControlType.ActivityIndicator;
 
         private void OnIsBusyChanged()

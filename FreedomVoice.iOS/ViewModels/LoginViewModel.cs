@@ -86,8 +86,6 @@ namespace FreedomVoice.iOS.ViewModels
             else
             {
                 KeyChain.SetPasswordForUsername(Username, Password);
-                Cookies.SaveCookieToStore();
-
                 ProceedSuccessResponse();
             }
 
@@ -108,8 +106,6 @@ namespace FreedomVoice.iOS.ViewModels
             var requestResult = await _service.ExecuteRequest(Username, Password);
             if (requestResult is ErrorResponse)
                 errorResponse = ProceedErrorResponse(requestResult);
-            else
-                Cookies.SaveCookieToStore();
 
             StopWatcher(errorResponse);
         }

@@ -21,26 +21,29 @@ namespace FreedomVoice.iOS.Utilities.Helpers
             return !IsExpired(activeCookie);
         }
 
-        public static void SaveCookieToStore()
+        public static void SaveCookieToStore(CookieContainer cookieContainer)
         {
-            var cookieContainer = ApiHelper.CookieContainer;
-
             var cookies = cookieContainer?.GetCookies(AppUrl);
-            if (cookies?.Count > 0)
+            if (cookies == null || cookies.Count == 0)
+            {
+                ClearCookies();
+            }
+            else
             {
                 UserDefault.RequestCookieExpires = cookies[0].Expires.ToString("O");
                 UserDefault.RequestCookie = SerializeCookieContainer(cookieContainer);
-
-                return;
             }
-
-            UserDefault.RequestCookieExpires = string.Empty;
-            UserDefault.RequestCookie = string.Empty;
         }
 
-        public static void RestoreCookieFromStore()
+        public static CookieContainer GetStoredCookieContainer()
         {
-            ApiHelper.CookieContainer = GetStoredCookieContainer();
+            return DeserializeCookieContainer(UserDefault.RequestCookie);
+        }
+
+        public static void ClearCookies()
+        {
+            UserDefault.RequestCookie = string.Empty;
+            UserDefault.RequestCookieExpires = string.Empty;
         }
 
         private static bool IsExpired()
@@ -51,21 +54,12 @@ namespace FreedomVoice.iOS.Utilities.Helpers
             if (string.IsNullOrEmpty(UserDefault.RequestCookie))
                 return true;
 
-            var cookieDateTime = DateTime.ParseExact(UserDefault.RequestCookieExpires, "O", CultureInfo.InvariantCulture);
-
-            return cookieDateTime < DateTime.Now;
+            return DateTime.ParseExact(UserDefault.RequestCookieExpires, "O", CultureInfo.InvariantCulture).AddDays(-1) < DateTime.Now;
         }
 
         private static bool IsExpired(Cookie cookie)
         {
-            return cookie == null || cookie.Expires < DateTime.Now;
-        }
-
-        private static CookieContainer GetStoredCookieContainer()
-        {
-            var cookie = UserDefault.RequestCookie;
-
-            return DeserializeCookieContainer(cookie);
+            return cookie == null || cookie.Expires.AddDays(-1) < DateTime.Now;
         }
 
         private static string SerializeCookieContainer(CookieContainer container)

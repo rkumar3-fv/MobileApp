@@ -41,7 +41,7 @@ namespace FreedomVoice.iOS.Utilities.Helpers
             };
 
             SecStatusCode resultCode;
-            var data = SecKeyChain.QueryAsRecord(existingRecord, out resultCode);
+            SecKeyChain.QueryAsRecord(existingRecord, out resultCode);
 
             if (resultCode == SecStatusCode.Success)
             {
@@ -102,7 +102,7 @@ namespace FreedomVoice.iOS.Utilities.Helpers
 		public static void DeletePasswordForUsername(string userName)
         {
             var queryRec = new SecRecord(SecKind.GenericPassword) { Service = ServiceId, Label = "Password", Account = userName };
-            var code = SecKeyChain.Remove(queryRec);
+            SecKeyChain.Remove(queryRec);
         }
     }
 }
