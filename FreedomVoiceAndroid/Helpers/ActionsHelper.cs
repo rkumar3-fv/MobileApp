@@ -18,6 +18,7 @@ using com.FreedomVoice.MobileApp.Android.Storage;
 using com.FreedomVoice.MobileApp.Android.Utils;
 using FreedomVoice.Core;
 using FreedomVoice.Core.Cache;
+using FreedomVoice.Core.Cookies;
 using FreedomVoice.Core.Utils;
 using Java.Util.Concurrent.Atomic;
 using Pair = Android.Support.V4.Util.Pair;
@@ -156,7 +157,9 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             Log.Debug(App.AppPackage, "HELPER: " + (IsFirstRun ? "First run" : "Not first run"));
 #endif
             var cacheImpl = new PclCacheImpl(_app);
+            var cookieImpl = new PclCookieImpl(_app);
             ServiceContainer.Register<IDeviceCacheStorage>(() => cacheImpl);
+            ServiceContainer.Register<IDeviceCookieStorage>(() => cookieImpl);
             RecentsDictionary = new SortedDictionary<long, RecentHolder>(Comparer<long>.Create((x, y) => y.CompareTo(x)));
             ExtensionsList = new List<Extension>();
             SelectedExtension = -1;
@@ -171,7 +174,6 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                 HelperEvent?.Invoke(this, new ActionsHelperIntentArgs(-2, intentLoading));
 
                 var watcherLoading = Stopwatch.StartNew();
-                var container = _preferencesHelper.GetCookieContainer();
                 var pair = _preferencesHelper.GetLoginPass(AppHelper.InsightsKey);
                 if (pair != null)
                 {
@@ -182,18 +184,19 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                 _pollingInterval = _preferencesHelper.GetPollingInterval();
                 watcherLoading.Stop();
                 _preferencesTime = watcherLoading.ElapsedMilliseconds;
-                if (container != null)
+                if (ApiHelper.CookieContainer != null)
                 {
                     var expireFlag = false;
-                    var collection = CookieHelper.GetAllCookies(container);
-                    if (collection != null)
+                    var collection = CookieHelper.GetAllCookies(ApiHelper.CookieContainer);
+                    if ((collection != null)&&(collection.Count>0))
                     {
                         if (collection.Any(cookie => cookie.Expired))
                             expireFlag = true; 
                     }
+                    else
+                        expireFlag = true;
                     if (!expireFlag)
                     {
-                        ApiHelper.CookieContainer = container;
                         IsLoggedIn = true;
                         if ((AccountsList == null) || (SelectedAccount == null))
                         {
@@ -858,7 +861,17 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 #if DEBUG
                                 Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} failed: UNAUTHORIZED");
 #endif
-                                DoLogout(response.RequestId);
+                                if (_accPair != null)
+                                {
+                                    var login = (string) _accPair.First;
+                                    var pass = (string) _accPair.Second;
+                                    if (!string.IsNullOrEmpty(login) && !string.IsNullOrEmpty(pass))
+                                        Authorize(login, pass);
+                                    else
+                                        DoLogout(response.RequestId);
+                                }
+                                else
+                                    DoLogout(response.RequestId);
                             }
                             else
                             {
@@ -941,7 +954,6 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                 case "LoginResponse":
                     IsLoggedIn = true;
                     _preferencesHelper.SaveCredentials(_userLogin, _userPassword, AppHelper.InsightsKey);
-                    _preferencesHelper.SaveCookie(ApiHelper.CookieContainer);
 #if DEBUG
                     Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} successed: YOU ARE LOGGED IN");
 #endif

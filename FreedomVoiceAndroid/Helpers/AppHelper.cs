@@ -373,11 +373,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             return true;
         }
 
-        #endregion
-
-        #region App State
-
-        #endregion
+#endregion
 
         public AppHelper(Context context)
         {

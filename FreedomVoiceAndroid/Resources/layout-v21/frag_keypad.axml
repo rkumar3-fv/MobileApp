@@ -4,7 +4,8 @@
     android:id="@+id/keypadFragment_contentArea"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_centerHorizontal="true">
+    android:layout_centerHorizontal="true"
+    android:background="@color/colorBackground">
     <LinearLayout
         android:id="@+id/keypadFragment_spinnerArea"
         android:orientation="horizontal"

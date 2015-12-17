@@ -88,7 +88,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         {
             HideErrors();
             var imm = GetSystemService(InputMethodService).JavaCast<InputMethodManager>();
-            imm.HideSoftInputFromWindow(RootLayout.WindowToken, 0);
+            if (RootLayout != null)
+                imm?.HideSoftInputFromWindow(RootLayout.WindowToken, 0);
 
             if (Appl.ApplicationHelper.IsAirplaneModeOn())
             {
@@ -98,7 +99,10 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
 
             if (!Appl.ApplicationHelper.IsInternetConnected())
             {
-                Snackbar.Make(RootLayout, Resource.String.Snack_noInternet, Snackbar.LengthLong).Show();
+                if (RootLayout != null)
+                    Snackbar.Make(RootLayout, Resource.String.Snack_noInternet, Snackbar.LengthLong).Show();
+                else
+                    Toast.MakeText(this, Resource.String.Snack_noInternet, ToastLength.Long).Show();
                 return;
             }
 
