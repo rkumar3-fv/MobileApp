@@ -114,7 +114,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
 
         private bool CheckLoading()
         {
-            if (Helper.SelectedAccount?.PresentationNumbers != null)
+            if ((Helper.SelectedAccount?.PresentationNumbers != null)&&(Helper.SelectedAccount.PresentationNumbers.Count > 0))
                return true;
             if ((Helper.SelectedAccount == null)||(Helper.AccountsList == null))
                 Helper.GetAccounts();
