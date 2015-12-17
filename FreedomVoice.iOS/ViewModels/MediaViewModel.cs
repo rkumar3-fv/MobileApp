@@ -68,13 +68,11 @@ namespace FreedomVoice.iOS.ViewModels
                 return;
             }
 
+            AppDelegate.DownloadIndicator.SetDownloadProgress(0);
+
             IsBusy = true;
 
             StartWatcher();
-
-            await RenewCookieIfNeeded();
-
-            AppDelegate.DownloadIndicator.SetDownloadProgress(0);
 
             var progressReporter = new Progress<DownloadBytesProgress>();
             progressReporter.ProgressChanged += (s, args) => AppDelegate.DownloadIndicator.SetDownloadProgress(args.PercentComplete);

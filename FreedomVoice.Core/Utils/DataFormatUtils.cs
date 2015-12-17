@@ -69,8 +69,14 @@ namespace FreedomVoice.Core.Utils
 
         public static string NormalizePhone(string phone)
         {
-            var r = new Regex("(?:[^*#0-9+]|(?<=['\"])s)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+            var r = new Regex("[^*#0-9+]", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
             return r.Replace(phone, string.Empty);
+        }
+
+        public static string NormalizeSearchText(string text)
+        {
+            var r = new Regex("[^*#0-9a-z+]", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+            return r.Replace(text, string.Empty);
         }
 
         /// <summary>

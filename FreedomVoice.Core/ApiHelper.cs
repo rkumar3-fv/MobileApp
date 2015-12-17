@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 using System.Net.Http;
 using System;
 using FreedomVoice.Core.Cache;
+using FreedomVoice.Core.Cookies;
 using FreedomVoice.Core.Utils;
 using ModernHttpClient;
 
@@ -21,21 +22,13 @@ namespace FreedomVoice.Core
     {
         private const int TimeOut = 20;
 
-        public static CookieContainer CookieContainer
-        {
-            get { return _clientHandler?.CookieContainer; }
-            set
-            {
-                if (_clientHandler != null)
-                    _clientHandler.CookieContainer = value;
-            }
-        }
-
-        private static CacheStorageClient CacheStorage { get; set; }
+        public static CookieContainer CookieContainer => _clientHandler.CookieContainer;
 
         private static NativeMessageHandler _clientHandler;
 
         private static HttpClient Client { get; set; }
+        private static CacheStorageClient CacheStorage { get; set; }
+        private static CookieStorageClient CookieStorage { get; set; }
 
         static ApiHelper()
         {
@@ -44,25 +37,33 @@ namespace FreedomVoice.Core
 
         private static void InitNewContext()
         {
-            _clientHandler = new NativeMessageHandler();
+            CookieStorage = new CookieStorageClient(ServiceContainer.Resolve<IDeviceCookieStorage>());
+
+            _clientHandler = new NativeMessageHandler { CookieContainer = CookieStorage.GetCookieContainer() };
             if (_clientHandler.SupportsAutomaticDecompression)
                 _clientHandler.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
 
-            Client = new HttpClient(_clientHandler) {Timeout = new TimeSpan(0, 0, TimeOut)};
+            Client = new HttpClient(_clientHandler) { Timeout = new TimeSpan(0, 0, TimeOut) };
             CacheStorage = new CacheStorageClient(ServiceContainer.Resolve<IDeviceCacheStorage>());
         }
 
         public static async Task<BaseResult<string>> Login(string login, string password)
         {
-            InitNewContext();
             var postdata = $"UserName={login}&Password={password}";
-            return await MakeAsyncPostRequest<string>("/api/v1/login", postdata, "application/x-www-form-urlencoded", CancellationToken.None);
+
+            var loginResponse = await MakeAsyncPostRequest<string>("/api/v1/login", postdata, "application/x-www-form-urlencoded", CancellationToken.None);
+            if (loginResponse != null && loginResponse.Code == ErrorCodes.Ok)
+                CookieStorage.SaveCookieContainer(CookieContainer);
+
+            return loginResponse;
         }
 
         public static async Task<BaseResult<string>> Logout()
         {
-            InitNewContext();
+            CookieStorage.ClearCookieContainer();
+
             await CacheStorage.DropCache();
+
             return await Task.FromResult(new BaseResult<string> { Code = ErrorCodes.Ok, Result = "" });
         }
 

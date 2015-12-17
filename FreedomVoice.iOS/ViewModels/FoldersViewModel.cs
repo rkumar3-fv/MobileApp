@@ -54,8 +54,6 @@ namespace FreedomVoice.iOS.ViewModels
 
             StartWatcher();
 
-            await RenewCookieIfNeeded();
-
             var errorResponse = string.Empty;
             var requestResult = await _service.ExecuteRequest(_systemPhoneNumber, _mailboxNumber);
             if (requestResult is ErrorResponse)

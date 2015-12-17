@@ -15,7 +15,6 @@ using FreedomVoice.iOS.ViewControllers;
 using FreedomVoice.iOS.ViewModels;
 using FreedomVoice.iOS.Views;
 using GoogleAnalytics.iOS;
-using Newtonsoft.Json;
 using UIKit;
 using Xamarin;
 using Xamarin.Contacts;
@@ -41,13 +40,14 @@ namespace FreedomVoice.iOS
         {
             ContactsRequested = true;
 
-            if (await ContactHasAccessPermissionsAsync()) return new Xamarin.Contacts.AddressBook().ToList();
+            if (await ContactHasAccessPermissionsAsync())
+                return new Xamarin.Contacts.AddressBook().Where(c => c.Phones.Any()).OrderBy(c => c.LastName ?? (c.FirstName ?? c.Phones.First().Number)).ToList();
 
             return new List<Contact>();
         }
 
-        public static int RecentsCount => Recents.Count;
-        public static List<Recent> Recents { get; private set; }
+        public static int RecentsCount => RecentsList.Count;
+        public static List<Recent> RecentsList { get; set; }
 
         public static AVPlayerView ActivePlayerView;
         public static UIButton ActiveSpeakerButton;
@@ -74,7 +74,7 @@ namespace FreedomVoice.iOS
             DownloadIndicator = new DownloadIndicator(Theme.ScreenBounds);
             ActivityIndicator = new ActivityIndicator(Theme.ScreenBounds);
 
-            RestoreRecentsFromCache();
+            Recents.RestoreRecentsFromCache();
 
             ServiceContainer.Register(Window);
             ServiceContainer.Register<ISynchronizeInvoke>(() => new SynchronizeInvoke());
@@ -110,9 +110,11 @@ namespace FreedomVoice.iOS
 
             var watcher = Stopwatch.StartNew();
 
+            await PrepareAuthentificationCookie();
             await ProceedGetAccountsList(false);
 
             watcher.Stop();
+
             Log.ReportTime(Log.EventCategory.LongAction, "LoadingScreen", "", watcher.ElapsedMilliseconds);
         }
 
@@ -214,16 +216,10 @@ namespace FreedomVoice.iOS
             return (from account in accountsList let phoneNumber = account.PhoneNumber where phoneNumber == lastUsedAccount select account).FirstOrDefault();
         }
 
-        public async Task PrepareAuthentificationCookie()
+        private async Task PrepareAuthentificationCookie()
         {
             if (Cookies.HasActiveCookie())
                 return;
-
-            if (Cookies.IsCookieStored)
-            {
-                Cookies.RestoreCookieFromStore();
-                return;
-            }
 
             string password = null;
 
@@ -248,11 +244,7 @@ namespace FreedomVoice.iOS
             UserDefault.IsAuthenticated = false;
             UserDefault.LastUsedAccount = string.Empty;
 
-            UserDefault.RequestCookie = string.Empty;
-            UserDefault.RequestCookieExpires = string.Empty;
-
-            Recents = new List<Recent>();
-            UserDefault.RecentsCache = string.Empty;
+            Recents.ClearRecents();
 
             UserDefault.AccountsCache = string.Empty;
             UserDefault.PresentationPhonesCache = string.Empty;
@@ -262,8 +254,7 @@ namespace FreedomVoice.iOS
             ResetAudioPlayer();
             RemoveTmpFiles();
 
-            var username = KeyChain.GetUsername();
-            KeyChain.DeletePasswordForUsername(username);
+            KeyChain.DeletePasswordForUsername(KeyChain.GetUsername());
 
             PassToAuthentificationProcess();
         }
@@ -346,27 +337,17 @@ namespace FreedomVoice.iOS
         // If your application supports background exection this method is called instead of WillTerminate when the user quits.
         public override void DidEnterBackground(UIApplication application)
         {
-            StoreRecentsToCache();
+            Recents.StoreRecentsToCache();
 
             NSUserDefaults.StandardUserDefaults.Synchronize();
         }
 
         /// This method is called as part of the transiton from background to active state.
-        public override void WillEnterForeground(UIApplication application)
+        public override async void WillEnterForeground(UIApplication application)
         {
-            RestoreRecentsFromCache();
-        }
+            await PrepareAuthentificationCookie();
 
-        private static void StoreRecentsToCache()
-        {
-            UserDefault.RecentsCache = Recents.Count != 0 ? JsonConvert.SerializeObject(Recents) : string.Empty;
-        }
-
-        private static void RestoreRecentsFromCache()
-        {
-            var recentsCache = UserDefault.RecentsCache;
-
-            Recents = string.IsNullOrEmpty(recentsCache) ? new List<Recent>() : JsonConvert.DeserializeObject<List<Recent>>(recentsCache);
+            Recents.RestoreRecentsFromCache();
         }
 
         private static void InitializeAnalytics()
