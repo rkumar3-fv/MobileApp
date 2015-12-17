@@ -61,6 +61,7 @@ namespace FreedomVoice.iOS.ViewControllers
             NavigationItem.SetRightBarButtonItem(Appearance.GetLogoutBarButton(this), false);
 
             var extensionsViewModel = new ExtensionsViewModel(SelectedAccount);
+            extensionsViewModel.OnUnauthorizedResponse += (sender, args) => OnUnauthorizedError();
             await extensionsViewModel.GetExtensionsListAsync();
 
             ExtensionsList = extensionsViewModel.ExtensionsList;
@@ -68,6 +69,15 @@ namespace FreedomVoice.iOS.ViewControllers
             _extensionsTableView.ReloadData();
 
             _updateTimer = NSTimer.CreateRepeatingScheduledTimer(UserDefault.PoolingInterval, delegate { UpdateExtensionsTable(); });
+        }
+
+        private async void OnUnauthorizedError()
+        {
+            var appDelegate = UIApplication.SharedApplication.Delegate as AppDelegate;
+            if (appDelegate != null)
+                await appDelegate.LoginWithStoredCredentials();
+
+            UpdateExtensionsTable();
         }
 
         private async void UpdateExtensionsTable()
@@ -81,7 +91,6 @@ namespace FreedomVoice.iOS.ViewControllers
                 if (extensionsViewModel.IsErrorResponseReceived) return;
 
                 ExtensionsList = extensionsViewModel.ExtensionsList;
-
                 _extensionsSource.Extensions = ExtensionsList;
 
                 needToReloadTable = true;

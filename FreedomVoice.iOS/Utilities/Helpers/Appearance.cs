@@ -49,7 +49,7 @@ namespace FreedomVoice.iOS.Utilities.Helpers
             var alertController = recentsExists ? UIAlertController.Create("Confirm logout?", "Your Recents list will be cleared.", UIAlertControllerStyle.Alert)
                                                 : UIAlertController.Create(null, "Confirm logout?", UIAlertControllerStyle.Alert);
             alertController.AddAction(UIAlertAction.Create("Cancel", UIAlertActionStyle.Default, null));
-            alertController.AddAction(UIAlertAction.Create("Log Out", UIAlertActionStyle.Cancel, a => { (UIApplication.SharedApplication.Delegate as AppDelegate)?.GoToLoginScreen(); }));
+            alertController.AddAction(UIAlertAction.Create("Log Out", UIAlertActionStyle.Cancel, a => { (UIApplication.SharedApplication.Delegate as AppDelegate)?.PassToAuthentificationProcess(); }));
             controller.PresentViewController(alertController, true, null);
         }
 

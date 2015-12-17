@@ -58,6 +58,7 @@ namespace FreedomVoice.iOS.ViewControllers
             NavigationItem.SetRightBarButtonItem(Appearance.GetLogoutBarButton(this), false);
 
             var foldersViewModel = new FoldersViewModel(SelectedAccount.PhoneNumber, SelectedExtension.ExtensionNumber);
+            foldersViewModel.OnUnauthorizedResponse += (sender, args) => OnUnauthorizedError();
             await foldersViewModel.GetFoldersListAsync();
 
             FoldersList = foldersViewModel.FoldersList;
@@ -67,6 +68,15 @@ namespace FreedomVoice.iOS.ViewControllers
             _updateTimer = NSTimer.CreateRepeatingScheduledTimer(UserDefault.PoolingInterval, delegate { UpdateFoldersTable(); });
 
             base.ViewWillAppear(animated);
+        }
+
+        private async void OnUnauthorizedError()
+        {
+            var appDelegate = UIApplication.SharedApplication.Delegate as AppDelegate;
+            if (appDelegate != null)
+                await appDelegate.LoginWithStoredCredentials();
+
+            UpdateFoldersTable();
         }
 
         public override void ViewDidDisappear(bool animated)

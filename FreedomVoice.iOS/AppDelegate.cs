@@ -120,6 +120,23 @@ namespace FreedomVoice.iOS
 
         public void PassToAuthentificationProcess()
         {
+            UserDefault.IsAuthenticated = false;
+            UserDefault.LastUsedAccount = string.Empty;
+
+            Recents.ClearRecents();
+
+            UserDefault.AccountsCache = string.Empty;
+            UserDefault.PresentationPhonesCache = string.Empty;
+
+            NSUserDefaults.StandardUserDefaults.Synchronize();
+
+            ResetAudioPlayer();
+            RemoveTmpFiles();
+
+            var storedUsername = KeyChain.GetUsername();
+            if (storedUsername != null)
+                KeyChain.DeletePasswordForUsername(storedUsername);
+
             var loginViewController = GetViewController<LoginViewController>();
             loginViewController.OnLoginSuccess -= OnLoginSuccess;
             loginViewController.OnLoginSuccess += OnLoginSuccess;
@@ -221,6 +238,11 @@ namespace FreedomVoice.iOS
             if (Cookies.HasActiveCookie())
                 return;
 
+            await LoginWithStoredCredentials();
+        }
+
+        public async Task LoginWithStoredCredentials()
+        {
             string password = null;
 
             var userName = KeyChain.GetUsername();
@@ -237,26 +259,6 @@ namespace FreedomVoice.iOS
             await loginViewModel.AutoLoginAsync();
             if (loginViewModel.IsErrorResponseReceived)
                 PassToAuthentificationProcess();
-        }
-
-        public void GoToLoginScreen()
-        {
-            UserDefault.IsAuthenticated = false;
-            UserDefault.LastUsedAccount = string.Empty;
-
-            Recents.ClearRecents();
-
-            UserDefault.AccountsCache = string.Empty;
-            UserDefault.PresentationPhonesCache = string.Empty;
-
-            NSUserDefaults.StandardUserDefaults.Synchronize();
-
-            ResetAudioPlayer();
-            RemoveTmpFiles();
-
-            KeyChain.DeletePasswordForUsername(KeyChain.GetUsername());
-
-            PassToAuthentificationProcess();
         }
 
         private static void RemoveTmpFiles()

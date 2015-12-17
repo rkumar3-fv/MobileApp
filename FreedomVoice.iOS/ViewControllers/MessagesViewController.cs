@@ -64,6 +64,7 @@ namespace FreedomVoice.iOS.ViewControllers
             View.Add(_messagesTableView);
 
             var messagesViewModel = new MessagesViewModel(SelectedAccount.PhoneNumber, SelectedExtension.ExtensionNumber, SelectedFolder.DisplayName, MainTabBarInstance.Contacts);
+            messagesViewModel.OnUnauthorizedResponse += (sender, args) => OnUnauthorizedError();
             await messagesViewModel.GetMessagesListAsync();
 
             MessagesList = messagesViewModel.MessagesList;
@@ -73,6 +74,15 @@ namespace FreedomVoice.iOS.ViewControllers
             _messagesTableView.ReloadData();
 
             base.ViewDidLoad();
+        }
+
+        private async void OnUnauthorizedError()
+        {
+            var appDelegate = UIApplication.SharedApplication.Delegate as AppDelegate;
+            if (appDelegate != null)
+                await appDelegate.LoginWithStoredCredentials();
+
+            UpdateMessagesTable();
         }
 
         private async void OnSourceRowCallbackClick(object sender, ExpandedCellButtonClickEventArgs e)
@@ -110,7 +120,7 @@ namespace FreedomVoice.iOS.ViewControllers
             NavigationItem.SetLeftBarButtonItems(Appearance.GetBarButtonWithArrow((s, args) => NavigationController.PopViewController(true), "x" + SelectedExtension.ExtensionNumber), false);
             NavigationItem.SetRightBarButtonItem(Appearance.GetLogoutBarButton(this), false);
 
-            _updateTimer = NSTimer.CreateRepeatingScheduledTimer(UserDefault.PoolingInterval, delegate { UpdateMessageTable(); });
+            _updateTimer = NSTimer.CreateRepeatingScheduledTimer(UserDefault.PoolingInterval, delegate { UpdateMessagesTable(); });
 
             base.ViewWillAppear(animated);
         }
@@ -125,7 +135,7 @@ namespace FreedomVoice.iOS.ViewControllers
             _updateTimer.Invalidate();
         }
 
-        private async void UpdateMessageTable()
+        private async void UpdateMessagesTable()
         {
             var needToReloadTable = false;
 
@@ -134,6 +144,8 @@ namespace FreedomVoice.iOS.ViewControllers
                 var messagesViewModel = new MessagesViewModel(SelectedAccount.PhoneNumber, SelectedExtension.ExtensionNumber, SelectedFolder.DisplayName, MainTabBarInstance.Contacts);
 
                 await messagesViewModel.GetMessagesListAsync(true);
+                if (messagesViewModel.IsErrorResponseReceived) return;
+
                 var recievedMessages = messagesViewModel.MessagesList;
 
                 var messagesToAdd = recievedMessages.Where(message => !MessagesList.Exists(m => m.Id == message.Id)).ToList();
