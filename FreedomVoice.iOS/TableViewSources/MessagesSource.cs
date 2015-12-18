@@ -102,6 +102,8 @@ namespace FreedomVoice.iOS.TableViewSources
             if (Equals(SelectedRowIndexPath, indexPath))
                 return;
 
+            OnRowSelected?.Invoke(this, EventArgs.Empty);
+
             AppDelegate.ResetAudioPlayer();
 
             var previousSelectedPath = SelectedRowIndexPath;
@@ -125,6 +127,7 @@ namespace FreedomVoice.iOS.TableViewSources
 
         public event EventHandler<ExpandedCellButtonClickEventArgs> OnRowCallbackClick;
         public event EventHandler<ExpandedCellButtonClickEventArgs> OnRowViewFaxClick;
+        public event EventHandler OnRowSelected;
 
         private void RowPlayClick(NSIndexPath indexPath)
         {
@@ -188,8 +191,9 @@ namespace FreedomVoice.iOS.TableViewSources
             else
                 await model.MoveMessageToTrashAsync();
 
-            tableView.BeginUpdates();
             Messages.RemoveAt(indexPath.Row);
+
+            tableView.BeginUpdates();
             tableView.DeleteRows(new[] { indexPath }, UITableViewRowAnimation.Left);
             ReloadSelectedRow(tableView);
             tableView.EndUpdates();

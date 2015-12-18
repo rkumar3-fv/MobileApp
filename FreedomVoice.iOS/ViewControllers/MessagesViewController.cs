@@ -52,6 +52,7 @@ namespace FreedomVoice.iOS.ViewControllers
             _messagesSource = new MessagesSource(MessagesList, SelectedAccount, this);
             _messagesSource.OnRowCallbackClick += OnSourceRowCallbackClick;
             _messagesSource.OnRowViewFaxClick += OnSourceRowViewFaxClick;
+            _messagesSource.OnRowSelected += OnSourceRowSelected;
 
             _messagesTableView = new UITableView
             {
@@ -97,6 +98,12 @@ namespace FreedomVoice.iOS.ViewControllers
         private static void AddRecent(string phoneNumber)
         {
             MainTabBarInstance.AddRecent(new Recent(string.Empty, phoneNumber, DateTime.Now));
+        }
+
+        private void OnSourceRowSelected(object sender, EventArgs e)
+        {
+            _updateTimer.Invalidate();
+            _updateTimer = NSTimer.CreateRepeatingScheduledTimer(UserDefault.PoolingInterval, delegate { UpdateMessagesTable(); });
         }
 
         private void OnSourceRowViewFaxClick(object sender, ExpandedCellButtonClickEventArgs e)
