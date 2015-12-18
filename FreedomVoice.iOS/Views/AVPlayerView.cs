@@ -105,6 +105,8 @@ namespace FreedomVoice.iOS.Views
 
         private void OnProgressBarValueChanged(object sender, EventArgs e)
         {
+            if (_player == null) return;
+
             var progressBarSlider = sender as UISlider;
             if (progressBarSlider != null)
                 _player.CurrentTime = progressBarSlider.Value;
