@@ -866,7 +866,10 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                                     var login = (string) _accPair.First;
                                     var pass = (string) _accPair.Second;
                                     if (!string.IsNullOrEmpty(login) && !string.IsNullOrEmpty(pass))
+                                    {
+                                        IsLoggedIn = false;
                                         Authorize(login, pass);
+                                    }
                                     else
                                         DoLogout(response.RequestId);
                                 }
