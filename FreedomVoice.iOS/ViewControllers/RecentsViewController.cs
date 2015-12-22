@@ -17,6 +17,7 @@ using FreedomVoice.iOS.Utilities.Helpers;
 using FreedomVoice.iOS.Views.Shared;
 using UIKit;
 using Xamarin.Contacts;
+using ContactsHelper = FreedomVoice.iOS.Utilities.Helpers.Contacts;
 
 namespace FreedomVoice.iOS.ViewControllers
 {
@@ -74,8 +75,8 @@ namespace FreedomVoice.iOS.ViewControllers
             var recentLineView = new LineView(new RectangleF(0, (float)(CallerIdView.Frame.Y + CallerIdView.Frame.Height), (float)Theme.ScreenBounds.Width, 0.5f));
             View.AddSubviews(recentLineView);
 
-            if (!AppDelegate.ContactsRequested)
-                MainTabBarInstance.Contacts = await AppDelegate.GetContactsListAsync();
+            if (!ContactsHelper.ContactsRequested)
+                MainTabBarInstance.Contacts = await ContactsHelper.GetContactsListAsync();
 
             base.ViewDidLoad();
         }
@@ -126,20 +127,20 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private static List<Recent> GetRecentsUpdatedAndOrdered()
         {
-            List<Recent> res = MainTabBarInstance.GetRecentsOrdered();
+            var resents = MainTabBarInstance.GetRecentsOrdered();
 
-            foreach (var item in res)
+            foreach (var item in resents)
             {
                 if (!string.IsNullOrEmpty(item.ContactId))
                     continue;
 
-                Contact findContact = FindContactByNumber(item.PhoneNumber);
+                var findContact = FindContactByNumber(item.PhoneNumber);
                 if (findContact == null) continue;
 
                 item.Title = findContact.DisplayName;
                 item.ContactId = findContact.Id;
             }
-            return res;
+            return resents;
         }
 
         private static void ClearRecent()

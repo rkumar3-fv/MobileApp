@@ -47,7 +47,7 @@ namespace FreedomVoice.iOS.ViewControllers
         {
             _justLoaded = true;
 
-            _hasContactsPermissions = await AppDelegate.ContactHasAccessPermissionsAsync();
+            _hasContactsPermissions = await ContactsHelper.ContactHasAccessPermissionsAsync();
             if (!_hasContactsPermissions)
             {
                 View.AddSubview(new NoAccessToContactsView(Theme.ScreenBounds));
@@ -80,7 +80,7 @@ namespace FreedomVoice.iOS.ViewControllers
             headerView.AddSubviews(_contactsSearchBar, CallerIdView, lineView);
             View.AddSubview(headerView);
 
-            MainTabBarInstance.Contacts = await AppDelegate.GetContactsListAsync();
+            MainTabBarInstance.Contacts = await ContactsHelper.GetContactsListAsync();
             _contactSource = new ContactSource { ContactsList = MainTabBarInstance.Contacts };
             _contactSource.OnRowSelected += TableSourceOnRowSelected;
             _contactSource.OnDraggingStarted += TableSourceOnDraggingStarted;
@@ -123,7 +123,7 @@ namespace FreedomVoice.iOS.ViewControllers
 
             if (_hasContactsPermissions && !_justLoaded)
             {
-                MainTabBarInstance.Contacts = await AppDelegate.GetContactsListAsync();
+                MainTabBarInstance.Contacts = await ContactsHelper.GetContactsListAsync();
                 _filteredContactList = IsSearchMode ? GetMatchedContacts(SearchText) : MainTabBarInstance.Contacts;
                 _contactSource.ContactsList = _filteredContactList;
 

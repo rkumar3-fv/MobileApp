@@ -17,7 +17,6 @@ using FreedomVoice.iOS.Views;
 using GoogleAnalytics.iOS;
 using UIKit;
 using Xamarin;
-using Xamarin.Contacts;
 
 namespace FreedomVoice.iOS
 {
@@ -27,24 +26,6 @@ namespace FreedomVoice.iOS
         public override UIWindow Window { get; set; }
 
         public static int SystemVersion => UIDevice.CurrentDevice.CheckSystemVersion(9, 0) ? 9 : 8;
-
-        private static bool? HasContactsPermissions { get; set; }
-        public static async Task<bool> ContactHasAccessPermissionsAsync()
-        {
-            return HasContactsPermissions ?? (HasContactsPermissions = await new Xamarin.Contacts.AddressBook().RequestPermission()).Value;
-        }
-
-        public static bool ContactsRequested { get; private set; }
-
-        public async static Task<List<Contact>> GetContactsListAsync()
-        {
-            ContactsRequested = true;
-
-            if (await ContactHasAccessPermissionsAsync())
-                return new Xamarin.Contacts.AddressBook().Where(c => c.Phones.Any()).OrderBy(c => c.LastName ?? (c.FirstName ?? c.Phones.First().Number)).ToList();
-
-            return new List<Contact>();
-        }
 
         public static int RecentsCount => RecentsList.Count;
         public static List<Recent> RecentsList { get; set; }
