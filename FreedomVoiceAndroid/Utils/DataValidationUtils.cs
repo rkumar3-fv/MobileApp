@@ -10,16 +10,6 @@ namespace com.FreedomVoice.MobileApp.Android.Utils
     public static class DataValidationUtils
     {
         /// <summary>
-        /// E-Mail format checking
-        /// </summary>
-        /// <param name="email">entered e-mail</param>
-        /// <returns>validation result</returns>
-        public static bool IsEmailValid(string email)
-        {
-            return Regex.IsMatch(email, @"^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$");
-        }
-
-        /// <summary>
         /// Phone number checking
         /// </summary>
         /// <param name="phone">entered phone</param>

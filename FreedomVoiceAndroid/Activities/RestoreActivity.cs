@@ -10,7 +10,7 @@ using Android.Views;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Dialogs;
 using com.FreedomVoice.MobileApp.Android.Helpers;
-using com.FreedomVoice.MobileApp.Android.Utils;
+using FreedomVoice.Core.Utils;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
 {
@@ -62,7 +62,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         private void RestoreButtonOnClick(object sender, EventArgs e)
         {
             if (_emailText.Length() > 5)
-                if (DataValidationUtils.IsEmailValid(_emailText.Text.Trim()))
+                if (DataFormatUtils.IsValidEmail(_emailText.Text.Trim()))
                 {
                     _emailText.Background.ClearColorFilter();
                     if (_progressSend.Visibility == ViewStates.Invisible)
