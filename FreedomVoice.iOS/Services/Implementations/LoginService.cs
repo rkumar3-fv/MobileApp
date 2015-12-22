@@ -15,5 +15,12 @@ namespace FreedomVoice.iOS.Services.Implementations
 
             return new EmptyResponse();
         }
+
+        public async Task<BaseResponse> Logout()
+        {
+            await ApiHelper.Logout();
+
+            return new EmptyResponse();
+        }
     }
 }

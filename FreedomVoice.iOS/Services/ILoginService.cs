@@ -9,5 +9,10 @@ namespace FreedomVoice.iOS.Services
         /// Asynchronous login
         /// </summary>
         Task<BaseResponse> ExecuteRequest(string userName, string password);
+
+        /// <summary>
+        /// Asynchronous logout
+        /// </summary>
+        Task<BaseResponse> Logout();
     }
 }

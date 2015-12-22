@@ -111,6 +111,15 @@ namespace FreedomVoice.iOS.ViewModels
         }
 
         /// <summary>
+        /// Performs an asynchronous logout
+        /// </summary>
+        /// <returns></returns>
+        public async Task LogoutAsync()
+        {
+            await _service.Logout();
+        }
+
+        /// <summary>
         /// Validation logic
         /// </summary>
         protected override void Validate()

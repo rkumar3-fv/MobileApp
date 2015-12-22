@@ -99,15 +99,15 @@ namespace FreedomVoice.iOS
             Log.ReportTime(Log.EventCategory.LongAction, "LoadingScreen", "", watcher.ElapsedMilliseconds);
         }
 
-        public void PassToAuthentificationProcess()
+        public async void PassToAuthentificationProcess()
         {
             UserDefault.IsAuthenticated = false;
             UserDefault.LastUsedAccount = string.Empty;
 
             Recents.ClearRecents();
 
-            UserDefault.AccountsCache = string.Empty;
-            UserDefault.PresentationPhonesCache = string.Empty;
+            var loginViewModel = new LoginViewModel();
+            await loginViewModel.LogoutAsync();
 
             NSUserDefaults.StandardUserDefaults.Synchronize();
 
@@ -208,7 +208,7 @@ namespace FreedomVoice.iOS
             }
         }
 
-        private static Account GetLastSelectedAccount(List<Account> accountsList)
+        private static Account GetLastSelectedAccount(IEnumerable<Account> accountsList)
         {
             var lastUsedAccount = UserDefault.LastUsedAccount;
             return (from account in accountsList let phoneNumber = account.PhoneNumber where phoneNumber == lastUsedAccount select account).FirstOrDefault();
@@ -308,6 +308,9 @@ namespace FreedomVoice.iOS
 
         public override void OnActivated(UIApplication application)
         {
+            if (application.KeyWindow == null)
+                return;
+
             var visibleViewController = GetVisibleViewController(application.KeyWindow.RootViewController);
             if (visibleViewController != null)
                 visibleViewController.View.UserInteractionEnabled = true;
