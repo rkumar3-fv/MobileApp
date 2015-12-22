@@ -11,7 +11,7 @@ using Android.Views;
 using Android.Views.InputMethods;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Helpers;
-using com.FreedomVoice.MobileApp.Android.Utils;
+using FreedomVoice.Core.Utils;
 using Java.Interop;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
@@ -106,7 +106,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 return;
             }
 
-            if ((_loginText.Text.Trim().Length < 6)||(!DataValidationUtils.IsEmailValid(_loginText.Text.Trim())))
+            if ((_loginText.Text.Trim().Length < 6)||(!DataFormatUtils.IsValidEmail(_loginText.Text.Trim())))
             {
                 _loginText.Background.SetColorFilter(_errorColor, PorterDuff.Mode.SrcAtop);
                 _errorText.Text = GetString(Resource.String.ActivityAuth_badLogin);
@@ -149,7 +149,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         private void ForgotButtonOnClick(object sender, EventArgs e)
         {
             var intent = new Intent(this, typeof(RestoreActivity));
-            if ((_loginText.Text.Length > 0) && (DataValidationUtils.IsEmailValid(_loginText.Text)))
+            if ((_loginText.Text.Length > 0) && DataFormatUtils.IsValidEmail(_loginText.Text))
                 intent.PutExtra(RestoreActivity.EmailField, _loginText.Text);
             StartActivity(intent);
         }
