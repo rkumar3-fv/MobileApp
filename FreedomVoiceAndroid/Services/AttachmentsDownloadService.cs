@@ -194,7 +194,7 @@ namespace com.FreedomVoice.MobileApp.Android.Services
 #if DEBUG
             Log.Debug(App.AppPackage, $"MEDIA REQUEST to {msg.AttachUrl}");
 #endif
-            var res = await ApiHelper.MakeAsyncFileDownload(msg.AttachUrl, "application/json", token);
+            var res = await ApiHelper.MakeAsyncFileDownload(msg.AttachUrl, token);
             if (res == null)
             {
 #if DEBUG
