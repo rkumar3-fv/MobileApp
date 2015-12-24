@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Foundation;
 using FreedomVoice.iOS.Services.Responses;
 using FreedomVoice.iOS.Utilities.Events;
 using FreedomVoice.iOS.Utilities.Helpers;
@@ -159,6 +160,8 @@ namespace FreedomVoice.iOS.ViewModels
 
         protected virtual ProgressControlType ProgressControl => ProgressControlType.ActivityIndicator;
 
+        private NSTimer _downloadIndicatorTimer;
+
         private void OnIsBusyChanged()
         {
             if (!UIApplication.SharedApplication.KeyWindow.RootViewController.IsViewLoaded)
@@ -175,19 +178,28 @@ namespace FreedomVoice.iOS.ViewModels
                 }
                 else
                 {
-                    UIApplication.SharedApplication.KeyWindow.AddSubview(AppDelegate.DownloadIndicator);
-                    AppDelegate.DownloadIndicator.Show();
+                    AppDelegate.DisableUserInteraction(UIApplication.SharedApplication);
+                    _downloadIndicatorTimer = NSTimer.CreateScheduledTimer(3, delegate { ShowDownloadIndicator(); });
                 }
             }
             else
             {
                 UIApplication.SharedApplication.NetworkActivityIndicatorVisible = false;
 
-                if (ProgressControl == ProgressControlType.ActivityIndicator)
-                    AppDelegate.ActivityIndicator.Hide();
-                else
-                    AppDelegate.DownloadIndicator.Hide();
+                if (ProgressControl == ProgressControlType.ProgressBar)
+                {
+                    AppDelegate.EnableUserInteraction(UIApplication.SharedApplication);
+                    _downloadIndicatorTimer.Invalidate();
+                }
+
+                AppDelegate.ActivityIndicator.Hide();
             }
+        }
+
+        private static void ShowDownloadIndicator()
+        {
+            UIApplication.SharedApplication.KeyWindow.AddSubview(AppDelegate.ActivityIndicator);
+            AppDelegate.ActivityIndicator.Show();
         }
     }
 

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Foundation;
+using FreedomVoice.Core;
 using FreedomVoice.Core.Utils;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.Utilities;
@@ -36,7 +37,6 @@ namespace FreedomVoice.iOS
 
         public static CancellationTokenSource ActiveDownloadCancelationToken;
 
-        public static DownloadIndicator DownloadIndicator { get; private set; }
         public static ActivityIndicator ActivityIndicator { get; private set; }
 
         public static string TempFolderPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments, Environment.SpecialFolderOption.DoNotVerify), "..", "tmp");
@@ -52,7 +52,6 @@ namespace FreedomVoice.iOS
         {
             Window = new UIWindow(UIScreen.MainScreen.Bounds);
 
-            DownloadIndicator = new DownloadIndicator(Theme.ScreenBounds);
             ActivityIndicator = new ActivityIndicator(Theme.ScreenBounds);
 
             Recents.RestoreRecentsFromCache();
@@ -308,12 +307,27 @@ namespace FreedomVoice.iOS
 
         public override void OnActivated(UIApplication application)
         {
+            EnableUserInteraction(application);
+        }
+
+        public static void EnableUserInteraction(UIApplication application)
+        {
+            ChangeUserInteractionState(application, true);
+        }
+
+        public static void DisableUserInteraction(UIApplication application)
+        {
+            ChangeUserInteractionState(application, false);
+        }
+
+        private static void ChangeUserInteractionState(UIApplication application, bool enabled)
+        {
             if (application.KeyWindow == null)
                 return;
 
             var visibleViewController = GetVisibleViewController(application.KeyWindow.RootViewController);
             if (visibleViewController != null)
-                visibleViewController.View.UserInteractionEnabled = true;
+                visibleViewController.View.UserInteractionEnabled = enabled;
         }
 
         // This method is invoked when the application is about to move from active to inactive state.

@@ -54,8 +54,8 @@ namespace FreedomVoice.iOS.ViewModels
         public async Task GetMediaAsync()
         {
             var fileName = string.Concat(DateTime.Now.ToString("MMddyyyy_"), _messageId, ".", _mediaType);
-
             var filePath = Path.Combine(AppDelegate.TempFolderPath, fileName);
+
             if (File.Exists(filePath))
             {
                 FilePath = filePath;
@@ -68,17 +68,12 @@ namespace FreedomVoice.iOS.ViewModels
                 return;
             }
 
-            AppDelegate.DownloadIndicator.SetDownloadProgress(0);
-
             IsBusy = true;
 
             StartWatcher();
 
-            var progressReporter = new Progress<DownloadBytesProgress>();
-            progressReporter.ProgressChanged += (s, args) => AppDelegate.DownloadIndicator.SetDownloadProgress(args.PercentComplete);
-
             var errorResponse = string.Empty;
-            var requestResult = await _service.ExecuteRequest(progressReporter, _systemPhoneNumber, _mailboxNumber, _folderName, _messageId, _mediaType, AppDelegate.ActiveDownloadCancelationToken.Token);
+            var requestResult = await _service.ExecuteRequest(null, _systemPhoneNumber, _mailboxNumber, _folderName, _messageId, _mediaType, AppDelegate.ActiveDownloadCancelationToken.Token);
             if (requestResult is ErrorResponse)
                 errorResponse = ProceedErrorResponse(requestResult);
             else
