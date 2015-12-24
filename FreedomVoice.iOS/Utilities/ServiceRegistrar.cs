@@ -30,6 +30,7 @@ namespace FreedomVoice.iOS.Utilities
             ServiceContainer.Register<IMessageOperationsService>(() => new MessageOperationsService());
             ServiceContainer.Register<IDeviceCacheStorage>(() => new DeviceCacheStorage());
             ServiceContainer.Register<IDeviceCookieStorage>(() => new DeviceCookieStorage());
+            ServiceContainer.Register<IHttpClientHelper>(() => new HttpClientHelper());
         }
     }
 }

@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Globalization;
-using System.IO;
+using System.Linq;
 using System.Net;
-using System.Runtime.Serialization.Formatters.Binary;
+using Foundation;
 using FreedomVoice.Core;
 
 namespace FreedomVoice.iOS.Utilities.Helpers
@@ -13,74 +12,42 @@ namespace FreedomVoice.iOS.Utilities.Helpers
 
         public static bool IsCookieStored => !IsExpired();
 
-        public static bool HasActiveCookie()
-        {
-            var cookies = ApiHelper.CookieContainer?.GetCookies(AppUrl);
-            var activeCookie = cookies?.Count > 0 ? cookies[0] : null;
-
-            return !IsExpired(activeCookie);
-        }
-
         public static void SaveCookieToStore(CookieContainer cookieContainer)
         {
             var cookies = cookieContainer?.GetCookies(AppUrl);
-            if (cookies == null || cookies.Count == 0)
-            {
-                ClearCookies();
-            }
+            if (cookies != null && cookies.Count > 0)
+                for (var i = 0; i < cookies.Count; i++)
+                    NSHttpCookieStorage.SharedStorage.SetCookie(new NSHttpCookie(cookies[i]));
             else
-            {
-                UserDefault.RequestCookieExpires = cookies[0].Expires.ToString("O");
-                UserDefault.RequestCookie = SerializeCookieContainer(cookieContainer);
-            }
+                ClearCookies();
         }
 
         public static CookieContainer GetStoredCookieContainer()
         {
-            return DeserializeCookieContainer(UserDefault.RequestCookie);
+            var cookieContainer = new CookieContainer();
+            var cookies = NSHttpCookieStorage.SharedStorage.CookiesForUrl(AppUrl);
+            foreach (var c in cookies)
+                cookieContainer.Add(AppUrl, new Cookie(c.Name, c.Value, c.Path, c.Domain) { Expires = NSDateToDateTime(c.ExpiresDate) });
+
+            return cookieContainer;
         }
 
         public static void ClearCookies()
         {
-            UserDefault.RequestCookie = string.Empty;
-            UserDefault.RequestCookieExpires = string.Empty;
+            var cookies = NSHttpCookieStorage.SharedStorage.CookiesForUrl(AppUrl);
+            foreach (var cookie in cookies)
+                NSHttpCookieStorage.SharedStorage.DeleteCookie(cookie);
         }
 
         private static bool IsExpired()
         {
-            if (string.IsNullOrEmpty(UserDefault.RequestCookieExpires))
-                return true;
-
-            if (string.IsNullOrEmpty(UserDefault.RequestCookie))
-                return true;
-
-            return DateTime.ParseExact(UserDefault.RequestCookieExpires, "O", CultureInfo.InvariantCulture).AddDays(-1) < DateTime.Now;
+            var cookies = NSHttpCookieStorage.SharedStorage.CookiesForUrl(AppUrl);
+            return cookies.Length == 0 || cookies.Any(cookie => NSDateToDateTime(cookie.ExpiresDate).AddDays(-1) < DateTime.Now);
         }
 
-        private static bool IsExpired(Cookie cookie)
+        private static DateTime NSDateToDateTime(NSDate date)
         {
-            return cookie == null || cookie.Expires.AddDays(-1) < DateTime.Now;
-        }
-
-        private static string SerializeCookieContainer(CookieContainer container)
-        {
-            using (var memoryStream = new MemoryStream())
-            {
-                var formatter = new BinaryFormatter();
-                formatter.Serialize(memoryStream, container);
-
-                return Convert.ToBase64String(memoryStream.ToArray());
-            }
-        }
-
-        private static CookieContainer DeserializeCookieContainer(string serializedCookieContainer)
-        {
-            var cookieContainerBytes = Convert.FromBase64String(serializedCookieContainer);
-            using (var memoryStream = new MemoryStream(cookieContainerBytes))
-            {
-                var formatter = new BinaryFormatter();
-                return (CookieContainer)formatter.Deserialize(memoryStream);
-            }
+            return TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(2001, 1, 1, 0, 0, 0)).AddSeconds(date.SecondsSinceReferenceDate);
         }
     }
 }

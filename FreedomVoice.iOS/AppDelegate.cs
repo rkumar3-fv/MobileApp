@@ -52,12 +52,14 @@ namespace FreedomVoice.iOS
         {
             Window = new UIWindow(UIScreen.MainScreen.Bounds);
 
-            ActivityIndicator = new ActivityIndicator(Theme.ScreenBounds);
-
-            Recents.RestoreRecentsFromCache();
-
             ServiceContainer.Register(Window);
             ServiceContainer.Register<ISynchronizeInvoke>(() => new SynchronizeInvoke());
+
+            ActivityIndicator = new ActivityIndicator(Theme.ScreenBounds);
+
+            NSHttpCookieStorage.SharedStorage.AcceptPolicy = NSHttpCookieAcceptPolicy.Always;
+
+            Recents.RestoreRecentsFromCache();
 
             InitializeAnalytics();
 
@@ -90,7 +92,7 @@ namespace FreedomVoice.iOS
 
             var watcher = Stopwatch.StartNew();
 
-            await PrepareAuthentificationCookie();
+            await LoginWithStoredCredentials();
             await ProceedGetAccountsList(false);
 
             watcher.Stop();
@@ -100,6 +102,17 @@ namespace FreedomVoice.iOS
 
         public async void PassToAuthentificationProcess()
         {
+            ResetAudioPlayer();
+            RemoveTmpFiles();
+
+            var loginViewController = GetViewController<LoginViewController>();
+            loginViewController.OnLoginSuccess -= OnLoginSuccess;
+            loginViewController.OnLoginSuccess += OnLoginSuccess;
+
+            Theme.TransitionController(loginViewController, false);
+
+            Window.MakeKeyAndVisible();
+
             UserDefault.IsAuthenticated = false;
             UserDefault.LastUsedAccount = string.Empty;
 
@@ -110,20 +123,9 @@ namespace FreedomVoice.iOS
 
             NSUserDefaults.StandardUserDefaults.Synchronize();
 
-            ResetAudioPlayer();
-            RemoveTmpFiles();
-
             var storedUsername = KeyChain.GetUsername();
             if (storedUsername != null)
                 KeyChain.DeletePasswordForUsername(storedUsername);
-
-            var loginViewController = GetViewController<LoginViewController>();
-            loginViewController.OnLoginSuccess -= OnLoginSuccess;
-            loginViewController.OnLoginSuccess += OnLoginSuccess;
-
-            Theme.TransitionController(loginViewController, false);
-
-            Window.MakeKeyAndVisible();
         }
 
         private async Task ProceedGetAccountsList(bool noCache)
@@ -215,8 +217,12 @@ namespace FreedomVoice.iOS
 
         private async Task PrepareAuthentificationCookie()
         {
-            if (Cookies.HasActiveCookie())
+            ApiHelper.InitNewContext();
+
+            if (Cookies.IsCookieStored)
                 return;
+
+            NSHttpCookieStorage.SharedStorage.AcceptPolicy = NSHttpCookieAcceptPolicy.Always;
 
             await LoginWithStoredCredentials();
         }
