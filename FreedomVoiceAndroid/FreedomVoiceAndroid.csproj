@@ -51,9 +51,8 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AndroidUseSharedRuntime>False</AndroidUseSharedRuntime>
-    <AndroidLinkSkip>
-    </AndroidLinkSkip>
-    <AndroidLinkMode>SdkOnly</AndroidLinkMode>
+    <AndroidLinkSkip>FreedomVoice.Core;Newtonsoft.Json</AndroidLinkSkip>
+    <AndroidLinkMode>Full</AndroidLinkMode>
     <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
     <BundleAssemblies>False</BundleAssemblies>
     <AndroidCreatePackagePerAbi>False</AndroidCreatePackagePerAbi>
