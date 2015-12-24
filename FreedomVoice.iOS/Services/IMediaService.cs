@@ -12,6 +12,6 @@ namespace FreedomVoice.iOS.Services
         /// <summary>
         /// Asynchronous retrieving of media
         /// </summary>
-        Task<BaseResponse> ExecuteRequest(IProgress<DownloadBytesProgress> progressReporter, string systemNumber, int mailboxNumber, string folderName, string messageId, MediaType mediaType, CancellationToken token);
+        Task<BaseResponse> ExecuteRequest(IProgress<DownloadBytesProgress> progressReporter, string systemNumber, int mailboxNumber, string folderName, string messageId, MediaType mediaType, string filePath, CancellationToken token);
     }
 }

@@ -11,54 +11,52 @@ namespace FreedomVoice.iOS.Services.Implementations
 {
     public class MediaService : BaseService, IMediaService
     {
-        public async Task<BaseResponse> ExecuteRequest(IProgress<DownloadBytesProgress> progressReporter, string systemNumber, int mailboxNumber, string folderName, string messageId, MediaType mediaType, CancellationToken token)
+        private const int BufferSize = 4096;
+
+        public async Task<BaseResponse> ExecuteRequest(IProgress<DownloadBytesProgress> progressReporter, string systemNumber, int mailboxNumber, string folderName, string messageId, MediaType mediaType, string filePath, CancellationToken token)
         {
-            var fileName = string.Concat(DateTime.Now.ToString("MMddyyyy_"), messageId, ".", mediaType);
-
-            var filePath = Path.Combine(AppDelegate.TempFolderPath, fileName);
-
-            var asyncRes = await ApiHelper.MakeAsyncFileDownload($"/api/v1/systems/{systemNumber}/mailboxes/{mailboxNumber}/folders/{folderName}/messages/{messageId}/media/{mediaType}", token);
-            var errorResponse = CheckErrorResponse(asyncRes);
+            var asyncResult = await ApiHelper.MakeAsyncFileDownload($"/api/v1/systems/{systemNumber}/mailboxes/{mailboxNumber}/folders/{folderName}/messages/{messageId}/media/{mediaType}", token);
+            var errorResponse = CheckErrorResponse(asyncResult);
             if (errorResponse != null)
                 return errorResponse;
 
-            var mediaResponse = asyncRes.Result;
+            var totalBytes = asyncResult.Result.Length;
+            var receivedBytes = 0;
 
-            var receivedBytes = 0;  
-            var totalBytes = mediaResponse.Length;
-
-            using (var stream = mediaResponse.ReceivedStream)
-            using (var targetStream = new FileStream(filePath, FileMode.CreateNew, FileAccess.Write))
+            try
             {
-                var buffer = new byte[4096];
+                using (var receivedStream = asyncResult.Result.ReceivedStream)
+                using (var fs = new FileStream(filePath, FileMode.CreateNew, FileAccess.Write))
+                {
+                    var buffer = new byte[BufferSize];
+                    int bytesRead;
 
-                do {
-                    if (token.IsCancellationRequested)
+                    while ((bytesRead = await receivedStream.ReadAsync(buffer, 0, BufferSize, token)) > 0)
                     {
-                        if (File.Exists(filePath))
-                            File.Delete(filePath);
+                        token.ThrowIfCancellationRequested();
 
-                        return null;
+                        fs.Write(buffer, 0, bytesRead);
+
+                        receivedBytes += bytesRead;
+
+                        progressReporter?.Report(new DownloadBytesProgress(receivedBytes, totalBytes));
                     }
-
-                    var bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length, token);
-                    targetStream.Write(buffer, 0, bytesRead);
-
-                    if (bytesRead == 0)
-                    {
-                        await Task.Yield();
-                        break;
-                    }
-
-                    receivedBytes += bytesRead;
-                    if (progressReporter == null) continue;
-
-                    var args = new DownloadBytesProgress(receivedBytes, totalBytes);
-                    progressReporter.Report(args);
-                } while (true);
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                return new ErrorResponse(ErrorResponse.ErrorCancelled);
+            }
+            catch (InvalidOperationException)
+            {
+                return new ErrorResponse(ErrorResponse.ErrorConnection);
+            }
+            catch (Exception)
+            {
+                return new ErrorResponse(ErrorResponse.ErrorBadRequest);
             }
 
-            return new GetMediaResponse(filePath);
+            return new EmptyResponse();
         }
     }
 }

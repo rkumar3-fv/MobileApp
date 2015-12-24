@@ -73,15 +73,16 @@ namespace FreedomVoice.iOS.ViewModels
             StartWatcher();
 
             var errorResponse = string.Empty;
-            var requestResult = await _service.ExecuteRequest(null, _systemPhoneNumber, _mailboxNumber, _folderName, _messageId, _mediaType, AppDelegate.ActiveDownloadCancelationToken.Token);
+            var requestResult = await _service.ExecuteRequest(null, _systemPhoneNumber, _mailboxNumber, _folderName, _messageId, _mediaType, filePath, AppDelegate.ActiveDownloadCancelationToken.Token);
             if (requestResult is ErrorResponse)
-                errorResponse = ProceedErrorResponse(requestResult);
-            else
             {
-                var data = requestResult as GetMediaResponse;
-                if (data != null)
-                    FilePath = data.FilePath;
+                if (File.Exists(filePath))
+                    File.Delete(filePath);
+
+                errorResponse = ProceedErrorResponse(requestResult);
             }
+            else
+                FilePath = filePath;
 
             StopWatcher(errorResponse);
 
