@@ -114,8 +114,8 @@
   
   <!-- Keypad fragment -->
   <dimen name="fragment_keypad_spinner_size">56dp</dimen>
-  <dimen name="fragment_keypad_spinner_width">180dp</dimen>
-  <dimen name="fragment_keypad_spinner_width_collapsed">168dp</dimen>
+  <dimen name="fragment_keypad_spinner_width">200dp</dimen>
+  <dimen name="fragment_keypad_spinner_width_collapsed">188dp</dimen>
   <dimen name="fragment_keypad_spinner_height">48dp</dimen>
   <dimen name="fragment_keypad_number_size">65dp</dimen>
   <dimen name="fragment_keypad_number_text_size">30sp</dimen>
