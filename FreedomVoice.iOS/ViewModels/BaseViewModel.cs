@@ -80,6 +80,7 @@ namespace FreedomVoice.iOS.ViewModels
 
         public event EventHandler OnUnauthorizedResponse;
         public event EventHandler OnErrorConnectionResponse;
+        public event EventHandler OnTimeoutResponse;
         public event EventHandler OnSuccessResponse;
         public event EventHandler OnPaymentRequiredResponse;
         public event EventHandler OnBadRequestResponse;
@@ -90,7 +91,7 @@ namespace FreedomVoice.iOS.ViewModels
 
         public bool IsErrorResponseReceived;
 
-        protected string ProceedErrorResponse(BaseResponse baseResponse)
+        protected string ProceedErrorResponse(BaseResponse baseResponse, bool silent = false)
         {
             var response = baseResponse as ErrorResponse;
             if (response == null) return string.Empty;
@@ -106,12 +107,16 @@ namespace FreedomVoice.iOS.ViewModels
                     OnCanceledResponse?.Invoke(null, EventArgs.Empty);
                     return "Cancelled";
                 case ErrorResponse.ErrorConnection:
+                    if (OnErrorConnectionResponse == null && !silent)
+                        Appearance.ShowOkAlertWithMessage("Please try again later.", "Connection lost");
+                    OnErrorConnectionResponse?.Invoke(null, EventArgs.Empty);
+                    return "Connection Lost";
                 case ErrorResponse.ErrorGatewayTimeout:
                 case ErrorResponse.ErrorRequestTimeout:
-                    if (OnErrorConnectionResponse == null)
-                        new UIAlertView("Service is unavailable", "Please try again later.", null, "OK", null).Show();
-                    OnErrorConnectionResponse?.Invoke(null, EventArgs.Empty);
-                    return response.ErrorCode == ErrorResponse.ErrorConnection ? "Connection Lost" : response.ErrorCode == ErrorResponse.ErrorGatewayTimeout ? "504 - Gateway Timeout" : "408 - Request Timeout";
+                    if (OnTimeoutResponse == null && !silent)
+                        Appearance.ShowOkAlertWithMessage("Please try again later.", "Service is unavailable");
+                    OnTimeoutResponse?.Invoke(null, EventArgs.Empty);
+                    return response.ErrorCode == ErrorResponse.ErrorGatewayTimeout ? "504 - Gateway Timeout" : "408 - Request Timeout";
                 case ErrorResponse.ErrorUnauthorized:
                     OnUnauthorizedResponse?.Invoke(null, EventArgs.Empty);
                     return "401 - Unauthorized";
@@ -126,8 +131,8 @@ namespace FreedomVoice.iOS.ViewModels
                     return "404 - Not Found";
                 case ErrorResponse.ErrorInternal:
                 case ErrorResponse.ErrorUnknown:
-                    if (OnInternalErrorResponse == null)
-                        new UIAlertView("Internal server error", "Please try again later.", null, "OK", null).Show();
+                    if (OnInternalErrorResponse == null && !silent)
+                        Appearance.ShowOkAlertWithMessage("Please try again later.", "Internal server error");
                     OnInternalErrorResponse?.Invoke(null, EventArgs.Empty);
                     return response.ErrorCode == ErrorResponse.ErrorInternal ? "500 - Internal Server Error" : "Unknown Error";
                 default:

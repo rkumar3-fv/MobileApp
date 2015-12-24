@@ -62,10 +62,7 @@ namespace FreedomVoice.iOS.ViewModels
             var errorResponse = string.Empty;
             var requestResult = await _service.ExecuteRequest(_systemPhoneNumber, _mailboxNumber, _folderName, _contactsList);
             if (requestResult is ErrorResponse)
-            {
-                if (!silent)
-                    errorResponse = ProceedErrorResponse(requestResult);
-            }
+                errorResponse = ProceedErrorResponse(requestResult, silent);
             else
             {
                 var data = requestResult as MessagesResponse;

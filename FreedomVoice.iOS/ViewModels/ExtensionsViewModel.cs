@@ -55,10 +55,7 @@ namespace FreedomVoice.iOS.ViewModels
             var errorResponse = string.Empty;
             var requestResult = await _service.ExecuteRequest(_selectedAccount.PhoneNumber);
             if (requestResult is ErrorResponse)
-            {
-                if (!silent)
-                    errorResponse = ProceedErrorResponse(requestResult);
-            }
+                errorResponse = ProceedErrorResponse(requestResult, silent);
             else
             {
                 var data = requestResult as ExtensionsWithCountResponse;
