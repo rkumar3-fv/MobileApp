@@ -82,9 +82,9 @@ namespace FreedomVoice.iOS.Utilities.Helpers
             ShowOkAlertWithMessage(alertMessageText);
         }
 
-        public static void ShowOkAlertWithMessage(string alertMessageText)
+        public static void ShowOkAlertWithMessage(string alertMessageText, string title = null)
         {
-            var alertController = UIAlertController.Create(null, alertMessageText, UIAlertControllerStyle.Alert);
+            var alertController = UIAlertController.Create(title, alertMessageText, UIAlertControllerStyle.Alert);
             alertController.AddAction(UIAlertAction.Create("Ok", UIAlertActionStyle.Cancel, null));
             UIApplication.SharedApplication.KeyWindow.RootViewController?.PresentViewController(alertController, true, null);
         }
