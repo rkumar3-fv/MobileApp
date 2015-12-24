@@ -27,6 +27,7 @@ namespace FreedomVoice.Core
         private static NativeMessageHandler _clientHandler;
 
         private static HttpClient Client { get; set; }
+
         private static CacheStorageClient CacheStorage { get; set; }
         private static CookieStorageClient CookieStorage { get; set; }
 
@@ -37,14 +38,7 @@ namespace FreedomVoice.Core
 
         public static void InitNewContext()
         {
-            CookieStorage = new CookieStorageClient(ServiceContainer.Resolve<IDeviceCookieStorage>());
-
-            _clientHandler = new NativeMessageHandler { CookieContainer = CookieStorage.GetCookieContainer() };
-            if (_clientHandler.SupportsAutomaticDecompression)
-                _clientHandler.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
-
             Client = CreateClient();
-            CacheStorage = new CacheStorageClient(ServiceContainer.Resolve<IDeviceCacheStorage>());
         }
 
         public static async Task<BaseResult<string>> Login(string login, string password)
@@ -52,8 +46,8 @@ namespace FreedomVoice.Core
             var postdata = $"UserName={login}&Password={password}";
 
             var loginResponse = await MakeAsyncPostRequest<string>("/api/v1/login", postdata, "application/x-www-form-urlencoded", CancellationToken.None);
-            if (loginResponse != null && loginResponse.Code == ErrorCodes.Ok)
-                CookieStorage.SaveCookieContainer(CookieContainer);
+            //if (loginResponse != null && loginResponse.Code == ErrorCodes.Ok)
+            //    CookieStorage.SaveCookieContainer(CookieContainer);
 
             return loginResponse;
         }
@@ -179,6 +173,17 @@ namespace FreedomVoice.Core
 
         private static HttpClient CreateClient()
         {
+            CookieStorage = new CookieStorageClient(ServiceContainer.Resolve<IDeviceCookieStorage>());
+            CacheStorage = new CacheStorageClient(ServiceContainer.Resolve<IDeviceCacheStorage>());
+
+            _clientHandler = ServiceContainer.Resolve<IHttpClientHelper>().MessageHandler;
+
+            //_clientHandler = new NativeMessageHandler { CookieContainer = CookieStorage.GetCookieContainer() };
+
+            //_clientHandler.CookieContainer = CookieStorage.GetCookieContainer();
+            if (_clientHandler.SupportsAutomaticDecompression)
+                _clientHandler.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
+
             var httpClient = new HttpClient(_clientHandler) { Timeout = TimeSpan.FromSeconds(TimeOut), BaseAddress = new Uri(WebResources.AppUrl) };
 
             httpClient.DefaultRequestHeaders.Accept.Clear();
@@ -221,17 +226,25 @@ namespace FreedomVoice.Core
 
             try
             {
-                if (ct.IsCancellationRequested)
-                    return new BaseResult<MediaResponse> { Code = ErrorCodes.Cancelled };
-
-                var streamResp = Client.GetStreamAsync(url);
-
-                var stream = await streamResp;
-                retResult = new BaseResult<MediaResponse>
+                var response = await Client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, ct);
+                try
                 {
-                    Code = ErrorCodes.Ok,
-                    Result = new MediaResponse(stream.Length, stream)
-                };
+                    if (ct.IsCancellationRequested)
+                        return new BaseResult<MediaResponse> { Code = ErrorCodes.Cancelled };
+
+                    response.EnsureSuccessStatusCode();
+
+                    var stream = await response.Content.ReadAsStreamAsync();
+                    retResult = new BaseResult<MediaResponse>
+                    {
+                        Code = ErrorCodes.Ok,
+                        Result = new MediaResponse(response.Content.Headers.ContentLength ?? stream.Length, stream)
+                    };
+                }
+                catch (HttpRequestException ex)
+                {
+                    return HandleErrorState<MediaResponse>(response.StatusCode, ex);
+                }
             }
             catch (Exception ex)
             {

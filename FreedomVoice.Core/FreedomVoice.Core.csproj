@@ -71,6 +71,7 @@
     <Compile Include="Entities\DefaultPhoneNumbers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils\DataFormatUtils.cs" />
+    <Compile Include="Utils\IHttpClientHelper.cs" />
     <Compile Include="Utils\ServiceContainer.cs" />
     <Compile Include="WebResources.Designer.cs">
       <AutoGen>True</AutoGen>
