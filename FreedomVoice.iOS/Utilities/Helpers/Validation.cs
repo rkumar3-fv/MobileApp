@@ -1,4 +1,5 @@
 ﻿using System.Text.RegularExpressions;
+using FreedomVoice.Core.Utils;
 
 namespace FreedomVoice.iOS.Utilities.Helpers
 {
@@ -6,7 +7,7 @@ namespace FreedomVoice.iOS.Utilities.Helpers
     {
         public static bool IsValidEmail(string emailAddress)
         {
-            return !string.IsNullOrEmpty(emailAddress) && Regex.Match(emailAddress, @"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$").Success;
+            return DataFormatUtils.IsValidEmail(emailAddress);
         }
 
         public static bool IsValidPhoneNumber(string phoneNumber)
