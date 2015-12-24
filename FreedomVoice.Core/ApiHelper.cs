@@ -31,6 +31,8 @@ namespace FreedomVoice.Core
         private static CacheStorageClient CacheStorage { get; set; }
         private static CookieStorageClient CookieStorage { get; set; }
 
+        private static bool Native { get; set; }
+
         static ApiHelper()
         {
             InitNewContext();
@@ -46,8 +48,10 @@ namespace FreedomVoice.Core
             var postdata = $"UserName={login}&Password={password}";
 
             var loginResponse = await MakeAsyncPostRequest<string>("/api/v1/login", postdata, "application/x-www-form-urlencoded", CancellationToken.None);
-            //if (loginResponse != null && loginResponse.Code == ErrorCodes.Ok)
-            //    CookieStorage.SaveCookieContainer(CookieContainer);
+            if (Native) return loginResponse;
+
+            if (loginResponse != null && loginResponse.Code == ErrorCodes.Ok)
+                CookieStorage.SaveCookieContainer(CookieContainer);
 
             return loginResponse;
         }
@@ -176,11 +180,17 @@ namespace FreedomVoice.Core
             CookieStorage = new CookieStorageClient(ServiceContainer.Resolve<IDeviceCookieStorage>());
             CacheStorage = new CacheStorageClient(ServiceContainer.Resolve<IDeviceCacheStorage>());
 
-            _clientHandler = ServiceContainer.Resolve<IHttpClientHelper>().MessageHandler;
+            try
+            {
+                _clientHandler = ServiceContainer.Resolve<IHttpClientHelper>().MessageHandler;
+                Native = true;
+            }
+            catch (KeyNotFoundException)
+            {
+                _clientHandler = new NativeMessageHandler { CookieContainer = CookieStorage.GetCookieContainer() };
+                Native = false;
+            }
 
-            //_clientHandler = new NativeMessageHandler { CookieContainer = CookieStorage.GetCookieContainer() };
-
-            //_clientHandler.CookieContainer = CookieStorage.GetCookieContainer();
             if (_clientHandler.SupportsAutomaticDecompression)
                 _clientHandler.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
 
@@ -301,93 +311,40 @@ namespace FreedomVoice.Core
 
         private static BaseResult<T> HandleErrorState<T>(HttpStatusCode code, Exception ex)
         {
-            string msg = string.Empty;
-
-            if (ex != null)
-                msg = ex.Message;
+            var baseResult = new BaseResult<T> { Result = default(T), ErrorText = ex != null ? ex.Message : string.Empty };
 
             switch (code)
             {
                 case HttpStatusCode.Unauthorized:
-                    {
-                        return new BaseResult<T>
-                        {
-                            Code = ErrorCodes.Unauthorized,
-                            Result = default(T),
-                            ErrorText = msg
-                        };
-                    }
+                    baseResult.Code = ErrorCodes.Unauthorized;
+                    break;
                 case HttpStatusCode.Forbidden:
-                    {
-                        return new BaseResult<T>
-                        {
-                            Code = ErrorCodes.Forbidden,
-                            Result = default(T),
-                            ErrorText = msg
-                        };
-                    }
+                    baseResult.Code = ErrorCodes.Forbidden;
+                    break;
                 case HttpStatusCode.BadRequest:
-                    {
-                        return new BaseResult<T>
-                        {
-                            Code = ErrorCodes.BadRequest,
-                            Result = default(T),
-                            ErrorText = msg
-                        };
-                    }
+                    baseResult.Code = ErrorCodes.BadRequest;
+                    break;
                 case HttpStatusCode.RequestTimeout:
-                    {
-                        return new BaseResult<T>
-                        {
-                            Code = ErrorCodes.RequestTimeout,
-                            Result = default(T),
-                            ErrorText = msg
-                        };
-                    }
+                    baseResult.Code = ErrorCodes.RequestTimeout;
+                    break;
                 case HttpStatusCode.GatewayTimeout:
-                    {
-                        return new BaseResult<T>
-                        {
-                            Code = ErrorCodes.GatewayTimeout,
-                            Result = default(T),
-                            ErrorText = msg
-                        };
-                    }
+                    baseResult.Code = ErrorCodes.GatewayTimeout;
+                    break;
                 case HttpStatusCode.NotFound:
-                    {
-                        return new BaseResult<T>
-                        {
-                            Code = ErrorCodes.NotFound,
-                            Result = default(T),
-                            ErrorText = msg
-                        };
-                    }
+                    baseResult.Code = ErrorCodes.NotFound;
+                    break;
                 case HttpStatusCode.PaymentRequired:
-                    {
-                        return new BaseResult<T>
-                        {
-                            Code = ErrorCodes.PaymentRequired,
-                            Result = default(T),
-                            ErrorText = msg
-                        };
-                    }
+                    baseResult.Code = ErrorCodes.PaymentRequired;
+                    break;
                 case HttpStatusCode.InternalServerError:
-                    {
-                        return new BaseResult<T>
-                        {
-                            Code = ErrorCodes.InternalServerError,
-                            Result = default(T),
-                            ErrorText = msg
-                        };
-                    }
+                    baseResult.Code = ErrorCodes.InternalServerError;
+                    break;
+                default:
+                    baseResult.Code = ErrorCodes.Unknown;
+                    break;
             }
 
-            return new BaseResult<T>
-            {
-                Code = ErrorCodes.Unknown,
-                Result = default(T),
-                ErrorText = msg
-            };
+            return baseResult;
         }
     }
 }
