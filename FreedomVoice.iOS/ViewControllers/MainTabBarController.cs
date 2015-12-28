@@ -62,8 +62,6 @@ namespace FreedomVoice.iOS.ViewControllers
             
             ViewControllers = new[] { recentsTab, contactsTab, keypadTab, messagesTab };
 
-            AppDelegate.ActivityIndicator.SetActivityIndicatorCenter(Theme.ScreenCenter);
-
             CallerIdEvent.CallerIdChanged += PresentationNumberChanged;
 
             SelectedIndex = 2;

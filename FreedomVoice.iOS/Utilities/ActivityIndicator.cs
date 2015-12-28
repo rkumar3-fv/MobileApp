@@ -17,7 +17,7 @@ namespace FreedomVoice.iOS.Utilities
                 HidesWhenStopped = true,
                 Frame = new CGRect(0, 0, 37, 37),
                 AutoresizingMask = UIViewAutoresizing.All,
-                Center = new CGPoint(Frame.Width / 2, Frame.Height / 2)
+                Center = Theme.ScreenCenter
             };
 
             AddSubview(_activityIndicator);

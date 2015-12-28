@@ -37,6 +37,42 @@ namespace FreedomVoice.iOS.ViewControllers
 
         public override async void ViewDidLoad()
         {
+            AppDelegate.ActivityIndicator.SetActivityIndicatorCenter(Theme.ScreenCenter);
+
+            await InitializeTableView();
+
+            base.ViewDidLoad();
+        }
+
+        public override void ViewWillAppear(bool animated)
+	    {
+            Theme.Apply();
+
+            NavigationItem.Title = SelectedFolder.DisplayName;
+            NavigationItem.SetLeftBarButtonItems(Appearance.GetBarButtonWithArrow((s, args) => NavigationController.PopViewController(true), "x" + SelectedExtension.ExtensionNumber), false);
+            NavigationItem.SetRightBarButtonItem(Appearance.GetLogoutBarButton(this), false);
+
+            PhoneCapability.ReachabilityChanged += NetworkChangedHandler;
+
+            _updateTimer = NSTimer.CreateRepeatingScheduledTimer(UserDefault.PoolingInterval, delegate { UpdateMessagesTable(); });
+
+            base.ViewWillAppear(animated);
+        }
+
+	    public override void ViewWillDisappear(bool animated)
+	    {
+            AppDelegate.ResetAudioPlayer();
+            AppDelegate.CancelActiveDownload();
+
+            _messagesSource.ReloadSelectedRow(_messagesTableView);
+
+            PhoneCapability.ReachabilityChanged -= NetworkChangedHandler;
+
+            _updateTimer.Invalidate();
+        }
+
+	    private async Task InitializeTableView()
+	    {
             var headerHeight = Theme.StatusBarHeight + NavigationController.NavigationBarHeight();
             var insets = new UIEdgeInsets(0, 0, Theme.TabBarHeight, 0);
 
@@ -73,16 +109,23 @@ namespace FreedomVoice.iOS.ViewControllers
 
             _messagesTableView.BackgroundView = noMessagesLabel;
             _messagesTableView.ReloadData();
+        }
 
-            base.ViewDidLoad();
+	    private static EventHandler NetworkChangedHandler
+        {
+            get { return async (sender, args) => await RenewAuthorization(); }
+        }
+
+	    private static async Task RenewAuthorization()
+	    {
+            var appDelegate = UIApplication.SharedApplication.Delegate as AppDelegate;
+            if (appDelegate != null)
+                await appDelegate.LoginWithStoredCredentials(false);
         }
 
         private async void OnUnauthorizedError()
         {
-            var appDelegate = UIApplication.SharedApplication.Delegate as AppDelegate;
-            if (appDelegate != null)
-                await appDelegate.LoginWithStoredCredentials();
-
+            await RenewAuthorization();
             UpdateMessagesTable();
         }
 
@@ -117,29 +160,6 @@ namespace FreedomVoice.iOS.ViewControllers
 
             var faxController = new UINavigationController(faxViewController);
             PresentViewController(faxController, true, () => { });
-        }
-
-        public override void ViewWillAppear(bool animated)
-	    {
-            Theme.Apply();
-
-            NavigationItem.Title = SelectedFolder.DisplayName;
-            NavigationItem.SetLeftBarButtonItems(Appearance.GetBarButtonWithArrow((s, args) => NavigationController.PopViewController(true), "x" + SelectedExtension.ExtensionNumber), false);
-            NavigationItem.SetRightBarButtonItem(Appearance.GetLogoutBarButton(this), false);
-
-            _updateTimer = NSTimer.CreateRepeatingScheduledTimer(UserDefault.PoolingInterval, delegate { UpdateMessagesTable(); });
-
-            base.ViewWillAppear(animated);
-        }
-
-	    public override void ViewWillDisappear(bool animated)
-	    {
-            AppDelegate.ResetAudioPlayer();
-            AppDelegate.CancelActiveDownload();
-
-            _messagesSource.ReloadSelectedRow(_messagesTableView);
-
-            _updateTimer.Invalidate();
         }
 
         private async void UpdateMessagesTable()

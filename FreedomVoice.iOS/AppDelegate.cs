@@ -227,7 +227,7 @@ namespace FreedomVoice.iOS
             await LoginWithStoredCredentials();
         }
 
-        public async Task LoginWithStoredCredentials()
+        public async Task LoginWithStoredCredentials(bool redirectToLoginOnError = true)
         {
             string password = null;
 
@@ -243,7 +243,7 @@ namespace FreedomVoice.iOS
 
             var loginViewModel = new LoginViewModel(userName, password);
             await loginViewModel.AutoLoginAsync();
-            if (loginViewModel.IsErrorResponseReceived)
+            if (loginViewModel.IsErrorResponseReceived && redirectToLoginOnError)
                 PassToAuthentificationProcess();
         }
 

@@ -38,6 +38,8 @@ namespace FreedomVoice.iOS.ViewControllers
 
         public override void ViewDidLoad()
         {
+            AppDelegate.ActivityIndicator.SetActivityIndicatorCenter(Theme.ScreenCenter);
+
             InitializeTableView();
 
             base.ViewDidLoad();

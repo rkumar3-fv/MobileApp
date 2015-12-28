@@ -33,18 +33,9 @@ namespace FreedomVoice.iOS.ViewControllers
 
         public override void ViewDidLoad()
         {
-            var insets = new UIEdgeInsets(0, 0, Theme.StatusBarHeight + NavigationController.NavigationBarHeight() + Theme.TabBarHeight, 0);
+            AppDelegate.ActivityIndicator.SetActivityIndicatorCenter(Theme.ScreenCenter);
 
-            _extensionsSource = new ExtensionsSource(ExtensionsList, NavigationController);
-            _extensionsTableView = new UITableView
-            {
-                Frame = Theme.ScreenBounds,
-                TableFooterView = new UIView(CGRect.Empty),
-                Source = _extensionsSource,
-                ContentInset = insets,
-                ScrollIndicatorInsets = insets
-            };
-            View.Add(_extensionsTableView);
+            InitializeTableView();
 
             base.ViewDidLoad();
         }
@@ -69,6 +60,22 @@ namespace FreedomVoice.iOS.ViewControllers
             _extensionsTableView.ReloadData();
 
             _updateTimer = NSTimer.CreateRepeatingScheduledTimer(UserDefault.PoolingInterval, delegate { UpdateExtensionsTable(); });
+        }
+
+        private void InitializeTableView()
+        {
+            var insets = new UIEdgeInsets(0, 0, Theme.StatusBarHeight + NavigationController.NavigationBarHeight() + Theme.TabBarHeight, 0);
+
+            _extensionsSource = new ExtensionsSource(ExtensionsList, NavigationController);
+            _extensionsTableView = new UITableView
+            {
+                Frame = Theme.ScreenBounds,
+                TableFooterView = new UIView(CGRect.Empty),
+                Source = _extensionsSource,
+                ContentInset = insets,
+                ScrollIndicatorInsets = insets
+            };
+            View.AddSubview(_extensionsTableView);
         }
 
         private async void OnUnauthorizedError()
