@@ -895,13 +895,29 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                                 HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new []{ActionsHelperEventArgs.AuthLoginError, ActionsHelperEventArgs.RestoreError}));
                             }
                             // Call reservation bad request
-                            else if (_waitingRequestArray.ContainsKey(response.RequestId) && _waitingRequestArray[response.RequestId] is CallReservationRequest)
+                            else if (_waitingRequestArray.ContainsKey(response.RequestId))
                             {
 #if DEBUG
-                                Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} failed: BAD REQUEST");
+                                Log.Debug(App.AppPackage,
+                                    $"HELPER EXECUTOR: response for request with ID={response.RequestId} failed: BAD REQUEST");
 #endif
-                                SaveRecent(response);
-                                HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.CallReservationFail }));
+                                if (_waitingRequestArray[response.RequestId] is CallReservationRequest)
+                                {
+                                    SaveRecent(response);
+                                    HelperEvent?.Invoke(this,
+                                        new ActionsHelperEventArgs(response.RequestId,
+                                            new[] {ActionsHelperEventArgs.CallReservationFail}));
+                                }
+                                else if ((_waitingRequestArray[response.RequestId] is GetMessagesRequest) ||
+                                     (_waitingRequestArray[response.RequestId] is GetExtensionsRequest) ||
+                                     (_waitingRequestArray[response.RequestId] is GetFoldersRequest))
+                                    HelperEvent?.Invoke(this,
+                                        new ActionsHelperEventArgs(response.RequestId,
+                                            new[] { ActionsHelperEventArgs.MsgUpdateFailedInternal }));
+                                else
+                                    HelperEvent?.Invoke(this,
+                                        new ActionsHelperEventArgs(response.RequestId,
+                                            new[] { ActionsHelperEventArgs.InternalError }));
                             }
                             break;
                         //Account not found error
@@ -909,9 +925,26 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                             if (!IsLoggedIn)
                             {
 #if DEBUG
-                                Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} failed: BAD LOGIN");
+                                Log.Debug(App.AppPackage,
+                                    $"HELPER EXECUTOR: response for request with ID={response.RequestId} failed: BAD LOGIN");
 #endif
-                                HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] {ActionsHelperEventArgs.RestoreWrongEmail }));
+                                HelperEvent?.Invoke(this,
+                                    new ActionsHelperEventArgs(response.RequestId,
+                                        new[] {ActionsHelperEventArgs.RestoreWrongEmail}));
+                            }
+                            else
+                            {
+                                if (_waitingRequestArray.ContainsKey(response.RequestId) &&
+                                    ((_waitingRequestArray[response.RequestId] is GetMessagesRequest) ||
+                                     (_waitingRequestArray[response.RequestId] is GetExtensionsRequest) ||
+                                     (_waitingRequestArray[response.RequestId] is GetFoldersRequest)))
+                                    HelperEvent?.Invoke(this,
+                                        new ActionsHelperEventArgs(response.RequestId,
+                                            new[] {ActionsHelperEventArgs.MsgUpdateFailedInternal}));
+                                else
+                                    HelperEvent?.Invoke(this,
+                                        new ActionsHelperEventArgs(response.RequestId,
+                                            new[] {ActionsHelperEventArgs.InternalError}));
                             }
                             break;
                         //Number on hold (payment required) error
@@ -1256,7 +1289,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             });
             var values = RecentsDictionary.Values.ToList();
             var keys = RecentsDictionary.Keys.ToList();
-            long keyForRemove = -1;
+            long keyForRemove = 0;
             var counter = 1;
             for (var i = 0; i < values.Count; i++)
             {
@@ -1264,7 +1297,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                 keyForRemove = keys[i];
                 break;
             }
-            if (keyForRemove != -1)
+            if (keyForRemove != 0)
             {
                 counter = RecentsDictionary[keyForRemove].Count + 1;
                 RecentsDictionary.Remove(keyForRemove);

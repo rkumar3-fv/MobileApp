@@ -5,7 +5,7 @@
 	<key>CFBundleDisplayName</key>
 	<string>FreedomVoice</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.freedomvoice.mobileapp</string>
+	<string>com.freedomvoice</string>
 	<key>CFBundleShortVersionString</key>
 	<string>1.0.20</string>
 	<key>CFBundleVersion</key>

@@ -170,6 +170,9 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 switch (code)
                 {
                     case ActionsHelperEventArgs.AuthLoginError:
+                        _errorText.Text = GetString(Resource.String.ActivityAuth_badLogin);
+                        _errorText.Visibility = ViewStates.Visible;
+                        return;
                     case ActionsHelperEventArgs.AuthPasswdError:
                         _errorText.Text = GetString(Resource.String.ActivityAuth_incorrectError);
                         _errorText.Visibility = ViewStates.Visible;

@@ -45,7 +45,9 @@ namespace FreedomVoice.Core
 
         public static async Task<BaseResult<string>> Login(string login, string password)
         {
-            var postdata = $"UserName={login}&Password={password}";
+            var loginEncoded = WebUtility.UrlEncode(login);
+            var passEncoded = WebUtility.UrlEncode(password);
+            var postdata = $"UserName={loginEncoded}&Password={passEncoded}";
 
             var loginResponse = await MakeAsyncPostRequest<string>("/api/v1/login", postdata, "application/x-www-form-urlencoded", CancellationToken.None);
             if (Native) return loginResponse;
@@ -67,7 +69,8 @@ namespace FreedomVoice.Core
 
         public static async Task<BaseResult<string>> PasswordReset(string login)
         {
-            var postdata = $"UserName={login}";
+            var loginEncoded = WebUtility.UrlEncode(login);
+            var postdata = $"UserName={loginEncoded}";
             return await MakeAsyncPostRequest<string>("/api/v1/passwordReset", postdata, "application/x-www-form-urlencoded", CancellationToken.None);
         }
 
@@ -108,9 +111,9 @@ namespace FreedomVoice.Core
 
         public static async Task<BaseResult<CreateCallReservationSetting>> CreateCallReservation(string systemPhoneNumber, string expectedCallerIdNumber, string presentationPhoneNumber, string destinationPhoneNumber)
         {
-            var expectFormatted = expectedCallerIdNumber.Replace("+", "%2B").Replace("#", "%23").Replace("*", "%2A");
-            var presentFormatted = presentationPhoneNumber.Replace("+", "%2B").Replace("#", "%23").Replace("*", "%2A");
-            var destFormatted = destinationPhoneNumber.Replace("+", "%2B").Replace("#", "%23").Replace("*", "%2A");
+            var expectFormatted = WebUtility.UrlEncode(expectedCallerIdNumber);
+            var presentFormatted = WebUtility.UrlEncode(presentationPhoneNumber);
+            var destFormatted = WebUtility.UrlEncode(destinationPhoneNumber);
             var postdata = $"ExpectedCallerIdNumber={expectFormatted}&PresentationPhoneNumber={presentFormatted}&DestinationPhoneNumber={destFormatted}";
             return await MakeAsyncPostRequest<CreateCallReservationSetting>(
                 $"/api/v1/systems/{systemPhoneNumber}/createCallReservation",
@@ -141,16 +144,18 @@ namespace FreedomVoice.Core
 
         public static async Task<BaseResult<List<Message>>> GetMesages(string systemPhoneNumber, int mailboxNumber, string folderName, int pageSize, int pageNumber, bool asc)
         {
+            var folder = WebUtility.UrlEncode(folderName);
             return await MakeAsyncGetRequest<List<Message>>(
-                $"/api/v1/systems/{systemPhoneNumber}/mailboxes/{mailboxNumber}/folders/{folderName}/messages?PageSize={pageSize}&PageNumber={pageNumber}&SortAsc={asc}",
+                $"/api/v1/systems/{systemPhoneNumber}/mailboxes/{mailboxNumber}/folders/{folder}/messages?PageSize={pageSize}&PageNumber={pageNumber}&SortAsc={asc}",
                 CancellationToken.None);
         }
 
         public static async Task<BaseResult<string>> MoveMessages(string systemPhoneNumber, int mailboxNumber, string destinationFolder, IEnumerable<string> messageIds)
         {
+            var folder = WebUtility.UrlEncode(destinationFolder);
             var messagesStr = messageIds.Aggregate(string.Empty, (current, messageId) => current + ("&MessageIds=" + messageId));
 
-            var postdata = $"DestinationFolderName={destinationFolder}{messagesStr}";
+            var postdata = $"DestinationFolderName={folder}{messagesStr}";
 
             return await MakeAsyncPostRequest<string>(
                 $"/api/v1/systems/{systemPhoneNumber}/mailboxes/{mailboxNumber}/moveMessages",
@@ -172,7 +177,8 @@ namespace FreedomVoice.Core
 
         public static async Task<BaseResult<MediaResponse>> GetMedia(string systemPhoneNumber, int mailboxNumber, string folderName, string messageId, MediaType mediaType, CancellationToken token)
         {
-            return await MakeAsyncFileDownload($"/api/v1/systems/{systemPhoneNumber}/mailboxes/{mailboxNumber}/folders/{folderName}/messages/{messageId}/media/{mediaType}", token);
+            var folder = WebUtility.UrlEncode(folderName);
+            return await MakeAsyncFileDownload($"/api/v1/systems/{systemPhoneNumber}/mailboxes/{mailboxNumber}/folders/{folder}/messages/{messageId}/media/{mediaType}", token);
         }
 
         private static HttpClient CreateClient()
