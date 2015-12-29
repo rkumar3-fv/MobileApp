@@ -215,3 +215,6 @@ FakesAssemblies/
 GeneratedArtifacts/
 _Pvt_Extensions/
 ModelManifest.xml
+
+# Ignore generated Android output (.apk) 
+*.apk
