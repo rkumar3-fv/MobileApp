@@ -157,17 +157,15 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         protected override void OnResume()
         {
             base.OnResume();
-            var phone = Appl.ApplicationHelper?.GetMyPhoneNumber();
+            var phone = Appl?.ApplicationHelper?.GetMyPhoneNumber();
             if (string.IsNullOrEmpty(phone)) return;
             _phoneText.Text = phone;
             _phoneText.SetSelection(_phoneText.Text.Length);
-            if (!Appl.ApplicationHelper.CheckReadPhoneState())
-            { 
-                var snackPerm = Snackbar.Make(RootLayout, Resource.String.Snack_noStatePermission, Snackbar.LengthLong);
-                snackPerm.SetAction(Resource.String.Snack_noPhonePermissionAction, OnSetStatePermission);
-                snackPerm.SetActionTextColor(ContextCompat.GetColor(this, Resource.Color.colorUndoList));
-                snackPerm.Show();
-            }
+            if (Appl.ApplicationHelper.CheckReadPhoneState()) return;
+            var snackPerm = Snackbar.Make(RootLayout, Resource.String.Snack_noStatePermission, Snackbar.LengthLong);
+            snackPerm.SetAction(Resource.String.Snack_noPhonePermissionAction, OnSetStatePermission);
+            snackPerm.SetActionTextColor(ContextCompat.GetColor(this, Resource.Color.colorUndoList));
+            snackPerm.Show();
         }
 
         protected override void OnHelperEvent(ActionsHelperEventArgs args)

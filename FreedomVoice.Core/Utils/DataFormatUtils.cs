@@ -96,7 +96,7 @@ namespace FreedomVoice.Core.Utils
         /// <returns>formatted date</returns>
         public static string ToFullFormattedDate( DateTime date)
         {
-            return date.ToString("MM/dd/yyyy hh:mm tt");
+            return date.ToString("MM/dd/yyyy hh:mm tt").ToUpper();
         }
 
         /// <summary>
@@ -110,12 +110,12 @@ namespace FreedomVoice.Core.Utils
             var current = DateTime.Now;
 
             if ((date.DayOfYear == current.DayOfYear) && (date.Year == current.Year))
-                return date.ToString("hh:mm tt");
+                return date.ToString("hh:mm tt").ToUpper();
 
             if ((date.DayOfYear == current.DayOfYear - 1) && (date.Year == current.Year))
-                return $"{yesterdayLabel} {date.ToString("hh:mm tt")}";
+                return $"{yesterdayLabel} {date.ToString("hh:mm tt").ToUpper()}";
 
-            return date.ToString("MM/dd/yyyy hh:mm tt");
+            return date.ToString("MM/dd/yyyy hh:mm tt").ToUpper();
         }
 
         /// <summary>
@@ -129,7 +129,7 @@ namespace FreedomVoice.Core.Utils
             var current = DateTime.Now;
 
             if ((date.DayOfYear == current.DayOfYear) && (date.Year == current.Year))
-                return date.ToString("hh:mm tt");
+                return date.ToString("hh:mm tt").ToUpper();
 
             if ((date.DayOfYear == current.DayOfYear - 1) && (date.Year == current.Year))
                 return yesterdayLabel;
