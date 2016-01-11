@@ -28,7 +28,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         protected TextView SenderText;
         protected TextView MessageDate;
         protected TextView MessageStamp;
-        protected ImageButton RemoveButton;
         protected ProgressBar Progress;
         protected long AttachmentId;
         private Color _lightProgress;
@@ -61,7 +60,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         protected override void OnStart()
         {
             base.OnStart();
-            RemoveButton.Click += RemoveButtonOnClick;
             
             Progress.IndeterminateDrawable?.SetColorFilter(_darkProgress, PorterDuff.Mode.SrcIn);
             Progress.ProgressDrawable?.SetColorFilter(_lightProgress, PorterDuff.Mode.SrcIn);
@@ -70,7 +68,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         protected override void OnResume()
         {
             base.OnResume();
-            RemoveButton.Visibility = ViewStates.Invisible;
             if ((Helper.SelectedExtension != -1)&&(Helper.SelectedFolder != -1)&&(Helper.SelectedMessage != -1))
             {
                 if (!(Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].MessagesList.Count > Helper.SelectedMessage))

@@ -186,8 +186,8 @@
     <item name="android:gravity">center</item>
     <item name="android:textAlignment">center</item>
     <item name="android:textAllCaps">true</item>
-    <item name="android:maxHeight">@dimen/details_activity_actions_height</item>
-    <item name="android:minHeight">@dimen/details_activity_actions_height</item>
+    <item name="android:maxHeight">@dimen/details_activity_actions_toggle_height</item>
+    <item name="android:minHeight">@dimen/details_activity_actions_toggle_height</item>
     <item name="android:background">@drawable/toggle_selector</item>
     <item name="android:elevation">0dp</item>
   </style>
@@ -200,6 +200,8 @@
     <item name="android:textAllCaps">true</item>
     <item name="android:layout_centerHorizontal">true</item>
     <item name="android:minHeight">@dimen/dlg_action_bar_button</item>
+    <item name="android:maxHeight">@dimen/dlg_action_bar_button</item>
+    <item name="android:minWidth">@dimen/dlg_action_bar_button_width</item>
   </style>
 
   <!-- Borderless EditText for number -->

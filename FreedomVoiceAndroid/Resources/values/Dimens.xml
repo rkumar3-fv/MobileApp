@@ -82,7 +82,8 @@
   <dimen name="details_activity_stamp_margin">20dp</dimen>
   <dimen name="details_activity_actions_margin">10dp</dimen>
   <dimen name="details_activity_actions_spacing">8dp</dimen>
-  <dimen name="details_activity_actions_height">36dp</dimen>
+  <dimen name="details_activity_actions_height">48dp</dimen>
+  <dimen name="details_activity_actions_toggle_height">36dp</dimen>
   <dimen name="details_activity_progress_size">4dp</dimen>
   <dimen name="details_play_button_size">36dp</dimen>
   <dimen name="details_play_margin">9dp</dimen>
@@ -150,7 +151,8 @@
   <!-- Dialogs -->
   <dimen name="dlg_elevation">24dp</dimen>
   <dimen name="dlg_action_bar_height">52dp</dimen>
-  <dimen name="dlg_action_bar_button">36dp</dimen>
+  <dimen name="dlg_action_bar_button">48dp</dimen>
+  <dimen name="dlg_action_bar_button_width">64dp</dimen>
   <dimen name="dlg_action_bar_padding">8dp</dimen>
   <dimen name="dlg_action_bar_font">14sp</dimen>
   <dimen name="dlg_margin">24dp</dimen>

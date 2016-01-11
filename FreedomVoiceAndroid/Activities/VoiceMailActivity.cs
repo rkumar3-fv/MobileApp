@@ -21,7 +21,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             base.OnCreate(bundle);
             SetContentView(Resource.Layout.act_voicemail);
             RootLayout = FindViewById(Resource.Id.voicemailActivity_root);
-            RemoveButton = FindViewById<ImageButton>(Resource.Id.voicemailActivity_deleteButton);
             SenderText = FindViewById<TextView>(Resource.Id.voicemailActivity_senderText);
             MessageDate = FindViewById<TextView>(Resource.Id.voicemailActivity_dateText);
             MessageStamp = FindViewById<TextView>(Resource.Id.voicemailActivity_stampText);

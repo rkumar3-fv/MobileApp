@@ -21,7 +21,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             base.OnCreate(bundle);
             SetContentView(Resource.Layout.act_record);
             RootLayout = FindViewById(Resource.Id.recordActivity_root);
-            RemoveButton = FindViewById<ImageButton>(Resource.Id.recordActivity_deleteButton);
             SenderText = FindViewById<TextView>(Resource.Id.recordActivity_senderText);
             MessageDate = FindViewById<TextView>(Resource.Id.recordActivity_dateText);
             MessageStamp = FindViewById<TextView>(Resource.Id.recordActivity_stampText);
