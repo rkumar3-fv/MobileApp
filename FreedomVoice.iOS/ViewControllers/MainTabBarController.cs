@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using FreedomVoice.Core.Utils;
 using FreedomVoice.iOS.Entities;
-using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.Utilities.Events;
 using GoogleAnalytics.iOS;
 using UIKit;
@@ -17,7 +16,7 @@ namespace FreedomVoice.iOS.ViewControllers
         public List<PresentationNumber> PresentationNumbers { private get; set; }
 	    public List<ExtensionWithCount> ExtensionsList { private get; set; }
 
-	    public bool IsRootController => NavigationController.ViewControllers.Length == 1;
+	    public bool IsRootController => NavigationController == null || NavigationController.ViewControllers.Length == 1;
 
 	    public List<Contact> Contacts { get; set; }
 
