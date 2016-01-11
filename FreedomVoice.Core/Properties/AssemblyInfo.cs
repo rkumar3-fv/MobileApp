@@ -14,5 +14,5 @@ using System.Reflection;
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: NeutralResourcesLanguage("en")]
-[assembly: AssemblyVersion("0.15.1")]
-[assembly: AssemblyFileVersion("0.15.1")]
+[assembly: AssemblyVersion("0.15.2")]
+[assembly: AssemblyFileVersion("0.15.2")]
