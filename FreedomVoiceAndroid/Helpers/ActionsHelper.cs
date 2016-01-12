@@ -764,7 +764,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                     var responseName = response.GetType().Name;
                     if (responseName == "ErrorResponse")
                     {
-                        var errorResponse = (ErrorResponse)response;
+                        var errorResponse = (ErrorResponse) response;
                         string postfix;
                         switch (errorResponse.ErrorCode)
                         {
@@ -803,9 +803,17 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                                 break;
                         }
                         _app.ApplicationHelper.ReportTime(TimingEvent.Request, requestName, $"{responseName}: {postfix}", time);
+#if DEBUG
+                        Log.Debug(App.AppPackage, $"<{requestName}> - <{responseName}>: {postfix}");
+#endif
                     }
                     else
+                    {
                         _app.ApplicationHelper.ReportTime(TimingEvent.Request, requestName, responseName, time);
+#if DEBUG
+                        Log.Debug(App.AppPackage, $"<{requestName}> OK");
+#endif
+                    }
                     if (_preferencesTime != 0)
                     {
                         _app.ApplicationHelper.ReportTime(TimingEvent.LongAction, "LOADING FROM STORAGE", "", _preferencesTime);
@@ -842,9 +850,6 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                         case ErrorResponse.ErrorConnection:
                         case ErrorResponse.ErrorGatewayTimeout:
                         case ErrorResponse.ErrorRequestTimeout:
-#if DEBUG
-                            Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} failed: CONNECTION LOST");
-#endif
                             if (!_waitingRequestArray.ContainsKey(response.RequestId)) break;
                             var req = _waitingRequestArray[response.RequestId].GetType().Name;
                             if ((req == "GetExtensionsRequest")||(req == "GetFoldersRequest")||(req == "GetMessagesRequest"))
@@ -858,9 +863,6 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                         case ErrorResponse.ErrorUnauthorized:
                             if (IsLoggedIn)
                             {
-#if DEBUG
-                                Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} failed: UNAUTHORIZED");
-#endif
                                 if (_accPair != null)
                                 {
                                     var login = (string) _accPair.First;
@@ -877,30 +879,16 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                                     DoLogout(response.RequestId);
                             }
                             else
-                            {
-#if DEBUG
-                                Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} failed: BAD PASSWORD");
-#endif
                                 HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new []{ActionsHelperEventArgs.AuthPasswdError}));
-                            }
                             break;
                         //Bad request format
                         case ErrorResponse.ErrorBadRequest:
                             // Bad login format
                             if (!IsLoggedIn)
-                            {
-#if DEBUG
-                                Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} failed: BAD LOGIN FORMAT");
-#endif
                                 HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new []{ActionsHelperEventArgs.AuthLoginError, ActionsHelperEventArgs.RestoreError}));
-                            }
                             // Call reservation bad request
                             else if (_waitingRequestArray.ContainsKey(response.RequestId))
                             {
-#if DEBUG
-                                Log.Debug(App.AppPackage,
-                                    $"HELPER EXECUTOR: response for request with ID={response.RequestId} failed: BAD REQUEST");
-#endif
                                 if (_waitingRequestArray[response.RequestId] is CallReservationRequest)
                                 {
                                     SaveRecent(response);
@@ -924,10 +912,6 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                         case ErrorResponse.ErrorNotFound:
                             if (!IsLoggedIn)
                             {
-#if DEBUG
-                                Log.Debug(App.AppPackage,
-                                    $"HELPER EXECUTOR: response for request with ID={response.RequestId} failed: BAD LOGIN");
-#endif
                                 HelperEvent?.Invoke(this,
                                     new ActionsHelperEventArgs(response.RequestId,
                                         new[] {ActionsHelperEventArgs.RestoreWrongEmail}));
@@ -960,9 +944,6 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                             // Call reservation bad destination phone
                             if (_waitingRequestArray.ContainsKey(response.RequestId) && _waitingRequestArray[response.RequestId] is CallReservationRequest)
                             {
-#if DEBUG
-                                Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} failed: FORBIDDEN");
-#endif
                                 SaveRecent(response);
                                 HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] {ActionsHelperEventArgs.CallReservationWrong}));
                             }
@@ -971,9 +952,6 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                             break;
                         case ErrorResponse.ErrorInternal:
                         case ErrorResponse.ErrorUnknown:
-#if DEBUG
-                            Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} failed: INTERNAL SERVER ERROR");
-#endif
                             if (!_waitingRequestArray.ContainsKey(response.RequestId)) break;
                             var reqErr = _waitingRequestArray[response.RequestId].GetType().Name;
                             if ((reqErr == "GetExtensionsRequest")||(reqErr == "GetFoldersRequest")||(reqErr == "GetMessagesRequest"))
@@ -990,9 +968,6 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                 case "LoginResponse":
                     IsLoggedIn = true;
                     _preferencesHelper.SaveCredentials(_userLogin, _userPassword, AppHelper.InsightsKey);
-#if DEBUG
-                    Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} successed: YOU ARE LOGGED IN");
-#endif
                     _waitingRequestArray.Remove(response.RequestId);
                     if (_app.ApplicationHelper.IsVoicecallsSupported()&&(IsFirstRun || (_app.ApplicationHelper.GetMyPhoneNumber() == "")))
                     {
@@ -1005,9 +980,6 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 
                 // Restore password response
                 case "RestorePasswordResponse":
-#if DEBUG
-                    Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} successed: E-MAIL SENT");
-#endif
                     if (_waitingRequestArray.ContainsKey(response.RequestId))
                         _waitingRequestArray.Remove(response.RequestId);
                     HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.RestoreOk }));
@@ -1015,9 +987,6 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 
                 // Restore password response
                 case "GetPollingResponse":
-#if DEBUG
-                    Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} successed: NEW POLLING INTERVAL APPLIED");
-#endif
                     if (_waitingRequestArray.ContainsKey(response.RequestId))
                         _waitingRequestArray.Remove(response.RequestId);
                     var pollingResponse = (GetPollingResponse) response;
@@ -1032,18 +1001,12 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 
                 // Login action response
                 case "LogoutResponse":
-#if DEBUG
-                    Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} successed: YOU ARE LOGGED OUT");
-#endif
                     DoLogout(response.RequestId);
                     break;
 
                 // GetAccounts action response
                 case "GetAccountsResponse":
                     var accsResponse = (GetAccountsResponse) response;
-#if DEBUG
-                    Log.Debug(App.AppPackage, $"HELPER EXECUTOR: detect {accsResponse.AccountsList.Count} accounts");
-#endif
                     if (_waitingRequestArray.ContainsKey(response.RequestId))
                         _waitingRequestArray.Remove(response.RequestId);
                     switch (accsResponse.AccountsList.Count)
@@ -1095,9 +1058,6 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                 // Get presentation numbers response
                 case "GetPresentationNumbersResponse":
                     var numbResponse = (GetPresentationNumbersResponse)response;
-#if DEBUG
-                    Log.Debug(App.AppPackage, $"HELPER EXECUTOR: detect {numbResponse.NumbersList.Count} numbers");
-#endif
                     if (_waitingRequestArray.ContainsKey(response.RequestId))
                         _waitingRequestArray.Remove(response.RequestId);
                     switch (numbResponse.NumbersList.Count)
@@ -1215,9 +1175,6 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 
                 // Move message to trash response
                 case "RemoveMessageResponse":
-#if DEBUG
-                    Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} successed - MESSAGE REMOVED");
-#endif
                     if (_waitingRequestArray.ContainsKey(response.RequestId))
                         _waitingRequestArray.Remove(response.RequestId);
                     HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.MsgMessagesUpdated }));
@@ -1225,9 +1182,6 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 
                 // Restore message from trash response
                 case "RestoreMessageResponse":
-#if DEBUG
-                    Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} successed - MESSAGE RESTORED");
-#endif
                     if (_waitingRequestArray.ContainsKey(response.RequestId))
                         _waitingRequestArray.Remove(response.RequestId);
                     HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.MsgMessagesUpdated }));
@@ -1235,9 +1189,6 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 
                 // Delete message from trash response
                 case "DeleteMessageResponse":
-#if DEBUG
-                    Log.Debug(App.AppPackage, $"HELPER EXECUTOR: response for request with ID={response.RequestId} successed - MESSAGE DELETED");
-#endif
                     if (_waitingRequestArray.ContainsKey(response.RequestId))
                         _waitingRequestArray.Remove(response.RequestId);
                     HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.MsgMessagesUpdated }));

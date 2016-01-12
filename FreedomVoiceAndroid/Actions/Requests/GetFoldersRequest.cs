@@ -2,9 +2,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Android.OS;
 using Android.Runtime;
-#if DEBUG
-using Android.Util;
-#endif
 using com.FreedomVoice.MobileApp.Android.Actions.Responses;
 using com.FreedomVoice.MobileApp.Android.Entities;
 using FreedomVoice.Core;
@@ -51,13 +48,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
 
         public override async Task<BaseResponse> ExecuteRequest()
         {
-#if DEBUG
-            Log.Debug(App.AppPackage, $"{GetType().Name} REQUESTS FOLDERS FOR x{ExtensionId}");
-#endif
             var asyncRes = await ApiHelper.GetFoldersWithCount(AccountName, ExtensionId);
-#if DEBUG
-            Log.Debug(App.AppPackage, $"{GetType().Name} GetResponse {(asyncRes == null ? "NULL" : "NOT NULL")}");
-#endif
             if (asyncRes == null) return new ErrorResponse(Id, ErrorResponse.ErrorInternal);
             var errorResponse = CheckErrorResponse(Id, asyncRes.Code);
             if (errorResponse != null)

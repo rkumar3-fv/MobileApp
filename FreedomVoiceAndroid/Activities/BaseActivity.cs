@@ -5,9 +5,6 @@ using Android.OS;
 using Android.Provider;
 using Android.Support.Design.Widget;
 using Android.Support.V7.App;
-#if DEBUG
-using Android.Util;
-#endif
 using Android.Views;
 using com.FreedomVoice.MobileApp.Android.Dialogs;
 using com.FreedomVoice.MobileApp.Android.Helpers;
@@ -62,9 +59,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         /// <param name="args">Result args</param>
         private void OnHelperEvent(object sender, EventArgs args)
         {
-#if DEBUG
-            Log.Debug(App.AppPackage, $"ACTIVITY {GetType().Name} handle event {args.GetType().Name}");
-#endif
             var arg = args as ActionsHelperIntentArgs;
             if (arg != null)
             {
@@ -74,9 +68,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 if (actArray?.Length > 0)
                 {
                     var act = actArray[actArray.Length - 1];
-#if DEBUG
-                    Log.Debug(App.AppPackage, $"Activity {act} already started");
-#endif
                     if (act == GetType().Name)
                         return;
                 }
