@@ -75,8 +75,7 @@ namespace FreedomVoice.iOS.ViewControllers
             var recentLineView = new LineView(new RectangleF(0, (float)(CallerIdView.Frame.Y + CallerIdView.Frame.Height), (float)Theme.ScreenBounds.Width, 0.5f));
             View.AddSubviews(recentLineView);
 
-            if (!ContactsHelper.ContactsRequested)
-                MainTabBarInstance.Contacts = await ContactsHelper.GetContactsListAsync();
+            await ContactsHelper.GetContactsListAsync();
 
             base.ViewDidLoad();
         }
@@ -122,25 +121,23 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private static Contact FindContactByNumber(string number)
         {
-            return MainTabBarInstance.Contacts.FirstOrDefault(c => c.Phones.Any(p => DataFormatUtils.NormalizePhone(p.Number) == DataFormatUtils.NormalizePhone(number)));
+            return ContactsHelper.ContactList.FirstOrDefault(c => c.Phones.Any(p => DataFormatUtils.NormalizePhone(p.Number) == DataFormatUtils.NormalizePhone(number)));
         }
 
         private static List<Recent> GetRecentsUpdatedAndOrdered()
         {
-            var resents = MainTabBarInstance.GetRecentsOrdered();
+            var recents = MainTabBarInstance.GetRecentsOrdered();
 
-            foreach (var item in resents)
+            foreach (var item in recents)
             {
-                if (!string.IsNullOrEmpty(item.ContactId))
-                    continue;
+                var foundContact = FindContactByNumber(item.PhoneNumber);
+                if (foundContact == null) continue;
 
-                var findContact = FindContactByNumber(item.PhoneNumber);
-                if (findContact == null) continue;
-
-                item.Title = findContact.DisplayName;
-                item.ContactId = findContact.Id;
+                item.Title = foundContact.DisplayName;
+                item.ContactId = foundContact.Id;
             }
-            return resents;
+
+            return recents;
         }
 
         private static void ClearRecent()

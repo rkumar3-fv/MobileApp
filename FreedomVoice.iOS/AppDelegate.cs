@@ -57,6 +57,8 @@ namespace FreedomVoice.iOS
 
             ActivityIndicator = new ActivityIndicator(Theme.ScreenBounds);
 
+            Utilities.Helpers.Contacts.SubscribeToContactsChange();
+
             NSHttpCookieStorage.SharedStorage.AcceptPolicy = NSHttpCookieAcceptPolicy.Always;
 
             Recents.RestoreRecentsFromCache();

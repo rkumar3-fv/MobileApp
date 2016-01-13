@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AddressBook;
+using Contacts;
+using Foundation;
 using FreedomVoice.Core.Utils;
 using FreedomVoice.iOS.Utilities.Extensions;
 using Xamarin.Contacts;
@@ -13,8 +15,14 @@ namespace FreedomVoice.iOS.Utilities.Helpers
     {
         private static readonly char[] Separators = { ' ', '-', '.', '/', '@' };
 
+        public static List<Contact> ContactList { get; private set; }
+
+        public static int ContactsCount => ContactList.Count;
+
         static Contacts()
         {
+            ContactList = new List<Contact>();
+
             ContactNameFormat = ABPersonCompositeNameFormat.LastNameFirst;
             ContactSortOrder = ABPersonSortBy.LastName;
         }
@@ -25,16 +33,54 @@ namespace FreedomVoice.iOS.Utilities.Helpers
             return HasContactsPermissions ?? (HasContactsPermissions = await new Xamarin.Contacts.AddressBook().RequestPermission()).Value;
         }
 
-        public static bool ContactsRequested { get; private set; }
+        private static bool ContactsRequested { get; set; }
+
+        private static ABAddressBook NotificationAddressBook { get; set; }
+        private static CNContactStore NotificationContactStore { get; set; }
 
         private static ABPersonCompositeNameFormat ContactNameFormat { get; set; }
         public static ABPersonSortBy ContactSortOrder { get; private set; }
 
-        public async static Task<List<Contact>> GetContactsListAsync()
+        public static void SubscribeToContactsChange()
         {
+            if (AppDelegate.SystemVersion == 9)
+            {
+                NotificationContactStore = new CNContactStore();
+                NSNotificationCenter.DefaultCenter.AddObserver(CNContactStore.NotificationDidChange, MyAddressBookExternalChangeCallback);
+            }
+            else
+            {
+                NotificationAddressBook = new ABAddressBook();
+                NotificationAddressBook.ExternalChange += MyAddressBookExternalChangeCallback;
+            }
+        }
+
+        private static void MyAddressBookExternalChangeCallback(NSNotification notification)
+        {
+            RenewContactsList();
+        }
+
+        private static void MyAddressBookExternalChangeCallback(object sender, ExternalChangeEventArgs e)
+        {
+            RenewContactsList();
+        }
+
+        private static async void RenewContactsList()
+        {
+            ContactsRequested = false;
+
+            await GetContactsListAsync();
+        }
+
+        public async static Task GetContactsListAsync()
+        {
+            if (ContactsRequested)
+                return;
+
             ContactsRequested = true;
 
-            if (!await ContactHasAccessPermissionsAsync()) return new List<Contact>();
+            if (!await ContactHasAccessPermissionsAsync())
+                return;
 
             ContactNameFormat = ABPerson.GetCompositeNameFormat(null);
             ContactSortOrder = ABPerson.SortOrdering;
@@ -42,7 +88,7 @@ namespace FreedomVoice.iOS.Utilities.Helpers
             var contactsList = new Xamarin.Contacts.AddressBook().Where(c => c.Phones.Any()).ToList();
             contactsList.ForEach(c => UpdateDisplayName(c));
 
-            return SortContacts(contactsList);
+            ContactList = SortContacts(contactsList);
         }
 
         private static List<Contact> SortContacts(IEnumerable<Contact> contactsList)

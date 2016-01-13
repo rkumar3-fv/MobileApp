@@ -11,6 +11,7 @@ using FreedomVoice.iOS.Utilities.Events;
 using FreedomVoice.iOS.Utilities.Helpers;
 using FreedomVoice.iOS.ViewModels;
 using UIKit;
+using ContactsHelper = FreedomVoice.iOS.Utilities.Helpers.Contacts;
 
 namespace FreedomVoice.iOS.ViewControllers
 {
@@ -40,6 +41,8 @@ namespace FreedomVoice.iOS.ViewControllers
             AppDelegate.ActivityIndicator.SetActivityIndicatorCenter(Theme.ScreenCenter);
 
             await InitializeTableView();
+
+            await ContactsHelper.GetContactsListAsync();
 
             base.ViewDidLoad();
         }
@@ -100,7 +103,7 @@ namespace FreedomVoice.iOS.ViewControllers
             };
             View.Add(_messagesTableView);
 
-            var messagesViewModel = new MessagesViewModel(SelectedAccount.PhoneNumber, SelectedExtension.ExtensionNumber, SelectedFolder.DisplayName, MainTabBarInstance.Contacts);
+            var messagesViewModel = new MessagesViewModel(SelectedAccount.PhoneNumber, SelectedExtension.ExtensionNumber, SelectedFolder.DisplayName, ContactsHelper.ContactList);
             messagesViewModel.OnUnauthorizedResponse += (sender, args) => OnUnauthorizedError();
             await messagesViewModel.GetMessagesListAsync();
 
@@ -168,7 +171,7 @@ namespace FreedomVoice.iOS.ViewControllers
 
             await Task.Run(async () => 
             {
-                var messagesViewModel = new MessagesViewModel(SelectedAccount.PhoneNumber, SelectedExtension.ExtensionNumber, SelectedFolder.DisplayName, MainTabBarInstance.Contacts);
+                var messagesViewModel = new MessagesViewModel(SelectedAccount.PhoneNumber, SelectedExtension.ExtensionNumber, SelectedFolder.DisplayName, ContactsHelper.ContactList);
 
                 await messagesViewModel.GetMessagesListAsync(true);
                 if (messagesViewModel.IsErrorResponseReceived) return;
