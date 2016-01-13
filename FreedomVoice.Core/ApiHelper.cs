@@ -282,14 +282,13 @@ namespace FreedomVoice.Core
             {
                 using (var response = await r)
                 {
+                    string content = null;
                     try
                     {
                         if (ct.IsCancellationRequested)
                             return new BaseResult<T> { Code = ErrorCodes.Cancelled };
-
-                        response.EnsureSuccessStatusCode();
-
-                        string content = await response.Content.ReadAsStringAsync();
+                        content = await response.Content.ReadAsStringAsync();
+                        response.EnsureSuccessStatusCode();         
                         retResult = new BaseResult<T>
                         {
                             Code = ErrorCodes.Ok,
@@ -298,7 +297,7 @@ namespace FreedomVoice.Core
                     }
                     catch (HttpRequestException ex)
                     {
-                        return HandleErrorState<T>(response.StatusCode, ex);
+                        return content != null ? HandleErrorState<T>(response.StatusCode, ex, content) : HandleErrorState<T>(response.StatusCode, ex);
                     }
                 }
             }
@@ -316,6 +315,11 @@ namespace FreedomVoice.Core
         }
 
         private static BaseResult<T> HandleErrorState<T>(HttpStatusCode code, Exception ex)
+        {
+            return HandleErrorState<T>(code, ex, "JSON is NULL");
+        }
+
+        private static BaseResult<T> HandleErrorState<T>(HttpStatusCode code, Exception ex, string json)
         {
             var baseResult = new BaseResult<T> { Result = default(T), ErrorText = ex != null ? ex.Message : string.Empty };
 
@@ -349,7 +353,7 @@ namespace FreedomVoice.Core
                     baseResult.Code = ErrorCodes.Unknown;
                     break;
             }
-
+            baseResult.JsonText = json;
             return baseResult;
         }
     }

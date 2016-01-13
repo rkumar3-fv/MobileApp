@@ -55,8 +55,8 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
         public override async Task<BaseResponse> ExecuteRequest()
         {
             var asyncRes = await ApiHelper.CreateCallReservation(Account, RealSimNumber, PresentationNumber, DialingNumber);
-            if (asyncRes == null) return new ErrorResponse(Id, ErrorResponse.ErrorInternal);
-            var errorResponse = CheckErrorResponse(Id, asyncRes.Code);
+            if (asyncRes == null) return new ErrorResponse(Id, ErrorResponse.ErrorInternal, "Response is NULL");
+            var errorResponse = CheckErrorResponse(Id, asyncRes.Code, asyncRes.JsonText);
             if (errorResponse != null)
                 return errorResponse;
             return new CallReservationResponse(Id, asyncRes.Result.SwitchboardPhoneNumber);

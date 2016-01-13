@@ -805,6 +805,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                         _app.ApplicationHelper.ReportTime(TimingEvent.Request, requestName, $"{responseName}: {postfix}", time);
 #if DEBUG
                         Log.Debug(App.AppPackage, $"<{requestName}> - <{responseName}>: {postfix}");
+                        Log.Debug(App.AppPackage, $"JSON: {errorResponse.ErrorJson}");
 #endif
                     }
                     else
@@ -885,10 +886,10 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                         case ErrorResponse.ErrorBadRequest:
                             // Bad login format
                             if (!IsLoggedIn)
-                                HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new []{ActionsHelperEventArgs.AuthLoginError, ActionsHelperEventArgs.RestoreError}));
-                            // Call reservation bad request
+                                HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new []{ActionsHelperEventArgs.AuthLoginError, ActionsHelperEventArgs.RestoreError}));             
                             else if (_waitingRequestArray.ContainsKey(response.RequestId))
                             {
+                                // Call reservation bad request
                                 if (_waitingRequestArray[response.RequestId] is CallReservationRequest)
                                 {
                                     SaveRecent(response);
@@ -896,16 +897,14 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                                         new ActionsHelperEventArgs(response.RequestId,
                                             new[] {ActionsHelperEventArgs.CallReservationFail}));
                                 }
-                                else if ((_waitingRequestArray[response.RequestId] is GetMessagesRequest) ||
-                                     (_waitingRequestArray[response.RequestId] is GetExtensionsRequest) ||
-                                     (_waitingRequestArray[response.RequestId] is GetFoldersRequest))
-                                    HelperEvent?.Invoke(this,
-                                        new ActionsHelperEventArgs(response.RequestId,
-                                            new[] { ActionsHelperEventArgs.MsgUpdateFailedInternal }));
-                                else
-                                    HelperEvent?.Invoke(this,
-                                        new ActionsHelperEventArgs(response.RequestId,
-                                            new[] { ActionsHelperEventArgs.InternalError }));
+                                // Messages loading bad request
+                                else if (_waitingRequestArray[response.RequestId] is GetMessagesRequest ||
+                                     _waitingRequestArray[response.RequestId] is GetExtensionsRequest ||
+                                     _waitingRequestArray[response.RequestId] is GetFoldersRequest)
+                                    HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.MsgUpdateFailedInternal }));
+                                // Not polling interval bad request
+                                else if (!(_waitingRequestArray[response.RequestId] is GetPollingRequest))
+                                    HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.InternalError }));
                             }
                             break;
                         //Account not found error
@@ -918,17 +917,15 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                             }
                             else
                             {
+                                // Messages 404
                                 if (_waitingRequestArray.ContainsKey(response.RequestId) &&
-                                    ((_waitingRequestArray[response.RequestId] is GetMessagesRequest) ||
-                                     (_waitingRequestArray[response.RequestId] is GetExtensionsRequest) ||
-                                     (_waitingRequestArray[response.RequestId] is GetFoldersRequest)))
-                                    HelperEvent?.Invoke(this,
-                                        new ActionsHelperEventArgs(response.RequestId,
-                                            new[] {ActionsHelperEventArgs.MsgUpdateFailedInternal}));
-                                else
-                                    HelperEvent?.Invoke(this,
-                                        new ActionsHelperEventArgs(response.RequestId,
-                                            new[] {ActionsHelperEventArgs.InternalError}));
+                                    (_waitingRequestArray[response.RequestId] is GetMessagesRequest ||
+                                     _waitingRequestArray[response.RequestId] is GetExtensionsRequest ||
+                                     _waitingRequestArray[response.RequestId] is GetFoldersRequest))
+                                    HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] {ActionsHelperEventArgs.MsgUpdateFailedInternal}));
+                                // Not polling interval 404
+                                else if (!(_waitingRequestArray[response.RequestId] is GetPollingRequest))
+                                    HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] {ActionsHelperEventArgs.InternalError}));
                             }
                             break;
                         //Number on hold (payment required) error
@@ -957,7 +954,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                             if ((reqErr == "GetExtensionsRequest")||(reqErr == "GetFoldersRequest")||(reqErr == "GetMessagesRequest"))
                                 HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.MsgUpdateFailedInternal}));
                             else if (reqErr != "GetPollingRequest")
-                                HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.InternalError }));
+                                HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] {ActionsHelperEventArgs.InternalError}));
                             break;
                     }
                     if (_waitingRequestArray.ContainsKey(response.RequestId))

@@ -23,7 +23,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
         public override async Task<BaseResponse> ExecuteRequest()
         {
             var asyncRes = await ApiHelper.Logout();
-            var errorResponse = CheckErrorResponse(Id, asyncRes.Code);
+            var errorResponse = CheckErrorResponse(Id, asyncRes.Code, "");
             if (errorResponse != null)
                 return errorResponse;
             return new LogoutResponse(Id);

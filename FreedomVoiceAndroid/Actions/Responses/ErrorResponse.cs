@@ -25,14 +25,16 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Responses
         public const int ErrorGatewayTimeout = 10;
         public const int ErrorUnknown = 0;
 
-        public ErrorResponse(long requestId, int errorCode) : base(requestId)
+        public ErrorResponse(long requestId, int errorCode, string json) : base(requestId)
         {
             ErrorCode = errorCode;
+            ErrorJson = json;
         }
 
         private ErrorResponse(Parcel parcel) : base(parcel)
         {
             ErrorCode = parcel.ReadInt();
+            ErrorJson = parcel.ReadString();
         }
 
         /// <summary>
@@ -40,10 +42,13 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Responses
         /// </summary>
         public int ErrorCode { get; }
 
+        public string ErrorJson { get; }
+
         public override void WriteToParcel(Parcel dest, ParcelableWriteFlags flags)
         {
             base.WriteToParcel(dest, flags);
             dest.WriteInt(ErrorCode);
+            dest.WriteString(ErrorJson);
         }
 
         [ExportField("CREATOR")]

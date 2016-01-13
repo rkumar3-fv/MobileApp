@@ -9,5 +9,7 @@
         public T Result { get; set; }
 
         public string ErrorText { get; set; }
+
+        public string JsonText { get; set; }
     }
 }

@@ -59,8 +59,8 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
             for (var i = 1; i < 10; i++)
             {
                 var asyncRes = await ApiHelper.GetMesages(AccountName, ExtensionId, Folder, 30, i, false);
-                if (asyncRes == null) return new ErrorResponse(Id, ErrorResponse.ErrorInternal);
-                var errorResponse = CheckErrorResponse(Id, asyncRes.Code);
+                if (asyncRes == null) return new ErrorResponse(Id, ErrorResponse.ErrorInternal, "Response is NULL");
+                var errorResponse = CheckErrorResponse(Id, asyncRes.Code, asyncRes.JsonText);
                 if (errorResponse != null)
                     if (i == 1)
                         return errorResponse;
