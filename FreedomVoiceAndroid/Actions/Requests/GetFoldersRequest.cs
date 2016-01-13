@@ -50,7 +50,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
         {
             var asyncRes = await ApiHelper.GetFoldersWithCount(AccountName, ExtensionId);
             if (asyncRes == null) return new ErrorResponse(Id, ErrorResponse.ErrorInternal, "Response is NULL");
-            var errorResponse = CheckErrorResponse(Id, asyncRes.Code, asyncRes.JsonText);
+            var errorResponse = CheckErrorResponse(Id, asyncRes.Code, $"{asyncRes.HttpCode} - {asyncRes.JsonText}");
             if (errorResponse != null)
                 return errorResponse;
             var listFold = asyncRes.Result;

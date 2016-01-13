@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Android.OS;
 using Android.Runtime;
-#if DEBUG
-using Android.Util;
-#endif
 using com.FreedomVoice.MobileApp.Android.Actions.Responses;
 using FreedomVoice.Core;
 using Java.Interop;
@@ -63,15 +60,9 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
         /// <returns>RemoveMessageResponse or ErrorResponse</returns>
         public override async Task<BaseResponse> ExecuteRequest()
         {
-#if DEBUG
-            Log.Debug(App.AppPackage, $"{GetType().Name} executes request");
-#endif
             var asyncRes = await ApiHelper.MoveMessages(Account, Extension, "Trash", new List<string> {MessageName});
-#if DEBUG
-            Log.Debug(App.AppPackage, $"{GetType().Name} GetResponse {(asyncRes == null ? "NULL" : "NOT NULL")}");
-#endif
             if (asyncRes == null) return new ErrorResponse(Id, ErrorResponse.ErrorInternal, "Response is NULL");
-            var errorResponse = CheckErrorResponse(Id, asyncRes.Code, asyncRes.JsonText);
+            var errorResponse = CheckErrorResponse(Id, asyncRes.Code, $"{asyncRes.HttpCode} - {asyncRes.JsonText}");
             if (errorResponse != null)
                 return errorResponse;
             return new RemoveMessageResponse(Id);

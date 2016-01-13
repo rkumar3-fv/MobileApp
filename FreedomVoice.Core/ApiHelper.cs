@@ -292,7 +292,8 @@ namespace FreedomVoice.Core
                         retResult = new BaseResult<T>
                         {
                             Code = ErrorCodes.Ok,
-                            Result = JsonConvert.DeserializeObject<T>(content)
+                            Result = JsonConvert.DeserializeObject<T>(content),
+                            HttpCode = (int)response.StatusCode
                         };
                     }
                     catch (HttpRequestException ex)
@@ -321,8 +322,13 @@ namespace FreedomVoice.Core
 
         private static BaseResult<T> HandleErrorState<T>(HttpStatusCode code, Exception ex, string json)
         {
-            var baseResult = new BaseResult<T> { Result = default(T), ErrorText = ex != null ? ex.Message : string.Empty };
-
+            var baseResult = new BaseResult<T>
+            {
+                Result = default(T),
+                ErrorText = ex != null ? ex.Message : string.Empty,
+                HttpCode = (int) code,
+                JsonText = json
+            };
             switch (code)
             {
                 case HttpStatusCode.Unauthorized:
@@ -353,7 +359,6 @@ namespace FreedomVoice.Core
                     baseResult.Code = ErrorCodes.Unknown;
                     break;
             }
-            baseResult.JsonText = json;
             return baseResult;
         }
     }

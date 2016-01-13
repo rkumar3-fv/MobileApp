@@ -30,7 +30,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
         {
             var asyncRes = await ApiHelper.DeleteMessages(Account, Extension, new List<string> { MessageName });
             if (asyncRes == null) return new ErrorResponse(Id, ErrorResponse.ErrorInternal, "Response is NULL");
-            var errorResponse = CheckErrorResponse(Id, asyncRes.Code, asyncRes.JsonText);
+            var errorResponse = CheckErrorResponse(Id, asyncRes.Code, $"{asyncRes.HttpCode} - {asyncRes.JsonText}");
             if (errorResponse != null)
                 return errorResponse;
             return new DeleteMessageResponse(Id);

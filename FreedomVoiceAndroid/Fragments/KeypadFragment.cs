@@ -1,9 +1,6 @@
 using System;
 using System.Linq;
 using Android.Support.Design.Widget;
-#if DEBUG
-using Android.Util;
-#endif
 using Android.Views;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Helpers;
@@ -87,9 +84,6 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         /// </summary>
         private void ButtonDigitOnClick(string s)
         {
-#if DEBUG
-            Log.Debug(App.AppPackage, $"KEYPAD: add {s}");
-#endif
             _enteredNumber=_enteredNumber.Insert(_enteredNumber.Length, s);
             SetupNewText();
         }
@@ -117,16 +111,9 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             if (_enteredNumber.Length > 0)
             {
                 var newString = _enteredNumber.Substring(0, _enteredNumber.Length - 1);
-#if DEBUG
-                Log.Debug(App.AppPackage, $"KEYPAD: remove symbol {_enteredNumber.Substring(_enteredNumber.Length-1)}");
-#endif
                 _enteredNumber = newString;
                 SetupNewText();
             }
-#if DEBUG
-            else
-                Log.Debug(App.AppPackage, "KEYPAD: nothing to remove");
-#endif
         }
 
         /// <summary>
@@ -134,9 +121,6 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         /// </summary>
         private void ButtonZeroOnLongClick(object sender, View.LongClickEventArgs longClickEventArgs)
         {
-#if DEBUG
-            Log.Debug(App.AppPackage, "KEYPAD: + added");
-#endif
             _enteredNumber = _enteredNumber.Insert(_enteredNumber.Length, "+");
             SetupNewText();
         }
@@ -146,9 +130,6 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         /// </summary>
         private void BackspaceButtonOnLongClick(object sender, View.LongClickEventArgs longClickEventArgs)
         {
-#if DEBUG
-            Log.Debug(App.AppPackage, "KEYPAD: clear phone");
-#endif
             _enteredNumber = "";
             SetupNewText();
         }

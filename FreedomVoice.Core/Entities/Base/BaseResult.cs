@@ -11,5 +11,7 @@
         public string ErrorText { get; set; }
 
         public string JsonText { get; set; }
+
+        public int HttpCode { get; set; }
     }
 }
