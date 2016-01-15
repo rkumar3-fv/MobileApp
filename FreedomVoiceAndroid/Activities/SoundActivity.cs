@@ -46,6 +46,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             _audioManager = GetSystemService(AudioService).JavaCast<AudioManager>();
             _audioManager.Mode = Mode.Normal;
             _audioManager.SpeakerphoneOn = false;
+
+            VolumeControlStream = Stream.VoiceCall;
         }
 
         protected override void OnStart()

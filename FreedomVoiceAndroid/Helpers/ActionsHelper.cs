@@ -51,8 +51,9 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                 return _pollingInterval;
             }
         }
-
+        
         private double _pollingInterval;
+        private int _repeats;
 
         /// <summary>
         /// Last entered user login
@@ -165,7 +166,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             SelectedExtension = -1;
             SelectedFolder = -1;
             SelectedMessage = -1;
-
+            _repeats = 0;
             if (!IsFirstRun)
             {
                 var intentLoading = new Intent(_app, typeof(LoadingActivity));
@@ -810,6 +811,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                     }
                     else
                     {
+                        _repeats = 0;
                         _app.ApplicationHelper.ReportTime(TimingEvent.Request, requestName, responseName, time);
 #if DEBUG
                         Log.Debug(App.AppPackage, $"<{requestName}> OK");
@@ -948,13 +950,33 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                                 DoLogout(response.RequestId);
                             break;
                         case ErrorResponse.ErrorInternal:
-                        case ErrorResponse.ErrorUnknown:
                             if (!_waitingRequestArray.ContainsKey(response.RequestId)) break;
                             var reqErr = _waitingRequestArray[response.RequestId].GetType().Name;
                             if ((reqErr == "GetExtensionsRequest")||(reqErr == "GetFoldersRequest")||(reqErr == "GetMessagesRequest"))
                                 HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.MsgUpdateFailedInternal}));
                             else if (reqErr != "GetPollingRequest")
                                 HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] {ActionsHelperEventArgs.InternalError}));
+                            break;
+                        case ErrorResponse.ErrorUnknown:
+                            if (!_waitingRequestArray.ContainsKey(response.RequestId)) break;
+                            var reqError = _waitingRequestArray[response.RequestId].GetType().Name;
+                            if (reqError != "GetPollingRequest")
+                            {
+                                if (_repeats < 5)
+                                {
+                                    var repeatable = _waitingRequestArray[response.RequestId];
+                                    _waitingRequestArray.Remove(response.RequestId);
+                                    _repeats++;
+                                    PrepareIntent(RequestId, repeatable);
+                                }
+                                else
+                                {
+                                    if ((reqError == "GetExtensionsRequest") || (reqError == "GetFoldersRequest") || (reqError == "GetMessagesRequest"))
+                                        HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] {ActionsHelperEventArgs.MsgUpdateFailedInternal}));
+                                    else
+                                        HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] {ActionsHelperEventArgs.InternalError}));
+                                }
+                            }
                             break;
                     }
                     if (_waitingRequestArray.ContainsKey(response.RequestId))
@@ -1029,12 +1051,11 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                             {
                                 var accName = (string) _accPair.First;
                                 if (!string.IsNullOrEmpty(accName))
-                                { 
+                                {
                                     var selAccount = new Account(accName, new List<string>());
-                                    for (var i = 0; i < AccountsList.Count; i++)
+                                    foreach (var account in AccountsList.Where(account => account.Equals(selAccount)))
                                     {
-                                        if (!AccountsList[i].Equals(selAccount)) continue;
-                                        SelectedAccount = AccountsList[i];
+                                        SelectedAccount = account;
                                         break;
                                     }
                                 }

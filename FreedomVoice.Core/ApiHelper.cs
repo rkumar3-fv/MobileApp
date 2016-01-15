@@ -308,7 +308,9 @@ namespace FreedomVoice.Core
                 {
                     Code = ErrorCodes.Unknown,
                     Result = default(T),
-                    ErrorText = ex2.Message
+                    ErrorText = ex2.Message,
+                    HttpCode = -1, 
+                    JsonText = ex2.Message
                 };
             }
 
