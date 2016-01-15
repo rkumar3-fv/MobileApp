@@ -1051,12 +1051,11 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                             {
                                 var accName = (string) _accPair.First;
                                 if (!string.IsNullOrEmpty(accName))
-                                { 
+                                {
                                     var selAccount = new Account(accName, new List<string>());
-                                    for (var i = 0; i < AccountsList.Count; i++)
+                                    foreach (var account in AccountsList.Where(account => account.Equals(selAccount)))
                                     {
-                                        if (!AccountsList[i].Equals(selAccount)) continue;
-                                        SelectedAccount = AccountsList[i];
+                                        SelectedAccount = account;
                                         break;
                                     }
                                 }
