@@ -27,8 +27,12 @@ namespace FreedomVoice.iOS.TableViewCells
 
             var textToMakeBold = ContactsHelper.ContactSortOrder == ABPersonSortBy.LastName ? lastName : firstName;
 
-            var boldedRange = string.IsNullOrEmpty(textToMakeBold) ? new NSRange(0, displayName.Length)
-                                                                   : new NSRange(displayName.IndexOf(textToMakeBold, StringComparison.Ordinal), textToMakeBold.Length);
+            NSRange boldedRange;
+
+            if (!string.IsNullOrEmpty(textToMakeBold) && displayName.IndexOf(textToMakeBold, StringComparison.Ordinal) != -1)
+                boldedRange = new NSRange(displayName.IndexOf(textToMakeBold, StringComparison.Ordinal), textToMakeBold.Length);
+            else
+                boldedRange = new NSRange(0, displayName.Length);
 
             var textAttributedString = new NSMutableAttributedString(displayName);
             textAttributedString.AddAttribute(UIStringAttributeKey.Font, UIFont.SystemFontOfSize(17, UIFontWeight.Semibold), boldedRange);
