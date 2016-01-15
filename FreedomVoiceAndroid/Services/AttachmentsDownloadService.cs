@@ -48,9 +48,6 @@ namespace com.FreedomVoice.MobileApp.Android.Services
         public override void OnCreate()
         {
             base.OnCreate();
-#if DEBUG
-            Log.Debug(App.AppPackage, "DOWNLOADING FOREGROUND SERVICE STARTED");
-#endif
             var app = App.GetApplication(this);
             _helper = app.ApplicationHelper;
             _downloadingUrls = new ConcurrentQueue<Message>();
@@ -178,9 +175,6 @@ namespace com.FreedomVoice.MobileApp.Android.Services
             }
             catch (Exception)
             {
-#if DEBUG
-                Log.Debug(App.AppPackage, "MEDIA REQUEST FAILED: UNABLE TO CREATE DIRECTORY");
-#endif
                 var failData = new Bundle();
                 failData.PutParcelable(AttachmentsServiceResultReceiver.ReceiverDataExtra, new ErrorReport(msg.Id, msg, ErrorReport.ErrorBadRequest));
                 _receiver.Send(Result.Ok, failData);
@@ -268,17 +262,11 @@ namespace com.FreedomVoice.MobileApp.Android.Services
                     var resData = new Bundle();
                     if (!token.IsCancellationRequested)
                     {
-#if DEBUG
-                        Log.Debug(App.AppPackage, $"MEDIA FILE SAVED. Path - {fullName}");
-#endif
                         resData.PutParcelable(AttachmentsServiceResultReceiver.ReceiverDataExtra,
                             new SuccessReport(msg.Id, msg, fullName));
                     }
                     else
                     {
-#if DEBUG
-                        Log.Debug(App.AppPackage, "MEDIA FILE LOADING CANCELLED");
-#endif
                         resData.PutParcelable(AttachmentsServiceResultReceiver.ReceiverDataExtra,
                             new ErrorReport(msg.Id, msg, ErrorReport.ErrorCancelled));
                     }
@@ -295,14 +283,6 @@ namespace com.FreedomVoice.MobileApp.Android.Services
                     new ErrorReport(msg.Id, msg, ErrorReport.ErrorBadRequest));
                 _receiver.Send(Result.Ok, failData);
             }
-        }
-
-        public override void OnDestroy()
-        {
-            base.OnDestroy();
-#if DEBUG
-            Log.Debug(App.AppPackage, "SERVICE DESTROYED");
-#endif
         }
     }
 }
