@@ -108,7 +108,47 @@ namespace FreedomVoice.iOS.Utilities.Helpers
                     break;
             }
 
-            return sortedContacts.ToList();
+            return GetMergedContacts(sortedContacts);
+        }
+
+        private static List<Contact> GetMergedContacts(IOrderedEnumerable<Contact> contacts)
+        {
+            var mergedContacts = new List<Contact>();
+
+            var groups = contacts.GroupBy(c => c.DisplayName);
+            foreach (var @group in groups)
+            {
+                if (@group.Count() == 1)
+                {
+                    mergedContacts.Add(@group.First());
+                    continue;
+                }
+
+                var firstContact = @group.First();
+                foreach (var contact in @group.Skip(1))
+                {
+                    if (contact.FirstName != firstContact.FirstName || contact.LastName != firstContact.LastName)
+                    {
+                        mergedContacts.Add(contact);
+                        continue;
+                    }
+
+                    var hasMatchedPhone = contact.Phones.Any(phone => firstContact.Phones.Any(p => DataFormatUtils.NormalizePhone(p.Number) == DataFormatUtils.NormalizePhone(phone.Number)));
+                    if (hasMatchedPhone)
+                    {
+                        var firstContactPhones = firstContact.Phones.ToList();
+
+                        firstContactPhones.AddRange(contact.Phones.Where(phone => firstContact.Phones.All(p => DataFormatUtils.NormalizePhone(p.Number) != DataFormatUtils.NormalizePhone(@phone.Number))));
+                        firstContact.Phones = firstContactPhones;
+                    }
+                    else
+                        mergedContacts.Add(contact);
+                }
+
+                mergedContacts.Add(firstContact);
+            }
+
+            return mergedContacts;
         }
 
         private static string UpdateDisplayName(Contact c)
