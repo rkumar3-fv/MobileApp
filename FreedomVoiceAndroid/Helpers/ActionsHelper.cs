@@ -8,7 +8,9 @@ using Android.OS;
 using Android.Util;
 #endif
 using System.Diagnostics;
+using System.Net;
 using System.Threading.Tasks;
+using System.Timers;
 using com.FreedomVoice.MobileApp.Android.Actions.Requests;
 using com.FreedomVoice.MobileApp.Android.Actions.Responses;
 using com.FreedomVoice.MobileApp.Android.Activities;
@@ -157,6 +159,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 #if DEBUG
             Log.Debug(App.AppPackage, "HELPER: " + (IsFirstRun ? "First run" : "Not first run"));
 #endif
+            ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
             var cacheImpl = new PclCacheImpl(_app);
             var cookieImpl = new PclCookieImpl(_app);
             ServiceContainer.Register<IDeviceCacheStorage>(() => cacheImpl);
@@ -964,10 +967,28 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                             {
                                 if (_repeats < 5)
                                 {
+                                    var id = RequestId;
                                     var repeatable = _waitingRequestArray[response.RequestId];
                                     _waitingRequestArray.Remove(response.RequestId);
+                                    repeatable.Id = id;
                                     _repeats++;
-                                    PrepareIntent(RequestId, repeatable);
+                                    var timer = new Timer
+                                    {
+                                        Interval = 1000,
+                                        AutoReset = false,
+                                        Enabled = true
+                                    };
+                                    timer.Elapsed += (sender, args) =>
+                                    {
+                                        using (var h = new Handler(Looper.MainLooper))
+                                        {
+#if DEBUG
+                                            Log.Debug(App.AppPackage, $"{reqError} repeating {_repeats} times now");
+                                            Log.Debug(App.AppPackage, $"New ID = {id}; Old ID {response.RequestId} was removed from waiting stack");
+#endif
+                                            h.Post(() => { PrepareIntent(id, repeatable); });
+                                        }
+                                    };
                                 }
                                 else
                                 {
