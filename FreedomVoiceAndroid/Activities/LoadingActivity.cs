@@ -68,15 +68,14 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                     Helper.GetAccounts();
                     return;
                 }
-                if ((Helper.SelectedAccount?.PresentationNumbers == null) || (string.IsNullOrEmpty(Helper.SelectedAccount.PresentationNumber)))
+                if ((Helper.SelectedAccount?.PresentationNumbers == null) || string.IsNullOrEmpty(Helper.SelectedAccount.PresentationNumber))
                     Helper.GetPresentationNumbers();
             }
-            if (!Appl.ApplicationHelper.IsInternetConnected() || Appl.ApplicationHelper.IsAirplaneModeOn())
-            {
-                if (_timer.Enabled)
-                    _timer.Stop();
-                StartActivity(new Intent(this, typeof (AuthActivity)));
-            }
+            if ((Appl?.ApplicationHelper == null) || (Appl.ApplicationHelper.IsInternetConnected() && !Appl.ApplicationHelper.IsAirplaneModeOn()))
+                return;
+            if (_timer.Enabled)
+                _timer.Stop();
+            StartActivity(new Intent(this, typeof (AuthActivity)));
         }
 
         protected override void OnPause()
@@ -124,7 +123,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                     Helper.GetExtensions();
                 else if (Helper.IsLoggedIn)
                     Helper.GetAccounts();
-                else if (Helper.Authorize() == -100)
+                else if ((Helper.Authorize() == -100) || (Helper.SelectedAccount?.PresentationNumbers == null) || string.IsNullOrEmpty(Helper.SelectedAccount.PresentationNumber))
                 {
                     var intent = new Intent(this, typeof(AuthActivity));
                     intent.SetFlags(ActivityFlags.NewTask);

@@ -140,6 +140,9 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         private long _preferencesTime;
         private long _initHelperTime;
 
+        private const int RepeatsInInternalError = 3;
+        private const int RepeatsTimeout = 1000;
+
         /// <summary>
         /// Set actions helper for current context
         /// </summary>
@@ -965,7 +968,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                             var reqError = _waitingRequestArray[response.RequestId].GetType().Name;
                             if (reqError != "GetPollingRequest")
                             {
-                                if (_repeats < 5)
+                                if (_repeats < RepeatsInInternalError)
                                 {
                                     var id = RequestId;
                                     var repeatable = _waitingRequestArray[response.RequestId];
@@ -974,9 +977,10 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                                     _repeats++;
                                     var timer = new Timer
                                     {
-                                        Interval = 1000,
-                                        AutoReset = false,
-                                        Enabled = true
+                                        // CONST
+                                        // ReSharper disable once UnreachableCode
+                                        Interval = (RepeatsTimeout < 100)?1000:RepeatsTimeout,
+                                        AutoReset = false
                                     };
                                     timer.Elapsed += (sender, args) =>
                                     {
@@ -989,6 +993,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                                             h.Post(() => { PrepareIntent(id, repeatable); });
                                         }
                                     };
+                                    timer.Start();
                                 }
                                 else
                                 {
