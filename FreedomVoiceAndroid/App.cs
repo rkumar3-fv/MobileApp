@@ -1,5 +1,4 @@
 using System;
-using System.Net;
 using Android.App;
 using Android.Content;
 using Android.OS;
@@ -51,7 +50,6 @@ namespace com.FreedomVoice.MobileApp.Android
             base.OnCreate();
             JavaSystem.SetProperty("http.keepAlive", "true");
             _helper = new AppHelper(this);
-            ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
             if (!_helper.IsInsigthsOn)
                 AppDomain.CurrentDomain.UnhandledException += HandleUnhandledException;
         }

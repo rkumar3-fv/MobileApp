@@ -8,7 +8,9 @@ using Android.OS;
 using Android.Util;
 #endif
 using System.Diagnostics;
+using System.Net;
 using System.Threading.Tasks;
+using System.Timers;
 using com.FreedomVoice.MobileApp.Android.Actions.Requests;
 using com.FreedomVoice.MobileApp.Android.Actions.Responses;
 using com.FreedomVoice.MobileApp.Android.Activities;
@@ -138,6 +140,9 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         private long _preferencesTime;
         private long _initHelperTime;
 
+        private const int RepeatsInInternalError = 3;
+        private const int RepeatsTimeout = 1000;
+
         /// <summary>
         /// Set actions helper for current context
         /// </summary>
@@ -157,6 +162,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 #if DEBUG
             Log.Debug(App.AppPackage, "HELPER: " + (IsFirstRun ? "First run" : "Not first run"));
 #endif
+            ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
             var cacheImpl = new PclCacheImpl(_app);
             var cookieImpl = new PclCookieImpl(_app);
             ServiceContainer.Register<IDeviceCacheStorage>(() => cacheImpl);
@@ -962,12 +968,32 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                             var reqError = _waitingRequestArray[response.RequestId].GetType().Name;
                             if (reqError != "GetPollingRequest")
                             {
-                                if (_repeats < 5)
+                                if (_repeats < RepeatsInInternalError)
                                 {
+                                    var id = RequestId;
                                     var repeatable = _waitingRequestArray[response.RequestId];
                                     _waitingRequestArray.Remove(response.RequestId);
+                                    repeatable.Id = id;
                                     _repeats++;
-                                    PrepareIntent(RequestId, repeatable);
+                                    var timer = new Timer
+                                    {
+                                        // CONST
+                                        // ReSharper disable once UnreachableCode
+                                        Interval = (RepeatsTimeout < 100)?1000:RepeatsTimeout,
+                                        AutoReset = false
+                                    };
+                                    timer.Elapsed += (sender, args) =>
+                                    {
+                                        using (var h = new Handler(Looper.MainLooper))
+                                        {
+#if DEBUG
+                                            Log.Debug(App.AppPackage, $"{reqError} repeating {_repeats} times now");
+                                            Log.Debug(App.AppPackage, $"New ID = {id}; Old ID {response.RequestId} was removed from waiting stack");
+#endif
+                                            h.Post(() => { PrepareIntent(id, repeatable); });
+                                        }
+                                    };
+                                    timer.Start();
                                 }
                                 else
                                 {

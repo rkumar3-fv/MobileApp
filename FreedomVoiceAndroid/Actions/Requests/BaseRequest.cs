@@ -14,7 +14,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
     [Preserve(AllMembers = true)]
     public abstract class BaseRequest : BaseAction, IEquatable<BaseRequest>
     {
-        public long Id { get; }
+        public long Id { get; set; }
 
         protected BaseRequest(long id)
         {
