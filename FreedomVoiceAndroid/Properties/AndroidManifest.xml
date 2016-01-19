@@ -14,7 +14,7 @@
 	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 	<uses-permission android:name="android.permission.READ_PHONE_STATE" />
 	<uses-feature android:name="android.hardware.telephony" android:required="false" />
-	<application android:label="@string/ApplicationTitle" android:allowBackup="false" android:theme="@style/SplashTheme">
+	<application android:label="Freedom Voice" android:allowBackup="false" android:theme="@style/SplashTheme">
 		<meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
 		<receiver android:name="com.google.android.gms.analytics.AnalyticsReceiver" android:enabled="true">
 			<intent-filter>
