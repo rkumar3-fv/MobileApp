@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using FreedomVoice.Core.Utils;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.Utilities.Events;
 using GoogleAnalytics.iOS;
@@ -85,38 +84,6 @@ namespace FreedomVoice.iOS.ViewControllers
             }
 
             return selectedPresentationNumber;
-        }
-
-	    public void AddRecent(Recent recent)
-	    {
-            var existingRecent = AppDelegate.RecentsList.FirstOrDefault(r => DataFormatUtils.NormalizePhone(r.PhoneNumber) == DataFormatUtils.NormalizePhone(recent.PhoneNumber));
-            if (existingRecent == null)
-                AppDelegate.RecentsList.Add(recent);
-            else
-            {
-                existingRecent.DialDate = DateTime.Now;
-                existingRecent.CallsQuantity++;
-            }
-        }
-
-	    public void ClearRecents()
-	    {
-            AppDelegate.RecentsList.Clear();
-	    }
-
-        public void RemoveRecents(Recent recent)
-        {
-            AppDelegate.RecentsList.Remove(recent);
-        }
-
-        public List<Recent> GetRecentsOrdered()
-        {
-            return AppDelegate.RecentsList.OrderByDescending(r => r.DialDate).ToList();
-        }
-
-        public Recent GetLastRecent()
-        {
-            return GetRecentsOrdered().First();
         }
 
         private static UIViewController GetTabBarItem(UIViewController viewController, string tabTitle)

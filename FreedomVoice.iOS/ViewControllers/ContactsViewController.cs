@@ -209,7 +209,7 @@ namespace FreedomVoice.iOS.ViewControllers
                     return;
                 case 1:
                     if (await PhoneCall.CreateCallReservation(MainTabBarInstance.SelectedAccount.PhoneNumber, selectedCallerId, phoneNumbers.First().Number, this))
-                        AddRecent(person.DisplayName, phoneNumbers.First().Number, person.Id);
+                        Recents.AddRecent(phoneNumbers.First().Number, person.DisplayName, person.Id);
                     break;
                 default:
                     var phoneCallController = UIAlertController.Create("Select number for " + person.DisplayName, null, UIAlertControllerStyle.ActionSheet);
@@ -217,7 +217,7 @@ namespace FreedomVoice.iOS.ViewControllers
                     {
                         phoneCallController.AddAction(UIAlertAction.Create(phone.Number + " \u2013 " + phone.Label, UIAlertActionStyle.Default, async a => {
                             if (await PhoneCall.CreateCallReservation(MainTabBarInstance.SelectedAccount.PhoneNumber, selectedCallerId, phone.Number, this))
-                                AddRecent(person.DisplayName, phone.Number, person.Id);
+                                Recents.AddRecent(phone.Number, person.DisplayName, person.Id);
                         }));
                     }
                     phoneCallController.AddAction(UIAlertAction.Create("Cancel", UIAlertActionStyle.Cancel, null));
@@ -234,11 +234,6 @@ namespace FreedomVoice.iOS.ViewControllers
         private static List<Contact> GetMatchedContacts(string searchText)
         {
             return ContactsHelper.ContactList.Where(c => ContactsHelper.ContactMatchPredicate(c, searchText)).Distinct().ToList();
-        }
-
-        private static void AddRecent(string title, string phoneNumber, string contactId)
-        {
-            MainTabBarInstance.AddRecent(new Recent(title, phoneNumber, DateTime.Now, contactId));
         }
 
         private void CheckResult(int contactsCount)

@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using FreedomVoice.Core;
 using FreedomVoice.Core.Entities;
 using FreedomVoice.iOS.Services.Responses;
-using Xamarin.Contacts;
 
 namespace FreedomVoice.iOS.Services.Implementations
 {
@@ -11,7 +10,7 @@ namespace FreedomVoice.iOS.Services.Implementations
     {
         private const int PageSize = 30;
 
-        public async Task<BaseResponse> ExecuteRequest(string systemNumber, int mailboxNumber, string folderName, List<Contact> contactList)
+        public async Task<BaseResponse> ExecuteRequest(string systemNumber, int mailboxNumber, string folderName)
         {            
             int messageCount;
             var pageNumber = 1;
@@ -29,7 +28,7 @@ namespace FreedomVoice.iOS.Services.Implementations
                 pageNumber++;
             } while (messageCount == PageSize);
 
-            return new MessagesResponse(result, contactList);
+            return new MessagesResponse(result);
         }
     }
 }

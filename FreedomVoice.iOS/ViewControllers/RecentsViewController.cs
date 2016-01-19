@@ -2,21 +2,18 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Text.RegularExpressions;
 using AddressBook;
 using AddressBookUI;
 using Contacts;
 using ContactsUI;
 using CoreGraphics;
 using Foundation;
-using FreedomVoice.Core.Utils;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.TableViewSources;
 using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.Utilities.Helpers;
 using FreedomVoice.iOS.Views.Shared;
 using UIKit;
-using Xamarin.Contacts;
 using ContactsHelper = FreedomVoice.iOS.Utilities.Helpers.Contacts;
 
 namespace FreedomVoice.iOS.ViewControllers
@@ -51,7 +48,7 @@ namespace FreedomVoice.iOS.ViewControllers
                 TextAlignment = UITextAlignment.Center
             };
 
-            _recentSource = new RecentsSource(MainTabBarInstance.GetRecentsOrdered());
+            _recentSource = new RecentsSource(Recents.GetRecentsOrdered());
 
             _recentsTableView = new UITableView
             {
@@ -90,7 +87,7 @@ namespace FreedomVoice.iOS.ViewControllers
             var request = new CNContactFetchRequest(CNContactKey.PhoneNumbers);
             store.EnumerateContacts(request, out error, (item, cursor) =>
             {
-                if (item.PhoneNumbers.Any(p => Regex.Replace(p.Value.StringValue, @"[^\d]", "") == Regex.Replace(recent.PhoneNumber, @"[^\d]", "")))
+                if (item.PhoneNumbers.Any(p => ContactsHelper.NormalizePhoneNumber(p.Value.StringValue) == ContactsHelper.NormalizePhoneNumber(recent.PhoneNumber)))
                     contact = item;
             });
 
@@ -119,18 +116,13 @@ namespace FreedomVoice.iOS.ViewControllers
             NavigationController.PushViewController(viewController, true);
         }
 
-        private static Contact FindContactByNumber(string number)
-        {
-            return ContactsHelper.ContactList.FirstOrDefault(c => c.Phones.Any(p => DataFormatUtils.NormalizePhone(p.Number) == DataFormatUtils.NormalizePhone(number)));
-        }
-
         private static List<Recent> GetRecentsUpdatedAndOrdered()
         {
-            var recents = MainTabBarInstance.GetRecentsOrdered();
+            var recents = Recents.GetRecentsOrdered();
 
             foreach (var item in recents)
             {
-                var foundContact = FindContactByNumber(item.PhoneNumber);
+                var foundContact = ContactsHelper.FindContactByNumber(item.PhoneNumber);
                 if (foundContact == null) continue;
 
                 item.Title = foundContact.DisplayName;
@@ -138,16 +130,6 @@ namespace FreedomVoice.iOS.ViewControllers
             }
 
             return recents;
-        }
-
-        private static void ClearRecent()
-        {
-            MainTabBarInstance.ClearRecents();
-        }
-
-        private static void RemoveRecent(Recent recent)
-        {
-            MainTabBarInstance.RemoveRecents(recent);
         }
 
         public override void ViewWillAppear(bool animated)
@@ -198,7 +180,7 @@ namespace FreedomVoice.iOS.ViewControllers
             var alertController = UIAlertController.Create(null, null, UIAlertControllerStyle.ActionSheet);
             alertController.AddAction(UIAlertAction.Create("Clear All Recents", UIAlertActionStyle.Destructive, a =>
             {
-                ClearRecent();
+                Recents.ClearRecents();
                 ReturnToRecentsView();
                 _recentSource.SetRecents(new List<Recent>());
                 _recentsTableView.ReloadData();
@@ -212,17 +194,17 @@ namespace FreedomVoice.iOS.ViewControllers
         {
             e.TableView.DeselectRow(e.IndexPath, false);
 
-            var recent = MainTabBarInstance.GetRecentsOrdered()[e.IndexPath.Row];
+            var recent = Recents.GetRecentsOrdered()[e.IndexPath.Row];
             if (recent == null) return;
 
             var selectedCallerId = MainTabBarInstance.GetSelectedPresentationNumber().PhoneNumber;
             if (!await PhoneCall.CreateCallReservation(MainTabBarInstance.SelectedAccount.PhoneNumber, selectedCallerId, recent.PhoneNumber, this)) return;
 
-            MainTabBarInstance.AddRecent(recent);
+            Recents.AddRecent(recent.PhoneNumber);
 
             _recentsTableView.BeginUpdates();
 
-            _recentSource.SetRecents(MainTabBarInstance.GetRecentsOrdered());
+            _recentSource.SetRecents(Recents.GetRecentsOrdered());
             e.TableView.MoveRow(e.IndexPath, NSIndexPath.FromRowSection(0, 0));
             _recentsTableView.ReloadData();
 
@@ -233,14 +215,14 @@ namespace FreedomVoice.iOS.ViewControllers
         {
             e.TableView.DeselectRow(e.IndexPath, false);
 
-            var recent = MainTabBarInstance.GetRecentsOrdered()[e.IndexPath.Row];
+            var recent = Recents.GetRecentsOrdered()[e.IndexPath.Row];
             if (recent == null) return;
 
-            RemoveRecent(recent);
+            Recents.RemoveRecent(recent);
 
             _recentsTableView.BeginUpdates();
 
-            _recentSource.SetRecents(MainTabBarInstance.GetRecentsOrdered());
+            _recentSource.SetRecents(Recents.GetRecentsOrdered());
             _recentsTableView.DeleteRows(new[] { e.IndexPath }, UITableViewRowAnimation.Left);
 
             _recentsTableView.EndUpdates();

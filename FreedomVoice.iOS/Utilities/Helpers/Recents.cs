@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using FreedomVoice.iOS.Entities;
 using Newtonsoft.Json;
 
@@ -6,21 +8,51 @@ namespace FreedomVoice.iOS.Utilities.Helpers
 {
     public static class Recents
     {
+        private static List<Recent> RecentsList { get; set; }
+        public static int RecentsCount => RecentsList.Count;
+
         public static void StoreRecentsToCache()
         {
-            UserDefault.RecentsCache = AppDelegate.RecentsList.Count != 0 ? JsonConvert.SerializeObject(AppDelegate.RecentsList) : string.Empty;
+            UserDefault.RecentsCache = RecentsCount != 0 ? JsonConvert.SerializeObject(RecentsList) : string.Empty;
         }
 
         public static void RestoreRecentsFromCache()
         {
             var recentsCache = UserDefault.RecentsCache;
 
-            AppDelegate.RecentsList = string.IsNullOrEmpty(recentsCache) ? new List<Recent>() : JsonConvert.DeserializeObject<List<Recent>>(recentsCache);
+            RecentsList = string.IsNullOrEmpty(recentsCache) ? new List<Recent>() : JsonConvert.DeserializeObject<List<Recent>>(recentsCache);
+        }
+
+        public static Recent GetLastRecent()
+        {
+            return GetRecentsOrdered().First();
+        }
+
+        public static void RemoveRecent(Recent recent)
+        {
+            RecentsList.Remove(recent);
+        }
+
+        public static List<Recent> GetRecentsOrdered()
+        {
+            return RecentsList.OrderByDescending(r => r.DialDate).ToList();
+        }
+
+        public static void AddRecent(string phoneNumber, string title = "", string contactId = "")
+        {
+            var existingRecent = RecentsList.FirstOrDefault(r => Contacts.NormalizePhoneNumber(r.PhoneNumber) == Contacts.NormalizePhoneNumber(phoneNumber));
+            if (existingRecent == null)
+                RecentsList.Add(new Recent(title, phoneNumber, DateTime.Now, contactId));
+            else
+            {
+                existingRecent.DialDate = DateTime.Now;
+                existingRecent.CallsQuantity++;
+            }
         }
 
         public static void ClearRecents()
         {
-            AppDelegate.RecentsList = new List<Recent>();
+            RecentsList.Clear();
             UserDefault.RecentsCache = string.Empty;
         }
     }

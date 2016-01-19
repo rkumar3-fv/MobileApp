@@ -1,16 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
 using FreedomVoice.Core.Entities.Enums;
 using FreedomVoice.Core.Utils;
-using Xamarin.Contacts;
+using ContactsHelper = FreedomVoice.iOS.Utilities.Helpers.Contacts;
 
 namespace FreedomVoice.iOS.Entities
 {
     public class Message
     {
-        public Message(Core.Entities.Message message, List<Contact> contactList)
+        public Message(Core.Entities.Message message)
         {
             Id = message.Id;
             Name = message.Name;
@@ -23,7 +20,6 @@ namespace FreedomVoice.iOS.Entities
             Type = message.Type;
             Unread = message.Unread;
 
-            ContactList = contactList;
             Title = GetMessageTitle();
         }
 
@@ -40,13 +36,12 @@ namespace FreedomVoice.iOS.Entities
         public string Name { get; set; }
 
         private string SourceName { get; }
-        private List<Contact> ContactList { get; }
 
         private string GetMessageTitle()
         {
             if (!string.IsNullOrEmpty(SourceNumber))
             {
-                var contact = FindContactByNumber(SourceNumber);
+                var contact = ContactsHelper.FindContactByNumber(SourceNumber);
                 if (!string.IsNullOrEmpty(contact?.DisplayName))
                     return contact.DisplayName;
             }
@@ -55,13 +50,6 @@ namespace FreedomVoice.iOS.Entities
                 return SourceName;
 
             return !string.IsNullOrEmpty(SourceNumber) ? DataFormatUtils.ToPhoneNumber(SourceNumber) : "Unavailable";
-        }
-
-        private Contact FindContactByNumber(string number)
-        {
-            var numberToCompareWith = Regex.Replace(number, @"[^\d]", "");
-
-            return ContactList.FirstOrDefault(c => c.Phones.Any(p => Regex.Replace(p.Number, @"[^\d]", "").EndsWith(numberToCompareWith)));
         }
     }
 }

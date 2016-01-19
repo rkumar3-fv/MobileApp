@@ -6,7 +6,6 @@ using FreedomVoice.iOS.Services;
 using FreedomVoice.iOS.Services.Responses;
 using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.Utilities.Helpers;
-using Xamarin.Contacts;
 
 namespace FreedomVoice.iOS.ViewModels
 {
@@ -23,14 +22,13 @@ namespace FreedomVoice.iOS.ViewModels
         private readonly string _systemPhoneNumber;
         private readonly int _mailboxNumber;
         private readonly string _folderName;
-        private readonly List<Contact> _contactsList;
 
         public List<Message> MessagesList { get; private set; }
 
         /// <summary>
         /// Constructor, requires an IService
         /// </summary>
-        public MessagesViewModel(string systemPhoneNumber, int mailboxNumber, string folderName, List<Contact> contactsList)
+        public MessagesViewModel(string systemPhoneNumber, int mailboxNumber, string folderName)
         {
             MessagesList = new List<Message>();
 
@@ -39,7 +37,6 @@ namespace FreedomVoice.iOS.ViewModels
             _systemPhoneNumber = systemPhoneNumber;
             _mailboxNumber = mailboxNumber;
             _folderName = folderName;
-            _contactsList = contactsList;
         }
 
         /// <summary>
@@ -60,7 +57,7 @@ namespace FreedomVoice.iOS.ViewModels
             StartWatcher();
 
             var errorResponse = string.Empty;
-            var requestResult = await _service.ExecuteRequest(_systemPhoneNumber, _mailboxNumber, _folderName, _contactsList);
+            var requestResult = await _service.ExecuteRequest(_systemPhoneNumber, _mailboxNumber, _folderName);
             if (requestResult is ErrorResponse)
                 errorResponse = ProceedErrorResponse(requestResult, silent);
             else

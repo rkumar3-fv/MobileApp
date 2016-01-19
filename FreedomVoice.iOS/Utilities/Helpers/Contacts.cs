@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using AddressBook;
 using Contacts;
@@ -133,12 +134,12 @@ namespace FreedomVoice.iOS.Utilities.Helpers
                         continue;
                     }
 
-                    var hasMatchedPhone = contact.Phones.Any(phone => firstContact.Phones.Any(p => DataFormatUtils.NormalizePhone(p.Number) == DataFormatUtils.NormalizePhone(phone.Number)));
+                    var hasMatchedPhone = contact.Phones.Any(phone => firstContact.Phones.Any(p => NormalizePhoneNumber(p.Number) == NormalizePhoneNumber(phone.Number)));
                     if (hasMatchedPhone)
                     {
                         var firstContactPhones = firstContact.Phones.ToList();
 
-                        firstContactPhones.AddRange(contact.Phones.Where(phone => firstContact.Phones.All(p => DataFormatUtils.NormalizePhone(p.Number) != DataFormatUtils.NormalizePhone(@phone.Number))));
+                        firstContactPhones.AddRange(contact.Phones.Where(phone => firstContact.Phones.All(p => NormalizePhoneNumber(p.Number) != NormalizePhoneNumber(@phone.Number))));
                         firstContact.Phones = firstContactPhones;
                     }
                     else
@@ -205,6 +206,18 @@ namespace FreedomVoice.iOS.Utilities.Helpers
                 return true;
 
             return string.IsNullOrEmpty(c.FirstName) && c.LastName.NotNullAndStartsWith(key);
+        }
+
+        public static string NormalizePhoneNumber(string number)
+        {
+            var normalizedPhoneNumber = Regex.Replace(number, @"[^\d]", "");
+
+            return normalizedPhoneNumber.Length == 11 && normalizedPhoneNumber.StartsWith("1") ? normalizedPhoneNumber.Substring(1) : normalizedPhoneNumber;
+        }
+
+        public static Contact FindContactByNumber(string number)
+        {
+            return ContactList.FirstOrDefault(c => c.Phones.Any(p => NormalizePhoneNumber(p.Number) == NormalizePhoneNumber(number)));
         }
     }
 }

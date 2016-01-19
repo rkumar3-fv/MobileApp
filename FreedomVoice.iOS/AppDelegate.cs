@@ -28,9 +28,6 @@ namespace FreedomVoice.iOS
 
         public static int SystemVersion => UIDevice.CurrentDevice.CheckSystemVersion(9, 0) ? 9 : 8;
 
-        public static int RecentsCount => RecentsList.Count;
-        public static List<Recent> RecentsList { get; set; }
-
         public static AVPlayerView ActivePlayerView;
         public static UIButton ActiveSpeakerButton;
         public static string ActivePlayerMessageId;

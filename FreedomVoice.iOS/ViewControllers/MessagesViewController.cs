@@ -40,9 +40,9 @@ namespace FreedomVoice.iOS.ViewControllers
         {
             AppDelegate.ActivityIndicator.SetActivityIndicatorCenter(Theme.ScreenCenter);
 
-            await InitializeTableView();
-
             await ContactsHelper.GetContactsListAsync();
+
+            await InitializeTableView();
 
             base.ViewDidLoad();
         }
@@ -103,7 +103,7 @@ namespace FreedomVoice.iOS.ViewControllers
             };
             View.Add(_messagesTableView);
 
-            var messagesViewModel = new MessagesViewModel(SelectedAccount.PhoneNumber, SelectedExtension.ExtensionNumber, SelectedFolder.DisplayName, ContactsHelper.ContactList);
+            var messagesViewModel = new MessagesViewModel(SelectedAccount.PhoneNumber, SelectedExtension.ExtensionNumber, SelectedFolder.DisplayName);
             messagesViewModel.OnUnauthorizedResponse += (sender, args) => OnUnauthorizedError();
             await messagesViewModel.GetMessagesListAsync();
 
@@ -138,12 +138,7 @@ namespace FreedomVoice.iOS.ViewControllers
             var selectedMessagePhoneNumber = e.SelectedMessage.SourceNumber;
 
             if (await PhoneCall.CreateCallReservation(MainTabBarInstance.SelectedAccount.PhoneNumber, selectedCallerId, selectedMessagePhoneNumber, this))
-                AddRecent(selectedMessagePhoneNumber);
-        }
-
-        private static void AddRecent(string phoneNumber)
-        {
-            MainTabBarInstance.AddRecent(new Recent(string.Empty, phoneNumber, DateTime.Now));
+                Recents.AddRecent(selectedMessagePhoneNumber);
         }
 
         private void OnSourceRowSelected(object sender, EventArgs e)
@@ -171,7 +166,7 @@ namespace FreedomVoice.iOS.ViewControllers
 
             await Task.Run(async () => 
             {
-                var messagesViewModel = new MessagesViewModel(SelectedAccount.PhoneNumber, SelectedExtension.ExtensionNumber, SelectedFolder.DisplayName, ContactsHelper.ContactList);
+                var messagesViewModel = new MessagesViewModel(SelectedAccount.PhoneNumber, SelectedExtension.ExtensionNumber, SelectedFolder.DisplayName);
 
                 await messagesViewModel.GetMessagesListAsync(true);
                 if (messagesViewModel.IsErrorResponseReceived) return;

@@ -44,7 +44,7 @@ namespace FreedomVoice.iOS.Utilities.Helpers
         {
             var recentsExists = false;
             if (MainTabBarController.SharedInstance != null)
-                recentsExists = AppDelegate.RecentsCount > 0;
+                recentsExists = Recents.RecentsCount > 0;
 
             var alertController = recentsExists ? UIAlertController.Create("Confirm logout?", "Your Recents list will be cleared.", UIAlertControllerStyle.Alert)
                                                 : UIAlertController.Create(null, "Confirm logout?", UIAlertControllerStyle.Alert);

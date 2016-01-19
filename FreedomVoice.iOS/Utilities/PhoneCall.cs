@@ -68,7 +68,6 @@ namespace FreedomVoice.iOS.Utilities
             }
 
             var switchboardNumber = callReservationViewModel.Reservation.SwitchboardNumber;
-            switchboardNumber = switchboardNumber.StartsWith("+1") ? switchboardNumber : string.Concat("+1", switchboardNumber);
 
             var phoneNumber = NSUrl.FromString($"tel:{switchboardNumber}");
             if (!UIApplication.SharedApplication.OpenUrl(phoneNumber))

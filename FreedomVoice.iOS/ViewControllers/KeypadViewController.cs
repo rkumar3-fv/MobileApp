@@ -163,9 +163,9 @@ namespace FreedomVoice.iOS.ViewControllers
         {
             if (string.IsNullOrEmpty(PhoneNumber))
             {
-                if (AppDelegate.RecentsCount == 0) return;
+                if (Recents.RecentsCount == 0) return;
 
-                PhoneNumber = MainTabBarInstance.GetLastRecent().PhoneNumber;
+                PhoneNumber = Recents.GetLastRecent().PhoneNumber;
                 _phoneLabel.Text = DataFormatUtils.ToPhoneNumber(PhoneNumber);
                 ChangeClearPhoneButtonVisibility();
                 return;
@@ -174,15 +174,10 @@ namespace FreedomVoice.iOS.ViewControllers
             var selectedCallerId = MainTabBarInstance.GetSelectedPresentationNumber().PhoneNumber;
             if (await PhoneCall.CreateCallReservation(MainTabBarInstance.SelectedAccount.PhoneNumber, selectedCallerId, PhoneNumber, this))
             {
-                AddRecent(PhoneNumber);
+                Recents.AddRecent(PhoneNumber);
                 ClearEnteredPhone();
                 ChangeClearPhoneButtonVisibility();
             }
-        }
-        
-	    private static void AddRecent(string phoneNumber)
-        {
-            MainTabBarInstance.AddRecent(new Recent(string.Empty, phoneNumber, DateTime.Now));
         }
     }
 }
