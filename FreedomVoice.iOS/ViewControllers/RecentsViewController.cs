@@ -148,6 +148,13 @@ namespace FreedomVoice.iOS.ViewControllers
             base.ViewWillAppear(animated);
         }
 
+        public override void ViewDidAppear(bool animated)
+        {
+            AppDelegate.EnableUserInteraction(UIApplication.SharedApplication);
+
+            base.ViewDidAppear(animated);
+        }
+
         public override void ViewWillDisappear(bool animated)
         {
             _recentsTableView.SetEditing(false, false);

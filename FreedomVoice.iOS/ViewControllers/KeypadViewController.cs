@@ -107,6 +107,13 @@ namespace FreedomVoice.iOS.ViewControllers
             base.ViewWillAppear(animated);
         }
 
+        public override void ViewDidAppear(bool animated)
+        {
+            AppDelegate.EnableUserInteraction(UIApplication.SharedApplication);
+
+            base.ViewDidAppear(animated);
+        }
+
         private void OnKeypadButtonTouchUpInside(object sender, EventArgs args)
         {
             var button = sender as RoundedButton;

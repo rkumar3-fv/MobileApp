@@ -143,6 +143,13 @@ namespace FreedomVoice.iOS.ViewControllers
             base.ViewWillAppear(animated);
         }
 
+        public override void ViewDidAppear(bool animated)
+        {
+            AppDelegate.EnableUserInteraction(UIApplication.SharedApplication);
+
+            base.ViewDidAppear(animated);
+        }
+
         private void SearchBarOnSearchButtonClicked(object sender, EventArgs e)
         {
             HideKeyboard();
