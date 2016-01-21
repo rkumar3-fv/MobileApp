@@ -11,7 +11,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
 {
     [Activity(
         MainLauncher = true,
-        Label = "@string/ApplicationName",
+        Label = "@string/ApplicationTitle",
         Icon = "@mipmap/ic_launcher",
         LaunchMode = LaunchMode.SingleTop,
         ScreenOrientation = ScreenOrientation.Portrait,

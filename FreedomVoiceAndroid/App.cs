@@ -24,15 +24,17 @@ namespace com.FreedomVoice.MobileApp.Android
     public class App : Application
     {
         public const string AppPackage = "com.FreedomVoice.MobileApp.Android";
-        private AppHelper _helper;
+        private readonly AppHelper _helper;
 
         /// <summary>
         /// Main application helper
         /// </summary>
         public AppHelper ApplicationHelper => _helper;
 
-        protected App(IntPtr javaReference, JniHandleOwnership transfer) : base(javaReference, transfer)
-        {}
+        public App(IntPtr javaReference, JniHandleOwnership transfer) : base(javaReference, transfer)
+        {
+            _helper = new AppHelper(this);
+        }
 
         /// <summary>
         /// Get app context
@@ -49,7 +51,6 @@ namespace com.FreedomVoice.MobileApp.Android
         {
             base.OnCreate();
             JavaSystem.SetProperty("http.keepAlive", "true");
-            _helper = new AppHelper(this);
             if (!_helper.IsInsigthsOn)
                 AppDomain.CurrentDomain.UnhandledException += HandleUnhandledException;
         }
@@ -68,7 +69,7 @@ namespace com.FreedomVoice.MobileApp.Android
             ApplicationHelper.ReportEvent(SpecialEvent.LowMemory, DataFormatUtils.ToFullFormattedDate(DateTime.Now), $"{availableMegs}Mb / {totalMegs}");
         }
 
-        protected void HandleUnhandledException(object sender, UnhandledExceptionEventArgs args)
+        private void HandleUnhandledException(object sender, UnhandledExceptionEventArgs args)
         {
             Process.GetCurrentProcess().Kill();
         }
