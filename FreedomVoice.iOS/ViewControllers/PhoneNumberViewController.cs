@@ -33,7 +33,7 @@ namespace FreedomVoice.iOS.ViewControllers
 
 	    public override void ViewDidLoad()
 	    {
-            Title = "Your Phone Number";
+            Title = "Your Mobile Phone Number";
 
             InitializeFirstLabel();
             InitializeSecondLabel();
@@ -93,14 +93,14 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private void InitializeFirstLabel()
         {
-            var labelFrame = new CGRect(15, 20, Theme.ScreenBounds.Width - 30, 90);
+            var labelFrame = new CGRect(15, 20, Theme.ScreenBounds.Width - 30, 108);
             _firstLabel = new UILabel(labelFrame)
             {
-                Text = $"To make calls with this app, we require your device's phone number and you must enable the Caller ID feature.{Environment.NewLine}This information is not shared with any 3rd parties.",
+                Text = $"To make calls with this app, we require your device's phone number and you must enable the Caller ID feature.{Environment.NewLine}This information is not shared with any 3rd parties. Please do not enter your FreedomVoice number here.",
                 Font = UIFont.SystemFontOfSize(15, UIFontWeight.Regular),
                 TextColor = Theme.BlackColor,
                 TextAlignment = UITextAlignment.Left,
-                Lines = 5
+                Lines = 6
             };
 
             View.Add(_firstLabel);
