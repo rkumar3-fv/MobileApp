@@ -24,6 +24,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         /// <param name="phone">Destination phone</param>
         public void Call(string phone)
         {
+            if (Appl?.ApplicationHelper == null) return;
             if (Appl.ApplicationHelper.CheckCallsPermission() == false)
             {
                 var snackPerm = Snackbar.Make(RootLayout, Resource.String.Snack_noPhonePermission, Snackbar.LengthLong);

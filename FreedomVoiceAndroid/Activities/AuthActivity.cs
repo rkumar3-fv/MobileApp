@@ -20,7 +20,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
     /// Authorization activity
     /// </summary>
     [Activity(
-        Label = "@string/ApplicationName",
+        Label = "@string/ApplicationTitle",
         Icon = "@mipmap/ic_launcher",
         ScreenOrientation = ScreenOrientation.Portrait,
         WindowSoftInputMode = SoftInput.AdjustResize,
