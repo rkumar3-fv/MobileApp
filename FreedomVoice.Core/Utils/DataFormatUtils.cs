@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Text.RegularExpressions;
 
 namespace FreedomVoice.Core.Utils
@@ -8,6 +9,8 @@ namespace FreedomVoice.Core.Utils
     /// </summary>
     public static class DataFormatUtils
     {
+        private const string SpaceFlag = "--SPACE--";
+
         private const string Phone3Regex = @"^\(?([0-9]{3})\)$";
         private const string Phone4Regex = @"^\(?([0-9]{3})\)?[-. ]?([0-9]{1,3})$";
         private const string Phone7Regex = @"^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{1,4})$";
@@ -163,6 +166,13 @@ namespace FreedomVoice.Core.Utils
             {
                 return false;
             }
+        }
+
+        public static string UrlEncodeWithSpaces(string value)
+        {
+            var url = value.Replace(" ", SpaceFlag);
+            url = WebUtility.UrlEncode(url);
+            return url.Replace(SpaceFlag, "%20").Replace("(", "%28").Replace(")", "%29");
         }
     }
 }
