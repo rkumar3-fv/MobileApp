@@ -36,7 +36,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         /// <summary>
         /// App network actions helper
         /// </summary>
-        public ActionsHelper ActionsHelper { get; }
+        public ActionsHelper ActionsHelper { get; set; }
 
         /// <summary>
         /// App attachments helper
@@ -378,7 +378,6 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         public AppHelper(Context context)
         {
             _context = context;
-            ActionsHelper = new ActionsHelper(App.GetApplication(context));
             AttachmentsHelper = new AttachmentsHelper(context);
             PreferencesHelper = AppPreferencesHelper.Instance(_context);
         }

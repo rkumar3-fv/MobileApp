@@ -50,6 +50,7 @@ namespace com.FreedomVoice.MobileApp.Android
         public override void OnCreate()
         {
             base.OnCreate();
+            _helper.ActionsHelper = new ActionsHelper(this);
             JavaSystem.SetProperty("http.keepAlive", "true");
             if (!_helper.IsInsigthsOn)
                 AppDomain.CurrentDomain.UnhandledException += HandleUnhandledException;

@@ -19,12 +19,19 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
         protected BaseRequest(long id)
         {
             Id = id;
+            CreationTime = DateTime.Now;
         }
 
         protected BaseRequest(Parcel parcel)
         {
             Id = parcel.ReadLong();
+            CreationTime = DateTime.FromFileTime(parcel.ReadLong());
         }
+
+        /// <summary>
+        /// Request creation time
+        /// </summary>
+        public DateTime CreationTime { get; }
 
         /// <summary>
         /// Check response for errors
@@ -69,6 +76,7 @@ namespace com.FreedomVoice.MobileApp.Android.Actions.Requests
         public override void WriteToParcel(Parcel dest, ParcelableWriteFlags flags)
         {
             dest.WriteLong(Id);
+            dest.WriteLong(CreationTime.ToFileTime());
         }
 
         public bool Equals(BaseRequest other)

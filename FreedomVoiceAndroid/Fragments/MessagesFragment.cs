@@ -64,6 +64,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                     Helper.ForceLoadFolders();
                 else if (Helper.SelectedMessage == -1)
                     Helper.ForceLoadMessages();
+                RestartTimer();
             });
         }
 
@@ -74,28 +75,26 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         {
             _removedMsgIndex = args.ElementIndex;
             _adapter.RemoveItem(args.ElementIndex);
-                if (Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].FolderName ==
-                    GetString(Resource.String.FragmentMessages_folderTrash))
-                    Helper.DeleteMessage(_removedMsgIndex);
-                else
-                    Helper.RemoveMessage(_removedMsgIndex);
-                Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].TotalMailsCount--;
-                if (Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].MessagesList[_removedMsgIndex].Unread)
-                {
-                    Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].MailsCount--;
-                    Helper.ExtensionsList[Helper.SelectedExtension].MailsCount--;
-                }
-                Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].MessagesList.RemoveAt(_removedMsgIndex);
-                if (_adapter.ItemCount == 0)
-                {
-                    if (_noMessagesTextView.Visibility == ViewStates.Invisible)
-                    {
-                        _noMessagesTextView.Text = GetString(Resource.String.FragmentMessages_no);
-                        _noMessagesTextView.Visibility = ViewStates.Visible;
-                    }
-                    if (_recyclerView.Visibility == ViewStates.Visible)
-                        _recyclerView.Visibility = ViewStates.Invisible;
-                }
+            if (Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].FolderName ==
+                GetString(Resource.String.FragmentMessages_folderTrash))
+                Helper.DeleteMessage(_removedMsgIndex);
+            else
+                Helper.RemoveMessage(_removedMsgIndex);
+            Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].TotalMailsCount--;
+            if (Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].MessagesList[_removedMsgIndex].Unread)
+            {
+                Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].MailsCount--;
+                Helper.ExtensionsList[Helper.SelectedExtension].MailsCount--;
+            }
+            Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].MessagesList.RemoveAt(_removedMsgIndex);
+            if (_adapter.ItemCount != 0) return;
+            if (_noMessagesTextView.Visibility == ViewStates.Invisible)
+            {
+                _noMessagesTextView.Text = GetString(Resource.String.FragmentMessages_no);
+                _noMessagesTextView.Visibility = ViewStates.Visible;
+            }
+            if (_recyclerView.Visibility == ViewStates.Visible)
+                _recyclerView.Visibility = ViewStates.Invisible;
         }
 
         /// <summary>
@@ -135,6 +134,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             }
             else if (Helper.SelectedExtension != -1)
                 Helper.ForceLoadFolders();
+            RestartTimer();
         }
 
         public override void OnResume()
@@ -158,15 +158,14 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                 if (_progressLayout.Visibility == ViewStates.Visible)
                     _progressLayout.Visibility = ViewStates.Gone;
             }
-            if (Helper.SelectedAccount != null)
-            {
-                if (Helper.SelectedFolder != -1)
-                    Helper.ForceLoadMessages();
-                else if (Helper.SelectedExtension != -1)
-                    Helper.ForceLoadFolders();
-                else
-                    Helper.ForceLoadExtensions();
-            }
+            if (Helper.SelectedAccount == null) return;
+            if (Helper.SelectedFolder != -1)
+                Helper.ForceLoadMessages();
+            else if (Helper.SelectedExtension != -1)
+                Helper.ForceLoadFolders();
+            else
+                Helper.ForceLoadExtensions();
+            RestartTimer();
         }
 
         public override void OnPause()
@@ -218,17 +217,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                         }
                         if (_retryButton.Visibility == ViewStates.Visible)
                             _retryButton.Visibility = ViewStates.Invisible;
-                        if (!_timer.Enabled)
-                        {
-                            if (Math.Abs(_timer.Interval - 100) > -0.5)
-                            {
-                                if (Math.Abs(Helper.PollingInterval) > 0)
-                                {
-                                    _timer.Interval = Helper.PollingInterval;
-                                    _timer.Start();
-                                }
-                            }
-                        }
+                        RestartTimer();
                         break;
                     case ActionsHelperEventArgs.MsgUpdateFailed:
                         if ((_adapter.CurrentContent == null) || (_adapter.CurrentContent.Count == 0))
@@ -282,23 +271,31 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             }
         }
 
+        private void RestartTimer()
+        {
+            if (_timer.Enabled) return;
+            if (!(Math.Abs(_timer.Interval - 100) > -0.5)) return;
+            if (!(Math.Abs(Helper.PollingInterval) > 0)) return;
+            _timer.Interval = Helper.PollingInterval;
+            _timer.Start();
+        }
+
         private void RetryButtonOnClick(object sender, EventArgs eventArgs)
         {
-            if (_retryButton.Visibility == ViewStates.Visible)
-            {
-                if (_progressLayout.Visibility == ViewStates.Gone)
-                    _progressLayout.Visibility = ViewStates.Visible;
-                if (_noMessagesTextView.Visibility == ViewStates.Visible)
-                    _noMessagesTextView.Visibility = ViewStates.Invisible;
-                _noMessagesTextView.Text = "";
-                _retryButton.Visibility = ViewStates.Invisible;
-                if (Helper.SelectedFolder != -1)
-                    Helper.ForceLoadMessages();
-                else if (Helper.SelectedExtension != -1)
-                    Helper.ForceLoadFolders();
-                else
-                    Helper.ForceLoadExtensions();
-            }
+            if (_retryButton.Visibility != ViewStates.Visible) return;
+            if (_progressLayout.Visibility == ViewStates.Gone)
+                _progressLayout.Visibility = ViewStates.Visible;
+            if (_noMessagesTextView.Visibility == ViewStates.Visible)
+                _noMessagesTextView.Visibility = ViewStates.Invisible;
+            _noMessagesTextView.Text = "";
+            _retryButton.Visibility = ViewStates.Invisible;
+            if (Helper.SelectedFolder != -1)
+                Helper.ForceLoadMessages();
+            else if (Helper.SelectedExtension != -1)
+                Helper.ForceLoadFolders();
+            else
+                Helper.ForceLoadExtensions();
+            RestartTimer();
         }
     }
 }
