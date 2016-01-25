@@ -142,7 +142,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 
         private const int RepeatsInInternalError = 3;
         private const int RepeatsTimeout = 1000;
-        private const int DuplicateTimeoutSeconds = 10;
+        private const int DuplicateTimeoutSeconds = 45;
 
         /// <summary>
         /// Set actions helper for current context
