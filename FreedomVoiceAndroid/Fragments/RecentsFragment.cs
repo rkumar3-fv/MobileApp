@@ -1,8 +1,8 @@
 using System.Linq;
 using Android.Content;
-using Android.Net;
 using Android.OS;
 using Android.Provider;
+using Android.Support.Design.Widget;
 using Android.Support.V7.Widget;
 using Android.Support.V7.Widget.Helper;
 #if DEBUG
@@ -15,6 +15,7 @@ using com.FreedomVoice.MobileApp.Android.CustomControls;
 using com.FreedomVoice.MobileApp.Android.CustomControls.Callbacks;
 using com.FreedomVoice.MobileApp.Android.CustomControls.CustomEventArgs;
 using com.FreedomVoice.MobileApp.Android.Helpers;
+using Uri = Android.Net.Uri;
 
 namespace com.FreedomVoice.MobileApp.Android.Fragments
 {
@@ -72,7 +73,26 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             var intent = new Intent(Intent.ActionView);
             var uri = Uri.WithAppendedPath(ContactsContract.Contacts.ContentUri, id);
             intent.SetData(uri);
-            ContentActivity.StartActivity(intent);
+            try
+            {
+                ContentActivity.StartActivity(intent);
+            }
+            catch (ActivityNotFoundException)
+            {
+                intent = new Intent();
+                intent.SetAction(Intent.ActionMain);
+                intent.AddCategory(Intent.CategoryLauncher);
+                var componentName = new ComponentName("com.android.contacts", "com.sec.android.app.contacts.PhoneBookTopMenuActivity");
+                intent.SetComponent(componentName);
+                try
+                {
+                    ContentActivity.StartActivity(intent);
+                }
+                catch (ActivityNotFoundException)
+                {
+                    Snackbar.Make(_recentsView, Resource.String.Snack_noContacts, Snackbar.LengthLong).Show();
+                }
+            }
         }
 
         /// <summary>

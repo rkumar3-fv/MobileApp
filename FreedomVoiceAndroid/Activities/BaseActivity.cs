@@ -17,7 +17,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
     public abstract class BaseActivity : AppCompatActivity
     {
         private const string AirDlgTag = "AIR_DLG_TAG";
-        public ActionsHelper Helper;
+        protected ActionsHelper Helper;
         protected App Appl;
         protected View RootLayout;
 

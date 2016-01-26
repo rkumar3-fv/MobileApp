@@ -4066,11 +4066,11 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f0700a2
 			public const int Dlg_settings = 2131165346;
 			
-			// aapt resource value: 0x7f0700c5
-			public const int Extra_notificationBroadcast = 2131165381;
+			// aapt resource value: 0x7f0700c6
+			public const int Extra_notificationBroadcast = 2131165382;
 			
-			// aapt resource value: 0x7f0700c4
-			public const int Extra_pdfReaderPath = 2131165380;
+			// aapt resource value: 0x7f0700c5
+			public const int Extra_pdfReaderPath = 2131165381;
 			
 			// aapt resource value: 0x7f070085
 			public const int FragmentContacts_empty = 2131165317;
@@ -4219,50 +4219,50 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f070041
 			public const int MenuItem_search = 2131165249;
 			
-			// aapt resource value: 0x7f0700ba
-			public const int Notif_attachment_fail = 2131165370;
-			
-			// aapt resource value: 0x7f0700b8
-			public const int Notif_attachment_progress = 2131165368;
+			// aapt resource value: 0x7f0700bb
+			public const int Notif_attachment_fail = 2131165371;
 			
 			// aapt resource value: 0x7f0700b9
-			public const int Notif_attachment_success = 2131165369;
+			public const int Notif_attachment_progress = 2131165369;
 			
-			// aapt resource value: 0x7f0700c3
-			public const int Notif_faxShow = 2131165379;
+			// aapt resource value: 0x7f0700ba
+			public const int Notif_attachment_success = 2131165370;
 			
-			// aapt resource value: 0x7f0700b7
-			public const int Notif_fax_fail = 2131165367;
+			// aapt resource value: 0x7f0700c4
+			public const int Notif_faxShow = 2131165380;
 			
-			// aapt resource value: 0x7f0700b5
-			public const int Notif_fax_progress = 2131165365;
+			// aapt resource value: 0x7f0700b8
+			public const int Notif_fax_fail = 2131165368;
 			
 			// aapt resource value: 0x7f0700b6
-			public const int Notif_fax_success = 2131165366;
+			public const int Notif_fax_progress = 2131165366;
 			
-			// aapt resource value: 0x7f0700bc
-			public const int Notif_record = 2131165372;
-			
-			// aapt resource value: 0x7f0700c1
-			public const int Notif_record_fail = 2131165377;
+			// aapt resource value: 0x7f0700b7
+			public const int Notif_fax_success = 2131165367;
 			
 			// aapt resource value: 0x7f0700bd
-			public const int Notif_record_progress = 2131165373;
-			
-			// aapt resource value: 0x7f0700bf
-			public const int Notif_record_success = 2131165375;
-			
-			// aapt resource value: 0x7f0700bb
-			public const int Notif_voicemail = 2131165371;
+			public const int Notif_record = 2131165373;
 			
 			// aapt resource value: 0x7f0700c2
-			public const int Notif_voicemail_fail = 2131165378;
+			public const int Notif_record_fail = 2131165378;
 			
 			// aapt resource value: 0x7f0700be
-			public const int Notif_voicemail_progress = 2131165374;
+			public const int Notif_record_progress = 2131165374;
 			
 			// aapt resource value: 0x7f0700c0
-			public const int Notif_voicemail_success = 2131165376;
+			public const int Notif_record_success = 2131165376;
+			
+			// aapt resource value: 0x7f0700bc
+			public const int Notif_voicemail = 2131165372;
+			
+			// aapt resource value: 0x7f0700c3
+			public const int Notif_voicemail_fail = 2131165379;
+			
+			// aapt resource value: 0x7f0700bf
+			public const int Notif_voicemail_progress = 2131165375;
+			
+			// aapt resource value: 0x7f0700c1
+			public const int Notif_voicemail_success = 2131165377;
 			
 			// aapt resource value: 0x7f0700ae
 			public const int Snack_callFailed = 2131165358;
@@ -4278,6 +4278,9 @@ namespace com.FreedomVoice.MobileApp.Android
 			
 			// aapt resource value: 0x7f0700b1
 			public const int Snack_loadingError = 2131165361;
+			
+			// aapt resource value: 0x7f0700b5
+			public const int Snack_noContacts = 2131165365;
 			
 			// aapt resource value: 0x7f0700a8
 			public const int Snack_noContactsPermission = 2131165352;

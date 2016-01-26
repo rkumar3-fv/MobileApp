@@ -121,6 +121,7 @@
   <string name="Snack_pdfError">You Have No PDF Readers</string>
   <string name="Snack_pdfGet">INSTALL ONE</string>
   <string name="Snack_noPlayMarket">Your Device Doesn\'t Have Play Market</string>
+  <string name="Snack_noContacts">Contact Preview Doesn\'t Available On Your Device</string>
   <string name="Notif_fax_progress">Fax Downloading</string>
   <string name="Notif_fax_success">Fax Downloaded</string>
   <string name="Notif_fax_fail">Fax Downloading Failed</string>
