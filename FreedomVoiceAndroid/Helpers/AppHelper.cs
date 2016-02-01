@@ -336,7 +336,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                 return null;
             }
             _phoneNumber = PreferencesHelper.GetPhoneNumber();
-            var telephony = _context.GetSystemService(Context.TelephonyService).JavaCast<TelephonyManager>();
+            var telephony = _context.GetSystemService(Context.TelephonyService)?.JavaCast<TelephonyManager>();
             if (!CheckReadPhoneState())
             {
                 if ((telephony?.Line1Number == null) || (telephony.SimSerialNumber == null) ||

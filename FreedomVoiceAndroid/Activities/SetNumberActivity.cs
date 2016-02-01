@@ -162,6 +162,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             _phoneText.Text = phone;
             _phoneText.SetSelection(_phoneText.Text.Length);
             if (Appl.ApplicationHelper.CheckReadPhoneState()) return;
+            if (RootLayout == null) return;
             var snackPerm = Snackbar.Make(RootLayout, Resource.String.Snack_noStatePermission, Snackbar.LengthLong);
             snackPerm.SetAction(Resource.String.Snack_noPhonePermissionAction, OnSetStatePermission);
             snackPerm.SetActionTextColor(ContextCompat.GetColor(this, Resource.Color.colorUndoList));
