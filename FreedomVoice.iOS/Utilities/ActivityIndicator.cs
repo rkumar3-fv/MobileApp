@@ -32,7 +32,6 @@ namespace FreedomVoice.iOS.Utilities
         {
             _activityIndicator.Hidden = false;
             _activityIndicator.StartAnimating();
-            Alpha = 1;
         }
 
         /// <summary>
@@ -41,7 +40,7 @@ namespace FreedomVoice.iOS.Utilities
         public void Hide()
         {
             _activityIndicator.StopAnimating();
-            Animate(0.5, () => { Alpha = 0; }, RemoveFromSuperview);
+            RemoveFromSuperview();
         }
     }
 }
