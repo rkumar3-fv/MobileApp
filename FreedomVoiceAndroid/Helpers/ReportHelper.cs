@@ -52,8 +52,8 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         private void SendMail(string title, string text, string attachmentFilePath)
         {
             var email = new Intent(Intent.ActionSend);
-            email.PutExtra(Intent.ExtraEmail, new[] { "sergey.yakovlev@waveaccess.ru", /*"alexander.pyatakov@waveaccess.ru",*/ "julia.andriyash@waveaccess.ru" });
-            //email.PutExtra(Intent.ExtraCc, new[] { "liza.galyga@waveaccess.ru" });
+            email.PutExtra(Intent.ExtraEmail, new[] { "sergey.yakovlev@waveaccess.ru", "julia.andriyash@waveaccess.ru" });
+            email.PutExtra(Intent.ExtraCc, new[] { "liza.galyga@waveaccess.ru" });
             email.PutExtra(Intent.ExtraSubject, title);
             email.PutExtra(Intent.ExtraText, text);
             if (!string.IsNullOrEmpty(attachmentFilePath))
