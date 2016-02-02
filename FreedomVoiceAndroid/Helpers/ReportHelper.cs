@@ -33,7 +33,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         {
             var title = $"Report {DataFormatUtils.ToFullFormattedDate(DateTime.Now)}";
             var path = $"{_context.GetExternalFilesDir(null)}/{Path.GetRandomFileName()}.log";
-            Task.Factory.StartNew(() => CreateFullReport(path, new Dictionary<DateTime, string>(_logDictionary)))
+            Task.Factory.StartNew(() => CreateFullReport(path, _logDictionary!=null?new Dictionary<DateTime, string>(_logDictionary):new Dictionary<DateTime, string>()))
                 .ContinueWith(task => activity.RunOnUiThread(() =>
                 {
                     _logDictionary.Clear();
@@ -127,6 +127,8 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                 }
                 else
                     streamWriter.WriteLine("WAITING RESPONSES STACK: EMPTY");
+                if (dictionary.Count==0)
+                    return;
                 streamWriter.WriteLine("--- DEVICE LOG ---");
                 foreach (var entity in dictionary)
                 {

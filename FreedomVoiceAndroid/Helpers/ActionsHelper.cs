@@ -594,7 +594,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 #if DEBUG
             Log.Debug(App.AppPackage, "HELPER REQUEST: Remove message request ID=" + requestId);
 #else
-            _app.ApplicationHelper.Reports.Log("HELPER REQUEST: Remove message request ID=" + requestId);
+            _app.ApplicationHelper.Reports?.Log("HELPER REQUEST: Remove message request ID=" + requestId);
 #endif
             PrepareIntent(requestId, removeRequest);
             return requestId;
@@ -616,7 +616,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 #if DEBUG
             Log.Debug(App.AppPackage, "HELPER REQUEST: Delete message request ID=" + requestId);
 #else
-            _app.ApplicationHelper.Reports.Log("HELPER REQUEST: Delete message request ID=" + requestId);
+            _app.ApplicationHelper.Reports?.Log("HELPER REQUEST: Delete message request ID=" + requestId);
 #endif
             PrepareIntent(requestId, deleteRequest);
             return requestId;
@@ -638,7 +638,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 #if DEBUG
             Log.Debug(App.AppPackage, "HELPER REQUEST: Restore message request ID=" + requestId);
 #else
-            _app.ApplicationHelper.Reports.Log("HELPER REQUEST: Restore message request ID=" + requestId);
+            _app.ApplicationHelper.Reports?.Log("HELPER REQUEST: Restore message request ID=" + requestId);
 #endif
             PrepareIntent(requestId, restoreRequest);
             return requestId;
@@ -660,7 +660,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 #if DEBUG
             Log.Debug(App.AppPackage, "HELPER INTENT CREATED: request ID="+requestId);
 #else
-            _app.ApplicationHelper.Reports.Log("HELPER INTENT CREATED: request ID=" + requestId);
+            _app.ApplicationHelper.Reports?.Log("HELPER INTENT CREATED: request ID=" + requestId);
 #endif
             _watchersDictionary.Add(requestId, Stopwatch.StartNew());
             _app.StartService(intent);
@@ -850,7 +850,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 #if DEBUG
                         Log.Debug(App.AppPackage, $"<{requestName}> OK");
 #else
-                        _app.ApplicationHelper.Reports.Log($"<{requestName}> OK");
+                        _app.ApplicationHelper.Reports?.Log($"<{requestName}> OK");
 #endif
                     }
                     if (_preferencesTime != 0)
@@ -1240,7 +1240,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                         Log.Debug(App.AppPackage,
                             $"ACTIVITY {GetType().Name} CREATES CALL to {callResponse.ServiceNumber}");
 #else
-                        _app.ApplicationHelper.Reports.Log($"ACTIVITY {GetType().Name} CREATES CALL to {callResponse.ServiceNumber}");
+                        _app.ApplicationHelper.Reports?.Log($"ACTIVITY {GetType().Name} CREATES CALL to {callResponse.ServiceNumber}");
 #endif
                         if (_waitingRequestArray.ContainsKey(response.RequestId))
                             _waitingRequestArray.Remove(response.RequestId);

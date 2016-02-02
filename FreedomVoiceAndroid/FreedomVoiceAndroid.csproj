@@ -219,6 +219,7 @@
     <Compile Include="Dialogs\ClearRecentsDialogFragment.cs" />
     <Compile Include="Dialogs\DialogEventArgs.cs" />
     <Compile Include="Dialogs\DialogResult.cs" />
+    <Compile Include="Dialogs\FeedbackDialogFragment.cs" />
     <Compile Include="Dialogs\LogoutDialogFragment.cs" />
     <Compile Include="Dialogs\MultiContactsDialogFragment.cs" />
     <Compile Include="Dialogs\NoCellularDialogFragment.cs" />
@@ -288,6 +289,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <AndroidResource Include="Resources\layout\dlg_feedback.axml">
+      <SubType>AndroidResource</SubType>
+    </AndroidResource>
     <ProguardConfiguration Include="proguard.cfg" />
     <None Include="Properties\AndroidManifest.xml" />
     <AndroidResource Include="Resources\layout\act_content.axml" />
@@ -1365,21 +1369,6 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable-xxxhdpi\logo_voicemail.jpg" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable-hdpi\ic_action_report.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable-mdpi\ic_action_report.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable-xhdpi\ic_action_report.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable-xxhdpi\ic_action_report.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable-xxxhdpi\ic_action_report.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
