@@ -59,6 +59,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                             var normalizedNumber = DataFormatUtils.NormalizePhone(phone);
 #if DEBUG
                             Log.Debug(App.AppPackage, $"DIAL TO {DataFormatUtils.ToPhoneNumber(phone)}");
+#else
+                            Appl.ApplicationHelper.Reports?.Log($"DIAL TO {DataFormatUtils.ToPhoneNumber(phone)}");
 #endif
                             Helper.Call(normalizedNumber);
                             JavaSystem.Gc();
@@ -69,6 +71,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                             Snackbar.Make(RootLayout, Resource.String.Snack_incorrectDest, Snackbar.LengthLong).Show();
 #if DEBUG
                             Log.Debug(App.AppPackage, "DIAL TO EMPTY PHONE UNAVAILABLE");
+#else
+                            Appl.ApplicationHelper.Reports?.Log("DIAL TO EMPTY PHONE UNAVAILABLE");
 #endif
                         }
                     }

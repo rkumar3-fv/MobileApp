@@ -7,6 +7,7 @@
   <string name="MenuItem_remove">Remove message</string>
   <string name="MenuItem_search">Search</string>
   <string name="MenuItem_phone">Edit phone number</string>
+  <string name="MenuItem_feedback">Feedback</string>
   <string name="ActivityAuth_title">Welcome</string>
   <string name="ActivityAuth_loginHint">Username or Email</string>
   <string name="ActivityAuth_passwordHint">Password</string>
@@ -81,7 +82,7 @@
   <string name="ActivityFax_title">Fax</string>
   <string name="ActivityFax_view">View Fax</string>
   <string name="ActivityNumber_title">Your Mobile Phone Number</string>
-  <string name="ActivityNubmer_description">To make calls with this app, we require your device’s phone number and you must enable the caller ID feature. This information is not shared with any 3rd parties. Please do not enter your FreedomVoice number here.</string>
+  <string name="ActivityNubmer_description">To make calls with this app, we require your device\’s phone number and you must enable the caller ID feature. This information is not shared with any 3rd parties. Please do not enter your FreedomVoice number here.</string>
   <string name="ActivityNumber_hint">10 digit phone number</string>
   <string name="ActivityNumber_code">+1</string>
   <string name="ActivityNumber_applyButton">CONTINUE</string>
@@ -89,6 +90,10 @@
   <string name="ActivityNumber_error">Please enter correct number.</string>
   <string name="Dlg_ok">OK</string>
   <string name="Dlg_cancel">CANCEL</string>
+  <string name="DlgFeedback_title">Feedback</string>
+  <string name="DlgFeedback_hint">Enter Your feedback here.</string>
+  <string name="DlgFeedback_attach">Attach Device Logs</string>
+  <string name="DlgFeedback_send">SEND</string>
   <string name="DlgLogout_title">Confirm logout?</string>
   <string name="DlgLogout_content">Your Recents list will be cleared.</string>
   <string name="DlgLogout_ok">LOG OUT</string>
@@ -106,6 +111,7 @@
   <string name="DlgPhone_content">To make calls with this app, please enter your device\'s phone number by going to the app menu > Edit Phone Number.</string>
   <string name="DlgPhone_ok">EDIT NUMBER</string>
   <string name="Timestamp_yesterday">Yesterday</string>
+  <string name="Toast_noMailClient">You haven\'t e-mail client. Please install one</string>
   <string name="Snack_noPhonePermission">Application Needs Permission For Making Calls</string>
   <string name="Snack_noStatePermission">Application Needs Permission For Check Your Phone Number</string>
   <string name="Snack_noContactsPermission">FreedomVoice would like to access your Contacts</string>

@@ -16,4 +16,9 @@
     android:title="@string/MenuItem_logout"
     android:icon="@drawable/ic_action_logout"
     app:showAsAction="never"/>
+  <item
+    android:id="@+id/menu_action_feedback"
+    android:title="@string/MenuItem_feedback"
+    android:icon="@drawable/ic_action_report"
+    app:showAsAction="never"/>
 </menu>

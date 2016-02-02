@@ -9,8 +9,8 @@ using Android.Views;
 using Android.Widget;
 #if DEBUG
 using Android.Util;
-using FreedomVoice.Core.Utils;
 #endif
+using FreedomVoice.Core.Utils;
 using com.FreedomVoice.MobileApp.Android.Adapters;
 using com.FreedomVoice.MobileApp.Android.CustomControls;
 using com.FreedomVoice.MobileApp.Android.Helpers;
@@ -65,6 +65,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             if (position >= Helper.AccountsList.Count) return;
 #if DEBUG
             Log.Debug(App.AppPackage, $"ACTIVITY {GetType().Name}: select account #{DataFormatUtils.ToPhoneNumber(_adapter.AccountName(position))}");
+#else
+            Appl.ApplicationHelper.Reports?.Log($"ACTIVITY {GetType().Name}: select account #{DataFormatUtils.ToPhoneNumber(_adapter.AccountName(position))}");
 #endif
             if (_progressLayout.Visibility == ViewStates.Gone)
                 _progressLayout.Visibility = ViewStates.Visible;

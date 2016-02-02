@@ -79,6 +79,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 var callIntent = new Intent(Intent.ActionCall, Uri.Parse("tel:+1" + GetString(Resource.String.ActivityInactive_customerNumber)));
                 Log.Debug(App.AppPackage, $"ACTIVITY {GetType().Name} CREATES CALL to +1{GetString(Resource.String.ActivityInactive_customerNumber)}");
 #else
+                Appl.ApplicationHelper.Reports?.Log($"ACTIVITY {GetType().Name} CREATES CALL to +1{GetString(Resource.String.ActivityInactive_customerNumber)}");
                 var callIntent = new Intent(Intent.ActionCall, Uri.Parse("tel:" + GetString(Resource.String.ActivityInactive_customerNumber)));
 #endif
                 StartActivity(callIntent);

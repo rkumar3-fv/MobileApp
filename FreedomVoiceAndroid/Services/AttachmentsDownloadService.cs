@@ -187,12 +187,16 @@ namespace com.FreedomVoice.MobileApp.Android.Services
             var totalRead = 0;
 #if DEBUG
             Log.Debug(App.AppPackage, $"MEDIA REQUEST to {msg.AttachUrl}");
+#else
+            _helper.Reports.Log($"MEDIA REQUEST to {msg.AttachUrl}");
 #endif
             var res = await ApiHelper.MakeAsyncFileDownload(msg.AttachUrl, token);
             if (res == null)
             {
 #if DEBUG
                 Log.Debug(App.AppPackage, "MEDIA REQUEST FAILED : CONNECTION LOST");
+#else
+                _helper.Reports.Log("MEDIA REQUEST FAILED : CONNECTION LOST");
 #endif
                 var failData = new Bundle();
                 failData.PutParcelable(AttachmentsServiceResultReceiver.ReceiverDataExtra, new ErrorReport(msg.Id, msg, ErrorCodes.ConnectionLost));
@@ -203,6 +207,8 @@ namespace com.FreedomVoice.MobileApp.Android.Services
             {
 #if DEBUG
                 Log.Debug(App.AppPackage, $"MEDIA REQUEST FAILED with CODE = {res.Code}");
+#else
+                _helper.Reports.Log($"MEDIA REQUEST FAILED with CODE = {res.Code}");
 #endif
                 var failData = new Bundle();
                 failData.PutParcelable(AttachmentsServiceResultReceiver.ReceiverDataExtra, new ErrorReport(msg.Id, msg, res.Code));
@@ -211,6 +217,8 @@ namespace com.FreedomVoice.MobileApp.Android.Services
             }
 #if DEBUG
             Log.Debug(App.AppPackage, $"STREAM RESPONSE RECEIVED, LENGTH = {res.Result.Length}");
+#else
+            _helper.Reports.Log($"STREAM RESPONSE RECEIVED, LENGTH = {res.Result.Length}");
 #endif
             var buffer = new byte[BufferSize];
             try
@@ -221,6 +229,8 @@ namespace com.FreedomVoice.MobileApp.Android.Services
                     int bytesRead;
 #if DEBUG
                     Log.Debug(App.AppPackage, "START LOADING, PROGRESS IS 0%");
+#else
+                    _helper.Reports.Log("START LOADING, PROGRESS IS 0%");
 #endif
                     var progressData = new Bundle();
                     progressData.PutParcelable(AttachmentsServiceResultReceiver.ReceiverDataExtra,
@@ -233,6 +243,8 @@ namespace com.FreedomVoice.MobileApp.Android.Services
                         {
 #if DEBUG
                             Log.Debug(App.AppPackage, "LOADING CANCELLED");
+#else
+                            _helper.Reports.Log("LOADING CANCELLED");
 #endif
                             _builder.SetProgress(100, 0, false);
                             _notificationManager.Notify(ProgressNotificationId, _builder.Build());
@@ -277,6 +289,8 @@ namespace com.FreedomVoice.MobileApp.Android.Services
             {
 #if DEBUG
                 Log.Debug(App.AppPackage, "MEDIA REQUEST FAILED: UNABLE TO WRITE FILE");
+#else
+                _helper.Reports.Log("MEDIA REQUEST FAILED: UNABLE TO WRITE FILE");
 #endif
                 var failData = new Bundle();
                 failData.PutParcelable(AttachmentsServiceResultReceiver.ReceiverDataExtra,
