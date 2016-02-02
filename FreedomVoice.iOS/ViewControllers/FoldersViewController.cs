@@ -74,10 +74,7 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private async void OnUnauthorizedError()
         {
-            var appDelegate = UIApplication.SharedApplication.Delegate as AppDelegate;
-            if (appDelegate != null)
-                await appDelegate.LoginWithStoredCredentials();
-
+            await AppDelegate.RenewAuthorization();
             UpdateFoldersTable();
         }
 

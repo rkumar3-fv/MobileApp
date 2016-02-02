@@ -116,19 +116,12 @@ namespace FreedomVoice.iOS.ViewControllers
 
 	    private static EventHandler NetworkChangedHandler
         {
-            get { return async (sender, args) => await RenewAuthorization(); }
-        }
-
-	    private static async Task RenewAuthorization()
-	    {
-            var appDelegate = UIApplication.SharedApplication.Delegate as AppDelegate;
-            if (appDelegate != null)
-                await appDelegate.LoginWithStoredCredentials(false);
+            get { return async (sender, args) => await AppDelegate.RenewAuthorization(false); }
         }
 
         private async void OnUnauthorizedError()
         {
-            await RenewAuthorization();
+            await AppDelegate.RenewAuthorization(false);
             UpdateMessagesTable();
         }
 

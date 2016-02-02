@@ -226,7 +226,7 @@ namespace FreedomVoice.iOS
             await LoginWithStoredCredentials();
         }
 
-        public async Task LoginWithStoredCredentials(bool redirectToLoginOnError = true)
+        private async Task LoginWithStoredCredentials(bool redirectToLoginOnError = true)
         {
             string password = null;
 
@@ -242,8 +242,16 @@ namespace FreedomVoice.iOS
 
             var loginViewModel = new LoginViewModel(userName, password);
             await loginViewModel.AutoLoginAsync();
+
             if (loginViewModel.IsErrorResponseReceived && redirectToLoginOnError)
                 PassToAuthentificationProcess();
+        }
+
+        public static async Task RenewAuthorization(bool redirectToLoginOnError = true)
+	    {
+            var appDelegate = UIApplication.SharedApplication.Delegate as AppDelegate;
+            if (appDelegate != null)
+                await appDelegate.LoginWithStoredCredentials(redirectToLoginOnError);
         }
 
         private static void RemoveTmpFiles()
