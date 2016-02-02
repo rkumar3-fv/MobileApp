@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using AddressBook;
 using AddressBookUI;
 using Contacts;
 using ContactsUI;
@@ -79,12 +78,12 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private void TableSourceOnRecentInfoClicked(Recent recent)
         {
-            var store = new CNContactStore();
-            NSError error;
-
             CNContact contact = null;
 
+            var store = new CNContactStore();
             var request = new CNContactFetchRequest(CNContactKey.PhoneNumbers);
+
+            NSError error;
             store.EnumerateContacts(request, out error, (item, cursor) =>
             {
                 if (item.PhoneNumbers.Any(p => ContactsHelper.NormalizePhoneNumber(p.Value.StringValue) == ContactsHelper.NormalizePhoneNumber(recent.PhoneNumber)))
@@ -104,9 +103,9 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private void DeprecatedTableSourceOnRecentInfoClicked(Recent recent)
         {
-            NSError error;
-            var addressBook = ABAddressBook.Create(out error);
-            var person = addressBook.GetPerson(int.Parse(recent.ContactId));
+            var addressBook = ContactsHelper.GetAddressBook();
+
+            var person = addressBook?.GetPerson(int.Parse(recent.ContactId));
 
             if (person == null)
                 return;

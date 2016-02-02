@@ -51,9 +51,23 @@ namespace FreedomVoice.iOS.Utilities.Helpers
             }
             else
             {
-                NotificationAddressBook = new ABAddressBook();
+                NotificationAddressBook = GetAddressBook();
+                if (NotificationAddressBook == null)
+                    return;
+
                 NotificationAddressBook.ExternalChange += MyAddressBookExternalChangeCallback;
             }
+        }
+
+        public static ABAddressBook GetAddressBook()
+        {
+            var authorizationStatus = ABAddressBook.GetAuthorizationStatus();
+            if (authorizationStatus != ABAuthorizationStatus.Authorized)
+                return null;
+
+            NSError error;
+
+            return ABAddressBook.Create(out error);
         }
 
         private static void MyAddressBookExternalChangeCallback(NSNotification notification)
