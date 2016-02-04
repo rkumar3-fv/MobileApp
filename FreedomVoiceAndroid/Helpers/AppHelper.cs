@@ -349,7 +349,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                     return null;
                 }
             }
-            if (telephony != null && (CheckReadPhoneState()&&(_phoneNumber != telephony.Line1Number) && (telephony.Line1Number.Length > 1) && (_phoneNumber.Length != 10)))
+            if (telephony?.Line1Number != null && CheckReadPhoneState() && (_phoneNumber != telephony.Line1Number) && (telephony.Line1Number.Length > 1) && (_phoneNumber.Length != 10))
             {
                 if (telephony.Line1Number.StartsWith("1") && (telephony.Line1Number.Length == 11))
                     _phoneNumber = telephony.Line1Number.Substring(1);

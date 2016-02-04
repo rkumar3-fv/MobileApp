@@ -3172,20 +3172,17 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f0c0110
 			public const int media_actions = 2131493136;
 			
-			// aapt resource value: 0x7f0c0121
-			public const int menu_action_clear = 2131493153;
+			// aapt resource value: 0x7f0c0120
+			public const int menu_action_clear = 2131493152;
 			
 			// aapt resource value: 0x7f0c011e
-			public const int menu_action_feedback = 2131493150;
-			
-			// aapt resource value: 0x7f0c011f
-			public const int menu_action_logout = 2131493151;
+			public const int menu_action_logout = 2131493150;
 			
 			// aapt resource value: 0x7f0c011d
 			public const int menu_action_phone = 2131493149;
 			
-			// aapt resource value: 0x7f0c0120
-			public const int menu_action_remove = 2131493152;
+			// aapt resource value: 0x7f0c011f
+			public const int menu_action_remove = 2131493151;
 			
 			// aapt resource value: 0x7f0c011c
 			public const int menu_action_search = 2131493148;

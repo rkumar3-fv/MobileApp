@@ -45,9 +45,9 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 case Resource.Id.menu_action_logout:
                     LogoutAction();
                     return true;
-                case Resource.Id.menu_action_feedback:
+                /*case Resource.Id.menu_action_feedback:
                     FeedbackDialog();
-                    return true;
+                    return true;*/
                 case global::Android.Resource.Id.Home:
                     OnBackPressed();
                     return true;
