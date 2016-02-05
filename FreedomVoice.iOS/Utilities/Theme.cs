@@ -256,8 +256,6 @@ namespace FreedomVoice.iOS.Utilities
             UINavigationBar.Appearance.TintColor = WhiteColor;
             UINavigationBar.Appearance.SetTitleTextAttributes(new UITextAttributes { TextColor = WhiteColor });
 
-            //var navigationBarImage = AppDelegate.CurrentDeviceName == iPhone6 || AppDelegate.CurrentDeviceName == iPhone6S ? "navbar_wide.png" : "navbar.png";
-            //UINavigationBar.Appearance.SetBackgroundImage(UIImage.FromFile(navigationBarImage), UIBarMetrics.Default);
             UINavigationBar.Appearance.SetBackgroundImage(UIImage.FromFile("navbar.png"), UIBarMetrics.Default);
         }
 

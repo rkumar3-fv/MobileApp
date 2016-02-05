@@ -30,7 +30,6 @@ namespace FreedomVoice.iOS.Utilities
 
         public void Show()
         {
-            _activityIndicator.Hidden = false;
             _activityIndicator.StartAnimating();
         }
 
