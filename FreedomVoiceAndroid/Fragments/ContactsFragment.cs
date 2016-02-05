@@ -74,12 +74,16 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
 
         private void AdapterOnItemClick(object sender, Contact contact)
         {
-#if DEBUG
+
             foreach (var phone in contact.PhonesList)
             {
+#if DEBUG
                 Log.Debug(App.AppPackage, $"{phone.PhoneNumber} - {phone.TypeCode}");
-            }
+#else
+                App.GetApplication(Context).ApplicationHelper.Reports?.Log($"{phone.PhoneNumber} - {phone.TypeCode}");
 #endif
+            }
+
             ContentActivity.HideKeyboard();
             switch (contact.PhonesList.Count)
             {

@@ -11,9 +11,13 @@
     android:id="@+id/menu_action_phone"
     android:title="@string/MenuItem_phone"
     app:showAsAction="never"/>
+<!--  <item
+    android:id="@+id/menu_action_feedback"
+    android:title="@string/MenuItem_feedback"
+    app:showAsAction="never"/>-->
   <item
     android:id="@+id/menu_action_logout"
     android:title="@string/MenuItem_logout"
     android:icon="@drawable/ic_action_logout"
-    app:showAsAction="never"/>
+    app:showAsAction="never"/>  
 </menu>

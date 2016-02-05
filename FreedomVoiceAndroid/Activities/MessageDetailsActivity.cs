@@ -121,11 +121,15 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 Helper.ExtensionsList[Helper.SelectedExtension].Folders[Helper.SelectedFolder].MessagesList.RemoveAt(MarkForRemove);
 #if DEBUG
                 Log.Debug(App.AppPackage, $"REMOVE message {Helper.SelectedMessage}");
+#else
+                Appl.ApplicationHelper.Reports?.Log($"REMOVE message {Helper.SelectedMessage}");
 #endif
             }
-#if DEBUG
             else
+#if DEBUG
                 Log.Debug(App.AppPackage, $"UNDO removing message {Helper.SelectedMessage}");
+#else
+                Appl.ApplicationHelper.Reports?.Log($"UNDO removing message {Helper.SelectedMessage}");
 #endif
             MarkForRemove = -1;
         }

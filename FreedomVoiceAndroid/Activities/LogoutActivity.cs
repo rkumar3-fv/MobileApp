@@ -11,6 +11,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
 {
     public abstract class LogoutActivity : BaseActivity
     {
+        private const string FeedbackDlgTag = "FEEDBACK_DLG_TAG";
         protected const int CallsPermissionRequestId = 2045;
         protected const int StatePermissionRequestId = 2046;
         protected const int ContactsPermissionRequestId = 2047;
@@ -44,6 +45,9 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 case Resource.Id.menu_action_logout:
                     LogoutAction();
                     return true;
+                /*case Resource.Id.menu_action_feedback:
+                    FeedbackDialog();
+                    return true;*/
                 case global::Android.Resource.Id.Home:
                     OnBackPressed();
                     return true;
@@ -114,6 +118,14 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         {
             if (!Appl.ApplicationHelper.CheckFilesPermissions())
                 RequestPermissions(new[] { AppHelper.WriteStoragePermission }, StoragePermissionRequestId);
+        }
+
+        private void FeedbackDialog()
+        {
+            if (SupportFragmentManager.FindFragmentByTag(FeedbackDlgTag) != null)
+                return;
+            var feedbackDialog = new FeedbackDialogFragment(this);
+            feedbackDialog.Show(SupportFragmentManager, FeedbackDlgTag);
         }
 
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, Permission[] grantResults)

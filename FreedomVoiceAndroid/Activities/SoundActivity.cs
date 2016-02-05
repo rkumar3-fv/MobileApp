@@ -4,7 +4,9 @@ using Android.Content;
 using Android.Media;
 using Android.OS;
 using Android.Runtime;
+#if DEBUG
 using Android.Util;
+#endif
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Helpers;
 using com.FreedomVoice.MobileApp.Android.Services;
@@ -169,7 +171,11 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         {
             var prev = _callbackPrevious.ToFileTime();
             var curr = DateTime.Now.ToFileTime();
+#if DEBUG
             Log.Debug(App.AppPackage, $"Previous - {prev}; Current - {curr}");
+#else
+            Appl.ApplicationHelper.Reports?.Log($"Previous - {prev}; Current - {curr}");
+#endif
             if (prev+FireTime > curr) return;
             _callbackPrevious = DateTime.Now;
             if (MarkForRemove != (-1))

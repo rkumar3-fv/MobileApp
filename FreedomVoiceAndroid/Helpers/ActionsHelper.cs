@@ -127,7 +127,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         /// <summary>
         /// Waiting requests dictionary
         /// </summary>
-        private readonly Dictionary<long, BaseRequest> _waitingRequestArray;
+        public Dictionary<long, BaseRequest> _waitingRequestArray { get;}
 
         /// <summary>
         /// Watchers dictionary
@@ -162,6 +162,8 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             IsFirstRun = _preferencesHelper.IsFirstRun();
 #if DEBUG
             Log.Debug(App.AppPackage, "HELPER: " + (IsFirstRun ? "First run" : "Not first run"));
+#else
+            _app.ApplicationHelper.Reports?.Log("HELPER: " + (IsFirstRun ? "First run" : "Not first run"));
 #endif
             ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
             var cacheImpl = new PclCacheImpl(_app);
@@ -232,12 +234,14 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                         return;
                     }
                 }
-#if DEBUG
                 else
                 {
+#if DEBUG
                     Log.Debug(App.AppPackage, "EXPIRED COOKIE");
-                }
+#else
+                    _app.ApplicationHelper.Reports?.Log("EXPIRED COOKIE");
 #endif
+                }
                 if (!string.IsNullOrEmpty(_userLogin) && !string.IsNullOrEmpty(_userPassword))
                 {
                     Authorize(_userLogin, _userPassword);
@@ -296,6 +300,8 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             _userPassword = password;
 #if DEBUG
             Log.Debug(App.AppPackage, "HELPER REQUEST: Authorize ID="+requestId);
+#else
+            _app.ApplicationHelper.Reports?.Log("HELPER REQUEST: Authorize ID=" + requestId);
 #endif
             PrepareIntent(requestId, loginRequest);
             return requestId;
@@ -313,6 +319,8 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             var logoutRequest = new LogoutRequest(requestId);
 #if DEBUG
             Log.Debug(App.AppPackage, "HELPER REQUEST: Logout ID=" + requestId);
+#else
+            _app.ApplicationHelper.Reports?.Log("HELPER REQUEST: Logout ID=" + requestId);
 #endif
             PrepareIntent(requestId, logoutRequest);
             return requestId;
@@ -332,6 +340,8 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             if (duplicateCheckResult != -1) return duplicateCheckResult;
 #if DEBUG
             Log.Debug(App.AppPackage, "HELPER REQUEST: RestorePassword ID=" + requestId);
+#else
+            _app.ApplicationHelper.Reports?.Log("HELPER REQUEST: RestorePassword ID=" + requestId);
 #endif
             PrepareIntent(requestId, restoreRequest);
             return requestId;
@@ -351,6 +361,8 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             var restoreRequest = new GetPollingRequest(requestId);
 #if DEBUG
             Log.Debug(App.AppPackage, "HELPER REQUEST: GetPollingInterval ID=" + requestId);
+#else
+            _app.ApplicationHelper.Reports?.Log("HELPER REQUEST: GetPollingInterval ID=" + requestId);
 #endif
             PrepareIntent(requestId, restoreRequest);
             return requestId;
@@ -369,6 +381,8 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             if (duplicateCheckResult != -1) return duplicateCheckResult;
 #if DEBUG
             Log.Debug(App.AppPackage, "HELPER REQUEST: GetAccounts ID=" + requestId);
+#else
+            _app.ApplicationHelper.Reports?.Log("HELPER REQUEST: GetAccounts ID=" + requestId);
 #endif
             PrepareIntent(requestId, getAccsRequest);  
             return requestId;
@@ -388,6 +402,8 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             var getPresNumbersRequest = new GetPresentationNumbersRequest(requestId, SelectedAccount.AccountName);
 #if DEBUG
             Log.Debug(App.AppPackage, "HELPER REQUEST: GetPresentationNumbers ID=" + requestId);
+#else
+            _app.ApplicationHelper.Reports?.Log("HELPER REQUEST: GetPresentationNumbers ID=" + requestId);
 #endif
             PrepareIntent(requestId, getPresNumbersRequest);
             return requestId;
@@ -432,6 +448,8 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             {
 #if DEBUG
                 Log.Debug(App.AppPackage, $"HELPER REQUEST: Duplicate {request.Value.Class.Name}. ID={request.Key} already executing.");
+#else
+                _app.ApplicationHelper.Reports?.Log($"HELPER REQUEST: Duplicate {request.Value.Class.Name}. ID={request.Key} already executing.");
 #endif
                 return request.Key;
             }
@@ -463,6 +481,8 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             if (duplicateCheckResult != -1) return duplicateCheckResult;
 #if DEBUG
             Log.Debug(App.AppPackage, "HELPER REQUEST: ForceLoadExtensions ID=" + requestId);
+#else
+            _app.ApplicationHelper.Reports?.Log("HELPER REQUEST: ForceLoadExtensions ID=" + requestId);
 #endif
             PrepareIntent(requestId, getExtRequest);
             return requestId;
@@ -482,6 +502,8 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             if (duplicateCheckResult != -1) return duplicateCheckResult;
 #if DEBUG
             Log.Debug(App.AppPackage, "HELPER REQUEST: ForceLoadFolders ID=" + requestId);
+#else
+            _app.ApplicationHelper.Reports?.Log("HELPER REQUEST: ForceLoadFolders ID=" + requestId);
 #endif
             PrepareIntent(requestId, getFoldersRequest);
             return requestId;
@@ -501,6 +523,8 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             if (duplicateCheckResult != -1) return duplicateCheckResult;
 #if DEBUG
             Log.Debug(App.AppPackage, "HELPER REQUEST: ForceLoadMessages ID=" + requestId);
+#else
+            _app.ApplicationHelper.Reports?.Log("HELPER REQUEST: ForceLoadMessages ID=" + requestId);
 #endif
             PrepareIntent(requestId, getMsgRequest);
             return requestId;
@@ -541,6 +565,12 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                     Log.Debug(App.AppPackage, $"HELPER REQUEST: Call ID={requestId}");
                     Log.Debug(App.AppPackage,
                         $"Call from {reserveCallRequest.Account} (shows as {reserveCallRequest.PresentationNumber}) to {reserveCallRequest.DialingNumber} using SIM {reserveCallRequest.RealSimNumber}");
+#else
+                    if (_app.ApplicationHelper.Reports != null)
+                    {
+                        _app.ApplicationHelper.Reports.Log($"HELPER REQUEST: Call ID={requestId}");
+                        _app.ApplicationHelper.Reports.Log($"Call from {reserveCallRequest.Account} (shows as {reserveCallRequest.PresentationNumber}) to {reserveCallRequest.DialingNumber} using SIM {reserveCallRequest.RealSimNumber}");
+                    }
 #endif
                     PrepareIntent(requestId, reserveCallRequest);
                 }
@@ -563,6 +593,8 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             if (duplicateCheckResult != -1) return duplicateCheckResult;
 #if DEBUG
             Log.Debug(App.AppPackage, "HELPER REQUEST: Remove message request ID=" + requestId);
+#else
+            _app.ApplicationHelper.Reports?.Log("HELPER REQUEST: Remove message request ID=" + requestId);
 #endif
             PrepareIntent(requestId, removeRequest);
             return requestId;
@@ -583,6 +615,8 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             if (duplicateCheckResult != -1) return duplicateCheckResult;
 #if DEBUG
             Log.Debug(App.AppPackage, "HELPER REQUEST: Delete message request ID=" + requestId);
+#else
+            _app.ApplicationHelper.Reports?.Log("HELPER REQUEST: Delete message request ID=" + requestId);
 #endif
             PrepareIntent(requestId, deleteRequest);
             return requestId;
@@ -603,6 +637,8 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             if (duplicateCheckResult != -1) return duplicateCheckResult;
 #if DEBUG
             Log.Debug(App.AppPackage, "HELPER REQUEST: Restore message request ID=" + requestId);
+#else
+            _app.ApplicationHelper.Reports?.Log("HELPER REQUEST: Restore message request ID=" + requestId);
 #endif
             PrepareIntent(requestId, restoreRequest);
             return requestId;
@@ -623,6 +659,8 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             _waitingRequestArray.Add(requestId, request);
 #if DEBUG
             Log.Debug(App.AppPackage, "HELPER INTENT CREATED: request ID="+requestId);
+#else
+            _app.ApplicationHelper.Reports?.Log("HELPER INTENT CREATED: request ID=" + requestId);
 #endif
             _watchersDictionary.Add(requestId, Stopwatch.StartNew());
             _app.StartService(intent);
@@ -797,6 +835,12 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 #if DEBUG
                         Log.Debug(App.AppPackage, $"<{requestName}> - <{responseName}>: {postfix}");
                         Log.Debug(App.AppPackage, $"JSON: {errorResponse.ErrorJson}");
+#else
+                        if (_app.ApplicationHelper.Reports != null)
+                        {
+                            _app.ApplicationHelper.Reports.Log($"<{requestName}> - <{responseName}>: {postfix}");
+                            _app.ApplicationHelper.Reports.Log($"JSON: {errorResponse.ErrorJson}");
+                        }
 #endif
                     }
                     else
@@ -805,6 +849,8 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                         _app.ApplicationHelper.ReportTime(TimingEvent.Request, requestName, responseName, time);
 #if DEBUG
                         Log.Debug(App.AppPackage, $"<{requestName}> OK");
+#else
+                        _app.ApplicationHelper.Reports?.Log($"<{requestName}> OK");
 #endif
                     }
                     if (_preferencesTime != 0)
@@ -973,6 +1019,12 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 #if DEBUG
                                             Log.Debug(App.AppPackage, $"{reqError} repeating {_repeats} times now");
                                             Log.Debug(App.AppPackage, $"New ID = {id}; Old ID {response.RequestId} was removed from waiting stack");
+#else
+                                            if (_app.ApplicationHelper.Reports != null)
+                                            {
+                                                _app.ApplicationHelper.Reports.Log($"{reqError} repeating {_repeats} times now");   
+                                                _app.ApplicationHelper.Reports.Log($"New ID = {id}; Old ID {response.RequestId} was removed from waiting stack");
+                                            }
 #endif
                                             h.Post(() => { PrepareIntent(id, repeatable); });
                                         }
@@ -1187,6 +1239,8 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 #if DEBUG
                         Log.Debug(App.AppPackage,
                             $"ACTIVITY {GetType().Name} CREATES CALL to {callResponse.ServiceNumber}");
+#else
+                        _app.ApplicationHelper.Reports?.Log($"ACTIVITY {GetType().Name} CREATES CALL to {callResponse.ServiceNumber}");
 #endif
                         if (_waitingRequestArray.ContainsKey(response.RequestId))
                             _waitingRequestArray.Remove(response.RequestId);

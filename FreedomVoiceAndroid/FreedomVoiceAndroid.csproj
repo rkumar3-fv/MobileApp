@@ -219,6 +219,7 @@
     <Compile Include="Dialogs\ClearRecentsDialogFragment.cs" />
     <Compile Include="Dialogs\DialogEventArgs.cs" />
     <Compile Include="Dialogs\DialogResult.cs" />
+    <Compile Include="Dialogs\FeedbackDialogFragment.cs" />
     <Compile Include="Dialogs\LogoutDialogFragment.cs" />
     <Compile Include="Dialogs\MultiContactsDialogFragment.cs" />
     <Compile Include="Dialogs\NoCellularDialogFragment.cs" />
@@ -253,6 +254,7 @@
     <Compile Include="Helpers\AppHelper.cs" />
     <Compile Include="Helpers\AttachmentHelperEventArgs.cs" />
     <Compile Include="Helpers\AttachmentsHelper.cs" />
+    <Compile Include="Helpers\ReportHelper.cs" />
     <Compile Include="Receivers\NotificationBroadcastReceiver.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -287,6 +289,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <AndroidResource Include="Resources\layout\dlg_feedback.axml">
+      <SubType>AndroidResource</SubType>
+    </AndroidResource>
     <ProguardConfiguration Include="proguard.cfg" />
     <None Include="Properties\AndroidManifest.xml" />
     <AndroidResource Include="Resources\layout\act_content.axml" />

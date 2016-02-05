@@ -51,6 +51,7 @@ namespace com.FreedomVoice.MobileApp.Android
         {
             base.OnCreate();
             _helper.ActionsHelper = new ActionsHelper(this);
+            //_helper.Reports = new ReportHelper(this, _helper.ActionsHelper);
             JavaSystem.SetProperty("http.keepAlive", "true");
             if (!_helper.IsInsigthsOn)
                 AppDomain.CurrentDomain.UnhandledException += HandleUnhandledException;
@@ -66,6 +67,8 @@ namespace com.FreedomVoice.MobileApp.Android
             var totalMegs = (int)Build.VERSION.SdkInt > 15 ? $"{mi.TotalMem / 1048576L}Mb" : "API 15";
 #if DEBUG
             Log.Debug(AppPackage, $"LOW MEMORY: available  {availableMegs}Mb / {totalMegs}");
+#else
+            ApplicationHelper.Reports?.Log($"LOW MEMORY: available  {availableMegs}Mb / {totalMegs}");
 #endif
             ApplicationHelper.ReportEvent(SpecialEvent.LowMemory, DataFormatUtils.ToFullFormattedDate(DateTime.Now), $"{availableMegs}Mb / {totalMegs}");
         }
