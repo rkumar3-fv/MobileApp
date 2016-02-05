@@ -262,6 +262,10 @@ namespace FreedomVoice.Core
                     return HandleErrorState<MediaResponse>(response.StatusCode, ex);
                 }
             }
+            catch (OperationCanceledException)
+            {
+                return new BaseResult<MediaResponse> { Code = ErrorCodes.Cancelled };
+            }
             catch (Exception ex)
             {
                 return new BaseResult<MediaResponse>
