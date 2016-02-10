@@ -179,12 +179,14 @@ namespace FreedomVoice.iOS.ViewControllers
             }
 
             var selectedCallerId = MainTabBarInstance.GetSelectedPresentationNumber().PhoneNumber;
-            if (await PhoneCall.CreateCallReservation(MainTabBarInstance.SelectedAccount.PhoneNumber, selectedCallerId, PhoneNumber, this))
-            {
-                Recents.AddRecent(PhoneNumber);
-                ClearEnteredPhone();
-                ChangeClearPhoneButtonVisibility();
-            }
+            await PhoneCall.CreateCallReservation(MainTabBarInstance.SelectedAccount.PhoneNumber, selectedCallerId, PhoneNumber, this, OnSuccessCallReservation);
+        }
+
+        private void OnSuccessCallReservation()
+        {
+            Recents.AddRecent(PhoneNumber);
+            ClearEnteredPhone();
+            ChangeClearPhoneButtonVisibility();
         }
     }
 }

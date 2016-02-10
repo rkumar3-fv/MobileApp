@@ -51,15 +51,21 @@ namespace FreedomVoice.iOS.ViewControllers
 
             NavigationItem.SetRightBarButtonItem(Appearance.GetLogoutBarButton(this), false);
 
+            _updateTimer = NSTimer.CreateRepeatingScheduledTimer(UserDefault.PoolingInterval, delegate { UpdateExtensionsTable(); });
+
+            ReloadExtensionsTable();
+
             var extensionsViewModel = new ExtensionsViewModel(SelectedAccount);
             extensionsViewModel.OnUnauthorizedResponse += (sender, args) => OnUnauthorizedError();
             await extensionsViewModel.GetExtensionsListAsync();
 
-            ExtensionsList = extensionsViewModel.ExtensionsList;
-            _extensionsSource.Extensions = ExtensionsList;
-            _extensionsTableView.ReloadData();
+            ReloadExtensionsTable(extensionsViewModel.ExtensionsList);
+        }
 
-            _updateTimer = NSTimer.CreateRepeatingScheduledTimer(UserDefault.PoolingInterval, delegate { UpdateExtensionsTable(); });
+        public override void ViewWillDisappear(bool animated)
+        {
+            AppDelegate.ActivityIndicator?.Hide();
+            _updateTimer?.Invalidate();
         }
 
         private void InitializeTableView()
@@ -84,6 +90,13 @@ namespace FreedomVoice.iOS.ViewControllers
             UpdateExtensionsTable();
         }
 
+        private void ReloadExtensionsTable(List<ExtensionWithCount> extensionsList = null)
+        {
+            ExtensionsList = extensionsList ?? new List<ExtensionWithCount>();
+            _extensionsSource.Extensions = ExtensionsList;
+            _extensionsTableView.ReloadData();
+        }
+
         private async void UpdateExtensionsTable()
         {
             var needToReloadTable = false;
@@ -102,15 +115,6 @@ namespace FreedomVoice.iOS.ViewControllers
 
             if (needToReloadTable)
                 _extensionsTableView.ReloadData();
-        }
-
-        public override void ViewDidDisappear(bool animated)
-        {
-            ExtensionsList = new List<ExtensionWithCount>();
-            _extensionsSource.Extensions = ExtensionsList;
-            _extensionsTableView.ReloadData();
-
-            _updateTimer.Invalidate();
         }
     }
 }

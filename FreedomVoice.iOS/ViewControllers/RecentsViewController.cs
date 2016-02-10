@@ -47,7 +47,7 @@ namespace FreedomVoice.iOS.ViewControllers
                 TextAlignment = UITextAlignment.Center
             };
 
-            _recentSource = new RecentsSource(Recents.GetRecentsOrdered());
+            _recentSource = new RecentsSource(Recents.GetRecentsOrdered(), this);
 
             _recentsTableView = new UITableView
             {
@@ -59,9 +59,6 @@ namespace FreedomVoice.iOS.ViewControllers
                 ScrollIndicatorInsets = insets
             };
             View.Add(_recentsTableView);
-
-            _recentSource.OnRowSelected += TableSourceOnRowSelected;
-            _recentSource.OnRowDeleted += TableSourceOnRowDeleted;
 
             if (AppDelegate.SystemVersion == 9)
                 _recentSource.OnRecentInfoClicked += TableSourceOnRecentInfoClicked;
@@ -194,44 +191,6 @@ namespace FreedomVoice.iOS.ViewControllers
             alertController.AddAction(UIAlertAction.Create("Cancel", UIAlertActionStyle.Cancel, a => { ReturnToRecentsView(); }));
 
             PresentViewController(alertController, true, null);
-        }
-
-        private async void TableSourceOnRowSelected(object sender, RecentsSource.RowSelectedEventArgs e)
-        {
-            e.TableView.DeselectRow(e.IndexPath, false);
-
-            var recent = Recents.GetRecentsOrdered()[e.IndexPath.Row];
-            if (recent == null) return;
-
-            var selectedCallerId = MainTabBarInstance.GetSelectedPresentationNumber().PhoneNumber;
-            if (!await PhoneCall.CreateCallReservation(MainTabBarInstance.SelectedAccount.PhoneNumber, selectedCallerId, recent.PhoneNumber, this)) return;
-
-            Recents.AddRecent(recent.PhoneNumber);
-
-            _recentsTableView.BeginUpdates();
-
-            _recentSource.SetRecents(Recents.GetRecentsOrdered());
-            e.TableView.MoveRow(e.IndexPath, NSIndexPath.FromRowSection(0, 0));
-            _recentsTableView.ReloadData();
-
-            _recentsTableView.EndUpdates();
-        }
-
-        private void TableSourceOnRowDeleted(object sender, RecentsSource.RowSelectedEventArgs e)
-        {
-            e.TableView.DeselectRow(e.IndexPath, false);
-
-            var recent = Recents.GetRecentsOrdered()[e.IndexPath.Row];
-            if (recent == null) return;
-
-            Recents.RemoveRecent(recent);
-
-            _recentsTableView.BeginUpdates();
-
-            _recentSource.SetRecents(Recents.GetRecentsOrdered());
-            _recentsTableView.DeleteRows(new[] { e.IndexPath }, UITableViewRowAnimation.Left);
-
-            _recentsTableView.EndUpdates();
         }
     }
 }

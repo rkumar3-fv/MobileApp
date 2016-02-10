@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Foundation;
 using FreedomVoice.Core.Utils;
 using FreedomVoice.iOS.Utilities.Helpers;
@@ -9,7 +10,7 @@ namespace FreedomVoice.iOS.Utilities
 {
     public static class PhoneCall
     {
-        public static async Task<bool> CreateCallReservation(string systemNumber, string presentationNumber, string destinationNumberFormatted, UIViewController viewController)
+        public static async Task<bool> CreateCallReservation(string systemNumber, string presentationNumber, string destinationNumberFormatted, UIViewController viewController, Action onSuccessAction)
         {
             viewController.View.UserInteractionEnabled = false;
 
@@ -43,6 +44,8 @@ namespace FreedomVoice.iOS.Utilities
                 viewController.View.UserInteractionEnabled = true;
                 return false;
             }
+
+            onSuccessAction?.Invoke();
 
             //if (string.IsNullOrEmpty(expectedCallerIdNumber) || expectedCallerIdNumber.Length != 10)
             //TODO: Only for test purposes, replace later

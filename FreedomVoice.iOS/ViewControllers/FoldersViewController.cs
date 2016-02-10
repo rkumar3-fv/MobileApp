@@ -47,6 +47,8 @@ namespace FreedomVoice.iOS.ViewControllers
 
         public override async void ViewWillAppear(bool animated)
         {
+            base.ViewWillAppear(animated);
+
             NavigationItem.Title = "x" + SelectedExtension.ExtensionNumber;
 
             if (IsSingleExtension)
@@ -59,17 +61,38 @@ namespace FreedomVoice.iOS.ViewControllers
 
             NavigationItem.SetRightBarButtonItem(Appearance.GetLogoutBarButton(this), false);
 
+            _updateTimer = NSTimer.CreateRepeatingScheduledTimer(UserDefault.PoolingInterval, delegate { UpdateFoldersTable(); });
+
+            ReloadFoldersTable();
+
             var foldersViewModel = new FoldersViewModel(SelectedAccount.PhoneNumber, SelectedExtension.ExtensionNumber);
             foldersViewModel.OnUnauthorizedResponse += (sender, args) => OnUnauthorizedError();
             await foldersViewModel.GetFoldersListAsync();
 
-            FoldersList = foldersViewModel.FoldersList;
-            _foldersSource.Folders = FoldersList;
-            _foldersTableView.ReloadData();
+            ReloadFoldersTable(foldersViewModel.FoldersList);
+        }
 
-            _updateTimer = NSTimer.CreateRepeatingScheduledTimer(UserDefault.PoolingInterval, delegate { UpdateFoldersTable(); });
+        public override void ViewWillDisappear(bool animated)
+        {
+            AppDelegate.ActivityIndicator.Hide();
+            _updateTimer?.Invalidate();
+        }
 
-            base.ViewWillAppear(animated);
+        private void InitializeTableView()
+        {
+            _insetsHeight = Theme.StatusBarHeight + NavigationController.NavigationBarHeight() + Theme.TabBarHeight;
+            var insets = new UIEdgeInsets(0, 0, _insetsHeight, 0);
+
+            _foldersSource = new FoldersSource(FoldersList, SelectedExtension, SelectedAccount, NavigationController);
+            _foldersTableView = new UITableView
+            {
+                Frame = Theme.ScreenBounds,
+                TableFooterView = new UIView(CGRect.Empty),
+                Source = _foldersSource,
+                ContentInset = insets,
+                ScrollIndicatorInsets = insets
+            };
+            View.AddSubview(_foldersTableView);
         }
 
         private async void OnUnauthorizedError()
@@ -78,13 +101,11 @@ namespace FreedomVoice.iOS.ViewControllers
             UpdateFoldersTable();
         }
 
-        public override void ViewDidDisappear(bool animated)
-        {
-            FoldersList = new List<FolderWithCount>();
+	    private void ReloadFoldersTable(List<FolderWithCount> foldersList = null)
+	    {
+            FoldersList = foldersList ?? new List<FolderWithCount>();
             _foldersSource.Folders = FoldersList;
             _foldersTableView.ReloadData();
-
-            _updateTimer.Invalidate();
         }
 
         private async void UpdateFoldersTable()
@@ -106,22 +127,5 @@ namespace FreedomVoice.iOS.ViewControllers
             if (needToReloadTable)
                 _foldersTableView.ReloadData();
         }
-
-        private void InitializeTableView()
-        {
-            _insetsHeight = Theme.StatusBarHeight + NavigationController.NavigationBarHeight() + Theme.TabBarHeight;
-            var insets = new UIEdgeInsets(0, 0, _insetsHeight, 0);
-
-            _foldersSource = new FoldersSource(FoldersList, SelectedExtension, SelectedAccount, NavigationController);
-	        _foldersTableView = new UITableView
-	        {
-	            Frame = Theme.ScreenBounds,
-	            TableFooterView = new UIView(CGRect.Empty),
-	            Source = _foldersSource,
-	            ContentInset = insets,
-	            ScrollIndicatorInsets = insets
-	        };
-	        View.AddSubview(_foldersTableView);
-	    }
     }
 }

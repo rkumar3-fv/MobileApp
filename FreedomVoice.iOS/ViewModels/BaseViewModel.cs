@@ -173,8 +173,7 @@ namespace FreedomVoice.iOS.ViewModels
 
                 if (ProgressControl == ProgressControlType.ActivityIndicator)
                 {
-                    UIApplication.SharedApplication.KeyWindow.AddSubview(AppDelegate.ActivityIndicator);
-                    AppDelegate.ActivityIndicator.Show();
+                    ShowDownloadIndicator();
                 }
                 else
                 {
@@ -198,7 +197,7 @@ namespace FreedomVoice.iOS.ViewModels
 
         private static void ShowDownloadIndicator()
         {
-            UIApplication.SharedApplication.KeyWindow.AddSubview(AppDelegate.ActivityIndicator);
+            UIApplication.SharedApplication.KeyWindow.RootViewController.View.AddSubview(AppDelegate.ActivityIndicator);
             AppDelegate.ActivityIndicator.Show();
         }
     }

@@ -27,6 +27,10 @@ namespace FreedomVoice.iOS.ViewControllers
 	    private UITableView _messagesTableView;
 	    private MessagesSource _messagesSource;
 
+	    private UILabel _noMessagesLabel;
+
+	    private bool NeedToInitializeTableData { get; set; }
+
 	    private NSTimer _updateTimer;
 
         private static MainTabBarController MainTabBarInstance => MainTabBarController.SharedInstance;
@@ -34,6 +38,8 @@ namespace FreedomVoice.iOS.ViewControllers
 	    public MessagesViewController(IntPtr handle) : base(handle)
 	    {
             MessagesList = new List<Message>();
+
+            NeedToInitializeTableData = true;
         }
 
         public override async void ViewDidLoad()
@@ -42,13 +48,15 @@ namespace FreedomVoice.iOS.ViewControllers
 
             await ContactsHelper.GetContactsListAsync();
 
-            await InitializeTableView();
+            InitializeTableView();
 
             base.ViewDidLoad();
         }
 
-        public override void ViewWillAppear(bool animated)
+        public override async void ViewWillAppear(bool animated)
 	    {
+            base.ViewWillAppear(animated);
+
             Theme.Apply();
 
             NavigationItem.Title = SelectedFolder.DisplayName;
@@ -57,9 +65,22 @@ namespace FreedomVoice.iOS.ViewControllers
 
             PhoneCapability.ReachabilityChanged += NetworkChangedHandler;
 
-            _updateTimer = NSTimer.CreateRepeatingScheduledTimer(UserDefault.PoolingInterval, delegate { UpdateMessagesTable(); });
+            if (NeedToInitializeTableData)
+            {
+                var messagesViewModel = new MessagesViewModel(SelectedAccount.PhoneNumber, SelectedExtension.ExtensionNumber, SelectedFolder.DisplayName);
+                messagesViewModel.OnUnauthorizedResponse += (sender, args) => OnUnauthorizedError();
+                await messagesViewModel.GetMessagesListAsync();
 
-            base.ViewWillAppear(animated);
+                MessagesList = messagesViewModel.MessagesList;
+                _messagesSource.Messages = MessagesList;
+
+                _messagesTableView.BackgroundView = _noMessagesLabel;
+                _messagesTableView.ReloadData();
+                
+                NeedToInitializeTableData = false;
+            }
+
+            _updateTimer = NSTimer.CreateRepeatingScheduledTimer(UserDefault.PoolingInterval, delegate { UpdateMessagesTable(); });
         }
 
 	    public override void ViewWillDisappear(bool animated)
@@ -71,15 +92,18 @@ namespace FreedomVoice.iOS.ViewControllers
 
             PhoneCapability.ReachabilityChanged -= NetworkChangedHandler;
 
-            _updateTimer.Invalidate();
+            AppDelegate.EnableUserInteraction(UIApplication.SharedApplication);
+            AppDelegate.ActivityIndicator?.Hide();
+
+            _updateTimer?.Invalidate();
         }
 
-	    private async Task InitializeTableView()
+	    private void InitializeTableView()
 	    {
             var headerHeight = Theme.StatusBarHeight + NavigationController.NavigationBarHeight();
             var insets = new UIEdgeInsets(0, 0, Theme.TabBarHeight, 0);
 
-            var noMessagesLabel = new UILabel
+            _noMessagesLabel = new UILabel
             {
                 Frame = new CGRect(15, Theme.ScreenBounds.Height / 2 - headerHeight - 15, Theme.ScreenBounds.Width - 30, 30),
                 Text = "No messages",
@@ -102,17 +126,7 @@ namespace FreedomVoice.iOS.ViewControllers
                 ScrollIndicatorInsets = insets
             };
             View.Add(_messagesTableView);
-
-            var messagesViewModel = new MessagesViewModel(SelectedAccount.PhoneNumber, SelectedExtension.ExtensionNumber, SelectedFolder.DisplayName);
-            messagesViewModel.OnUnauthorizedResponse += (sender, args) => OnUnauthorizedError();
-            await messagesViewModel.GetMessagesListAsync();
-
-            MessagesList = messagesViewModel.MessagesList;
-            _messagesSource.Messages = MessagesList;
-
-            _messagesTableView.BackgroundView = noMessagesLabel;
-            _messagesTableView.ReloadData();
-        }
+	    }
 
 	    private static EventHandler NetworkChangedHandler
         {
@@ -130,8 +144,7 @@ namespace FreedomVoice.iOS.ViewControllers
             var selectedCallerId = MainTabBarInstance.GetSelectedPresentationNumber().PhoneNumber;
             var selectedMessagePhoneNumber = e.SelectedMessage.SourceNumber;
 
-            if (await PhoneCall.CreateCallReservation(MainTabBarInstance.SelectedAccount.PhoneNumber, selectedCallerId, selectedMessagePhoneNumber, this))
-                Recents.AddRecent(selectedMessagePhoneNumber);
+            await PhoneCall.CreateCallReservation(MainTabBarInstance.SelectedAccount.PhoneNumber, selectedCallerId, selectedMessagePhoneNumber, this, () => Recents.AddRecent(selectedMessagePhoneNumber));
         }
 
         private void OnSourceRowSelected(object sender, EventArgs e)
@@ -172,7 +185,9 @@ namespace FreedomVoice.iOS.ViewControllers
                 if (messagesToAdd.Count == 0 && messagesToRemove.Count == 0)
                     return;
 
-                var selectedMessage = _messagesSource.SelectedRowIndexPath != null ? MessagesList[_messagesSource.SelectedRowIndexPath.Row] : null;
+                var selectedMessage = _messagesSource.SelectedRowIndexPath?.Row >= 0 && _messagesSource.SelectedRowIndexPath.Row < MessagesList.Count
+                                        ? MessagesList[_messagesSource.SelectedRowIndexPath.Row]
+                                        : null;
 
                 var selectedMessageIndex = recievedMessages.FindIndex(m => m.Id == selectedMessage?.Id);
 

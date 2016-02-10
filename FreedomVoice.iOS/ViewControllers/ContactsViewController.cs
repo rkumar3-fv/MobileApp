@@ -215,17 +215,16 @@ namespace FreedomVoice.iOS.ViewControllers
                     PresentViewController(alertController, true, null);
                     return;
                 case 1:
-                    if (await PhoneCall.CreateCallReservation(MainTabBarInstance.SelectedAccount.PhoneNumber, selectedCallerId, phoneNumbers.First().Number, this))
-                        Recents.AddRecent(phoneNumbers.First().Number, person.DisplayName, person.Id);
+                    await PhoneCall.CreateCallReservation(MainTabBarInstance.SelectedAccount.PhoneNumber, selectedCallerId, phoneNumbers.First().Number, this, () => Recents.AddRecent(phoneNumbers.First().Number, person.DisplayName, person.Id));
                     break;
                 default:
                     var phoneCallController = UIAlertController.Create("Select number for " + person.DisplayName, null, UIAlertControllerStyle.ActionSheet);
                     foreach (var phone in phoneNumbers)
                     {
-                        phoneCallController.AddAction(UIAlertAction.Create(phone.Number + " \u2013 " + phone.Label, UIAlertActionStyle.Default, async a => {
-                            if (await PhoneCall.CreateCallReservation(MainTabBarInstance.SelectedAccount.PhoneNumber, selectedCallerId, phone.Number, this))
-                                Recents.AddRecent(phone.Number, person.DisplayName, person.Id);
-                        }));
+                        phoneCallController.AddAction(UIAlertAction.Create(phone.Number + " \u2013 " + phone.Label, UIAlertActionStyle.Default,
+                            async obj => {
+                                await PhoneCall.CreateCallReservation(MainTabBarInstance.SelectedAccount.PhoneNumber, selectedCallerId, phone.Number, this, () => Recents.AddRecent(phone.Number, person.DisplayName, person.Id));
+                            }));
                     }
                     phoneCallController.AddAction(UIAlertAction.Create("Cancel", UIAlertActionStyle.Cancel, null));
                     PresentViewController(phoneCallController, true, null);

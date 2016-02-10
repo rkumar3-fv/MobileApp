@@ -3,17 +3,24 @@ using System.Collections.Generic;
 using Foundation;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.TableViewCells;
+using FreedomVoice.iOS.Utilities;
+using FreedomVoice.iOS.Utilities.Helpers;
+using FreedomVoice.iOS.ViewControllers;
 using UIKit;
 
 namespace FreedomVoice.iOS.TableViewSources
 {
     public class RecentsSource : UITableViewSource
     {
-        private List<Recent> _recents;        
+        private static MainTabBarController MainTabBarInstance => MainTabBarController.SharedInstance;
 
-        public RecentsSource(List<Recent> recents)
+        private List<Recent> _recents;
+        private readonly UIViewController _viewController;
+
+        public RecentsSource(List<Recent> recents, UIViewController viewController)
         {
-            _recents = recents;            
+            _recents = recents;
+            _viewController = viewController;
         }
 
         public void SetRecents(List<Recent> recents)
@@ -72,29 +79,47 @@ namespace FreedomVoice.iOS.TableViewSources
 
         public Action<Recent> OnRecentInfoClicked;
 
-        public event EventHandler<RowSelectedEventArgs> OnRowSelected;
-        public event EventHandler<RowSelectedEventArgs> OnRowDeleted;
-
-        public class RowSelectedEventArgs : EventArgs
+        public override async void RowSelected(UITableView tableView, NSIndexPath indexPath)
         {
-            public UITableView TableView { get; private set; }
-            public NSIndexPath IndexPath { get; private set; }
+            tableView.DeselectRow(indexPath, false);
 
-            public RowSelectedEventArgs(UITableView tableView, NSIndexPath indexPath)
-            {
-                TableView = tableView;
-                IndexPath = indexPath;
-            }
+            var recent = Recents.GetRecentsOrdered()[indexPath.Row];
+            if (recent == null) return;
+
+            Action onSuccessCallReservation = () => OnSuccessCallReservation(tableView, indexPath, recent);
+
+            var selectedCallerId = MainTabBarInstance.GetSelectedPresentationNumber().PhoneNumber;
+            await PhoneCall.CreateCallReservation(MainTabBarInstance.SelectedAccount.PhoneNumber, selectedCallerId, recent.PhoneNumber, _viewController, onSuccessCallReservation);
         }
 
-        public override void RowSelected(UITableView tableView, NSIndexPath indexPath)
+        private void OnSuccessCallReservation(UITableView tableView, NSIndexPath indexPath, Recent recent)
         {
-            OnRowSelected?.Invoke(this, new RowSelectedEventArgs(tableView, indexPath));
+            Recents.AddRecent(recent.PhoneNumber);
+            SetRecents(Recents.GetRecentsOrdered());
+
+            tableView.BeginUpdates();
+
+            tableView.MoveRow(indexPath, NSIndexPath.FromRowSection(0, 0));
+            tableView.ReloadData();
+
+            tableView.EndUpdates();
         }
 
         private void RowDeleted(UITableView tableView, NSIndexPath indexPath)
         {
-            OnRowDeleted?.Invoke(this, new RowSelectedEventArgs(tableView, indexPath));
+            tableView.DeselectRow(indexPath, false);
+
+            var recent = Recents.GetRecentsOrdered()[indexPath.Row];
+            if (recent == null) return;
+
+            Recents.RemoveRecent(recent);
+            SetRecents(Recents.GetRecentsOrdered());
+
+            tableView.BeginUpdates();
+
+            tableView.DeleteRows(new[] { indexPath }, UITableViewRowAnimation.Left);
+
+            tableView.EndUpdates();
         }
     }
 }
