@@ -7,6 +7,7 @@ namespace FreedomVoice.iOS.Utilities
 {
     public static class Theme
     {
+        private static readonly bool IPhone4 = ScreenBounds.Height == 480;
         private static readonly bool IPhone6 = ScreenBounds.Width == 375;
         private static readonly bool IPhone6Plus = ScreenBounds.Width == 414;
 
@@ -26,7 +27,7 @@ namespace FreedomVoice.iOS.Utilities
         /// Login page background image
         /// </summary>
         static readonly Lazy<UIImage> loginBackgroundImage = new Lazy<UIImage>(() => UIImage.FromFile($"Login-{(IPhone6Plus ? "736h" : IPhone6 ? "667h" : "568h")}.png"));
-        public static UIImage LoginBackgroundImage => loginBackgroundImage.Value;
+        private static UIImage LoginBackgroundImage => loginBackgroundImage.Value;
 
         /// <summary>
         /// Splash screen background image
@@ -37,7 +38,7 @@ namespace FreedomVoice.iOS.Utilities
         /// <summary>
         /// Keypad Dial image
         /// </summary>
-        private static readonly Lazy<UIImage> keypadDialImage = new Lazy<UIImage>(() => UIImage.FromFile($"keypad_call{(IPhone6 ? "_big" : "")}.png"));
+        private static readonly Lazy<UIImage> keypadDialImage = new Lazy<UIImage>(() => UIImage.FromFile($"keypad_call{(IPhone6 ? "_big" : IPhone4 ? "_small" : "")}.png"));
         public static UIImage KeypadDialImage => keypadDialImage.Value;
 
         public static UIImage LoginLogoImage(bool keyboardVisible) => UIImage.FromFile($"logo_freedomvoice{(!IPhone6 && !IPhone6Plus && keyboardVisible ? "_small" : "")}_white.png");
@@ -225,19 +226,25 @@ namespace FreedomVoice.iOS.Utilities
 
         public static nfloat BackButtonLabelWidth => AppDelegate.SystemVersion == 9 ? 86 : 91;
 
-        public static nfloat KeypadButtonDiameter => IPhone6 || IPhone6Plus ? 75 : 65;
+        public static nfloat KeypadButtonDiameter => IPhone6 || IPhone6Plus ? 75 : IPhone4 ? 50 : 65;
 
-        public static nfloat KeypadDistanceX => IPhone6 || IPhone6Plus ? 28 : 16;
+        public static nfloat KeypadDialButtonWidth => IPhone6Plus || IPhone6 ? 281 : IPhone4 ? 190 : 227;
 
-        public static nfloat KeypadDistanceY => IPhone6 || IPhone6Plus ? 15 : 8;
+        public static nfloat KeypadDialButtonHeight => IPhone6Plus || IPhone6 ? 72 : IPhone4 ? 50 : 62;
+
+        public static nfloat KeypadButtonFontSize => IPhone4 ? 30 : 36;
+
+        public static nfloat KeypadDistanceX => IPhone6 || IPhone6Plus ? 28 : IPhone4 ? 20 : 16;
+
+        public static nfloat KeypadDistanceY => IPhone6 || IPhone6Plus ? 15 : IPhone4 ? 5 : 8;
 
         public static nfloat KeypadWidth => KeypadButtonDiameter * 3 + KeypadDistanceX * 2;
 
         public static nfloat KeypadHeight => (KeypadButtonDiameter + KeypadDistanceY) * 4;
 
-        public static nfloat KeypadTopPadding => IPhone6Plus ? 44 : IPhone6 ? 17 : 0;
+        public static nfloat KeypadPhoneLabelHeight => IPhone4 ? 46 : 52;
 
-        public static nfloat KeypadDialButtonDiameter => KeypadButtonDiameter - 3;
+        public static nfloat KeypadTopPadding => IPhone6Plus ? 44 : IPhone6 ? 17 : 0;
 
         public static nfloat NavigationBarHeight(this UINavigationController navigationController)
         {

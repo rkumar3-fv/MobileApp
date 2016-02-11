@@ -413,6 +413,7 @@
     <BundleResource Include="Resources\keypad_call_big%402x.png" />
     <BundleResource Include="Resources\arrow_right%402x.png" />
     <BundleResource Include="Resources\arrow_right%403x.png" />
+    <BundleResource Include="Resources\keypad_call_small%402x.png" />
     <Content Include="Settings.bundle\Root.plist">
       <SubType>Designer</SubType>
     </Content>

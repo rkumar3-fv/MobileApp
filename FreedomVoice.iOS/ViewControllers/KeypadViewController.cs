@@ -36,7 +36,7 @@ namespace FreedomVoice.iOS.ViewControllers
 
             _phoneLabel = new UILabel
             {
-                Frame = new CGRect(40, keypadLineView.Frame.Y, Theme.ScreenBounds.Width - 80, 52),
+                Frame = new CGRect(40, keypadLineView.Frame.Y, Theme.ScreenBounds.Width - 80, Theme.KeypadPhoneLabelHeight),
                 Font = UIFont.SystemFontOfSize(30, UIFontWeight.Thin),
                 TextAlignment = UITextAlignment.Center,
                 LineBreakMode = UILineBreakMode.HeadTruncation,
@@ -63,8 +63,9 @@ namespace FreedomVoice.iOS.ViewControllers
                 var button = new RoundedButton(buttonRect, string.IsNullOrEmpty(item.Image) ? RoundedButtonStyle.Subtitle : RoundedButtonStyle.CentralImage, item.Text)
                 {
                     BorderColor = Theme.KeypadBorderColor,
-                    TextLabel = { Text = item.Text, Font = UIFont.SystemFontOfSize(36, UIFontWeight.Thin) },
-                    DetailTextLabel = { Text = item.DetailedText, Font = UIFont.SystemFontOfSize(9, UIFontWeight.Regular) },
+                    TextLabel = { Text = item.Text, Font = UIFont.SystemFontOfSize(Theme.KeypadButtonFontSize, UIFontWeight.Thin) },
+                    DetailTextLabel = { Text = item.DetailedText, Font = UIFont.SystemFontOfSize(item.Text == "0" ? 12 : 9, UIFontWeight.Regular) },
+                    ContentEdgeInsets = string.IsNullOrEmpty(item.Image) ? new UIEdgeInsets(-4, 0, 0, 0) : UIEdgeInsets.Zero,
                     CornerRadius = RoundedButton.MaxValue,
                     BorderWidth = 1,
                     ContentColor = UIColor.Black
@@ -84,7 +85,7 @@ namespace FreedomVoice.iOS.ViewControllers
                 View.AddSubview(button);
             }
 
-            _keypadDial = new UIButton(new CGRect(0, keypadPositionY + Theme.KeypadHeight, Theme.KeypadDialButtonDiameter, Theme.KeypadDialButtonDiameter));
+            _keypadDial = new UIButton(new CGRect(0, keypadPositionY + Theme.KeypadHeight, Theme.KeypadDialButtonWidth, Theme.KeypadDialButtonHeight));
             _keypadDial.Center = new CGPoint(View.Center.X, _keypadDial.Center.Y);
             _keypadDial.SetBackgroundImage(Theme.KeypadDialImage, UIControlState.Normal);
             _keypadDial.TouchUpInside += OnKeypadDialTouchUpInside;
