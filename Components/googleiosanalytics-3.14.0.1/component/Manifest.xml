@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<component format="1" id="googleiosanalytics" is-shell="true">
+  <name>Google Analytics for iOS</name>
+  <publisher>Xamarin Inc.</publisher>
+  <publisher-url>http://xamarin.com</publisher-url>
+  <docs-url>https://developers.google.com/analytics/</docs-url>
+  <version>3.14.0.1</version>
+  <summary>Collect, configure, and analyze your data to reach the right audience.</summary>
+  <packages>
+    <package id="Xamarin.Google.iOS.Analytics" version="3.14.0.1" framework="ios-unified" />
+  </packages>
+  <samples>
+    <sample id="CuteAnimalsiOS">
+      <name>Cute Animals Sample</name>
+      <summary>Cute Animals Sample</summary>
+    </sample>
+  </samples>
+</component>

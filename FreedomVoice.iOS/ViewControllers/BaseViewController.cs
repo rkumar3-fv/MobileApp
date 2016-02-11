@@ -1,6 +1,6 @@
 ﻿using System;
 using Foundation;
-using GoogleAnalytics.iOS;
+using Google.Analytics;
 using UIKit;
 
 namespace FreedomVoice.iOS.ViewControllers
@@ -15,8 +15,8 @@ namespace FreedomVoice.iOS.ViewControllers
         /// </param>
         protected BaseViewController(IntPtr handle) : base(handle)
         {
-            GAI.SharedInstance.DefaultTracker.Set(GAIConstants.ScreenName, PageName);
-            GAI.SharedInstance.DefaultTracker.Send(GAIDictionaryBuilder.CreateScreenView().Build());
+            Gai.SharedInstance.DefaultTracker.Set(GaiConstants.ScreenName, PageName);
+            Gai.SharedInstance.DefaultTracker.Send(DictionaryBuilder.CreateScreenView().Build());
 
             if (!HandlesKeyboardNotifications) return;
 

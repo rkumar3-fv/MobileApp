@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.Utilities.Events;
-using GoogleAnalytics.iOS;
+using Google.Analytics;
 using UIKit;
 
 namespace FreedomVoice.iOS.ViewControllers
@@ -22,8 +22,8 @@ namespace FreedomVoice.iOS.ViewControllers
         {
             SharedInstance = this;
 
-            GAI.SharedInstance.DefaultTracker.Set(GAIConstants.ScreenName, "Main Tab Bar Screen");
-            GAI.SharedInstance.DefaultTracker.Send(GAIDictionaryBuilder.CreateScreenView().Build());
+            Gai.SharedInstance.DefaultTracker.Set(GaiConstants.ScreenName, "Main Tab Bar Screen");
+            Gai.SharedInstance.DefaultTracker.Send(DictionaryBuilder.CreateScreenView().Build());
         }
 
 	    public override void ViewDidLoad()

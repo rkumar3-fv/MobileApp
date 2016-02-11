@@ -15,7 +15,7 @@ using FreedomVoice.iOS.Utilities.Helpers;
 using FreedomVoice.iOS.ViewControllers;
 using FreedomVoice.iOS.ViewModels;
 using FreedomVoice.iOS.Views;
-using GoogleAnalytics.iOS;
+using Google.Analytics;
 using UIKit;
 using Xamarin;
 
@@ -372,9 +372,9 @@ namespace FreedomVoice.iOS
         private const string GoogleAnalyticsTrackingId = "UA-587407-96";
         private static void InitializeGoogleAnalytics()
         {
-            GAI.SharedInstance.DispatchInterval = 20;
-            GAI.SharedInstance.TrackUncaughtExceptions = true;
-            GAI.SharedInstance.GetTracker(GoogleAnalyticsTrackingId);
+            Gai.SharedInstance.DispatchInterval = 20;
+            Gai.SharedInstance.TrackUncaughtExceptions = true;
+            Gai.SharedInstance.GetTracker(GoogleAnalyticsTrackingId);
         }
 
         private const string InsightsApiKey = "d3d8eb1b7ea6654b812ec9a8dea5fb8224e3a2b5";
