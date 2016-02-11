@@ -194,17 +194,15 @@ namespace FreedomVoice.iOS.TableViewSources
             Messages.RemoveAt(indexPath.Row);
 
             tableView.BeginUpdates();
+
             tableView.DeleteRows(new[] { indexPath }, UITableViewRowAnimation.Left);
-            ReloadSelectedRow(tableView);
+
+            if (DeletedRowIndexPath != null && !Equals(DeletedRowIndexPath, indexPath))
+                tableView.ReloadRows(new[] { DeletedRowIndexPath }, UITableViewRowAnimation.None);
+
             tableView.EndUpdates();
 
             DeletedRowIndexPath = SelectedRowIndexPath;
-        }
-
-        public void ReloadSelectedRow(UITableView tableView)
-        {
-            if (DeletedRowIndexPath != null)
-                tableView.ReloadRows(new[] { DeletedRowIndexPath }, UITableViewRowAnimation.None);
         }
 
         private bool IndexPathIsInvalid(NSIndexPath indexPath)

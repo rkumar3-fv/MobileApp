@@ -88,8 +88,6 @@ namespace FreedomVoice.iOS.ViewControllers
             AppDelegate.ResetAudioPlayer();
             AppDelegate.CancelActiveDownload();
 
-            _messagesSource.ReloadSelectedRow(_messagesTableView);
-
             PhoneCapability.ReachabilityChanged -= NetworkChangedHandler;
 
             AppDelegate.EnableUserInteraction(UIApplication.SharedApplication);
