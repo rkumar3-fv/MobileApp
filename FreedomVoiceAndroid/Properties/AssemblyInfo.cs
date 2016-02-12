@@ -10,8 +10,8 @@ using System.Runtime.InteropServices;
 #endif
 [assembly: AssemblyCompany("FreedomVoice")]
 [assembly: AssemblyProduct("FreedomVoice.MobileApp.Android")]
-[assembly: AssemblyCopyright("Copyright ©  2015")]
+[assembly: AssemblyCopyright("Copyright ©  2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: ComVisible(false)]
-[assembly: AssemblyVersion("0.15.21")]
+[assembly: AssemblyVersion("0.15.23")]
