@@ -172,7 +172,7 @@ namespace FreedomVoice.Core.Utils
         {
             var url = value.Replace(" ", SpaceFlag);
             url = WebUtility.UrlEncode(url);
-            return url.Replace(SpaceFlag, "%20").Replace("(", "%28").Replace(")", "%29");
+            return url.Replace(SpaceFlag, "%20").Replace("(", "%28").Replace(")", "%29").Replace("&", "%26");
         }
     }
 }
