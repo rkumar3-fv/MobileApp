@@ -83,7 +83,7 @@
   <string name="ActivityFax_view">View Fax</string>
   <string name="ActivityNumber_title">Your Mobile Phone Number</string>
   <string name="ActivityNubmer_description">To make calls with this app, we require your device\’s phone number and you must enable the caller ID feature. This information is not shared with any 3rd parties. Please do not enter your FreedomVoice number here.</string>
-  <string name="ActivityNumber_hint">10 digit phone number</string>
+  <string name="ActivityNumber_hint">10-Digit Mobile Phone Number</string>
   <string name="ActivityNumber_code">+1</string>
   <string name="ActivityNumber_applyButton">CONTINUE</string>
   <string name="ActivityNumber_cancelButton">SKIP</string>
