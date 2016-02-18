@@ -117,10 +117,10 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                     else
                         streamWriter.WriteLine("SELECTED EXTENSION: NOT SELECTED");
                 }
-                if ((_actionsHelper._waitingRequestArray != null) && (_actionsHelper._waitingRequestArray.Count > 0))
+                if ((_actionsHelper.WaitingRequestArray != null) && (_actionsHelper.WaitingRequestArray.Count > 0))
                 {
                     streamWriter.WriteLine("---WAITING RESPONSES STACK---");
-                    foreach (var request in _actionsHelper._waitingRequestArray)
+                    foreach (var request in _actionsHelper.WaitingRequestArray)
                     {
                         streamWriter.WriteLine($"{request.Key}: {request.Value.Class.Name}");
                     }

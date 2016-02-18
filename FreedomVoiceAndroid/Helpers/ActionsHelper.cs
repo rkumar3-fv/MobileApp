@@ -127,7 +127,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         /// <summary>
         /// Waiting requests dictionary
         /// </summary>
-        public Dictionary<long, BaseRequest> _waitingRequestArray { get;}
+        public Dictionary<long, BaseRequest> WaitingRequestArray { get;}
 
         /// <summary>
         /// Watchers dictionary
@@ -154,7 +154,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             _app = app;
             _dbHelper = AppDbHelper.Instance(app);
             _idCounter = new AtomicLong();
-            _waitingRequestArray = new Dictionary<long, BaseRequest>();
+            WaitingRequestArray = new Dictionary<long, BaseRequest>();
             _watchersDictionary = new Dictionary<long, Stopwatch>();
             _receiver = new ComServiceResultReceiver(new Handler());
             _receiver.SetListener(this);
@@ -290,8 +290,6 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         /// <returns>request ID</returns>
         public long Authorize(string login, string password)
         {
-            if (IsLoggedIn)
-                return -1;
             var requestId = RequestId;
             var loginRequest = new LoginRequest(requestId, login, password);
             var duplicateCheckResult = CheckDuplicate<LoginRequest>(loginRequest);
@@ -353,6 +351,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         /// <returns>request ID</returns>
         public long GetPolling()
         {
+            if (!IsLoggedIn) return -1;
             var requestId = RequestId;
             if (!CheckRequestAbility(requestId)) return requestId;
             var duplicateCheckResult = CheckDuplicate<GetPollingRequest>();
@@ -374,6 +373,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         /// <returns>request ID</returns>
         public long GetAccounts()
         {
+            if (!IsLoggedIn) return -1;
             var requestId = RequestId;
             if (!CheckRequestAbility(requestId)) return requestId;
             var getAccsRequest = new GetAccountsRequest(requestId);
@@ -394,6 +394,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         /// <returns>request ID</returns>
         public long GetPresentationNumbers()
         {
+            if (!IsLoggedIn) return -1;
             var requestId = RequestId;
             if (!CheckRequestAbility(requestId)) return requestId;
             var duplicateCheckResult = CheckDuplicate<GetPresentationNumbersRequest>();
@@ -416,7 +417,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         /// <returns>Executing ID or -1</returns>
         private long CheckDuplicate<T>() where T: BaseRequest
         {
-            foreach (var request in _waitingRequestArray.Where(response => response.Value is T))
+            foreach (var request in WaitingRequestArray.Where(response => response.Value is T))
             {
                 return Cheking(request);
             }
@@ -430,7 +431,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         /// <returns>Executing ID or -1</returns>
         private long CheckDuplicate<T>(BaseRequest baseRequest) where T: BaseRequest
         {
-            foreach (var request in _waitingRequestArray.Where(response => response.Value is T).Where(request =>
+            foreach (var request in WaitingRequestArray.Where(response => response.Value is T).Where(request =>
             {
                 var req = request.Value as T;
                 return req != null && req.Equals(baseRequest as T);
@@ -453,7 +454,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 #endif
                 return request.Key;
             }
-            _waitingRequestArray.Remove(request.Key);
+            WaitingRequestArray.Remove(request.Key);
             return -1;
         }
 
@@ -474,6 +475,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         /// <returns>request ID</returns>
         public long ForceLoadExtensions()
         {
+            if (!IsLoggedIn) return -1;
             var requestId = RequestId;
             if (!CheckMessageUpdate(requestId)) return requestId;
             var getExtRequest = new GetExtensionsRequest(requestId, SelectedAccount.AccountName);
@@ -494,6 +496,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         /// <returns>request ID</returns>
         public long ForceLoadFolders()
         {
+            if (!IsLoggedIn) return -1;
             if (SelectedExtension == -1) return -1;
             var requestId = RequestId;
             if (!CheckMessageUpdate(requestId)) return requestId;
@@ -515,6 +518,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         /// <returns>request ID</returns>
         public long ForceLoadMessages()
         {
+            if (!IsLoggedIn) return -1;
             if ((SelectedExtension == -1)||(SelectedFolder == -1)) return -1;
             var requestId = RequestId;
             if (!CheckMessageUpdate(requestId)) return requestId;
@@ -537,6 +541,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         /// <returns>request ID</returns>
         public long Call(string number)
         {
+            if (!IsLoggedIn) return -1;
             var requestId = RequestId;
             if (!CheckRequestAbility(requestId)) return requestId;
             if (!_app.ApplicationHelper.CheckCallsPermission())
@@ -585,6 +590,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         /// <returns>request ID</returns>
         public long RemoveMessage(int index)
         {
+            if (!IsLoggedIn) return -1;
             var requestId = RequestId;
             if (!CheckRequestAbility(requestId)) return requestId;
             var removeRequest = new RemoveMessageRequest(requestId, SelectedAccount.AccountName, ExtensionsList[SelectedExtension].Id, 
@@ -607,6 +613,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         /// <returns>request ID</returns>
         public long DeleteMessage(int index)
         {
+            if (!IsLoggedIn) return -1;
             var requestId = RequestId;
             if (!CheckRequestAbility(requestId)) return requestId;
             var deleteRequest = new DeleteMessageRequest(requestId, SelectedAccount.AccountName, ExtensionsList[SelectedExtension].Id,
@@ -629,6 +636,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         /// <returns>request ID</returns>
         public long RestoreMessage(string messageCode)
         {
+            if (!IsLoggedIn) return -1;
             var requestId = RequestId;
             if (!CheckRequestAbility(requestId)) return requestId;
             var restoreRequest = new RestoreMessageRequest(requestId, SelectedAccount.AccountName, ExtensionsList[SelectedExtension].Id, messageCode,
@@ -656,7 +664,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             intent.PutExtra(ComService.RequestIdTag, requestId);
             intent.PutExtra(ComServiceResultReceiver.ReceiverTag, _receiver);
             intent.PutExtra(ComService.RequestTag, request);
-            _waitingRequestArray.Add(requestId, request);
+            WaitingRequestArray.Add(requestId, request);
 #if DEBUG
             Log.Debug(App.AppPackage, "HELPER INTENT CREATED: request ID="+requestId);
 #else
@@ -788,8 +796,8 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                         _watchersDictionary[response.RequestId].Stop();
                     var time = _watchersDictionary[response.RequestId].ElapsedMilliseconds;
                     _watchersDictionary.Remove(response.RequestId);
-                    if (!_waitingRequestArray.ContainsKey(response.RequestId)) return;
-                    var requestName = _waitingRequestArray[response.RequestId].GetType().Name;
+                    if (!WaitingRequestArray.ContainsKey(response.RequestId)) return;
+                    var requestName = WaitingRequestArray[response.RequestId].GetType().Name;
                     var responseName = response.GetType().Name;
                     if (responseName == "ErrorResponse")
                     {
@@ -876,7 +884,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         {
             var type = response.GetType().Name;
             Intent intent;
-            if (!_waitingRequestArray.ContainsKey(response.RequestId))
+            if (!WaitingRequestArray.ContainsKey(response.RequestId))
                 return;
 
             switch (type)
@@ -889,8 +897,8 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                         case ErrorResponse.ErrorConnection:
                         case ErrorResponse.ErrorGatewayTimeout:
                         case ErrorResponse.ErrorRequestTimeout:
-                            if (!_waitingRequestArray.ContainsKey(response.RequestId)) break;
-                            var req = _waitingRequestArray[response.RequestId].GetType().Name;
+                            if (!WaitingRequestArray.ContainsKey(response.RequestId)) break;
+                            var req = WaitingRequestArray[response.RequestId].GetType().Name;
                             if ((req == "GetExtensionsRequest")||(req == "GetFoldersRequest")||(req == "GetMessagesRequest"))
                                 HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.MsgUpdateFailed }));
                             else if (req == "GetPollingRequest")
@@ -902,17 +910,19 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                         case ErrorResponse.ErrorUnauthorized:
                             if (IsLoggedIn)
                             {
-                                if (_accPair != null)
+                                if (WaitingRequestArray.ContainsKey(response.RequestId))
                                 {
-                                    var login = (string) _accPair.First;
-                                    var pass = (string) _accPair.Second;
-                                    if (!string.IsNullOrEmpty(login) && !string.IsNullOrEmpty(pass))
-                                    {
-                                        IsLoggedIn = false;
-                                        Authorize(login, pass);
-                                    }
-                                    else
-                                        DoLogout(response.RequestId);
+                                    if (WaitingRequestArray[response.RequestId] is GetMessagesRequest ||
+                                        WaitingRequestArray[response.RequestId] is GetExtensionsRequest ||
+                                        WaitingRequestArray[response.RequestId] is GetFoldersRequest)
+                                        HelperEvent?.Invoke(this,
+                                            new ActionsHelperEventArgs(response.RequestId,
+                                                new[] {ActionsHelperEventArgs.MsgUpdateFailed}));
+                                    WaitingRequestArray.Remove(response.RequestId);
+                                }
+                                if (!string.IsNullOrEmpty(_userLogin) && !string.IsNullOrEmpty(_userPassword))
+                                {
+                                    Authorize(_userLogin, _userPassword);
                                 }
                                 else
                                     DoLogout(response.RequestId);
@@ -925,10 +935,10 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                             // Bad login format
                             if (!IsLoggedIn)
                                 HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new []{ActionsHelperEventArgs.AuthLoginError, ActionsHelperEventArgs.RestoreError}));             
-                            else if (_waitingRequestArray.ContainsKey(response.RequestId))
+                            else if (WaitingRequestArray.ContainsKey(response.RequestId))
                             {
                                 // Call reservation bad request
-                                if (_waitingRequestArray[response.RequestId] is CallReservationRequest)
+                                if (WaitingRequestArray[response.RequestId] is CallReservationRequest)
                                 {
                                     SaveRecent(response);
                                     HelperEvent?.Invoke(this,
@@ -936,12 +946,12 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                                             new[] {ActionsHelperEventArgs.CallReservationFail}));
                                 }
                                 // Messages loading bad request
-                                else if (_waitingRequestArray[response.RequestId] is GetMessagesRequest ||
-                                     _waitingRequestArray[response.RequestId] is GetExtensionsRequest ||
-                                     _waitingRequestArray[response.RequestId] is GetFoldersRequest)
+                                else if (WaitingRequestArray[response.RequestId] is GetMessagesRequest ||
+                                     WaitingRequestArray[response.RequestId] is GetExtensionsRequest ||
+                                     WaitingRequestArray[response.RequestId] is GetFoldersRequest)
                                     HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.MsgUpdateFailedInternal }));
                                 // Not polling interval bad request
-                                else if (!(_waitingRequestArray[response.RequestId] is GetPollingRequest))
+                                else if (!(WaitingRequestArray[response.RequestId] is GetPollingRequest))
                                     HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.InternalError }));
                             }
                             break;
@@ -956,13 +966,13 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                             else
                             {
                                 // Messages 404
-                                if (_waitingRequestArray.ContainsKey(response.RequestId) &&
-                                    (_waitingRequestArray[response.RequestId] is GetMessagesRequest ||
-                                     _waitingRequestArray[response.RequestId] is GetExtensionsRequest ||
-                                     _waitingRequestArray[response.RequestId] is GetFoldersRequest))
+                                if (WaitingRequestArray.ContainsKey(response.RequestId) &&
+                                    (WaitingRequestArray[response.RequestId] is GetMessagesRequest ||
+                                     WaitingRequestArray[response.RequestId] is GetExtensionsRequest ||
+                                     WaitingRequestArray[response.RequestId] is GetFoldersRequest))
                                     HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] {ActionsHelperEventArgs.MsgUpdateFailedInternal}));
                                 // Not polling interval 404
-                                else if (!(_waitingRequestArray[response.RequestId] is GetPollingRequest))
+                                else if (!(WaitingRequestArray[response.RequestId] is GetPollingRequest))
                                     HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] {ActionsHelperEventArgs.InternalError}));
                             }
                             break;
@@ -977,7 +987,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                         //Forbidden 403
                         case ErrorResponse.ErrorForbidden:
                             // Call reservation bad destination phone
-                            if (_waitingRequestArray.ContainsKey(response.RequestId) && _waitingRequestArray[response.RequestId] is CallReservationRequest)
+                            if (WaitingRequestArray.ContainsKey(response.RequestId) && WaitingRequestArray[response.RequestId] is CallReservationRequest)
                             {
                                 SaveRecent(response);
                                 HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] {ActionsHelperEventArgs.CallReservationWrong}));
@@ -986,23 +996,23 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                                 DoLogout(response.RequestId);
                             break;
                         case ErrorResponse.ErrorInternal:
-                            if (!_waitingRequestArray.ContainsKey(response.RequestId)) break;
-                            var reqErr = _waitingRequestArray[response.RequestId].GetType().Name;
+                            if (!WaitingRequestArray.ContainsKey(response.RequestId)) break;
+                            var reqErr = WaitingRequestArray[response.RequestId].GetType().Name;
                             if ((reqErr == "GetExtensionsRequest")||(reqErr == "GetFoldersRequest")||(reqErr == "GetMessagesRequest"))
                                 HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.MsgUpdateFailedInternal}));
                             else if (reqErr != "GetPollingRequest")
                                 HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] {ActionsHelperEventArgs.InternalError}));
                             break;
                         case ErrorResponse.ErrorUnknown:
-                            if (!_waitingRequestArray.ContainsKey(response.RequestId)) break;
-                            var reqError = _waitingRequestArray[response.RequestId].GetType().Name;
+                            if (!WaitingRequestArray.ContainsKey(response.RequestId)) break;
+                            var reqError = WaitingRequestArray[response.RequestId].GetType().Name;
                             if (reqError != "GetPollingRequest")
                             {
                                 if (_repeats < RepeatsInInternalError)
                                 {
                                     var id = RequestId;
-                                    var repeatable = _waitingRequestArray[response.RequestId];
-                                    _waitingRequestArray.Remove(response.RequestId);
+                                    var repeatable = WaitingRequestArray[response.RequestId];
+                                    WaitingRequestArray.Remove(response.RequestId);
                                     repeatable.Id = id;
                                     _repeats++;
                                     var timer = new Timer
@@ -1041,15 +1051,17 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                             }
                             break;
                     }
-                    if (_waitingRequestArray.ContainsKey(response.RequestId))
-                        _waitingRequestArray.Remove(response.RequestId);
+                    if (WaitingRequestArray.ContainsKey(response.RequestId))
+                        WaitingRequestArray.Remove(response.RequestId);
                     break;
 
                 // Login action response
                 case "LoginResponse":
-                    IsLoggedIn = true;
                     _preferencesHelper.SaveCredentials(_userLogin, _userPassword, AppHelper.InsightsKey);
-                    _waitingRequestArray.Remove(response.RequestId);
+                    WaitingRequestArray.Remove(response.RequestId);
+                    if (IsLoggedIn)
+                        break;
+                    IsLoggedIn = true;
                     if (_app.ApplicationHelper.IsVoicecallsSupported()&&(IsFirstRun || (_app.ApplicationHelper.GetMyPhoneNumber() == "")))
                     {
                         intent = new Intent(_app, typeof(SetNumberActivity));
@@ -1061,15 +1073,15 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 
                 // Restore password response
                 case "RestorePasswordResponse":
-                    if (_waitingRequestArray.ContainsKey(response.RequestId))
-                        _waitingRequestArray.Remove(response.RequestId);
+                    if (WaitingRequestArray.ContainsKey(response.RequestId))
+                        WaitingRequestArray.Remove(response.RequestId);
                     HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.RestoreOk }));
                     break;
 
                 // Restore password response
                 case "GetPollingResponse":
-                    if (_waitingRequestArray.ContainsKey(response.RequestId))
-                        _waitingRequestArray.Remove(response.RequestId);
+                    if (WaitingRequestArray.ContainsKey(response.RequestId))
+                        WaitingRequestArray.Remove(response.RequestId);
                     var pollingResponse = (GetPollingResponse) response;
                     if (Math.Abs(pollingResponse.PollingInterval) > 0)
                     {
@@ -1088,8 +1100,8 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                 // GetAccounts action response
                 case "GetAccountsResponse":
                     var accsResponse = (GetAccountsResponse) response;
-                    if (_waitingRequestArray.ContainsKey(response.RequestId))
-                        _waitingRequestArray.Remove(response.RequestId);
+                    if (WaitingRequestArray.ContainsKey(response.RequestId))
+                        WaitingRequestArray.Remove(response.RequestId);
                     switch (accsResponse.AccountsList.Count)
                     {
                         // No one account is active
@@ -1138,8 +1150,8 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                 // Get presentation numbers response
                 case "GetPresentationNumbersResponse":
                     var numbResponse = (GetPresentationNumbersResponse)response;
-                    if (_waitingRequestArray.ContainsKey(response.RequestId))
-                        _waitingRequestArray.Remove(response.RequestId);
+                    if (WaitingRequestArray.ContainsKey(response.RequestId))
+                        WaitingRequestArray.Remove(response.RequestId);
                     switch (numbResponse.NumbersList.Count)
                     {
                         // No one active presentation numbers
@@ -1201,8 +1213,8 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                     }
                     else
                         HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new []{ActionsHelperEventArgs.MsgUpdated}));
-                    if (_waitingRequestArray.ContainsKey(response.RequestId))
-                        _waitingRequestArray.Remove(response.RequestId);
+                    if (WaitingRequestArray.ContainsKey(response.RequestId))
+                        WaitingRequestArray.Remove(response.RequestId);
                     break;
 
                 // Get folders response
@@ -1213,7 +1225,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                         ExtensionsList[SelectedExtension].Folders = foldersResponse.FoldersList;
                         HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.MsgUpdated }));
                     }
-                    _waitingRequestArray.Remove(response.RequestId);
+                    WaitingRequestArray.Remove(response.RequestId);
                     break;
 
                 // Get messages response
@@ -1224,8 +1236,8 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                         ExtensionsList[SelectedExtension].Folders[SelectedFolder].MessagesList = msgResponse.MessagesList;
                         SelectedMessage = -1;
                     }
-                    if (_waitingRequestArray.ContainsKey(response.RequestId))
-                        _waitingRequestArray.Remove(response.RequestId);
+                    if (WaitingRequestArray.ContainsKey(response.RequestId))
+                        WaitingRequestArray.Remove(response.RequestId);
                     HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.MsgUpdated }));
                     break;
 
@@ -1242,37 +1254,37 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 #else
                         _app.ApplicationHelper.Reports?.Log($"ACTIVITY {GetType().Name} CREATES CALL to {callResponse.ServiceNumber}");
 #endif
-                        if (_waitingRequestArray.ContainsKey(response.RequestId))
-                            _waitingRequestArray.Remove(response.RequestId);
+                        if (WaitingRequestArray.ContainsKey(response.RequestId))
+                            WaitingRequestArray.Remove(response.RequestId);
                         HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.CallReservationOk }));
                         HelperEvent?.Invoke(this, new ActionsHelperIntentArgs(response.RequestId, callIntent));
                     }
                     else
                     {
-                        if (_waitingRequestArray.ContainsKey(response.RequestId))
-                            _waitingRequestArray.Remove(response.RequestId);
+                        if (WaitingRequestArray.ContainsKey(response.RequestId))
+                            WaitingRequestArray.Remove(response.RequestId);
                         HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] {ActionsHelperEventArgs.CallReservationFail}));
                     }
                     break;
 
                 // Move message to trash response
                 case "RemoveMessageResponse":
-                    if (_waitingRequestArray.ContainsKey(response.RequestId))
-                        _waitingRequestArray.Remove(response.RequestId);
+                    if (WaitingRequestArray.ContainsKey(response.RequestId))
+                        WaitingRequestArray.Remove(response.RequestId);
                     HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.MsgMessagesUpdated }));
                     break;
 
                 // Restore message from trash response
                 case "RestoreMessageResponse":
-                    if (_waitingRequestArray.ContainsKey(response.RequestId))
-                        _waitingRequestArray.Remove(response.RequestId);
+                    if (WaitingRequestArray.ContainsKey(response.RequestId))
+                        WaitingRequestArray.Remove(response.RequestId);
                     HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.MsgMessagesUpdated }));
                     break;
 
                 // Delete message from trash response
                 case "DeleteMessageResponse":
-                    if (_waitingRequestArray.ContainsKey(response.RequestId))
-                        _waitingRequestArray.Remove(response.RequestId);
+                    if (WaitingRequestArray.ContainsKey(response.RequestId))
+                        WaitingRequestArray.Remove(response.RequestId);
                     HelperEvent?.Invoke(this, new ActionsHelperEventArgs(response.RequestId, new[] { ActionsHelperEventArgs.MsgMessagesUpdated }));
                     break;
             }
@@ -1284,8 +1296,8 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         /// <param name="id">request ID</param>
         private void DoLogout(long id)
         {
-            if (_waitingRequestArray.ContainsKey(id))
-                _waitingRequestArray.Remove(id);
+            if (WaitingRequestArray.ContainsKey(id))
+                WaitingRequestArray.Remove(id);
             _userLogin = "";
             _userPassword = "";
             IsLoggedIn = false;
@@ -1314,7 +1326,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         /// <param name="response">response from server</param>
         private void SaveRecent(BaseResponse response)
         {
-            var callReservation = (CallReservationRequest)_waitingRequestArray[response.RequestId];
+            var callReservation = (CallReservationRequest)WaitingRequestArray[response.RequestId];
             var recent = new Recent(callReservation.DialingNumber);
             var task = Task.Run(() =>
             {
