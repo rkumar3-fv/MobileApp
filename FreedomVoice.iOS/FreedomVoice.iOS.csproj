@@ -95,7 +95,7 @@
     <CodesignResourceRules />
     <CodesignExtraArgs />
     <IpaIncludeArtwork>False</IpaIncludeArtwork>
-    <IpaPackageName>FreedomVoice-1.0.29</IpaPackageName>
+    <IpaPackageName>FreedomVoice-1.0.30</IpaPackageName>
     <MtouchSdkVersion>9.2</MtouchSdkVersion>
     <MtouchLink>SdkOnly</MtouchLink>
     <MtouchDebug>False</MtouchDebug>

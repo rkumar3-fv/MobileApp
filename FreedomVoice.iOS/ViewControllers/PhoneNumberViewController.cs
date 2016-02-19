@@ -133,7 +133,7 @@ namespace FreedomVoice.iOS.ViewControllers
                 Font = UIFont.SystemFontOfSize(17, UIFontWeight.Regular),
                 BorderStyle = UITextBorderStyle.RoundedRect,
                 KeyboardType = UIKeyboardType.NumberPad,
-                AttributedPlaceholder = new NSAttributedString("10-Digit Phone Number", new UIStringAttributes { ForegroundColor = Theme.TextFieldHintColor })
+                AttributedPlaceholder = new NSAttributedString("10-Digit Mobile Phone Number", new UIStringAttributes { ForegroundColor = Theme.TextFieldHintColor })
             };
             _phoneNumberTextField.Layer.CornerRadius = 5;
             _phoneNumberTextField.Layer.BorderWidth = 1;
