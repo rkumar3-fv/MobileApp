@@ -5,9 +5,9 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
     <ImageView
+        android:id="@+id/faxActivity_logo"
         android:layout_width="match_parent"
         android:layout_height="@dimen/details_activity_image_height"
-        android:src="@drawable/logo_fax"
         android:scaleType="centerCrop"
         android:adjustViewBounds="false" />
     <ProgressBar

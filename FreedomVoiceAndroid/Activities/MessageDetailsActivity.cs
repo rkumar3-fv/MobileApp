@@ -24,6 +24,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
     {
         public const string MessageExtraTag = "MessageExtra";
         private ContactsHelper _contactsHelper;
+        protected ImageView LogoView;
         protected Message Msg;
         protected TextView SenderText;
         protected TextView MessageDate;
@@ -60,9 +61,16 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         protected override void OnStart()
         {
             base.OnStart();
-            
             Progress.IndeterminateDrawable?.SetColorFilter(_darkProgress, PorterDuff.Mode.SrcIn);
             Progress.ProgressDrawable?.SetColorFilter(_lightProgress, PorterDuff.Mode.SrcIn);
+        }
+
+        protected override void OnStop()
+        {
+            base.OnStop();
+            if (LogoView == null) return;
+            LogoView.SetImageBitmap(null);
+            LogoView.DestroyDrawingCache();
         }
 
         protected override void OnResume()

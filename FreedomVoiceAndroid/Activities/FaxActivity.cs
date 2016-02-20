@@ -19,6 +19,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
     [Activity(
         Label = "@string/ActivityFax_title",
         Theme = "@style/AppThemeActionBar",
+        LaunchMode = LaunchMode.SingleTask, 
         WindowSoftInputMode = SoftInput.StateAlwaysHidden,
         ScreenOrientation = ScreenOrientation.Portrait)]
     public class FaxActivity : MessageDetailsActivity
@@ -30,6 +31,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             base.OnCreate(bundle);
             SetContentView(Resource.Layout.act_fax);
             RootLayout = FindViewById(Resource.Id.faxActivity_root);
+            LogoView = FindViewById<ImageView>(Resource.Id.faxActivity_logo);
             SenderText = FindViewById<TextView>(Resource.Id.faxActivity_senderText);
             MessageDate = FindViewById<TextView>(Resource.Id.faxActivity_dateText);
             MessageStamp = FindViewById<TextView>(Resource.Id.faxActivity_stampText);
@@ -42,6 +44,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         protected override void OnStart()
         {
             base.OnStart();
+            LogoView?.SetImageResource(Resource.Drawable.logo_fax);
             if (Msg.Length < 1)
                 _openFaxButton.Activated = false;
         }
