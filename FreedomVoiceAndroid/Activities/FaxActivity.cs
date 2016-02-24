@@ -5,6 +5,9 @@ using Android.Content.PM;
 using Android.OS;
 using Android.Support.Design.Widget;
 using Android.Support.V4.Content;
+#if DEBUG
+using Android.Util;
+#endif
 using Android.Views;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Helpers;
@@ -19,6 +22,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
     [Activity(
         Label = "@string/ActivityFax_title",
         Theme = "@style/AppThemeActionBar",
+        LaunchMode = LaunchMode.SingleTask, 
         WindowSoftInputMode = SoftInput.StateAlwaysHidden,
         ScreenOrientation = ScreenOrientation.Portrait)]
     public class FaxActivity : MessageDetailsActivity
@@ -30,6 +34,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             base.OnCreate(bundle);
             SetContentView(Resource.Layout.act_fax);
             RootLayout = FindViewById(Resource.Id.faxActivity_root);
+            LogoView = FindViewById<ImageView>(Resource.Id.faxActivity_logo);
             SenderText = FindViewById<TextView>(Resource.Id.faxActivity_senderText);
             MessageDate = FindViewById<TextView>(Resource.Id.faxActivity_dateText);
             MessageStamp = FindViewById<TextView>(Resource.Id.faxActivity_stampText);
@@ -42,6 +47,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         protected override void OnStart()
         {
             base.OnStart();
+            LogoView?.SetImageResource(Resource.Drawable.logo_fax);
             if (Msg.Length < 1)
                 _openFaxButton.Activated = false;
         }
@@ -55,10 +61,22 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 AttachmentId = Appl.ApplicationHelper.AttachmentsHelper.LoadAttachment(Msg);
             else
             {
-                var snackPerm = Snackbar.Make(RootLayout, Resource.String.Snack_noStoragePermission, Snackbar.LengthLong);
-                snackPerm.SetAction(Resource.String.Snack_noPhonePermissionAction, OnSetStoragePermission);
-                snackPerm.SetActionTextColor(ContextCompat.GetColor(this, Resource.Color.colorUndoList));
-                snackPerm.Show();
+                try
+                {
+                    var snackPerm = Snackbar.Make(RootLayout, Resource.String.Snack_noStoragePermission, Snackbar.LengthLong);
+                    snackPerm.SetAction(Resource.String.Snack_noPhonePermissionAction, OnSetStoragePermission);
+                    snackPerm.SetActionTextColor(ContextCompat.GetColor(this, Resource.Color.colorUndoList));
+                    snackPerm.Show();
+                }
+                catch (RuntimeException)
+                {
+#if DEBUG
+                    Log.Debug(App.AppPackage, "SNACKBAR creation failed. Please, REBUILD APP.");
+#else
+                    Appl.ApplicationHelper.Reports?.Log("SNACKBAR creation failed. Please, REBUILD APP.");
+#endif
+                    Toast.MakeText(this, Resource.String.Snack_noStoragePermission, ToastLength.Short).Show();
+                }
             }
         }
 
@@ -80,14 +98,26 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             }
             catch (ActivityNotFoundException)
             {
-                var snakPdf = Snackbar.Make(RootLayout, Resource.String.Snack_pdfError, Snackbar.LengthLong);
-                snakPdf.SetAction(Resource.String.Snack_pdfGet, OnUndoClick);
-                snakPdf.SetActionTextColor(ContextCompat.GetColor(this, Resource.Color.colorUndoList));
-                snakPdf.Show();
+                try
+                {
+                    var snakPdf = Snackbar.Make(RootLayout, Resource.String.Snack_pdfError, Snackbar.LengthLong);
+                    snakPdf.SetAction(Resource.String.Snack_pdfGet, OnGetReaderClick);
+                    snakPdf.SetActionTextColor(ContextCompat.GetColor(this, Resource.Color.colorUndoList));
+                    snakPdf.Show();
+                }
+                catch (RuntimeException)
+                {
+#if DEBUG
+                    Log.Debug(App.AppPackage, "SNACKBAR creation failed. Please, REBUILD APP.");
+#else
+                    Appl.ApplicationHelper.Reports?.Log("SNACKBAR creation failed. Please, REBUILD APP.");
+#endif
+                    Toast.MakeText(this, Resource.String.Snack_pdfError, ToastLength.Short).Show();
+                }
             }
         }
 
-        private void OnUndoClick(View view)
+        private void OnGetReaderClick(View view)
         {
             try
             {
@@ -95,7 +125,20 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             }
             catch (ActivityNotFoundException)
             {
-                Snackbar.Make(RootLayout, Resource.String.Snack_noPlayMarket, Snackbar.LengthLong).Show();
+                try
+                {
+                    Snackbar.Make(RootLayout, Resource.String.Snack_noPlayMarket, Snackbar.LengthLong).Show();
+                }
+                catch (RuntimeException)
+                {
+#if DEBUG
+                    Log.Debug(App.AppPackage, "SNACKBAR creation failed. Please, REBUILD APP.");
+#else
+                    Appl.ApplicationHelper.Reports?.Log("SNACKBAR creation failed. Please, REBUILD APP.");
+#endif
+                    Toast.MakeText(this, Resource.String.Snack_pdfError, ToastLength.Short).Show();
+                }
+                
             }
         }
 

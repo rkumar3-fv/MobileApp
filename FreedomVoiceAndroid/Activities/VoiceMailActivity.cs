@@ -12,6 +12,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
     [Activity(
         Label = "@string/ActivityVoice_title",
         Theme = "@style/AppThemeActionBar",
+        LaunchMode = LaunchMode.SingleTask, 
         WindowSoftInputMode = SoftInput.StateAlwaysHidden,
         ScreenOrientation = ScreenOrientation.Portrait)]
     public class VoiceMailActivity : SoundActivity
@@ -21,6 +22,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             base.OnCreate(bundle);
             SetContentView(Resource.Layout.act_voicemail);
             RootLayout = FindViewById(Resource.Id.voicemailActivity_root);
+            LogoView = FindViewById<ImageView>(Resource.Id.voicemailActivity_logo);
             SenderText = FindViewById<TextView>(Resource.Id.voicemailActivity_senderText);
             MessageDate = FindViewById<TextView>(Resource.Id.voicemailActivity_dateText);
             MessageStamp = FindViewById<TextView>(Resource.Id.voicemailActivity_stampText);
@@ -33,6 +35,12 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             PlayerSeek = FindViewById<SeekBar>(Resource.Id.voiceMailActivity_playerSeek);
             TouchLayout = FindViewById<RelativeLayout>(Resource.Id.voicemailActivity_touchArea);
             SupportActionBar.SetTitle(Resource.String.ActivityVoice_title);
+        }
+
+        protected override void OnStart()
+        {
+            base.OnStart();
+            LogoView?.SetImageResource(Resource.Drawable.logo_voicemail);
         }
     }
 }

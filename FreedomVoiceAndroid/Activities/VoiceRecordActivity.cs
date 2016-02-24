@@ -12,6 +12,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
     [Activity(
         Label = "@string/ActivityRecord_title",
         Theme = "@style/AppThemeActionBar",
+        LaunchMode = LaunchMode.SingleTask, 
         WindowSoftInputMode = SoftInput.StateAlwaysHidden,
         ScreenOrientation = ScreenOrientation.Portrait)]
     public class VoiceRecordActivity : SoundActivity
@@ -21,6 +22,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             base.OnCreate(bundle);
             SetContentView(Resource.Layout.act_record);
             RootLayout = FindViewById(Resource.Id.recordActivity_root);
+            LogoView = FindViewById<ImageView>(Resource.Id.recordActivity_logo);
             SenderText = FindViewById<TextView>(Resource.Id.recordActivity_senderText);
             MessageDate = FindViewById<TextView>(Resource.Id.recordActivity_dateText);
             MessageStamp = FindViewById<TextView>(Resource.Id.recordActivity_stampText);
@@ -33,6 +35,12 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             PlayerSeek = FindViewById<SeekBar>(Resource.Id.recordActivity_playerSeek);
             TouchLayout = FindViewById<RelativeLayout>(Resource.Id.recordActivity_touchArea);
             SupportActionBar.SetTitle(Resource.String.ActivityRecord_title);
+        }
+
+        protected override void OnStart()
+        {
+            base.OnStart();
+            LogoView?.SetImageResource(Resource.Drawable.logo_record);
         }
     }
 }

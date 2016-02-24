@@ -5,9 +5,14 @@ using Android.OS;
 using Android.Provider;
 using Android.Support.Design.Widget;
 using Android.Support.V7.App;
+#if DEBUG
+using Android.Util;
+#endif
 using Android.Views;
+using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Dialogs;
 using com.FreedomVoice.MobileApp.Android.Helpers;
+using Java.Lang;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
 {
@@ -107,13 +112,51 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 switch (code)
                 {
                     case ActionsHelperEventArgs.NoInternetConnection:
-                        Snackbar.Make(RootLayout, Resource.String.Snack_noInternet, Snackbar.LengthLong).Show();
+                        try
+                        {
+                            Snackbar.Make(RootLayout, Resource.String.Snack_noInternet, Snackbar.LengthLong).Show();
+                        }
+                        catch (RuntimeException)
+                        {
+#if DEBUG
+                            Log.Debug(App.AppPackage, "SNACKBAR creation failed. Please, REBUILD APP.");
+#else
+                            Appl.ApplicationHelper.Reports?.Log("SNACKBAR creation failed. Please, REBUILD APP.");
+#endif
+                            Toast.MakeText(this, Resource.String.Snack_noInternet, ToastLength.Short).Show();
+                        }
+                        
                         return;
                     case ActionsHelperEventArgs.ConnectionLostError:
-                        Snackbar.Make(RootLayout, Resource.String.Snack_connectionLost, Snackbar.LengthLong).Show();
+                        try
+                        {
+                            Snackbar.Make(RootLayout, Resource.String.Snack_connectionLost, Snackbar.LengthLong).Show();
+                        }
+                        catch (RuntimeException)
+                        {
+#if DEBUG
+                            Log.Debug(App.AppPackage, "SNACKBAR creation failed. Please, REBUILD APP.");
+#else
+                            Appl.ApplicationHelper.Reports?.Log("SNACKBAR creation failed. Please, REBUILD APP.");
+#endif
+                            Toast.MakeText(this, Resource.String.Snack_connectionLost, ToastLength.Short).Show();
+                        }
+                        
                         return;
                     case ActionsHelperEventArgs.InternalError:
-                        Snackbar.Make(RootLayout, Resource.String.Snack_serverError, Snackbar.LengthLong).Show();
+                        try
+                        {
+                            Snackbar.Make(RootLayout, Resource.String.Snack_serverError, Snackbar.LengthLong).Show();
+                        }
+                        catch (RuntimeException)
+                        {
+#if DEBUG
+                            Log.Debug(App.AppPackage, "SNACKBAR creation failed. Please, REBUILD APP.");
+#else
+                            Appl.ApplicationHelper.Reports?.Log("SNACKBAR creation failed. Please, REBUILD APP.");
+#endif
+                            Toast.MakeText(this, Resource.String.Snack_serverError, ToastLength.Short).Show();
+                        }                  
                         return;
                 }
             }

@@ -7,12 +7,16 @@ using Android.OS;
 using Android.Support.Design.Widget;
 using Android.Support.V4.Content;
 using Android.Support.V7.Widget;
+#if DEBUG
+using Android.Util;
+#endif
 using Android.Views;
 using Android.Views.InputMethods;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Helpers;
 using FreedomVoice.Core.Utils;
 using Java.Interop;
+using Java.Lang;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
 {
@@ -100,7 +104,20 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             if (!Appl.ApplicationHelper.IsInternetConnected())
             {
                 if (RootLayout != null)
-                    Snackbar.Make(RootLayout, Resource.String.Snack_noInternet, Snackbar.LengthLong).Show();
+                    try
+                    {
+                        Snackbar.Make(RootLayout, Resource.String.Snack_noInternet, Snackbar.LengthLong).Show();
+                    }
+                    catch (RuntimeException)
+                    {
+#if DEBUG
+                        Log.Debug(App.AppPackage, "SNACKBAR creation failed. Please, REBUILD APP.");
+#else
+                        Appl.ApplicationHelper.Reports?.Log("SNACKBAR creation failed. Please, REBUILD APP.");
+#endif
+                        Toast.MakeText(this, Resource.String.Snack_noInternet, ToastLength.Long).Show();
+                    }
+                    
                 else
                     Toast.MakeText(this, Resource.String.Snack_noInternet, ToastLength.Long).Show();
                 return;
