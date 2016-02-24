@@ -38,15 +38,11 @@ namespace FreedomVoice.iOS.ViewControllers
 	    public MessagesViewController(IntPtr handle) : base(handle)
 	    {
             MessagesList = new List<Message>();
-
-            NeedToInitializeTableData = true;
         }
 
-        public override async void ViewDidLoad()
+        public override void ViewDidLoad()
         {
             AppDelegate.ActivityIndicator.SetActivityIndicatorCenter(Theme.ScreenCenter);
-
-            await ContactsHelper.GetContactsListAsync();
 
             InitializeTableView();
 
@@ -67,6 +63,10 @@ namespace FreedomVoice.iOS.ViewControllers
 
             if (NeedToInitializeTableData)
             {
+                NeedToInitializeTableData = false;
+
+                await ContactsHelper.GetContactsListAsync();
+
                 var messagesViewModel = new MessagesViewModel(SelectedAccount.PhoneNumber, SelectedExtension.ExtensionNumber, SelectedFolder.DisplayName);
                 messagesViewModel.OnUnauthorizedResponse += (sender, args) => OnUnauthorizedError();
                 await messagesViewModel.GetMessagesListAsync();
@@ -76,8 +76,6 @@ namespace FreedomVoice.iOS.ViewControllers
 
                 _messagesTableView.BackgroundView = _noMessagesLabel;
                 _messagesTableView.ReloadData();
-                
-                NeedToInitializeTableData = false;
             }
 
             _updateTimer = NSTimer.CreateRepeatingScheduledTimer(UserDefault.PoolingInterval, delegate { UpdateMessagesTable(); });
@@ -124,7 +122,9 @@ namespace FreedomVoice.iOS.ViewControllers
                 ScrollIndicatorInsets = insets
             };
             View.Add(_messagesTableView);
-	    }
+
+            NeedToInitializeTableData = true;
+        }
 
 	    private static EventHandler NetworkChangedHandler
         {
