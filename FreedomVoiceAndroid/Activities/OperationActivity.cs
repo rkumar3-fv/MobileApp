@@ -2,6 +2,7 @@ using Android.Content;
 using Android.Provider;
 using Android.Support.Design.Widget;
 using Android.Support.V4.Content;
+using Android.Widget;
 #if DEBUG
 using Android.Util;
 #endif
@@ -68,7 +69,20 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
 
                         else
                         {
-                            Snackbar.Make(RootLayout, Resource.String.Snack_incorrectDest, Snackbar.LengthLong).Show();
+                            try
+                            {
+                                Snackbar.Make(RootLayout, Resource.String.Snack_incorrectDest, Snackbar.LengthLong).Show();
+                            }
+                            catch (RuntimeException)
+                            {
+#if DEBUG
+                                Log.Debug(App.AppPackage, "SNACKBAR creation failed. Please, REBUILD APP.");
+#else
+                                Appl.ApplicationHelper.Reports?.Log("SNACKBAR creation failed. Please, REBUILD APP.");
+#endif
+                                Toast.MakeText(this, Resource.String.Snack_incorrectDest, ToastLength.Short).Show();
+                            }
+                            
 #if DEBUG
                             Log.Debug(App.AppPackage, "DIAL TO EMPTY PHONE UNAVAILABLE");
 #else
@@ -113,10 +127,35 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                         break;
 
                     case ActionsHelperEventArgs.CallReservationFail:
-                        Snackbar.Make(RootLayout, Resource.String.Snack_callFailed, Snackbar.LengthLong).Show();
+                        try
+                        {
+                            Snackbar.Make(RootLayout, Resource.String.Snack_callFailed, Snackbar.LengthLong).Show();
+                        }
+                        catch (RuntimeException)
+                        {
+#if DEBUG
+                            Log.Debug(App.AppPackage, "SNACKBAR creation failed. Please, REBUILD APP.");
+#else
+                            Appl.ApplicationHelper.Reports?.Log("SNACKBAR creation failed. Please, REBUILD APP.");
+#endif
+                            Toast.MakeText(this, Resource.String.Snack_callFailed, ToastLength.Short).Show();
+                        }        
                         break;
                     case ActionsHelperEventArgs.CallReservationWrong:
-                        Snackbar.Make(RootLayout, Resource.String.Snack_callWrong, Snackbar.LengthLong).Show();
+                        try
+                        {
+                            Snackbar.Make(RootLayout, Resource.String.Snack_callWrong, Snackbar.LengthLong).Show();
+                        }
+                        catch (RuntimeException)
+                        {
+#if DEBUG
+                            Log.Debug(App.AppPackage, "SNACKBAR creation failed. Please, REBUILD APP.");
+#else
+                            Appl.ApplicationHelper.Reports?.Log("SNACKBAR creation failed. Please, REBUILD APP.");
+#endif
+                            Toast.MakeText(this, Resource.String.Snack_callWrong, ToastLength.Short).Show();
+                        }
+                        
                         break;
                 }
             }

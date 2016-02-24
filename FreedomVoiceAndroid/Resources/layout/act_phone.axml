@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:minLines="3"
-        android:maxLines="5"
+        android:maxLines="6"
         android:textSize="@dimen/text_main"
         android:textColor="@color/textColorSecondary"
         android:text="@string/ActivityNubmer_description"

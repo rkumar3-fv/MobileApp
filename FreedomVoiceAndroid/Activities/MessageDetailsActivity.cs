@@ -13,6 +13,7 @@ using com.FreedomVoice.MobileApp.Android.CustomControls.Callbacks;
 using com.FreedomVoice.MobileApp.Android.Helpers;
 using com.FreedomVoice.MobileApp.Android.Utils;
 using FreedomVoice.Core.Utils;
+using Java.Lang;
 using Message = com.FreedomVoice.MobileApp.Android.Entities.Message;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
@@ -159,7 +160,21 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             if (Progress.Visibility == ViewStates.Visible)
                 Progress.Visibility = ViewStates.Invisible;
             if (!args.Result)
-                Snackbar.Make(RootLayout, Resource.String.Snack_loadingError, Snackbar.LengthLong).Show();
+            {
+                try
+                {
+                    Snackbar.Make(RootLayout, Resource.String.Snack_loadingError, Snackbar.LengthLong).Show();
+                }
+                catch (RuntimeException)
+                {
+#if DEBUG
+                    Log.Debug(App.AppPackage, "SNACKBAR creation failed. Please, REBUILD APP.");
+#else
+                    Appl.ApplicationHelper.Reports?.Log("SNACKBAR creation failed. Please, REBUILD APP.");
+#endif
+                }
+
+            }
         }
 
         /// <summary>
@@ -184,12 +199,26 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
 
         private void RemoveSnack()
         {
-            _snakForRemoving = Snackbar.Make(RootLayout, Resource.String.FragmentMessages_remove, 10000);
-            _snakForRemoving.SetAction(Resource.String.FragmentMessages_removeUndo, OnUndoClick);
-            _snakForRemoving.SetActionTextColor(ContextCompat.GetColor(this, Resource.Color.colorUndoList));
-            _snakForRemoving.SetCallback(_snackCallback);
-            MarkForRemove = Helper.SelectedMessage;
-            _snakForRemoving.Show();
+            try
+            {
+                _snakForRemoving = Snackbar.Make(RootLayout, Resource.String.FragmentMessages_remove, 10000);
+                _snakForRemoving.SetAction(Resource.String.FragmentMessages_removeUndo, OnUndoClick);
+                _snakForRemoving.SetActionTextColor(ContextCompat.GetColor(this, Resource.Color.colorUndoList));
+                _snakForRemoving.SetCallback(_snackCallback);
+                MarkForRemove = Helper.SelectedMessage;
+                _snakForRemoving.Show();
+            }
+            catch (RuntimeException)
+            {
+#if DEBUG
+                Log.Debug(App.AppPackage, "SNACKBAR creation failed. Please, REBUILD APP.");
+#else
+                Appl.ApplicationHelper.Reports?.Log("SNACKBAR creation failed. Please, REBUILD APP.");
+#endif
+                MarkForRemove = Helper.SelectedMessage;
+                RemoveAction();
+            }
+            
         }
 
         public override void OnBackPressed()

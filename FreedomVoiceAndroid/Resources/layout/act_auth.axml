@@ -77,7 +77,6 @@
                         android:id="@+id/authActivity_loginButton"
                         android:clickable="true"
                         app:cardBackgroundColor="@color/colorButton"
-                        android:stateListAnimator="@anim/button_z_translation"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:minHeight="@dimen/activity_button_size"

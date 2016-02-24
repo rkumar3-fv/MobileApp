@@ -40,7 +40,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         protected override void OnStart()
         {
             base.OnStart();
-            LogoView?.SetImageResource(Resource.Id.recordActivity_logo);
+            LogoView?.SetImageResource(Resource.Drawable.logo_record);
         }
     }
 }
