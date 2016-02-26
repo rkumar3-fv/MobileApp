@@ -167,7 +167,9 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 return;
             var callerDialog = new CallerIdDialogFragment();
             callerDialog.DialogEvent += CallerDialogOnDialogEvent;
-            callerDialog.Show(SupportFragmentManager, CallerDlgTag);
+            var transaction = SupportFragmentManager.BeginTransaction();
+            transaction.Add(callerDialog, CallerDlgTag);
+            transaction.CommitAllowingStateLoss();
         }
 
         private void NoCellularDialog()
@@ -175,7 +177,9 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             if (SupportFragmentManager.FindFragmentByTag(CellularDlgTag) != null)
                 return;
             var noCellularDialog = new NoCellularDialogFragment();
-            noCellularDialog.Show(SupportFragmentManager, CellularDlgTag);
+            var transaction = SupportFragmentManager.BeginTransaction();
+            transaction.Add(noCellularDialog, CellularDlgTag);
+            transaction.CommitAllowingStateLoss();
         }
 
         private void CreatePhoneDialog()
@@ -184,7 +188,9 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 return;
             var noPhoneDialog = new NoPhoneDialogFragment();
             noPhoneDialog.DialogEvent += NoPhoneDialogOnDialogEvent;
-            noPhoneDialog.Show(SupportFragmentManager, PhoneDlgTag);
+            var transaction = SupportFragmentManager.BeginTransaction();
+            transaction.Add(noPhoneDialog, PhoneDlgTag);
+            transaction.CommitAllowingStateLoss();
         }
     }
 }

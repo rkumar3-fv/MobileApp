@@ -79,7 +79,9 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 hasRecents = true;
             var logoutDialog = new LogoutDialogFragment(hasRecents);
             logoutDialog.DialogEvent += OnDialogEvent;
-            logoutDialog.Show(SupportFragmentManager, GetString(Resource.String.DlgLogout_title));
+            var transaction = SupportFragmentManager.BeginTransaction();
+            transaction.Add(logoutDialog, GetString(Resource.String.DlgLogout_title));
+            transaction.CommitAllowingStateLoss();
         }
 
         private void SetPhone()
@@ -87,7 +89,9 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             if (!Appl.ApplicationHelper.IsVoicecallsSupported())
             {
                 var noCellularDialog = new NoCellularDialogFragment();
-                noCellularDialog.Show(SupportFragmentManager, GetString(Resource.String.DlgCellular_title));
+                var transaction = SupportFragmentManager.BeginTransaction();
+                transaction.Add(noCellularDialog, GetString(Resource.String.DlgCellular_title));
+                transaction.CommitAllowingStateLoss();
             }
             else
             {
@@ -125,7 +129,9 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             if (SupportFragmentManager.FindFragmentByTag(FeedbackDlgTag) != null)
                 return;
             var feedbackDialog = new FeedbackDialogFragment(this);
-            feedbackDialog.Show(SupportFragmentManager, FeedbackDlgTag);
+            var transaction = SupportFragmentManager.BeginTransaction();
+            transaction.Add(feedbackDialog, FeedbackDlgTag);
+            transaction.CommitAllowingStateLoss();
         }
 
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, Permission[] grantResults)

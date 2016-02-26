@@ -144,7 +144,9 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                         hasRecents = true;
                     var logoutDialog = new LogoutDialogFragment(hasRecents);
                     logoutDialog.DialogEvent += OnDialogEvent;
-                    logoutDialog.Show(SupportFragmentManager, GetString(Resource.String.DlgLogout_title));
+                    var transaction = SupportFragmentManager.BeginTransaction();
+                    transaction.Add(logoutDialog, GetString(Resource.String.DlgLogout_title));
+                    transaction.CommitAllowingStateLoss();
                     return true;
                 case global::Android.Resource.Id.Home:
                     BaseBackPressed();

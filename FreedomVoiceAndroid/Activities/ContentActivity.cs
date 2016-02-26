@@ -230,7 +230,9 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 case Resource.Id.menu_action_clear:
                     var clearDialog = new ClearRecentsDialogFragment();
                     clearDialog.DialogEvent += ClearDialogEvent;
-                    clearDialog.Show(SupportFragmentManager, GetString(Resource.String.DlgLogout_title));
+                    var transaction = SupportFragmentManager.BeginTransaction();
+                    transaction.Add(clearDialog, GetString(Resource.String.DlgLogout_title));
+                    transaction.CommitAllowingStateLoss();
                     return true;
                 default:
                     return base.OnOptionsItemSelected(item);

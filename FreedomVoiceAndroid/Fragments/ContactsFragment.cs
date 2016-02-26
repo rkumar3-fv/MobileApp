@@ -89,7 +89,9 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             {
                 case 0:
                     var noPhonesDialog = new NoContactsDialogFragment(contact);
-                    noPhonesDialog.Show(ContentActivity.SupportFragmentManager, GetString(Resource.String.DlgNumbers_content));
+                    var transaction = ContentActivity.SupportFragmentManager.BeginTransaction();
+                    transaction.Add(noPhonesDialog, GetString(Resource.String.DlgNumbers_content));
+                    transaction.CommitAllowingStateLoss();
                     break;
                 case 1:
                     ContentActivity.Call(contact.PhonesList[0].PhoneNumber);
@@ -97,7 +99,9 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                 default:
                     var multiPhonesDialog = new MultiContactsDialogFragment(contact, ContentActivity);
                     multiPhonesDialog.PhoneClick += MultiPhonesDialogOnPhoneClick;
-                    multiPhonesDialog.Show(ContentActivity.SupportFragmentManager, GetString(Resource.String.DlgNumbers_title));
+                    var transactionMultiPhones = ContentActivity.SupportFragmentManager.BeginTransaction();
+                    transactionMultiPhones.Add(multiPhonesDialog, GetString(Resource.String.DlgNumbers_title));
+                    transactionMultiPhones.CommitAllowingStateLoss();
                     break;
             }
         }

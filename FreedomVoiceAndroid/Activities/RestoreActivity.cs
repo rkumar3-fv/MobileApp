@@ -121,9 +121,11 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         /// </summary>
         private void RestorationSuccessfull()
         {
-            var logoutDialog = new RestoreDialogFragment();
-            logoutDialog.DialogEvent += OnDialogEvent;
-            logoutDialog.Show(SupportFragmentManager, GetString(Resource.String.DlgLogout_title));
+            var restoreDlg = new RestoreDialogFragment();
+            restoreDlg.DialogEvent += OnDialogEvent;
+            var transaction = SupportFragmentManager.BeginTransaction();
+            transaction.Add(restoreDlg, GetString(Resource.String.DlgLogout_title));
+            transaction.CommitAllowingStateLoss();
         }
 
         /// <summary>

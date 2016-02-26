@@ -1,6 +1,8 @@
 using System;
 using Android.App;
+using Android.Content;
 using Android.OS;
+using Android.Views;
 using Android.Widget;
 using DialogFragment = Android.Support.V4.App.DialogFragment;
 
@@ -32,6 +34,7 @@ namespace com.FreedomVoice.MobileApp.Android.Dialogs
             var dialog = base.OnCreateDialog(savedInstanceState);
             dialog.RequestWindowFeature(StyleNoTitle);
             dialog.SetCanceledOnTouchOutside(false);
+            dialog.SetOnKeyListener(new BaseDialogKeyListener());
             return dialog;
         }
 
@@ -51,6 +54,16 @@ namespace com.FreedomVoice.MobileApp.Android.Dialogs
         {
             Dismiss();
             DialogEvent?.Invoke(this, new DialogEventArgs(DialogResult.Ok));
+        }
+
+        private class BaseDialogKeyListener : Java.Lang.Object, IDialogInterfaceOnKeyListener
+        {
+            public bool OnKey(IDialogInterface dialog, Keycode keyCode, KeyEvent e)
+            {
+                if (keyCode != Keycode.Back) return false;
+                dialog.Cancel();
+                return true;
+            }
         }
     }
 }

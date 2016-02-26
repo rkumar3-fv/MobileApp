@@ -48,7 +48,9 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 case Resource.Id.menu_action_logout:
                     var logoutDialog = new LogoutDialogFragment(false);
                     logoutDialog.DialogEvent += OnDialogEvent;
-                    logoutDialog.Show(SupportFragmentManager, GetString(Resource.String.DlgLogout_title));
+                    var transaction = SupportFragmentManager.BeginTransaction();
+                    transaction.Add(logoutDialog, GetString(Resource.String.DlgLogout_title));
+                    transaction.CommitAllowingStateLoss();
                     return true;
                 case global::Android.Resource.Id.Home:
                     BaseBackPressed();
@@ -87,7 +89,9 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             else
             {
                 var noCellularDialog = new NoCellularDialogFragment();
-                noCellularDialog.Show(SupportFragmentManager, GetString(Resource.String.DlgCellular_title));
+                var transaction = SupportFragmentManager.BeginTransaction();
+                transaction.Add(noCellularDialog, GetString(Resource.String.DlgCellular_title));
+                transaction.CommitAllowingStateLoss();
             }
         }
     }
