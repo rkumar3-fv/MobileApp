@@ -1366,7 +1366,10 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             }
             foreach (var recentHolder in dict)
             {
-                RecentsDictionary.Add(index, recentHolder.Value);
+                if (RecentsDictionary.ContainsKey(index))
+                    RecentsDictionary[index] = recentHolder.Value;
+                else
+                    RecentsDictionary.Add(index, recentHolder.Value);
                 index--;
             }
         }
