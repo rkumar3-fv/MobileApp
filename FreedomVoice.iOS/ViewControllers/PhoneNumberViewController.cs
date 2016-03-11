@@ -16,8 +16,7 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private UIButton _continuedButton;
 
-        private UILabel _firstLabel;
-        private UILabel _secondLabel;
+        private UILabel _infoLabel;
         private UILabel _plusOneLabel;
 
         private UILabel _phoneValidationLabel;
@@ -35,8 +34,7 @@ namespace FreedomVoice.iOS.ViewControllers
 	    {
             Title = "Your Mobile Phone Number";
 
-            InitializeFirstLabel();
-            InitializeSecondLabel();
+            InitializeInfoLabel();
             InitializePhoneNumberTextField();
             InitializePlusOneLabel();
             InitializeContinueButton();
@@ -91,41 +89,42 @@ namespace FreedomVoice.iOS.ViewControllers
 
         #region Controls Initialization
 
-        private void InitializeFirstLabel()
+        private void InitializeInfoLabel()
         {
-            var labelFrame = new CGRect(15, 20, Theme.ScreenBounds.Width - 30, 108);
-            _firstLabel = new UILabel(labelFrame)
+            var labelFrame = new CGRect(15, 20, Theme.ScreenBounds.Width - 30, Theme.PhoneNumberInformationLabelHeight);
+            _infoLabel = new UILabel(labelFrame)
             {
-                Text = $"To make calls with this app, we require your device's phone number and you must enable the Caller ID feature.{Environment.NewLine}This information is not shared with any 3rd parties. Please do not enter your FreedomVoice number here.",
                 Font = UIFont.SystemFontOfSize(15, UIFontWeight.Regular),
                 TextColor = Theme.BlackColor,
                 TextAlignment = UITextAlignment.Left,
-                Lines = 6
+                Lines = Theme.PhoneNumberInformationLabelLines
             };
 
-            View.Add(_firstLabel);
-        }
-
-        private void InitializeSecondLabel()
-        {
-            var labelFrame = new CGRect(15, _firstLabel.Frame.Y + _firstLabel.Frame.Height + 15, Theme.ScreenBounds.Width - 30, 54);
-            _secondLabel = new UILabel(labelFrame)
+            if (Theme.ScreenBounds.Height > 480)
             {
-                Text = "You may update this number by going to your device's Settings screen and selecting the FreedomVoice app.",
-                Font = UIFont.SystemFontOfSize(15, UIFontWeight.Regular),
-                TextColor = Theme.BlackColor,
-                TextAlignment = UITextAlignment.Left,
-                Lines = 3
-            };
+                _infoLabel.Text = $"To make calls with this app, we require your device's phone number and you must enable the Caller ID feature.{Environment.NewLine}" +
+                                  $"This information is not shared with any 3rd parties. Please do not enter your FreedomVoice number here.{Environment.NewLine}{Environment.NewLine}" +
+                                  "You may update this number by going to your device's Settings screen and selecting the FreedomVoice app.";
+            }
+            else
+            {
+                const string infoText = "To make outgoing calls, enter your mobile phone number here and turn on Caller ID for your phone. We will not share your number with any 3rd parties.";
+                var textAttributedString = new NSMutableAttributedString(infoText);
+                textAttributedString.AddAttribute(UIStringAttributeKey.Font, UIFont.SystemFontOfSize(15, UIFontWeight.Semibold), new NSRange(35, 6));
 
-            View.Add(_secondLabel);
+                _infoLabel.AttributedText = textAttributedString;
+            }
+
+            View.Add(_infoLabel);
         }
 
         private void InitializePhoneNumberTextField()
         {
             const int maxCharacters = 10;
 
-            var textFieldFrame = new CGRect(35, _secondLabel.Frame.Y + _secondLabel.Frame.Height + 25, Theme.ScreenBounds.Width - 120, 44);
+            var placeholderText = Theme.ScreenBounds.Width > 320 ? "10-Digit Mobile Phone Number" : "10-Digit Mobile Number";
+
+            var textFieldFrame = new CGRect(35, _infoLabel.Frame.Y + _infoLabel.Frame.Height + 22, Theme.ScreenBounds.Width - 120, 44);
             _phoneNumberTextField = new UITextField(textFieldFrame)
             {
                 TextColor = Theme.TextFieldTextColor,
@@ -133,7 +132,7 @@ namespace FreedomVoice.iOS.ViewControllers
                 Font = UIFont.SystemFontOfSize(17, UIFontWeight.Regular),
                 BorderStyle = UITextBorderStyle.RoundedRect,
                 KeyboardType = UIKeyboardType.NumberPad,
-                AttributedPlaceholder = new NSAttributedString("10-Digit Mobile Phone Number", new UIStringAttributes { ForegroundColor = Theme.TextFieldHintColor })
+                AttributedPlaceholder = new NSAttributedString(placeholderText, new UIStringAttributes { ForegroundColor = Theme.TextFieldHintColor })
             };
             _phoneNumberTextField.Layer.CornerRadius = 5;
             _phoneNumberTextField.Layer.BorderWidth = 1;
@@ -150,7 +149,7 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private void InitializePlusOneLabel()
         {
-            var labelFrame = new CGRect(10, _secondLabel.Frame.Y + _secondLabel.Frame.Height + 25, 30, 44);
+            var labelFrame = new CGRect(10, _phoneNumberTextField.Frame.Y, 30, 44);
             _plusOneLabel = new UILabel(labelFrame)
             {
                 Text = "+1",

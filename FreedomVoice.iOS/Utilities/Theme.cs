@@ -246,6 +246,10 @@ namespace FreedomVoice.iOS.Utilities
 
         public static nfloat KeypadTopPadding => IPhone6Plus ? 44 : IPhone6 ? 17 : 0;
 
+        public static nfloat PhoneNumberInformationLabelHeight => IPhone4 ? 72 : 180;
+
+        public static int PhoneNumberInformationLabelLines => IPhone4 ? 4 : 10;
+
         public static nfloat NavigationBarHeight(this UINavigationController navigationController)
         {
             return navigationController.NavigationBar?.Frame.Size.Height ?? 0;
