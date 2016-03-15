@@ -48,7 +48,7 @@ namespace FreedomVoice.iOS.TableViewSources
             }
 
             var messageCell = tableView.DequeueReusableCell(MessageCell.MessageCellId) as MessageCell ?? new MessageCell { Accessory = UITableViewCellAccessory.None };
-            messageCell.UpdateCell(message);
+            messageCell.Model = message;
 
             return messageCell;
         }
@@ -216,7 +216,7 @@ namespace FreedomVoice.iOS.TableViewSources
             {
                 case UITableViewCellEditingStyle.Delete:
                     DeleteMessageClick(tableView, indexPath);
-                    break;                    
+                    break;
             }
         }
 

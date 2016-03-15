@@ -51,8 +51,6 @@ namespace FreedomVoice.iOS.ViewControllers
 
         public override async void ViewWillAppear(bool animated)
 	    {
-            base.ViewWillAppear(animated);
-
             Theme.Apply();
 
             NavigationItem.Title = SelectedFolder.DisplayName;
@@ -79,6 +77,8 @@ namespace FreedomVoice.iOS.ViewControllers
             }
 
             _updateTimer = NSTimer.CreateRepeatingScheduledTimer(UserDefault.PoolingInterval, delegate { UpdateMessagesTable(); });
+
+            base.ViewWillAppear(animated);
         }
 
 	    public override void ViewWillDisappear(bool animated)

@@ -11,6 +11,8 @@ namespace FreedomVoice.iOS.TableViewCells
 {
     public class MessageCell : UITableViewCell
     {
+        public Message Model { private get; set; }
+
         #region Controls
 
         private readonly UIImageView _image;
@@ -32,19 +34,21 @@ namespace FreedomVoice.iOS.TableViewCells
             AddSubviews(_image, _title, _date, _length);
         }
 
-        public void UpdateCell(Message message)
+        public override void LayoutSubviews()
         {
-            _image.Image = AppearanceHelper.GetMessageImage(message.Type, message.Unread, false);
+            _image.Image = AppearanceHelper.GetMessageImage(Model.Type, Model.Unread, false);
 
-            _title.Text = message.Title;
-            _title.Font = UIFont.SystemFontOfSize(17, message.Unread ? UIFontWeight.Bold : UIFontWeight.Regular);
+            _title.Text = Model.Title;
+            _title.Font = UIFont.SystemFontOfSize(17, Model.Unread ? UIFontWeight.Bold : UIFontWeight.Regular);
             _title.Center = new CGPoint(_title.Center.X, 16);
 
-            _date.Text = DataFormatUtils.ToFormattedDate("Yesterday", message.ReceivedOn);
+            _date.Text = DataFormatUtils.ToFormattedDate("Yesterday", Model.ReceivedOn);
             _date.Center = new CGPoint(_date.Center.X, 35);
-            
-            _length.Text = AppearanceHelper.GetFormattedMessageLength(message.Length, message.Type == MessageType.Fax);
+
+            _length.Text = AppearanceHelper.GetFormattedMessageLength(Model.Length, Model.Type == MessageType.Fax);
             _length.Center = new CGPoint(_length.Center.X, 35);
+
+            base.LayoutSubviews();
         }
     }
 }

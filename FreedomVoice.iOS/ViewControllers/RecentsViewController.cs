@@ -131,8 +131,8 @@ namespace FreedomVoice.iOS.ViewControllers
         public override void ViewWillAppear(bool animated)
         {
             NavigationItem.Title = "Recents";
-            NavigationItem.SetLeftBarButtonItem(GetEditButton(), true);
-            NavigationItem.SetRightBarButtonItem(Appearance.GetLogoutBarButton(this), false);
+
+            SetEditMode(false);
 
             _recentSource.SetRecents(GetRecentsUpdatedAndOrdered());
             _recentsTableView.ReloadData();
@@ -153,29 +153,25 @@ namespace FreedomVoice.iOS.ViewControllers
 
         public override void ViewWillDisappear(bool animated)
         {
-            _recentsTableView.SetEditing(false, false);
+            _recentsTableView?.SetEditing(false, animated);
+
             base.ViewWillDisappear(animated);
         }
 
-        private void SetEditMode()
+        private void SetEditMode(bool editing)
         {
-            _recentsTableView.SetEditing(true, true);
+            _recentsTableView.SetEditing(editing, true);
 
-            NavigationItem.SetRightBarButtonItem(Appearance.GetPlainBarButton("Done", (s, args) => { _recentsTableView.ReloadData(); ReturnToRecentsView(); }), true);
-            NavigationItem.SetLeftBarButtonItem(Appearance.GetPlainBarButton("Clear", (s, args) => { ClearAll(); }), true);
-        }
-
-        private void ReturnToRecentsView()
-        {
-            _recentsTableView.SetEditing(false, true);
-
-            NavigationItem.SetLeftBarButtonItem(GetEditButton(), true);
-            NavigationItem.SetRightBarButtonItem(Appearance.GetLogoutBarButton(this), false);
-        }
-
-        private UIBarButtonItem GetEditButton()
-        {
-            return Appearance.GetPlainBarButton("Edit", (s, args) => { SetEditMode(); });
+            if (editing)
+            {
+                NavigationItem.SetRightBarButtonItem(Appearance.GetPlainBarButton("Done", (s, args) => { _recentsTableView.ReloadData(); SetEditMode(false); }), true);
+                NavigationItem.SetLeftBarButtonItem(Appearance.GetPlainBarButton("Clear", (s, args) => { ClearAll(); }), true);
+            }
+            else
+            {
+                NavigationItem.SetLeftBarButtonItem(Appearance.GetPlainBarButton("Edit", (s, args) => { SetEditMode(true); }), true);
+                NavigationItem.SetRightBarButtonItem(Appearance.GetLogoutBarButton(this), false);
+            }
         }
 
         private void ClearAll()
@@ -184,11 +180,11 @@ namespace FreedomVoice.iOS.ViewControllers
             alertController.AddAction(UIAlertAction.Create("Clear All Recents", UIAlertActionStyle.Destructive, a =>
             {
                 Recents.ClearRecents();
-                ReturnToRecentsView();
+                SetEditMode(false);
                 _recentSource.SetRecents(new List<Recent>());
                 _recentsTableView.ReloadData();
             }));
-            alertController.AddAction(UIAlertAction.Create("Cancel", UIAlertActionStyle.Cancel, a => { ReturnToRecentsView(); }));
+            alertController.AddAction(UIAlertAction.Create("Cancel", UIAlertActionStyle.Cancel, a => { SetEditMode(false); }));
 
             PresentViewController(alertController, true, null);
         }

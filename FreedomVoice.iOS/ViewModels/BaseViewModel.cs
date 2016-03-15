@@ -89,6 +89,7 @@ namespace FreedomVoice.iOS.ViewModels
         public event EventHandler OnCanceledResponse;
         public event EventHandler OnForbiddenResponse;
         public event EventHandler OnInternalErrorResponse;
+        public event EventHandler OnUnknownErrorResponse;
 
         public bool IsErrorResponseReceived;
 
@@ -109,13 +110,13 @@ namespace FreedomVoice.iOS.ViewModels
                     return "Cancelled";
                 case ErrorResponse.ErrorConnection:
                     if (OnErrorConnectionResponse == null && !silent)
-                        Appearance.ShowOkAlertWithMessage("Please try again later.", "Connection lost");
+                        Appearance.ShowOkAlertWithMessage("Please try again later", "Connection lost");
                     OnErrorConnectionResponse?.Invoke(null, EventArgs.Empty);
                     return "Connection Lost";
                 case ErrorResponse.ErrorGatewayTimeout:
                 case ErrorResponse.ErrorRequestTimeout:
                     if (OnTimeoutResponse == null && !silent)
-                        Appearance.ShowOkAlertWithMessage("Please try again later.", "Service is unavailable");
+                        Appearance.ShowOkAlertWithMessage("Please try again later", "Service is unavailable");
                     OnTimeoutResponse?.Invoke(null, EventArgs.Empty);
                     return response.ErrorCode == ErrorResponse.ErrorGatewayTimeout ? "504 - Gateway Timeout" : "408 - Request Timeout";
                 case ErrorResponse.ErrorUnauthorized:
@@ -131,11 +132,15 @@ namespace FreedomVoice.iOS.ViewModels
                     OnNotFoundResponse?.Invoke(null, EventArgs.Empty);
                     return "404 - Not Found";
                 case ErrorResponse.ErrorInternal:
-                case ErrorResponse.ErrorUnknown:
                     if (OnInternalErrorResponse == null && !silent)
-                        Appearance.ShowOkAlertWithMessage("Please try again later.", "Internal server error");
+                        Appearance.ShowOkAlertWithMessage("Please try again later", "Internal server error");
                     OnInternalErrorResponse?.Invoke(null, EventArgs.Empty);
-                    return response.ErrorCode == ErrorResponse.ErrorInternal ? "500 - Internal Server Error" : "Unknown Error";
+                    return "500 - Internal Server Error";
+                case ErrorResponse.ErrorUnknown:
+                    if (OnUnknownErrorResponse == null && !silent)
+                        Appearance.ShowOkAlertWithMessage("Please try again");
+                    OnUnknownErrorResponse?.Invoke(null, EventArgs.Empty);
+                    return "Unknown Error";
                 default:
                     return "Unknown Error";
             }

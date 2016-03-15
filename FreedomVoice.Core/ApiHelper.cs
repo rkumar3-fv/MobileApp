@@ -21,6 +21,7 @@ namespace FreedomVoice.Core
     public static class ApiHelper
     {
         private const int TimeOut = 20;
+        private const int LongTimeOut = 60;
 
         public static CookieContainer CookieContainer => _clientHandler.CookieContainer;
 
@@ -49,7 +50,7 @@ namespace FreedomVoice.Core
             var passEncoded = DataFormatUtils.UrlEncodeWithSpaces(password);
             var postdata = $"UserName={loginEncoded}&Password={passEncoded}";
 
-            var loginResponse = await MakeAsyncPostRequest<string>("/api/v1/login", postdata, "application/x-www-form-urlencoded", CancellationToken.None);
+            var loginResponse = await MakeAsyncPostRequest<string>("/api/v1/login", postdata, "application/x-www-form-urlencoded", CancellationToken.None, LongTimeOut);
             if (Native) return loginResponse;
 
             if (loginResponse != null && loginResponse.Code == ErrorCodes.Ok)
@@ -147,7 +148,7 @@ namespace FreedomVoice.Core
             var folder = DataFormatUtils.UrlEncodeWithSpaces(folderName);
             return await MakeAsyncGetRequest<List<Message>>(
                 $"/api/v1/systems/{systemPhoneNumber}/mailboxes/{mailboxNumber}/folders/{folder}/messages?PageSize={pageSize}&PageNumber={pageNumber}&SortAsc={asc}",
-                CancellationToken.None);
+                CancellationToken.None, LongTimeOut);
         }
 
         public static async Task<BaseResult<string>> MoveMessages(string systemPhoneNumber, int mailboxNumber, string destinationFolder, IEnumerable<string> messageIds)
@@ -200,7 +201,7 @@ namespace FreedomVoice.Core
             if (_clientHandler.SupportsAutomaticDecompression)
                 _clientHandler.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
 
-            var httpClient = new HttpClient(_clientHandler) { Timeout = TimeSpan.FromSeconds(TimeOut), BaseAddress = new Uri(WebResources.AppUrl) };
+            var httpClient = new HttpClient(_clientHandler) { BaseAddress = new Uri(WebResources.AppUrl) };
 
             httpClient.DefaultRequestHeaders.Accept.Clear();
             httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -208,8 +209,10 @@ namespace FreedomVoice.Core
             return httpClient;
         }
 
-        private static async Task<BaseResult<T>> MakeAsyncPostRequest<T>(string url, string postData, string contentType, CancellationToken ct)
+        private static async Task<BaseResult<T>> MakeAsyncPostRequest<T>(string url, string postData, string contentType, CancellationToken ct, int timeout = TimeOut)
         {
+            Client.Timeout = TimeSpan.FromSeconds(timeout);
+
             BaseResult<T> baseRes;
             try
             {
@@ -229,8 +232,10 @@ namespace FreedomVoice.Core
             return baseRes;
         }
 
-        private static async Task<BaseResult<T>> MakeAsyncGetRequest<T>(string url, CancellationToken ct)
+        private static async Task<BaseResult<T>> MakeAsyncGetRequest<T>(string url, CancellationToken ct, int timeout = TimeOut)
         {
+            Client.Timeout = TimeSpan.FromSeconds(timeout);
+
             var request = new HttpRequestMessage(HttpMethod.Get, url);
             var getResp = Client.SendAsync(request, ct);
             return await GetResponse<T>(getResp, ct);

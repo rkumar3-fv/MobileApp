@@ -9,7 +9,7 @@ namespace FreedomVoice.iOS.Services
         protected static ErrorResponse CheckErrorResponse<T>(BaseResult<T> baseResult, bool checkOnNullResult = true)
         {
             if (baseResult == null)
-                return new ErrorResponse(ErrorResponse.ErrorInternal);
+                return new ErrorResponse(ErrorResponse.ErrorUnknown);
 
             if (baseResult.Code == ErrorCodes.Ok && checkOnNullResult && baseResult.Result == null)
                 return new ErrorResponse(ErrorResponse.ErrorInternal);
