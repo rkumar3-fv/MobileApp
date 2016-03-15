@@ -770,7 +770,15 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         public void SetPresentationNumber(int index)
         {
             SelectedAccount.SelectedPresentationNumber = index;
-            _preferencesHelper.SaveAccCaller(SelectedAccount.AccountName, SelectedAccount.PresentationNumber);
+            if (!string.IsNullOrEmpty(SelectedAccount.AccountName) &&
+                !string.IsNullOrEmpty(SelectedAccount.PresentationNumber))
+            {
+                if (_preferencesHelper == null)
+                    AppPreferencesHelper.Instance(_app)
+                        .SaveAccCaller(SelectedAccount.AccountName, SelectedAccount.PresentationNumber);
+                else
+                    _preferencesHelper.SaveAccCaller(SelectedAccount.AccountName, SelectedAccount.PresentationNumber);
+            }
             HelperEvent?.Invoke(this, new ActionsHelperEventArgs(-1, new[] { ActionsHelperEventArgs.ChangePresentation }));
         }
 
@@ -1366,7 +1374,10 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             }
             foreach (var recentHolder in dict)
             {
-                RecentsDictionary.Add(index, recentHolder.Value);
+                if (RecentsDictionary.ContainsKey(index))
+                    RecentsDictionary[index] = recentHolder.Value;
+                else
+                    RecentsDictionary.Add(index, recentHolder.Value);
                 index--;
             }
         }

@@ -162,7 +162,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                 analytics.SetLocalDispatchPeriod(GaUpdatePeriod);
                 AnalyticsTracker = analytics.NewTracker(GaKey);
                 AnalyticsTracker.EnableAutoActivityTracking(false);
-                AnalyticsTracker.EnableExceptionReporting(true);
+                AnalyticsTracker.EnableExceptionReporting(false);
                 AnalyticsTracker.EnableAdvertisingIdCollection(false);
                 var pInfo = _context.PackageManager.GetPackageInfo(App.AppPackage, 0);
                 AnalyticsTracker.SetAppName(_context.GetString(Resource.String.ApplicationName));
