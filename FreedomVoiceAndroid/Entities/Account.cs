@@ -58,7 +58,17 @@ namespace com.FreedomVoice.MobileApp.Android.Entities
         /// <summary>
         /// Get presentation number
         /// </summary>
-        public string PresentationNumber => PresentationNumbers[SelectedPresentationNumber];
+        public string PresentationNumber
+        {
+            get
+            {
+                if ((PresentationNumbers == null) || (PresentationNumbers.Count == 0))
+                    return "";
+                if (PresentationNumbers.Count <= SelectedPresentationNumber)
+                    SelectedPresentationNumber = 0;
+                return PresentationNumbers[SelectedPresentationNumber];
+            }
+        } 
 
         public Account(string name, List<string> numbers, bool state)
         {

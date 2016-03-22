@@ -769,6 +769,8 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         /// <param name="index">number index</param>
         public void SetPresentationNumber(int index)
         {
+            if (SelectedAccount == null)
+                return;
             SelectedAccount.SelectedPresentationNumber = index;
             if (!string.IsNullOrEmpty(SelectedAccount.AccountName) &&
                 !string.IsNullOrEmpty(SelectedAccount.PresentationNumber))
@@ -890,6 +892,8 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         /// <param name="response">response from ComService</param>
         private void ResponseResultActionExecutor(BaseResponse response)
         {
+            if (response == null)
+                return;
             var type = response.GetType().Name;
             Intent intent;
             if (!WaitingRequestArray.ContainsKey(response.RequestId))
