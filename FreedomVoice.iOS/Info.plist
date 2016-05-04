@@ -7,9 +7,9 @@
 	<key>CFBundleIdentifier</key>
 	<string>com.freedomvoice.mobileapp</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0.32</string>
+	<string>1.0.33</string>
 	<key>CFBundleVersion</key>
-	<string>1.0.32</string>
+	<string>1.0.33</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>MinimumOSVersion</key>
@@ -28,8 +28,6 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-  <key>UIStatusBarStyle</key>
-  <string>UIStatusBarStyleLightContent</string>
 	<key>UIRequiresPersistentWiFi</key>
 	<true/>
 	<key>CFBundleIconFiles</key>

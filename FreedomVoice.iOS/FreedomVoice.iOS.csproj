@@ -54,10 +54,7 @@
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
     <CodesignKey>iPhone Developer: Александр Пятаков (TRSB9P63FJ)</CodesignKey>
     <MtouchDebug>True</MtouchDebug>
-    <CodesignProvision>8169524e-868d-493b-9c13-eda527bf40d2</CodesignProvision>
-    <CodesignResourceRules />
-    <CodesignExtraArgs />
-    <MtouchSdkVersion>9.2</MtouchSdkVersion>
+    <MtouchSdkVersion>9.3</MtouchSdkVersion>
     <MtouchLink>SdkOnly</MtouchLink>
     <MtouchProfiling>False</MtouchProfiling>
     <MtouchFastDev>False</MtouchFastDev>
@@ -68,7 +65,9 @@
     <DeviceSpecificBuild>False</DeviceSpecificBuild>
     <OptimizePNGs>True</OptimizePNGs>
     <MtouchFloat32>False</MtouchFloat32>
-    <MtouchI18n />
+    <MtouchEnableBitcode>False</MtouchEnableBitcode>
+    <MtouchTlsProvider>Default</MtouchTlsProvider>
+    <MtouchHttpClientHandler>HttpClientHandler</MtouchHttpClientHandler>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
     <DebugType>none</DebugType>
@@ -91,13 +90,10 @@
     <MtouchArch>ARMv7, ARM64</MtouchArch>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
     <BuildIpa>True</BuildIpa>
-    <CodesignProvision>4758bbac-f984-4e5f-9004-872a824696a0</CodesignProvision>
-    <CodesignKey>iPhone Distribution: WaveAccess (8WX23BUD23)</CodesignKey>
-    <CodesignResourceRules />
-    <CodesignExtraArgs />
+    <CodesignKey>iPhone Developer: Александр Пятаков (TRSB9P63FJ)</CodesignKey>
     <IpaIncludeArtwork>False</IpaIncludeArtwork>
-    <IpaPackageName>FreedomVoice-1.0.32</IpaPackageName>
-    <MtouchSdkVersion>9.2</MtouchSdkVersion>
+    <IpaPackageName>FreedomVoice-1.0.33</IpaPackageName>
+    <MtouchSdkVersion>9.3</MtouchSdkVersion>
     <MtouchLink>SdkOnly</MtouchLink>
     <MtouchDebug>False</MtouchDebug>
     <MtouchProfiling>False</MtouchProfiling>
@@ -108,7 +104,9 @@
     <MtouchUseRefCounting>False</MtouchUseRefCounting>
     <OptimizePNGs>True</OptimizePNGs>
     <MtouchFloat32>False</MtouchFloat32>
-    <MtouchI18n />
+    <MtouchEnableBitcode>False</MtouchEnableBitcode>
+    <MtouchTlsProvider>Default</MtouchTlsProvider>
+    <MtouchHttpClientHandler>HttpClientHandler</MtouchHttpClientHandler>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|iPhone' ">
     <DebugType>none</DebugType>
@@ -461,7 +459,7 @@
   <ItemGroup>
     <XamarinComponentReference Include="googleiosanalytics">
       <Visible>False</Visible>
-      <Version>3.14.0.1</Version>
+      <Version>3.14.0.3</Version>
     </XamarinComponentReference>
     <XamarinComponentReference Include="mroundedbutton">
       <Version>1.1.2.0</Version>
