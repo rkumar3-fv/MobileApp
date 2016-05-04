@@ -46,6 +46,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             switch (item.ItemId)
             {
                 case Resource.Id.menu_action_logout:
+                    if (IsFinishing)
+                        return true;
                     var logoutDialog = new LogoutDialogFragment(false);
                     logoutDialog.DialogEvent += OnDialogEvent;
                     var transaction = SupportFragmentManager.BeginTransaction();
@@ -88,6 +90,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             }
             else
             {
+                if (IsFinishing)
+                    return;
                 var noCellularDialog = new NoCellularDialogFragment();
                 var transaction = SupportFragmentManager.BeginTransaction();
                 transaction.Add(noCellularDialog, GetString(Resource.String.DlgCellular_title));

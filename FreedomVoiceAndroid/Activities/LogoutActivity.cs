@@ -77,6 +77,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 hasRecents = false;
             else
                 hasRecents = true;
+            if (IsFinishing)
+                return;
             var logoutDialog = new LogoutDialogFragment(hasRecents);
             logoutDialog.DialogEvent += OnDialogEvent;
             var transaction = SupportFragmentManager.BeginTransaction();
@@ -88,6 +90,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         {
             if (!Appl.ApplicationHelper.IsVoicecallsSupported())
             {
+                if (IsFinishing)
+                    return;
                 var noCellularDialog = new NoCellularDialogFragment();
                 var transaction = SupportFragmentManager.BeginTransaction();
                 transaction.Add(noCellularDialog, GetString(Resource.String.DlgCellular_title));
@@ -126,7 +130,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
 
         private void FeedbackDialog()
         {
-            if (SupportFragmentManager.FindFragmentByTag(FeedbackDlgTag) != null)
+            if ((SupportFragmentManager.FindFragmentByTag(FeedbackDlgTag) != null)||(IsFinishing))
                 return;
             var feedbackDialog = new FeedbackDialogFragment(this);
             var transaction = SupportFragmentManager.BeginTransaction();

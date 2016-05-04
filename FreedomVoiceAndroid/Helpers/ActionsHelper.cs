@@ -1338,7 +1338,11 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         /// <param name="response">response from server</param>
         private void SaveRecent(BaseResponse response)
         {
+            if (response == null)
+                return;
             var callReservation = (CallReservationRequest)WaitingRequestArray[response.RequestId];
+            if (string.IsNullOrEmpty(callReservation?.DialingNumber))
+                return;
             var recent = new Recent(callReservation.DialingNumber);
             var task = Task.Run(() =>
             {

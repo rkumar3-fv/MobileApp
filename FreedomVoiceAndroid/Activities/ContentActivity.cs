@@ -228,6 +228,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                     SetToolbarContent();
                     return true;
                 case Resource.Id.menu_action_clear:
+                    if (IsFinishing)
+                        return true;
                     var clearDialog = new ClearRecentsDialogFragment();
                     clearDialog.DialogEvent += ClearDialogEvent;
                     var transaction = SupportFragmentManager.BeginTransaction();

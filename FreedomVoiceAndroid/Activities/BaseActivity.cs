@@ -84,10 +84,13 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                     }
                     catch (ActivityNotFoundException)
                     {
-                        var noCellularDialog = new NoCellularDialogFragment();
-                        var transaction = SupportFragmentManager.BeginTransaction();
-                        transaction.Add(noCellularDialog, GetString(Resource.String.DlgCellular_title));
-                        transaction.CommitAllowingStateLoss();
+                        if (!IsFinishing)
+                        {
+                            var noCellularDialog = new NoCellularDialogFragment();
+                            var transaction = SupportFragmentManager.BeginTransaction();
+                            transaction.Add(noCellularDialog, GetString(Resource.String.DlgCellular_title));
+                            transaction.CommitAllowingStateLoss();
+                        }
                     }
                 }
                 else
@@ -166,7 +169,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
 
         protected void AirplaneDialog()
         {
-            if (SupportFragmentManager.FindFragmentByTag(AirDlgTag) != null)
+            if ((SupportFragmentManager.FindFragmentByTag(AirDlgTag) != null)||(IsFinishing))
                 return;
             var airplaneDialog = new AirplaneDialogFragment();
             airplaneDialog.DialogEvent += AirplaneDialogOnDialogEvent;
