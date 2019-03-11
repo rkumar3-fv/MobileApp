@@ -67,9 +67,9 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             _progressLogin.IndeterminateDrawable?.SetColorFilter(progressColor, PorterDuff.Mode.SrcIn);
             _progressLogin.ProgressDrawable?.SetColorFilter(progressColor, PorterDuff.Mode.SrcIn);
 
-#if DEBUG
-            FillInLoginData();
-#endif
+//#if DEBUG
+//            FillInLoginData();
+//#endif
         }
 
         /// <summary>
