@@ -75,5 +75,7 @@
 	</array>
 	<key>UIMainStoryboardFile~ipad</key>
 	<string>MainStoryboard</string>
+	<key>CFBundleName</key>
+	<string>FreedomVoice</string>
 </dict>
 </plist>
