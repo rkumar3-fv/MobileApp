@@ -276,9 +276,13 @@
     <Compile Include="Utils\ExceptionSupport.cs" />
     <Compile Include="Utils\SecurityHelper.cs" />
     <Compile Include="Utils\TouchHelper.cs" />
+    <Compile Include="Fragments\ConversationsFragment.cs" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\act_auth.axml" />
+    <AndroidResource Include="Resources\layout\frag_conversations.axml">
+      <SubType>AndroidResource</SubType>
+    </AndroidResource>
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\values\Strings.xml">
