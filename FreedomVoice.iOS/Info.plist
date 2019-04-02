@@ -77,5 +77,7 @@
 	<string>MainStoryboard</string>
 	<key>CFBundleName</key>
 	<string>FreedomVoice</string>
+	<key>NSContactsUsageDescription</key>
+	<string>Access to your contacts allows you to identify who is calling or texting your FreedomVoice number. Your contacts are never stored on FreedomVoice servers.</string>
 </dict>
 </plist>
