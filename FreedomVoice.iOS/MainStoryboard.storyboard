@@ -1,20 +1,22 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6206.8" systemVersion="13A461" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="1156" useTraitCollections="YES">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="1156">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7026.1"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--class Prefix:identifier First View Controller - First-->
-        <!--class Prefix:identifier Second View Controller - Second-->
-        <!--Tab Bar Controller-->
+        <!--Main Tab Bar Controller-->
         <scene sceneID="1073">
             <objects>
-                <tabBarController definesPresentationContext="YES" id="1074" sceneMemberID="viewController" customClass="MainTabBarController" storyboardIdentifier="MainTabBarController">
+                <tabBarController storyboardIdentifier="MainTabBarController" definesPresentationContext="YES" id="1074" customClass="MainTabBarController" sceneMemberID="viewController">
                     <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
-                    <tabBar key="tabBar" contentMode="scaleToFill" id="1079" tag="0">
-                        <rect key="frame" x="0.0" y="519" width="320" height="49"/>
+                    <tabBar key="tabBar" contentMode="scaleToFill" id="1079">
+                        <rect key="frame" x="0.0" y="617" width="375" height="50"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
                     </tabBar>
                     <connections>
                         <outlet property="MainTabBar" destination="1079" id="name-outlet-1079"/>
@@ -24,45 +26,44 @@
             </objects>
             <point key="canvasLocation" x="368" y="880"/>
         </scene>
+        <!--Login-->
         <scene sceneID="1155">
             <objects>
-                <viewController id="1156" sceneMemberID="viewController" customClass="LoginViewController" storyboardIdentifier="LoginViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" title="Login">
+                <viewController storyboardIdentifier="LoginViewController" title="Login" useStoryboardIdentifierAsRestorationIdentifier="YES" id="1156" customClass="LoginViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="1153"/>
                         <viewControllerLayoutGuide type="bottom" id="1154"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="1157">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <subviews/>
-                        <color key="backgroundColor" colorSpace="calibratedWhite" white="0" alpha="0"/>
+                        <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
                     </view>
-                    <connections>
-                        <segue id="4710" destination="1198" kind="show" identifier="LoginToForgotPasswordSegue"/>
-                        <segue id="4885" destination="1074" kind="presentation" identifier="LoginToTabBarSegue"/>
-                    </connections>
-                    <navigationItem title="Title" id="2036" key="navigationItem"/>
+                    <navigationItem key="navigationItem" title="Title" id="2036"/>
                     <nil key="simulatedTopBarMetrics"/>
+                    <connections>
+                        <segue destination="1198" kind="show" identifier="LoginToForgotPasswordSegue" id="4710"/>
+                        <segue destination="1074" kind="presentation" identifier="LoginToTabBarSegue" id="4885"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="1158" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-1377" y="662"/>
         </scene>
+        <!--Forgot Password-->
         <scene sceneID="1197">
             <objects>
-                <viewController id="1198" sceneMemberID="viewController" customClass="ForgotPasswordViewController" storyboardIdentifier="ForgotPasswordViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" title="Forgot Password">
+                <viewController storyboardIdentifier="ForgotPasswordViewController" title="Forgot Password" useStoryboardIdentifierAsRestorationIdentifier="YES" id="1198" customClass="ForgotPasswordViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="1195"/>
                         <viewControllerLayoutGuide type="bottom" id="1196"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="1199">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                        <subviews/>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </view>
-                    <connections/>
-                    <navigationItem title="Forgot Password" id="2923" key="navigationItem">
+                    <navigationItem key="navigationItem" title="Forgot Password" id="2923">
                         <barButtonItem key="backBarButtonItem" title="Login" id="4298"/>
                     </navigationItem>
                 </viewController>
@@ -70,47 +71,51 @@
             </objects>
             <point key="canvasLocation" x="-764" y="-10"/>
         </scene>
+        <!--Root View Controller-->
         <scene sceneID="2276">
             <objects>
-                <viewController id="2273" sceneMemberID="viewController" customClass="RecentsViewController" storyboardIdentifier="RecentsViewController" useStoryboardIdentifierAsRestorationIdentifier="YES">
+                <viewController storyboardIdentifier="RecentsViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="2273" customClass="RecentsViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="2268"/>
                         <viewControllerLayoutGuide type="bottom" id="2269"/>
                     </layoutGuides>
-                    <navigationItem key="navigationItem" title="Root View Controller" id="2277"/>
-                    <connections/>
-                    <view contentMode="scaleToFill" id="5232" translatesAutoresizingMaskIntoConstraints="NO" key="view">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                    <view key="view" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5232">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </view>
                     <extendedEdge key="edgesForExtendedLayout" top="YES"/>
+                    <navigationItem key="navigationItem" title="Root View Controller" id="2277"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="2279" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="839" y="363"/>
         </scene>
+        <!--Root View Controller-->
         <scene sceneID="2449">
             <objects>
-                <viewController id="2446" sceneMemberID="viewController" customClass="KeypadViewController" storyboardIdentifier="KeypadViewController" useStoryboardIdentifierAsRestorationIdentifier="YES">
+                <viewController storyboardIdentifier="KeypadViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="2446" customClass="KeypadViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="2441"/>
                         <viewControllerLayoutGuide type="bottom" id="2442"/>
                     </layoutGuides>
-                    <navigationItem key="navigationItem" title="Root View Controller" id="2450"/>
-                    <connections/>
-                    <view contentMode="scaleToFill" id="5228" translatesAutoresizingMaskIntoConstraints="NO" key="view">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                    <view key="view" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5228">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </view>
+                    <navigationItem key="navigationItem" title="Root View Controller" id="2450"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="2452" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="845" y="1238"/>
         </scene>
+        <!--Navigation Controller-->
         <scene sceneID="2813">
             <objects>
                 <navigationController definesPresentationContext="YES" id="2814" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="2817">
+                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                     </navigationBar>
                     <connections>
@@ -121,30 +126,31 @@
             </objects>
             <point key="canvasLocation" x="-701" y="2240"/>
         </scene>
+        <!--Account Unavailable View Controller-->
         <scene sceneID="2819">
             <objects>
-                <viewController id="2816" sceneMemberID="viewController" customClass="AccountUnavailableViewController" storyboardIdentifier="AccountUnavailableViewController" useStoryboardIdentifierAsRestorationIdentifier="YES">
+                <viewController storyboardIdentifier="AccountUnavailableViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="2816" customClass="AccountUnavailableViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="2811"/>
                         <viewControllerLayoutGuide type="bottom" id="2812"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="2821">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                        <subviews/>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </view>
                     <navigationItem key="navigationItem" id="2820"/>
-                    <connections/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="2822" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-95" y="2236"/>
         </scene>
+        <!--Navigation Controller-->
         <scene sceneID="4003">
             <objects>
                 <navigationController definesPresentationContext="YES" id="4004" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="4007">
+                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                     </navigationBar>
                     <connections>
@@ -155,76 +161,79 @@
             </objects>
             <point key="canvasLocation" x="-713" y="1200"/>
         </scene>
+        <!--Emergency Disclaimer-->
         <scene sceneID="4009">
             <objects>
-                <viewController id="4006" sceneMemberID="viewController" title="Emergency Disclaimer" customClass="EmergencyDisclaimerViewController" storyboardIdentifier="EmergencyDisclaimerViewController" useStoryboardIdentifierAsRestorationIdentifier="YES">
+                <viewController storyboardIdentifier="EmergencyDisclaimerViewController" title="Emergency Disclaimer" useStoryboardIdentifierAsRestorationIdentifier="YES" id="4006" customClass="EmergencyDisclaimerViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="4001"/>
                         <viewControllerLayoutGuide type="bottom" id="4002"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="4011">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                        <subviews/>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </view>
-                    <navigationItem key="navigationItem" id="4010" title="Emergency Disclaimer"/>
-                    <connections/>
+                    <navigationItem key="navigationItem" title="Emergency Disclaimer" id="4010"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4012" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-190" y="1206"/>
         </scene>
+        <!--Select Account-->
         <scene sceneID="4364">
             <objects>
-                <viewController id="4365" sceneMemberID="viewController" customClass="AccountsViewController" storyboardIdentifier="AccountsViewController" title="Select Account" useStoryboardIdentifierAsRestorationIdentifier="YES">
+                <viewController storyboardIdentifier="AccountsViewController" title="Select Account" useStoryboardIdentifierAsRestorationIdentifier="YES" id="4365" customClass="AccountsViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="4362"/>
                         <viewControllerLayoutGuide type="bottom" id="4363"/>
                     </layoutGuides>
-                    <connections>
-                        <segue id="4538" destination="4004" kind="presentation" identifier="AccountsToEmergencyDisclaimerSegue"/>
-                        <segue id="4636" destination="1074" kind="show" identifier="AccountsToTabBarSegue"/>
-                    </connections>
-                    <view contentMode="scaleToFill" id="5234" translatesAutoresizingMaskIntoConstraints="NO" key="view">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                    <view key="view" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5234">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </view>
                     <extendedEdge key="edgesForExtendedLayout" top="YES"/>
+                    <connections>
+                        <segue destination="4004" kind="presentation" identifier="AccountsToEmergencyDisclaimerSegue" id="4538"/>
+                        <segue destination="1074" kind="show" identifier="AccountsToTabBarSegue" id="4636"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4367" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-1362" y="1742"/>
         </scene>
+        <!--Contacts View Controller-->
         <scene sceneID="4999">
             <objects>
-                <viewController id="5000" sceneMemberID="viewController" customClass="ContactsViewController" storyboardIdentifier="ContactsViewController" useStoryboardIdentifierAsRestorationIdentifier="YES">
+                <viewController storyboardIdentifier="ContactsViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="5000" customClass="ContactsViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="4997"/>
                         <viewControllerLayoutGuide type="bottom" id="4998"/>
                     </layoutGuides>
-                    <connections/>
-                    <view contentMode="scaleToFill" id="5233" translatesAutoresizingMaskIntoConstraints="NO" key="view">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                    <view key="view" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5233">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </view>
                     <extendedEdge key="edgesForExtendedLayout" top="YES"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5002" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1319" y="361"/>
+            <point key="canvasLocation" x="1906" y="317"/>
         </scene>
+        <!--Extensions View Controller-->
         <scene sceneID="5109">
             <objects>
-                <viewController id="5110" sceneMemberID="viewController" customClass="ExtensionsViewController" storyboardIdentifier="ExtensionsViewController" useStoryboardIdentifierAsRestorationIdentifier="YES">
+                <viewController storyboardIdentifier="ExtensionsViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="5110" customClass="ExtensionsViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="5107"/>
                         <viewControllerLayoutGuide type="bottom" id="5108"/>
                     </layoutGuides>
-                    <connections/>
-                    <view contentMode="scaleToFill" id="5229" translatesAutoresizingMaskIntoConstraints="NO" key="view">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                    <view key="view" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5229">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </view>
                     <extendedEdge key="edgesForExtendedLayout" top="YES"/>
                 </viewController>
@@ -232,17 +241,18 @@
             </objects>
             <point key="canvasLocation" x="1324" y="1242"/>
         </scene>
+        <!--Folders View Controller-->
         <scene sceneID="5127">
             <objects>
-                <viewController id="5128" sceneMemberID="viewController" customClass="FoldersViewController" storyboardIdentifier="FoldersViewController" useStoryboardIdentifierAsRestorationIdentifier="YES">
+                <viewController storyboardIdentifier="FoldersViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="5128" customClass="FoldersViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="5125"/>
                         <viewControllerLayoutGuide type="bottom" id="5126"/>
                     </layoutGuides>
-                    <connections/>
-                    <view contentMode="scaleToFill" id="5230" translatesAutoresizingMaskIntoConstraints="NO" key="view">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                    <view key="view" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5230">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </view>
                     <extendedEdge key="edgesForExtendedLayout" top="YES"/>
                 </viewController>
@@ -250,17 +260,18 @@
             </objects>
             <point key="canvasLocation" x="1807" y="1247"/>
         </scene>
+        <!--Messages View Controller-->
         <scene sceneID="5150">
             <objects>
-                <viewController id="5151" sceneMemberID="viewController" customClass="MessagesViewController" storyboardIdentifier="MessagesViewController" useStoryboardIdentifierAsRestorationIdentifier="YES">
+                <viewController storyboardIdentifier="MessagesViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="5151" customClass="MessagesViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="5148"/>
                         <viewControllerLayoutGuide type="bottom" id="5149"/>
                     </layoutGuides>
-                    <connections/>
-                    <view contentMode="scaleToFill" id="5231" translatesAutoresizingMaskIntoConstraints="NO" key="view">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                    <view key="view" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5231">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </view>
                     <extendedEdge key="edgesForExtendedLayout" top="YES"/>
                 </viewController>
@@ -268,140 +279,81 @@
             </objects>
             <point key="canvasLocation" x="2285" y="1247"/>
         </scene>
+        <!--Your Phone Number-->
         <scene sceneID="5174">
             <objects>
-                <viewController id="5175" sceneMemberID="viewController" title="Your Phone Number" customClass="PhoneNumberViewController" storyboardIdentifier="PhoneNumberViewController" useStoryboardIdentifierAsRestorationIdentifier="YES">
+                <viewController storyboardIdentifier="PhoneNumberViewController" title="Your Phone Number" useStoryboardIdentifierAsRestorationIdentifier="YES" id="5175" customClass="PhoneNumberViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="5172"/>
                         <viewControllerLayoutGuide type="bottom" id="5173"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="5176">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </view>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5177" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-307" y="-10"/>
         </scene>
+        <!--Fax View Controller-->
         <scene sceneID="5197">
             <objects>
-                <viewController id="5198" sceneMemberID="viewController" customClass="FaxViewController" storyboardIdentifier="FaxViewController" useStoryboardIdentifierAsRestorationIdentifier="YES">
+                <viewController storyboardIdentifier="FaxViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="5198" customClass="FaxViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="5195"/>
                         <viewControllerLayoutGuide type="bottom" id="5196"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="5199">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </view>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5200" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2820" y="1242"/>
         </scene>
+        <!--Splash View Controller-->
         <scene sceneID="5285">
             <objects>
-                <viewController id="5286" sceneMemberID="viewController" customClass="SplashViewController" storyboardIdentifier="SplashViewController" useStoryboardIdentifierAsRestorationIdentifier="YES">
+                <viewController storyboardIdentifier="SplashViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="5286" customClass="SplashViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="5283"/>
                         <viewControllerLayoutGuide type="bottom" id="5284"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="5287">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </view>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5288" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-1382" y="-222"/>
         </scene>
+        <!--List Conversations View Controller-->
+        <scene sceneID="YgD-an-hzK">
+            <objects>
+                <viewController storyboardIdentifier="ListConversationsViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="au4-Uy-ELb" customClass="ListConversationsViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="t1a-NV-rDL"/>
+                        <viewControllerLayoutGuide type="bottom" id="5KQ-TG-r70"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="xB3-U7-xQm">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    </view>
+                    <extendedEdge key="edgesForExtendedLayout" top="YES"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Qfo-Zx-Z3w" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1906" y="317"/>
+        </scene>
     </scenes>
-    <resources>
-        <image name="first" width="16" height="16"/>
-        <image name="second" width="16" height="16"/>
-        <image name="Default-568h.png" width="640" height="1136"/>
-        <image name="first.png" width="30" height="30"/>
-        <image name="second.png" width="30" height="30"/>
-        <image name="clearPhone.png" width="44" height="35"/>
-        <image name="dial.png" width="125" height="125"/>
-        <image name="recent.png" width="44" height="44"/>
-        <image name="back.png" width="36" height="63"/>
-        <image name="contacts_access.png" width="285" height="285"/>
-        <image name="dropdown_arrow.png" width="30" height="18"/>
-        <image name="folder_new.png" width="75" height="75"/>
-        <image name="folder_saved.png" width="75" height="75"/>
-        <image name="folder_sent.png" width="75" height="75"/>
-        <image name="folder_trash.png" width="75" height="75"/>
-        <image name="keypad_asterisk.png" width="48" height="42"/>
-        <image name="keypad_backspace.png" width="120" height="120"/>
-        <image name="keypad_call.png" width="186" height="186"/>
-        <image name="keypad_plus.png" width="21" height="21"/>
-        <image name="keypad_sharp.png" width="48" height="48"/>
-        <image name="Login-568h.png" width="640" height="1136"/>
-        <image name="logo_freedomvoice_grey.png" width="789" height="126"/>
-        <image name="logo_freedomvoice_small_white.png" width="552" height="87"/>
-        <image name="logo_freedomvoice_white.png" width="789" height="126"/>
-        <image name="logout.png" width="75" height="75"/>
-        <image name="messages_callrecord.png" width="50" height="50"/>
-        <image name="messages_callrecord_active.png" width="50" height="50"/>
-        <image name="messages_callrecord_unread.png" width="50" height="50"/>
-        <image name="messages_fax.png" width="50" height="50"/>
-        <image name="messages_fax_active.png" width="50" height="50"/>
-        <image name="messages_fax_unread.png" width="50" height="50"/>
-        <image name="messages_voicemail.png" width="50" height="50"/>
-        <image name="messages_voicemail_active.png" width="50" height="50"/>
-        <image name="messages_voicemail_unread.png" width="50" height="50"/>
-        <image name="recents_info.png" width="75" height="75"/>
-        <image name="tab_contacts.png" width="90" height="90"/>
-        <image name="tab_contacts_active.png" width="90" height="90"/>
-        <image name="tab_keypad.png" width="90" height="90"/>
-        <image name="tab_keypad_active.png" width="90" height="90"/>
-        <image name="tab_messages.png" width="90" height="90"/>
-        <image name="tab_messages_active.png" width="90" height="90"/>
-        <image name="tab_recents.png" width="90" height="90"/>
-        <image name="tab_recents_active.png" width="90" height="90"/>
-        <image name="warning.png" width="285" height="285"/>
-        <image name="btn_pause.png" width="30" height="30"/>
-        <image name="btn_play.png" width="31" height="32"/>
-        <image name="progress_bar_thumb.png" width="7" height="30"/>
-        <image name="back_transparent.png" width="36" height="63"/>
-        <image name="call_back.png" width="54" height="54"/>
-        <image name="callback.png" width="207" height="56"/>
-        <image name="callrecord.png" width="75" height="75"/>
-        <image name="callrecord_active.png" width="75" height="75"/>
-        <image name="callrecord_unread.png" width="75" height="75"/>
-        <image name="delete.png" width="75" height="75"/>
-        <image name="fax.png" width="75" height="75"/>
-        <image name="fax_active.png" width="75" height="75"/>
-        <image name="fax_unread.png" width="75" height="75"/>
-        <image name="pause.png" width="90" height="90"/>
-        <image name="play.png" width="90" height="90"/>
-        <image name="scroller.png" width="69" height="69"/>
-        <image name="speaker.png" width="54" height="54"/>
-        <image name="view_fax.png" width="54" height="54"/>
-        <image name="voicemail.png" width="75" height="75"/>
-        <image name="voicemail_active.png" width="75" height="75"/>
-        <image name="voicemail_unread.png" width="75" height="75"/>
-        <image name="navbar.png" width="960" height="192"/>
-        <image name="Icon-60.png" width="120" height="120"/>
-        <image name="Icon.png" width="57" height="57"/>
-        <image name="Icons/Icon-60.png" width="180" height="180"/>
-        <image name="Icons/Icon-76.png" width="76" height="76"/>
-        <image name="Icons/Icon-Small-40.png" width="40" height="40"/>
-        <image name="Icons/Icon-Small.png" width="29" height="29"/>
-        <image name="Default.jpg" width="1242" height="2208"/>
-        <image name="Login.jpg" width="1242" height="2208"/>
-        <image name="Default-667h.png" width="750" height="1334"/>
-        <image name="Default-736h.png" width="1242" height="2208"/>
-        <image name="Login-667h.png" width="750" height="1334"/>
-        <image name="Login-736h.png" width="1242" height="2208"/>
-        <image name="navbar_wide.png" width="750" height="128"/>
-    </resources>
-    <simulatedMetricsContainer key="defaultSimulatedMetrics">
-        <simulatedScreenMetrics key="destination" type="retina55"/>
-    </simulatedMetricsContainer>
+    <inferredMetricsTieBreakers>
+        <segue reference="4885"/>
+    </inferredMetricsTieBreakers>
 </document>

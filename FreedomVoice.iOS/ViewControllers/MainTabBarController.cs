@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.Utilities.Events;
+using FreedomVoice.iOS.ViewControllers.Texts;
 using Google.Analytics;
 using UIKit;
 
@@ -50,8 +51,13 @@ namespace FreedomVoice.iOS.ViewControllers
                 foldersViewController.IsSingleExtension = true;
                 messagesTab = GetTabBarItem(foldersViewController, "Messages");
             }
-            
-            ViewControllers = new[] { recentsTab, contactsTab, keypadTab, messagesTab };
+
+            var textsControllers = AppDelegate.GetViewController<ListConversationsViewController>();
+            var textsTab = GetTabBarItem(textsControllers, "Texts");
+
+
+
+            ViewControllers = new[] { recentsTab, contactsTab, keypadTab, messagesTab, textsTab };
 
             CallerIdEvent.CallerIdChanged += PresentationNumberChanged;
 
