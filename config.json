@@ -1,0 +1,94 @@
+{
+  "body" : {
+    "request" : "Please enter a body of commit",
+    "newLineSpacer" : "|",
+    "length" : {
+
+    }
+  },
+  "footer" : {
+    "length" : {
+
+    },
+    "prefix" : "META:",
+    "enabled" : true,
+    "request" : "Please enter a footer of commit"
+  },
+  "header" : {
+    "scope" : {
+      "skiptRequest" : "Do not add scope.",
+      "enabled" : true,
+      "items" : [
+        {
+          "key" : "core",
+          "value" : "Part of code in core your application"
+        },
+        {
+          "key" : "texting",
+          "value" : "Texting feature"
+        },
+        {
+          "key" : "styles",
+          "value" : "Code related by styles or markup of project"
+        },
+        {
+          "key" : "android",
+          "value" : "Android project modification"
+        },
+        {
+          "key" : "ios",
+          "value" : "iOS modification"
+        }
+      ],
+      "skip" : true,
+      "request" : "Please, choose you scope of code:"
+    },
+    "length" : {
+      "min" : {
+        "value" : 5
+      },
+      "max" : {
+        "value" : 72
+      }
+    },
+    "customScope" : {
+      "enabled" : true,
+      "length" : {
+        "min" : {
+          "value" : 2
+        },
+        "max" : {
+          "value" : 5
+        }
+      },
+      "request" : "Please, enter your custom scope (or enter `<` to return to list of scopes):",
+      "back" : "<"
+    },
+    "type" : {
+      "request" : "Please, choose you type of commit:",
+      "items" : [
+        {
+          "key" : "build",
+          "value" : "Modifications related by configuration or building rules of project"
+        },
+        {
+          "key" : "ci",
+          "value" : "Changes for continuous integration"
+        },
+        {
+          "key" : "feat",
+          "value" : "Making some feature"
+        },
+        {
+          "key" : "fix",
+          "value" : "Bugfixing"
+        },
+        {
+          "key" : "perf",
+          "value" : "Perfomance improvement"
+        }
+      ]
+    },
+    "request" : "Please enter a header of commit"
+  }
+}
