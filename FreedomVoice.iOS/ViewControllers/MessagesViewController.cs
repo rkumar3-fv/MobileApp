@@ -1,3 +1,4 @@
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +18,7 @@ namespace FreedomVoice.iOS.ViewControllers
 {
 	partial class MessagesViewController : BaseViewController
     {
-        protected override string PageName => "Messages Screen";
+        protected override string PageName => "Voicemail Screen";
 
         public Account SelectedAccount { private get; set; }
         public ExtensionWithCount SelectedExtension { private get; set; }

@@ -54,7 +54,7 @@
     <ConsolePause>false</ConsolePause>
     <MtouchArch>ARMv7, ARM64</MtouchArch>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
-    <CodesignKey>iPhone Developer: Александр Пятаков (TRSB9P63FJ)</CodesignKey>
+    <CodesignKey>iPhone Developer: Evgeni Kalyada (7BXF4TS6ML)</CodesignKey>
     <MtouchDebug>True</MtouchDebug>
     <MtouchSdkVersion>11.2</MtouchSdkVersion>
     <MtouchLink>SdkOnly</MtouchLink>
@@ -68,6 +68,8 @@
     <MtouchEnableBitcode>False</MtouchEnableBitcode>
     <MtouchTlsProvider>Default</MtouchTlsProvider>
     <MtouchHttpClientHandler>HttpClientHandler</MtouchHttpClientHandler>
+    <CodesignProvision>Provision Profile 2019</CodesignProvision>
+    <MtouchEnableSGenConc>false</MtouchEnableSGenConc>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
     <DebugType>none</DebugType>
@@ -295,9 +297,26 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
+    <Compile Include="ViewControllers\Texts\ListConversationsViewController.cs" />
+    <Compile Include="ViewControllers\Texts\ListConversationsViewController.designer.cs">
+      <DependentUpon>ListConversationsViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\FVRoundedButton.cs" />
+    <Compile Include="TableViewSources\Texting\ConversationsSource.cs" />
+    <InterfaceDefinition Include="TableViewCells\Texting\ConversationItemTableViewCell.xib" />
+    <Compile Include="TableViewCells\Texting\ConversationItemTableViewCell.cs" />
+    <Compile Include="TableViewCells\Texting\ConversationItemTableViewCell.designer.cs">
+      <DependentUpon>ConversationItemTableViewCell.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\Default-568h%402x.png" />
+    <BundleResource Include="Resources\tab_texts%402x.png" />
+    <BundleResource Include="Resources\tab_texts%403x.png" />
+    <BundleResource Include="Resources\disclosure%402x.png" />
+    <BundleResource Include="Resources\disclosure%403x.png" />
+    <BundleResource Include="Resources\tab_texts_active%402x.png" />
+    <BundleResource Include="Resources\tab_texts_active%403x.png" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Google.Analytics, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -415,6 +434,9 @@
     <Reference Include="Xamarin.Mobile">
       <HintPath>..\Components\xamarin.mobile-0.7.7\lib\ios-unified\Xamarin.Mobile.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\netstandard2.0\Newtonsoft.Json.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\progress_bar_thumb%402x.png" />
@@ -484,8 +506,8 @@
     <BundleResource Include="Resources\tab_contacts_active%403x.png" />
     <BundleResource Include="Resources\tab_keypad%403x.png" />
     <BundleResource Include="Resources\tab_keypad_active%403x.png" />
-    <BundleResource Include="Resources\tab_messages%403x.png" />
-    <BundleResource Include="Resources\tab_messages_active%403x.png" />
+    <BundleResource Include="Resources\tab_voicemail%403x.png" />
+    <BundleResource Include="Resources\tab_voicemail_active%403x.png" />
     <BundleResource Include="Resources\tab_recents%403x.png" />
     <BundleResource Include="Resources\tab_recents_active%403x.png" />
     <BundleResource Include="Resources\view_fax%403x.png" />
@@ -531,8 +553,8 @@
     <BundleResource Include="Resources\tab_contacts_active%402x.png" />
     <BundleResource Include="Resources\tab_keypad%402x.png" />
     <BundleResource Include="Resources\tab_keypad_active%402x.png" />
-    <BundleResource Include="Resources\tab_messages%402x.png" />
-    <BundleResource Include="Resources\tab_messages_active%402x.png" />
+    <BundleResource Include="Resources\tab_voicemail%402x.png" />
+    <BundleResource Include="Resources\tab_voicemail_active%402x.png" />
     <BundleResource Include="Resources\tab_recents%402x.png" />
     <BundleResource Include="Resources\tab_recents_active%402x.png" />
     <BundleResource Include="Resources\warning%402x.png" />
@@ -587,6 +609,7 @@
       <Name>FreedomVoice.Entities</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

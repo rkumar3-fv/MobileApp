@@ -71,6 +71,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             var keypadFragment = new KeypadFragment();
             var messagesFragment = new MessagesFragment();
             var recentsFragment = new RecentsFragment();
+            var conversationsFragment = new ConversationsFragment();
             if (_viewPager != null)
             {
                 _viewPager.AllowSwipe = false;
@@ -79,6 +80,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 _pagerAdapter.AddFragment(_contactsFragment, Resource.String.FragmentContacts_title, Resource.Drawable.ic_tab_contacts);
                 _pagerAdapter.AddFragment(keypadFragment, Resource.String.FragmentKeypad_title, Resource.Drawable.ic_tab_keypad);
                 _pagerAdapter.AddFragment(messagesFragment, Resource.String.FragmentMessages_title, Resource.Drawable.ic_tab_messages);
+                _pagerAdapter.AddFragment(conversationsFragment, Resource.String.FragmentConversations_title, Resource.Drawable.ic_tab_messages);
                 _viewPager.Adapter = _pagerAdapter;
                 _viewPager.CurrentItem = 2;
                 _viewPager.PageSelected += ViewPagerOnPageSelected;

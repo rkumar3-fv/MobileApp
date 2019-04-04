@@ -31,6 +31,7 @@
   <string name="ActivityRestore_badEmail">Please enter a valid email address.</string>
   <string name="ActivitySelect_title">Select Account</string>
   <string name="ActivityExtension_title">Select extension</string>
+  <string name="FragmentConversations_title">Texts</string>
   <string name="FragmentKeypad_title">Keypad</string>
   <string name="FragmentKeypad_callerId">Show as Caller ID:</string>
   <string name="FragmentKeypad_oneButtonTitle">1</string>
@@ -55,16 +56,16 @@
   <string name="FragmentKeypad_zeroButton">+</string>
   <string name="FragmentKeypad_starButtonTitle">*</string>
   <string name="FragmentKeypad_hashButtonTitle">#</string>
-  <string name="FragmentMessages_title">Messages</string>
+  <string name="FragmentMessages_title">Voicemail</string>
   <string name="FragmentMessages_folderNew">New</string>
   <string name="FragmentMessages_folderSent">Sent</string>
   <string name="FragmentMessages_folderTrash">Trash</string>
   <string name="FragmentMessages_folderSaved">Saved</string>
   <string name="FragmentMessages_onePage">1 page</string>
   <string name="FragmentMessages_morePage">pages</string>
-  <string name="FragmentMessages_remove">Message Removed</string>
+  <string name="FragmentMessages_remove">Voicemail Removed</string>
   <string name="FragmentMessages_removeUndo">UNDO</string>
-  <string name="FragmentMessages_no">No Messages</string>
+  <string name="FragmentMessages_no">No Voicemails</string>
   <string name="FragmentMessages_airplane">Your Device In Airplane Mode</string>
   <string name="FragmentMessages_connection">No Internet Connection</string>
   <string name="FragmentMessages_internal">Internal Server Error</string>

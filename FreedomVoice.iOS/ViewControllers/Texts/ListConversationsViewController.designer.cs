@@ -1,4 +1,4 @@
-// WARNING
+﻿// WARNING
 //
 // This file has been generated automatically by Visual Studio from the outlets and
 // actions declared in your storyboard file.
@@ -9,10 +9,10 @@ using System;
 using System.CodeDom.Compiler;
 using UIKit;
 
-namespace FreedomVoice.iOS.ViewControllers
+namespace FreedomVoice.iOS.ViewControllers.Texts
 {
-    [Register ("SplashViewController")]
-    partial class SplashViewController
+    [Register ("ListConversationsViewController")]
+    partial class ListConversationsViewController
     {
         void ReleaseDesignerOutlets ()
         {
