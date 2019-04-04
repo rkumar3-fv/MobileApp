@@ -1,10 +1,9 @@
 ﻿using System;
 
-namespace FreedomVoice.Entities
+namespace FreedomVoice.DAL.DbEntities
 {
-    public class Message
+    public class Message : BaseEntity
     {
-        public int Id { get; set; }
         public Phone From { get; set; }
         public Phone To { get; set; }
         public string Text { get; set; }
