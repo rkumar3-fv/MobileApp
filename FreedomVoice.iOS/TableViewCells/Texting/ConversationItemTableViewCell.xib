@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
@@ -14,11 +14,11 @@
             <rect key="frame" x="0.0" y="0.0" width="397" height="179"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="cxk-wN-pdQ" id="YTl-1W-gDM">
-                <rect key="frame" x="0.0" y="0.0" width="397" height="178"/>
+                <rect key="frame" x="0.0" y="0.0" width="397" height="178.5"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="IYx-M8-UgU">
-                        <rect key="frame" x="16" y="14" width="6" height="6"/>
+                        <rect key="frame" x="20" y="17" width="6" height="6"/>
                         <color key="backgroundColor" red="0.0" green="0.58980089430000004" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="6" id="iSg-6b-6mc"/>
@@ -26,28 +26,28 @@
                         </constraints>
                     </view>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="252" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="152">
-                        <rect key="frame" x="30" y="8" width="38.5" height="18"/>
+                        <rect key="frame" x="34" y="11" width="38.5" height="18"/>
                         <fontDescription key="fontDescription" type="system" weight="medium" pointSize="15"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="153">
-                        <rect key="frame" x="319.5" y="8" width="37.5" height="18"/>
+                        <rect key="frame" x="315.5" y="11" width="37.5" height="18"/>
                         <fontDescription key="fontDescription" type="system" pointSize="15"/>
                         <color key="textColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="disclosure.png" translatesAutoresizingMaskIntoConstraints="NO" id="154">
-                        <rect key="frame" x="365" y="9" width="16" height="16"/>
+                        <rect key="frame" x="361" y="12" width="16" height="16"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="16" id="AGM-31-Oom"/>
                             <constraint firstAttribute="height" constant="16" id="lWi-OE-fqp"/>
                         </constraints>
                     </imageView>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="151">
-                        <rect key="frame" x="30" y="34" width="327" height="136.5"/>
+                        <rect key="frame" x="34" y="37" width="319" height="131"/>
                         <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                        <nil key="textColor"/>
+                        <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <nil key="highlightedColor"/>
                     </label>
                 </subviews>
@@ -67,13 +67,17 @@
                     <constraint firstItem="IYx-M8-UgU" firstAttribute="leading" secondItem="YTl-1W-gDM" secondAttribute="leadingMargin" id="wzn-Bm-8eD"/>
                 </constraints>
             </tableViewCellContentView>
-            <point key="canvasLocation" x="173.59999999999999" y="109.29535232383809"/>
             <connections>
                 <outlet property="AccessoryCustomView" destination="154" id="name-outlet-154"/>
+                <outlet property="DateLabel" destination="153" id="name-outlet-153"/>
+                <outlet property="MessageLabel" destination="151" id="name-outlet-151"/>
+                <outlet property="NameLabel" destination="152" id="name-outlet-152"/>
+                <outlet property="NewMessageView" destination="IYx-M8-UgU" id="name-outlet-IYx-M8-UgU"/>
             </connections>
+            <point key="canvasLocation" x="173.59999999999999" y="109.29535232383809"/>
         </tableViewCell>
     </objects>
     <resources>
-        <image name="disclosure.png" width="9.5" height="9.5"/>
+        <image name="disclosure.png" width="16" height="16"/>
     </resources>
 </document>

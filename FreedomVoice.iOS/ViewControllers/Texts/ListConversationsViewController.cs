@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using CoreGraphics;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.TableViewSources.Texting;
 using FreedomVoice.iOS.Utilities;
+using FreedomVoice.iOS.Views.Shared;
 using UIKit;
 
 namespace FreedomVoice.iOS.ViewControllers.Texts
@@ -14,6 +16,9 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
 
         private UILabel _noItemsLabel;
         private UITableView _tableView;
+        private CallerIdView _callerIdView;
+        private LineView _lineView;
+        private static MainTabBarController MainTabBarInstance => MainTabBarController.SharedInstance;
 
         public ListConversationsViewController(IntPtr handle) : base(handle)
         {
@@ -28,6 +33,16 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             };
             
             _tableView = new UITableView
+            {
+                TranslatesAutoresizingMaskIntoConstraints = false
+            };
+
+            _callerIdView = new CallerIdView(new RectangleF(0, 0, (float)Theme.ScreenBounds.Width, 40), MainTabBarInstance.GetPresentationNumbers())
+            {
+                TranslatesAutoresizingMaskIntoConstraints = false
+            };
+
+            _lineView = new LineView(CGRect.Empty)
             {
                 TranslatesAutoresizingMaskIntoConstraints = false
             };
@@ -50,10 +65,13 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
 
         private void _SetupViews()
         {
-            View.AddSubview(_noItemsLabel);
+            View.AddSubview(_callerIdView);
+            View.AddSubview(_lineView);
             View.AddSubview(_tableView);
+            View.AddSubview(_noItemsLabel);
 
-            var createButton = new UIBarButtonItem("Create", UIBarButtonItemStyle.Plain, (s, e) => { });
+            var createButton = new UIBarButtonItem(UIBarButtonSystemItem.Compose, (sender, e) => { });
+
             NavigationItem.RightBarButtonItem = createButton;
         }
 
@@ -64,7 +82,17 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             _noItemsLabel.TrailingAnchor.ConstraintEqualTo(View.TrailingAnchor, -15).Active = true;
             _noItemsLabel.HeightAnchor.ConstraintEqualTo(40).Active = true;
 
-            _tableView.TopAnchor.ConstraintEqualTo(View.TopAnchor).Active = true;
+            _callerIdView.TopAnchor.ConstraintEqualTo(View.TopAnchor).Active = true;
+            _callerIdView.LeadingAnchor.ConstraintEqualTo(View.LeadingAnchor).Active = true;
+            _callerIdView.TrailingAnchor.ConstraintEqualTo(View.TrailingAnchor).Active = true;
+            _callerIdView.HeightAnchor.ConstraintEqualTo(40).Active = true;
+
+            _lineView.TopAnchor.ConstraintEqualTo(_callerIdView.BottomAnchor).Active = true;
+            _lineView.LeadingAnchor.ConstraintEqualTo(View.LeadingAnchor).Active = true;
+            _lineView.TrailingAnchor.ConstraintEqualTo(View.TrailingAnchor).Active = true;
+            _lineView.HeightAnchor.ConstraintEqualTo(0.5f).Active = true;
+
+            _tableView.TopAnchor.ConstraintEqualTo(_lineView.BottomAnchor).Active = true;
             _tableView.BottomAnchor.ConstraintEqualTo(View.BottomAnchor).Active = true;
             _tableView.LeadingAnchor.ConstraintEqualTo(View.LeadingAnchor).Active = true;
             _tableView.TrailingAnchor.ConstraintEqualTo(View.TrailingAnchor).Active = true;

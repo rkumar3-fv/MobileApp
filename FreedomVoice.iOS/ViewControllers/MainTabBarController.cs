@@ -42,14 +42,14 @@ namespace FreedomVoice.iOS.ViewControllers
             if (ExtensionsList.Count > 1)
 	        {
                 var extensionsViewController = AppDelegate.GetViewController<ExtensionsViewController>();
-                messagesTab = GetTabBarItem(extensionsViewController, "Messages");
+                messagesTab = GetTabBarItem(extensionsViewController, "Voicemail");
             }
             else
             {
                 var foldersViewController = AppDelegate.GetViewController<FoldersViewController>();
                 foldersViewController.SelectedExtension = ExtensionsList.First();
                 foldersViewController.IsSingleExtension = true;
-                messagesTab = GetTabBarItem(foldersViewController, "Messages");
+                messagesTab = GetTabBarItem(foldersViewController, "Voicemail");
             }
 
             var textsControllers = AppDelegate.GetViewController<ListConversationsViewController>();

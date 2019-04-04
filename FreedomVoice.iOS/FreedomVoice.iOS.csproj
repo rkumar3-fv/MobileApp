@@ -313,6 +313,9 @@
     <BundleResource Include="Resources\tab_texts%402x.png" />
     <BundleResource Include="Resources\tab_texts%403x.png" />
     <BundleResource Include="Resources\disclosure%402x.png" />
+    <BundleResource Include="Resources\disclosure%403x.png" />
+    <BundleResource Include="Resources\tab_texts_active%402x.png" />
+    <BundleResource Include="Resources\tab_texts_active%403x.png" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Google.Analytics, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -415,8 +418,8 @@
     <BundleResource Include="Resources\tab_contacts_active%403x.png" />
     <BundleResource Include="Resources\tab_keypad%403x.png" />
     <BundleResource Include="Resources\tab_keypad_active%403x.png" />
-    <BundleResource Include="Resources\tab_messages%403x.png" />
-    <BundleResource Include="Resources\tab_messages_active%403x.png" />
+    <BundleResource Include="Resources\tab_voicemail%403x.png" />
+    <BundleResource Include="Resources\tab_voicemail_active%403x.png" />
     <BundleResource Include="Resources\tab_recents%403x.png" />
     <BundleResource Include="Resources\tab_recents_active%403x.png" />
     <BundleResource Include="Resources\view_fax%403x.png" />
@@ -462,8 +465,8 @@
     <BundleResource Include="Resources\tab_contacts_active%402x.png" />
     <BundleResource Include="Resources\tab_keypad%402x.png" />
     <BundleResource Include="Resources\tab_keypad_active%402x.png" />
-    <BundleResource Include="Resources\tab_messages%402x.png" />
-    <BundleResource Include="Resources\tab_messages_active%402x.png" />
+    <BundleResource Include="Resources\tab_voicemail%402x.png" />
+    <BundleResource Include="Resources\tab_voicemail_active%402x.png" />
     <BundleResource Include="Resources\tab_recents%402x.png" />
     <BundleResource Include="Resources\tab_recents_active%402x.png" />
     <BundleResource Include="Resources\warning%402x.png" />
