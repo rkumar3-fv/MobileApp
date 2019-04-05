@@ -24,12 +24,16 @@ namespace FreedomVoice.Core.ViewModels
 
         public ConversationsViewModel()
         {
-
+            _hasMore = false;
         }
 
-        public void ReloadData() {
+        public void Reload() {
         
         }
+
+        public void LoadMore() { 
+        }
+
 
     }
 }

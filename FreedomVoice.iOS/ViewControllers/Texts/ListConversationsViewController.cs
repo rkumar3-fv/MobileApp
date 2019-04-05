@@ -50,10 +50,6 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             {
                 TranslatesAutoresizingMaskIntoConstraints = false
             };
-
-            _vm = new ConversationsViewModel();
-
-            CallerIdEvent.CallerIdChanged += UpdateCallerId;
         }
 
         public override void ViewDidLoad()
@@ -108,7 +104,11 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
 
         private void _SetupData()
         {
-            _tableView.Source = new ConversationsSource(new List<Account>(), NavigationController, _tableView);
+            CallerIdEvent.CallerIdChanged += UpdateCallerId;
+
+            _vm = new ConversationsViewModel();
+            _vm.PhoneNumber = _callerIdView.SelectedNumber.PhoneNumber;
+            _tableView.Source = new ConversationsSource(_vm, NavigationController, _tableView);
             _tableView.ReloadData();
         }
 

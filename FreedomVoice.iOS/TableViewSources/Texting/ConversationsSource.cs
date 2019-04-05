@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Foundation;
+using FreedomVoice.Core.ViewModels;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.TableViewCells;
 using FreedomVoice.iOS.TableViewCells.Texting;
@@ -13,12 +14,12 @@ namespace FreedomVoice.iOS.TableViewSources.Texting
 {
     public class ConversationsSource : UITableViewSource
     {
-        private readonly List<Account> _accounts;
+        private readonly ConversationsViewModel _viewModel;
         private readonly UINavigationController _navigationController;
 
-        public ConversationsSource(List<Account> accounts, UINavigationController navigationController, UITableView tableView)
+        public ConversationsSource(ConversationsViewModel viewModel, UINavigationController navigationController, UITableView tableView)
         {
-            _accounts = accounts;
+            _viewModel = viewModel;
             _navigationController = navigationController;
             
             tableView.RegisterNibForCellReuse(UINib.FromName("ConversationItemTableViewCell", NSBundle.MainBundle), "cell" );
@@ -48,7 +49,12 @@ namespace FreedomVoice.iOS.TableViewSources.Texting
         public override void RowSelected(UITableView tableView, NSIndexPath indexPath)
         {
             tableView.DeselectRow(indexPath, true);
-
         }
+        
+        [Export("scrollViewDidScroll:")]
+        private void ScrollViewDidScroll(UIScrollView scrollView) {
+            Console.WriteLine("scroll");
+        }
+
     }
 }
