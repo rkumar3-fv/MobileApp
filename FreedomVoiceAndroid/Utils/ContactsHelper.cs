@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Android.Content;
 using Android.Database;
 using Android.Provider;
+using com.FreedomVoice.MobileApp.Android.Helpers;
 using FreedomVoice.Core.Utils;
 using Java.Interop;
 using Uri = Android.Net.Uri;
@@ -17,14 +18,15 @@ namespace com.FreedomVoice.MobileApp.Android.Utils
         private static readonly object Locker = new object();
         private readonly Context _context;
         private readonly Dictionary<string, string> _phonesCache;
+        private readonly AppHelper _appHelper;
 
         private ContactsHelper(Context context)
         {
             _context = context;
             _phonesCache = new Dictionary<string, string>();
-            var contactsObserver = new ContactsObserver();
-            context.ContentResolver.RegisterContentObserver(ContactsContract.Contacts.ContentUri, true, contactsObserver);
-            contactsObserver.ContactsChangingEvent += ContactsObserverOnContactsChangingEvent;
+            _appHelper = App.GetApplication(_context).ApplicationHelper;
+            if (_appHelper.CheckContactsPermission())
+                StartListenContactsChanges();
         }
 
         private void ContactsObserverOnContactsChangingEvent(object sender, bool b)
@@ -47,12 +49,21 @@ namespace com.FreedomVoice.MobileApp.Android.Utils
             return _instance;
         }
 
-        /// <summary>
-        /// Get contact name by phone
-        /// </summary>
-        /// <param name="normalizedPhone">normalized phone</param>
-        /// <returns>Is in contacts</returns>
-        public bool GetName(string normalizedPhone, out string name)
+        public void ContactsPermissionGranted() => StartListenContactsChanges();
+
+        private void StartListenContactsChanges()
+        {
+            var contactsObserver = new ContactsObserver();
+            _context.ContentResolver.RegisterContentObserver(ContactsContract.Contacts.ContentUri, true, contactsObserver);
+            contactsObserver.ContactsChangingEvent += ContactsObserverOnContactsChangingEvent;
+        }
+
+    /// <summary>
+    /// Get contact name by phone
+    /// </summary>
+    /// <param name="normalizedPhone">normalized phone</param>
+    /// <returns>Is in contacts</returns>
+    public bool GetName(string normalizedPhone, out string name)
         {
             var phone = DataFormatUtils.NormalizePhone(normalizedPhone);
             if (_phonesCache.ContainsKey(phone))

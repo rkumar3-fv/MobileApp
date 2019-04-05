@@ -16,6 +16,7 @@ using com.FreedomVoice.MobileApp.Android.CustomControls;
 using com.FreedomVoice.MobileApp.Android.CustomControls.Callbacks;
 using com.FreedomVoice.MobileApp.Android.Dialogs;
 using com.FreedomVoice.MobileApp.Android.Fragments;
+using com.FreedomVoice.MobileApp.Android.Utils;
 using SearchView = Android.Support.V7.Widget.SearchView;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 
@@ -341,6 +342,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                     {
                         ContactsBarRestore();
                         _contactsFragment?.ReloadContacts();
+                        ContactsHelper.Instance(this).ContactsPermissionGranted();
                     }
                     break;
                 default:
