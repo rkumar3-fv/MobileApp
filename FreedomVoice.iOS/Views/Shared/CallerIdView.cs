@@ -23,6 +23,8 @@ namespace FreedomVoice.iOS.Views.Shared
         private UITextField _callerIdTextField;
         private UIImageView _dropdownImage;
 
+        public PresentationNumber SelectedNumber => _selectedPresentationNumber;
+
         public CallerIdView(RectangleF bounds, IList<PresentationNumber> numbers) : base(bounds)
         {
             Initialize(numbers);

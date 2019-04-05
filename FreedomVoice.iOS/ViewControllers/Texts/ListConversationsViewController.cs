@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Drawing;
 using CoreGraphics;
+using FreedomVoice.Core.ViewModels;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.TableViewSources.Texting;
 using FreedomVoice.iOS.Utilities;
+using FreedomVoice.iOS.Utilities.Events;
 using FreedomVoice.iOS.Views.Shared;
 using UIKit;
 
@@ -19,6 +21,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
         private CallerIdView _callerIdView;
         private LineView _lineView;
         private static MainTabBarController MainTabBarInstance => MainTabBarController.SharedInstance;
+        private ConversationsViewModel _vm;
 
         public ListConversationsViewController(IntPtr handle) : base(handle)
         {
@@ -31,7 +34,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
                 TranslatesAutoresizingMaskIntoConstraints = false,
                 Hidden = true
             };
-            
+
             _tableView = new UITableView
             {
                 TranslatesAutoresizingMaskIntoConstraints = false
@@ -42,10 +45,15 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
                 TranslatesAutoresizingMaskIntoConstraints = false
             };
 
+
             _lineView = new LineView(CGRect.Empty)
             {
                 TranslatesAutoresizingMaskIntoConstraints = false
             };
+
+            _vm = new ConversationsViewModel();
+
+            CallerIdEvent.CallerIdChanged += UpdateCallerId;
         }
 
         public override void ViewDidLoad()
@@ -102,6 +110,21 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
         {
             _tableView.Source = new ConversationsSource(new List<Account>(), NavigationController, _tableView);
             _tableView.ReloadData();
+        }
+
+
+        private void PresentationNumberChanged(object sender, EventArgs args)
+        {
+
+        }
+
+        private void UpdateCallerId(object sender, EventArgs args)
+        {
+            var selectedPresentationNumber = (args as CallerIdEventArgs)?.SelectedPresentationNumber;
+            if (selectedPresentationNumber == null)
+                return;
+            _vm.PhoneNumber = selectedPresentationNumber.PhoneNumber;
+            _vm.ReloadData();
         }
     }
 }
