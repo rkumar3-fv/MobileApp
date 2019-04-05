@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Foundation;
 using FreedomVoice.Core.ViewModels;
 using FreedomVoice.iOS.Entities;
@@ -20,6 +21,11 @@ namespace FreedomVoice.iOS.TableViewSources.Texting
         public ConversationsSource(ConversationsViewModel viewModel, UINavigationController navigationController, UITableView tableView)
         {
             _viewModel = viewModel;
+            _viewModel.ItemsChanged += (object sender, EventArgs e) =>
+            {
+                tableView.ReloadData();
+            };
+
             _navigationController = navigationController;
             
             tableView.RegisterNibForCellReuse(UINib.FromName("ConversationItemTableViewCell", NSBundle.MainBundle), "cell" );
@@ -30,15 +36,18 @@ namespace FreedomVoice.iOS.TableViewSources.Texting
         public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
         {
             var cell = tableView.DequeueReusableCell("cell") as ConversationItemTableViewCell;
-            //cell.TextLabel.Text = _accounts[indexPath.Row].FormattedPhoneNumber;
-            //cell.Accessory = UITableViewCellAccessory.DisclosureIndicator;
+            var item = _viewModel.Items[indexPath.Row];
+            cell.Title = item.CollocutorPhone.PhoneNumber;
+            var message = item.Messages.First();
+            cell.Detail = message.Text;
+            cell.Date = message.To.Equals(_viewModel.PhoneNumber) ? message.ReceivedAt.ToString() : message.SentAt.ToString();
 
             return cell;
         }
 
         public override nint RowsInSection(UITableView tableview, nint section)
         {
-            return 50;
+            return _viewModel.Items.Count();
         }
 
         public override nfloat GetHeightForRow(UITableView tableView, NSIndexPath indexPath)
@@ -53,7 +62,10 @@ namespace FreedomVoice.iOS.TableViewSources.Texting
         
         [Export("scrollViewDidScroll:")]
         private void ScrollViewDidScroll(UIScrollView scrollView) {
-            Console.WriteLine("scroll");
+            if (scrollView.ContentOffset.Y >= scrollView.ContentSize.Height - 200 && _viewModel.HasMore)
+            {
+                _viewModel.LoadMore();
+            }
         }
 
     }

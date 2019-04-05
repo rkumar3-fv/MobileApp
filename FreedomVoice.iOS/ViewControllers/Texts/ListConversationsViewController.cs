@@ -124,7 +124,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             if (selectedPresentationNumber == null)
                 return;
             _vm.PhoneNumber = selectedPresentationNumber.PhoneNumber;
-            _vm.ReloadData();
+            _vm.ReloadAsync();
         }
     }
 }
