@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreedomVoiceAndroid", "Free
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreedomVoice.iOS", "FreedomVoice.iOS\FreedomVoice.iOS.csproj", "{42B6DC7E-903E-495B-9BEF-053D35506CBB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FreedomVoice.Entities", "FreedomVoice.Entities\FreedomVoice.Entities.csproj", "{9C83001C-E1C6-461D-B0D3-1F6BA63000A6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreedomVoice.Entities", "FreedomVoice.Entities\FreedomVoice.Entities.csproj", "{9C83001C-E1C6-461D-B0D3-1F6BA63000A6}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FreedomVoice.Core", "FreedomVoice.Core\FreedomVoice.Core.csproj", "{AA1B2017-3A77-46FA-BC08-35E20FA24DE3}"
 EndProject
