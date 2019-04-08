@@ -8,6 +8,8 @@ using com.FreedomVoice.MobileApp.Android.Adapters;
 using com.FreedomVoice.MobileApp.Android.CustomControls;
 using com.FreedomVoice.MobileApp.Android.Entities;
 using com.FreedomVoice.MobileApp.Android.Helpers;
+using FreedomVoice.Core.Services;
+using FreedomVoice.Core.ViewModels;
 
 namespace com.FreedomVoice.MobileApp.Android.Fragments
 {
@@ -17,7 +19,8 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         private ConversationRecyclerAdapter _adapter;
         private TextView _noResultText;
         private LinearLayoutManager _layoutManager;
-        private int TotalItemCount => 20; // todo get from vm.TotalItemsCount (items count all pages)
+        private int TotalItemCount => 20;
+        private ConversationsViewModel _vm => new ConversationsViewModel(new ConversationService());
 
 
         protected override View InitView()
@@ -33,10 +36,10 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         public override void OnViewCreated(View view, Bundle savedInstanceState)
         {
             base.OnViewCreated(view, savedInstanceState);
-            _adapter = new ConversationRecyclerAdapter(((sender, account) =>
-            {
-                /* todo delegate to vm.onClickItem */
-            }));
+            //_adapter = new ConversationRecyclerAdapter(((sender, account) =>
+            //{
+            //    /* todo delegate to vm.onClickItem */
+            //}));
             _layoutManager = new LinearLayoutManager(Context);
             _recyclerView.SetLayoutManager(_layoutManager);
             _recyclerView.AddItemDecoration(new DividerItemDecorator(Context));
@@ -48,11 +51,11 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         private void onListScrolled()
         {
             var visibleItemCount = _layoutManager.ChildCount;
-            var totalItemCount = TotalItemCount;
+
             var pastVisiblesItems = _layoutManager.FindLastVisibleItemPosition();
-            if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) 
+            if (_vm.HasMore) 
             {
-                // todo call vm.LoadNextPage
+                _vm.LoadMore();
             }
         }
 
@@ -61,7 +64,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             var isEmpty = newList == null || newList.Count == 0;
             _noResultText.Visibility = isEmpty ? ViewStates.Visible : ViewStates.Gone;
             _recyclerView.Visibility = isEmpty ? ViewStates.Gone : ViewStates.Visible;
-            _adapter.Update(newList);
+            //_adapter.Update(newList);
         }
 
 
