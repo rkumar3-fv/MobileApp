@@ -81,12 +81,17 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 _pagerAdapter.AddFragment(_contactsFragment, Resource.String.FragmentContacts_title, Resource.Drawable.ic_tab_contacts);
                 _pagerAdapter.AddFragment(keypadFragment, Resource.String.FragmentKeypad_title, Resource.Drawable.ic_tab_keypad);
                 _pagerAdapter.AddFragment(messagesFragment, Resource.String.FragmentMessages_title, Resource.Drawable.ic_tab_messages);
-                _pagerAdapter.AddFragment(conversationsFragment, Resource.String.FragmentConversations_title, Resource.Drawable.ic_tab_messages);
+                _pagerAdapter.AddFragment(conversationsFragment, Resource.String.FragmentConversations_title, Resource.Drawable.ic_conversations);
                 _viewPager.Adapter = _pagerAdapter;
                 _viewPager.CurrentItem = 2;
                 _viewPager.PageSelected += ViewPagerOnPageSelected;
             }
             _tabLayout.SetupWithViewPager(_viewPager);
+            _tabLayout.GetTabAt(0).SetIcon(Resource.Drawable.ic_tab_history);
+            _tabLayout.GetTabAt(1).SetIcon(Resource.Drawable.ic_tab_contacts);
+            _tabLayout.GetTabAt(2).SetIcon(Resource.Drawable.ic_tab_keypad);
+            _tabLayout.GetTabAt(3).SetIcon(Resource.Drawable.ic_tab_messages);
+            _tabLayout.GetTabAt(4).SetIcon(Resource.Drawable.ic_conversations);
         }
 
         protected override void OnStart()
@@ -211,6 +216,9 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 case 2:
                     _toolbar.InflateMenu(Resource.Menu.menu_content);
                     ExpandToolbar();
+                    break;
+                case 4:
+                    _toolbar.InflateMenu(Resource.Menu.menu_conversations);
                     break;
             }
         }
