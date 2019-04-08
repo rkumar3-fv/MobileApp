@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using CoreGraphics;
+using FreedomVoice.Core.Services;
 using FreedomVoice.Core.ViewModels;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.TableViewSources.Texting;
@@ -106,8 +107,10 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
         {
             CallerIdEvent.CallerIdChanged += UpdateCallerId;
 
-            _vm = new ConversationsViewModel();
-            _vm.PhoneNumber = _callerIdView.SelectedNumber.PhoneNumber;
+            _vm = new ConversationsViewModel(new ConversationService())
+            {
+                PhoneNumber = _callerIdView.SelectedNumber.PhoneNumber
+            };
             _tableView.Source = new ConversationsSource(_vm, NavigationController, _tableView);
             _tableView.ReloadData();
         }

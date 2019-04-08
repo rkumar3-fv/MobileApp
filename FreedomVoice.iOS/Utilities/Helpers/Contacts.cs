@@ -18,6 +18,8 @@ namespace FreedomVoice.iOS.Utilities.Helpers
 
         public static List<Contact> ContactList { get; private set; }
 
+        public static event EventHandler ItemsChanged;
+
         public static int ContactsCount => ContactList.Count;
 
         static Contacts()
@@ -104,6 +106,7 @@ namespace FreedomVoice.iOS.Utilities.Helpers
             contactsList.ForEach(c => UpdateDisplayName(c));
 
             ContactList = SortContacts(contactsList);
+            ItemsChanged.Invoke(null, null);
         }
 
         private static List<Contact> SortContacts(IEnumerable<Contact> contactsList)
