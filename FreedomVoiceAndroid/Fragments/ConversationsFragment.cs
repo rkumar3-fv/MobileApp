@@ -9,6 +9,7 @@ using com.FreedomVoice.MobileApp.Android.CustomControls;
 using com.FreedomVoice.MobileApp.Android.Entities;
 using com.FreedomVoice.MobileApp.Android.Helpers;
 using FreedomVoice.Core.Services;
+using FreedomVoice.Core.Services.Interfaces;
 using FreedomVoice.Core.ViewModels;
 
 namespace com.FreedomVoice.MobileApp.Android.Fragments
@@ -20,8 +21,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         private TextView _noResultText;
         private LinearLayoutManager _layoutManager;
         private int TotalItemCount => 20;
-        private ConversationsViewModel _vm => new ConversationsViewModel(new ConversationService());
-
+        private ConversationsViewModel _vm => new ConversationsViewModel(DateTime.Now);
 
         protected override View InitView()
         {

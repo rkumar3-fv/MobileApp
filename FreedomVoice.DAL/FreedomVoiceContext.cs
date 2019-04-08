@@ -10,7 +10,7 @@ namespace FreedomVoice.DAL
     {
         private readonly string _databasePath;
         
-        public FreedomVoiceContext(string databasePath)
+        public FreedomVoiceContext(string databasePath) : base()
         {
             _databasePath = databasePath;
         }
@@ -31,7 +31,10 @@ namespace FreedomVoice.DAL
             modelBuilder.ApplyConfiguration(new PhoneMap());
             modelBuilder.ApplyConfiguration(new MessageMap());
         }
-        public DbSet<TEntity> Set<TEntity>() where TEntity : class => base.Set<TEntity>();
+        public DbSet<TEntity> Set<TEntity>() where TEntity : class
+        {
+            return base.Set<TEntity>();
+        }
 
         public IList<TEntity> ExecuteStoredProcedureList<TEntity>(string commandText, params object[] parameters) where TEntity : BaseEntity, new()
         {

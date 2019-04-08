@@ -79,7 +79,11 @@
     <DevInstrumentationEnabled>True</DevInstrumentationEnabled>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AutoMapper, Version=8.0.0.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutoMapper.8.0.0\lib\netstandard2.0\AutoMapper.dll</HintPath>
+    </Reference>
     <Reference Include="Java.Interop" />
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Data.Sqlite, Version=2.2.3.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Data.Sqlite.Core.2.2.3\lib\netstandard2.0\Microsoft.Data.Sqlite.dll</HintPath>
     </Reference>
@@ -474,7 +478,7 @@
     <AndroidResource Include="Resources\layout\dlg_airplane.axml">
       <SubType>AndroidResource</SubType>
     </AndroidResource>
-      <AndroidResource Include="Resources\layout\item_conversation.axml" />
+    <AndroidResource Include="Resources\layout\item_conversation.axml" />
     <AndroidResource Include="Resources\layout\dlg_callerid.axml">
       <SubType>AndroidResource</SubType>
     </AndroidResource>

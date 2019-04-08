@@ -319,10 +319,14 @@
     <BundleResource Include="Resources\tab_texts_active%403x.png" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="AutoMapper, Version=8.0.0.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutoMapper.8.0.0\lib\netstandard2.0\AutoMapper.dll</HintPath>
+    </Reference>
     <Reference Include="Google.Analytics, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Xamarin.Google.iOS.Analytics.3.14.0.3\lib\Xamarin.iOS10\Google.Analytics.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Data.Sqlite, Version=2.2.3.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Data.Sqlite.Core.2.2.3\lib\netstandard2.0\Microsoft.Data.Sqlite.dll</HintPath>
     </Reference>

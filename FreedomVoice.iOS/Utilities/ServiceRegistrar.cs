@@ -1,6 +1,8 @@
-﻿using FreedomVoice.Core.Cache;
+﻿using FreedomVoice.Core;
+using FreedomVoice.Core.Cache;
 using FreedomVoice.Core.Cookies;
 using FreedomVoice.Core.Utils;
+using FreedomVoice.iOS.Data;
 using FreedomVoice.iOS.Services;
 using FreedomVoice.iOS.Services.Implementations;
 using FreedomVoice.iOS.Utilities.Helpers;
@@ -17,6 +19,7 @@ namespace FreedomVoice.iOS.Utilities
         /// </summary>
         public static void Startup()
         {
+            CoreModules.Load(IosDbPath.GetDatabasePath("freedomvoice.db"));
             ServiceContainer.Register<ILoginService> (() => new LoginService());
             ServiceContainer.Register<IAccountsService>(() => new AccountsService());
             ServiceContainer.Register<IForgotPasswordService>(() => new ForgotPasswordService());

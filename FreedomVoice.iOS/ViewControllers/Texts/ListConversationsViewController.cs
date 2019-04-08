@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using FreedomVoice.Core.Utils;
 using System.Drawing;
 using CoreGraphics;
 using FreedomVoice.Core.Services;
@@ -10,6 +11,7 @@ using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.Utilities.Events;
 using FreedomVoice.iOS.Views.Shared;
 using UIKit;
+using FreedomVoice.Core.Services.Interfaces;
 
 namespace FreedomVoice.iOS.ViewControllers.Texts
 {
@@ -23,9 +25,12 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
         private LineView _lineView;
         private static MainTabBarController MainTabBarInstance => MainTabBarController.SharedInstance;
         private ConversationsViewModel _vm;
+        private DateTime _opennedDate;
+
 
         public ListConversationsViewController(IntPtr handle) : base(handle)
         {
+            _opennedDate = DateTime.Now;
             _noItemsLabel = new UILabel
             {
                 Text = "No Items",
@@ -107,7 +112,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
         {
             CallerIdEvent.CallerIdChanged += UpdateCallerId;
 
-            _vm = new ConversationsViewModel(new ConversationService())
+            _vm = new ConversationsViewModel(_opennedDate)
             {
                 PhoneNumber = _callerIdView.SelectedNumber.PhoneNumber
             };

@@ -181,6 +181,14 @@ namespace FreedomVoice.Core
             var folder = DataFormatUtils.UrlEncodeWithSpaces(folderName);
             return await MakeAsyncFileDownload($"/api/v1/systems/{systemPhoneNumber}/mailboxes/{mailboxNumber}/folders/{folder}/messages/{messageId}/media/{mediaType}", token);
         }
+        
+        public static async Task<BaseResult<List<FreedomVoice.Entities.Response.Conversation>>> GetConversations(string phone, DateTime startDate, DateTime lastUpdateDate, int start, int limit)
+        {
+            //api/v1/system/[controller]/conversations/{telephoneNumber}/{lastModify}/{start}/{limit}
+            return await MakeAsyncGetRequest<List<FreedomVoice.Entities.Response.Conversation>>(
+                $"/api/v1/systems/forward/{phone}/conversations?startDate={startDate}&lastModify={lastUpdateDate.Ticks}&start={start}&limit={limit}",
+                CancellationToken.None, LongTimeOut);
+        }
 
         private static HttpClient CreateClient()
         {
