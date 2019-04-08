@@ -4,6 +4,7 @@
   <string name="ApplicationTitle">Freedom Voice</string>
   <string name="MenuItem_logout">Logout</string>
   <string name="MenuItem_clear">Clear recents</string>
+  <string name="MenuItem_new_conversation">New Conversation</string>
   <string name="MenuItem_remove">Remove message</string>
   <string name="MenuItem_search">Search</string>
   <string name="MenuItem_phone">Edit phone number</string>
@@ -76,6 +77,7 @@
   <string name="FragmentContacts_hint">Find contacts</string>
   <string name="FragmentContacts_no">No Results</string>
   <string name="FragmentContacts_empty">No Items</string>
+  <string name="FragmentConversations_empty">No Items</string>
   <string name="ActivityVoice_title">Voicemail</string>
   <string name="ActivityVoice_speaker">Speaker</string>
   <string name="ActivityVoice_callback">Call back</string>

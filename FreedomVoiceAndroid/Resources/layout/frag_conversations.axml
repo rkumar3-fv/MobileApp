@@ -1,55 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <LinearLayout
+            android:id="@+id/contactsFragment_spinnerArea"
+            android:layout_alignParentTop="true"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:elevation="@dimen/content_activity_id_elevation"
+            android:background="@color/colorCallerId"
+            android:weightSum="1.0">
+
+        <TextView
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                style="@style/CallerIdSpinnerText"
+                android:layout_centerHorizontal="true"
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:text="@string/FragmentKeypad_callerId"
+                android:layout_weight="0.4"/>
+
+        <RelativeLayout
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:layout_width="0dip"
+                android:layout_height="@dimen/fragment_keypad_spinner_size"
+                android:layout_weight="0.6">
+
+            <com.FreedomVoice.MobileApp.Android.CustomControls.AlwaysTopSpinner
+                    android:id="@+id/contatnsFragment_idSpinner"
+                    android:layout_width="@dimen/fragment_keypad_spinner_width_collapsed"
+                    android:layout_height="@dimen/fragment_keypad_spinner_size"
+                    android:dropDownWidth="@dimen/fragment_keypad_spinner_width"
+                    android:spinnerMode="dropdown"/>
+
+            <TextView
+                    android:id="@+id/contactsFragment_singleId"
+                    style="@style/CallerIdSpinnerText"
+                    android:visibility="invisible"
+                    android:layout_centerVertical="true"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+        </RelativeLayout>
+    </LinearLayout>
+
     <TextView
-        android:id="@+id/messagesFragment_noResultText"
-        style="@style/ListBackgroundText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="@dimen/content_activity_no_res_margin"
-        android:text=""
-        android:visibility="invisible" />
-    <Button
-        android:id="@+id/messagesFragment_retryButton"
-        style="@style/BorderlessRestoreButtonStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/FragmentMessages_retry"
-        android:textColor="@color/colorDlgButton"
-        android:layout_marginTop="@dimen/content_activity_no_res_margin"
-        android:layout_below="@id/messagesFragment_noResultText"
-        android:visibility="invisible" />
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/messagesFragment_recyclerView"
-        style="@style/ScrollTheme"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingTop="@dimen/fragment_msg_element_padding"
-        android:paddingBottom="@dimen/fragment_msg_element_padding"
-        android:clipToPadding="false" />
-    <RelativeLayout
-        android:id="@+id/messagesFragment_progressLayout"
-        android:layout_alignParentTop="true"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:clickable="true"
-        android:visibility="gone"
-        android:background="@color/colorTransparent">
-        <ProgressBar
-            android:id="@+id/messagesFragment_progress"
-            style="@style/InWhiteButtonProgressBar"
-            android:indeterminate="true"
-            android:layout_width="@dimen/select_acc_activity_progress_size"
-            android:layout_height="@dimen/select_acc_activity_progress_size"
+            android:id="@+id/conversationFragment_noResultText"
+            style="@style/ListBackgroundText"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal"
+            android:text="@string/FragmentConversations_empty"
+            android:layout_below="@id/contactsFragment_spinnerArea"
             android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true" />
-    </RelativeLayout>
+            android:layout_marginTop="@dimen/content_activity_no_res_margin"
+            android:visibility="gone" />
+
+    <android.support.v7.widget.RecyclerView
+            android:id="@+id/conversationFragment_recyclerView"
+            style="@style/ScrollTheme"
+            android:layout_below="@+id/contactsFragment_spinnerArea"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingTop="@dimen/fragment_msg_element_padding"
+            android:paddingBottom="@dimen/fragment_msg_element_padding"
+            android:clipToPadding="false"/>
+
 </RelativeLayout>
