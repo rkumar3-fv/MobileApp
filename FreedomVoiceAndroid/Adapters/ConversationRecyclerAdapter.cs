@@ -12,28 +12,27 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
 {
     public class ConversationRecyclerAdapter : RecyclerView.Adapter
     {
-        //private List<Account> _accounts = new List<Account>();
+        private List<Conversation> _items = new List<Conversation>();
         private readonly EventHandler<Conversation> _itemClickEventHandler;
-        private ConversationsViewModel _vm;
 
-        public ConversationRecyclerAdapter(ConversationsViewModel vm, EventHandler<Conversation> itemClickEventHandler)
+        public ConversationRecyclerAdapter(EventHandler<Conversation> itemClickEventHandler)
         {
             this._itemClickEventHandler = itemClickEventHandler;
         }
 
-        //public void Update(List<Account> items)
-        //{
-        //    _accounts = items ?? new List<Account>();
-        //    NotifyDataSetChanged();
-        //}
+        public override int ItemCount => _items.Count;
 
-        public override int ItemCount => _vm.Items.Count;
+        public void Update(List<Conversation> items)
+        {
+            _items = items ?? new List<Conversation>();
+            NotifyDataSetChanged();
+        }
+
 
         public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
         {
             var vh = holder as AccountVh;
-            var item = _vm.Items[position];
-
+            var item = _items[position];
 
             vh.UserName.SetText(item.CollocutorPhone.PhoneNumber, TextView.BufferType.Normal);
             var message = item.Messages.FirstOrDefault();
@@ -45,7 +44,7 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
         {
             var view = LayoutInflater.From(parent.Context).Inflate(Resource.Layout.item_conversation, parent, false);
             var vh = new AccountVh(view);
-            vh.Container.Click += (sender, args) => _itemClickEventHandler(this, _vm.Items[vh.AdapterPosition]);
+            vh.Container.Click += (sender, args) => _itemClickEventHandler(this, _items[vh.AdapterPosition]);
             return vh;
         }
 

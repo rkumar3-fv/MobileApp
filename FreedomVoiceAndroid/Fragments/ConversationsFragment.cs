@@ -10,6 +10,7 @@ using com.FreedomVoice.MobileApp.Android.Entities;
 using com.FreedomVoice.MobileApp.Android.Helpers;
 using FreedomVoice.Core.Services;
 using FreedomVoice.Core.ViewModels;
+using FreedomVoice.DAL.DbEntities;
 
 namespace com.FreedomVoice.MobileApp.Android.Fragments
 {
@@ -19,8 +20,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         private ConversationRecyclerAdapter _adapter;
         private TextView _noResultText;
         private LinearLayoutManager _layoutManager;
-        private int TotalItemCount => 20;
-        private ConversationsViewModel _vm => new ConversationsViewModel(new ConversationService());
+        private ConversationsViewModel _vm;
 
 
         protected override View InitView()
@@ -36,16 +36,22 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         public override void OnViewCreated(View view, Bundle savedInstanceState)
         {
             base.OnViewCreated(view, savedInstanceState);
-            //_adapter = new ConversationRecyclerAdapter(((sender, account) =>
-            //{
+            _adapter = new ConversationRecyclerAdapter(((sender, account) =>
+            {
             //    /* todo delegate to vm.onClickItem */
-            //}));
+            }));
             _layoutManager = new LinearLayoutManager(Context);
             _recyclerView.SetLayoutManager(_layoutManager);
             _recyclerView.AddItemDecoration(new DividerItemDecorator(Context));
             _recyclerView.SetAdapter(_adapter);
             _recyclerView.ScrollChange += (sender, args) => { onListScrolled(); };
-            UpdateList(new List<Account>());
+            _vm = new ConversationsViewModel(new ConversationService());
+            _vm.ItemsChanged += (object sender, EventArgs e) =>
+            {
+                UpdateList(_vm.Items);
+            };
+            _vm.ReloadAsync();
+
         }
 
         private void onListScrolled()
@@ -59,12 +65,12 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             }
         }
 
-        private void UpdateList(List<Account> newList)
+        private void UpdateList(List<Conversation> newList)
         {
             var isEmpty = newList == null || newList.Count == 0;
             _noResultText.Visibility = isEmpty ? ViewStates.Visible : ViewStates.Gone;
             _recyclerView.Visibility = isEmpty ? ViewStates.Gone : ViewStates.Visible;
-            //_adapter.Update(newList);
+            _adapter.Update(newList);
         }
 
 
