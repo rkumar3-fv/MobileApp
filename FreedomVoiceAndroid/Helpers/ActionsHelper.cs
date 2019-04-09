@@ -25,6 +25,7 @@ using FreedomVoice.Core.Utils;
 using Java.Util.Concurrent.Atomic;
 using Pair = Android.Support.V4.Util.Pair;
 using Uri = Android.Net.Uri;
+using com.FreedomVoice.MobileApp.Android.Data;
 
 namespace com.FreedomVoice.MobileApp.Android.Helpers
 {
@@ -170,6 +171,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             var cookieImpl = new PclCookieImpl(_app);
             ServiceContainer.Register<IDeviceCacheStorage>(() => cacheImpl);
             ServiceContainer.Register<IDeviceCookieStorage>(() => cookieImpl);
+            CoreModules.Load(AndroidDbPath.GetDatabasePath("freedomvoice.db"));
             RecentsDictionary = new SortedDictionary<long, RecentHolder>(Comparer<long>.Create((x, y) => y.CompareTo(x)));
             ExtensionsList = new List<Extension>();
             SelectedExtension = -1;

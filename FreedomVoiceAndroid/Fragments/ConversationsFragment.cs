@@ -47,11 +47,16 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             _recyclerView.AddItemDecoration(new DividerItemDecorator(Activity, Resource.Drawable.divider));
             _recyclerView.SetAdapter(_adapter);
             _recyclerView.ScrollChange += (sender, args) => { onListScrolled(); };
-
+            
             var provider = ServiceContainer.Resolve<IContactNameProvider>();
             provider.ContactsUpdated += ProviderOnContactsUpdated;
+        }
 
-            _presenter = new ConversationsPresenter();
+        public override void OnActivityCreated(Bundle savedInstanceState)
+        {
+            base.OnActivityCreated(savedInstanceState);
+
+            _presenter = new ConversationsPresenter() { PhoneNumber = this.Helper?.SelectedAccount?.PresentationNumber };
             _presenter.ItemsChanged += (sender, e) =>
             {
                 UpdateList(_presenter.Items);
@@ -72,7 +77,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             var pastVisiblesItems = _layoutManager.FindLastVisibleItemPosition();
             if (visibleItemCount + pastVisiblesItems + 8 >= _presenter.Items.Count && _presenter.HasMore)
             {
-                _presenter.LoadMore();
+                _presenter.LoadMoreAsync();
             }
         }
 

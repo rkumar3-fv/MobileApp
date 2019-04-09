@@ -39,10 +39,6 @@ namespace com.FreedomVoice.MobileApp.Android
         public App(IntPtr javaReference, JniHandleOwnership transfer) : base(javaReference, transfer)
         {
             _helper = new AppHelper(this);
-            string dbPath = AndroidDbPath.GetDatabasePath("freedomvoice.db");
-            var cache = new SQLiteCache(dbPath);
-            var conversation = cache.GetConversationById(1);
-
             ServiceContainer.Register<IContactNameProvider>(() => new ContactNameProvider(this));
         }
 
