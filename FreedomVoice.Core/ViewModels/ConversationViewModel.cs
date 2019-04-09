@@ -8,22 +8,24 @@ namespace FreedomVoice.Core.ViewModels
 {
     public class ConversationViewModel
     {
-        public readonly string Collocutor;
+        private readonly string _RawCollocutor;
+        public string Collocutor => _contactNameProvider.GetName(_RawCollocutor);
         public readonly string Date;
         public readonly string LastMessage;
-        public readonly bool IsNew; 
-       
+        public readonly bool IsNew;
+        private readonly IContactNameProvider _contactNameProvider;
+
 
         public ConversationViewModel(Conversation entity, IContactNameProvider contactNameProvider)
         {
-
-            Collocutor = Regex.Replace(entity.CollocutorPhone.PhoneNumber, @"\D", "");
+            _contactNameProvider = contactNameProvider;
+            _RawCollocutor = Regex.Replace(entity.CollocutorPhone.PhoneNumber, @"\D", "");
             var message = entity.Messages.FirstOrDefault();
             if (message == null) return;
             LastMessage = message.Text;
             var from = Regex.Replace(message.From.PhoneNumber, @"\D", "");
             //last message not from us
-            if (from.Equals(Collocutor) && message.ReceivedAt != null)
+            if (from.Equals(_RawCollocutor) && message.ReceivedAt != null)
             {
                 Date = TimeAgo((DateTime) message.ReceivedAt);
                 IsNew = message.ReadAt == null;
@@ -33,8 +35,6 @@ namespace FreedomVoice.Core.ViewModels
                 Date = TimeAgo((DateTime) message.SentAt);
                 IsNew = false;
             }
-
-            Collocutor = contactNameProvider.GetName(Collocutor);
         }
         
         private string TimeAgo(DateTime dateTime)

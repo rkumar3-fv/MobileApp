@@ -8,6 +8,6 @@ namespace FreedomVoice.Core.Services.Interfaces
 {
     public interface IConversationService
     {
-        Task<ConversationListResponse> GetList(string phone, int count, int page);
+        Task<ConversationListResponse> GetList(string phone, DateTime current, int count = 10, int page = 1);
     }
 }

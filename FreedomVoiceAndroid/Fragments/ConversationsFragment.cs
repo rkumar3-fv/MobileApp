@@ -10,6 +10,7 @@ using com.FreedomVoice.MobileApp.Android.Helpers;
 using com.FreedomVoice.MobileApp.Android.Utils;
 using FreedomVoice.Core.Presenters;
 using FreedomVoice.Core.Services;
+using FreedomVoice.Core.Utils;
 using FreedomVoice.Core.ViewModels;
 
 namespace com.FreedomVoice.MobileApp.Android.Fragments
@@ -30,7 +31,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             _noResultText = view.FindViewById<TextView>(Resource.Id.conversationFragment_noResultText);
             IdSpinner = view.FindViewById<Spinner>(Resource.Id.contatnsFragment_idSpinner);
             SingleId = view.FindViewById<TextView>(Resource.Id.contactsFragment_singleId);
-            
+
             return view;
         }
 
@@ -46,8 +47,11 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             _recyclerView.AddItemDecoration(new DividerItemDecorator(Activity, Resource.Drawable.divider));
             _recyclerView.SetAdapter(_adapter);
             _recyclerView.ScrollChange += (sender, args) => { onListScrolled(); };
-            ContactsHelper.Instance(Context).PremissionChanged += OnPremissionChanged;
-            _presenter = new ConversationsPresenter(new ConversationService(), ContactsHelper.Instance(Context));
+
+            var provider = ServiceContainer.Resolve<IContactNameProvider>();
+            provider.ContactsUpdated += ProviderOnContactsUpdated;
+
+            _presenter = new ConversationsPresenter();
             _presenter.ItemsChanged += (sender, e) =>
             {
                 UpdateList(_presenter.Items);
@@ -56,7 +60,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             _presenter.ReloadAsync();
         }
 
-        private void OnPremissionChanged(object sender, EventArgs e)
+        private void ProviderOnContactsUpdated(object sender, EventArgs e)
         {
             UpdateList(_presenter.Items);
         }
@@ -66,7 +70,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             var visibleItemCount = _layoutManager.ChildCount;
 
             var pastVisiblesItems = _layoutManager.FindLastVisibleItemPosition();
-            if (visibleItemCount + pastVisiblesItems + 8 >= _presenter.Items.Count && _presenter.HasMore) 
+            if (visibleItemCount + pastVisiblesItems + 8 >= _presenter.Items.Count && _presenter.HasMore)
             {
                 _presenter.LoadMore();
             }

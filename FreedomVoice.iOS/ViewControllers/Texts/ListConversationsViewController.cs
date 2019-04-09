@@ -4,6 +4,8 @@ using System.Drawing;
 using CoreGraphics;
 using FreedomVoice.Core.Presenters;
 using FreedomVoice.Core.Services;
+using FreedomVoice.Core.Services.Interfaces;
+using FreedomVoice.Core.Utils;
 using FreedomVoice.Core.ViewModels;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.TableViewSources.Texting;
@@ -68,8 +70,13 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
         public override void ViewWillAppear(bool animated)
         {
             NavigationItem.Title = PageName;
-
             base.ViewWillAppear(animated);
+        }
+
+        public override void ViewDidAppear(bool animated)
+        {
+            base.ViewDidAppear(animated);
+            ServiceContainer.Resolve<IContactNameProvider>().RequestContacts();
         }
 
         private void _SetupViews()
@@ -110,16 +117,17 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
         private void _SetupData()
         {
             CallerIdEvent.CallerIdChanged += UpdateCallerId;
-            _contactNameProvider = new ContactNameProvider();
-            _contactNameProvider.ContactsUpdated += ProviderOnContactsUpdated;
 
-            _presenter = new ConversationsPresenter(new ConversationService(), _contactNameProvider)
+            var provider = ServiceContainer.Resolve<IContactNameProvider>();
+            provider.ContactsUpdated += ProviderOnContactsUpdated;
+
+            _presenter = new ConversationsPresenter()
             {
                 PhoneNumber = _callerIdView.SelectedNumber.PhoneNumber
             };
-            _presenter.ItemsChanged += (sender, args) => 
-            { 
-                _noItemsLabel.Hidden = _presenter.Items.Count > 0; 
+            _presenter.ItemsChanged += (sender, args) =>
+            {
+                _noItemsLabel.Hidden = _presenter.Items.Count > 0;
             };
             _tableView.Source = new ConversationsSource(_presenter, NavigationController, _tableView);
             _tableView.ReloadData();

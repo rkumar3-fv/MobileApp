@@ -6,6 +6,18 @@ namespace FreedomVoice.DAL
     public partial interface IRepository<T> where T : class
     {
         /// <summary>
+        /// Insert entity without saving
+        /// </summary>
+        /// <param name="entity">Entity</param>
+        void InsertWithoutSaving(T entity);
+
+        /// <summary>
+        /// Insert entities without saving
+        /// </summary>
+        /// <param name="entities">Entities</param>
+        void InsertWithoutSaving(IEnumerable<T> entities);
+
+        /// <summary>
         /// Insert entity
         /// </summary>
         /// <param name="entity">Entity</param>
@@ -52,6 +64,11 @@ namespace FreedomVoice.DAL
         /// </summary>
         /// <param name="entities">Entities</param>
         void RemoveWithoutSave(IEnumerable<T> entities);
+
+        /// <summary>
+        /// Saving
+        /// </summary>
+        void SaveChanges();
 
         /// <summary>
         /// Gets a table

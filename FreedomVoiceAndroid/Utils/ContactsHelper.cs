@@ -5,7 +5,6 @@ using Android.Database;
 using Android.Provider;
 using com.FreedomVoice.MobileApp.Android.Helpers;
 using FreedomVoice.Core.Utils;
-using FreedomVoice.Core.ViewModels;
 using Java.Interop;
 using Uri = Android.Net.Uri;
 
@@ -14,15 +13,13 @@ namespace com.FreedomVoice.MobileApp.Android.Utils
     /// <summary>
     /// Contacts helper cache
     /// </summary>
-    public class ContactsHelper: IContactNameProvider
+    public class ContactsHelper
     {
         private static volatile ContactsHelper _instance;
         private static readonly object Locker = new object();
         private readonly Context _context;
         private readonly Dictionary<string, string> _phonesCache;
         private readonly AppHelper _appHelper;
-
-        public event EventHandler PremissionChanged;
 
         private ContactsHelper(Context context)
         {
@@ -113,13 +110,6 @@ namespace com.FreedomVoice.MobileApp.Android.Utils
         {
             _phonesCache.Add(phone, name);
         }
-
-        public string GetName(string phone)
-        {
-            var res = phone;
-            GetName(phone, out res);
-            return res;
-
-        }
+       
     }
 }

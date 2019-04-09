@@ -8,8 +8,11 @@ using Android.Util;
 using com.FreedomVoice.MobileApp.Android.Data;
 #endif
 using com.FreedomVoice.MobileApp.Android.Helpers;
+using com.FreedomVoice.MobileApp.Android.Utils;
 using FreedomVoice.Core.Cache;
+using FreedomVoice.Core.Services.Interfaces;
 using FreedomVoice.Core.Utils;
+using FreedomVoice.Core.ViewModels;
 using Java.Lang;
 using Process = System.Diagnostics.Process;
 
@@ -39,6 +42,8 @@ namespace com.FreedomVoice.MobileApp.Android
             string dbPath = AndroidDbPath.GetDatabasePath("freedomvoice.db");
             var cache = new SQLiteCache(dbPath);
             var conversation = cache.GetConversationById(1);
+
+            ServiceContainer.Register<IContactNameProvider>(() => new ContactNameProvider(this));
         }
 
         /// <summary>

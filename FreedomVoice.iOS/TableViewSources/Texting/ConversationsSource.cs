@@ -73,10 +73,10 @@ namespace FreedomVoice.iOS.TableViewSources.Texting
         {
             if (scrollView.ContentOffset.Y >= scrollView.ContentSize.Height - 200 && _presenter.HasMore)
             {
-                _presenter.LoadMore();
+                _presenter.LoadMoreAsync();
             }
         }
 
-     
+
     }
 }

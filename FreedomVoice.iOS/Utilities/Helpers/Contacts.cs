@@ -244,11 +244,16 @@ namespace FreedomVoice.iOS.Utilities.Helpers
     {
 
         private Dictionary<string, string> _contactNames = new Dictionary<string, string>();
+
         public event EventHandler ContactsUpdated;
         
         public ContactNameProvider()
         {
             Contacts.ItemsChanged += ContactItemsDidReceive;
+        }
+        
+        public void RequestContacts()
+        {
             Contacts.GetContactsListAsync();
         }
         

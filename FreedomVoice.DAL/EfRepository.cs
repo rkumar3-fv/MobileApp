@@ -31,28 +31,34 @@ namespace FreedomVoice.DAL
 
         #region Methods
 
+
         /// <summary>
-        /// Insert entity
+        /// Insert entity without saving
         /// </summary>
         /// <param name="entity">Entity</param>
-        public virtual void Insert(T entity)
+        public virtual void InsertWithoutSaving(T entity)
         {
-            if (entity == null)
-                throw new ArgumentNullException("entity");
+            try
+            {
+                if (entity == null)
+                    throw new ArgumentNullException("entity");
 
-            var validationContext = new ValidationContext(entity);
-            Validator.ValidateObject(entity, validationContext);
+                var validationContext = new ValidationContext(entity);
+                Validator.ValidateObject(entity, validationContext);
 
-            this.Entities.Add(entity);
-
-            this._context.SaveChanges();
+                this.Entities.Add(entity);
+            }
+            catch (Exception ex)
+            {
+                var a = 0;
+            }
         }
 
         /// <summary>
-        /// Insert entities
+        /// Insert entities without saving
         /// </summary>
         /// <param name="entities">Entities</param>
-        public virtual void Insert(IEnumerable<T> entities)
+        public virtual void InsertWithoutSaving(IEnumerable<T> entities)
         {
             if (entities == null)
                 throw new ArgumentNullException("entities");
@@ -65,7 +71,25 @@ namespace FreedomVoice.DAL
 
             foreach (var entity in entities)
                 this.Entities.Add(entity);
+        }
 
+        /// <summary>
+        /// Insert entity
+        /// </summary>
+        /// <param name="entity">Entity</param>
+        public virtual void Insert(T entity)
+        {
+            InsertWithoutSaving(entity);
+            this._context.SaveChanges();
+        }
+
+        /// <summary>
+        /// Insert entities
+        /// </summary>
+        /// <param name="entities">Entities</param>
+        public virtual void Insert(IEnumerable<T> entities)
+        {
+            InsertWithoutSaving(entities);
             this._context.SaveChanges();
         }
 
@@ -160,6 +184,14 @@ namespace FreedomVoice.DAL
 
             foreach (var entity in entities)
                 this.Entities.Remove(entity);
+        }
+
+        /// <summary>
+        /// Saving
+        /// </summary>
+        public virtual void SaveChanges()
+        {
+            this._context.SaveChanges();
         }
 
         #endregion
