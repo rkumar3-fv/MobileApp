@@ -6,12 +6,11 @@ using Android.Views;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Adapters;
 using com.FreedomVoice.MobileApp.Android.CustomControls;
-using com.FreedomVoice.MobileApp.Android.Entities;
 using com.FreedomVoice.MobileApp.Android.Helpers;
+using com.FreedomVoice.MobileApp.Android.Utils;
 using FreedomVoice.Core.Presenters;
 using FreedomVoice.Core.Services;
 using FreedomVoice.Core.ViewModels;
-using FreedomVoice.DAL.DbEntities;
 
 namespace com.FreedomVoice.MobileApp.Android.Fragments
 {
@@ -21,7 +20,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         private ConversationRecyclerAdapter _adapter;
         private TextView _noResultText;
         private LinearLayoutManager _layoutManager;
-        private ConversationsPresenter _vm;
+        private ConversationsPresenter _presenter;
 
 
         protected override View InitView()
@@ -31,29 +30,35 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             _noResultText = view.FindViewById<TextView>(Resource.Id.conversationFragment_noResultText);
             IdSpinner = view.FindViewById<Spinner>(Resource.Id.contatnsFragment_idSpinner);
             SingleId = view.FindViewById<TextView>(Resource.Id.contactsFragment_singleId);
+            
             return view;
         }
 
         public override void OnViewCreated(View view, Bundle savedInstanceState)
         {
             base.OnViewCreated(view, savedInstanceState);
-            _adapter = new ConversationRecyclerAdapter(((sender, account) =>
+            _adapter = new ConversationRecyclerAdapter((sender, account) =>
             {
-            //    /* todo delegate to vm.onClickItem */
-            }));
+                //    /* todo delegate to vm.onClickItem */
+            });
             _layoutManager = new LinearLayoutManager(Context);
             _recyclerView.SetLayoutManager(_layoutManager);
-            _recyclerView.AddItemDecoration(new DividerItemDecorator(Context));
+            _recyclerView.AddItemDecoration(new DividerItemDecorator(Activity, Resource.Drawable.divider));
             _recyclerView.SetAdapter(_adapter);
             _recyclerView.ScrollChange += (sender, args) => { onListScrolled(); };
-            _vm = new ConversationsPresenter(new ConversationService());
-            _vm.ItemsChanged += (object sender, EventArgs e) =>
+            ContactsHelper.Instance(Context).PremissionChanged += OnPremissionChanged;
+            _presenter = new ConversationsPresenter(new ConversationService(), ContactsHelper.Instance(Context));
+            _presenter.ItemsChanged += (sender, e) =>
             {
-                UpdateList(_vm.Items);
+                UpdateList(_presenter.Items);
             };
 
-            _vm.ReloadAsync();
+            _presenter.ReloadAsync();
+        }
 
+        private void OnPremissionChanged(object sender, EventArgs e)
+        {
+            UpdateList(_presenter.Items);
         }
 
         private void onListScrolled()
@@ -61,13 +66,13 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             var visibleItemCount = _layoutManager.ChildCount;
 
             var pastVisiblesItems = _layoutManager.FindLastVisibleItemPosition();
-            if (_vm.HasMore) 
+            if (visibleItemCount + pastVisiblesItems + 8 >= _presenter.Items.Count && _presenter.HasMore) 
             {
-                _vm.LoadMore();
+                _presenter.LoadMore();
             }
         }
 
-        private void UpdateList(List<Conversation> newList)
+        private void UpdateList(List<ConversationViewModel> newList)
         {
             var isEmpty = newList == null || newList.Count == 0;
             _noResultText.Visibility = isEmpty ? ViewStates.Visible : ViewStates.Gone;

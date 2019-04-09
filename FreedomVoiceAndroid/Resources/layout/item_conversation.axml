@@ -23,12 +23,13 @@
             android:layout_width="wrap_content"
             style="@style/ListItemSecondaryText"
             android:layout_marginTop="4dp"
+            android:lines="2"
             android:layout_height="wrap_content"/>
 
     <TextView
             android:layout_alignParentRight="true"
             android:id="@+id/itemConversation_lastMessageDate"
-            android:lines="2"
+            android:lines="1"
             style="@style/ListItemDateText"
             android:ellipsize="end"
             android:layout_width="wrap_content"

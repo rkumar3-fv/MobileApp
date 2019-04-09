@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Android.Graphics;
 using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
@@ -12,19 +13,19 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
 {
     public class ConversationRecyclerAdapter : RecyclerView.Adapter
     {
-        private List<Conversation> _items = new List<Conversation>();
-        private readonly EventHandler<Conversation> _itemClickEventHandler;
+        private List<ConversationViewModel> _items = new List<ConversationViewModel>();
+        private readonly EventHandler<ConversationViewModel> _itemClickEventHandler;
 
-        public ConversationRecyclerAdapter(EventHandler<Conversation> itemClickEventHandler)
+        public ConversationRecyclerAdapter(EventHandler<ConversationViewModel> itemClickEventHandler)
         {
-            this._itemClickEventHandler = itemClickEventHandler;
+            _itemClickEventHandler = itemClickEventHandler;
         }
 
         public override int ItemCount => _items.Count;
 
-        public void Update(List<Conversation> items)
+        public void Update(List<ConversationViewModel> items)
         {
-            _items = items ?? new List<Conversation>();
+            _items = items ?? new List<ConversationViewModel>();
             NotifyDataSetChanged();
         }
 
@@ -34,10 +35,11 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
             var vh = holder as AccountVh;
             var item = _items[position];
 
-            vh.UserName.SetText(item.CollocutorPhone.PhoneNumber, TextView.BufferType.Normal);
-            var message = item.Messages.FirstOrDefault();
-            vh.LastMessage.SetText(message.Text, TextView.BufferType.Normal);
-            vh.LastMessageDate.SetText(message.SentAt.ToString(), TextView.BufferType.Normal);
+            vh.UserName.SetText(item.Collocutor, TextView.BufferType.Normal);
+            vh.UserName.SetTypeface(Typeface.Default, item.IsNew ? TypefaceStyle.Bold : TypefaceStyle.Normal );
+            vh.LastMessage.SetText(item.LastMessage, TextView.BufferType.Normal);
+            vh.LastMessage.SetTypeface(Typeface.Default, item.IsNew ? TypefaceStyle.Bold : TypefaceStyle.Normal );
+            vh.LastMessageDate.SetText(item.Date, TextView.BufferType.Normal);
         }
 
         public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)

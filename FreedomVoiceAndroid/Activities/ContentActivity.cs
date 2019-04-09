@@ -146,7 +146,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         private void ViewPagerOnPageSelected(object sender, ViewPager.PageSelectedEventArgs pageSelectedEventArgs)
         {
             SetToolbarContent();
-            if ((_viewPager.CurrentItem == 1)&&(!Appl.ApplicationHelper.CheckContactsPermission()))
+            if ((_viewPager.CurrentItem == 1 || _viewPager.CurrentItem == 4) &&(!Appl.ApplicationHelper.CheckContactsPermission()))
             {
                 var snackPerm = Snackbar.Make(RootLayout, Resource.String.Snack_noContactsPermission, Snackbar.LengthLong);
                 snackPerm.SetAction(Resource.String.Snack_noPhonePermissionAction, OnSetContactsPermission);
