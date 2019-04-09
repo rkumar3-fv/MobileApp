@@ -28,6 +28,7 @@ namespace FreedomVoice.Core.Services
             if (result.Code == Entities.Enums.ErrorCodes.Ok)
                 _cacheService.UpdateConversationsCache(result.Result);
 
+            result.Result = result.Result.Where(x => !x.IsRemoved).ToList();
             return result;
         }
 
