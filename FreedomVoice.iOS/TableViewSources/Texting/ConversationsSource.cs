@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Foundation;
+using FreedomVoice.Core.Presenters;
 using FreedomVoice.Core.ViewModels;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.TableViewCells;
@@ -15,50 +17,45 @@ namespace FreedomVoice.iOS.TableViewSources.Texting
 {
     public class ConversationsSource : UITableViewSource
     {
-        private readonly ConversationsViewModel _viewModel;
+        private readonly ConversationsPresenter _presenter;
         private readonly UINavigationController _navigationController;
         private readonly UITableView _tableView;
-        private Dictionary<string, string> _contactNames = new Dictionary<string, string>();
 
-
-        public ConversationsSource(ConversationsViewModel viewModel, UINavigationController navigationController, UITableView tableView)
+        public ConversationsSource(ConversationsPresenter presenter, UINavigationController navigationController, UITableView tableView)
         {
-            _viewModel = viewModel;
-            _viewModel.ItemsChanged += (object sender, EventArgs e) =>
+            _presenter = presenter;
+            _presenter.ItemsChanged += (sender, e) =>
             {
                 tableView.ReloadData();
             };
 
-            Utilities.Helpers.Contacts.ItemsChanged += ContactItemsDidReceive;
             _tableView = tableView;
-
-            Utilities.Helpers.Contacts.GetContactsListAsync();
 
             _navigationController = navigationController;
 
             tableView.RegisterNibForCellReuse(UINib.FromName("ConversationItemTableViewCell", NSBundle.MainBundle), "cell");
             tableView.RowHeight = UITableView.AutomaticDimension;
             tableView.EstimatedRowHeight = 40;
-            _viewModel.ReloadAsync();
+            _presenter.ReloadAsync();
         }
 
         public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
         {
             var cell = tableView.DequeueReusableCell("cell") as ConversationItemTableViewCell;
-            var item = _viewModel.Items[indexPath.Row];
-           
-            cell.Title = _contactNames.ContainsKey(item.CollocutorPhone.PhoneNumber) ? _contactNames[item.CollocutorPhone.PhoneNumber] : item.CollocutorPhone.PhoneNumber;
-            var message = item.Messages.First();
-            cell.Detail = message.Text;
-            cell.Date = message.To.Equals(_viewModel.PhoneNumber) ? message.ReceivedAt.ToString() : message.SentAt.ToString();
-            cell.isNew = message.ReadAt == null && message.To.Equals(_viewModel.PhoneNumber);
+            var item = _presenter.Items[indexPath.Row];
+
+            Debug.Assert(cell != null, nameof(cell) + " != null");
+            cell.Title = item.Collocutor;
+            cell.Detail = item.LastMessage;
+            cell.Date = item.Date;
+            cell.isNew = item.IsNew;
 
             return cell;
         }
 
         public override nint RowsInSection(UITableView tableview, nint section)
         {
-            return _viewModel.Items.Count();
+            return _presenter.Items.Count;
         }
 
         public override nfloat GetHeightForRow(UITableView tableView, NSIndexPath indexPath)
@@ -74,29 +71,12 @@ namespace FreedomVoice.iOS.TableViewSources.Texting
         [Export("scrollViewDidScroll:")]
         private void ScrollViewDidScroll(UIScrollView scrollView)
         {
-            if (scrollView.ContentOffset.Y >= scrollView.ContentSize.Height - 200 && _viewModel.HasMore)
+            if (scrollView.ContentOffset.Y >= scrollView.ContentSize.Height - 200 && _presenter.HasMore)
             {
-                _viewModel.LoadMore();
+                _presenter.LoadMore();
             }
         }
 
-        private void ContactItemsDidReceive(object sender, EventArgs e)
-        {
-            foreach(var contact in Utilities.Helpers.Contacts.ContactList)
-            {
-                foreach(var phone in contact.Phones) {
-                    var raw = phone.Number.Replace(" ", "");
-                    raw = raw.Replace("+", "");
-                    raw = raw.Replace("(", "");
-                    raw = raw.Replace(")", "");
-                    raw = raw.Replace("-", "");
-                    _contactNames[raw] = contact.DisplayName;
-                }
-
-            }
-            _tableView.ReloadData();
-            Utilities.Helpers.Contacts.ItemsChanged -= ContactItemsDidReceive;
-
-        }
+     
     }
 }

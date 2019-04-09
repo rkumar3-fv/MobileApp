@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Drawing;
 using CoreGraphics;
+using FreedomVoice.Core.Presenters;
 using FreedomVoice.Core.Services;
 using FreedomVoice.Core.ViewModels;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.TableViewSources.Texting;
 using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.Utilities.Events;
+using FreedomVoice.iOS.Utilities.Helpers;
 using FreedomVoice.iOS.Views.Shared;
 using UIKit;
 
@@ -22,7 +24,8 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
         private CallerIdView _callerIdView;
         private LineView _lineView;
         private static MainTabBarController MainTabBarInstance => MainTabBarController.SharedInstance;
-        private ConversationsViewModel _vm;
+        private ConversationsPresenter _presenter;
+        private ContactNameProvider _contactNameProvider;
 
         public ListConversationsViewController(IntPtr handle) : base(handle)
         {
@@ -38,7 +41,8 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
 
             _tableView = new UITableView
             {
-                TranslatesAutoresizingMaskIntoConstraints = false
+                TranslatesAutoresizingMaskIntoConstraints = false,
+                TableFooterView = new UIView()
             };
 
             _callerIdView = new CallerIdView(new RectangleF(0, 0, (float)Theme.ScreenBounds.Width, 40), MainTabBarInstance.GetPresentationNumbers())
@@ -106,19 +110,25 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
         private void _SetupData()
         {
             CallerIdEvent.CallerIdChanged += UpdateCallerId;
+            _contactNameProvider = new ContactNameProvider();
+            _contactNameProvider.ContactsUpdated += ProviderOnContactsUpdated;
 
-            _vm = new ConversationsViewModel(new ConversationService())
+            _presenter = new ConversationsPresenter(new ConversationService(), _contactNameProvider)
             {
                 PhoneNumber = _callerIdView.SelectedNumber.PhoneNumber
             };
-            _tableView.Source = new ConversationsSource(_vm, NavigationController, _tableView);
+            _presenter.ItemsChanged += (sender, args) => 
+            { 
+                _noItemsLabel.Hidden = _presenter.Items.Count > 0; 
+            };
+            _tableView.Source = new ConversationsSource(_presenter, NavigationController, _tableView);
             _tableView.ReloadData();
         }
 
-
-        private void PresentationNumberChanged(object sender, EventArgs args)
+        private void ProviderOnContactsUpdated(object sender, EventArgs e)
         {
-
+            _tableView.ReloadData();
+            _contactNameProvider.ContactsUpdated -= ProviderOnContactsUpdated;
         }
 
         private void UpdateCallerId(object sender, EventArgs args)
@@ -126,8 +136,8 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             var selectedPresentationNumber = (args as CallerIdEventArgs)?.SelectedPresentationNumber;
             if (selectedPresentationNumber == null)
                 return;
-            _vm.PhoneNumber = selectedPresentationNumber.PhoneNumber;
-            _vm.ReloadAsync();
+            _presenter.PhoneNumber = selectedPresentationNumber.PhoneNumber;
+            _presenter.ReloadAsync();
         }
     }
 }

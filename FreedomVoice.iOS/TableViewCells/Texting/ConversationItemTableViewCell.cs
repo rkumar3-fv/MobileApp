@@ -25,6 +25,7 @@ namespace FreedomVoice.iOS.TableViewCells.Texting
         {
             NewMessageView.ClipsToBounds = true;
             NewMessageView.Layer.CornerRadius = NewMessageView.Frame.Height / 2;
+            NewMessageView.TintColor = NewMessageView.BackgroundColor;
         }
 
         public String Title

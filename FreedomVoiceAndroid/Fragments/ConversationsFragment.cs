@@ -8,6 +8,7 @@ using com.FreedomVoice.MobileApp.Android.Adapters;
 using com.FreedomVoice.MobileApp.Android.CustomControls;
 using com.FreedomVoice.MobileApp.Android.Entities;
 using com.FreedomVoice.MobileApp.Android.Helpers;
+using FreedomVoice.Core.Presenters;
 using FreedomVoice.Core.Services;
 using FreedomVoice.Core.ViewModels;
 using FreedomVoice.DAL.DbEntities;
@@ -20,7 +21,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         private ConversationRecyclerAdapter _adapter;
         private TextView _noResultText;
         private LinearLayoutManager _layoutManager;
-        private ConversationsViewModel _vm;
+        private ConversationsPresenter _vm;
 
 
         protected override View InitView()
@@ -45,11 +46,12 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             _recyclerView.AddItemDecoration(new DividerItemDecorator(Context));
             _recyclerView.SetAdapter(_adapter);
             _recyclerView.ScrollChange += (sender, args) => { onListScrolled(); };
-            _vm = new ConversationsViewModel(new ConversationService());
+            _vm = new ConversationsPresenter(new ConversationService());
             _vm.ItemsChanged += (object sender, EventArgs e) =>
             {
                 UpdateList(_vm.Items);
             };
+
             _vm.ReloadAsync();
 
         }

@@ -7,6 +7,7 @@ using AddressBook;
 using Contacts;
 using Foundation;
 using FreedomVoice.Core.Utils;
+using FreedomVoice.Core.ViewModels;
 using FreedomVoice.iOS.Utilities.Extensions;
 using Xamarin.Contacts;
 
@@ -235,6 +236,39 @@ namespace FreedomVoice.iOS.Utilities.Helpers
         public static Contact FindContactByNumber(string number)
         {
             return ContactList.FirstOrDefault(c => c.Phones.Any(p => NormalizePhoneNumber(p.Number) == NormalizePhoneNumber(number)));
+        }
+    }
+
+    class ContactNameProvider: IContactNameProvider
+    {
+
+        private Dictionary<string, string> _contactNames = new Dictionary<string, string>();
+        public event EventHandler ContactsUpdated;
+        
+        public ContactNameProvider()
+        {
+            Contacts.ItemsChanged += ContactItemsDidReceive;
+            Contacts.GetContactsListAsync();
+        }
+        
+        public string GetName(string phone)
+        {
+            return _contactNames.ContainsKey(phone) ? _contactNames[phone] : phone;
+        }
+        
+        private void ContactItemsDidReceive(object sender, EventArgs e)
+        {
+            foreach(var contact in Contacts.ContactList)
+            {
+                foreach(var phone in contact.Phones) {
+                    var raw = Regex.Replace(phone.Number, @"\D", "");
+                    _contactNames[raw] = contact.DisplayName;
+                }
+
+            }
+            Contacts.ItemsChanged -= ContactItemsDidReceive;
+            ContactsUpdated?.Invoke(this, null);
+
         }
     }
 }
