@@ -47,7 +47,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             _recyclerView.AddItemDecoration(new DividerItemDecorator(Activity, Resource.Drawable.divider));
             _recyclerView.SetAdapter(_adapter);
             _recyclerView.ScrollChange += (sender, args) => { onListScrolled(); };
-            
+
             var provider = ServiceContainer.Resolve<IContactNameProvider>();
             provider.ContactsUpdated += ProviderOnContactsUpdated;
         }
@@ -55,14 +55,24 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         public override void OnActivityCreated(Bundle savedInstanceState)
         {
             base.OnActivityCreated(savedInstanceState);
+        }
 
-            _presenter = new ConversationsPresenter() { PhoneNumber = this.Helper?.SelectedAccount?.PresentationNumber };
-            _presenter.ItemsChanged += (sender, e) =>
+        protected override void OnHelperEvent(ActionsHelperEventArgs args)
+        {
+            base.OnHelperEvent(args);
+
+            foreach (var code in args.Codes)
             {
-                UpdateList(_presenter.Items);
-            };
+                if (code != ActionsHelperEventArgs.ChangePresentation) continue;
 
-            _presenter.ReloadAsync();
+                _presenter = new ConversationsPresenter() { PhoneNumber = this.Helper?.SelectedAccount?.PresentationNumber };
+                _presenter.ItemsChanged += (sender, e) =>
+                {
+                    UpdateList(_presenter.Items);
+                };
+
+                _presenter.ReloadAsync();
+            }
         }
 
         private void ProviderOnContactsUpdated(object sender, EventArgs e)
@@ -87,12 +97,6 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             _noResultText.Visibility = isEmpty ? ViewStates.Visible : ViewStates.Gone;
             _recyclerView.Visibility = isEmpty ? ViewStates.Gone : ViewStates.Visible;
             _adapter.Update(newList);
-        }
-
-
-        protected override void OnHelperEvent(ActionsHelperEventArgs args)
-        {
-            //throw new NotImplementedException();
         }
     }
 }
