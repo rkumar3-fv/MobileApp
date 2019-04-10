@@ -30,7 +30,7 @@ namespace FreedomVoice.Core
             ServiceContainer.Register<IRepository<Message>>(() => new EfRepository<Message>(ServiceContainer.Resolve<IDbContext>()));
 
             ServiceContainer.Register<ICacheService>(() => new CacheService(ServiceContainer.Resolve<IRepository<Conversation>>(), 
-                ServiceContainer.Resolve<IRepository<Message>>(), ServiceContainer.Resolve<IMapper>()));
+                ServiceContainer.Resolve<IRepository<Message>>(), ServiceContainer.Resolve<IRepository<Phone>>(), ServiceContainer.Resolve<IMapper>()));
             ServiceContainer.Register<INetworkService>(() => new NetworkService(ServiceContainer.Resolve<ICacheService>()));
             ServiceContainer.Register<IConversationService>(() => new ConversationService(ServiceContainer.Resolve<ICacheService>(), 
                 ServiceContainer.Resolve<INetworkService>(), ServiceContainer.Resolve<IMapper>()));

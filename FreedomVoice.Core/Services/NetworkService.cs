@@ -22,9 +22,10 @@ namespace FreedomVoice.Core.Services
 
         public async Task<BaseResult<List<Conversation>>> GetConversations(string phone, DateTime startDate, DateTime lastUpdateDate, int start, int limit)
         {
-            //var result = await ApiHelper.GetConversations(phone, startDate, lastUpdateDate, start, limit);
-            var result = await GenerateDummyConversationsResult(phone);
-
+            var result = await ApiHelper.GetConversations(phone, startDate, lastUpdateDate, start, limit);
+            //var result = await GenerateDummyConversationsResult(phone);
+            if (result.Result == null)
+                result.Result = new List<Conversation>();
             if (result.Code == Entities.Enums.ErrorCodes.Ok)
                 _cacheService.UpdateConversationsCache(result.Result);
 

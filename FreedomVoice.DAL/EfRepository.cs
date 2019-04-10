@@ -191,7 +191,14 @@ namespace FreedomVoice.DAL
         /// </summary>
         public virtual void SaveChanges()
         {
-            this._context.SaveChanges();
+            try
+            {
+                this._context.SaveChanges();
+            }
+            catch(Exception ex)
+            {
+                var a = 0;
+            }
         }
 
         #endregion
