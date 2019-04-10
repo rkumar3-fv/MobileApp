@@ -1,4 +1,5 @@
-﻿using FreedomVoice.Core.Entities.Base;
+﻿using AutoMapper;
+using FreedomVoice.Core.Entities.Base;
 using FreedomVoice.Core.Services.Interfaces;
 using FreedomVoice.DAL;
 using FreedomVoice.Entities;
@@ -14,23 +15,36 @@ namespace FreedomVoice.Core.Services
     public class NetworkService : INetworkService
     {
         private readonly ICacheService _cacheService;
+        private readonly IMapper _mapper;
 
-        public NetworkService(ICacheService cacheService)
+        public NetworkService(ICacheService cacheService, IMapper mapper)
         {
             _cacheService = cacheService;
+            _mapper = mapper;
         }
 
         public async Task<BaseResult<List<Conversation>>> GetConversations(string phone, DateTime startDate, DateTime lastUpdateDate, int start, int limit)
         {
-            var result = await ApiHelper.GetConversations(phone, startDate, lastUpdateDate, start, limit);
-            //var result = await GenerateDummyConversationsResult(phone);
-            if (result.Result == null)
-                result.Result = new List<Conversation>();
-            if (result.Code == Entities.Enums.ErrorCodes.Ok)
-                _cacheService.UpdateConversationsCache(result.Result);
+            try
+            {
+                var result = await ApiHelper.GetConversations(phone, startDate, lastUpdateDate, start, limit);
+                //var result = await GenerateDummyConversationsResult(phone);
+                if (result.Result == null)
+                    result.Result = _cacheService.GetConversations(phone, limit, start).Select(x => _mapper.Map<Conversation>(x)).ToList(); //new List<Conversation>();
+                if (result.Code == Entities.Enums.ErrorCodes.Ok)
+                    _cacheService.UpdateConversationsCache(result.Result);
 
-            result.Result = result.Result.Where(x => !x.IsRemoved).ToList();
-            return result;
+                result.Result = result.Result.Where(x => !x.IsRemoved).ToList();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return new BaseResult<List<Conversation>>()
+                {
+                    Code = Entities.Enums.ErrorCodes.ConnectionLost,
+                    Result = _cacheService.GetConversations(phone, limit, start).Select(x => _mapper.Map<Conversation>(x)).ToList()
+                };
+            }
         }
 
         private async Task<BaseResult<List<Conversation>>> GenerateDummyConversationsResult(string phone)
