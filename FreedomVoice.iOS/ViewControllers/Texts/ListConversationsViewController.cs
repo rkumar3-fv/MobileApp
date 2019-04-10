@@ -27,7 +27,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
         private LineView _lineView;
         private static MainTabBarController MainTabBarInstance => MainTabBarController.SharedInstance;
         private ConversationsPresenter _presenter;
-        private ContactNameProvider _contactNameProvider;
+        private IContactNameProvider _contactNameProvider;
 
         public ListConversationsViewController(IntPtr handle) : base(handle)
         {
@@ -118,8 +118,8 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
         {
             CallerIdEvent.CallerIdChanged += UpdateCallerId;
 
-            var provider = ServiceContainer.Resolve<IContactNameProvider>();
-            provider.ContactsUpdated += ProviderOnContactsUpdated;
+            _contactNameProvider = ServiceContainer.Resolve<IContactNameProvider>();
+            _contactNameProvider.ContactsUpdated += ProviderOnContactsUpdated;
 
             _presenter = new ConversationsPresenter()
             {
@@ -128,15 +128,20 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             _presenter.ItemsChanged += (sender, args) =>
             {
                 _noItemsLabel.Hidden = _presenter.Items.Count > 0;
+                AppDelegate.ActivityIndicator.Hide();
             };
             _tableView.Source = new ConversationsSource(_presenter, NavigationController, _tableView);
             _tableView.ReloadData();
+            View.AddSubview(AppDelegate.ActivityIndicator);
+            AppDelegate.ActivityIndicator.Show();
+            _presenter.ReloadAsync();
         }
 
         private void ProviderOnContactsUpdated(object sender, EventArgs e)
         {
             _tableView.ReloadData();
             _contactNameProvider.ContactsUpdated -= ProviderOnContactsUpdated;
+            AppDelegate.ActivityIndicator.Hide();
         }
 
         private void UpdateCallerId(object sender, EventArgs args)
@@ -145,6 +150,8 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             if (selectedPresentationNumber == null)
                 return;
             _presenter.PhoneNumber = selectedPresentationNumber.PhoneNumber;
+            View.AddSubview(AppDelegate.ActivityIndicator);
+            AppDelegate.ActivityIndicator.Show();
             _presenter.ReloadAsync();
         }
     }

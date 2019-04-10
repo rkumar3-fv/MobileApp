@@ -36,7 +36,6 @@ namespace FreedomVoice.iOS.TableViewSources.Texting
             tableView.RegisterNibForCellReuse(UINib.FromName("ConversationItemTableViewCell", NSBundle.MainBundle), "cell");
             tableView.RowHeight = UITableView.AutomaticDimension;
             tableView.EstimatedRowHeight = 40;
-            _presenter.ReloadAsync();
         }
 
         public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
