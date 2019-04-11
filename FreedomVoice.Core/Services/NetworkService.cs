@@ -27,17 +27,16 @@ namespace FreedomVoice.Core.Services
         {
             try
             {
-                var result = await ApiHelper.GetConversations(phone, startDate, lastUpdateDate, start, limit);
-                //var result = await GenerateDummyConversationsResult(phone);
+                BaseResult<List<Conversation>> result = await ApiHelper.GetConversations(phone, startDate, lastUpdateDate, start, limit);
                 if (result.Result == null)
-                    result.Result = _cacheService.GetConversations(phone, limit, start).Select(x => _mapper.Map<Conversation>(x)).ToList(); //new List<Conversation>();
+                    result.Result = _cacheService.GetConversations(phone, limit, start).Select(x => _mapper.Map<Conversation>(x)).ToList();
                 if (result.Code == Entities.Enums.ErrorCodes.Ok)
                     _cacheService.UpdateConversationsCache(result.Result);
 
                 result.Result = result.Result.Where(x => !x.IsRemoved).ToList();
                 return result;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return new BaseResult<List<Conversation>>()
                 {

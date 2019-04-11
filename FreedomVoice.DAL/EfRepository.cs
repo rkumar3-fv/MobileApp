@@ -48,9 +48,9 @@ namespace FreedomVoice.DAL
 
                 this.Entities.Add(entity);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                var a = 0;
+                // ignore
             }
         }
 
@@ -195,9 +195,9 @@ namespace FreedomVoice.DAL
             {
                 this._context.SaveChanges();
             }
-            catch(Exception ex)
+            catch(Exception)
             {
-                var a = 0;
+                // ignore
             }
         }
 
