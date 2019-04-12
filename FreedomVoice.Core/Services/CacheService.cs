@@ -43,10 +43,18 @@ namespace FreedomVoice.Core.Services
             if (conversation.Messages == null)
                 conversation.Messages = new List<Message>();
             // Removing - we cannot to remove messages
-            // Updating - we cannot to update message
-            // Adding
-            foreach (var messageForAdding in messages.Where(x => _messagesRepository.TableNoTracking.All(xx => xx.Id != x.Id)))
-                conversation.Messages.Add(_mapper.Map<Message>(messageForAdding));
+
+            var messagesForUpdate = _messagesRepository.Table.Where(x => messages.Any(xx => xx.Id == x.Id));
+            foreach (var messageFromApi in messages)
+            {
+                var message = messagesForUpdate.FirstOrDefault(x => x.Id == messageFromApi.Id);
+                // Adding
+                if (message == null)
+                    conversation.Messages.Add(_mapper.Map<Message>(messageFromApi));
+                // Updating
+                else
+                    message.ReadAt = messageFromApi.ReadAt;
+            }
 
             UpdatePhones(conversation, alreadyCreatedPhones);
         }
