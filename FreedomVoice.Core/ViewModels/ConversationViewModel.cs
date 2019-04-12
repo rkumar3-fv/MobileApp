@@ -13,6 +13,7 @@ namespace FreedomVoice.Core.ViewModels
         public readonly string Date;
         public readonly string LastMessage;
         public readonly bool IsNew;
+        public readonly int ConversationId;
         private readonly IContactNameProvider _contactNameProvider;
 
 
@@ -35,6 +36,7 @@ namespace FreedomVoice.Core.ViewModels
                 Date = TimeAgo((DateTime) message.SentAt);
                 IsNew = false;
             }
+            ConversationId = entity.Id;
         }
         
         private string TimeAgo(DateTime dateTime)

@@ -312,6 +312,10 @@
     <Compile Include="TableViewCells\Texting\ConversationItemTableViewCell.designer.cs">
       <DependentUpon>ConversationItemTableViewCell.cs</DependentUpon>
     </Compile>
+    <Compile Include="ViewControllers\Texts\ConversationViewController.cs" />
+    <Compile Include="ViewControllers\Texts\ConversationViewController.designer.cs">
+      <DependentUpon>ConversationViewController.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\Default-568h%402x.png" />

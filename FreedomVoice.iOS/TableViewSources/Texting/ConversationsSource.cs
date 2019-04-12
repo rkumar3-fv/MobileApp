@@ -11,17 +11,28 @@ using FreedomVoice.iOS.TableViewCells.Texting;
 using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.Utilities.Helpers;
 using FreedomVoice.iOS.ViewControllers;
+using FreedomVoice.iOS.ViewControllers.Texts;
 using UIKit;
 
 namespace FreedomVoice.iOS.TableViewSources.Texting
 {
+    public class ConversationEventArgs : EventArgs
+    {
+        public int ConversationId;
+
+        public ConversationEventArgs(int conversationId)
+        {
+            ConversationId = conversationId;
+        }
+    }
+
     public class ConversationsSource : UITableViewSource
     {
         private readonly ConversationsPresenter _presenter;
-        private readonly UINavigationController _navigationController;
         private readonly UITableView _tableView;
+        public event EventHandler ItemDidSelected;
 
-        public ConversationsSource(ConversationsPresenter presenter, UINavigationController navigationController, UITableView tableView)
+        public ConversationsSource(ConversationsPresenter presenter, UITableView tableView)
         {
             _presenter = presenter;
             _presenter.ItemsChanged += (sender, e) =>
@@ -30,8 +41,6 @@ namespace FreedomVoice.iOS.TableViewSources.Texting
             };
 
             _tableView = tableView;
-
-            _navigationController = navigationController;
 
             tableView.RegisterNibForCellReuse(UINib.FromName("ConversationItemTableViewCell", NSBundle.MainBundle), "cell");
             tableView.RowHeight = UITableView.AutomaticDimension;
@@ -65,6 +74,8 @@ namespace FreedomVoice.iOS.TableViewSources.Texting
         public override void RowSelected(UITableView tableView, NSIndexPath indexPath)
         {
             tableView.DeselectRow(indexPath, true);
+            var item = _presenter.Items[indexPath.Row];
+            ItemDidSelected?.Invoke(this, new ConversationEventArgs(item.ConversationId));
         }
 
         [Export("scrollViewDidScroll:")]

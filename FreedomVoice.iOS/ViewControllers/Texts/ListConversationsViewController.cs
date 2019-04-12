@@ -130,7 +130,9 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
                 _noItemsLabel.Hidden = _presenter.Items.Count > 0;
                 AppDelegate.ActivityIndicator.Hide();
             };
-            _tableView.Source = new ConversationsSource(_presenter, NavigationController, _tableView);
+            var dataSource = new ConversationsSource(_presenter, _tableView);
+            dataSource.ItemDidSelected += DataSource_ItemDidSelected;
+            _tableView.Source = dataSource;
             _tableView.ReloadData();
             View.AddSubview(AppDelegate.ActivityIndicator);
             AppDelegate.ActivityIndicator.Show();
@@ -154,6 +156,21 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             AppDelegate.ActivityIndicator.Show();
             _presenter.ReloadAsync();
         }
+
+        void DataSource_ItemDidSelected(object sender, EventArgs e)
+        {
+
+            if (!(e is ConversationEventArgs arg))
+            {
+                return;
+            }
+            View.EndEditing(true);
+            var controller = AppDelegate.GetViewController<ConversationViewController>();
+            controller.converstaionId = arg.ConversationId;
+            controller.currentPhone = _callerIdView.SelectedNumber;
+            NavigationController.PushViewController(controller, true);
+        }
+
     }
 }
 
