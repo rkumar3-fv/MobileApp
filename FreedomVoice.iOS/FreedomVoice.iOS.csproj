@@ -42,6 +42,8 @@
     <MtouchLink>None</MtouchLink>
     <MtouchArch>i386</MtouchArch>
     <ConsolePause>false</ConsolePause>
+    <CodesignProvision>Ad Hoc Provision Profile 2019</CodesignProvision>
+    <CodesignKey>iPhone Distribution: CallCatchers Inc. (P63QDD35U7)</CodesignKey>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
     <DebugSymbols>true</DebugSymbols>
@@ -80,7 +82,8 @@
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
     <MtouchArch>ARMv7, ARM64</MtouchArch>
     <ConsolePause>false</ConsolePause>
-    <CodesignKey>iPhone Developer</CodesignKey>
+    <CodesignKey>iPhone Distribution: CallCatchers Inc. (P63QDD35U7)</CodesignKey>
+    <CodesignProvision>Ad Hoc Provision Profile 2019</CodesignProvision>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Ad-Hoc|iPhone' ">
     <DebugType>none</DebugType>
@@ -92,7 +95,7 @@
     <MtouchArch>ARMv7, ARM64</MtouchArch>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
     <BuildIpa>True</BuildIpa>
-    <CodesignKey>iPhone Developer: Александр Пятаков (TRSB9P63FJ)</CodesignKey>
+    <CodesignKey>iPhone Distribution: CallCatchers Inc. (P63QDD35U7)</CodesignKey>
     <IpaIncludeArtwork>False</IpaIncludeArtwork>
     <IpaPackageName>FreedomVoice-1.0.33</IpaPackageName>
     <MtouchSdkVersion>9.3</MtouchSdkVersion>
@@ -107,6 +110,7 @@
     <MtouchEnableBitcode>False</MtouchEnableBitcode>
     <MtouchTlsProvider>Default</MtouchTlsProvider>
     <MtouchHttpClientHandler>HttpClientHandler</MtouchHttpClientHandler>
+    <CodesignProvision>Ad Hoc Provision Profile 2019</CodesignProvision>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|iPhone' ">
     <DebugType>none</DebugType>
