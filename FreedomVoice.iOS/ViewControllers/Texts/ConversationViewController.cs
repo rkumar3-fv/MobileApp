@@ -34,7 +34,8 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             _tableView = new UITableView
             {
                 TranslatesAutoresizingMaskIntoConstraints = false,
-                TableFooterView = new UIView()
+                TableFooterView = new UIView(),
+                ContentInset = new UIEdgeInsets(50, 0, -50, 0)
             };
 
             _callerIdView = new CallerIdView(new RectangleF(0, 0, (float)Theme.ScreenBounds.Width, 40), MainTabBarInstance.GetPresentationNumbers())
@@ -55,6 +56,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             _SetupViews();
             _SetupConstraints();
             _SetupData();
+            AutomaticallyAdjustsScrollViewInsets = false;
 
         }
 
@@ -86,6 +88,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
         private void _SetupData()
         {
             _callerIdView.UpdatePickerData(currentPhone);
+            _tableView.Source = new ConversationSource(_tableView);
         }
     }
 }

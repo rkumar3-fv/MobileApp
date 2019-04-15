@@ -30,7 +30,7 @@
     <CodesignEntitlements />
     <CodesignResourceRules />
     <CodesignExtraArgs />
-    <MtouchSdkVersion>11.2</MtouchSdkVersion>
+    <MtouchSdkVersion>12.2</MtouchSdkVersion>
     <MtouchNoSymbolStrip>true</MtouchNoSymbolStrip>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
@@ -316,6 +316,22 @@
     <Compile Include="ViewControllers\Texts\ConversationViewController.designer.cs">
       <DependentUpon>ConversationViewController.cs</DependentUpon>
     </Compile>
+    <InterfaceDefinition Include="TableViewCells\Texting\Messaging\MessageDateTableViewCell.xib" />
+    <Compile Include="TableViewCells\Texting\Messaging\MessageDateTableViewCell.cs" />
+    <Compile Include="TableViewCells\Texting\Messaging\MessageDateTableViewCell.designer.cs">
+      <DependentUpon>MessageDateTableViewCell.cs</DependentUpon>
+    </Compile>
+    <InterfaceDefinition Include="TableViewCells\Texting\Messaging\IncomingMessageTableViewCell.xib" />
+    <Compile Include="TableViewCells\Texting\Messaging\IncomingMessageTableViewCell.cs" />
+    <Compile Include="TableViewCells\Texting\Messaging\IncomingMessageTableViewCell.designer.cs">
+      <DependentUpon>IncomingMessageTableViewCell.cs</DependentUpon>
+    </Compile>
+    <InterfaceDefinition Include="TableViewCells\Texting\Messaging\OutgoingMessageTableViewCell.xib" />
+    <Compile Include="TableViewCells\Texting\Messaging\OutgoingMessageTableViewCell.cs" />
+    <Compile Include="TableViewCells\Texting\Messaging\OutgoingMessageTableViewCell.designer.cs">
+      <DependentUpon>OutgoingMessageTableViewCell.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TableViewSources\Texting\ConversationSource.cs" />
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\Default-568h%402x.png" />
@@ -622,6 +638,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />
+  <ItemGroup>
+    <Folder Include="TableViewCells\Texting\Messaging\" />
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
