@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using Android.Content;
 using Android.OS;
 using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
+using com.FreedomVoice.MobileApp.Android.Activities;
 using com.FreedomVoice.MobileApp.Android.Adapters;
 using com.FreedomVoice.MobileApp.Android.CustomControls;
 using com.FreedomVoice.MobileApp.Android.Helpers;
@@ -46,6 +48,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             _recyclerView.SetLayoutManager(_layoutManager);
             _recyclerView.AddItemDecoration(new DividerItemDecorator(Activity, Resource.Drawable.divider));
             _recyclerView.SetAdapter(_adapter);
+            _noResultText.Click += (sender, args) => { StartActivity(new Intent(Context, typeof(ChatActivity)));};
             _recyclerView.ScrollChange += (sender, args) => { onListScrolled(); };
 
             var provider = ServiceContainer.Resolve<IContactNameProvider>();

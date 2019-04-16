@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/conversation_message_fl"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:weightSum="100"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:gravity="right"
+        >
+
+    <FrameLayout
+            android:id="@+id/conversation_message_fl"
+            android:layout_width="0dp"
+            android:layout_weight="60"
+            android:layout_height="wrap_content">
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:layout_gravity="right"
+                android:background="@drawable/bg_message_cloud_left"
+                tools:text="Test message"
+                android:id="@+id/conversation_message_tv"
+                />
+
+    </FrameLayout>
+
+
+</LinearLayout>

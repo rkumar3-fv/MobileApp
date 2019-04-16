@@ -18,7 +18,7 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
 
         public ConversationRecyclerAdapter(EventHandler<ConversationViewModel> itemClickEventHandler)
         {
-            _itemClickEventHandler = itemClickEventHandler;
+            this._itemClickEventHandler = itemClickEventHandler;
         }
 
         public override int ItemCount => _items.Count;

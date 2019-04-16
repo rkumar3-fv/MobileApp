@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:background="@color/colorBackground"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <LinearLayout
+            android:id="@+id/conversationDetailsFragment_spinnerArea"
+            android:layout_alignParentTop="true"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:elevation="@dimen/content_activity_id_elevation"
+            android:background="@color/colorCallerId"
+            android:weightSum="1.0">
+
+        <TextView
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                style="@style/CallerIdSpinnerText"
+                android:layout_centerHorizontal="true"
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:text="@string/FragmentKeypad_callerId"
+                android:layout_weight="0.4"/>
+
+        <RelativeLayout
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:layout_width="0dip"
+                android:layout_height="@dimen/fragment_keypad_spinner_size"
+                android:layout_weight="0.6">
+
+            <com.FreedomVoice.MobileApp.Android.CustomControls.AlwaysTopSpinner
+                    android:id="@+id/conversationDetailsFragment_idSpinner"
+                    android:layout_width="@dimen/fragment_keypad_spinner_width_collapsed"
+                    android:layout_height="@dimen/fragment_keypad_spinner_size"
+                    android:dropDownWidth="@dimen/fragment_keypad_spinner_width"
+                    android:spinnerMode="dropdown"/>
+
+            <TextView
+                    android:id="@+id/conversationDetailsFragment_singleId"
+                    style="@style/CallerIdSpinnerText"
+                    android:visibility="invisible"
+                    android:layout_centerVertical="true"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+        </RelativeLayout>
+    </LinearLayout>
+
+    <TextView
+            android:id="@+id/conversationDetailsFragment_noResultText"
+            style="@style/ListBackgroundText"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal"
+            android:text="@string/FragmentConversations_empty"
+            android:layout_below="@id/contactsFragment_spinnerArea"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/content_activity_no_res_margin"
+            android:visibility="gone"/>
+
+    <android.support.v7.widget.RecyclerView
+            android:id="@+id/conversationDetailsFragment_recyclerView"
+            style="@style/ScrollTheme"
+            android:layout_below="@+id/conversationDetailsFragment_spinnerArea"
+            android:layout_above="@+id/conversationDetailsFragment_write_lock"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingTop="@dimen/fragment_msg_element_padding"
+            android:paddingBottom="@dimen/fragment_msg_element_padding"
+            android:clipToPadding="false"/>
+
+    <RelativeLayout
+            android:id="@+id/conversationDetailsFragment_write_lock"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <EditText
+                android:id="@+id/conversationDetailsFragment_et_message"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/ConversationMessageEt"
+                android:hint="@string/ConversationDetails_message"
+                android:layout_toLeftOf="@+id/conversationDetailsFragment_iv_send"
+                />
+
+        <ImageView
+                android:id="@+id/conversationDetailsFragment_iv_send"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="8dp"
+                android:visibility="visible"
+                android:src="@drawable/ic_send_folder"
+                android:layout_alignParentRight="true"
+                />
+
+    </RelativeLayout>
+
+
+</RelativeLayout>

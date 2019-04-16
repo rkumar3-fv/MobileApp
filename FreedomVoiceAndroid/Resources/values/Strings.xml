@@ -148,4 +148,5 @@
   <string name="Notif_faxShow">Show fax</string>
   <string name="Extra_pdfReaderPath">com.google.android.apps.pdfviewer</string>
   <string name="Extra_notificationBroadcast">com.freedomvoice.android.notif</string>
+  <string name="ConversationDetails_message">Message</string>
 </resources>
