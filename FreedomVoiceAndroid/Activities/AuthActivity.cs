@@ -66,19 +66,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             var progressColor = new Color(ContextCompat.GetColor(this, Resource.Color.colorProgressWhite));
             _progressLogin.IndeterminateDrawable?.SetColorFilter(progressColor, PorterDuff.Mode.SrcIn);
             _progressLogin.ProgressDrawable?.SetColorFilter(progressColor, PorterDuff.Mode.SrcIn);
-
-//#if DEBUG
-//            FillInLoginData();
-//#endif
-        }
-
-        /// <summary>
-        /// Only for test purposes, will be removed later
-        /// </summary>
-        private void FillInLoginData()
-        {
-            _loginText.Text = "freedomvoice.adm.267055@gmail.com";
-            _passwordText.Text = "adm654654";
         }
 
 #if !DEBUG
