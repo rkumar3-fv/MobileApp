@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Android.Content;
 using Android.Database;
@@ -109,5 +110,6 @@ namespace com.FreedomVoice.MobileApp.Android.Utils
         {
             _phonesCache.Add(phone, name);
         }
+       
     }
 }

@@ -24,7 +24,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:fitsSystemWindows="true"
-            app:tabMode="fixed" />
+            app:tabGravity="fill"
+            app:tabMode="scrollable" />
     </android.support.design.widget.AppBarLayout>
     <com.FreedomVoice.MobileApp.Android.CustomControls.ContentPager
         android:id="@+id/contentActivity_contentPager"

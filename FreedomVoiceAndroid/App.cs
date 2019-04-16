@@ -5,9 +5,14 @@ using Android.OS;
 using Android.Runtime;
 #if DEBUG
 using Android.Util;
+using com.FreedomVoice.MobileApp.Android.Data;
 #endif
 using com.FreedomVoice.MobileApp.Android.Helpers;
+using com.FreedomVoice.MobileApp.Android.Utils;
+using FreedomVoice.Core.Cache;
+using FreedomVoice.Core.Services.Interfaces;
 using FreedomVoice.Core.Utils;
+using FreedomVoice.Core.ViewModels;
 using Java.Lang;
 using Process = System.Diagnostics.Process;
 
@@ -34,6 +39,7 @@ namespace com.FreedomVoice.MobileApp.Android
         public App(IntPtr javaReference, JniHandleOwnership transfer) : base(javaReference, transfer)
         {
             _helper = new AppHelper(this);
+            ServiceContainer.Register<IContactNameProvider>(() => new ContactNameProvider(this));
         }
 
         /// <summary>

@@ -37,6 +37,8 @@ namespace com.FreedomVoice.MobileApp.Android.CustomControls
                 var child = parent.GetChildAt(i);
                 var parameters = child.LayoutParameters.JavaCast<RecyclerView.LayoutParams>();
                 var top = child.Bottom + parameters.BottomMargin;
+
+                if (_divider == null) continue;
                 var bottom = top + _divider.IntrinsicHeight;
                 _divider.SetBounds(left, top, right, bottom);
                 _divider.Draw(c);
