@@ -35,7 +35,7 @@ namespace FreedomVoice.Core.Presenters
             get => _phoneNumber;
             set
             {
-                if (value == _phoneNumber)
+                if (_phoneNumber != null && value == _phoneNumber)
                     return;
                 _phoneNumber = value;
 

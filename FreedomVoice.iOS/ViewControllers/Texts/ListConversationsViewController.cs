@@ -160,7 +160,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
         void DataSource_ItemDidSelected(object sender, EventArgs e)
         {
 
-            if (!(e is ConversationEventArgs arg))
+            if (!(e is ConversationSelectEventArgs arg))
             {
                 return;
             }

@@ -26,6 +26,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
         private UITableView _tableView;
         private CallerIdView _callerIdView;
         private LineView _lineView;
+        private ConversationPresenter _presenter;
         private static MainTabBarController MainTabBarInstance => MainTabBarController.SharedInstance;
 
 
@@ -89,6 +90,19 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
         {
             _callerIdView.UpdatePickerData(currentPhone);
             _tableView.Source = new ConversationSource(_tableView);
+
+            _presenter = new ConversationPresenter()
+            {
+                PhoneNumber = _callerIdView.SelectedNumber.PhoneNumber
+            };
+            _presenter.ConversationId = converstaionId;
+            _presenter.ItemsChanged += (sender, args) =>
+            {
+                AppDelegate.ActivityIndicator.Hide();
+            };
+            View.AddSubview(AppDelegate.ActivityIndicator);
+            AppDelegate.ActivityIndicator.Show();
+            _presenter.ReloadAsync();
         }
     }
 }

@@ -16,11 +16,11 @@ using UIKit;
 
 namespace FreedomVoice.iOS.TableViewSources.Texting
 {
-    public class ConversationEventArgs : EventArgs
+    public class ConversationSelectEventArgs : EventArgs
     {
         public int ConversationId;
 
-        public ConversationEventArgs(int conversationId)
+        public ConversationSelectEventArgs(int conversationId)
         {
             ConversationId = conversationId;
         }
@@ -75,7 +75,7 @@ namespace FreedomVoice.iOS.TableViewSources.Texting
         {
             tableView.DeselectRow(indexPath, true);
             var item = _presenter.Items[indexPath.Row];
-            ItemDidSelected?.Invoke(this, new ConversationEventArgs(item.ConversationId));
+            ItemDidSelected?.Invoke(this, new ConversationSelectEventArgs(item.ConversationId));
         }
 
         [Export("scrollViewDidScroll:")]
