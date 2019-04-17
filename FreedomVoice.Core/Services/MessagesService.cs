@@ -31,7 +31,8 @@ namespace FreedomVoice.Core.Services
 
             var result = new MessageListResponse();
             var lastSyncDate = _cacheService.GetLastConversationUpdateDate(current);
-            var netMessages = await _networkService.GetMessages(conversationId, current, lastSyncDate, count, page);
+            var start = count * (page - 1);
+            var netMessages = await _networkService.GetMessages(conversationId, current, lastSyncDate, start, count);
             result.ResponseCode = netMessages.Code;
             result.Message = netMessages.ErrorText;
             result.Messages = netMessages.Result.Select(x => _mapper.Map<Message>(x));

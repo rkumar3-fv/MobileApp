@@ -70,10 +70,10 @@ namespace FreedomVoice.Core.Presenters
         private async Task _PerformLoading()
         {
             _isLoading = true;
-            _currentPage = 1;
+            //_currentPage = 1;
             var res = await _service.GetList(_phoneNumber, _currentDate, 50, _currentPage);
             HasMore = !res.IsEnd;
-            Items = new List<ConversationViewModel>();
+            //Items = new List<ConversationViewModel>();
             if (res.Conversations != null)
             {
                 foreach (var row in res.Conversations)
