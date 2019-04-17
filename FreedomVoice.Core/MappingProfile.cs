@@ -1,8 +1,5 @@
 ﻿using AutoMapper;
 using FreedomVoice.DAL.DbEntities;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace FreedomVoice.Core
 {
