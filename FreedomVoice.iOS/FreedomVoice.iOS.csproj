@@ -144,6 +144,7 @@
     <Compile Include="Utilities\Helpers\Cookies.cs" />
     <Compile Include="Utilities\Helpers\DeviceCookieStorage.cs" />
     <Compile Include="Utilities\Helpers\HttpClientHelper.cs" />
+    <Compile Include="Utilities\Helpers\KeyboardHelper.cs" />
     <Compile Include="Utilities\Helpers\Log.cs" />
     <Compile Include="Utilities\Helpers\Recents.cs" />
     <Compile Include="ViewControllers\SplashViewController.cs" />
@@ -206,6 +207,7 @@
     <Compile Include="ViewModels\MediaViewModel.cs" />
     <Compile Include="ViewModels\PoolingIntervalViewModel.cs" />
     <Compile Include="Views\AVPlayerView.cs" />
+    <Compile Include="Views\ChatTextView.cs" />
     <Compile Include="Views\NoAccessToContactsView.cs" />
     <Compile Include="Views\Shared\LineView.cs" />
     <Compile Include="Views\Shared\CallerIdView.cs" />

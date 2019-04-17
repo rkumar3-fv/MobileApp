@@ -19,5 +19,10 @@ namespace FreedomVoice.iOS.TableViewCells.Texting.Messaging
         {
             // Note: this .ctor should not contain any initialization logic.
         }
+        
+        public string Text
+        {
+            set => TextLabel.Text = value;
+        }
     }
 }

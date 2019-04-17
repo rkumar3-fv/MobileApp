@@ -166,8 +166,8 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             }
             View.EndEditing(true);
             var controller = AppDelegate.GetViewController<ConversationViewController>();
-            controller.converstaionId = arg.ConversationId;
-            controller.currentPhone = _callerIdView.SelectedNumber;
+            controller.ConversationId = arg.ConversationId;
+            controller.CurrentPhone = _callerIdView.SelectedNumber;
             NavigationController.PushViewController(controller, true);
         }
 

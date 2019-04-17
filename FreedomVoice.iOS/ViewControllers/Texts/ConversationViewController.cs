@@ -12,6 +12,7 @@ using FreedomVoice.iOS.TableViewSources.Texting;
 using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.Utilities.Events;
 using FreedomVoice.iOS.Utilities.Helpers;
+using FreedomVoice.iOS.Views;
 using FreedomVoice.iOS.Views.Shared;
 using UIKit;
 
@@ -20,12 +21,13 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
     public partial class ConversationViewController : BaseViewController
     {
 
-        public int converstaionId;
-        public PresentationNumber currentPhone;
+        public int ConversationId;
+        public PresentationNumber CurrentPhone;
 
-        private UITableView _tableView;
-        private CallerIdView _callerIdView;
-        private LineView _lineView;
+        private readonly UITableView _tableView;
+        private readonly CallerIdView _callerIdView;
+        private readonly LineView _lineView;
+        private readonly ChatTextView _chatField;
         private ConversationPresenter _presenter;
         private static MainTabBarController MainTabBarInstance => MainTabBarController.SharedInstance;
 
@@ -49,6 +51,11 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             {
                 TranslatesAutoresizingMaskIntoConstraints = false
             };
+
+            _chatField = new ChatTextView
+            {
+                TranslatesAutoresizingMaskIntoConstraints = false
+            };
         }
 
         public override void ViewDidLoad()
@@ -57,15 +64,42 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             _SetupViews();
             _SetupConstraints();
             _SetupData();
+            TabBarController.TabBar.Hidden = true;
             AutomaticallyAdjustsScrollViewInsets = false;
+        }
 
+        public override void ViewDidAppear(bool animated)
+        {
+            base.ViewDidAppear(animated);
+            _SubscribeToKeyboard();
+        }
+
+
+        public override void ViewDidDisappear(bool animated)
+        {
+            base.ViewDidDisappear(animated);
+            _UnsubscribeFromKeyboard();
         }
 
         private void _SetupViews()
         {
             View.AddSubview(_callerIdView);
             View.AddSubview(_lineView);
+            View.AddSubview(_chatField);
             View.AddSubview(_tableView);
+        }
+
+        private void _SubscribeToKeyboard()
+        {
+//            self.notificationCenter.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+//                self.notificationCenter.addObserver(self, selector: #selector(keyboardDidShow(_:)), name: UIResponder.keyboardDidShowNotification, object: nil)
+//                    self.notificationCenter.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
+//                        self.notificationCenter.addObserver(self, selector: #selector(keyboardWillChangeFrame(_:)), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
+        }
+        
+        private void _UnsubscribeFromKeyboard()
+        {
+            
         }
 
         private void _SetupConstraints()
@@ -81,21 +115,25 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             _lineView.HeightAnchor.ConstraintEqualTo(0.5f).Active = true;
 
             _tableView.TopAnchor.ConstraintEqualTo(_lineView.BottomAnchor).Active = true;
-            _tableView.BottomAnchor.ConstraintEqualTo(View.BottomAnchor).Active = true;
+//            _tableView.BottomAnchor.ConstraintEqualTo(View.BottomAnchor).Active = true;
             _tableView.LeadingAnchor.ConstraintEqualTo(View.LeadingAnchor).Active = true;
             _tableView.TrailingAnchor.ConstraintEqualTo(View.TrailingAnchor).Active = true;
+            
+            _chatField.TopAnchor.ConstraintEqualTo(_tableView.BottomAnchor).Active = true;
+            _chatField.BottomAnchor.ConstraintEqualTo(View.BottomAnchor).Active = true;
+            _chatField.LeadingAnchor.ConstraintEqualTo(View.LeadingAnchor).Active = true;
+            _chatField.TrailingAnchor.ConstraintEqualTo(View.TrailingAnchor).Active = true;
         }
 
         private void _SetupData()
         {
-            _callerIdView.UpdatePickerData(currentPhone);
+            _callerIdView.UpdatePickerData(CurrentPhone);
             _tableView.Source = new ConversationSource(_tableView);
 
-            _presenter = new ConversationPresenter()
+            _presenter = new ConversationPresenter
             {
-                PhoneNumber = _callerIdView.SelectedNumber.PhoneNumber
+                PhoneNumber = _callerIdView.SelectedNumber.PhoneNumber, ConversationId = ConversationId
             };
-            _presenter.ConversationId = converstaionId;
             _presenter.ItemsChanged += (sender, args) =>
             {
                 AppDelegate.ActivityIndicator.Hide();
