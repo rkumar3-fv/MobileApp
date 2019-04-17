@@ -31,7 +31,8 @@ namespace FreedomVoice.Core.Services
 
             var result = new ConversationListResponse();
             var lastSyncDate = _cacheService.GetLastConversationUpdateDate(current);
-            var netConversations = await _networkService.GetConversations(phone, current, lastSyncDate, count, page);
+            var start = count * (page - 1);
+            var netConversations = await _networkService.GetConversations(phone, current, lastSyncDate, start, count);
             result.ResponseCode = netConversations.Code;
             result.Message = netConversations.ErrorText;
             result.Conversations = netConversations.Result.Select(x => _mapper.Map<Conversation>(x));
