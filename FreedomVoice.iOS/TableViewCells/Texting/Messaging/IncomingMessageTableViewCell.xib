@@ -60,6 +60,7 @@
             <connections>
                 <outlet property="ImageView" destination="dFy-cn-sMI" id="name-outlet-dFy-cn-sMI"/>
                 <outlet property="TextLabel" destination="tfT-4O-9Ta" id="name-outlet-tfT-4O-9Ta"/>
+                <outlet property="BubbleView" destination="62Z-CW-Rw4" id="name-outlet-62Z-CW-Rw4"/>
             </connections>
         </tableViewCell>
     </objects>

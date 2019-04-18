@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using FreedomVoice.Core.Services.Interfaces;
 using FreedomVoice.Core.Utils;
 using FreedomVoice.Core.ViewModels;
+using FreedomVoice.DAL.DbEntities;
 
 namespace FreedomVoice.Core.Presenters
 {

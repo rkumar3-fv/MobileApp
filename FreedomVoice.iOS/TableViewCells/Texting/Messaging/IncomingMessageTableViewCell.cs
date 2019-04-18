@@ -1,6 +1,8 @@
 ﻿using System;
-
+using CoreAnimation;
+using CoreGraphics;
 using Foundation;
+using FreedomVoice.iOS.Views;
 using UIKit;
 
 namespace FreedomVoice.iOS.TableViewCells.Texting.Messaging
@@ -17,7 +19,8 @@ namespace FreedomVoice.iOS.TableViewCells.Texting.Messaging
 
         protected IncomingMessageTableViewCell(IntPtr handle) : base(handle)
         {
-            // Note: this .ctor should not contain any initialization logic.
+            var mask = new BubbleView(false);
+            BubbleView.MaskView = mask;
         }
         
         public string Text
