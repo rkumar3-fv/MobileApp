@@ -48,7 +48,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             _recyclerView.SetLayoutManager(_layoutManager);
             _recyclerView.AddItemDecoration(new DividerItemDecorator(Activity, Resource.Drawable.divider));
             _recyclerView.SetAdapter(_adapter);
-            _noResultText.Click += (sender, args) => { StartActivity(new Intent(Context, typeof(ChatActivity)));};
+            _noResultText.Click += (sender, args) => { ChatActivity.Start(Activity, 0);};
             _recyclerView.ScrollChange += (sender, args) => { onListScrolled(); };
 
             var provider = ServiceContainer.Resolve<IContactNameProvider>();

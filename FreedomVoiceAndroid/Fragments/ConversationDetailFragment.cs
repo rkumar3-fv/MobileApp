@@ -15,7 +15,7 @@ using Message = FreedomVoice.Entities.Message;
 
 namespace com.FreedomVoice.MobileApp.Android.Fragments
 {
-    public class ConversationDetailFragment : Fragment
+    public class ConversationDetailFragment : CallerFragment
     {
         private EditText _messageEt;
         private ImageView _sendIv;
@@ -25,15 +25,25 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         private TextView _singleId;
         private ConversationMessageRecyclerAdapter _adapter;
 
-        public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+        private static string EXTRA_CONVERSATION_ID = "EXTRA_CONVERSATION_ID";
+        public static ConversationDetailFragment newInstance(int conversationId)
         {
-            var view = inflater.Inflate(Resource.Layout.frag_conversation_details, container, false);
+            var fragment = new ConversationDetailFragment();
+            var args = new Bundle();
+            args.PutInt(EXTRA_CONVERSATION_ID, conversationId);
+            fragment.Arguments = args;
+            return fragment;
+        }
+        
+        protected override View InitView()
+        {
+            var view = Inflater.Inflate(Resource.Layout.frag_conversation_details, null, false);
             _messageEt = view.FindViewById<EditText>(Resource.Id.conversationDetailsFragment_et_message);
             _sendIv = view.FindViewById<ImageView>(Resource.Id.conversationDetailsFragment_iv_send);
             _recycler = view.FindViewById<RecyclerView>(Resource.Id.conversationDetailsFragment_recyclerView);
             _placeHolder = view.FindViewById<TextView>(Resource.Id.conversationDetailsFragment_noResultText);
-            _spinner = view.FindViewById<Spinner>(Resource.Id.conversationDetailsFragment_idSpinner);
-            _singleId = view.FindViewById<TextView>(Resource.Id.contactsFragment_singleId);
+            IdSpinner = view.FindViewById<Spinner>(Resource.Id.conversationDetailsFragment_idSpinner);
+            SingleId = view.FindViewById<TextView>(Resource.Id.conversationDetailsFragment_singleId);
             return view;
         }
 
@@ -68,188 +78,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                     ReadAt = DateTime.Now,
                     ReceivedAt = DateTime.Now,
                     SentAt = DateTime.Now
-                },
-                new Message()
-                {
-                    Id = 3,
-                    Text =
-                        "Message alskdfj ajffa alkdfj alsdkfj  sdf jsl jslj sdl fjl;j ;asjf asfsdfuhdfkhsdlh sdjf haj aaaskdfj laskdfj skdfj lskd jskdfj lfj",
-                    To = new Phone() {Id = 1, PhoneNumber = "123123"},
-                    From = new Phone() {Id = 3, PhoneNumber = "111111111"},
-                    ReadAt = DateTime.Now,
-                    ReceivedAt = DateTime.Now,
-                    SentAt = DateTime.Now
-                },
-                new Message()
-                {
-                    Id = 4,
-                    Text = "Message alskdfj ajffa alkdfj alsdkfj aaaskdfj laskdfj skdfj lskd jskdfj lfj",
-                    To = new Phone() {Id = 1, PhoneNumber = "123123"},
-                    From = new Phone() {Id = 2, PhoneNumber = "123"},
-                    ReadAt = DateTime.Now,
-                    ReceivedAt = DateTime.Now,
-                    SentAt = DateTime.Now
-                },
-                new Message()
-                {
-                    Id = 5,
-                    Text = "Message alskdfj ajffa alkdfj alsdkfj aaaskdfj laskdfj skdfj lskd jskdfj lfj",
-                    To = new Phone() {Id = 1, PhoneNumber = "123123"},
-                    From = new Phone() {Id = 3, PhoneNumber = "111111111"},
-                    ReadAt = DateTime.Now,
-                    ReceivedAt = DateTime.Now,
-                    SentAt = DateTime.Now
-                },
-                new Message()
-                {
-                    Id = 5,
-                    Text = "Message alskdfj ajffa alkdfj alsdkfj aaaskdfj laskdfj skdfj lskd jskdfj lfj",
-                    To = new Phone() {Id = 1, PhoneNumber = "123123"},
-                    From = new Phone() {Id = 3, PhoneNumber = "111111111"},
-                    ReadAt = DateTime.Now,
-                    ReceivedAt = DateTime.Now,
-                    SentAt = DateTime.Now
-                },
-                new Message()
-                {
-                    Id = 5,
-                    Text = "Message alskdfj ajffa alkdfj alsdkfj aaaskdfj laskdfj skdfj lskd jskdfj lfj",
-                    To = new Phone() {Id = 1, PhoneNumber = "123123"},
-                    From = new Phone() {Id = 3, PhoneNumber = "111111111"},
-                    ReadAt = DateTime.Now,
-                    ReceivedAt = DateTime.Now,
-                    SentAt = DateTime.Now
-                },
-                new Message()
-                {
-                    Id = 5,
-                    Text = "Message alskdfj ajffa alkdfj alsdkfj aaaskdfj laskdfj skdfj lskd jskdfj lfj",
-                    To = new Phone() {Id = 1, PhoneNumber = "123123"},
-                    From = new Phone() {Id = 3, PhoneNumber = "111111111"},
-                    ReadAt = DateTime.Now,
-                    ReceivedAt = DateTime.Now,
-                    SentAt = DateTime.Now
-                },
-                new Message()
-                {
-                    Id = 5,
-                    Text = "Message alskdfj ajffa alkdfj alsdkfj aaaskdfj laskdfj skdfj lskd jskdfj lfj",
-                    To = new Phone() {Id = 1, PhoneNumber = "123123"},
-                    From = new Phone() {Id = 3, PhoneNumber = "111111111"},
-                    ReadAt = DateTime.Now,
-                    ReceivedAt = DateTime.Now,
-                    SentAt = DateTime.Now
-                },
-                new Message()
-                {
-                    Id = 5,
-                    Text = "Message alskdfj ajffa alkdfj alsdkfj aaaskdfj laskdfj skdfj lskd jskdfj lfj",
-                    To = new Phone() {Id = 1, PhoneNumber = "123123"},
-                    From = new Phone() {Id = 3, PhoneNumber = "111111111"},
-                    ReadAt = DateTime.Now,
-                    ReceivedAt = DateTime.Now,
-                    SentAt = DateTime.Now
-                },
-                new Message()
-                {
-                    Id = 5,
-                    Text = "Message alskdfj ajffa alkdfj alsdkfj aaaskdfj laskdfj skdfj lskd jskdfj lfj",
-                    To = new Phone() {Id = 1, PhoneNumber = "123123"},
-                    From = new Phone() {Id = 3, PhoneNumber = "111111111"},
-                    ReadAt = DateTime.Now,
-                    ReceivedAt = DateTime.Now,
-                    SentAt = DateTime.Now
-                },
-                new Message()
-                {
-                    Id = 5,
-                    Text = "Message alskdfj ajffa alkdfj alsdkfj aaaskdfj laskdfj skdfj lskd jskdfj lfj",
-                    To = new Phone() {Id = 1, PhoneNumber = "123123"},
-                    From = new Phone() {Id = 3, PhoneNumber = "111111111"},
-                    ReadAt = DateTime.Now,
-                    ReceivedAt = DateTime.Now,
-                    SentAt = DateTime.Now
-                },
-                new Message()
-                {
-                    Id = 5,
-                    Text = "Message alskdfj ajffa alkdfj alsdkfj aaaskdfj laskdfj skdfj lskd jskdfj lfj",
-                    To = new Phone() {Id = 1, PhoneNumber = "123123"},
-                    From = new Phone() {Id = 3, PhoneNumber = "111111111"},
-                    ReadAt = DateTime.Now,
-                    ReceivedAt = DateTime.Now,
-                    SentAt = DateTime.Now
-                },
-                new Message()
-                {
-                    Id = 5,
-                    Text = "Message alskdfj ajffa alkdfj alsdkfj aaaskdfj laskdfj skdfj lskd jskdfj lfj",
-                    To = new Phone() {Id = 1, PhoneNumber = "123123"},
-                    From = new Phone() {Id = 3, PhoneNumber = "111111111"},
-                    ReadAt = DateTime.Now,
-                    ReceivedAt = DateTime.Now,
-                    SentAt = DateTime.Now
-                },
-                new Message()
-                {
-                    Id = 5,
-                    Text = "Message alskdfj ajffa alkdfj alsdkfj aaaskdfj laskdfj skdfj lskd jskdfj lfj",
-                    To = new Phone() {Id = 1, PhoneNumber = "123123"},
-                    From = new Phone() {Id = 3, PhoneNumber = "111111111"},
-                    ReadAt = DateTime.Now,
-                    ReceivedAt = DateTime.Now,
-                    SentAt = DateTime.Now
-                },
-                new Message()
-                {
-                    Id = 5,
-                    Text = "Message alskdfj ajffa alkdfj alsdkfj aaaskdfj laskdfj skdfj lskd jskdfj lfj",
-                    To = new Phone() {Id = 1, PhoneNumber = "123123"},
-                    From = new Phone() {Id = 3, PhoneNumber = "111111111"},
-                    ReadAt = DateTime.Now,
-                    ReceivedAt = DateTime.Now,
-                    SentAt = DateTime.Now
-                },
-                new Message()
-                {
-                    Id = 5,
-                    Text = "Message alskdfj ajffa alkdfj alsdkfj aaaskdfj laskdfj skdfj lskd jskdfj lfj",
-                    To = new Phone() {Id = 1, PhoneNumber = "123123"},
-                    From = new Phone() {Id = 3, PhoneNumber = "111111111"},
-                    ReadAt = DateTime.Now,
-                    ReceivedAt = DateTime.Now,
-                    SentAt = DateTime.Now
-                },
-                new Message()
-                {
-                    Id = 5,
-                    Text = "Message alskdfj ajffa alkdfj alsdkfj aaaskdfj laskdfj skdfj lskd jskdfj lfj",
-                    To = new Phone() {Id = 1, PhoneNumber = "123123"},
-                    From = new Phone() {Id = 3, PhoneNumber = "111111111"},
-                    ReadAt = DateTime.Now,
-                    ReceivedAt = DateTime.Now,
-                    SentAt = DateTime.Now
-                },
-                new Message()
-                {
-                    Id = 5,
-                    Text = "Message alskdfj ajffa alkdfj alsdkfj aaaskdfj laskdfj skdfj lskd jskdfj lfj",
-                    To = new Phone() {Id = 1, PhoneNumber = "123123"},
-                    From = new Phone() {Id = 3, PhoneNumber = "111111111"},
-                    ReadAt = DateTime.Now,
-                    ReceivedAt = DateTime.Now,
-                    SentAt = DateTime.Now
-                },
-                new Message()
-                {
-                    Id = 5,
-                    Text = "Message alskdfj ajffa alkdfj alsdkfj aaaskdfj laskdfj skdfj lskd jskdfj lfj",
-                    To = new Phone() {Id = 1, PhoneNumber = "123123"},
-                    From = new Phone() {Id = 3, PhoneNumber = "111111111"},
-                    ReadAt = DateTime.Now,
-                    ReceivedAt = DateTime.Now,
-                    SentAt = DateTime.Now
-                },
+                }
             });
         }
 
