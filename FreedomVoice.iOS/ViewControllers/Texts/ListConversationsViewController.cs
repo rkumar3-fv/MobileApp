@@ -77,6 +77,13 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
         {
             base.ViewDidAppear(animated);
             ServiceContainer.Resolve<IContactNameProvider>().RequestContacts();
+            CallerIdEvent.CallerIdChanged += UpdateCallerId;
+        }
+
+        public override void ViewWillDisappear(bool animated)
+        {
+            base.ViewWillDisappear(animated);
+            CallerIdEvent.CallerIdChanged -= UpdateCallerId;
         }
 
         private void _SetupViews()
@@ -116,7 +123,6 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
 
         private void _SetupData()
         {
-            CallerIdEvent.CallerIdChanged += UpdateCallerId;
 
             _contactNameProvider = ServiceContainer.Resolve<IContactNameProvider>();
             _contactNameProvider.ContactsUpdated += ProviderOnContactsUpdated;

@@ -6,6 +6,7 @@ using FreedomVoice.Core.Presenters;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.TableViewSources.Texting;
 using FreedomVoice.iOS.Utilities;
+using FreedomVoice.iOS.Utilities.Events;
 using FreedomVoice.iOS.Views;
 using FreedomVoice.iOS.Views.Shared;
 using UIKit;
@@ -156,6 +157,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
         {
             View.AddGestureRecognizer(new UITapGestureRecognizer((obj) => View.EndEditing(true)));
             _callerIdView.UpdatePickerData(CurrentPhone);
+            CallerIdEvent.CallerIdChanged += CallerIdEventOnCallerIdChanged;
             _tableView.Source = new ConversationSource(_tableView);
 
             _presenter = new ConversationPresenter
@@ -166,8 +168,14 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             {
                 AppDelegate.ActivityIndicator.Hide();
             };
-//            View.AddSubview(AppDelegate.ActivityIndicator);
-//            AppDelegate.ActivityIndicator.Show();
+            View.AddSubview(AppDelegate.ActivityIndicator);
+            AppDelegate.ActivityIndicator.Show();
+            _presenter.ReloadAsync();
+        }
+
+        private void CallerIdEventOnCallerIdChanged(object sender, EventArgs e)
+        {
+            _presenter.PhoneNumber = _callerIdView.SelectedNumber.PhoneNumber;
             _presenter.ReloadAsync();
         }
     }

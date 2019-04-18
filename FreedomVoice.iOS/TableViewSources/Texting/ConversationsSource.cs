@@ -78,15 +78,12 @@ namespace FreedomVoice.iOS.TableViewSources.Texting
             ItemDidSelected?.Invoke(this, new ConversationSelectEventArgs(item.ConversationId));
         }
 
-        [Export("scrollViewDidScroll:")]
-        private void ScrollViewDidScroll(UIScrollView scrollView)
+        public override void WillDisplay(UITableView tableView, UITableViewCell cell, NSIndexPath indexPath)
         {
-            if (scrollView.ContentOffset.Y >= scrollView.ContentSize.Height - scrollView.Frame.Height - 150 && _presenter.HasMore)
+            if (indexPath.Row >= _presenter.Items.Count - 15 && _presenter.HasMore)
             {
                 _presenter.LoadMoreAsync();
             }
         }
-
-
     }
 }
