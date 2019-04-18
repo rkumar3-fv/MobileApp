@@ -16,6 +16,6 @@ namespace FreedomVoice.Core.Services.Interfaces
         /// <param name="count"></param>
         /// <param name="page"></param>
         /// <returns></returns>
-        Task<MessageListResponse> GetList(int conversationId, DateTime current, int count = 10, int page = 1);
+        Task<MessageListResponse> GetList(long conversationId, DateTime current, int count = 10, int page = 1);
     }
 }

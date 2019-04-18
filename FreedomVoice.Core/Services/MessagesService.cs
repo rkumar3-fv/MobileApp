@@ -24,7 +24,7 @@ namespace FreedomVoice.Core.Services
             _mapper = mapper;
         }
 
-        public async Task<MessageListResponse> GetList(int conversationId, DateTime current, int count = 10, int page = 1)
+        public async Task<MessageListResponse> GetList(long conversationId, DateTime current, int count = 10, int page = 1)
         {
             if (page <= 0) throw new ArgumentException(nameof(page));
             if (count <= 0) throw new ArgumentException(nameof(count));

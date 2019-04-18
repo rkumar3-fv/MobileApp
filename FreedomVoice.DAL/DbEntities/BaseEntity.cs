@@ -6,6 +6,6 @@ namespace FreedomVoice.DAL.DbEntities
 {
     public class BaseEntity
     {
-        public int Id { get; set; }
+        public long Id { get; set; }
     }
 }

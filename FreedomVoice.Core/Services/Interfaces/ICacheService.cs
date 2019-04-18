@@ -18,7 +18,7 @@ namespace FreedomVoice.Core.Services.Interfaces
         /// </summary>
         /// <param name="conversationId"></param>
         /// <param name="messages"></param>
-        void UpdateMessagesCache(int conversationId, IEnumerable<FreedomVoice.Entities.Message> messages);
+        void UpdateMessagesCache(long conversationId, IEnumerable<FreedomVoice.Entities.Message> messages);
 
         /// <summary>
         /// Updating messages cache by provided conversation and list of messages
@@ -55,7 +55,7 @@ namespace FreedomVoice.Core.Services.Interfaces
         /// <param name="limit"></param>
         /// <param name="start"></param>
         /// <returns></returns>
-        IEnumerable<Message> GetMessagesByConversation(int conversationId, int limit, int start);
+        IEnumerable<Message> GetMessagesByConversation(long conversationId, int limit, int start);
 
         /// <summary>
         /// Get last modified conversation date by <paramref name="startTime"/>

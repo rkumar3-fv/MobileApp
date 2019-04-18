@@ -30,8 +30,8 @@ namespace FreedomVoice.Core.Presenters
         public event EventHandler ItemsChanged;
         public List<IChatMessage> Items;
         public bool HasMore { get; private set; }
-        private int _conversationId;
-        public int ConversationId
+        private long _conversationId;
+        public long ConversationId
         {
             get => _conversationId;
             set

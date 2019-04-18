@@ -7,7 +7,6 @@ using FreedomVoice.Core.ViewModels;
 
 namespace FreedomVoice.Core.Presenters
 {
-
     public class ConversationsEventArgs : EventArgs
     {
         public IEnumerable<ConversationViewModel> Conversations;
@@ -28,6 +27,7 @@ namespace FreedomVoice.Core.Presenters
         private readonly DateTime _currentDate;
         private int _currentPage;
         private bool _isLoading = false;
+        private const int DEFAULT_COUNT = 25;
 
         private string _phoneNumber;
         public string PhoneNumber
@@ -71,7 +71,7 @@ namespace FreedomVoice.Core.Presenters
         {
             _isLoading = true;
             //_currentPage = 1;
-            var res = await _service.GetList(_phoneNumber, _currentDate, 50, _currentPage);
+            var res = await _service.GetList(_phoneNumber, _currentDate, DEFAULT_COUNT, _currentPage);
             HasMore = !res.IsEnd;
             //Items = new List<ConversationViewModel>();
             if (res.Conversations != null)
