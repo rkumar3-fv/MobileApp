@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.539
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreedomVoiceAndroid", "FreedomVoiceAndroid\FreedomVoiceAndroid.csproj", "{7E59F8D9-423C-448C-B809-33738074E77B}"
 EndProject
@@ -90,7 +90,9 @@ Global
 		{F4FC9F9F-082C-4F29-977A-DA7EC449BA56}.AppStore|Any CPU.ActiveCfg = Release|Any CPU
 		{F4FC9F9F-082C-4F29-977A-DA7EC449BA56}.AppStore|Any CPU.Build.0 = Release|Any CPU
 		{F4FC9F9F-082C-4F29-977A-DA7EC449BA56}.AppStore|iPhone.ActiveCfg = Release|Any CPU
+		{F4FC9F9F-082C-4F29-977A-DA7EC449BA56}.AppStore|iPhone.Build.0 = Release|Any CPU
 		{F4FC9F9F-082C-4F29-977A-DA7EC449BA56}.AppStore|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{F4FC9F9F-082C-4F29-977A-DA7EC449BA56}.AppStore|iPhoneSimulator.Build.0 = Release|Any CPU
 		{F4FC9F9F-082C-4F29-977A-DA7EC449BA56}.AppStore|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{F4FC9F9F-082C-4F29-977A-DA7EC449BA56}.AppStore|Mixed Platforms.Build.0 = Release|Any CPU
 		{F4FC9F9F-082C-4F29-977A-DA7EC449BA56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -104,7 +106,9 @@ Global
 		{F4FC9F9F-082C-4F29-977A-DA7EC449BA56}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F4FC9F9F-082C-4F29-977A-DA7EC449BA56}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F4FC9F9F-082C-4F29-977A-DA7EC449BA56}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{F4FC9F9F-082C-4F29-977A-DA7EC449BA56}.Release|iPhone.Build.0 = Release|Any CPU
 		{F4FC9F9F-082C-4F29-977A-DA7EC449BA56}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{F4FC9F9F-082C-4F29-977A-DA7EC449BA56}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
 		{F4FC9F9F-082C-4F29-977A-DA7EC449BA56}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{F4FC9F9F-082C-4F29-977A-DA7EC449BA56}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{F4FC9F9F-082C-4F29-977A-DA7EC449BA56}.Trace|Any CPU.ActiveCfg = Trace|Any CPU
@@ -164,7 +168,6 @@ Global
 		{200F3399-6907-4195-92A2-06C69E0D354C}.AppStore|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{200F3399-6907-4195-92A2-06C69E0D354C}.AppStore|Mixed Platforms.Build.0 = Release|Any CPU
 		{200F3399-6907-4195-92A2-06C69E0D354C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{200F3399-6907-4195-92A2-06C69E0D354C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{200F3399-6907-4195-92A2-06C69E0D354C}.Debug|iPhone.ActiveCfg = Debug|Any CPU
 		{200F3399-6907-4195-92A2-06C69E0D354C}.Debug|iPhone.Build.0 = Debug|Any CPU
 		{200F3399-6907-4195-92A2-06C69E0D354C}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
@@ -190,5 +193,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1D7338E1-D2E3-41D4-9A5E-0EA7A0377412}
 	EndGlobalSection
 EndGlobal

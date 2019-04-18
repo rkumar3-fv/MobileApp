@@ -69,6 +69,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         }
 
 #if !DEBUG
+
+
         protected override void OnResume()
         {
             base.OnResume();

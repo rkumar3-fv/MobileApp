@@ -5,6 +5,7 @@ using FreedomVoice.Core.Utils;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.Utilities.Helpers;
+using FreedomVoice.iOS.Views;
 using FreedomVoice.iOS.Views.Shared;
 using MRoundedButton;
 using UIKit;
@@ -60,7 +61,7 @@ namespace FreedomVoice.iOS.ViewControllers
             foreach (var item in dialData.Items)
             {
                 var buttonRect = new CGRect(item.X, item.Y, Theme.KeypadButtonDiameter, Theme.KeypadButtonDiameter);
-                var button = new RoundedButton(buttonRect, string.IsNullOrEmpty(item.Image) ? RoundedButtonStyle.Subtitle : RoundedButtonStyle.CentralImage, item.Text)
+                var button = new FVRoundedButton(buttonRect, string.IsNullOrEmpty(item.Image) ? RoundedButtonStyle.Subtitle : RoundedButtonStyle.CentralImage, item.Text)
                 {
                     BorderColor = Theme.KeypadBorderColor,
                     TextLabel = { Text = item.Text, Font = UIFont.SystemFontOfSize(Theme.KeypadButtonFontSize, UIFontWeight.Thin) },
@@ -70,6 +71,7 @@ namespace FreedomVoice.iOS.ViewControllers
                     BorderWidth = 1,
                     ContentColor = UIColor.Black
                 };
+
 
                 if (!string.IsNullOrEmpty(item.Image))
                 {                    
