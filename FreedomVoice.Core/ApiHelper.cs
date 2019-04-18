@@ -196,7 +196,7 @@ namespace FreedomVoice.Core
             return result;
         }
 
-        public static async Task<BaseResult<List<FreedomVoice.Entities.Message>>> GetMessages(int coversationId, DateTime startDate, DateTime lastUpdateDate, int start, int limit)
+        public static async Task<BaseResult<List<FreedomVoice.Entities.Message>>> GetMessages(long coversationId, DateTime startDate, DateTime lastUpdateDate, int start, int limit)
         {
             //api/v1/system/[controller]/conversations/{telephoneNumber}/{lastModify}/{start}/{limit}
             // return await MakeAsyncGetRequest<List<FreedomVoice.Entities.Response.Conversation>>(

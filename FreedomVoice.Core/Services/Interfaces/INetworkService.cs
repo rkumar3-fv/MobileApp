@@ -28,6 +28,6 @@ namespace FreedomVoice.Core.Services.Interfaces
         /// <param name="start"></param>
         /// <param name="limit"></param>
         /// <returns></returns>
-        Task<BaseResult<List<FreedomVoice.Entities.Message>>> GetMessages(int conversationId, DateTime startDate, DateTime lastUpdateDate, int start, int limit);
+        Task<BaseResult<List<FreedomVoice.Entities.Message>>> GetMessages(long conversationId, DateTime startDate, DateTime lastUpdateDate, int start, int limit);
     }
 }

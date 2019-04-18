@@ -18,9 +18,9 @@ namespace FreedomVoice.iOS.TableViewSources.Texting
 {
     public class ConversationSelectEventArgs : EventArgs
     {
-        public int ConversationId;
+        public long ConversationId;
 
-        public ConversationSelectEventArgs(int conversationId)
+        public ConversationSelectEventArgs(long conversationId)
         {
             ConversationId = conversationId;
         }

@@ -46,7 +46,7 @@ namespace FreedomVoice.Core.Services
             }
         }
 
-        public async Task<BaseResult<List<Message>>> GetMessages(int conversationId, DateTime startDate, DateTime lastUpdateDate, int start, int limit)
+        public async Task<BaseResult<List<Message>>> GetMessages(long conversationId, DateTime startDate, DateTime lastUpdateDate, int start, int limit)
         {
             try
             {

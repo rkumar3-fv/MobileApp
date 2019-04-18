@@ -127,7 +127,7 @@ namespace FreedomVoice.Core.Services
         /// </summary>
         /// <param name="conversationId"></param>
         /// <param name="messages"></param>
-        public void UpdateMessagesCache(int conversationId, IEnumerable<FreedomVoice.Entities.Message> messages)
+        public void UpdateMessagesCache(long conversationId, IEnumerable<FreedomVoice.Entities.Message> messages)
         {
             var cachedConversation = _conversationRepository.Table.Include(x => x.Messages).FirstOrDefault(x => conversationId == x.Id);
             UpdateMessagesCache(cachedConversation, messages);
@@ -178,9 +178,10 @@ namespace FreedomVoice.Core.Services
         /// <param name="limit"></param>
         /// <param name="start"></param>
         /// <returns></returns>
-        public IEnumerable<Message> GetMessagesByConversation(int conversationId, int limit, int start)
+        public IEnumerable<Message> GetMessagesByConversation(long conversationId, int limit, int start)
         {
             var conversationWithMessages = _conversationRepository.TableNoTracking.Include(x => x.Messages).FirstOrDefault(x => x.Id == conversationId);
+            if (conversationWithMessages == null) return new List<Message>();
             return conversationWithMessages.Messages.Skip(start).Take(limit);
         }
         

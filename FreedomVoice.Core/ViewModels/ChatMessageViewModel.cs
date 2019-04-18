@@ -20,7 +20,7 @@ namespace FreedomVoice.Core.ViewModels
         public ChatMessageType Type => ChatMessageType.Incoming;
 
         public string Message => _message;
-        public readonly int Id;
+        public readonly long Id;
         private string _message;
 
 
@@ -36,7 +36,7 @@ namespace FreedomVoice.Core.ViewModels
         public ChatMessageType Type => ChatMessageType.Outgoing;
 
         public string Message => _message;
-        public readonly int Id;
+        public readonly long Id;
         private string _message;
 
         public OutgoingMessageViewModel(DAL.DbEntities.Message entity)

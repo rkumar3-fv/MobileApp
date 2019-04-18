@@ -15,7 +15,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
     public partial class ConversationViewController : BaseViewController
     {
 
-        public int ConversationId;
+        public long ConversationId;
         public PresentationNumber CurrentPhone;
  
         private readonly UITableView _tableView;
