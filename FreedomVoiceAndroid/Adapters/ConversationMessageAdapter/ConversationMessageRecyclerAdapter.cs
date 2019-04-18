@@ -51,7 +51,10 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
                     (result, messages) =>
                     {
                         result.Add(new ConversationMessageDate(messages.Key));
-                        result.AddRange(messages.Select(message => new ConversationMessageItem(message, _myPhoneId)));
+                        result.AddRange(messages.Select(message => _myPhoneId == message.From.Id
+                            ? (ConversationMessageRecyclerItem) new ConversationMyMessageItem(message)
+                            : (ConversationMessageRecyclerItem) new ConversationHerMessageItem(message)));
+                        
                         return result;
                     })
                 .ToList();

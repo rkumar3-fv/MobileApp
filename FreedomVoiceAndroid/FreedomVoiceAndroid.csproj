@@ -296,8 +296,9 @@
     <Compile Include="Adapters\CallerIdSpinnerAdapter.cs" />
     <Compile Include="Adapters\ContactsRecyclerAdapter.cs" />
     <Compile Include="Adapters\ContentPagerAdapter.cs" />
+    <Compile Include="Adapters\ConversationMessageAdapter\ConversationHerMessageItem.cs" />
     <Compile Include="Adapters\ConversationMessageAdapter\ConversationMessageDate.cs" />
-    <Compile Include="Adapters\ConversationMessageAdapter\ConversationMessageItem.cs" />
+    <Compile Include="Adapters\ConversationMessageAdapter\ConversationMyMessageItem.cs" />
     <Compile Include="Adapters\ConversationMessageAdapter\ConversationMessageRecyclerAdapter.cs" />
     <Compile Include="Adapters\ConversationMessageAdapter\ConversationMessageRecyclerItem.cs" />
     <Compile Include="Adapters\ConversationRecyclerAdapter.cs" />
@@ -395,6 +396,10 @@
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
+    <AndroidResource Include="Resources\layout\item_her_message.axml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+    </AndroidResource>
     <AndroidResource Include="Resources\values\Strings.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
@@ -1511,7 +1516,7 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\bg_message_cloud_left.xml" />
-    <AndroidResource Include="Resources\layout\frag_conversation_message_item.axml" />
+    <AndroidResource Include="Resources\layout\item_my_message.axml" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\act_chat.axml" />
