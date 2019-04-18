@@ -1,12 +1,17 @@
+using System;
 using CoreGraphics;
 using UIKit;
 
 namespace FreedomVoice.iOS.Views
 {
-    public class ChatTextView: UIView
+    public class ChatTextView: UIView, IUITextViewDelegate
     {
         private UITextView _textView;
         private UIButton _button;
+        private NSLayoutConstraint _heightConstraint;
+
+        private nfloat minHeight => 36;
+        private nfloat maxHeight => 156;
 
         public ChatTextView() 
         {
@@ -18,39 +23,71 @@ namespace FreedomVoice.iOS.Views
 
         private void _setupViews()
         {
-            
+
             _textView = new UITextView(CGRect.Empty)
             {
                 TranslatesAutoresizingMaskIntoConstraints = false,
-                BackgroundColor = UIColor.Green
+                Font = UIFont.SystemFontOfSize(15),
+                ContentInset = new UIEdgeInsets(6, 8, 0, 0),
+                Delegate = this,
+                ClipsToBounds = true
             };
 
             _button = new UIButton(UIButtonType.Plain)
             {
                 TranslatesAutoresizingMaskIntoConstraints = false,
-                BackgroundColor = UIColor.Blue
+                BackgroundColor = UIColor.Green
+
             };
-            _button.SetTitle("Send", UIControlState.Normal);
+            _button.SetTitleColor(UIColor.White, UIControlState.Normal);
+            _button.SetImage(new UIImage("arrow_right"), UIControlState.Normal);
+            _button.Layer.CornerRadius = 17;
+            _button.ClipsToBounds = true;
             AddSubview(_textView);
             AddSubview(_button);
-            BackgroundColor = UIColor.Red;
+
+            _textView.Layer.CornerRadius = 18;
+            _textView.Layer.BorderWidth = 0.5f;
+            _textView.Layer.BorderColor = UIColor.LightGray.CGColor;
         }
-        
+
         private void _setupConstraints()
         {
-            _textView.TopAnchor.ConstraintEqualTo(TopAnchor, 4).Active = true;
-            _textView.LeftAnchor.ConstraintEqualTo(LeftAnchor, 4).Active = true;
-            _textView.RightAnchor.ConstraintEqualTo(RightAnchor, -4).Active = true;
-            _textView.BottomAnchor.ConstraintEqualTo(BottomAnchor, -4).Active = true;
-            _textView.HeightAnchor.ConstraintGreaterThanOrEqualTo(56).Active = true;
-            _textView.HeightAnchor.ConstraintLessThanOrEqualTo(156).Active = true;
+            _textView.TopAnchor.ConstraintEqualTo(TopAnchor, 6).Active = true;
+            _textView.LeftAnchor.ConstraintEqualTo(LeftAnchor, 6).Active = true;
+            _textView.RightAnchor.ConstraintEqualTo(_button.LeftAnchor, -8).Active = true;
+            _textView.BottomAnchor.ConstraintEqualTo(BottomAnchor, -6).Active = true;
 
-            _button.BottomAnchor.ConstraintEqualTo(BottomAnchor, 4).Active = true;
-            _button.RightAnchor.ConstraintEqualTo(RightAnchor, 4).Active = true;
-            _button.HeightAnchor.ConstraintEqualTo(40).Active = true;
-            _button.WidthAnchor.ConstraintEqualTo(40).Active = true;
+            _heightConstraint = _textView.HeightAnchor.ConstraintEqualTo(minHeight);
+            _heightConstraint.Priority = 999;
+            _heightConstraint.Active = true;
+            _textView.HeightAnchor.ConstraintLessThanOrEqualTo(maxHeight).Active = true;
+
+            _button.BottomAnchor.ConstraintEqualTo(BottomAnchor, -8).Active = true;
+            _button.RightAnchor.ConstraintEqualTo(RightAnchor, -8).Active = true;
+            _button.HeightAnchor.ConstraintEqualTo(32).Active = true;
+            _button.WidthAnchor.ConstraintEqualTo(32).Active = true;
             
         }
-        
+
+        [Foundation.Export("textViewDidChange:")]
+        public virtual void Changed(UITextView textView)
+        {
+            var fixedWidth = textView.Frame.Size.Width;
+            var newSize = textView.SizeThatFits(new CGSize(fixedWidth, nfloat.MaxValue));
+            var newHeight = newSize.Height;
+            if( newHeight < minHeight )
+            {
+                newHeight = minHeight;
+            }
+            if( newHeight > maxHeight )
+            {
+                newHeight = maxHeight;
+            }
+
+            _heightConstraint.Constant = newHeight;
+
+        }
+
     }
 }

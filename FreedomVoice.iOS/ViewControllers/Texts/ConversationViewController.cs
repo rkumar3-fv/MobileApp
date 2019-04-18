@@ -1,17 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using CoreGraphics;
+using Foundation;
 using FreedomVoice.Core.Presenters;
-using FreedomVoice.Core.Services;
-using FreedomVoice.Core.Services.Interfaces;
-using FreedomVoice.Core.Utils;
-using FreedomVoice.Core.ViewModels;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.TableViewSources.Texting;
 using FreedomVoice.iOS.Utilities;
-using FreedomVoice.iOS.Utilities.Events;
-using FreedomVoice.iOS.Utilities.Helpers;
 using FreedomVoice.iOS.Views;
 using FreedomVoice.iOS.Views.Shared;
 using UIKit;
@@ -23,13 +17,17 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
 
         public int ConversationId;
         public PresentationNumber CurrentPhone;
-
+ 
         private readonly UITableView _tableView;
         private readonly CallerIdView _callerIdView;
         private readonly LineView _lineView;
         private readonly ChatTextView _chatField;
+        private IDisposable _observer1;
+        private IDisposable _observer2;
         private ConversationPresenter _presenter;
         private static MainTabBarController MainTabBarInstance => MainTabBarController.SharedInstance;
+
+        private NSLayoutConstraint _bottomConstraint; 
 
 
         protected ConversationViewController(IntPtr handle) : base(handle)
@@ -74,11 +72,11 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             _SubscribeToKeyboard();
         }
 
-
         public override void ViewDidDisappear(bool animated)
         {
             base.ViewDidDisappear(animated);
             _UnsubscribeFromKeyboard();
+
         }
 
         private void _SetupViews()
@@ -91,15 +89,36 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
 
         private void _SubscribeToKeyboard()
         {
-//            self.notificationCenter.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
-//                self.notificationCenter.addObserver(self, selector: #selector(keyboardDidShow(_:)), name: UIResponder.keyboardDidShowNotification, object: nil)
-//                    self.notificationCenter.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
-//                        self.notificationCenter.addObserver(self, selector: #selector(keyboardWillChangeFrame(_:)), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
+            _observer1 = UIKeyboard.Notifications.ObserveWillShow(WillShowNotification);
+            _observer2 = UIKeyboard.Notifications.ObserveWillHide(WillHideNotification);
+
         }
-        
+
+        private void WillHideNotification(object sender, UIKeyboardEventArgs e)
+        {
+            UIView.BeginAnimations("AnimateForKeyboard");
+            UIView.SetAnimationBeginsFromCurrentState(true);
+            UIView.SetAnimationDuration(UIKeyboard.AnimationDurationFromNotification(e.Notification));
+            UIView.SetAnimationCurve((UIViewAnimationCurve)UIKeyboard.AnimationCurveFromNotification(e.Notification));
+            _bottomConstraint.Constant = 0;
+            UIView.CommitAnimations();
+        }
+
+        private void WillShowNotification(object sender, UIKeyboardEventArgs e)
+        {
+            var keyboardSize = e.FrameEnd.Size;
+            UIView.BeginAnimations("AnimateForKeyboard");
+            UIView.SetAnimationBeginsFromCurrentState(true);
+            UIView.SetAnimationDuration(UIKeyboard.AnimationDurationFromNotification(e.Notification));
+            UIView.SetAnimationCurve((UIViewAnimationCurve)UIKeyboard.AnimationCurveFromNotification(e.Notification));
+            _bottomConstraint.Constant = -keyboardSize.Height;
+            UIView.CommitAnimations();
+        }
+
         private void _UnsubscribeFromKeyboard()
         {
-            
+            _observer1.Dispose();
+            _observer2.Dispose();
         }
 
         private void _SetupConstraints()
@@ -120,13 +139,16 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             _tableView.TrailingAnchor.ConstraintEqualTo(View.TrailingAnchor).Active = true;
             
             _chatField.TopAnchor.ConstraintEqualTo(_tableView.BottomAnchor).Active = true;
-            _chatField.BottomAnchor.ConstraintEqualTo(View.BottomAnchor).Active = true;
+            _bottomConstraint = _chatField.BottomAnchor.ConstraintEqualTo(View.BottomAnchor);
+            _bottomConstraint.Active = true;
+            
             _chatField.LeadingAnchor.ConstraintEqualTo(View.LeadingAnchor).Active = true;
             _chatField.TrailingAnchor.ConstraintEqualTo(View.TrailingAnchor).Active = true;
         }
 
         private void _SetupData()
         {
+            View.AddGestureRecognizer(new UITapGestureRecognizer((obj) => View.EndEditing(true)));
             _callerIdView.UpdatePickerData(CurrentPhone);
             _tableView.Source = new ConversationSource(_tableView);
 
@@ -138,8 +160,8 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             {
                 AppDelegate.ActivityIndicator.Hide();
             };
-            View.AddSubview(AppDelegate.ActivityIndicator);
-            AppDelegate.ActivityIndicator.Show();
+//            View.AddSubview(AppDelegate.ActivityIndicator);
+//            AppDelegate.ActivityIndicator.Show();
             _presenter.ReloadAsync();
         }
     }
