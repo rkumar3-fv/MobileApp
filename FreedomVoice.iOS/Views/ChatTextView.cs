@@ -36,7 +36,7 @@ namespace FreedomVoice.iOS.Views
             _button = new UIButton(UIButtonType.Plain)
             {
                 TranslatesAutoresizingMaskIntoConstraints = false,
-                BackgroundColor = UIColor.Green
+                BackgroundColor = new UIColor(red: 0.37f, green: 0.81f, blue: 0.36f, alpha: 1.0f)
 
             };
             _button.SetTitleColor(UIColor.White, UIControlState.Normal);
@@ -48,7 +48,7 @@ namespace FreedomVoice.iOS.Views
 
             _textView.Layer.CornerRadius = 18;
             _textView.Layer.BorderWidth = 0.5f;
-            _textView.Layer.BorderColor = UIColor.LightGray.CGColor;
+            _textView.Layer.BorderColor = new UIColor(0.90f, 0.90f, 0.91f, 1.0f).CGColor;
         }
 
         private void _setupConstraints()

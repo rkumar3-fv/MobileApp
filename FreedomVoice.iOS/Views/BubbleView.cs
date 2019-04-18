@@ -5,8 +5,8 @@ namespace FreedomVoice.iOS.Views
 {
     public class BubbleView: UIView
     {
-        public UIColor IncomingColor = UIColor.Magenta;
-        public UIColor OutgoingColor = UIColor.Green;
+        public UIColor IncomingColor = new UIColor(red: 0.90f, green: 0.90f, blue: 0.91f, alpha: 1.0f);
+        public UIColor OutgoingColor = new UIColor(red: 0.37f, green: 0.81f, blue: 0.36f, alpha: 1.0f);
         public readonly bool IsIncoming;
 
         public BubbleView(bool isIncoming)

@@ -64,6 +64,12 @@ namespace FreedomVoice.Core.Presenters
             HasMore = false;
             _service = ServiceContainer.Resolve<IMessagesService>();
             _nameProvider = ServiceContainer.Resolve<IContactNameProvider>();
+            //var phone = new Phone
+            //{
+            //    PhoneNumber = "12431241241"
+            //};
+            //Items.Add(new IncomingMessageViewModel(new Message {Text = "test1", Id = 1, From = phone , To = phone }));
+            //Items.Add(new OutgoingMessageViewModel(new Message {Text = "test2", Id = 2, From = phone, To = phone }));
         }
 
         public async void ReloadAsync()
