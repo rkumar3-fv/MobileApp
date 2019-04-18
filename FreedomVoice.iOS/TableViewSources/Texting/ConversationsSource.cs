@@ -81,7 +81,7 @@ namespace FreedomVoice.iOS.TableViewSources.Texting
         [Export("scrollViewDidScroll:")]
         private void ScrollViewDidScroll(UIScrollView scrollView)
         {
-            if (scrollView.ContentOffset.Y >= scrollView.ContentSize.Height - 200 && _presenter.HasMore)
+            if (scrollView.ContentOffset.Y >= scrollView.ContentSize.Height - scrollView.Frame.Height - 150 && _presenter.HasMore)
             {
                 _presenter.LoadMoreAsync();
             }

@@ -62,14 +62,20 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             _SetupViews();
             _SetupConstraints();
             _SetupData();
-            TabBarController.TabBar.Hidden = true;
             AutomaticallyAdjustsScrollViewInsets = false;
         }
 
         public override void ViewDidAppear(bool animated)
         {
             base.ViewDidAppear(animated);
+            TabBarController.TabBar.Hidden = true;
             _SubscribeToKeyboard();
+        }
+
+        public override void ViewWillDisappear(bool animated)
+        {
+            base.ViewWillDisappear(animated);
+            TabBarController.TabBar.Hidden = false;
         }
 
         public override void ViewDidDisappear(bool animated)

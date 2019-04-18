@@ -24,7 +24,7 @@ namespace FreedomVoice.Core.Presenters
         public event EventHandler ItemsChanged;
         private readonly IConversationService _service;
         private readonly IContactNameProvider _nameProvider;
-        private readonly DateTime _currentDate;
+        private DateTime _currentDate;
         private int _currentPage;
         private bool _isLoading = false;
         private const int DEFAULT_COUNT = 25;
@@ -57,6 +57,10 @@ namespace FreedomVoice.Core.Presenters
 
         public async void ReloadAsync()
         {
+            if (_isLoading) return;
+            _currentDate = DateTime.Now;
+            _currentPage = 1;
+            Items = new List<ConversationViewModel>();
             await _PerformLoading();
         }
 
@@ -70,7 +74,6 @@ namespace FreedomVoice.Core.Presenters
         private async Task _PerformLoading()
         {
             _isLoading = true;
-            //_currentPage = 1;
             var res = await _service.GetList(_phoneNumber, _currentDate, DEFAULT_COUNT, _currentPage);
             HasMore = !res.IsEnd;
             //Items = new List<ConversationViewModel>();
