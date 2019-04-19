@@ -43,11 +43,13 @@ namespace FreedomVoice.iOS.TableViewSources.Texting
                     var incCell = tableView.DequeueReusableCell(IncomingMessageTableViewCell.Key) as IncomingMessageTableViewCell;
                     incCell.ContentView.Transform = CGAffineTransform.MakeScale(1, -1);
                     incCell.Text = item.Message;
+                    incCell.Time = item.Time;
                     return incCell;
                 case ChatMessageType.Outgoing:
                     var outCell = tableView.DequeueReusableCell(OutgoingMessageTableViewCell.Key) as OutgoingMessageTableViewCell;
                     outCell.ContentView.Transform = CGAffineTransform.MakeScale(1, -1);
                     outCell.Text = item.Message;
+                    outCell.Time = item.Time;
                     return outCell;
                 default:
                     throw new ArgumentOutOfRangeException();

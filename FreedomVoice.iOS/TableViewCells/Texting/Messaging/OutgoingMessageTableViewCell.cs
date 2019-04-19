@@ -36,5 +36,10 @@ namespace FreedomVoice.iOS.TableViewCells.Texting.Messaging
         {
             set => MessageLabel.Text = value;
         }
+
+        public string Time
+        {
+            set => TimeLabel.Text = value;
+        }
     }
 }

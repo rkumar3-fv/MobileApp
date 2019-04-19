@@ -18,10 +18,10 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aW4-b8-Vqk">
-                        <rect key="frame" x="0.0" y="8" width="61.5" height="70.5"/>
+                        <rect key="frame" x="8" y="8" width="61.5" height="70.5"/>
                     </imageView>
                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="EQY-US-UN1">
-                        <rect key="frame" x="16" y="16" width="37.5" height="54.5"/>
+                        <rect key="frame" x="24" y="16" width="37.5" height="54.5"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tfT-4O-9Ta">
                                 <rect key="frame" x="0.0" y="0.0" width="37.5" height="54.5"/>
@@ -31,22 +31,32 @@
                             </label>
                         </subviews>
                     </stackView>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="21m-Dj-qhr">
+                        <rect key="frame" x="77.5" y="65" width="28.5" height="13.5"/>
+                        <fontDescription key="fontDescription" type="italicSystem" pointSize="11"/>
+                        <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <nil key="highlightedColor"/>
+                    </label>
                 </subviews>
                 <constraints>
                     <constraint firstAttribute="bottom" secondItem="EQY-US-UN1" secondAttribute="bottom" constant="16" id="1Q1-YS-c36"/>
+                    <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="21m-Dj-qhr" secondAttribute="trailing" constant="8" id="8jk-fo-2sK"/>
                     <constraint firstAttribute="bottom" secondItem="aW4-b8-Vqk" secondAttribute="bottom" constant="8" id="8nW-sb-Dxw"/>
                     <constraint firstItem="EQY-US-UN1" firstAttribute="top" secondItem="oyF-5R-ikj" secondAttribute="top" constant="16" id="PBp-nC-3Ku"/>
                     <constraint firstItem="EQY-US-UN1" firstAttribute="width" relation="lessThanOrEqual" secondItem="oyF-5R-ikj" secondAttribute="width" multiplier="0.75" id="Pmg-Sk-mHJ"/>
                     <constraint firstItem="aW4-b8-Vqk" firstAttribute="top" secondItem="oyF-5R-ikj" secondAttribute="top" constant="8" id="XMT-8E-WKd"/>
+                    <constraint firstItem="21m-Dj-qhr" firstAttribute="leading" secondItem="aW4-b8-Vqk" secondAttribute="trailing" constant="8" id="ZD6-Rj-8zw"/>
+                    <constraint firstItem="21m-Dj-qhr" firstAttribute="bottom" secondItem="aW4-b8-Vqk" secondAttribute="bottom" id="cyG-45-XkT"/>
                     <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="EQY-US-UN1" secondAttribute="trailing" constant="16" id="gjp-sH-tR9"/>
-                    <constraint firstItem="EQY-US-UN1" firstAttribute="leading" secondItem="oyF-5R-ikj" secondAttribute="leading" constant="16" id="pcD-5M-hiH"/>
-                    <constraint firstItem="aW4-b8-Vqk" firstAttribute="leading" secondItem="oyF-5R-ikj" secondAttribute="leading" id="rfO-fN-gQv"/>
+                    <constraint firstItem="EQY-US-UN1" firstAttribute="leading" secondItem="oyF-5R-ikj" secondAttribute="leading" constant="24" id="pcD-5M-hiH"/>
+                    <constraint firstItem="aW4-b8-Vqk" firstAttribute="leading" secondItem="oyF-5R-ikj" secondAttribute="leading" constant="8" id="rfO-fN-gQv"/>
                     <constraint firstItem="aW4-b8-Vqk" firstAttribute="trailing" secondItem="EQY-US-UN1" secondAttribute="trailing" constant="8" id="zaA-rj-wnc"/>
                 </constraints>
             </tableViewCellContentView>
             <connections>
                 <outlet property="BubbleView" destination="aW4-b8-Vqk" id="name-outlet-aW4-b8-Vqk"/>
                 <outlet property="MessageLabel" destination="tfT-4O-9Ta" id="name-outlet-tfT-4O-9Ta"/>
+                <outlet property="TimeLabel" destination="21m-Dj-qhr" id="name-outlet-21m-Dj-qhr"/>
             </connections>
             <point key="canvasLocation" x="136" y="-72"/>
         </tableViewCell>

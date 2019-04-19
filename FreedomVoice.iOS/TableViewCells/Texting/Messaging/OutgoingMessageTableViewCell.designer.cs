@@ -21,6 +21,10 @@ namespace FreedomVoice.iOS.TableViewCells.Texting.Messaging
         [GeneratedCode ("iOS Designer", "1.0")]
         UIKit.UILabel MessageLabel { get; set; }
 
+        [Outlet]
+        [GeneratedCode ("iOS Designer", "1.0")]
+        UIKit.UILabel TimeLabel { get; set; }
+
         void ReleaseDesignerOutlets ()
         {
             if (BubbleView != null) {
@@ -31,6 +35,11 @@ namespace FreedomVoice.iOS.TableViewCells.Texting.Messaging
             if (MessageLabel != null) {
                 MessageLabel.Dispose ();
                 MessageLabel = null;
+            }
+
+            if (TimeLabel != null) {
+                TimeLabel.Dispose ();
+                TimeLabel = null;
             }
         }
     }
