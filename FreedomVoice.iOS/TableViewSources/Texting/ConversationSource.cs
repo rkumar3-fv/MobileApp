@@ -10,6 +10,7 @@ namespace FreedomVoice.iOS.TableViewSources.Texting
 {
     public class ConversationSource: UITableViewSource
     {
+        public event EventHandler NeedMoreEvent;
         private readonly UITableView _tableView;
         private List<IChatMessage> _messages = new List<IChatMessage>();
 
@@ -50,6 +51,14 @@ namespace FreedomVoice.iOS.TableViewSources.Texting
                     return outCell;
                 default:
                     throw new ArgumentOutOfRangeException();
+            }
+        }
+        
+        public override void WillDisplay(UITableView tableView, UITableViewCell cell, NSIndexPath indexPath)
+        {
+            if (indexPath.Row >= _messages.Count - 15)
+            {
+                NeedMoreEvent?.Invoke(this, null);
             }
         }
 

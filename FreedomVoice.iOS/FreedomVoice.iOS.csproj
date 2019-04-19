@@ -330,8 +330,8 @@
     </Compile>
     <InterfaceDefinition Include="TableViewCells\Texting\Messaging\OutgoingMessageTableViewCell.xib" />
     <Compile Include="TableViewSources\Texting\ConversationSource.cs" />
-    <Compile Include="TableViewCells\Texting\OutgoingMessageTableViewCell.cs" />
-    <Compile Include="TableViewCells\Texting\OutgoingMessageTableViewCell.designer.cs">
+    <Compile Include="TableViewCells\Texting\Messaging\OutgoingMessageTableViewCell.cs" />
+    <Compile Include="TableViewCells\Texting\Messaging\OutgoingMessageTableViewCell.designer.cs">
       <DependentUpon>OutgoingMessageTableViewCell.cs</DependentUpon>
     </Compile>
   </ItemGroup>

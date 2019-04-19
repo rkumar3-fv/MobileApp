@@ -13,6 +13,7 @@ namespace FreedomVoice.Core.ViewModels
     {
         ChatMessageType Type { get; }
         string Message { get; }
+        DateTime Date { get; }
     }
 
     public class IncomingMessageViewModel : IChatMessage
@@ -20,6 +21,7 @@ namespace FreedomVoice.Core.ViewModels
         public ChatMessageType Type => ChatMessageType.Incoming;
 
         public string Message => _message;
+        public DateTime Date { get; }
         public readonly long Id;
         private string _message;
 
@@ -28,6 +30,7 @@ namespace FreedomVoice.Core.ViewModels
         {
             _message = entity.Text;
             Id = entity.Id;
+            Date = entity.ReceivedAt ?? DateTime.Now;
         }
     }
 
@@ -36,6 +39,7 @@ namespace FreedomVoice.Core.ViewModels
         public ChatMessageType Type => ChatMessageType.Outgoing;
 
         public string Message => _message;
+        public DateTime Date { get; }
         public readonly long Id;
         private string _message;
 
@@ -43,6 +47,7 @@ namespace FreedomVoice.Core.ViewModels
         {
             _message = entity.Text;
             Id = entity.Id;
+            Date = entity.ReceivedAt ?? DateTime.Now;
         }
     }
 
@@ -51,6 +56,7 @@ namespace FreedomVoice.Core.ViewModels
         public ChatMessageType Type => ChatMessageType.Date;
 
         public string Message => _date.ToString("MM/dd/yyyy");
+        public DateTime Date => _date;
         private DateTime _date;
 
         public DateMessageViewModel(DateTime date) {

@@ -24,9 +24,11 @@ namespace FreedomVoice.Core.Presenters
     {
         private readonly IMessagesService _service;
         private readonly IContactNameProvider _nameProvider;
-        private readonly DateTime _currentDate;
+        private DateTime _currentDate;
         private int _currentPage;
         private bool _isLoading = false;
+        private const int DEFAULT_COUNT = 50;
+        private Dictionary<string, List<IChatMessage>> _rawData;
 
         public event EventHandler ItemsChanged;
         public List<IChatMessage> Items;
@@ -59,21 +61,14 @@ namespace FreedomVoice.Core.Presenters
 
         public ConversationPresenter()
         {
-            _currentDate = DateTime.Now;
-            _currentPage = 1;
-            HasMore = false;
+            ResetState();
             _service = ServiceContainer.Resolve<IMessagesService>();
             _nameProvider = ServiceContainer.Resolve<IContactNameProvider>();
-            //var phone = new Phone
-            //{
-            //    PhoneNumber = "12431241241"
-            //};
-            //Items.Add(new IncomingMessageViewModel(new Message {Text = "test1", Id = 1, From = phone , To = phone }));
-            //Items.Add(new OutgoingMessageViewModel(new Message {Text = "test2", Id = 2, From = phone, To = phone }));
         }
 
         public async void ReloadAsync()
         {
+            ResetState();
             await _PerformLoading();
         }
 
@@ -84,36 +79,52 @@ namespace FreedomVoice.Core.Presenters
             await _PerformLoading();
         }
 
+        private void ResetState()
+        {
+            _currentDate = DateTime.Now;
+            _currentPage = 1;
+            Items = new List<IChatMessage>();
+            _rawData = new Dictionary<string, List<IChatMessage>>();
+            HasMore = false;
+        }
+
+
         private async Task _PerformLoading()
         {
             _isLoading = true;
-            _currentPage = 1;
-            var res = await _service.GetList(_conversationId, _currentDate, 50, _currentPage);
+            var res = await _service.GetList(_conversationId, _currentDate, DEFAULT_COUNT, _currentPage);
             HasMore = !res.IsEnd;
-            Items = new List<IChatMessage>();
 
-            var groups = res.Messages.GroupBy(arg =>
+            foreach (var row in res.Messages)
             {
-                var date = arg.From.PhoneNumber.Equals(PhoneNumber) ? arg.SentAt : arg.ReceivedAt;
-                return date?.ToString("MM/dd/yyyy") ?? "";
-            });
-            foreach (var group in groups)
-            {
-                Items.Add(new DateMessageViewModel(DateTime.Parse(group.Key)));
-                foreach (var row in group.ToList()) 
+                var date = row.From.PhoneNumber.Equals(PhoneNumber) ? row.SentAt : row.ReceivedAt;
+                var dateStr = date?.ToString("MM/dd/yyyy");
+                if (dateStr == null) return;
+                var pack = _rawData.ContainsKey(dateStr) ? _rawData[dateStr] : new List<IChatMessage>();
+                if (row.From.PhoneNumber.Equals(PhoneNumber))
                 {
-                    if (row.From.PhoneNumber.Equals(PhoneNumber))
-                    {
-                        Items.Add(new OutgoingMessageViewModel(row));
-                    }
-                    else
-                    {
-                        Items.Add(new IncomingMessageViewModel(row));
-                    }
+                    pack.Add(new OutgoingMessageViewModel(row));
                 }
+                else
+                {
+                    pack.Add(new IncomingMessageViewModel(row));
+                }
+                _rawData[dateStr] = pack;
             }
-            _isLoading = false;
+
+            _updateItems();
             ItemsChanged?.Invoke(this, new ConversationCollectionEventArgs(Items));
+            _isLoading = false;
+        }
+
+        private void _updateItems()
+        {
+            Items = new List<IChatMessage>();
+            foreach (var group in _rawData)
+            {
+                Items.AddRange(group.Value);
+                Items.Add(new DateMessageViewModel(DateTime.Parse(group.Key)));
+            }
         }
     }
 }

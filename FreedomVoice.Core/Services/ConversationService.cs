@@ -36,7 +36,7 @@ namespace FreedomVoice.Core.Services
             result.ResponseCode = netConversations.Code;
             result.Message = netConversations.ErrorText;
             result.Conversations = netConversations.Result.Select(x => _mapper.Map<Conversation>(x));
-            result.IsEnd = netConversations.Result != null ? netConversations.Result.Count < count : true;
+            result.IsEnd = netConversations.Result == null || netConversations.Result.Count < count;
             return result;
         }
     }

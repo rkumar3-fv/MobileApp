@@ -159,6 +159,13 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             _callerIdView.UpdatePickerData(CurrentPhone);
             CallerIdEvent.CallerIdChanged += CallerIdEventOnCallerIdChanged;
             var source = new ConversationSource(_tableView);
+            source.NeedMoreEvent += (sender, args) =>
+            {
+                if (_presenter.HasMore)
+                {
+                    _presenter.LoadMoreAsync();
+                }
+            };
             _tableView.Source = source;
 
             _presenter = new ConversationPresenter
@@ -168,7 +175,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             _presenter.ItemsChanged += (sender, args) =>
             {
                 var items = _presenter.Items;
-                items.Reverse();
+                //items.Reverse();
                 source.UpdateItems(items);
                 AppDelegate.ActivityIndicator.Hide();
             };

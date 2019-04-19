@@ -27,7 +27,7 @@ namespace FreedomVoice.Core.Presenters
         private DateTime _currentDate;
         private int _currentPage;
         private bool _isLoading = false;
-        private const int DEFAULT_COUNT = 25;
+        private const int DEFAULT_COUNT = 50;
 
         private string _phoneNumber;
         public string PhoneNumber
@@ -84,8 +84,8 @@ namespace FreedomVoice.Core.Presenters
                     Items.Add(new ConversationViewModel(row, _nameProvider));
                 }
             }
-            _isLoading = false;
             ItemsChanged?.Invoke(this, new ConversationsEventArgs(Items));
+            _isLoading = false;
         }
     }
 }

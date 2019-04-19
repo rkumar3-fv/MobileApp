@@ -25,6 +25,12 @@ namespace FreedomVoice.iOS.TableViewCells.Texting.Messaging
         public void AwakeFromNib()
         {
             base.AwakeFromNib();
+            var image = new UIImage("bubble_received.png")
+                .CreateResizableImage(new UIEdgeInsets(17, 21, 17, 21), UIImageResizingMode.Stretch)
+                .ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate);
+            BubbleView.Image = image;
+            BubbleView.TintColor = new UIColor(0.90f, 0.90f, 0.91f, 1.0f);
+            
         }
 
 

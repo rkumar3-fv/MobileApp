@@ -15,7 +15,7 @@ namespace FreedomVoice.iOS.TableViewCells.Texting.Messaging
     {
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
-        UIKit.UIView BubbleView { get; set; }
+        UIKit.UIImageView BubbleView { get; set; }
 
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
