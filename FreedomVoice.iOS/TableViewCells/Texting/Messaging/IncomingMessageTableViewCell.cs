@@ -19,13 +19,18 @@ namespace FreedomVoice.iOS.TableViewCells.Texting.Messaging
 
         protected IncomingMessageTableViewCell(IntPtr handle) : base(handle)
         {
-            var mask = new BubbleView(false);
-            BubbleView.MaskView = mask;
         }
-        
+
+        [Export("awakeFromNib")]
+        public void AwakeFromNib()
+        {
+            base.AwakeFromNib();
+        }
+
+
         public string Text
         {
-            set => TextLabel.Text = value;
+            set => MessageLabel.Text = value;
         }
     }
 }

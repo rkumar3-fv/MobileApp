@@ -28,7 +28,7 @@ namespace FreedomVoice.iOS.Views
                     new CGPoint(width, height - 7.61));
                 bezierPath.AddLineTo(new CGPoint(width, 17));
                 bezierPath.AddCurveToPoint(new CGPoint(width - 17, 0), new CGPoint(width, 7.61), new CGPoint(width - 7.61, 0));
-                bezierPath.AddLineTo(new CGPoint(21, 0));;
+                bezierPath.AddLineTo(new CGPoint(21, 0));
                 bezierPath.AddCurveToPoint(new CGPoint(4, 17), new CGPoint(11.61, 0), new CGPoint(4, 7.61));
                 bezierPath.AddLineTo(new CGPoint(4, height - 11));
                 bezierPath.AddCurveToPoint(new CGPoint(0, height), new CGPoint(4, height - 1), new CGPoint(0, height));

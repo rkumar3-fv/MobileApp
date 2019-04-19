@@ -19,13 +19,22 @@ namespace FreedomVoice.iOS.TableViewCells.Texting.Messaging
 
         protected OutgoingMessageTableViewCell(IntPtr handle) : base(handle)
         {
-            var mask = new BubbleView(false);
-            BubbleView.MaskView = mask;
+        }
+
+        [Export("awakeFromNib")]
+        public void AwakeFromNib()
+        {
+            base.AwakeFromNib();
+            var image = new UIImage("bubble_sent.png")
+                .CreateResizableImage(new UIEdgeInsets(17, 21, 17, 21), UIImageResizingMode.Stretch)
+                .ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate);
+            BubbleView.Image = image;
+            BubbleView.TintColor = new UIColor(0.37f, 0.81f, 0.36f, 1.0f);
         }
 
         public string Text
         {
-            set => TextLabel.Text = value;
+            set => MessageLabel.Text = value;
         }
     }
 }

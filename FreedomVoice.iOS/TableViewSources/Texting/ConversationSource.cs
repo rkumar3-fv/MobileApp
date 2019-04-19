@@ -18,11 +18,11 @@ namespace FreedomVoice.iOS.TableViewSources.Texting
             _tableView = tableView;
 
             tableView.Transform = CGAffineTransform.MakeScale(1, -1);
-            var tmp = tableView.AdjustedContentInset;
 
-            tableView.RegisterNibForCellReuse(UINib.FromName("IncomingMessageTableViewCell", NSBundle.MainBundle), "IncomingCell");
-            tableView.RegisterNibForCellReuse(UINib.FromName("OutgoingMessageTableViewCell", NSBundle.MainBundle), "OutgoingCell");
-            tableView.RegisterNibForCellReuse(UINib.FromName("MessageDateTableViewCell", NSBundle.MainBundle), "DateCell");
+
+            tableView.RegisterNibForCellReuse(IncomingMessageTableViewCell.Nib, IncomingMessageTableViewCell.Key);
+            tableView.RegisterNibForCellReuse(OutgoingMessageTableViewCell.Nib, OutgoingMessageTableViewCell.Key);
+            tableView.RegisterNibForCellReuse(MessageDateTableViewCell.Nib, MessageDateTableViewCell.Key);
             tableView.RowHeight = UITableView.AutomaticDimension;
             tableView.EstimatedRowHeight = 20;
             tableView.SeparatorStyle = UITableViewCellSeparatorStyle.None;
@@ -34,21 +34,19 @@ namespace FreedomVoice.iOS.TableViewSources.Texting
             switch (item.Type)
             {
                 case ChatMessageType.Date:
-                    var dateCell = tableView.DequeueReusableCell("DateCell") as MessageDateTableViewCell;
+                    var dateCell = tableView.DequeueReusableCell(MessageDateTableViewCell.Key) as MessageDateTableViewCell;
                     dateCell.ContentView.Transform = CGAffineTransform.MakeScale(1, -1);
-                    dateCell.Date = item.ToString();
+                    dateCell.Date = item.Message;
                     return dateCell;
                 case ChatMessageType.Incoming:
-                    var incCell =
-                        tableView.DequeueReusableCell("IncomingMessageTableViewCell") as IncomingMessageTableViewCell;
+                    var incCell = tableView.DequeueReusableCell(IncomingMessageTableViewCell.Key) as IncomingMessageTableViewCell;
                     incCell.ContentView.Transform = CGAffineTransform.MakeScale(1, -1);
-                    incCell.Text = item.ToString();
+                    incCell.Text = item.Message;
                     return incCell;
                 case ChatMessageType.Outgoing:
-                    var outCell =
-                        tableView.DequeueReusableCell("OutgoingMessageTableViewCell") as OutgoingMessageTableViewCell;
+                    var outCell = tableView.DequeueReusableCell(OutgoingMessageTableViewCell.Key) as OutgoingMessageTableViewCell;
                     outCell.ContentView.Transform = CGAffineTransform.MakeScale(1, -1);
-                    outCell.Text = item.ToString();
+                    outCell.Text = item.Message;
                     return outCell;
                 default:
                     throw new ArgumentOutOfRangeException();

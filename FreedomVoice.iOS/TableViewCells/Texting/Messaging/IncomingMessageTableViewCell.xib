@@ -18,21 +18,14 @@
                 <rect key="frame" x="0.0" y="0.0" width="347" height="86"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="62Z-CW-Rw4">
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="62Z-CW-Rw4" misplaced="YES">
                         <rect key="frame" x="8" y="8" width="50" height="70.5"/>
                         <subviews>
-                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="EQY-US-UN1">
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="EQY-US-UN1" misplaced="YES">
                                 <rect key="frame" x="0.0" y="0.0" width="50" height="70.5"/>
                                 <subviews>
-                                    <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="dFy-cn-sMI">
-                                        <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="50" id="eiM-Vb-SII"/>
-                                            <constraint firstAttribute="width" constant="50" id="vov-xO-gHD"/>
-                                        </constraints>
-                                    </imageView>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tfT-4O-9Ta">
-                                        <rect key="frame" x="0.0" y="50" width="50" height="20.5"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tfT-4O-9Ta" numberOfLines="0">
+                                        <rect key="frame" x="0.0" y="0.0" width="50" height="70.5"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
@@ -58,8 +51,7 @@
             </tableViewCellContentView>
             <point key="canvasLocation" x="136" y="-72"/>
             <connections>
-                <outlet property="ImageView" destination="dFy-cn-sMI" id="name-outlet-dFy-cn-sMI"/>
-                <outlet property="TextLabel" destination="tfT-4O-9Ta" id="name-outlet-tfT-4O-9Ta"/>
+                <outlet property="MessageLabel" destination="tfT-4O-9Ta" id="name-outlet-tfT-4O-9Ta"/>
                 <outlet property="BubbleView" destination="62Z-CW-Rw4" id="name-outlet-62Z-CW-Rw4"/>
             </connections>
         </tableViewCell>

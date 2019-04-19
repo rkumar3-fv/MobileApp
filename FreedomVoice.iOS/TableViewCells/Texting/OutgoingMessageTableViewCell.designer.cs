@@ -15,15 +15,11 @@ namespace FreedomVoice.iOS.TableViewCells.Texting.Messaging
     {
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
-        UIKit.UIView BubbleView { get; set; }
+        UIKit.UIImageView BubbleView { get; set; }
 
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
-        UIKit.UIImageView ImageView { get; set; }
-
-        [Outlet]
-        [GeneratedCode ("iOS Designer", "1.0")]
-        UIKit.UILabel TextLabel { get; set; }
+        UIKit.UILabel MessageLabel { get; set; }
 
         void ReleaseDesignerOutlets ()
         {
@@ -32,14 +28,9 @@ namespace FreedomVoice.iOS.TableViewCells.Texting.Messaging
                 BubbleView = null;
             }
 
-            if (ImageView != null) {
-                ImageView.Dispose ();
-                ImageView = null;
-            }
-
-            if (TextLabel != null) {
-                TextLabel.Dispose ();
-                TextLabel = null;
+            if (MessageLabel != null) {
+                MessageLabel.Dispose ();
+                MessageLabel = null;
             }
         }
     }

@@ -329,11 +329,11 @@
       <DependentUpon>IncomingMessageTableViewCell.cs</DependentUpon>
     </Compile>
     <InterfaceDefinition Include="TableViewCells\Texting\Messaging\OutgoingMessageTableViewCell.xib" />
-    <Compile Include="TableViewCells\Texting\Messaging\OutgoingMessageTableViewCell.cs" />
-    <Compile Include="TableViewCells\Texting\Messaging\OutgoingMessageTableViewCell.designer.cs">
+    <Compile Include="TableViewSources\Texting\ConversationSource.cs" />
+    <Compile Include="TableViewCells\Texting\OutgoingMessageTableViewCell.cs" />
+    <Compile Include="TableViewCells\Texting\OutgoingMessageTableViewCell.designer.cs">
       <DependentUpon>OutgoingMessageTableViewCell.cs</DependentUpon>
     </Compile>
-    <Compile Include="TableViewSources\Texting\ConversationSource.cs" />
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\Default-568h%402x.png" />
@@ -343,6 +343,12 @@
     <BundleResource Include="Resources\disclosure%403x.png" />
     <BundleResource Include="Resources\tab_texts_active%402x.png" />
     <BundleResource Include="Resources\tab_texts_active%403x.png" />
+    <BundleResource Include="Resources\bubble_received%402x.png" />
+    <BundleResource Include="Resources\bubble_received.png" />
+    <BundleResource Include="Resources\bubble_received%403x.png" />
+    <BundleResource Include="Resources\bubble_sent%402x.png" />
+    <BundleResource Include="Resources\bubble_sent.png" />
+    <BundleResource Include="Resources\bubble_sent%403x.png" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="AutoMapper, Version=8.0.0.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">

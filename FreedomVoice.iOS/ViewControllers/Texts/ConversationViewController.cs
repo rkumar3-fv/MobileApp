@@ -37,7 +37,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             {
                 TranslatesAutoresizingMaskIntoConstraints = false,
                 TableFooterView = new UIView(),
-                ContentInset = new UIEdgeInsets(50, 0, -50, 0)
+                //ContentInset = new UIEdgeInsets(-50, 0, 50, 0)
             };
 
             _callerIdView = new CallerIdView(new RectangleF(0, 0, (float)Theme.ScreenBounds.Width, 40), MainTabBarInstance.GetPresentationNumbers())
@@ -158,7 +158,8 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             View.AddGestureRecognizer(new UITapGestureRecognizer((obj) => View.EndEditing(true)));
             _callerIdView.UpdatePickerData(CurrentPhone);
             CallerIdEvent.CallerIdChanged += CallerIdEventOnCallerIdChanged;
-            _tableView.Source = new ConversationSource(_tableView);
+            var source = new ConversationSource(_tableView);
+            _tableView.Source = source;
 
             _presenter = new ConversationPresenter
             {
@@ -166,6 +167,9 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             };
             _presenter.ItemsChanged += (sender, args) =>
             {
+                var items = _presenter.Items;
+                items.Reverse();
+                source.UpdateItems(items);
                 AppDelegate.ActivityIndicator.Hide();
             };
             View.AddSubview(AppDelegate.ActivityIndicator);
