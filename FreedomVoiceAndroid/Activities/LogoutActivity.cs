@@ -107,7 +107,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         protected void OnSetCallsPermission(View view)
         {
             if (!Appl.ApplicationHelper.CheckCallsPermission())
-                RequestPermissions(new[] { AppHelper.MakeCallsPermission }, CallsPermissionRequestId);
+                RequestPermissions(new[] { AppHelper.MakeCallsPermission, AppHelper.ReadPhoneStatePermission }, CallsPermissionRequestId);
         }
 
         protected void OnSetStatePermission(View view)

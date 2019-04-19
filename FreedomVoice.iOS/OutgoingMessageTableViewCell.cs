@@ -11,6 +11,7 @@ namespace FreedomVoice.iOS.TableViewCells.Texting.Messaging
     {
         public static readonly NSString Key = new NSString("OutgoingMessageTableViewCell");
         public static readonly UINib Nib;
+        private BubbleView _bubbleView;
 
         static OutgoingMessageTableViewCell()
         {
@@ -22,14 +23,25 @@ namespace FreedomVoice.iOS.TableViewCells.Texting.Messaging
         }
 
         [Export("awakeFromNib")]
-        public void AwakeFromNib()
+        public void AwakeFromNib() 
         {
             base.AwakeFromNib();
-            var image = new UIImage("bubble_sent.png")
-                .CreateResizableImage(new UIEdgeInsets(17, 21, 17, 21), UIImageResizingMode.Stretch)
-                .ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate);
-            BubbleView.Image = image;
-            BubbleView.TintColor = new UIColor(0.37f, 0.81f, 0.36f, 1.0f);
+            MessageLabel.Lines = 0;
+            SelectionStyle = UITableViewCellSelectionStyle.None;
+            MessageLabel.Su
+        }
+
+        public override void LayoutSubviews()
+        {
+            base.LayoutSubviews();
+
+            var bubbleSize = new CGSize(MessageLabel.Superview.Frame.Width + 20, MessageLabel.Superview.Frame.Height + 20);
+
+
+            //let bubbleView = BubbleView()
+            _bubbleView.Frame = new CGRect(-14, -10, bubbleSize.Width, bubbleSize.Height);
+            _bubbleView.Center = MessageLabel.Superview.Center;
+            _bubbleView.BackgroundColor = UIColor.Clear;
         }
 
         public string Text

@@ -77,6 +77,13 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
         {
             base.ViewDidAppear(animated);
             ServiceContainer.Resolve<IContactNameProvider>().RequestContacts();
+            CallerIdEvent.CallerIdChanged += UpdateCallerId;
+        }
+
+        public override void ViewWillDisappear(bool animated)
+        {
+            base.ViewWillDisappear(animated);
+            CallerIdEvent.CallerIdChanged -= UpdateCallerId;
         }
 
         private void _SetupViews()
@@ -116,7 +123,6 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
 
         private void _SetupData()
         {
-            CallerIdEvent.CallerIdChanged += UpdateCallerId;
 
             _contactNameProvider = ServiceContainer.Resolve<IContactNameProvider>();
             _contactNameProvider.ContactsUpdated += ProviderOnContactsUpdated;
@@ -160,14 +166,14 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
         void DataSource_ItemDidSelected(object sender, EventArgs e)
         {
 
-            if (!(e is ConversationEventArgs arg))
+            if (!(e is ConversationSelectEventArgs arg))
             {
                 return;
             }
             View.EndEditing(true);
             var controller = AppDelegate.GetViewController<ConversationViewController>();
-            controller.converstaionId = arg.ConversationId;
-            controller.currentPhone = _callerIdView.SelectedNumber;
+            controller.ConversationId = arg.ConversationId;
+            controller.CurrentPhone = _callerIdView.SelectedNumber;
             NavigationController.PushViewController(controller, true);
         }
 

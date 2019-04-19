@@ -23,6 +23,7 @@ namespace FreedomVoice.iOS.TableViewCells.Texting
         [Export("awakeFromNib")]
         public void AwakeFromNib()
         {
+            base.AwakeFromNib();
             NewMessageView.ClipsToBounds = true;
             NewMessageView.Layer.CornerRadius = NewMessageView.Frame.Height / 2;
             NewMessageView.TintColor = NewMessageView.BackgroundColor;

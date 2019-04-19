@@ -5,6 +5,7 @@ using FreedomVoice.Core.Services.Interfaces;
 using FreedomVoice.Core.Utils;
 using FreedomVoice.DAL;
 using FreedomVoice.DAL.DbEntities;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -23,7 +24,7 @@ namespace FreedomVoice.Core
             ServiceContainer.Register(mapper);
 
             FreedomVoiceContext context = new FreedomVoiceContext(dbPath);
-            context.Database.EnsureCreated();
+            context.Database.Migrate();
             ServiceContainer.Register<IDbContext>(context);
             ServiceContainer.Register<IRepository<Conversation>>(() => new EfRepository<Conversation>(ServiceContainer.Resolve<IDbContext>()));
             ServiceContainer.Register<IRepository<Phone>>(() => new EfRepository<Phone>(ServiceContainer.Resolve<IDbContext>()));
@@ -33,6 +34,8 @@ namespace FreedomVoice.Core
                 ServiceContainer.Resolve<IRepository<Message>>(), ServiceContainer.Resolve<IRepository<Phone>>(), ServiceContainer.Resolve<IMapper>()));
             ServiceContainer.Register<INetworkService>(() => new NetworkService(ServiceContainer.Resolve<ICacheService>(), ServiceContainer.Resolve<IMapper>()));
             ServiceContainer.Register<IConversationService>(() => new ConversationService(ServiceContainer.Resolve<ICacheService>(), 
+                ServiceContainer.Resolve<INetworkService>(), ServiceContainer.Resolve<IMapper>()));
+            ServiceContainer.Register<IMessagesService>(() => new MessageService(ServiceContainer.Resolve<ICacheService>(),
                 ServiceContainer.Resolve<INetworkService>(), ServiceContainer.Resolve<IMapper>()));
         }
     }

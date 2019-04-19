@@ -13,7 +13,7 @@ namespace FreedomVoice.Core.ViewModels
         public readonly string Date;
         public readonly string LastMessage;
         public readonly bool IsNew;
-        public readonly int ConversationId;
+        public readonly long ConversationId;
         private readonly IContactNameProvider _contactNameProvider;
 
 

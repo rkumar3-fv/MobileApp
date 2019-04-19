@@ -7,7 +7,6 @@ using FreedomVoice.Core.ViewModels;
 
 namespace FreedomVoice.Core.Presenters
 {
-
     public class ConversationsEventArgs : EventArgs
     {
         public IEnumerable<ConversationViewModel> Conversations;
@@ -25,9 +24,10 @@ namespace FreedomVoice.Core.Presenters
         public event EventHandler ItemsChanged;
         private readonly IConversationService _service;
         private readonly IContactNameProvider _nameProvider;
-        private readonly DateTime _currentDate;
+        private DateTime _currentDate;
         private int _currentPage;
         private bool _isLoading = false;
+        private const int DEFAULT_COUNT = 50;
 
         private string _phoneNumber;
         public string PhoneNumber
@@ -35,7 +35,7 @@ namespace FreedomVoice.Core.Presenters
             get => _phoneNumber;
             set
             {
-                if (value == _phoneNumber)
+                if (_phoneNumber != null && value == _phoneNumber)
                     return;
                 _phoneNumber = value;
 
@@ -57,6 +57,10 @@ namespace FreedomVoice.Core.Presenters
 
         public async void ReloadAsync()
         {
+            if (_isLoading) return;
+            _currentDate = DateTime.Now;
+            _currentPage = 1;
+            Items = new List<ConversationViewModel>();
             await _PerformLoading();
         }
 
@@ -70,10 +74,9 @@ namespace FreedomVoice.Core.Presenters
         private async Task _PerformLoading()
         {
             _isLoading = true;
-            _currentPage = 1;
-            var res = await _service.GetList(_phoneNumber, _currentDate, 50, _currentPage);
+            var res = await _service.GetList(_phoneNumber, _currentDate, DEFAULT_COUNT, _currentPage);
             HasMore = !res.IsEnd;
-            Items = new List<ConversationViewModel>();
+            //Items = new List<ConversationViewModel>();
             if (res.Conversations != null)
             {
                 foreach (var row in res.Conversations)
@@ -81,8 +84,8 @@ namespace FreedomVoice.Core.Presenters
                     Items.Add(new ConversationViewModel(row, _nameProvider));
                 }
             }
-            _isLoading = false;
             ItemsChanged?.Invoke(this, new ConversationsEventArgs(Items));
+            _isLoading = false;
         }
     }
 }

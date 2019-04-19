@@ -15,19 +15,10 @@ namespace FreedomVoice.iOS.TableViewCells.Texting.Messaging
     {
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
-        UIKit.UIImageView BubbleView { get; set; }
-
-        [Outlet]
-        [GeneratedCode ("iOS Designer", "1.0")]
         UIKit.UILabel MessageLabel { get; set; }
 
         void ReleaseDesignerOutlets ()
         {
-            if (BubbleView != null) {
-                BubbleView.Dispose ();
-                BubbleView = null;
-            }
-
             if (MessageLabel != null) {
                 MessageLabel.Dispose ();
                 MessageLabel = null;
