@@ -102,6 +102,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             _messageEt.TextChanged -= MessageTextChanged;
             _sendIv.Click -= ClickSend;
             _presenter.ItemsChanged -= ItemsChanged;
+            _recycler.ScrollChange -= ScrollChanged;
         }
 
         private void ScrollChanged(object sender, View.ScrollChangeEventArgs e)
@@ -109,7 +110,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             var visibleItemCount = _manager.ChildCount;
 
             var pastVisiblesItems = _manager.FindLastVisibleItemPosition();
-            if (visibleItemCount + pastVisiblesItems + 8 >= _presenter.Items.Count && _presenter.HasMore)
+            if (visibleItemCount + pastVisiblesItems + 15 >= _presenter.Items.Count && _presenter.HasMore)
             {
                 _presenter.LoadMoreAsync();
             }
