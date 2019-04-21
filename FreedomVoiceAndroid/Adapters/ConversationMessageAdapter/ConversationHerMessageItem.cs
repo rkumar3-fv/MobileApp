@@ -1,7 +1,7 @@
 using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
-using FreedomVoice.Entities;
+using FreedomVoice.Core.ViewModels;
 
 namespace com.FreedomVoice.MobileApp.Android.Adapters
 {
@@ -17,16 +17,15 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
             ContainerLl = itemView.FindViewById<LinearLayout>(Resource.Id.conversation_message_fl);
             Date = itemView.FindViewById<TextView>(Resource.Id.item_message_date);
         }
-
     }
 
     public class ConversationHerMessageItem : ConversationMessageRecyclerItem
     {
-        private readonly Message _message;
+        private readonly IChatMessage _chatMessage;
 
-        public ConversationHerMessageItem(Message message)
+        public ConversationHerMessageItem(IChatMessage chatMessage)
         {
-            _message = message;
+            _chatMessage = chatMessage;
         }
 
         public int getLayoutResId() => Resource.Layout.item_her_message;
@@ -35,8 +34,8 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
         public void Bind(RecyclerView.ViewHolder holder)
         {
             var vh = holder as ConversationHerMessageVh;
-            vh.MessageTv.SetText(_message.Text, TextView.BufferType.Normal);
-            vh.Date.SetText(_message.SentAt.ToString(), TextView.BufferType.Normal);
+            vh.MessageTv.SetText(_chatMessage.Message, TextView.BufferType.Normal);
+            vh.Date.SetText(_chatMessage.Time, TextView.BufferType.Normal);
         }
     }
 }

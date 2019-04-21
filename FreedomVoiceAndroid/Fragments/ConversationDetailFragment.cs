@@ -1,17 +1,19 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Android.Graphics;
 using Android.OS;
-using Android.Support.V4.App;
 using Android.Support.V4.Content;
+using Android.Support.V7.App;
 using Android.Support.V7.Widget;
 using Android.Text;
 using Android.Views;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Adapters;
-using FreedomVoice.Entities;
-using Message = FreedomVoice.Entities.Message;
+using FreedomVoice.Core.Presenters;
+using FreedomVoice.Core.ViewModels;
+using FreedomVoice.DAL.DbEntities;
+using Message = FreedomVoice.DAL.DbEntities.Message;
+using Toolbar = Android.Support.V7.Widget.Toolbar;
 
 namespace com.FreedomVoice.MobileApp.Android.Fragments
 {
@@ -21,20 +23,23 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         private ImageView _sendIv;
         private RecyclerView _recycler;
         private TextView _placeHolder;
-        private Spinner _spinner;
-        private TextView _singleId;
         private ConversationMessageRecyclerAdapter _adapter;
 
-        private static string EXTRA_CONVERSATION_ID = "EXTRA_CONVERSATION_ID";
-        public static ConversationDetailFragment newInstance(int conversationId)
+        private const string ExtraConversationId = "EXTRA_CONVERSATION_ID";
+        private const string ExtraConversationPhone = "EXTRA_CONVERSATION_PHONE";
+        private ConversationPresenter _presenter;
+        private LinearLayoutManager _manager;
+
+        public static ConversationDetailFragment NewInstance(long conversationId, string phone)
         {
             var fragment = new ConversationDetailFragment();
             var args = new Bundle();
-            args.PutInt(EXTRA_CONVERSATION_ID, conversationId);
+            args.PutLong(ExtraConversationId, conversationId);
+            args.PutString(ExtraConversationPhone, phone);
             fragment.Arguments = args;
             return fragment;
         }
-        
+
         protected override View InitView()
         {
             var view = Inflater.Inflate(Resource.Layout.frag_conversation_details, null, false);
@@ -47,62 +52,110 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             return view;
         }
 
+        public override void OnCreate(Bundle savedInstanceState)
+        {
+            base.OnCreate(savedInstanceState);
+            _presenter = new ConversationPresenter()
+            {
+                ConversationId = Arguments.GetLong(ExtraConversationId)
+            };
+        }
+
+        public override void OnActivityCreated(Bundle savedInstanceState)
+        {
+            base.OnActivityCreated(savedInstanceState);
+            var bar = ((AppCompatActivity) Activity).SupportActionBar;
+            bar.SetIcon(Resource.Drawable.ic_account_white);
+            bar.SetHomeAsUpIndicator(Resource.Drawable.ic_action_back);
+            bar.SetDisplayShowHomeEnabled(true);
+            bar.SetDisplayHomeAsUpEnabled(true);
+            bar.Title = Arguments.GetString(ExtraConversationPhone);
+            _presenter.PhoneNumber = Helper.SelectedAccount.PresentationNumber;
+            _presenter.ReloadAsync();
+        }
+
         public override void OnViewCreated(View view, Bundle savedInstanceState)
         {
             base.OnViewCreated(view, savedInstanceState);
             UpdateSendButton();
 
-            var manager = new LinearLayoutManager(Context);
-            manager.StackFromEnd = true;
-            _recycler.SetLayoutManager(manager);
-            _adapter = new ConversationMessageRecyclerAdapter(3);
+            _manager = new LinearLayoutManager(Context);
+            _manager.StackFromEnd = true;
+            _recycler.SetLayoutManager(_manager);
+            _adapter = new ConversationMessageRecyclerAdapter();
             _recycler.SetAdapter(_adapter);
-            _adapter.UpdateItems(new List<Message>()
-            {
-                new Message()
-                {
-                    Id = 1,
-                    Text = "Message alskdfj ajffa alkdfj alsdkfj aaaskdfj laskdfj skdfj lskd jskdfj lfj",
-                    To = new Phone() {Id = 1, PhoneNumber = "123123"},
-                    From = new Phone() {Id = 3, PhoneNumber = "111111111"},
-                    ReadAt = DateTime.Now,
-                    ReceivedAt = DateTime.Now,
-                    SentAt = DateTime.Now
-                },
-                new Message()
-                {
-                    Id = 2,
-                    Text = "Message",
-                    To = new Phone() {Id = 1, PhoneNumber = "123123"},
-                    From = new Phone() {Id = 2, PhoneNumber = "123"},
-                    ReadAt = DateTime.Now,
-                    ReceivedAt = DateTime.Now,
-                    SentAt = DateTime.Now
-                }
-            });
         }
 
         public override void OnResume()
         {
             base.OnResume();
-            _messageEt.TextChanged += OnMessageTextChanged;
-            _sendIv.Click += OnClickSend;
+            _messageEt.TextChanged += MessageTextChanged;
+            _sendIv.Click += ClickSend;
+            _presenter.ItemsChanged += ItemsChanged;
+            _recycler.ScrollChange += ScrollChanged;
+            UpdateList();
         }
 
         public override void OnPause()
         {
             base.OnPause();
-            _messageEt.TextChanged -= OnMessageTextChanged;
-            _sendIv.Click -= OnClickSend;
+            _messageEt.TextChanged -= MessageTextChanged;
+            _sendIv.Click -= ClickSend;
+            _presenter.ItemsChanged -= ItemsChanged;
         }
 
-        private void OnClickSend(object sender, EventArgs e)
+        private void ScrollChanged(object sender, View.ScrollChangeEventArgs e)
+        {
+            var visibleItemCount = _manager.ChildCount;
+
+            var pastVisiblesItems = _manager.FindLastVisibleItemPosition();
+            if (visibleItemCount + pastVisiblesItems + 8 >= _presenter.Items.Count && _presenter.HasMore)
+            {
+                _presenter.LoadMoreAsync();
+            }
+        }
+
+        private void ItemsChanged(object sender, EventArgs e) => UpdateList();
+
+        private void MessageTextChanged(object sender, TextChangedEventArgs args) => UpdateSendButton();
+
+        private void ClickSend(object sender, EventArgs e)
         {
             // todo call vm.SendMessage(_messageEt.Text)
             _messageEt.SetText("", TextView.BufferType.Editable);
         }
 
-        private void OnMessageTextChanged(Object sender, TextChangedEventArgs args) => UpdateSendButton();
+        private void UpdateList()
+        {
+            _adapter.UpdateItems(_presenter.Items);
+//            _adapter.UpdateItems(new List<IChatMessage>()
+//            {
+//                new DateMessageViewModel(DateTime.Now),
+//                new IncomingMessageViewModel(new Message()
+//                {
+//                    Id = 1,
+//                    To = new Phone() {Id = 1, PhoneNumber = "123"},
+//                    From = new Phone() {Id = 1, PhoneNumber = "321"},
+//                    Text =
+//                        "lsdkfjlskd fjsldkfj s slkjf ssd jlks jfeiofjwoiefj osiejf oisejfo isejfois jefois je foijsef sefj osiejf s sldfj sslfj slfj sljf sf",
+//                    ReadAt = DateTime.Now,
+//                    SentAt = DateTime.Now,
+//                    ReceivedAt = DateTime.Now
+//                }),
+//                new OutgoingMessageViewModel(new Message()
+//                {
+//                    Id = 1,
+//                    To = new Phone() {Id = 1, PhoneNumber = "123"},
+//                    From = new Phone() {Id = 1, PhoneNumber = "321"},
+//                    Text =
+//                        "lsdkfjlskd fjsldkfj s slkjf ssd jlks jfeiofjwoiefj osiejf oisejfo isejfois jefois je foijsef sefj osiejf s sldfj sslfj slfj sljf sf",
+//                    ReadAt = DateTime.Now,
+//                    SentAt = DateTime.Now,
+//                    ReceivedAt = DateTime.Now
+//                })
+//            });
+            _adapter.NotifyDataSetChanged();
+        }
 
         private void UpdateSendButton()
         {
