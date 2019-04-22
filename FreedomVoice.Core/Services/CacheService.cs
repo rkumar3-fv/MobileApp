@@ -180,9 +180,13 @@ namespace FreedomVoice.Core.Services
         /// <returns></returns>
         public IEnumerable<Message> GetMessagesByConversation(long conversationId, int limit, int start)
         {
-            var conversationWithMessages = _conversationRepository.TableNoTracking.Include(x => x.Messages).FirstOrDefault(x => x.Id == conversationId);
+            var conversationWithMessages = _messagesRepository.TableNoTracking
+                .Include(x => x.Conversation)
+                .Include(x => x.From)
+                .Include(x => x.To)
+                .Where(x => x.Conversation.Id == conversationId);
             if (conversationWithMessages == null) return new List<Message>();
-            return conversationWithMessages.Messages.Skip(start).Take(limit);
+            return conversationWithMessages.Skip(start).Take(limit);
         }
         
         /// <summary>

@@ -10,5 +10,6 @@ namespace FreedomVoice.DAL.DbEntities
         public DateTime? SentAt { get; set; }
         public DateTime? ReceivedAt { get; set; }
         public DateTime? ReadAt { get; set; }
+        public Conversation Conversation { get; set; }
     }
 }

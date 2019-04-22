@@ -15,7 +15,7 @@ namespace FreedomVoice.DAL.Mapping
 
             builder.HasOne(x => x.CurrentPhone);
             builder.HasOne(x => x.CollocutorPhone);
-            builder.HasMany(x => x.Messages).WithOne().IsRequired();
+            builder.HasMany(x => x.Messages).WithOne(x => x.Conversation).IsRequired();
 
             builder.ToTable("Conversation");
         }
