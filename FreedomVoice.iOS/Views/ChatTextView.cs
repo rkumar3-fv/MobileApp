@@ -23,12 +23,12 @@ namespace FreedomVoice.iOS.Views
 
         private void _setupViews()
         {
-
             _textView = new UITextView(CGRect.Empty)
             {
                 TranslatesAutoresizingMaskIntoConstraints = false,
                 Font = UIFont.SystemFontOfSize(15),
-                ContentInset = new UIEdgeInsets(6, 8, 0, 0),
+                ContentInset = UIEdgeInsets.Zero,
+                TextContainerInset = new UIEdgeInsets(8, 8, 8, 8),
                 Delegate = this,
                 ClipsToBounds = true
             };
@@ -67,7 +67,6 @@ namespace FreedomVoice.iOS.Views
             _button.RightAnchor.ConstraintEqualTo(RightAnchor, -8).Active = true;
             _button.HeightAnchor.ConstraintEqualTo(32).Active = true;
             _button.WidthAnchor.ConstraintEqualTo(32).Active = true;
-            
         }
 
         [Foundation.Export("textViewDidChange:")]
@@ -85,9 +84,8 @@ namespace FreedomVoice.iOS.Views
                 newHeight = maxHeight;
             }
 
+            if (newHeight == _heightConstraint.Constant) return;
             _heightConstraint.Constant = newHeight;
-
         }
-
     }
 }
