@@ -24,6 +24,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         private TextView _noResultText;
         private LinearLayoutManager _layoutManager;
         private ConversationsPresenter _presenter;
+        private IContactNameProvider _contactNameProvider;
 
 
         protected override View InitView()
@@ -51,8 +52,8 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             _noResultText.Click += (sender, args) => { ChatActivity.Start(Activity, 0);};
             _recyclerView.ScrollChange += (sender, args) => { onListScrolled(); };
 
-            var provider = ServiceContainer.Resolve<IContactNameProvider>();
-            provider.ContactsUpdated += ProviderOnContactsUpdated;
+            _contactNameProvider = ServiceContainer.Resolve<IContactNameProvider>();
+            _contactNameProvider.ContactsUpdated += ProviderOnContactsUpdated;
         }
 
         public override void OnActivityCreated(Bundle savedInstanceState)
