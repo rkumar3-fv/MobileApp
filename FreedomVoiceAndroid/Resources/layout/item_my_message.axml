@@ -47,6 +47,15 @@
 
         </FrameLayout>
 
+        <ImageView
+                android:id="@+id/item_her_message_iv"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_marginLeft="4dp"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_chat"
+                />
+
     </LinearLayout>
 
 
