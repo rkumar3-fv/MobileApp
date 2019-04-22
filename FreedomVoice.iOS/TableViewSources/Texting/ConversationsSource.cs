@@ -19,10 +19,12 @@ namespace FreedomVoice.iOS.TableViewSources.Texting
     public class ConversationSelectEventArgs : EventArgs
     {
         public long ConversationId;
+        public string Name;
 
-        public ConversationSelectEventArgs(long conversationId)
+        public ConversationSelectEventArgs(long conversationId, string name)
         {
             ConversationId = conversationId;
+            Name = name;
         }
     }
 
@@ -74,8 +76,9 @@ namespace FreedomVoice.iOS.TableViewSources.Texting
         public override void RowSelected(UITableView tableView, NSIndexPath indexPath)
         {
             tableView.DeselectRow(indexPath, true);
+            if (indexPath.Row >= _presenter.Items.Count) return;
             var item = _presenter.Items[indexPath.Row];
-            ItemDidSelected?.Invoke(this, new ConversationSelectEventArgs(item.ConversationId));
+            ItemDidSelected?.Invoke(this, new ConversationSelectEventArgs(item.ConversationId, item.Collocutor));
         }
 
         public override void WillDisplay(UITableView tableView, UITableViewCell cell, NSIndexPath indexPath)

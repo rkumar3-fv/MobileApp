@@ -30,6 +30,7 @@ namespace FreedomVoice.iOS.TableViewCells.Texting.Messaging
                 .ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate);
             BubbleView.Image = image;
             BubbleView.TintColor = new UIColor(0.37f, 0.81f, 0.36f, 1.0f);
+            MessageLabel.TextColor = UIColor.White;
         }
 
         public string Text

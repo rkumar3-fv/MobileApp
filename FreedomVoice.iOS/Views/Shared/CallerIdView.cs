@@ -23,6 +23,19 @@ namespace FreedomVoice.iOS.Views.Shared
         private UITextField _callerIdTextField;
         private UIImageView _dropdownImage;
 
+        private bool _isReadOnly = false;
+        public bool IsReadOnly
+        {
+            get
+            {
+                return _isReadOnly;
+            }
+            set {
+                _isReadOnly = value;
+                _dropdownImage.Hidden = _isReadOnly;
+            }
+        }
+
         public PresentationNumber SelectedNumber => _selectedPresentationNumber;
 
         public CallerIdView(RectangleF bounds, IList<PresentationNumber> numbers) : base(bounds)
@@ -92,6 +105,10 @@ namespace FreedomVoice.iOS.Views.Shared
 
             toolbar.SetItems(new[] { doneButton }, true);
 
+            _callerIdTextField.ShouldBeginEditing = t =>
+            {
+                return !_isReadOnly;
+            };
             _callerIdTextField.InputView = _pickerField;
             _callerIdTextField.InputView.BackgroundColor = UIColor.White;
             _callerIdTextField.InputAccessoryView = toolbar;

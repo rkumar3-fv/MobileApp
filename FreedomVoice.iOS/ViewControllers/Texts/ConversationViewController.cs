@@ -42,7 +42,8 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
 
             _callerIdView = new CallerIdView(new RectangleF(0, 0, (float)Theme.ScreenBounds.Width, 40), MainTabBarInstance.GetPresentationNumbers())
             {
-                TranslatesAutoresizingMaskIntoConstraints = false
+                TranslatesAutoresizingMaskIntoConstraints = false,
+                IsReadOnly = true
             };
 
 
@@ -66,10 +67,15 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             AutomaticallyAdjustsScrollViewInsets = false;
         }
 
+        public override void ViewWillAppear(bool animated)
+        {
+            base.ViewWillAppear(animated);
+            TabBarController.TabBar.Hidden = true;
+        }
+
         public override void ViewDidAppear(bool animated)
         {
             base.ViewDidAppear(animated);
-            TabBarController.TabBar.Hidden = true;
             _SubscribeToKeyboard();
         }
 
@@ -141,7 +147,6 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             _lineView.HeightAnchor.ConstraintEqualTo(0.5f).Active = true;
 
             _tableView.TopAnchor.ConstraintEqualTo(_lineView.BottomAnchor).Active = true;
-//            _tableView.BottomAnchor.ConstraintEqualTo(View.BottomAnchor).Active = true;
             _tableView.LeadingAnchor.ConstraintEqualTo(View.LeadingAnchor).Active = true;
             _tableView.TrailingAnchor.ConstraintEqualTo(View.TrailingAnchor).Active = true;
             
@@ -175,7 +180,6 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             _presenter.ItemsChanged += (sender, args) =>
             {
                 var items = _presenter.Items;
-                //items.Reverse();
                 source.UpdateItems(items);
                 AppDelegate.ActivityIndicator.Hide();
             };

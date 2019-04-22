@@ -26,7 +26,7 @@ namespace FreedomVoice.Core.Presenters
         private readonly IContactNameProvider _nameProvider;
         private DateTime _currentDate;
         private int _currentPage;
-        private bool _isLoading = false;
+        private bool _isLoading;
         private const int DEFAULT_COUNT = 50;
         private Dictionary<string, List<IChatMessage>> _rawData;
 
@@ -42,7 +42,6 @@ namespace FreedomVoice.Core.Presenters
                 if (value == _conversationId)
                     return;
                 _conversationId = value;
-
             }
         }
 
@@ -97,9 +96,10 @@ namespace FreedomVoice.Core.Presenters
 
             foreach (var row in res.Messages)
             {
+                if (row.From == null) continue;
                 var date = row.From.PhoneNumber.Equals(PhoneNumber) ? row.SentAt : row.ReceivedAt;
                 var dateStr = date?.ToString("MM/dd/yyyy");
-                if (dateStr == null) return;
+                if (dateStr == null) continue;
                 var pack = _rawData.ContainsKey(dateStr) ? _rawData[dateStr] : new List<IChatMessage>();
                 if (row.From.PhoneNumber.Equals(PhoneNumber))
                 {
