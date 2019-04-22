@@ -122,8 +122,10 @@ namespace FreedomVoice.Core.Presenters
             Items = new List<IChatMessage>();
             foreach (var group in _rawData)
             {
+                var date = DateTime.MinValue;
+                DateTime.TryParseExact(group.Key, "MM/dd/yyyy", null, System.Globalization.DateTimeStyles.None, out date);
                 Items.AddRange(group.Value);
-                Items.Add(new DateMessageViewModel(DateTime.Parse(group.Key)));
+                Items.Add(new DateMessageViewModel(date));
             }
         }
     }
