@@ -80,7 +80,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             UpdateSendButton();
 
             _manager = new LinearLayoutManager(Context);
-            _manager.StackFromEnd = true;
+            _manager.ReverseLayout = true;
             _recycler.SetLayoutManager(_manager);
             _adapter = new ConversationMessageRecyclerAdapter();
             _recycler.SetAdapter(_adapter);
