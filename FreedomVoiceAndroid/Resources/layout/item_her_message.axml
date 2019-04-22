@@ -21,7 +21,7 @@
             >
 
         <ImageView
-                android:id="@+id/item_her_message_iv"
+                android:id="@+id/item_my_message_iv"
                 android:layout_width="18dp"
                 android:layout_height="18dp"
                 android:layout_marginRight="4dp"
@@ -32,7 +32,7 @@
 
         <FrameLayout
                 android:background="@drawable/bg_message_cloud_left"
-                android:layout_toRightOf="@+id/item_her_message_iv"
+                android:layout_toRightOf="@+id/item_my_message_iv"
                 android:layout_toLeftOf="@+id/item_message_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
