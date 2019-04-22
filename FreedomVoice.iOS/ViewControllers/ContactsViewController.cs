@@ -19,7 +19,7 @@ namespace FreedomVoice.iOS.ViewControllers
     {
         protected override string PageName => "Contacts Screen";
 
-        private List<Contact> _filteredContactList;
+        protected List<Contact> _filteredContactList;
 
         private int FilteredContactsCount => _filteredContactList.Count;
 
@@ -33,11 +33,16 @@ namespace FreedomVoice.iOS.ViewControllers
         private bool _hasContactsPermissions;
         private bool _justLoaded;
 
-        private bool IsSearchMode => _contactsSearchBar?.Text.Length > 0;
+        protected bool IsSearchMode => _contactsSearchBar?.Text.Length > 0;
         private string SearchText => _contactsSearchBar?.Text;
 
-        private static MainTabBarController MainTabBarInstance => MainTabBarController.SharedInstance;
+        protected static MainTabBarController MainTabBarInstance => MainTabBarController.SharedInstance;
 
+        public ContactsViewController()
+        {
+            _filteredContactList = new List<Contact>();
+        }
+        
         public ContactsViewController(IntPtr handle) : base(handle)
         {
             _filteredContactList = new List<Contact>();
@@ -46,7 +51,8 @@ namespace FreedomVoice.iOS.ViewControllers
         public override async void ViewDidLoad()
         {
             _justLoaded = true;
-
+            View.BackgroundColor = UIColor.White;
+           
             _hasContactsPermissions = await ContactsHelper.ContactHasAccessPermissionsAsync();
             if (!_hasContactsPermissions)
             {
@@ -134,7 +140,7 @@ namespace FreedomVoice.iOS.ViewControllers
 
             _justLoaded = false;
 
-            NavigationItem.SetRightBarButtonItem(Appearance.GetLogoutBarButton(this), false);
+            SetupNavigationBarButtons();
 
             PresentationNumber selectedNumber = MainTabBarInstance.GetSelectedPresentationNumber();
             if (selectedNumber != null && _hasContactsPermissions)
@@ -148,6 +154,11 @@ namespace FreedomVoice.iOS.ViewControllers
             AppDelegate.EnableUserInteraction(UIApplication.SharedApplication);
 
             base.ViewDidAppear(animated);
+        }
+
+        protected virtual void SetupNavigationBarButtons()
+        {
+            NavigationItem.SetRightBarButtonItem(Appearance.GetLogoutBarButton(this), false);
         }
 
         private void SearchBarOnSearchButtonClicked(object sender, EventArgs e)
@@ -196,7 +207,7 @@ namespace FreedomVoice.iOS.ViewControllers
             return true;
         }
 
-        private async void TableSourceOnRowSelected(object sender, ContactSource.RowSelectedEventArgs e)
+        protected virtual async void TableSourceOnRowSelected(object sender, ContactSource.RowSelectedEventArgs e)
         {
             e.TableView.DeselectRow(e.IndexPath, false);
 

@@ -12,6 +12,7 @@ using FreedomVoice.iOS.TableViewSources.Texting;
 using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.Utilities.Events;
 using FreedomVoice.iOS.Utilities.Helpers;
+using FreedomVoice.iOS.ViewControllers.Texts.NewConversation;
 using FreedomVoice.iOS.Views.Shared;
 using UIKit;
 
@@ -93,7 +94,11 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             View.AddSubview(_tableView);
             View.AddSubview(_noItemsLabel);
 
-            var createButton = new UIBarButtonItem(UIBarButtonSystemItem.Compose, (sender, e) => { });
+            var createButton = new UIBarButtonItem(UIBarButtonSystemItem.Compose, (sender, e) =>
+            {
+                var navController = new UINavigationController(new NewConversationViewController());
+                PresentViewController(navController, true, null);
+            });
 
             NavigationItem.RightBarButtonItem = createButton;
         }

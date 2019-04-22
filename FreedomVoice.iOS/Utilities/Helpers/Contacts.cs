@@ -108,7 +108,7 @@ namespace FreedomVoice.iOS.Utilities.Helpers
             contactsList.ForEach(c => UpdateDisplayName(c));
 
             ContactList = SortContacts(contactsList);
-            ItemsChanged.Invoke(null, null);
+            ItemsChanged?.Invoke(null, null);
         }
 
         private static List<Contact> SortContacts(IEnumerable<Contact> contactsList)

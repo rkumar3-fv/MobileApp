@@ -15,6 +15,16 @@ namespace FreedomVoice.iOS.ViewControllers
         /// </param>
         protected BaseViewController(IntPtr handle) : base(handle)
         {
+            InternalInit();
+        }
+
+        protected BaseViewController()
+        {
+            InternalInit();
+        }
+
+        protected virtual void InternalInit()
+        {
             Gai.SharedInstance.DefaultTracker.Set(GaiConstants.ScreenName, PageName);
             Gai.SharedInstance.DefaultTracker.Send(DictionaryBuilder.CreateScreenView().Build());
 

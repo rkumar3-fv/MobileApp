@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Drawing;
 using CoreGraphics;
-using Foundation;
 using FreedomVoice.Core.Presenters;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.TableViewSources.Texting;
@@ -15,47 +14,48 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
 {
     public partial class ConversationViewController : BaseViewController
     {
+        #region Subviews
+        private readonly UITableView _tableView = new UITableView
+        {
+            TranslatesAutoresizingMaskIntoConstraints = false,
+            TableFooterView = new UIView(),
+            //ContentInset = new UIEdgeInsets(-50, 0, 50, 0)
+        };
+        
+        protected readonly CallerIdView _callerIdView = new CallerIdView(new RectangleF(0, 0, (float)Theme.ScreenBounds.Width, 40), MainTabBarInstance.GetPresentationNumbers())
+        {
+            TranslatesAutoresizingMaskIntoConstraints = false,
+            IsReadOnly = true
+        };
+    
+        private readonly LineView _lineView = new LineView(CGRect.Empty)
+        {
+            TranslatesAutoresizingMaskIntoConstraints = false
+        };
+        
+        private readonly ChatTextView _chatField = new ChatTextView
+        {
+            TranslatesAutoresizingMaskIntoConstraints = false
+        };
+        
+        #endregion
 
         public long ConversationId;
         public PresentationNumber CurrentPhone;
- 
-        private readonly UITableView _tableView;
-        private readonly CallerIdView _callerIdView;
-        private readonly LineView _lineView;
-        private readonly ChatTextView _chatField;
+  
         private IDisposable _observer1;
         private IDisposable _observer2;
         private ConversationPresenter _presenter;
         private static MainTabBarController MainTabBarInstance => MainTabBarController.SharedInstance;
 
-        private NSLayoutConstraint _bottomConstraint; 
+        private NSLayoutConstraint _bottomConstraint;
 
+        protected ConversationViewController()
+        {
+        }
 
         protected ConversationViewController(IntPtr handle) : base(handle)
         {
-            _tableView = new UITableView
-            {
-                TranslatesAutoresizingMaskIntoConstraints = false,
-                TableFooterView = new UIView(),
-                //ContentInset = new UIEdgeInsets(-50, 0, 50, 0)
-            };
-
-            _callerIdView = new CallerIdView(new RectangleF(0, 0, (float)Theme.ScreenBounds.Width, 40), MainTabBarInstance.GetPresentationNumbers())
-            {
-                TranslatesAutoresizingMaskIntoConstraints = false,
-                IsReadOnly = true
-            };
-
-
-            _lineView = new LineView(CGRect.Empty)
-            {
-                TranslatesAutoresizingMaskIntoConstraints = false
-            };
-
-            _chatField = new ChatTextView
-            {
-                TranslatesAutoresizingMaskIntoConstraints = false
-            };
         }
 
         public override void ViewDidLoad()
@@ -70,7 +70,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
         public override void ViewWillAppear(bool animated)
         {
             base.ViewWillAppear(animated);
-            TabBarController.TabBar.Hidden = true;
+            if (TabBarController != null) TabBarController.TabBar.Hidden = true;
         }
 
         public override void ViewDidAppear(bool animated)
@@ -82,7 +82,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
         public override void ViewWillDisappear(bool animated)
         {
             base.ViewWillDisappear(animated);
-            TabBarController.TabBar.Hidden = false;
+            if (TabBarController != null) TabBarController.TabBar.Hidden = false;
         }
 
         public override void ViewDidDisappear(bool animated)
@@ -92,20 +92,30 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
 
         }
 
-        private void _SetupViews()
+        protected virtual void _SetupViews()
         {
+            View.BackgroundColor = UIColor.White;
+            
             View.AddSubview(_callerIdView);
             View.AddSubview(_lineView);
             View.AddSubview(_chatField);
             View.AddSubview(_tableView);
         }
 
-        private void _SubscribeToKeyboard()
+        protected virtual void _SubscribeToKeyboard()
         {
             _observer1 = UIKeyboard.Notifications.ObserveWillShow(WillShowNotification);
             _observer2 = UIKeyboard.Notifications.ObserveWillHide(WillHideNotification);
-
+            _chatField.SendButtonPressed += SendButtonPressed;
         }
+        
+        private void _UnsubscribeFromKeyboard()
+        {
+            _observer1.Dispose();
+            _observer2.Dispose();
+            _chatField.SendButtonPressed -= SendButtonPressed;
+        }
+        
 
         private void WillHideNotification(object sender, UIKeyboardEventArgs e)
         {
@@ -128,13 +138,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             UIView.CommitAnimations();
         }
 
-        private void _UnsubscribeFromKeyboard()
-        {
-            _observer1.Dispose();
-            _observer2.Dispose();
-        }
-
-        private void _SetupConstraints()
+        protected virtual void _SetupConstraints()
         {
             _callerIdView.TopAnchor.ConstraintEqualTo(View.TopAnchor).Active = true;
             _callerIdView.LeadingAnchor.ConstraintEqualTo(View.LeadingAnchor).Active = true;
@@ -158,7 +162,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             _chatField.TrailingAnchor.ConstraintEqualTo(View.TrailingAnchor).Active = true;
         }
 
-        private void _SetupData()
+        protected virtual void _SetupData()
         {
             View.AddGestureRecognizer(new UITapGestureRecognizer((obj) => View.EndEditing(true)));
             _callerIdView.UpdatePickerData(CurrentPhone);
@@ -186,6 +190,11 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             View.AddSubview(AppDelegate.ActivityIndicator);
             AppDelegate.ActivityIndicator.Show();
             _presenter.ReloadAsync();
+        }
+        
+        protected virtual void SendButtonPressed()
+        {
+            // TODO SEND LOGIC HERE
         }
 
         private void CallerIdEventOnCallerIdChanged(object sender, EventArgs e)
