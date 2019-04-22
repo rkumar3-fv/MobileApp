@@ -43,22 +43,16 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             base.OnViewCreated(view, savedInstanceState);
             _adapter = new ConversationRecyclerAdapter((sender, account) =>
             {
-                //    /* todo delegate to vm.onClickItem */
+                ChatActivity.Start(Activity, account.ConversationId, account.Collocutor);
             });
             _layoutManager = new LinearLayoutManager(Context);
             _recyclerView.SetLayoutManager(_layoutManager);
             _recyclerView.AddItemDecoration(new DividerItemDecorator(Activity, Resource.Drawable.divider));
             _recyclerView.SetAdapter(_adapter);
-            _noResultText.Click += (sender, args) => { ChatActivity.Start(Activity, 0);};
             _recyclerView.ScrollChange += (sender, args) => { onListScrolled(); };
 
             _contactNameProvider = ServiceContainer.Resolve<IContactNameProvider>();
             _contactNameProvider.ContactsUpdated += ProviderOnContactsUpdated;
-        }
-
-        public override void OnActivityCreated(Bundle savedInstanceState)
-        {
-            base.OnActivityCreated(savedInstanceState);
         }
 
         protected override void OnHelperEvent(ActionsHelperEventArgs args)

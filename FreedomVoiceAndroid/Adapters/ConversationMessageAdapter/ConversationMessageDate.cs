@@ -19,11 +19,11 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
 
     public class ConversationMessageDate : ConversationMessageRecyclerItem
     {
-        private readonly DateTime? _dateTime;
+        private readonly string _dateTimeText;
 
-        public ConversationMessageDate(DateTime? dateTime)
+        public ConversationMessageDate(string dateTime)
         {
-            _dateTime = dateTime?.Date;
+            _dateTimeText = dateTime;
         }
 
         public int getLayoutResId() => Resource.Layout.frag_conversation_message_date;
@@ -34,7 +34,7 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
         {
             var vh = holder as ConversationMessageDateVh;
 
-            vh.DateTv.SetText(_dateTime.ToString(), TextView.BufferType.Normal);
+            vh.DateTv.SetText(_dateTimeText, TextView.BufferType.Normal);
         }
     }
 }

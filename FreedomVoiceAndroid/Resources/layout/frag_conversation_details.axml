@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:background="@color/colorBackground"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -72,35 +71,46 @@
             android:paddingBottom="@dimen/fragment_msg_element_padding"
             android:clipToPadding="false"/>
 
-    <RelativeLayout
+    <LinearLayout
             android:id="@+id/conversationDetailsFragment_write_lock"
-            android:layout_alignParentBottom="true"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
             android:layout_width="match_parent"
+            android:layout_alignParentBottom="true"
+            android:orientation="vertical"
             android:layout_height="wrap_content">
 
-        <EditText
-                android:id="@+id/conversationDetailsFragment_et_message"
+        <View
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                style="@style/ConversationMessageEt"
-                android:hint="@string/ConversationDetails_message"
-                android:layout_toLeftOf="@+id/conversationDetailsFragment_iv_send"
-                />
+                android:layout_height="1dp"
+                android:background="@color/colorBackgroundProgress"/>
 
-        <ImageView
-                android:id="@+id/conversationDetailsFragment_iv_send"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_centerVertical="true"
+        <RelativeLayout
                 android:layout_marginLeft="8dp"
-                android:visibility="visible"
-                android:src="@drawable/ic_send_folder"
-                android:layout_alignParentRight="true"
-                />
+                android:layout_marginRight="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-    </RelativeLayout>
+            <EditText
+                    android:id="@+id/conversationDetailsFragment_et_message"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/ConversationMessageEt"
+                    android:hint="@string/ConversationDetails_message"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@+id/conversationDetailsFragment_iv_send"
+                    />
 
+            <ImageView
+                    android:id="@+id/conversationDetailsFragment_iv_send"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="8dp"
+                    android:visibility="visible"
+                    android:src="@drawable/ic_send_folder"
+                    android:layout_alignParentRight="true"
+                    />
+
+        </RelativeLayout>
+    </LinearLayout>
 
 </RelativeLayout>

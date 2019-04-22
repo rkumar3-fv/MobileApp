@@ -1,24 +1,16 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using Android.Runtime;
 using Android.Support.V7.Widget;
 using Android.Views;
-using FreedomVoice.Entities;
+using FreedomVoice.Core.ViewModels;
 using Java.Lang;
 
 namespace com.FreedomVoice.MobileApp.Android.Adapters
 {
     public partial class ConversationMessageRecyclerAdapter : RecyclerView.Adapter
     {
-        private readonly int _myPhoneId;
         private List<ConversationMessageRecyclerItem> _items = new List<ConversationMessageRecyclerItem>();
-
-        public ConversationMessageRecyclerAdapter(int myPhoneId)
-        {
-            _myPhoneId = myPhoneId;
-        }
 
         public override int ItemCount => _items.Count;
 
@@ -43,18 +35,26 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
             throw new IllegalStateException($"no have items with viewType = ${viewType}");
         }
 
-        public void UpdateItems(List<Message> newItems)
+        public void UpdateItems(IEnumerable<IChatMessage> newItems)
         {
             _items = newItems
-                .GroupBy(message => message.SentAt?.Date)
                 .Aggregate(new List<ConversationMessageRecyclerItem>(),
-                    (result, messages) =>
+                    (result, message) =>
                     {
-                        result.Add(new ConversationMessageDate(messages.Key));
-                        result.AddRange(messages.Select(message => _myPhoneId == message.From.Id
-                            ? (ConversationMessageRecyclerItem) new ConversationMyMessageItem(message)
-                            : (ConversationMessageRecyclerItem) new ConversationHerMessageItem(message)));
-                        
+                        switch (message.Type)
+                        {
+                            case ChatMessageType.Date:
+                                result.Add(new ConversationMessageDate(message.Message));
+                                break;
+                            case ChatMessageType.Incoming:
+                                result.Add(new ConversationHerMessageItem(message));
+                                break;
+                            case ChatMessageType.Outgoing:
+                                result.Add(new ConversationMyMessageItem(message));
+                                break;
+                            default:
+                                throw new ArgumentOutOfRangeException();
+                        }
                         return result;
                     })
                 .ToList();

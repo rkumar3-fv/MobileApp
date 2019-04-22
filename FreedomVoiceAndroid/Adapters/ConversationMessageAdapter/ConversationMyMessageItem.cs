@@ -1,7 +1,7 @@
 using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
-using FreedomVoice.Entities;
+using FreedomVoice.Core.ViewModels;
 
 namespace com.FreedomVoice.MobileApp.Android.Adapters
 {
@@ -21,11 +21,11 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
 
     public class ConversationMyMessageItem : ConversationMessageRecyclerItem
     {
-        private readonly Message _message;
+        private readonly IChatMessage _chatMessage;
 
-        public ConversationMyMessageItem(Message message)
+        public ConversationMyMessageItem(IChatMessage chatMessage)
         {
-            _message = message;
+            _chatMessage = chatMessage;
         }
 
         public int getLayoutResId() => Resource.Layout.item_my_message;
@@ -34,8 +34,8 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
         public void Bind(RecyclerView.ViewHolder holder)
         {
             var vh = holder as ConversationMyMessageVh;
-            vh.MessageTv.SetText(_message.Text, TextView.BufferType.Normal);
-            vh.Date.SetText(_message.SentAt.ToString(), TextView.BufferType.Normal);
+            vh.MessageTv.SetText(_chatMessage.Message, TextView.BufferType.Normal);
+            vh.Date.SetText(_chatMessage.Time, TextView.BufferType.Normal);
         }
     }
 }
