@@ -48,17 +48,19 @@ namespace FreedomVoice.iOS.ViewControllers.Texts.NewConversation
 
 		private void ConfigureSubviews()
 		{
-			BackgroundColor = UIColor.FromRGB(245, 245, 245);
+			BackgroundColor = UIColor.FromRGB(250, 250, 250);
 
 			_prefixLabel.Font = UIFont.SystemFontOfSize(16);
 			_prefixLabel.TextColor = UIColor.Gray;
 			_prefixLabel.Text = "To:";
-			
+
+
+			var addContactButtonColor = UIColor.FromRGB(74, 152, 247);
 			_addContactButton.SetTitle("+", UIControlState.Normal);
 			_addContactButton.Font = UIFont.SystemFontOfSize(16);
-			_addContactButton.SetTitleColor(UIColor.Blue, UIControlState.Normal);
+			_addContactButton.SetTitleColor(addContactButtonColor, UIControlState.Normal);
 			_addContactButton.Layer.CornerRadius = _addContactButtonSize / 2;
-			_addContactButton.Layer.BorderColor = UIColor.Blue.CGColor;
+			_addContactButton.Layer.BorderColor = addContactButtonColor.CGColor;
 			_addContactButton.Layer.BorderWidth = 1;
 		}
 
