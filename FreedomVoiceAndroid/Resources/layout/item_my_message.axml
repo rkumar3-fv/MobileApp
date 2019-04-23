@@ -51,14 +51,17 @@
 
         </FrameLayout>
 
-        <TextView
-                android:id="@+id/item_message_date"
-                tools:text="23:23"
-                android:layout_marginRight="4dp"
-                android:layout_alignParentBottom="true"
-                android:textColor="@color/colorChatTextSecondary"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+		<TextView
+			android:id="@+id/item_message_date"
+			tools:text="23:23"
+			android:layout_marginRight="4dp"
+			android:textColor="@color/colorChatTextSecondary"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_centerVertical="true"
+            android:textStyle="italic"
+            android:textSize="12sp"
+        />
 
     </RelativeLayout>
 

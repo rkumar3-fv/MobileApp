@@ -49,17 +49,19 @@
 
         </FrameLayout>
 
-        <TextView
-                android:id="@+id/item_message_date"
-                tools:text="02.03.2019 23:23"
-                android:layout_marginLeft="4dp"
-                android:layout_gravity="bottom"
-                android:lines="1"
-                android:textColor="@color/colorChatTextSecondary"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentRight="true"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+		<TextView
+			android:id="@+id/item_message_date"
+			tools:text="02.03.2019 23:23"
+			android:layout_marginLeft="4dp"
+			android:layout_gravity="center_vertical"
+			android:lines="1"
+			android:textColor="@color/colorChatTextSecondary"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentRight="true"
+            android:textStyle="italic"
+            android:textSize="12sp"
+			android:layout_centerVertical="true" />
 
     </RelativeLayout>
 
