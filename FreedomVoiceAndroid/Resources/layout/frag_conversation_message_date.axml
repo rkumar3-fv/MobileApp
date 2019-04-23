@@ -5,7 +5,7 @@
         android:id="@+id/frag_conversation_message_date_tv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="#989898"
+        android:textColor="@color/colorChatTextSecondary"
         android:gravity="center"
         tools:text="02/02/2020"
         />

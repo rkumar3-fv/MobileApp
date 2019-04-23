@@ -27,6 +27,7 @@
                 android:layout_marginRight="4dp"
                 android:layout_centerVertical="true"
                 android:layout_alignParentLeft="true"
+                android:visibility="gone"
                 android:src="@drawable/ic_account_black"
                 />
 
@@ -54,8 +55,7 @@
                 android:layout_marginLeft="4dp"
                 android:layout_gravity="bottom"
                 android:lines="1"
-                android:textColor="#020202"
-                android:visibility="gone"
+                android:textColor="@color/colorChatTextSecondary"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
                 android:layout_width="wrap_content"

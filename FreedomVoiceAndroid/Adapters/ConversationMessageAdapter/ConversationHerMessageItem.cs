@@ -8,13 +8,11 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
     internal class ConversationHerMessageVh : RecyclerView.ViewHolder
     {
         public readonly TextView MessageTv;
-        public readonly LinearLayout ContainerLl;
         public readonly TextView Date;
 
         public ConversationHerMessageVh(View itemView) : base(itemView)
         {
             MessageTv = itemView.FindViewById<TextView>(Resource.Id.conversation_message_tv);
-            ContainerLl = itemView.FindViewById<LinearLayout>(Resource.Id.conversation_message_fl);
             Date = itemView.FindViewById<TextView>(Resource.Id.item_message_date);
         }
     }

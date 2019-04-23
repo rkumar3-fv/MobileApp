@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Android.Content;
 using Android.OS;
+using Android.Support.V4.Widget;
 using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
@@ -9,9 +9,7 @@ using com.FreedomVoice.MobileApp.Android.Activities;
 using com.FreedomVoice.MobileApp.Android.Adapters;
 using com.FreedomVoice.MobileApp.Android.CustomControls;
 using com.FreedomVoice.MobileApp.Android.Helpers;
-using com.FreedomVoice.MobileApp.Android.Utils;
 using FreedomVoice.Core.Presenters;
-using FreedomVoice.Core.Services;
 using FreedomVoice.Core.Utils;
 using FreedomVoice.Core.ViewModels;
 
@@ -25,11 +23,12 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         private LinearLayoutManager _layoutManager;
         private ConversationsPresenter _presenter;
         private IContactNameProvider _contactNameProvider;
-
+        private SwipeRefreshLayout _swipeToRefresh;
 
         protected override View InitView()
         {
             var view = Inflater.Inflate(Resource.Layout.frag_conversations, null, false);
+            _swipeToRefresh = view.FindViewById<SwipeRefreshLayout>(Resource.Id.conversationFragment_swipeRefresh);
             _recyclerView = view.FindViewById<RecyclerView>(Resource.Id.conversationFragment_recyclerView);
             _noResultText = view.FindViewById<TextView>(Resource.Id.conversationFragment_noResultText);
             IdSpinner = view.FindViewById<Spinner>(Resource.Id.contatnsFragment_idSpinner);
@@ -49,10 +48,15 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             _recyclerView.SetLayoutManager(_layoutManager);
             _recyclerView.AddItemDecoration(new DividerItemDecorator(Activity, Resource.Drawable.divider));
             _recyclerView.SetAdapter(_adapter);
-            _recyclerView.ScrollChange += (sender, args) => { onListScrolled(); };
+            _recyclerView.NestedScrollingEnabled = false;
+            _recyclerView.ScrollChange += (sender, args) => { ListScrolled(); };
 
             _contactNameProvider = ServiceContainer.Resolve<IContactNameProvider>();
             _contactNameProvider.ContactsUpdated += ProviderOnContactsUpdated;
+
+            _swipeToRefresh.Refresh += SwipeRefresh;
+            var provider = ServiceContainer.Resolve<IContactNameProvider>();
+            provider.ContactsUpdated += ProviderOnContactsUpdated;
         }
 
         protected override void OnHelperEvent(ActionsHelperEventArgs args)
@@ -63,9 +67,11 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             {
                 if (code != ActionsHelperEventArgs.ChangePresentation) continue;
 
-                _presenter = new ConversationsPresenter() { PhoneNumber = this.Helper?.SelectedAccount?.PresentationNumber };
+                _presenter = new ConversationsPresenter()
+                    {PhoneNumber = Helper?.SelectedAccount?.PresentationNumber};
                 _presenter.ItemsChanged += (sender, e) =>
                 {
+                    _swipeToRefresh.Refreshing = false;
                     UpdateList(_presenter.Items);
                 };
 
@@ -78,12 +84,17 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             UpdateList(_presenter.Items);
         }
 
-        private void onListScrolled()
+        private void SwipeRefresh(object sender, EventArgs e)
+        {
+            _presenter.ReloadAsync();
+        }
+
+        private void ListScrolled()
         {
             var visibleItemCount = _layoutManager.ChildCount;
 
-            var pastVisiblesItems = _layoutManager.FindLastVisibleItemPosition();
-            if (visibleItemCount + pastVisiblesItems + 8 >= _presenter.Items.Count && _presenter.HasMore)
+            var pastVisibleItems = _layoutManager.FindLastVisibleItemPosition();
+            if (visibleItemCount + pastVisibleItems + 8 >= _presenter.Items.Count && _presenter.HasMore)
             {
                 _presenter.LoadMoreAsync();
             }

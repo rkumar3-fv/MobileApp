@@ -48,26 +48,45 @@
         </RelativeLayout>
     </LinearLayout>
 
-    <TextView
-            android:id="@+id/conversationFragment_noResultText"
-            style="@style/ListBackgroundText"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_horizontal"
-            android:text="@string/FragmentConversations_empty"
-            android:layout_below="@id/contactsFragment_spinnerArea"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="@dimen/content_activity_no_res_margin"
-            android:visibility="gone" />
-
-    <android.support.v7.widget.RecyclerView
-            android:id="@+id/conversationFragment_recyclerView"
-            style="@style/ScrollTheme"
+    <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/conversationFragment_swipeRefresh"
+            android:layout_alignParentBottom="true"
             android:layout_below="@+id/contactsFragment_spinnerArea"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingTop="@dimen/fragment_msg_element_padding"
-            android:paddingBottom="@dimen/fragment_msg_element_padding"
-            android:clipToPadding="false"/>
+            android:layout_height="match_parent">
+
+        <android.support.v4.widget.NestedScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                <TextView
+                        android:id="@+id/conversationFragment_noResultText"
+                        style="@style/ListBackgroundText"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center_horizontal"
+                        android:text="@string/FragmentConversations_empty"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="@dimen/content_activity_no_res_margin"
+                        android:visibility="gone"/>
+
+                <android.support.v7.widget.RecyclerView
+                        android:id="@+id/conversationFragment_recyclerView"
+                        style="@style/ScrollTheme"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:paddingTop="@dimen/fragment_msg_element_padding"
+                        android:paddingBottom="@dimen/fragment_msg_element_padding"
+                        android:clipToPadding="false"/>
+                
+            </FrameLayout>
+        
+        </android.support.v4.widget.NestedScrollView>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 
 </RelativeLayout>
