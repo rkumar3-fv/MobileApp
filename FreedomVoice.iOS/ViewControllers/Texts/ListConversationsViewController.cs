@@ -28,6 +28,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
         private static MainTabBarController MainTabBarInstance => MainTabBarController.SharedInstance;
         private ConversationsPresenter _presenter;
         private IContactNameProvider _contactNameProvider;
+        private UIRefreshControl _refreshControl;
 
         public ListConversationsViewController(IntPtr handle) : base(handle)
         {
@@ -57,6 +58,10 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             {
                 TranslatesAutoresizingMaskIntoConstraints = false
             };
+
+            _refreshControl = new UIRefreshControl();
+            _refreshControl.ValueChanged += _refreshControlValueChanged;
+
         }
 
         public override void ViewDidLoad()
@@ -96,6 +101,15 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             var createButton = new UIBarButtonItem(UIBarButtonSystemItem.Compose, (sender, e) => { });
 
             NavigationItem.RightBarButtonItem = createButton;
+
+            if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0))
+            {
+                _tableView.RefreshControl = _refreshControl;
+            }
+            else 
+            {
+                _tableView.AddSubview(_refreshControl);
+            }
         }
 
         private void _SetupConstraints()
@@ -119,6 +133,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             _tableView.BottomAnchor.ConstraintEqualTo(View.BottomAnchor).Active = true;
             _tableView.LeadingAnchor.ConstraintEqualTo(View.LeadingAnchor).Active = true;
             _tableView.TrailingAnchor.ConstraintEqualTo(View.TrailingAnchor).Active = true;
+
         }
 
         private void _SetupData()
@@ -133,6 +148,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             };
             _presenter.ItemsChanged += (sender, args) =>
             {
+                _refreshControl.EndRefreshing();
                 _noItemsLabel.Hidden = _presenter.Items.Count > 0;
                 AppDelegate.ActivityIndicator.Hide();
             };
@@ -145,8 +161,14 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             _presenter.ReloadAsync();
         }
 
+        void _refreshControlValueChanged(object sender, EventArgs e)
+        {
+            _reloadData();
+        }
+
         private void ProviderOnContactsUpdated(object sender, EventArgs e)
         {
+            _refreshControl.EndRefreshing();
             _tableView.ReloadData();
             _contactNameProvider.ContactsUpdated -= ProviderOnContactsUpdated;
             AppDelegate.ActivityIndicator.Hide();
@@ -158,6 +180,11 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             if (selectedPresentationNumber == null)
                 return;
             _presenter.PhoneNumber = selectedPresentationNumber.PhoneNumber;
+            _reloadData();
+        }
+
+        private void _reloadData()
+        {
             View.AddSubview(AppDelegate.ActivityIndicator);
             AppDelegate.ActivityIndicator.Show();
             _presenter.ReloadAsync();

@@ -52,13 +52,17 @@ namespace FreedomVoice.iOS.TableViewSources.Texting
         public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
         {
             var cell = tableView.DequeueReusableCell("cell") as ConversationItemTableViewCell;
-            var item = _presenter.Items[indexPath.Row];
-
             Debug.Assert(cell != null, nameof(cell) + " != null");
-            cell.Title = item.Collocutor;
-            cell.Detail = item.LastMessage;
-            cell.Date = item.Date;
-            cell.isNew = item.IsNew;
+
+            if (indexPath.Row < _presenter.Items.Count)
+            {
+                var item = _presenter.Items[indexPath.Row];
+
+                cell.Title = item.Collocutor;
+                cell.Detail = item.LastMessage;
+                cell.Date = item.Date;
+                cell.isNew = item.IsNew;
+            }
 
             return cell;
         }
