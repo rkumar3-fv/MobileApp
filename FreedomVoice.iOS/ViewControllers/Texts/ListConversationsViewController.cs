@@ -96,8 +96,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
 
             var createButton = new UIBarButtonItem(UIBarButtonSystemItem.Compose, (sender, e) =>
             {
-                var navController = new UINavigationController(new NewConversationViewController());
-                PresentViewController(navController, true, null);
+                NavigationController?.PushViewController(new NewConversationViewController(), true);
             });
 
             NavigationItem.RightBarButtonItem = createButton;

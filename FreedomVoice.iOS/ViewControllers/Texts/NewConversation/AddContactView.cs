@@ -48,7 +48,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts.NewConversation
 
 		private void ConfigureSubviews()
 		{
-			BackgroundColor = UIColor.FromRGB(240, 240, 240);
+			BackgroundColor = UIColor.FromRGB(245, 245, 245);
 
 			_prefixLabel.Font = UIFont.SystemFontOfSize(16);
 			_prefixLabel.TextColor = UIColor.Gray;

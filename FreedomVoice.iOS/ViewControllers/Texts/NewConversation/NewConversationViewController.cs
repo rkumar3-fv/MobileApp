@@ -14,7 +14,6 @@ namespace FreedomVoice.iOS.ViewControllers.Texts.NewConversation
 		{
 			base.ViewDidLoad();
 			Title = "New Message";
-			NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Cancel, CancelButtonPressed);
 		}
 
 		public override void ViewWillAppear(bool animated)
@@ -88,7 +87,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts.NewConversation
 			var controller = new ContactsPickerViewController();
 			controller.PhoneNumberSelected += PhoneNumberSelected;
 			controller.Cancelled += Cancelled;
-		 NavigationController.PushViewController(controller, true);
+			NavigationController.PushViewController(controller, true);
 		}
 
 		private void Cancelled(ContactsPickerViewController contactsPickerViewController)
@@ -105,11 +104,6 @@ namespace FreedomVoice.iOS.ViewControllers.Texts.NewConversation
 			NavigationController.PopToViewController(this, true);
 
 			_addContactView.Text = phone.Number;
-		}
-
-		private void CancelButtonPressed(object sender, EventArgs eventArgs)
-		{
-			NavigationController.DismissViewController(true, null);
 		}
 	}
 }
