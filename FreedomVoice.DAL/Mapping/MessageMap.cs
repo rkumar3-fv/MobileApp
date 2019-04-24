@@ -12,7 +12,7 @@ namespace FreedomVoice.DAL.Mapping
             builder.Property(x => x.Id).ValueGeneratedNever();
             builder.Property(x => x.Text).IsRequired();
             builder.Property(x => x.ReadAt);
-            builder.Property(x => x.ReceivedAt);
+            builder.Property(x => x.CreatedAt);
             builder.Property(x => x.SentAt);
 
             builder.HasOne(x => x.From);

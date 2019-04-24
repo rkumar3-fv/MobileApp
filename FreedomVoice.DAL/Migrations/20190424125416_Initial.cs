@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace FreedomVoice.DAL.Migrations
 {
-    public partial class InitMigration : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -11,7 +11,7 @@ namespace FreedomVoice.DAL.Migrations
                 name: "Phone",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false),
+                    Id = table.Column<long>(nullable: false),
                     PhoneNumber = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
@@ -23,9 +23,9 @@ namespace FreedomVoice.DAL.Migrations
                 name: "Conversation",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false),
-                    CurrentPhoneId = table.Column<int>(nullable: true),
-                    CollocutorPhoneId = table.Column<int>(nullable: true),
+                    Id = table.Column<long>(nullable: false),
+                    CurrentPhoneId = table.Column<long>(nullable: true),
+                    CollocutorPhoneId = table.Column<long>(nullable: true),
                     LastSyncDate = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
@@ -49,14 +49,14 @@ namespace FreedomVoice.DAL.Migrations
                 name: "Message",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false),
-                    FromId = table.Column<int>(nullable: true),
-                    ToId = table.Column<int>(nullable: true),
+                    Id = table.Column<long>(nullable: false),
+                    FromId = table.Column<long>(nullable: true),
+                    ToId = table.Column<long>(nullable: true),
                     Text = table.Column<string>(nullable: false),
                     SentAt = table.Column<DateTime>(nullable: true),
-                    ReceivedAt = table.Column<DateTime>(nullable: true),
+                    CreatedAt = table.Column<DateTime>(nullable: true),
                     ReadAt = table.Column<DateTime>(nullable: true),
-                    ConversationId = table.Column<int>(nullable: false)
+                    ConversationId = table.Column<long>(nullable: false)
                 },
                 constraints: table =>
                 {

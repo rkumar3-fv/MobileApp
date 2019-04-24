@@ -31,7 +31,7 @@ namespace FreedomVoice.Core.ViewModels
         {
             _message = entity.Text;
             Id = entity.Id;
-            Date = entity.ReceivedAt ?? DateTime.Now;
+            Date = entity.CreatedAt ?? DateTime.Now;
         }
     }
 
@@ -49,7 +49,7 @@ namespace FreedomVoice.Core.ViewModels
         {
             _message = entity.Text;
             Id = entity.Id;
-            Date = entity.ReceivedAt ?? DateTime.Now;
+            Date = entity.CreatedAt ?? DateTime.Now;
         }
     }
 

@@ -41,11 +41,11 @@ namespace FreedomVoice.DAL.Migrations
 
                     b.Property<long>("ConversationId");
 
+                    b.Property<DateTime?>("CreatedAt");
+
                     b.Property<long?>("FromId");
 
                     b.Property<DateTime?>("ReadAt");
-
-                    b.Property<DateTime?>("ReceivedAt");
 
                     b.Property<DateTime?>("SentAt");
 
@@ -90,7 +90,7 @@ namespace FreedomVoice.DAL.Migrations
 
             modelBuilder.Entity("FreedomVoice.DAL.DbEntities.Message", b =>
                 {
-                    b.HasOne("FreedomVoice.DAL.DbEntities.Conversation")
+                    b.HasOne("FreedomVoice.DAL.DbEntities.Conversation", "Conversation")
                         .WithMany("Messages")
                         .HasForeignKey("ConversationId")
                         .OnDelete(DeleteBehavior.Cascade);
