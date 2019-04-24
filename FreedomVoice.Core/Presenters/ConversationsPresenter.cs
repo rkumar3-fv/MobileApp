@@ -19,7 +19,6 @@ namespace FreedomVoice.Core.Presenters
 
     public class ConversationsPresenter
     {
-
         public List<ConversationViewModel> Items;
         public event EventHandler ItemsChanged;
         private readonly IConversationService _service;
@@ -48,6 +47,7 @@ namespace FreedomVoice.Core.Presenters
         public ConversationsPresenter()
         {
             _currentDate = DateTime.Now;
+            Console.WriteLine(_currentDate.ToString("t"));
             _currentPage = 1;
             Items = new List<ConversationViewModel>();
             HasMore = false;

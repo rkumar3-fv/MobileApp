@@ -1,7 +1,6 @@
 ﻿using System;
 namespace FreedomVoice.Core.ViewModels
 {
-
     public enum ChatMessageType
     { 
         Incoming,
@@ -11,6 +10,7 @@ namespace FreedomVoice.Core.ViewModels
 
     public interface IChatMessage
     {
+        private static string TimeFormat = "t";
         ChatMessageType Type { get; }
         string Message { get; }
         string Time { get; }
@@ -22,7 +22,7 @@ namespace FreedomVoice.Core.ViewModels
         public ChatMessageType Type => ChatMessageType.Incoming;
 
         public string Message => _message;
-        public string Time => Date.ToString("H:mm");
+        public string Time => Date.ToString("t");
         public DateTime Date { get; }
         public readonly long Id;
         private string _message;
@@ -42,7 +42,7 @@ namespace FreedomVoice.Core.ViewModels
 
         public string Message => _message;
         public DateTime Date { get; }
-        public string Time => Date.ToString("H:mm");
+        public string Time => Date.ToString("t");
         public readonly long Id;
         private string _message;
 
@@ -59,7 +59,7 @@ namespace FreedomVoice.Core.ViewModels
         public ChatMessageType Type => ChatMessageType.Date;
 
         public string Message => _date.ToString("MM/dd/yyyy");
-        public string Time => Date.ToString("H:mm");
+        public string Time => Date.ToString("t");
         public DateTime Date => _date;
         private DateTime _date;
 
