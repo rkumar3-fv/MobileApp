@@ -97,8 +97,7 @@ namespace FreedomVoice.Core.Presenters
             foreach (var row in res.Messages)
             {
                 if (row.From == null) continue;
-                var date = row.From.PhoneNumber.Equals(PhoneNumber) ? row.SentAt : row.CreatedAt;
-                var dateStr = date?.ToString("MM/dd/yyyy");
+                var dateStr = row.CreatedAt?.ToString("MM/dd/yyyy");
                 if (dateStr == null) continue;
                 var pack = _rawData.ContainsKey(dateStr) ? _rawData[dateStr] : new List<IChatMessage>();
                 if (row.From.PhoneNumber.Equals(PhoneNumber))
