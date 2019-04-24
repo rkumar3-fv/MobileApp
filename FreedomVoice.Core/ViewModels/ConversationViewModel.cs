@@ -26,9 +26,9 @@ namespace FreedomVoice.Core.ViewModels
             LastMessage = message.Text;
             var from = Regex.Replace(message.From.PhoneNumber, @"\D", "");
             //last message not from us
-            if (from.Equals(_RawCollocutor) && message.ReceivedAt != null)
+            if (from.Equals(_RawCollocutor) && message.CreatedAt != null)
             {
-                Date = TimeAgo((DateTime) message.ReceivedAt);
+                Date = TimeAgo((DateTime) message.CreatedAt);
                 IsNew = message.ReadAt == null;
             }
             else if ( message.SentAt != null )

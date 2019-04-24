@@ -159,7 +159,7 @@ namespace FreedomVoice.Core.Services
 
             foreach(var conversation in conversations)
                 conversation.Messages = new[] { _messagesRepository.TableNoTracking.Include(x => x.From).Include(x => x.To)
-                    .OrderByDescending(x => x.ReceivedAt).FirstOrDefault(x => x.Conversation.Id == conversation.Id) };
+                    .OrderByDescending(x => x.CreatedAt).FirstOrDefault(x => x.Conversation.Id == conversation.Id) };
 
             return conversations;
         }

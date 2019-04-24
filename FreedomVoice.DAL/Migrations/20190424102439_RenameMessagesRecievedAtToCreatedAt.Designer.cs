@@ -3,14 +3,16 @@ using System;
 using FreedomVoice.DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace FreedomVoice.DAL.Migrations
 {
     [DbContext(typeof(FreedomVoiceContext))]
-    partial class FreedomVoiceContextModelSnapshot : ModelSnapshot
+    [Migration("20190424102439_RenameMessagesRecievedAtToCreatedAt")]
+    partial class RenameMessagesRecievedAtToCreatedAt
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
