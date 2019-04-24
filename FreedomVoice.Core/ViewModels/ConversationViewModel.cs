@@ -21,7 +21,7 @@ namespace FreedomVoice.Core.ViewModels
         {
             _contactNameProvider = contactNameProvider;
             _RawCollocutor = Regex.Replace(entity.CollocutorPhone.PhoneNumber, @"\D", "");
-            var message = entity.Messages.FirstOrDefault();
+            var message = entity.Messages.OrderByDescending(x => x.CreatedAt).FirstOrDefault();
             if (message == null) return;
             LastMessage = message.Text;
             var from = Regex.Replace(message.From.PhoneNumber, @"\D", "");
