@@ -154,7 +154,14 @@ namespace FreedomVoice.Core.Services
         /// <returns>List of cached conversations</returns>
         public IEnumerable<Conversation> GetConversations(string phone, int limit, int start)
         {
-            return _conversationRepository.TableNoTracking.Include(x => x.CurrentPhone).Where(x => x.CurrentPhone != null && x.CurrentPhone.PhoneNumber == phone).Skip(start).Take(limit);
+            var conversations = _conversationRepository.TableNoTracking.Include(x => x.CurrentPhone).Include(x => x.CollocutorPhone)
+                .Where(x => x.CurrentPhone != null && x.CurrentPhone.PhoneNumber == phone).OrderByDescending(x => x.LastSyncDate).Skip(start).Take(limit);
+
+            foreach(var conversation in conversations)
+                conversation.Messages = new[] { _messagesRepository.TableNoTracking.Include(x => x.From).Include(x => x.To)
+                    .OrderByDescending(x => x.ReceivedAt).FirstOrDefault(x => x.Conversation.Id == conversation.Id) };
+
+            return conversations;
         }
 
         /// <summary>

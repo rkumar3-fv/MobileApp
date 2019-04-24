@@ -187,12 +187,13 @@ namespace FreedomVoice.Core
             //api/v1/system/[controller]/conversations/{telephoneNumber}/{lastModify}/{start}/{limit}
             // return await MakeAsyncGetRequest<List<FreedomVoice.Entities.Response.Conversation>>(
             // $"/api/v1/systems/forward/{phone}/conversations?startDate={startDate.Ticks}&lastModify={lastUpdateDate.Ticks}&start={start}&limit={limit}",
-            var oldBaseAddress = Client.BaseAddress;
-            Client.BaseAddress = new Uri("https://freedomvoice.wavea.cc/");
+            //var oldBaseAddress = Client.BaseAddress;
+            //Client.BaseAddress = new Uri("https://freedomvoice.wavea.cc/");
             var result = await MakeAsyncGetRequest<List<FreedomVoice.Entities.Response.Conversation>>(
-                $"/api/v1/{phone}/conversations?_from={startDate.Ticks}&_to={lastUpdateDate.Ticks}&_start={start}&_limit={limit}",
+                $"/api/v1/system/forward/{phone}/conversations?_from={startDate.Ticks}&_to={lastUpdateDate.Ticks}&_start={start}&_limit={limit}",
+                //$"/api/v1/{phone}/conversations?_from={startDate.Ticks}&_to={lastUpdateDate.Ticks}&_start={start}&_limit={limit}",
                 CancellationToken.None, LongTimeOut);
-            Client.BaseAddress = oldBaseAddress;
+            //Client.BaseAddress = oldBaseAddress;
             return result;
         }
 
@@ -201,12 +202,13 @@ namespace FreedomVoice.Core
             //api/v1/system/[controller]/conversations/{telephoneNumber}/{lastModify}/{start}/{limit}
             // return await MakeAsyncGetRequest<List<FreedomVoice.Entities.Response.Conversation>>(
             // $"/api/v1/systems/forward/{phone}/conversations?startDate={startDate.Ticks}&lastModify={lastUpdateDate.Ticks}&start={start}&limit={limit}",
-            var oldBaseAddress = Client.BaseAddress;
-            Client.BaseAddress = new Uri("https://freedomvoice.wavea.cc/");
+            //var oldBaseAddress = Client.BaseAddress;
+            //Client.BaseAddress = new Uri("https://freedomvoice.wavea.cc/");
             var result = await MakeAsyncGetRequest<List<FreedomVoice.Entities.Message>>(
-                $"/api/v1/{coversationId}/messages?_from={startDate.Ticks}&_to={lastUpdateDate.Ticks}&_start={start}&_limit={limit}",
+                $"/api/v1/system/forward/{coversationId}/messages?_from={startDate.Ticks}&_to={lastUpdateDate.Ticks}&_start={start}&_limit={limit}",
+                //$"/api/v1/{coversationId}/messages?_from={startDate.Ticks}&_to={lastUpdateDate.Ticks}&_start={start}&_limit={limit}",
                 CancellationToken.None, LongTimeOut);
-            Client.BaseAddress = oldBaseAddress;
+            //Client.BaseAddress = oldBaseAddress;
             return result;
         }
 
