@@ -10,7 +10,6 @@ namespace FreedomVoice.Core.ViewModels
 
     public interface IChatMessage
     {
-        private static string TimeFormat = "t";
         ChatMessageType Type { get; }
         string Message { get; }
         string Time { get; }
