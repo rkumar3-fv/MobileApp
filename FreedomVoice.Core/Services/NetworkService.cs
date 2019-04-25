@@ -3,6 +3,7 @@ using FreedomVoice.Core.Entities.Base;
 using FreedomVoice.Core.Services.Interfaces;
 using FreedomVoice.DAL;
 using FreedomVoice.Entities;
+using FreedomVoice.Entities.Request;
 using FreedomVoice.Entities.Response;
 using System;
 using System.Collections.Generic;
@@ -59,7 +60,7 @@ namespace FreedomVoice.Core.Services
                 result.Result = result.Result.ToList();
                 return result;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return new BaseResult<List<Message>>()
                 {
@@ -67,6 +68,11 @@ namespace FreedomVoice.Core.Services
                     Result = _cacheService.GetMessagesByConversation(conversationId, limit, start).Select(x => _mapper.Map<Message>(x)).ToList()
                 };
             }
+        }
+
+        public async Task<BaseResult<SendingResponse>> SendMessage(MessageRequest request)
+        {
+            return await ApiHelper.SendMessage(request);
         }
     }
 }

@@ -10,11 +10,13 @@ using System.Threading.Tasks;
 using FreedomVoice.Core.Cache;
 using FreedomVoice.Core.Cookies;
 using FreedomVoice.Core.Entities;
+using FreedomVoice.Entities.Response;
 using FreedomVoice.Core.Entities.Base;
 using FreedomVoice.Core.Entities.Enums;
 using FreedomVoice.Core.Utils;
 using ModernHttpClient;
 using Newtonsoft.Json;
+using FreedomVoice.Entities.Request;
 
 namespace FreedomVoice.Core
 {
@@ -212,6 +214,29 @@ namespace FreedomVoice.Core
             return result;
         }
 
+        public static async Task<BaseResult<SendingResponse>> SendMessage(MessageRequest request)
+        {
+            try
+            {
+                //var from = DataFormatUtils.UrlEncodeWithSpaces(request.From);
+                //var to = DataFormatUtils.UrlEncodeWithSpaces(request.To);
+                //var text = DataFormatUtils.UrlEncodeWithSpaces(request.Text);
+                //var postdata = $"From={from}&To={to}&Text={Text}";
+                var content = JsonConvert.SerializeObject(request);
+                var result = await MakeAsyncPostRequest<SendingResponse>(
+                    $"/api/v1/system/forward/sendMessage",
+                    content,
+                    "application/json",
+                    CancellationToken.None);
+                return result;
+            }
+            catch(Exception ex)
+            {
+                var a = 0;
+                return new BaseResult<SendingResponse> { Code = ErrorCodes.BadRequest };
+            }
+        }
+
         private static HttpClient CreateClient()
         {
             CookieStorage = new CookieStorageClient(ServiceContainer.Resolve<IDeviceCookieStorage>());
@@ -250,7 +275,7 @@ namespace FreedomVoice.Core
                 var postResp = Client.PostAsync(url, content, ct);
                 baseRes = await GetResponse<T>(postResp, ct);
             }
-            catch (WebException)
+            catch (WebException ex)
             {
                 baseRes = new BaseResult<T>
                 {

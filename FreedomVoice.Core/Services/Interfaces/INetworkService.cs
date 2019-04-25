@@ -1,4 +1,5 @@
 ﻿using FreedomVoice.Core.Entities.Base;
+using FreedomVoice.Entities.Request;
 using FreedomVoice.Entities.Response;
 using System;
 using System.Collections.Generic;
@@ -29,5 +30,12 @@ namespace FreedomVoice.Core.Services.Interfaces
         /// <param name="limit"></param>
         /// <returns></returns>
         Task<BaseResult<List<FreedomVoice.Entities.Message>>> GetMessages(long conversationId, DateTime startDate, DateTime lastUpdateDate, int start, int limit);
+
+        /// <summary>
+        /// Sending message to API by provided parameter
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns>Response from API about sending results</returns>
+        Task<BaseResult<SendingResponse>> SendMessage(MessageRequest request);
     }
 }
