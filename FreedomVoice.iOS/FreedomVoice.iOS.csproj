@@ -146,6 +146,7 @@
     <Compile Include="Utilities\Helpers\HttpClientHelper.cs" />
     <Compile Include="Utilities\Helpers\Log.cs" />
     <Compile Include="Utilities\Helpers\Recents.cs" />
+    <Compile Include="ViewControllers\ContactsPickerViewController.cs" />
     <Compile Include="ViewControllers\SplashViewController.cs" />
     <Compile Include="ViewControllers\SplashViewController.designer.cs">
       <DependentUpon>SplashViewController.cs</DependentUpon>
@@ -200,6 +201,8 @@
     <Compile Include="Services\Responses\ExtensionsWithCountResponse.cs" />
     <Compile Include="Services\Responses\MessagesResponse.cs" />
     <Compile Include="Services\Responses\PresentationNumbersResponse.cs" />
+    <Compile Include="ViewControllers\Texts\NewConversation\AddContactView.cs" />
+    <Compile Include="ViewControllers\Texts\NewConversation\NewConversationViewController.cs" />
     <Compile Include="ViewModels\CallReservationViewModel.cs" />
     <Compile Include="ViewModels\ExpandedCellViewModel.cs" />
     <Compile Include="ViewModels\ExtensionsViewModel.cs" />
