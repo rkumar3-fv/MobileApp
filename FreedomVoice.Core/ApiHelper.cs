@@ -10,11 +10,13 @@ using System.Threading.Tasks;
 using FreedomVoice.Core.Cache;
 using FreedomVoice.Core.Cookies;
 using FreedomVoice.Core.Entities;
+using FreedomVoice.Entities.Response;
 using FreedomVoice.Core.Entities.Base;
 using FreedomVoice.Core.Entities.Enums;
 using FreedomVoice.Core.Utils;
 using ModernHttpClient;
 using Newtonsoft.Json;
+using FreedomVoice.Entities.Request;
 
 namespace FreedomVoice.Core
 {
@@ -212,6 +214,29 @@ namespace FreedomVoice.Core
             return result;
         }
 
+        public static async Task<BaseResult<SendingResponse>> SendMessage(MessageRequest request)
+        {
+            try
+            {
+                //var from = DataFormatUtils.UrlEncodeWithSpaces(request.From);
+                //var to = DataFormatUtils.UrlEncodeWithSpaces(request.To);
+                //var text = DataFormatUtils.UrlEncodeWithSpaces(request.Text);
+                //var postdata = $"From={from}&To={to}&Text={Text}";
+                var content = JsonConvert.SerializeObject(request);
+                var result = await MakeAsyncPostRequest<SendingResponse>(
+                    $"/api/v1/system/forward/sendMessage",
+                    content,
+                    "application/json",
+                    CancellationToken.None);
+                return result;
+            }
+            catch(Exception ex)
+            {
+                var a = 0;
+                return new BaseResult<SendingResponse> { Code = ErrorCodes.BadRequest };
+            }
+        }
+
         private static HttpClient CreateClient()
         {
             CookieStorage = new CookieStorageClient(ServiceContainer.Resolve<IDeviceCookieStorage>());
@@ -247,10 +272,10 @@ namespace FreedomVoice.Core
             try
             {
                 var content = new StringContent(postData, Encoding.UTF8, contentType);
-                var postResp = Client.PostAsync(url, content, ct);
+                var postResp = Client.PostAsync(url, content, ct).GetAwaiter().GetResult();
                 baseRes = await GetResponse<T>(postResp, ct);
             }
-            catch (WebException)
+            catch (WebException ex)
             {
                 baseRes = new BaseResult<T>
                 {
@@ -313,6 +338,31 @@ namespace FreedomVoice.Core
             return retResult;
         }
 
+        private static async Task<BaseResult<T>> GetResponse<T>(HttpResponseMessage response, CancellationToken ct)
+        {
+            BaseResult<T> retResult;
+            string content = null;
+            try
+            {
+                if (ct.IsCancellationRequested)
+                    return new BaseResult<T> { Code = ErrorCodes.Cancelled };
+                content = await response.Content.ReadAsStringAsync();
+                response.EnsureSuccessStatusCode();
+                retResult = new BaseResult<T>
+                {
+                    Code = ErrorCodes.Ok,
+                    Result = JsonConvert.DeserializeObject<T>(content),
+                    HttpCode = (int)response.StatusCode
+                };
+            }
+            catch (HttpRequestException ex)
+            {
+                return content != null ? HandleErrorState<T>(response.StatusCode, ex, content) : HandleErrorState<T>(response.StatusCode, ex);
+            }
+
+            return retResult;
+        }
+
         private static async Task<BaseResult<T>> GetResponse<T>(Task<HttpResponseMessage> r, CancellationToken ct)
         {
             BaseResult<T> retResult;
@@ -321,24 +371,7 @@ namespace FreedomVoice.Core
             {
                 using (var response = await r)
                 {
-                    string content = null;
-                    try
-                    {
-                        if (ct.IsCancellationRequested)
-                            return new BaseResult<T> { Code = ErrorCodes.Cancelled };
-                        content = await response.Content.ReadAsStringAsync();
-                        response.EnsureSuccessStatusCode();         
-                        retResult = new BaseResult<T>
-                        {
-                            Code = ErrorCodes.Ok,
-                            Result = JsonConvert.DeserializeObject<T>(content),
-                            HttpCode = (int)response.StatusCode
-                        };
-                    }
-                    catch (HttpRequestException ex)
-                    {
-                        return content != null ? HandleErrorState<T>(response.StatusCode, ex, content) : HandleErrorState<T>(response.StatusCode, ex);
-                    }
+                    retResult = await GetResponse<T>(response, ct);
                 }
             }
             catch (Exception ex2)

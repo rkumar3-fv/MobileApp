@@ -3,6 +3,7 @@ using FreedomVoice.Core.Entities.Texting;
 using FreedomVoice.Core.Services.Interfaces;
 using FreedomVoice.DAL;
 using FreedomVoice.DAL.DbEntities;
+using FreedomVoice.Entities.Response;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,12 +17,14 @@ namespace FreedomVoice.Core.Services
         private readonly ICacheService _cacheService;
         private readonly INetworkService _networkService;
         private readonly IMapper _mapper;
+        private readonly IConversationService _conversationService;
 
-        public MessageService(ICacheService cacheService, INetworkService networkService, IMapper mapper)
+        public MessageService(ICacheService cacheService, INetworkService networkService, IMapper mapper, IConversationService conversationService)
         {
             _cacheService = cacheService;
             _networkService = networkService;
             _mapper = mapper;
+            _conversationService = conversationService;
         }
 
         public async Task<MessageListResponse> GetList(long conversationId, DateTime current, int count = 10, int page = 1)
@@ -38,6 +41,20 @@ namespace FreedomVoice.Core.Services
             result.Messages = netMessages.Result.Select(x => _mapper.Map<Message>(x));
             result.IsEnd = netMessages.Result == null || netMessages.Result.Count < count;
             return result;
+        }
+
+        public async Task<SendingResponse> SendMessage(long conversationId, string text)
+        {
+            // TODO: use conversationID for getting from and to phones
+            return await SendMessage("123", "321", text);
+        }
+
+        public async Task<SendingResponse> SendMessage(string currentNumber, string to, string text)
+        {
+            var sendingResult = await _networkService.SendMessage(new FreedomVoice.Entities.Request.MessageRequest { From = currentNumber, To = to, Text = text });
+            if (sendingResult.Code != Entities.Enums.ErrorCodes.Ok || sendingResult.Result == null)
+                return new SendingResponse { ErrorMessage = sendingResult.ErrorText, State = FreedomVoice.Entities.Enums.SendingState.Error };
+            return sendingResult.Result;
         }
     }
 }
