@@ -272,7 +272,7 @@ namespace FreedomVoice.Core
             try
             {
                 var content = new StringContent(postData, Encoding.UTF8, contentType);
-                var postResp = Client.PostAsync(url, content, ct).GetAwaiter().GetResult();
+                var postResp = await Client.PostAsync(url, content, ct);
                 baseRes = await GetResponse<T>(postResp, ct);
             }
             catch (WebException ex)
