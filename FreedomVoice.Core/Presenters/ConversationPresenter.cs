@@ -78,7 +78,7 @@ namespace FreedomVoice.Core.Presenters
             await _PerformLoading();
         }
 
-        public async void SendMessageAsync(string text)
+        public async Task SendMessageAsync(string text)
         {
             var res = await _service.SendMessage(_conversationId, text);
             switch (res.State)

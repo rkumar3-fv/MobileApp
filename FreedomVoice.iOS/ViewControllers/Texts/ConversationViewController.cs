@@ -192,9 +192,9 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             _presenter.ReloadAsync();
         }
         
-        protected virtual void SendButtonPressed()
+        protected virtual async void SendButtonPressed()
         {
-            // TODO SEND LOGIC HERE
+            await _presenter.SendMessageAsync(_chatField.Text ?? "");
         }
 
         private void CallerIdEventOnCallerIdChanged(object sender, EventArgs e)
