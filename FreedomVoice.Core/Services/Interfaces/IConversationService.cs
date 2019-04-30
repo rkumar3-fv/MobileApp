@@ -17,5 +17,13 @@ namespace FreedomVoice.Core.Services.Interfaces
         /// <param name="page"></param>
         /// <returns></returns>
         Task<ConversationListResponse> GetList(string phone, DateTime current, int count = 10, int page = 1);
+
+        /// <summary>
+        /// Get conversation by current phone and collocutor phone
+        /// </summary>
+        /// <param name="currentPhone"></param>
+        /// <param name="collocutorPhone"></param>
+        /// <returns></returns>
+        Task<ConversationResponse> Get(string currentPhone, string collocutorPhone);
     }
 }

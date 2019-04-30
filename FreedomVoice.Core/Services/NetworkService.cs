@@ -47,6 +47,27 @@ namespace FreedomVoice.Core.Services
             }
         }
 
+        public async Task<BaseResult<Conversation>> GetConversation(string currentPhone, string collocutorPhone)
+        {
+            try
+            {
+                BaseResult<Conversation> result = await ApiHelper.GetConversation(currentPhone, collocutorPhone);
+                
+                if (result.Code == Entities.Enums.ErrorCodes.Ok && result.Result != null)
+                    _cacheService.UpdateConversationsCache(new[] { result.Result });
+
+                return result;
+            }
+            catch (Exception)
+            {
+                return new BaseResult<Conversation>()
+                {
+                    Code = Entities.Enums.ErrorCodes.ConnectionLost,
+                    Result = null
+                };
+            }
+        }
+
         public async Task<BaseResult<List<Message>>> GetMessages(long conversationId, DateTime startDate, DateTime lastUpdateDate, int start, int limit)
         {
             try
