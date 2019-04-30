@@ -25,6 +25,15 @@ namespace FreedomVoice.Core.Services.Interfaces
         /// <param name="conversationId"></param>
         /// <param name="text"></param>
         /// <returns></returns>
-        Task<SendingResponse> SendMessage(long conversationId, string text);
+        Task<SendingResponse<FreedomVoice.Entities.Response.Conversation>> SendMessage(long conversationId, string text);
+
+        /// <summary>
+        /// Send message
+        /// </summary>
+        /// <param name="currentNumber"></param>
+        /// <param name="to"></param>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        Task<SendingResponse<FreedomVoice.Entities.Response.Conversation>> SendMessage(string currentNumber, string to, string text);
     }
 }

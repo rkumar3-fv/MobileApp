@@ -62,10 +62,6 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             {
                 ConversationId = Arguments.GetLong(ExtraConversationId)
             };
-
-            var messagesService = ServiceContainer.Resolve<IMessagesService>();
-            var result = messagesService.SendMessage(_presenter.ConversationId, "Test text").Result;
-            var a = 0;
         }
 
         public override void OnActivityCreated(Bundle savedInstanceState)

@@ -165,6 +165,16 @@ namespace FreedomVoice.Core.Services
         }
 
         /// <summary>
+        /// Get conversation by Id
+        /// </summary>
+        /// <param name="conversationId"></param>
+        /// <returns>Conversation from cache</returns>
+        public Conversation GetConversation(long conversationId)
+        {
+            return _conversationRepository.TableNoTracking.Include(x => x.CurrentPhone).Include(x => x.CollocutorPhone).FirstOrDefault(x => x.Id == conversationId);
+        }
+
+        /// <summary>
         /// Get list of cached messages for <paramref name="conversation"/> object from <paramref name="start"/> position 
         /// with limitation count of entities by <paramref name="limit"/>
         /// </summary>
