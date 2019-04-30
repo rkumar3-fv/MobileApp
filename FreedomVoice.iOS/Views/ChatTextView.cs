@@ -13,6 +13,7 @@ namespace FreedomVoice.iOS.Views
         private nfloat minHeight => 36;
         private nfloat maxHeight => 156;
 
+        public string Text => _textView.Text;
         public Action SendButtonPressed;
         
         public ChatTextView() 
@@ -23,13 +24,11 @@ namespace FreedomVoice.iOS.Views
             _setupConstraints();
         }
 
-
         public override void MovedToSuperview()
         {
             base.MovedToSuperview();
             _button.TouchUpInside += ButtonOnTouchUpInside;
         }
-
 
         public override void RemoveFromSuperview()
         {
@@ -52,7 +51,7 @@ namespace FreedomVoice.iOS.Views
             _button = new UIButton(UIButtonType.Plain)
             {
                 TranslatesAutoresizingMaskIntoConstraints = false,
-                BackgroundColor = new UIColor(red: 0.37f, green: 0.81f, blue: 0.36f, alpha: 1.0f)
+                BackgroundColor = UIColor.LightGray
 
             };
             _button.SetTitleColor(UIColor.White, UIControlState.Normal);
@@ -89,6 +88,10 @@ namespace FreedomVoice.iOS.Views
         [Foundation.Export("textViewDidChange:")]
         public virtual void Changed(UITextView textView)
         {
+            var isEmpty = string.IsNullOrEmpty(textView.Text);
+            _button.Enabled = !isEmpty;
+            _button.BackgroundColor = isEmpty ? UIColor.LightGray : new UIColor(red: 0.37f, green: 0.81f, blue: 0.36f, alpha: 1.0f);
+
             var fixedWidth = textView.Frame.Size.Width;
             var newSize = textView.SizeThatFits(new CGSize(fixedWidth, nfloat.MaxValue));
             var newHeight = newSize.Height;
