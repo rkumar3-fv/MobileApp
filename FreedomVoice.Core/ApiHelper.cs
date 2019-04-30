@@ -214,26 +214,21 @@ namespace FreedomVoice.Core
             return result;
         }
 
-        public static async Task<BaseResult<SendingResponse>> SendMessage(MessageRequest request)
+        public static async Task<BaseResult<SendingResponse<Conversation>>> SendMessage(MessageRequest request)
         {
             try
             {
-                //var from = DataFormatUtils.UrlEncodeWithSpaces(request.From);
-                //var to = DataFormatUtils.UrlEncodeWithSpaces(request.To);
-                //var text = DataFormatUtils.UrlEncodeWithSpaces(request.Text);
-                //var postdata = $"From={from}&To={to}&Text={Text}";
                 var content = JsonConvert.SerializeObject(request);
-                var result = await MakeAsyncPostRequest<SendingResponse>(
+                var result = await MakeAsyncPostRequest<SendingResponse<Conversation>>(
                     $"/api/v1/system/forward/sendMessage",
                     content,
                     "application/json",
                     CancellationToken.None);
                 return result;
             }
-            catch(Exception ex)
+            catch(Exception)
             {
-                var a = 0;
-                return new BaseResult<SendingResponse> { Code = ErrorCodes.BadRequest };
+                return new BaseResult<SendingResponse<Conversation>> { Code = ErrorCodes.BadRequest };
             }
         }
 

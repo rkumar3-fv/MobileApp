@@ -36,6 +36,6 @@ namespace FreedomVoice.Core.Services.Interfaces
         /// </summary>
         /// <param name="request"></param>
         /// <returns>Response from API about sending results</returns>
-        Task<BaseResult<SendingResponse>> SendMessage(MessageRequest request);
+        Task<BaseResult<SendingResponse<Conversation>>> SendMessage(MessageRequest request);
     }
 }

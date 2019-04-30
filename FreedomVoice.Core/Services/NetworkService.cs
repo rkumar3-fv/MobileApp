@@ -70,9 +70,13 @@ namespace FreedomVoice.Core.Services
             }
         }
 
-        public async Task<BaseResult<SendingResponse>> SendMessage(MessageRequest request)
+        public async Task<BaseResult<SendingResponse<Conversation>>> SendMessage(MessageRequest request)
         {
-            return await ApiHelper.SendMessage(request);
+            var result = await ApiHelper.SendMessage(request);
+            if(result.Result != null && result.Result.Entity != null)
+                _cacheService.UpdateConversationsCache(new[] { result.Result.Entity });
+
+            return result;
         }
     }
 }
