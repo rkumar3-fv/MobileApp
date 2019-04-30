@@ -13,7 +13,16 @@ namespace FreedomVoice.iOS.Views
         private nfloat minHeight => 36;
         private nfloat maxHeight => 156;
 
-        public string Text => _textView.Text;
+        public string Text
+        {
+            get => _textView.Text;
+            set
+            {
+                _textView.Text = value;
+                Changed(_textView);
+            }
+        }
+
         public Action SendButtonPressed;
         
         public ChatTextView() 

@@ -51,6 +51,13 @@ namespace FreedomVoice.Core.ViewModels
             Id = entity.Id;
             Date = entity.CreatedAt ?? DateTime.Now;
         }
+
+        public OutgoingMessageViewModel(FreedomVoice.Entities.Message entity)
+        {
+            _message = entity.Text;
+            Id = entity.Id;
+            Date = entity.CreatedAt ?? DateTime.Now;
+        }
     }
 
     public class DateMessageViewModel : IChatMessage

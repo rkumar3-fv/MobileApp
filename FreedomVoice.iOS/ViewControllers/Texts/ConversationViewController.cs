@@ -194,7 +194,16 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
         
         protected virtual async void SendButtonPressed()
         {
-            await _presenter.SendMessageAsync(_chatField.Text ?? "");
+            if (string.IsNullOrWhiteSpace(_chatField.Text))
+                return;
+            
+            var text = _chatField.Text;
+            _chatField.Text = "";
+            
+            View.AddSubview(AppDelegate.ActivityIndicator);
+            AppDelegate.ActivityIndicator.Show();
+            await _presenter.SendMessageAsync(text);
+            AppDelegate.ActivityIndicator.Hide();
         }
 
         private void CallerIdEventOnCallerIdChanged(object sender, EventArgs e)

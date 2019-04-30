@@ -84,13 +84,40 @@ namespace FreedomVoice.Core.Presenters
             switch (res.State)
             {
                 case FreedomVoice.Entities.Enums.SendingState.Error:
+                    MessagedSentError(res.Entity);
                     break;
+                
                 case FreedomVoice.Entities.Enums.SendingState.Sending:
+                    MessagedSentSending(res.Entity);
                     break;
+                
                 case FreedomVoice.Entities.Enums.SendingState.Success:
+                    MessagedSentSuccess(res.Entity);
                     break;
-
             }
+        }
+
+        private void MessagedSentSuccess(FreedomVoice.Entities.Response.Conversation conversation)
+        {
+            var lastMessage = conversation?.Messages?.Last();
+            if (lastMessage == null)
+            {
+                //TODO Show error?
+                return;
+            }
+            
+            Items.Insert(0, new OutgoingMessageViewModel(lastMessage));
+            ItemsChanged?.Invoke(this, new ConversationCollectionEventArgs(Items)); 
+        }
+
+        private void MessagedSentError(FreedomVoice.Entities.Response.Conversation conversation)
+        {
+            //TODO
+        }
+
+        private void MessagedSentSending(FreedomVoice.Entities.Response.Conversation conversation)
+        {
+            //TODO
         }
 
         private void ResetState()

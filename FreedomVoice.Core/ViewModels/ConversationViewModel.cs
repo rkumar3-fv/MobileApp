@@ -24,7 +24,7 @@ namespace FreedomVoice.Core.ViewModels
             var message = entity.Messages.OrderByDescending(x => x.CreatedAt).FirstOrDefault();
             if (message == null) return;
             LastMessage = message.Text;
-            var from = Regex.Replace(message.From.PhoneNumber, @"\D", "");
+            //var from = Regex.Replace(message.From.PhoneNumber, @"\D", "");
             //last message not from us
             if (message.CreatedAt != null)
             {
