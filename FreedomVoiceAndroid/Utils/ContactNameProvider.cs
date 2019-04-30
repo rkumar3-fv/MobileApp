@@ -1,6 +1,9 @@
 using System;
+using System.Text.RegularExpressions;
 using Android.Content;
 using FreedomVoice.Core.ViewModels;
+using Java.Lang;
+using Microsoft.Extensions.Primitives;
 
 namespace com.FreedomVoice.MobileApp.Android.Utils
 {
@@ -23,9 +26,30 @@ namespace com.FreedomVoice.MobileApp.Android.Utils
             return res;
         }
 
+        public string GetNameOrNull(string phone)
+        {
+            return GetName(phone);
+        }
+
+        public string GetFormattedPhoneNumber(string phoneNumber)
+        {
+            return phoneNumber;
+        }
+
+        public string GetClearPhoneNumber(string formattedPhoneNumber)
+        {
+            const string pattern = @"\d"; 
+        
+            var sb = "";
+            foreach (Match m in Regex.Matches(formattedPhoneNumber, pattern))
+                sb += m;
+
+            return sb;
+        }
+
         public void RequestContacts()
         {
-            
+       
         }
 
         private void ProviderOnContactsUpdated(object sender, EventArgs e)

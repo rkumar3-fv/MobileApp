@@ -9,7 +9,7 @@ namespace FreedomVoice.iOS.ViewControllers
 	partial class ContactsPickerViewController : ContactsViewController
 	{
 
-		public Action<ContactsPickerViewController, Phone> PhoneNumberSelected;
+		public Action<ContactsPickerViewController, Contact, Phone> PhoneNumberSelected;
 		public Action<ContactsPickerViewController> Cancelled;
 
 		protected override void SetupNavigationBarButtons()
@@ -40,7 +40,7 @@ namespace FreedomVoice.iOS.ViewControllers
 					PresentViewController(alertController, true, null);
 					return;
 				case 1:
-					PhoneNumberSelected?.Invoke(this, phoneNumbers.FirstOrDefault());
+					PhoneNumberSelected?.Invoke(this,  person, phoneNumbers.FirstOrDefault());
 					break;
 				default:
 					var phoneCallController = UIAlertController.Create("Select number for " + person.DisplayName, null, UIAlertControllerStyle.ActionSheet);
@@ -48,7 +48,7 @@ namespace FreedomVoice.iOS.ViewControllers
 					{
 						phoneCallController.AddAction(UIAlertAction.Create(phone.Number + " \u2013 " + phone.Label, UIAlertActionStyle.Default,
 							obj => {
-								PhoneNumberSelected?.Invoke(this, phone);
+								PhoneNumberSelected?.Invoke(this, person, phone);
 							}));
 					}
 					phoneCallController.AddAction(UIAlertAction.Create("Cancel", UIAlertActionStyle.Cancel, null));

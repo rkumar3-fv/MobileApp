@@ -7,6 +7,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts.NewConversation
 	internal sealed class AddContactView : UIView
 	{
 		public Action AddContactButtonPressed;
+		public Action<string> PhoneNumberChanged;
 
 		public string Text
 		{
@@ -33,12 +34,14 @@ namespace FreedomVoice.iOS.ViewControllers.Texts.NewConversation
 		{
 			base.MovedToSuperview();
 			_addContactButton.TouchUpInside += AddContactButtonPressedHandler;
+			_contactInputTextView.EditingChanged += ContactInputTextViewOnValueChanged;
 		}
 
 		public override void RemoveFromSuperview()
 		{
 			base.RemoveFromSuperview();
 			_addContactButton.TouchUpInside -= AddContactButtonPressedHandler;
+			_contactInputTextView.EditingChanged -= ContactInputTextViewOnValueChanged;
 		}
 
 		public override bool BecomeFirstResponder()
@@ -52,11 +55,11 @@ namespace FreedomVoice.iOS.ViewControllers.Texts.NewConversation
 
 			_prefixLabel.Font = UIFont.SystemFontOfSize(16);
 			_prefixLabel.TextColor = UIColor.Gray;
-			_prefixLabel.Text = "To:";
+			_prefixLabel.Text = NewConversationTexts.To;
 
 
 			var addContactButtonColor = UIColor.FromRGB(74, 152, 247);
-			_addContactButton.SetTitle("+", UIControlState.Normal);
+			_addContactButton.SetTitle(NewConversationTexts.Plus, UIControlState.Normal);
 			_addContactButton.Font = UIFont.SystemFontOfSize(16);
 			_addContactButton.SetTitleColor(addContactButtonColor, UIControlState.Normal);
 			_addContactButton.Layer.CornerRadius = _addContactButtonSize / 2;
@@ -94,6 +97,11 @@ namespace FreedomVoice.iOS.ViewControllers.Texts.NewConversation
 		private void AddContactButtonPressedHandler(object sender, EventArgs e)
 		{
 			AddContactButtonPressed?.Invoke();
+		}
+		
+		private void ContactInputTextViewOnValueChanged(object sender, EventArgs e)
+		{
+			PhoneNumberChanged?.Invoke(Text);
 		}
 	}
 }

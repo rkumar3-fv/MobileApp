@@ -1,25 +1,47 @@
 using System;
+using System.Text;
+using System.Text.RegularExpressions;
+using FreedomVoice.Core.Utils;
+using FreedomVoice.Core.ViewModels;
 using FreedomVoice.iOS.Entities;
 using UIKit;
 using Xamarin.Contacts;
 
 namespace FreedomVoice.iOS.ViewControllers.Texts.NewConversation
 {
+	internal struct NewConversationTexts
+	{
+		public const string NewMessage = "New Message";
+		public const string Error = "Error";
+		public const string PhoneNumberIsEmpty = "Phone number is empty.";
+		public const string OK = "Ok";
+		public const string To = "To:";
+		public const string Plus = "+";
+	}
+	
 	public class NewConversationViewController: ConversationViewController
 	{
 
 		private readonly AddContactView _addContactView = new AddContactView();
+		private readonly IContactNameProvider _contactNameProvider;
+
+		public NewConversationViewController()
+		{
+			_contactNameProvider = ServiceContainer.Resolve<IContactNameProvider>();
+		}
 
 		public override void ViewDidLoad()
 		{
 			base.ViewDidLoad();
-			Title = "New Message";
+			Title = NewConversationTexts.NewMessage;
 		}
 
 		public override void ViewWillAppear(bool animated)
 		{
 			base.ViewWillAppear(animated);
+			_contactNameProvider.ContactsUpdated += ProviderOnContactsUpdated;
 			_addContactView.AddContactButtonPressed += AddContactButtonPressed;
+			_addContactView.PhoneNumberChanged += PhoneNumberChanged;
 		}
 
 		public override void ViewWillDisappear(bool animated)
@@ -27,6 +49,8 @@ namespace FreedomVoice.iOS.ViewControllers.Texts.NewConversation
 			base.ViewWillDisappear(animated);
 			View.EndEditing(true);
 			_addContactView.AddContactButtonPressed -= AddContactButtonPressed;
+			_addContactView.PhoneNumberChanged -= PhoneNumberChanged;
+			_contactNameProvider.ContactsUpdated -= ProviderOnContactsUpdated;
 		}
 
 		public override void ViewDidAppear(bool animated)
@@ -61,8 +85,8 @@ namespace FreedomVoice.iOS.ViewControllers.Texts.NewConversation
 		{
 			if (string.IsNullOrWhiteSpace(_addContactView.Text))
 			{
-				var alert = UIAlertController.Create("Error", "Phone number is empty.", UIAlertControllerStyle.Alert);
-				var action = UIAlertAction.Create("Ok", UIAlertActionStyle.Default, null);
+				var alert = UIAlertController.Create(NewConversationTexts.Error, NewConversationTexts.PhoneNumberIsEmpty, UIAlertControllerStyle.Alert);
+				var action = UIAlertAction.Create(NewConversationTexts.OK, UIAlertActionStyle.Default, null);
 				alert.AddAction(action);
 				PresentViewController(alert, true, null);
 				return;
@@ -76,7 +100,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts.NewConversation
 			});
 
 			CurrentPhone = new PresentationNumber(_addContactView.Text);
-			Title = CurrentPhone.FormattedPhoneNumber;
+			UpdateTitle(_contactNameProvider.GetFormattedPhoneNumber(_addContactView.Text));
 
 			//TODO SEND MESSAGE LOGIC HERE
 			base._SetupData();
@@ -97,13 +121,49 @@ namespace FreedomVoice.iOS.ViewControllers.Texts.NewConversation
 			NavigationController.PopToViewController(this, true);
 		}
 
-		private void PhoneNumberSelected(ContactsPickerViewController contactsPickerViewController, Phone phone)
+		private void PhoneNumberSelected(ContactsPickerViewController contactsPickerViewController, Contact contact, Phone phone)
 		{
 			contactsPickerViewController.PhoneNumberSelected -= PhoneNumberSelected;
 			contactsPickerViewController.Cancelled -= Cancelled;
 			NavigationController.PopToViewController(this, true);
 
 			_addContactView.Text = phone.Number;
+			UpdateTitle(phone.Number, contact.DisplayName);
+		}
+		
+		private void ProviderOnContactsUpdated(object sender, EventArgs e)
+		{
+			PhoneNumberChanged(_addContactView.Text);
+		}
+		
+		private void PhoneNumberChanged(string phone)
+		{
+			if (string.IsNullOrWhiteSpace(phone))
+			{
+				UpdateTitle(phone);
+				return;
+			}
+
+			var clearPhone = _contactNameProvider.GetClearPhoneNumber(phone);
+			UpdateTitle(clearPhone);
+		}
+
+		private void UpdateTitle(string phone, string name = null)
+		{
+			if (!string.IsNullOrWhiteSpace(name))
+			{
+				Title = name;
+				return;
+			}
+			
+			var phoneOwner = _contactNameProvider.GetNameOrNull(phone);
+			if (!string.IsNullOrWhiteSpace(phoneOwner))
+			{
+				Title = phoneOwner;
+				return;
+			}
+
+			Title = NewConversationTexts.NewMessage;
 		}
 	}
 }
