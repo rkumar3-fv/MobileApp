@@ -39,5 +39,15 @@ namespace FreedomVoice.Core.Services
             result.IsEnd = netConversations.Result == null || netConversations.Result.Count < count;
             return result;
         }
+
+        public async Task<ConversationResponse> Get(string currentPhone, string collocutorPhone)
+        {
+            var result = new ConversationResponse();
+            var netConversation = await _networkService.GetConversation(currentPhone, collocutorPhone);
+            result.ResponseCode = netConversation.Code;
+            result.Message = netConversation.ErrorText;
+            result.Conversation = _mapper.Map<Conversation>(netConversation.Result);
+            return result;
+        }
     }
 }
