@@ -195,7 +195,7 @@ namespace FreedomVoice.Core
         public static async Task<BaseResult<Conversation>> GetConversation(string currentPhone, string collocutorPhone)
         {
             var result = await MakeAsyncGetRequest<Conversation>(
-                $"/api/v1/system/forward/{currentPhone}/conversation/{collocutorPhone}",
+                $"/api/v1/system/forward/{currentPhone}/conversations/{collocutorPhone}",
                 CancellationToken.None, LongTimeOut);
             return result;
         }
