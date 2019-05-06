@@ -1,9 +1,4 @@
 using System;
-using System.Text;
-using System.Text.RegularExpressions;
-using FreedomVoice.Core.Utils;
-using FreedomVoice.Core.ViewModels;
-using FreedomVoice.iOS.Entities;
 using UIKit;
 using Xamarin.Contacts;
 
@@ -18,16 +13,14 @@ namespace FreedomVoice.iOS.ViewControllers.Texts.NewConversation
 		public const string To = "To:";
 		public const string Plus = "+";
 	}
-	
+
 	public class NewConversationViewController: ConversationViewController
 	{
 
 		private readonly AddContactView _addContactView = new AddContactView();
-		private readonly IContactNameProvider _contactNameProvider;
 
 		public NewConversationViewController()
 		{
-			_contactNameProvider = ServiceContainer.Resolve<IContactNameProvider>();
 		}
 
 		public override void ViewDidLoad()
@@ -39,7 +32,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts.NewConversation
 		public override void ViewWillAppear(bool animated)
 		{
 			base.ViewWillAppear(animated);
-			_contactNameProvider.ContactsUpdated += ProviderOnContactsUpdated;
+			Presenter.ContactsUpdated += ProviderOnContactsUpdated;
 			_addContactView.AddContactButtonPressed += AddContactButtonPressed;
 			_addContactView.PhoneNumberChanged += PhoneNumberChanged;
 		}
@@ -50,7 +43,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts.NewConversation
 			View.EndEditing(true);
 			_addContactView.AddContactButtonPressed -= AddContactButtonPressed;
 			_addContactView.PhoneNumberChanged -= PhoneNumberChanged;
-			_contactNameProvider.ContactsUpdated -= ProviderOnContactsUpdated;
+			Presenter.ContactsUpdated -= ProviderOnContactsUpdated;
 		}
 
 		public override void ViewDidAppear(bool animated)
@@ -76,36 +69,56 @@ namespace FreedomVoice.iOS.ViewControllers.Texts.NewConversation
 			_addContactView.TrailingAnchor.ConstraintEqualTo(View.TrailingAnchor).Active = true;
 		}
 
-		protected override void _SetupData()
-		{
-			View.AddGestureRecognizer(new UITapGestureRecognizer((obj) => View.EndEditing(true)));
-		}
-
-		protected override void SendButtonPressed()
+		protected override async void SendButtonPressed()
 		{
 			if (string.IsNullOrWhiteSpace(_addContactView.Text))
 			{
-				var alert = UIAlertController.Create(NewConversationTexts.Error, NewConversationTexts.PhoneNumberIsEmpty, UIAlertControllerStyle.Alert);
+				var alert = UIAlertController.Create(NewConversationTexts.Error,
+					NewConversationTexts.PhoneNumberIsEmpty, UIAlertControllerStyle.Alert);
 				var action = UIAlertAction.Create(NewConversationTexts.OK, UIAlertActionStyle.Default, null);
 				alert.AddAction(action);
 				PresentViewController(alert, true, null);
 				return;
 			}
-			
-			base.SendButtonPressed();
-			UIView.Animate(0.24, () =>
+
+			if (string.IsNullOrWhiteSpace(_chatField.Text))
+				return;
+
+			if (Presenter.ConversationId.HasValue)
 			{
-				_callerIdView.Alpha = 1;
-				_addContactView.Alpha = 0;
-			});
+				base.SendButtonPressed();
+				return;
+			}
 
-			CurrentPhone = new PresentationNumber(_addContactView.Text);
-			UpdateTitle(_contactNameProvider.GetFormattedPhoneNumber(_addContactView.Text));
+			if (string.IsNullOrWhiteSpace(CurrentPhone.PhoneNumber) || string.IsNullOrWhiteSpace(_addContactView.Text))
+				return;
 
-			//TODO SEND MESSAGE LOGIC HERE
-			base._SetupData();
+			View.AddSubview(AppDelegate.ActivityIndicator);
+			AppDelegate.ActivityIndicator.Show();
+
+			var conversationId = await Presenter.SendMessage(CurrentPhone.PhoneNumber, _addContactView.Text, _chatField.Text);
+			ConversationId = Presenter.ConversationId = conversationId;
+
+			AppDelegate.ActivityIndicator.Hide();
+
+			if (conversationId.HasValue)
+			{
+				_chatField.Text = "";
+				UIView.Animate(0.24, () =>
+				{
+					_callerIdView.Alpha = 1;
+					_addContactView.Alpha = 0;
+				});
+
+				
+				UpdateTitle(_addContactView.Text, phonePlaceholder: Presenter.GetFormattedPhoneNumber(_addContactView.Text));
+			}
+			else
+			{
+				//TODO Keep state? Handle error state.
+			}
 		}
-		
+
 		private void AddContactButtonPressed()
 		{
 			var controller = new ContactsPickerViewController();
@@ -135,20 +148,22 @@ namespace FreedomVoice.iOS.ViewControllers.Texts.NewConversation
 		{
 			PhoneNumberChanged(_addContactView.Text);
 		}
-		
+
 		private void PhoneNumberChanged(string phone)
 		{
+			CheckCurrentConversation();
+			
 			if (string.IsNullOrWhiteSpace(phone))
 			{
 				UpdateTitle(phone);
 				return;
 			}
 
-			var clearPhone = _contactNameProvider.GetClearPhoneNumber(phone);
+			var clearPhone = Presenter.GetClearPhoneNumber(phone);
 			UpdateTitle(clearPhone);
 		}
 
-		private void UpdateTitle(string phone, string name = null)
+		private void UpdateTitle(string phone, string name = null, string phonePlaceholder = NewConversationTexts.NewMessage)
 		{
 			if (!string.IsNullOrWhiteSpace(name))
 			{
@@ -156,14 +171,35 @@ namespace FreedomVoice.iOS.ViewControllers.Texts.NewConversation
 				return;
 			}
 			
-			var phoneOwner = _contactNameProvider.GetNameOrNull(phone);
+			var phoneOwner = Presenter.GetNameOrNull(phone);
 			if (!string.IsNullOrWhiteSpace(phoneOwner))
 			{
 				Title = phoneOwner;
 				return;
 			}
 
-			Title = NewConversationTexts.NewMessage;
+			Title = phonePlaceholder;
+		}
+
+		private async void CheckCurrentConversation()
+		{
+			if (string.IsNullOrWhiteSpace(CurrentPhone.PhoneNumber) || string.IsNullOrWhiteSpace(_addContactView.Text))
+				return;
+			
+			var conversationId = await Presenter.GetConversationId(CurrentPhone.PhoneNumber, _addContactView.Text);
+
+			if (conversationId.HasValue)
+			{
+				Console.WriteLine($"Load history {conversationId}");
+				Presenter.ConversationId = ConversationId = conversationId;
+				Presenter.ReloadAsync();
+			}
+			else
+			{
+				Console.WriteLine("Clear history");
+				Presenter.ConversationId = ConversationId = null;
+				Presenter.Clear();
+			}
 		}
 	}
 }

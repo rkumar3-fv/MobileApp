@@ -33,22 +33,24 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             TranslatesAutoresizingMaskIntoConstraints = false
         };
         
-        private readonly ChatTextView _chatField = new ChatTextView
+        protected readonly ChatTextView _chatField = new ChatTextView
         {
             TranslatesAutoresizingMaskIntoConstraints = false
         };
         
         #endregion
 
-        public long ConversationId;
+        public long? ConversationId;
         public PresentationNumber CurrentPhone;
   
         private IDisposable _observer1;
         private IDisposable _observer2;
-        private ConversationPresenter _presenter;
         private static MainTabBarController MainTabBarInstance => MainTabBarController.SharedInstance;
 
         private NSLayoutConstraint _bottomConstraint;
+        
+        protected ConversationPresenter Presenter;
+
 
         protected ConversationViewController()
         {
@@ -170,26 +172,26 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             var source = new ConversationSource(_tableView);
             source.NeedMoreEvent += (sender, args) =>
             {
-                if (_presenter.HasMore)
+                if (Presenter.HasMore)
                 {
-                    _presenter.LoadMoreAsync();
+                    Presenter.LoadMoreAsync();
                 }
             };
             _tableView.Source = source;
 
-            _presenter = new ConversationPresenter
+            Presenter = new ConversationPresenter
             {
                 PhoneNumber = _callerIdView.SelectedNumber.PhoneNumber, ConversationId = ConversationId
             };
-            _presenter.ItemsChanged += (sender, args) =>
+            Presenter.ItemsChanged += (sender, args) =>
             {
-                var items = _presenter.Items;
+                var items = Presenter.Items;
                 source.UpdateItems(items);
                 AppDelegate.ActivityIndicator.Hide();
             };
             View.AddSubview(AppDelegate.ActivityIndicator);
             AppDelegate.ActivityIndicator.Show();
-            _presenter.ReloadAsync();
+            Presenter.ReloadAsync();
         }
         
         protected virtual async void SendButtonPressed()
@@ -197,19 +199,17 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             if (string.IsNullOrWhiteSpace(_chatField.Text))
                 return;
             
-            var text = _chatField.Text;
-            _chatField.Text = "";
-            
             View.AddSubview(AppDelegate.ActivityIndicator);
             AppDelegate.ActivityIndicator.Show();
-            await _presenter.SendMessageAsync(text);
+            await Presenter.SendMessageAsync(_chatField.Text);
+            _chatField.Text = "";
             AppDelegate.ActivityIndicator.Hide();
         }
 
         private void CallerIdEventOnCallerIdChanged(object sender, EventArgs e)
         {
-            _presenter.PhoneNumber = _callerIdView.SelectedNumber.PhoneNumber;
-            _presenter.ReloadAsync();
+            Presenter.PhoneNumber = _callerIdView.SelectedNumber.PhoneNumber;
+            Presenter.ReloadAsync();
         }
     }
 }
