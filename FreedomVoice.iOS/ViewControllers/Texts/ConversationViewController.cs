@@ -15,11 +15,13 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
     public partial class ConversationViewController : BaseViewController
     {
         #region Subviews
+
+        private readonly UIRefreshControl refreshControl = new UIRefreshControl();
+
         private readonly UITableView _tableView = new UITableView
         {
             TranslatesAutoresizingMaskIntoConstraints = false,
             TableFooterView = new UIView(),
-            //ContentInset = new UIEdgeInsets(-50, 0, 50, 0)
         };
         
         protected readonly CallerIdView _callerIdView = new CallerIdView(new RectangleF(0, 0, (float)Theme.ScreenBounds.Width, 40), MainTabBarInstance.GetPresentationNumbers())
@@ -78,7 +80,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
         public override void ViewDidAppear(bool animated)
         {
             base.ViewDidAppear(animated);
-            _SubscribeToKeyboard();
+            _SubscribeToEvents();
         }
 
         public override void ViewWillDisappear(bool animated)
@@ -90,7 +92,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
         public override void ViewDidDisappear(bool animated)
         {
             base.ViewDidDisappear(animated);
-            _UnsubscribeFromKeyboard();
+            _UnsubscribeFromEvents();
 
         }
 
@@ -104,18 +106,20 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             View.AddSubview(_tableView);
         }
 
-        protected virtual void _SubscribeToKeyboard()
+        protected virtual void _SubscribeToEvents()
         {
             _observer1 = UIKeyboard.Notifications.ObserveWillShow(WillShowNotification);
             _observer2 = UIKeyboard.Notifications.ObserveWillHide(WillHideNotification);
             _chatField.SendButtonPressed += SendButtonPressed;
+            refreshControl.ValueChanged += RefreshControlOnValueChanged;
         }
-        
-        private void _UnsubscribeFromKeyboard()
+
+        private void _UnsubscribeFromEvents()
         {
             _observer1.Dispose();
             _observer2.Dispose();
             _chatField.SendButtonPressed -= SendButtonPressed;
+            refreshControl.ValueChanged += RefreshControlOnValueChanged;
         }
         
 
@@ -179,6 +183,11 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             };
             _tableView.Source = source;
 
+            if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0))
+                _tableView.RefreshControl = refreshControl;
+            else
+                _tableView.AddSubview(refreshControl);
+            
             Presenter = new ConversationPresenter
             {
                 PhoneNumber = _callerIdView.SelectedNumber.PhoneNumber, ConversationId = ConversationId
@@ -188,6 +197,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
                 var items = Presenter.Items;
                 source.UpdateItems(items);
                 AppDelegate.ActivityIndicator.Hide();
+                refreshControl.EndRefreshing();
             };
             View.AddSubview(AppDelegate.ActivityIndicator);
             AppDelegate.ActivityIndicator.Show();
@@ -209,6 +219,11 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
         private void CallerIdEventOnCallerIdChanged(object sender, EventArgs e)
         {
             Presenter.PhoneNumber = _callerIdView.SelectedNumber.PhoneNumber;
+            Presenter.ReloadAsync();
+        }
+        
+        private void RefreshControlOnValueChanged(object sender, EventArgs e)
+        {
             Presenter.ReloadAsync();
         }
     }
