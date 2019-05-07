@@ -110,13 +110,14 @@ namespace FreedomVoice.iOS.ViewControllers.Texts.NewConversation
 				return;
 			}
 
-			if (string.IsNullOrWhiteSpace(CurrentPhone.PhoneNumber) || string.IsNullOrWhiteSpace(_addContactView.Text))
+			var clearedText = Presenter.GetClearPhoneNumber(_addContactView.Text);
+			if (string.IsNullOrWhiteSpace(clearedText) || string.IsNullOrWhiteSpace(CurrentPhone.PhoneNumber) || string.IsNullOrWhiteSpace(_addContactView.Text))
 				return;
 
 			View.AddSubview(AppDelegate.ActivityIndicator);
 			AppDelegate.ActivityIndicator.Show();
 
-			var conversationId = await Presenter.SendMessage(CurrentPhone.PhoneNumber, _addContactView.Text, _chatField.Text);
+			var conversationId = await Presenter.SendMessage(CurrentPhone.PhoneNumber, clearedText, _chatField.Text);
 			ConversationId = Presenter.ConversationId = conversationId;
 
 			AppDelegate.ActivityIndicator.Hide();
