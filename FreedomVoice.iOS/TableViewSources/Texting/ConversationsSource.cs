@@ -30,6 +30,14 @@ namespace FreedomVoice.iOS.TableViewSources.Texting
 
     public class ConversationsSource : UITableViewSource
     {
+        private struct Appearance
+        {
+            public static readonly nfloat EstimatedRowHeight = 40;
+        }
+        
+        //The number of items to the end of the list, after which the next page starts loading.
+        private const int StartLoadingMoreOffset = 15;
+        
         private readonly ConversationsPresenter _presenter;
         private readonly UITableView _tableView;
         public event EventHandler ItemDidSelected;
@@ -46,7 +54,7 @@ namespace FreedomVoice.iOS.TableViewSources.Texting
 
             tableView.RegisterNibForCellReuse(UINib.FromName("ConversationItemTableViewCell", NSBundle.MainBundle), "cell");
             tableView.RowHeight = UITableView.AutomaticDimension;
-            tableView.EstimatedRowHeight = 40;
+            tableView.EstimatedRowHeight = Appearance.EstimatedRowHeight;
         }
 
         public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
@@ -87,7 +95,7 @@ namespace FreedomVoice.iOS.TableViewSources.Texting
 
         public override void WillDisplay(UITableView tableView, UITableViewCell cell, NSIndexPath indexPath)
         {
-            if (indexPath.Row >= _presenter.Items.Count - 15 && _presenter.HasMore)
+            if (indexPath.Row >= _presenter.Items.Count - StartLoadingMoreOffset && _presenter.HasMore)
             {
                 _presenter.LoadMoreAsync();
             }

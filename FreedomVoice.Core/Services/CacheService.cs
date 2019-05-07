@@ -44,10 +44,10 @@ namespace FreedomVoice.Core.Services
                 conversation.Messages = new List<Message>();
             // Removing - we cannot to remove messages
 
-            var messagesForUpdate = _messagesRepository.Table.Where(x => messages.Any(xx => xx.Id == x.Id));
+            var messagesForUpdate = _messagesRepository.Table.Where(messageFromRepository => messages.Any(message => message.Id == messageFromRepository.Id));
             foreach (var messageFromApi in messages)
             {
-                var message = messagesForUpdate.FirstOrDefault(x => x.Id == messageFromApi.Id);
+                var message = messagesForUpdate.FirstOrDefault(messageForUpdate => messageForUpdate.Id == messageFromApi.Id);
                 // Adding
                 if (message == null)
                     conversation.Messages.Add(_mapper.Map<Message>(messageFromApi));
@@ -154,12 +154,25 @@ namespace FreedomVoice.Core.Services
         /// <returns>List of cached conversations</returns>
         public IEnumerable<Conversation> GetConversations(string phone, int limit, int start)
         {
-            var conversations = _conversationRepository.TableNoTracking.Include(x => x.CurrentPhone).Include(x => x.CollocutorPhone)
-                .Where(x => x.CurrentPhone != null && x.CurrentPhone.PhoneNumber == phone).OrderByDescending(x => x.LastSyncDate).Skip(start).Take(limit);
+            var conversations = _conversationRepository
+                .TableNoTracking
+                .Include(x => x.CurrentPhone)
+                .Include(x => x.CollocutorPhone)
+                .Where(x => x.CurrentPhone != null && x.CurrentPhone.PhoneNumber == phone)
+                .OrderByDescending(x => x.LastSyncDate)
+                .Skip(start)
+                .Take(limit);
 
-            foreach(var conversation in conversations)
-                conversation.Messages = new[] { _messagesRepository.TableNoTracking.Include(x => x.From).Include(x => x.To)
-                    .OrderByDescending(x => x.CreatedAt).FirstOrDefault(x => x.Conversation.Id == conversation.Id) };
+            foreach (var conversation in conversations)
+                conversation.Messages = new[]
+                {
+                    _messagesRepository
+                        .TableNoTracking
+                        .Include(x => x.From)
+                        .Include(x => x.To)
+                        .OrderByDescending(x => x.CreatedAt)
+                        .FirstOrDefault(x => x.Conversation.Id == conversation.Id)
+                };
 
             return conversations;
         }
