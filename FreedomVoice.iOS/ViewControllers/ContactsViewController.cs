@@ -7,6 +7,7 @@ using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.TableViewSources;
 using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.Utilities.Helpers;
+using FreedomVoice.iOS.ViewControllers.Texts.NewConversation;
 using FreedomVoice.iOS.Views;
 using FreedomVoice.iOS.Views.Shared;
 using UIKit;
@@ -15,9 +16,25 @@ using ContactsHelper = FreedomVoice.iOS.Utilities.Helpers.Contacts;
 
 namespace FreedomVoice.iOS.ViewControllers
 {
+    internal struct ContactsViewControllerTexts
+    {
+        public static readonly string ContactsScreen = "Contacts Screen";
+        public static readonly string Search = "Search";
+        public static readonly string Contacts = "Contacts";
+        public static readonly string NoResult = "No Result";
+        public static readonly string NoAvailableContact = "No phone numbers available for this contact.";
+        public static readonly string Ok = "Ok";
+        public static readonly string SelectNumberFor  = "Select number for ";
+        public static readonly string Cancel  = "Cancel";
+        public static readonly string Select  = "Select:";
+        public static readonly string CallPhone  = "Call Phone";
+        public static readonly string SendSMS  = "Send SMS";
+        public static readonly string EnDash  = " \u2013 ";
+    }
+
     partial class ContactsViewController : BaseViewController
     {
-        protected override string PageName => "Contacts Screen";
+        protected override string PageName => ContactsViewControllerTexts.ContactsScreen;
 
         protected List<Contact> _filteredContactList;
 
@@ -62,7 +79,7 @@ namespace FreedomVoice.iOS.ViewControllers
 
             _contactsSearchBar = new UISearchBar(new CGRect(0, 0, View.Frame.Width, 44))
             {
-                Placeholder = "Search",
+                Placeholder = ContactsViewControllerTexts.Search,
                 AutocapitalizationType = UITextAutocapitalizationType.None,
                 SpellCheckingType = UITextSpellCheckingType.No,
                 AutocorrectionType = UITextAutocorrectionType.No,
@@ -110,7 +127,7 @@ namespace FreedomVoice.iOS.ViewControllers
             var frame = new CGRect(15, 0, Theme.ScreenBounds.Width - 30, 30);
             _noResultsLabel = new UILabel(frame)
             {
-                Text = "No Result",
+                Text = ContactsViewControllerTexts.NoResult,
                 Font = UIFont.SystemFontOfSize(28),
                 TextColor = Theme.GrayColor,
                 TextAlignment = UITextAlignment.Center,
@@ -126,7 +143,7 @@ namespace FreedomVoice.iOS.ViewControllers
 
         public override void ViewWillAppear(bool animated)
         {
-            Title = "Contacts";
+            Title = ContactsViewControllerTexts.Contacts;
 
             if (_hasContactsPermissions && !_justLoaded)
             {
@@ -207,7 +224,7 @@ namespace FreedomVoice.iOS.ViewControllers
             return true;
         }
 
-        protected virtual async void TableSourceOnRowSelected(object sender, ContactSource.RowSelectedEventArgs e)
+        protected virtual void TableSourceOnRowSelected(object sender, ContactSource.RowSelectedEventArgs e)
         {
             e.TableView.DeselectRow(e.IndexPath, false);
 
@@ -221,26 +238,62 @@ namespace FreedomVoice.iOS.ViewControllers
             switch (phoneNumbers.Count)
             {
                 case 0:
-                    var alertController = UIAlertController.Create(null, "No phone numbers available for this contact.", UIAlertControllerStyle.Alert);
-                    alertController.AddAction(UIAlertAction.Create("Ok", UIAlertActionStyle.Cancel, null));
+                    var alertController = UIAlertController.Create(null, ContactsViewControllerTexts.NoAvailableContact, UIAlertControllerStyle.Alert);
+                    alertController.AddAction(UIAlertAction.Create(ContactsViewControllerTexts.Ok, UIAlertActionStyle.Cancel, null));
                     PresentViewController(alertController, true, null);
                     return;
+                
                 case 1:
-                    await PhoneCall.CreateCallReservation(MainTabBarInstance.SelectedAccount.PhoneNumber, selectedCallerId, phoneNumbers.First().Number, this, () => Recents.AddRecent(phoneNumbers.First().Number, person.DisplayName, person.Id));
+                    SelectActionType(MainTabBarInstance.SelectedAccount.PhoneNumber, selectedCallerId, phoneNumbers.First().Number, () => Recents.AddRecent(phoneNumbers.First().Number, person.DisplayName, person.Id));
                     break;
+                
                 default:
-                    var phoneCallController = UIAlertController.Create("Select number for " + person.DisplayName, null, UIAlertControllerStyle.ActionSheet);
+                    var phoneCallController = UIAlertController.Create(ContactsViewControllerTexts.SelectNumberFor + person.DisplayName, null, UIAlertControllerStyle.ActionSheet);
                     foreach (var phone in phoneNumbers)
                     {
-                        phoneCallController.AddAction(UIAlertAction.Create(phone.Number + " \u2013 " + phone.Label, UIAlertActionStyle.Default,
-                            async obj => {
-                                await PhoneCall.CreateCallReservation(MainTabBarInstance.SelectedAccount.PhoneNumber, selectedCallerId, phone.Number, this, () => Recents.AddRecent(phone.Number, person.DisplayName, person.Id));
-                            }));
+                        phoneCallController.AddAction(UIAlertAction.Create(phone.Number + ContactsViewControllerTexts.EnDash + phone.Label, UIAlertActionStyle.Default, async obj =>
+                        {
+                            SelectActionType(MainTabBarInstance.SelectedAccount.PhoneNumber, selectedCallerId, phone.Number, () => Recents.AddRecent(phone.Number, person.DisplayName, person.Id));
+                        }));
                     }
-                    phoneCallController.AddAction(UIAlertAction.Create("Cancel", UIAlertActionStyle.Cancel, null));
+                    phoneCallController.AddAction(UIAlertAction.Create(ContactsViewControllerTexts.Cancel, UIAlertActionStyle.Cancel, null));
                     PresentViewController(phoneCallController, true, null);
                     break;
             }
+        }
+
+        private void SelectActionType(string systemNumber, string presentationNumber, string destinationNumberFormatted, Action onCallSuccessAction)
+        {
+            var alert = new SelectActionDialog();
+            alert.Frame = View.Bounds;
+            View.AddSubview(alert);
+
+            alert.CallPhoneButtonPressed += () =>
+            {
+                alert.Hide(alert.RemoveFromSuperview);
+                CallPhone(systemNumber, presentationNumber, destinationNumberFormatted, onCallSuccessAction);
+            };
+            
+            alert.SendSMSButtonPressed += () =>
+            {
+                alert.Hide(alert.RemoveFromSuperview);
+                SendSMS(destinationNumberFormatted);
+            };
+            
+            alert.CancelledPressed += () => alert.Hide(alert.RemoveFromSuperview);
+
+            alert.Show();
+        }
+
+        private async void CallPhone(string systemNumber, string presentationNumber, string destinationNumberFormatted, Action onSuccessAction)
+        {
+            await PhoneCall.CreateCallReservation(systemNumber, presentationNumber, destinationNumberFormatted, this, onSuccessAction);
+        }
+
+        private void SendSMS(string destinationNumberFormatted)
+        {
+            var controller = new NewConversationViewController(CallerIdView.SelectedNumber.PhoneNumber, destinationNumberFormatted);
+            NavigationController?.PushViewController(controller, true);
         }
 
         private void HideKeyboard()

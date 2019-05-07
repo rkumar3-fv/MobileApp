@@ -83,6 +83,7 @@ namespace FreedomVoice.Core.Presenters
 
         public ConversationPresenter()
         {
+            _contactNameProvider.RequestContacts();
             _contactNameProvider.ContactsUpdated += ContactNameProviderOnContactsUpdated;
             ResetState();
         }
@@ -167,7 +168,8 @@ namespace FreedomVoice.Core.Presenters
 
         public string GetNameOrNull(string phone)
         {
-            return _contactNameProvider.GetNameOrNull(phone);
+            var clearPhone = GetClearPhoneNumber(phone);
+            return _contactNameProvider.GetNameOrNull(clearPhone);
         }
 
         public async Task<long?> GetConversationId(string currentPhone, string collocutorPhone)

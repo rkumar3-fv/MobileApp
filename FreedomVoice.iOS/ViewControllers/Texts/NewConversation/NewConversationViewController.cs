@@ -1,4 +1,6 @@
 using System;
+using FreedomVoice.iOS.Entities;
+using FreedomVoice.iOS.Utilities;
 using UIKit;
 using Xamarin.Contacts;
 
@@ -12,21 +14,31 @@ namespace FreedomVoice.iOS.ViewControllers.Texts.NewConversation
 		public const string OK = "Ok";
 		public const string To = "To:";
 		public const string Plus = "+";
+		public const string ErrorMessage = "Something went wrong. Try later.";
+		public const string ErrorTitle = "Error";
 	}
 
 	public class NewConversationViewController: ConversationViewController
 	{
+		private readonly string _preselectedCollocutorPhone;
 
 		private readonly AddContactView _addContactView = new AddContactView();
 
 		public NewConversationViewController()
 		{
+			_preselectedCollocutorPhone = null;
+		}
+		
+		public NewConversationViewController(string currentNumber, string collocutorPhone)
+		{
+			CurrentPhone = new PresentationNumber(currentNumber);
+			_preselectedCollocutorPhone = collocutorPhone;
 		}
 
 		public override void ViewDidLoad()
 		{
-			base.ViewDidLoad();
 			Title = NewConversationTexts.NewMessage;
+			base.ViewDidLoad();
 		}
 
 		public override void ViewWillAppear(bool animated)
@@ -67,6 +79,14 @@ namespace FreedomVoice.iOS.ViewControllers.Texts.NewConversation
 			_addContactView.TopAnchor.ConstraintEqualTo(View.TopAnchor).Active = true;
 			_addContactView.LeadingAnchor.ConstraintEqualTo(View.LeadingAnchor).Active = true;
 			_addContactView.TrailingAnchor.ConstraintEqualTo(View.TrailingAnchor).Active = true;
+		}
+
+		protected override void _SetupData()
+		{
+			base._SetupData();
+			_addContactView.Text = _preselectedCollocutorPhone;
+			UpdateTitle(_preselectedCollocutorPhone);
+			CheckCurrentConversation();
 		}
 
 		protected override async void SendButtonPressed()
@@ -115,7 +135,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts.NewConversation
 			}
 			else
 			{
-				//TODO Keep state? Handle error state.
+				UIAlertHelper.ShowAlert(this, NewConversationTexts.ErrorTitle, NewConversationTexts.ErrorMessage);
 			}
 		}
 
@@ -168,6 +188,12 @@ namespace FreedomVoice.iOS.ViewControllers.Texts.NewConversation
 			if (!string.IsNullOrWhiteSpace(name))
 			{
 				Title = name;
+				return;
+			}
+
+			if (string.IsNullOrWhiteSpace(phone))
+			{
+				Title = phonePlaceholder;
 				return;
 			}
 			

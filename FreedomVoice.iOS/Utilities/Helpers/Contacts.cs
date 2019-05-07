@@ -250,6 +250,7 @@ namespace FreedomVoice.iOS.Utilities.Helpers
         
         public ContactNameProvider()
         {
+            ContactItemsDidReceive(null, null);
             Contacts.ItemsChanged += ContactItemsDidReceive;
         }
         
