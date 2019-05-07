@@ -33,17 +33,8 @@ namespace FreedomVoice.Core.Presenters
         public event EventHandler ItemsChanged;
         public List<IChatMessage> Items;
         public bool HasMore { get; private set; }
-        private long _conversationId;
-        public long ConversationId
-        {
-            get => _conversationId;
-            set
-            {
-                if (value == _conversationId)
-                    return;
-                _conversationId = value;
-            }
-        }
+
+        public long ConversationId;
 
         private string _phoneNumber;
         public string PhoneNumber
@@ -91,7 +82,7 @@ namespace FreedomVoice.Core.Presenters
         private async Task _PerformLoading()
         {
             _isLoading = true;
-            var res = await _service.GetList(_conversationId, _currentDate, DEFAULT_COUNT, _currentPage);
+            var res = await _service.GetList(ConversationId, _currentDate, DEFAULT_COUNT, _currentPage);
             HasMore = !res.IsEnd;
 
             foreach (var row in res.Messages)

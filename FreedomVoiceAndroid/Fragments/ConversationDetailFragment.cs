@@ -129,32 +129,6 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         private void UpdateList()
         {
             _adapter.UpdateItems(_presenter.Items);
-//            _adapter.UpdateItems(new List<IChatMessage>()
-//            {
-//                new DateMessageViewModel(DateTime.Now),
-//                new IncomingMessageViewModel(new Message()
-//                {
-//                    Id = 1,
-//                    To = new Phone() {Id = 1, PhoneNumber = "123"},
-//                    From = new Phone() {Id = 1, PhoneNumber = "321"},
-//                    Text =
-//                        "lsdkfjlskd fjsldkfj s slkjf ssd jlks jfeiofjwoiefj osiejf oisejfo isejfois jefois je foijsef sefj osiejf s sldfj sslfj slfj sljf sf",
-//                    ReadAt = DateTime.Now,
-//                    SentAt = DateTime.Now,
-//                    ReceivedAt = DateTime.Now
-//                }),
-//                new OutgoingMessageViewModel(new Message()
-//                {
-//                    Id = 1,
-//                    To = new Phone() {Id = 1, PhoneNumber = "123"},
-//                    From = new Phone() {Id = 1, PhoneNumber = "321"},
-//                    Text =
-//                        "lsdkfjlskd fjsldkfj s slkjf ssd jlks jfeiofjwoiefj osiejf oisejfo isejfois jefois je foijsef sefj osiejf s sldfj sslfj slfj sljf sf",
-//                    ReadAt = DateTime.Now,
-//                    SentAt = DateTime.Now,
-//                    ReceivedAt = DateTime.Now
-//                })
-//            });
             _adapter.NotifyDataSetChanged();
         }
 

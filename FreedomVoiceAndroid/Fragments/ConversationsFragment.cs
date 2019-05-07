@@ -91,10 +91,11 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
 
         private void ListScrolled()
         {
+            const int countItemsToTheEndList = 8;
             var visibleItemCount = _layoutManager.ChildCount;
-
             var pastVisibleItems = _layoutManager.FindLastVisibleItemPosition();
-            if (visibleItemCount + pastVisibleItems + 8 >= _presenter.Items.Count && _presenter.HasMore)
+            
+            if (visibleItemCount + pastVisibleItems + countItemsToTheEndList >= _presenter.Items.Count && _presenter.HasMore)
             {
                 _presenter.LoadMoreAsync();
             }
