@@ -11,6 +11,7 @@ using Android.Text;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using com.FreedomVoice.MobileApp.Android.Activities;
 using com.FreedomVoice.MobileApp.Android.Helpers;
 using com.FreedomVoice.MobileApp.Android.Utils;
 using FreedomVoice.Core.ViewModels;
@@ -23,10 +24,15 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
     public class NewConversationDetailFragment : ConversationDetailFragment
     {
         private static int PICK_PHONE = 20009;
-
-        public static NewConversationDetailFragment NewInstance()
+        private const string ExtraConversationPhone = "EXTRA_CONVERSATION_PHONE";
+        
+        public static NewConversationDetailFragment NewInstance(string phone)
         {
-            return new NewConversationDetailFragment();
+            var fragment = new NewConversationDetailFragment();
+            var args = new Bundle();
+            args.PutString(ExtraConversationPhone, phone);
+            fragment.Arguments = args;
+            return fragment;
         }
 
         public override void OnViewCreated(View view, Bundle savedInstanceState)
@@ -41,6 +47,13 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             base.OnResume();
             _contactsIcon.Click += ClickSelectContact;
             _contactPhoneEt.TextChanged += ContactPhoneChanged;
+
+            var phone = Arguments?.GetString(ExtraConversationPhone);
+            if (phone != null)
+            {
+                _contactPhoneEt.Text = phone;
+                ContactPhoneChanged(this, new TextChangedEventArgs(phone, 0, 0, 0));
+            }
         }
 
         public override void OnPause()

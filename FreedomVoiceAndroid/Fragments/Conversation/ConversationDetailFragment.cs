@@ -81,8 +81,9 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             SetTitle(null);
 
             ConversationPhone = Arguments?.GetString(ExtraConversationPhone);
-            ConversationId = Arguments?.GetLong(ExtraConversationId);
-
+            var convId = Arguments?.GetLong(ExtraConversationId, -1);
+            ConversationId = convId == -1 ? null : convId;
+            
             ConversationSelected();
         }
 

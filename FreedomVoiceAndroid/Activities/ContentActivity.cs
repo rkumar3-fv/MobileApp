@@ -248,7 +248,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                     transaction.CommitAllowingStateLoss();
                     return true;
                 case Resource.Id.menu_conversation_new:
-                    ChatActivity.StartNewChat(this);
+                    ChatActivity.StartNewChat(this, null);
                     return true;
                 default:
                     return base.OnOptionsItemSelected(item);

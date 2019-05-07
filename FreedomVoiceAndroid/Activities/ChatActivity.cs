@@ -33,10 +33,11 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             context.StartActivity(intent);
         }
 
-        public static void StartNewChat(Activity context)
+        public static void StartNewChat(Activity context, string phone)
         {
             var intent = new Intent(context, typeof(ChatActivity));
             intent.PutExtra(ExtraScreen, ExtraScreenValueNewChat);
+            intent.PutExtra(ExtraConversationPhone, phone);
             context.StartActivity(intent);
         }
 
@@ -58,7 +59,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             }
             else
             {
-                fragment = NewConversationDetailFragment.NewInstance();
+                fragment = NewConversationDetailFragment.NewInstance(phone);
             }
 
             SupportFragmentManager.BeginTransaction()
