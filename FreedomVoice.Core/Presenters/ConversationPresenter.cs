@@ -127,7 +127,13 @@ namespace FreedomVoice.Core.Presenters
         
         public async Task<long?> SendMessage(string currentPhone, string collocutorPhone, string text)
         {
-            var res = await _messagesService.SendMessage(currentPhone, collocutorPhone, text);
+            var clearedCurrentPhone = GetClearPhoneNumber(currentPhone);
+            var clearedCollocutorPhone = GetClearPhoneNumber(collocutorPhone);
+            
+            if (string.IsNullOrWhiteSpace(clearedCurrentPhone) || string.IsNullOrWhiteSpace(clearedCollocutorPhone))
+                return null;
+            
+            var res = await _messagesService.SendMessage(clearedCurrentPhone, clearedCollocutorPhone, text);
             
             switch (res.State)
             {
@@ -174,7 +180,13 @@ namespace FreedomVoice.Core.Presenters
 
         public async Task<long?> GetConversationId(string currentPhone, string collocutorPhone)
         {
-            var conversation = await _conversationService.Get(currentPhone, collocutorPhone);
+            var clearedCurrentPhone = GetClearPhoneNumber(currentPhone);
+            var clearedCollocutorPhone = GetClearPhoneNumber(collocutorPhone);
+
+            if (string.IsNullOrWhiteSpace(clearedCurrentPhone) || string.IsNullOrWhiteSpace(clearedCollocutorPhone))
+                return null;
+            
+            var conversation = await _conversationService.Get(clearedCurrentPhone, clearedCollocutorPhone);
             return conversation?.Conversation?.Id;
         }
 
