@@ -566,6 +566,10 @@
     <BundleResource Include="Resources\arrow_right%402x.png" />
     <BundleResource Include="Resources\arrow_right%403x.png" />
     <BundleResource Include="Resources\keypad_call_small%402x.png" />
+    <Content Include="Resources\phone@2x.png" />
+    <Content Include="Resources\phone@3x.png" />
+    <Content Include="Resources\sms@2x.png" />
+    <Content Include="Resources\sms@3x.png" />
     <Content Include="Settings.bundle\Root.plist">
       <SubType>Designer</SubType>
     </Content>
