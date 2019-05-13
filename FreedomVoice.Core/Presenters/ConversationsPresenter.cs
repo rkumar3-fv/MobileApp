@@ -78,10 +78,9 @@ namespace FreedomVoice.Core.Presenters
             var res = await _service.GetList(_phoneNumber, _currentDate, DEFAULT_COUNT, _currentPage);
             HasMore = !res.IsEnd;
 
-            
-            if (res.Conversations != null)
-                Items.AddRange(res.Conversations.Select(row =>
-                    new ConversationViewModel(row, _nameProvider)));
+
+            Items.AddRange(res.Conversations?.Select(row =>
+                new ConversationViewModel(row, _nameProvider)));
             
             ItemsChanged?.Invoke(this, new ConversationsEventArgs(Items));
             _isLoading = false;
