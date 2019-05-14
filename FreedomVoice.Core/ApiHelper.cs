@@ -226,6 +226,24 @@ namespace FreedomVoice.Core
             }
         }
 
+        public static async Task<BaseResult<bool>> SendPushToken(PushRequest request)
+        {
+            try
+            {
+                var content = JsonConvert.SerializeObject(request);
+                var result = await MakeAsyncPostRequest<bool>(
+                    $"/api/v1/system/forward/push",
+                    content,
+                    "application/json",
+                    CancellationToken.None);
+                return result;
+            }
+            catch (Exception)
+            {
+                return new BaseResult<bool> { Code = ErrorCodes.BadRequest };
+            }
+        }
+
         private static HttpClient CreateClient()
         {
             CookieStorage = new CookieStorageClient(ServiceContainer.Resolve<IDeviceCookieStorage>());
@@ -274,6 +292,21 @@ namespace FreedomVoice.Core
             }
 
             return baseRes;
+        }
+
+        private static async Task<HttpResponseMessage> MakeAsyncPostRequest(string url, string postData, string contentType, CancellationToken ct, int timeout = TimeOut)
+        {
+            Client.Timeout = TimeSpan.FromSeconds(timeout);
+
+            try
+            {
+                var content = new StringContent(postData, Encoding.UTF8, contentType);
+                return await Client.PostAsync(url, content, ct);
+            }
+            catch (WebException ex)
+            {
+                return new HttpResponseMessage(HttpStatusCode.BadRequest);
+            }
         }
 
         private static async Task<BaseResult<T>> MakeAsyncGetRequest<T>(string url, CancellationToken ct, int timeout = TimeOut)
