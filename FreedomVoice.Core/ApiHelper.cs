@@ -226,13 +226,13 @@ namespace FreedomVoice.Core
             }
         }
 
-        public static async Task<BaseResult<bool>> SendPushToken(PushRequest request)
+        public static async Task<BaseResult<bool>> SendPushToken(PushRequest request, bool isRegistration)
         {
             try
             {
                 var content = JsonConvert.SerializeObject(request);
                 var result = await MakeAsyncPostRequest<bool>(
-                    $"/api/v1/system/forward/push",
+                    isRegistration ? "/api/v1/system/forward/pushRegister" : "/api/v1/system/forward/pushUnregister",
                     content,
                     "application/json",
                     CancellationToken.None);

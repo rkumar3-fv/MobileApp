@@ -46,11 +46,13 @@ namespace FreedomVoice.Core.Services.Interfaces
         /// <returns>Response from API about sending results</returns>
         Task<BaseResult<SendingResponse<Conversation>>> SendMessage(MessageRequest request);
 
+        
         /// <summary>
-        /// Sending push-token to API by provided parameter
+        /// Sending push-token to API by provided parameter 
         /// </summary>
         /// <param name="request"></param>
-        /// <returns>Response from API about sending results</returns>
-        Task<BaseResult<bool>> SendPushToken(PushRequest request);
+        /// <param name="isRegistration"></param>
+        /// <returns></returns>
+        Task<BaseResult<bool>> SendPushToken(PushRequest request, bool isRegistration);
     }
 }

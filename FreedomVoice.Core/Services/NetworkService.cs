@@ -105,9 +105,9 @@ namespace FreedomVoice.Core.Services
             return result;
         }
 
-        public async Task<BaseResult<bool>> SendPushToken(PushRequest request)
+        public async Task<BaseResult<bool>> SendPushToken(PushRequest request, bool isRegistration)
         {
-            var result = await ApiHelper.SendPushToken(request);
+            var result = await ApiHelper.SendPushToken(request, isRegistration: isRegistration);
             //if (result.Result != null && result.Result.Entity != null)
                 //_cacheService.UpdateConversationsCache(new[] { result.Result.Entity });
 
