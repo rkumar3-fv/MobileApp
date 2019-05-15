@@ -17,6 +17,7 @@ using FreedomVoice.iOS.ViewModels;
 using FreedomVoice.iOS.Views;
 using Google.Analytics;
 using UIKit;
+using UserNotifications;
 using Xamarin;
 
 namespace FreedomVoice.iOS
@@ -39,6 +40,8 @@ namespace FreedomVoice.iOS
         public static string TempFolderPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments, Environment.SpecialFolderOption.DoNotVerify), "..", "tmp");
 
         private static UIStoryboard MainStoryboard => UIStoryboard.FromName("MainStoryboard", NSBundle.MainBundle);
+        private static IPushNotificationsService pushService = new PushNotificationsService();
+        private static UNUserNotificationCenterDelegate pushServiceCenter = new NotificationCenterDelegate();
 
         public static T GetViewController<T>() where T : UIViewController
         {
@@ -69,6 +72,10 @@ namespace FreedomVoice.iOS
             else
                 PassToAuthentificationProcess();
 
+            pushService.RegisterForPushNotifications(UNAuthorizationOptions.Alert |
+                                                     UNAuthorizationOptions.Badge |
+                                                     UNAuthorizationOptions.Sound, null);
+            UNUserNotificationCenter.Current.Delegate = pushServiceCenter;
             return true;
         }
 
@@ -382,5 +389,35 @@ namespace FreedomVoice.iOS
         {
             Insights.Initialize(InsightsApiKey);
         }
+
+        #region PushNotifications
+       
+        public override void RegisteredForRemoteNotifications(UIApplication application, NSData deviceToken)
+        {
+            pushService.DidRegisterForRemoteNotifications(deviceToken);
+        }
+
+        public override void ReceivedLocalNotification(UIApplication application, UILocalNotification notification)
+        {
+          //  base.ReceivedLocalNotification(application, notification);
+        }
+
+        public override void DidReceiveRemoteNotification(UIApplication application, NSDictionary userInfo, Action<UIBackgroundFetchResult> completionHandler)
+        {
+
+           // base.DidReceiveRemoteNotification(application, userInfo, completionHandler);
+        }
+
+        public override void DidRegisterUserNotificationSettings(UIApplication application, UIUserNotificationSettings notificationSettings)
+        {
+          //  base.DidRegisterUserNotificationSettings(application, notificationSettings);
+        }
+
+        public override void FailedToRegisterForRemoteNotifications(UIApplication application, NSError error)
+        {
+            pushService.DidFailToRegisterForRemoteNotifications(error);
+        }
+
+        #endregion
     }
 }

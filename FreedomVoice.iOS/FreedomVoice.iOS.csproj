@@ -58,13 +58,12 @@
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
     <CodesignKey>iPhone Developer: Evgeni Kalyada (7BXF4TS6ML)</CodesignKey>
     <MtouchDebug>True</MtouchDebug>
-    <MtouchSdkVersion>12.2</MtouchSdkVersion>
     <MtouchLink>SdkOnly</MtouchLink>
     <MtouchProfiling>False</MtouchProfiling>
     <MtouchFastDev>False</MtouchFastDev>
     <MtouchUseLlvm>False</MtouchUseLlvm>
     <MtouchUseThumb>False</MtouchUseThumb>
-    <DeviceSpecificBuild>False</DeviceSpecificBuild>
+    <DeviceSpecificBuild>true</DeviceSpecificBuild>
     <OptimizePNGs>True</OptimizePNGs>
     <MtouchFloat32>False</MtouchFloat32>
     <MtouchEnableBitcode>False</MtouchEnableBitcode>
@@ -340,6 +339,7 @@
     <Compile Include="TableViewCells\Texting\Messaging\OutgoingMessageTableViewCell.designer.cs">
       <DependentUpon>OutgoingMessageTableViewCell.cs</DependentUpon>
     </Compile>
+    <Compile Include="PushNotificationsService.cs" />
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\Default-568h%402x.png" />
@@ -653,6 +653,11 @@
     <ProjectReference Include="..\FreedomVoice.Entities\FreedomVoice.Entities.csproj">
       <Project>{9C83001C-E1C6-461D-B0D3-1F6BA63000A6}</Project>
       <Name>FreedomVoice.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FreedomVoice.iOS.NotificationsServiceExtension\FreedomVoice.iOS.NotificationsServiceExtension.csproj">
+      <IsAppExtension>true</IsAppExtension>
+      <Project>{A059CAEB-A0A7-40A1-B70D-7E3A429E387B}</Project>
+      <Name>FreedomVoice.iOS.NotificationsServiceExtension</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />
