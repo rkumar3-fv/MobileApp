@@ -43,6 +43,7 @@ namespace FreedomVoice.Core.Presenters
         }
 
         public bool HasMore { get; private set; }
+        public string Query { get; set; }
 
 
         public ConversationsPresenter()
