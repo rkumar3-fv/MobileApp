@@ -25,7 +25,7 @@ namespace FreedomVoice.Core.Services.Interfaces
         /// <param name="conversationId"></param>
         /// <param name="text"></param>
         /// <returns></returns>
-        Task<SendingResponse<FreedomVoice.Entities.Response.Conversation>> SendMessage(long conversationId, string text);
+        Task<SendingResponse<DAL.DbEntities.Conversation>> SendMessage(long conversationId, string text);
 
         /// <summary>
         /// Send message
@@ -34,6 +34,6 @@ namespace FreedomVoice.Core.Services.Interfaces
         /// <param name="to"></param>
         /// <param name="text"></param>
         /// <returns></returns>
-        Task<SendingResponse<FreedomVoice.Entities.Response.Conversation>> SendMessage(string currentNumber, string to, string text);
+        Task<SendingResponse<DAL.DbEntities.Conversation>> SendMessage(string currentNumber, string to, string text);
     }
 }

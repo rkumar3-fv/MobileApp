@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using FreedomVoice.Core.Services.Interfaces;
 using FreedomVoice.Core.Utils;
@@ -76,14 +77,11 @@ namespace FreedomVoice.Core.Presenters
             _isLoading = true;
             var res = await _service.GetList(_phoneNumber, _currentDate, DEFAULT_COUNT, _currentPage);
             HasMore = !res.IsEnd;
-            //Items = new List<ConversationViewModel>();
-            if (res.Conversations != null)
-            {
-                foreach (var row in res.Conversations)
-                {
-                    Items.Add(new ConversationViewModel(row, _nameProvider));
-                }
-            }
+
+
+            Items.AddRange(res.Conversations?.Select(row =>
+                new ConversationViewModel(row, _nameProvider)));
+            
             ItemsChanged?.Invoke(this, new ConversationsEventArgs(Items));
             _isLoading = false;
         }

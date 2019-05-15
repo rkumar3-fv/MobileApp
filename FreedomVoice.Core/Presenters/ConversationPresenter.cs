@@ -192,7 +192,7 @@ namespace FreedomVoice.Core.Presenters
 
         #region Send message handlers
 
-        private void MessagedSentSuccess(FreedomVoice.Entities.Response.Conversation conversation)
+        private void MessagedSentSuccess(Conversation conversation)
         {
             var lastMessage = conversation?.Messages?.Last();
             if (lastMessage == null)
@@ -205,12 +205,12 @@ namespace FreedomVoice.Core.Presenters
             ItemsChanged?.Invoke(this, new ConversationCollectionEventArgs(Items)); 
         }
 
-        private void MessagedSentError(FreedomVoice.Entities.Response.Conversation conversation)
+        private void MessagedSentError(Conversation conversation)
         {
             //TODO
         }
 
-        private void MessagedSentSending(FreedomVoice.Entities.Response.Conversation conversation)
+        private void MessagedSentSending(Conversation conversation)
         {
             //TODO
         }
