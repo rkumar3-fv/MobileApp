@@ -131,6 +131,13 @@
     <Compile Include="Entities\FolderWithCount.cs" />
     <Compile Include="Entities\Message.cs" />
     <Compile Include="Entities\PresentationNumber.cs" />
+    <Compile Include="PushNotifications\NotificationCenterDelegate.cs" />
+    <Compile Include="PushNotifications\PushModel\Data.cs" />
+    <Compile Include="PushNotifications\PushModel\Message.cs" />
+    <Compile Include="PushNotifications\PushModel\PushNotification.cs" />
+    <Compile Include="PushNotifications\PushModel\PushNotificationKeys.cs" />
+    <Compile Include="PushNotifications\PushNotificationsService.cs" />
+    <Compile Include="PushNotifications\PushNotificationTokenDataStore.cs" />
     <Compile Include="Services\Implementations\PollingIntervalService.cs" />
     <Compile Include="Services\IPoolingIntervalService.cs" />
     <Compile Include="Services\Responses\EmptyResponse.cs" />
@@ -339,7 +346,6 @@
     <Compile Include="TableViewCells\Texting\Messaging\OutgoingMessageTableViewCell.designer.cs">
       <DependentUpon>OutgoingMessageTableViewCell.cs</DependentUpon>
     </Compile>
-    <Compile Include="PushNotificationsService.cs" />
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\Default-568h%402x.png" />

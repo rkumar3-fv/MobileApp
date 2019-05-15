@@ -54,7 +54,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
         protected ConversationPresenter Presenter;
 
 
-        protected ConversationViewController()
+        public ConversationViewController()
         {
         }
 

@@ -1,5 +1,7 @@
 ﻿using System;
 using Foundation;
+using FreedomVoice.Core.Utils;
+using FreedomVoice.iOS.PushNotifications;
 using Google.Analytics;
 using UIKit;
 
@@ -66,5 +68,11 @@ namespace FreedomVoice.iOS.ViewControllers
         /// Calculated height of the keyboard (width not generally needed here)
         /// </param>
         protected virtual void OnKeyboardChanged(bool visible, nfloat height) { }
+
+        public override void ViewWillAppear(bool animated)
+        {
+            base.ViewWillAppear(animated);
+            ServiceContainer.Resolve<IAppNavigator>().UpdateCurrentController(this);
+        }
     }
 }

@@ -10,6 +10,7 @@ using Foundation;
 using FreedomVoice.Core;
 using FreedomVoice.Core.Utils;
 using FreedomVoice.iOS.Entities;
+using FreedomVoice.iOS.PushNotifications;
 using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.Utilities.Helpers;
 using FreedomVoice.iOS.ViewControllers;
@@ -40,7 +41,7 @@ namespace FreedomVoice.iOS
         public static string TempFolderPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments, Environment.SpecialFolderOption.DoNotVerify), "..", "tmp");
 
         private static UIStoryboard MainStoryboard => UIStoryboard.FromName("MainStoryboard", NSBundle.MainBundle);
-        private static IPushNotificationsService pushService = new PushNotificationsService();
+        private static IPushNotificationsService pushService;
         private static UNUserNotificationCenterDelegate pushServiceCenter = new NotificationCenterDelegate();
 
         public static T GetViewController<T>() where T : UIViewController
@@ -54,7 +55,8 @@ namespace FreedomVoice.iOS
 
             ServiceContainer.Register(Window);
             ServiceContainer.Register<ISynchronizeInvoke>(() => new SynchronizeInvoke());
-
+            pushService = ServiceContainer.Resolve<IPushNotificationsService>();
+            
             ActivityIndicator = new ActivityIndicator(Theme.ScreenBounds);
 
             Utilities.Helpers.Contacts.SubscribeToContactsChange();
@@ -72,16 +74,41 @@ namespace FreedomVoice.iOS
             else
                 PassToAuthentificationProcess();
 
-            pushService.RegisterForPushNotifications(UNAuthorizationOptions.Alert |
-                                                     UNAuthorizationOptions.Badge |
-                                                     UNAuthorizationOptions.Sound, null);
+
             UNUserNotificationCenter.Current.Delegate = pushServiceCenter;
+            if (UserDefault.IsAuthenticated)
+            {
+                pushService.RegisterForPushNotifications(UNAuthorizationOptions.Alert | UNAuthorizationOptions.Badge | UNAuthorizationOptions.Sound, async _ =>
+                    {
+                        try
+                        {
+                            await pushService.RegisterPushNotificationToken();
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine(e);
+                        }
+                    });
+            }
+            
             return true;
         }
 
         private async void OnLoginSuccess(object sender, EventArgs e)
         {
             UserDefault.IsAuthenticated = true;
+
+            pushService.RegisterForPushNotifications(async _ =>
+            {
+                try
+                {
+                    await pushService.RegisterPushNotificationToken();
+                }
+                catch (Exception exception)
+                {
+                    Console.WriteLine(exception);
+                }
+            });
 
             var viewModel = new PoolingIntervalViewModel();
             await viewModel.GetPoolingIntervalAsync();
@@ -121,6 +148,15 @@ namespace FreedomVoice.iOS
 
             UserDefault.IsAuthenticated = false;
             UserDefault.LastUsedAccount = string.Empty;
+
+            try
+            {
+                await pushService.UnregisterPushNotificationToken();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
 
             Recents.ClearRecents();
 
@@ -392,9 +428,21 @@ namespace FreedomVoice.iOS
 
         #region PushNotifications
        
-        public override void RegisteredForRemoteNotifications(UIApplication application, NSData deviceToken)
+        public override async void RegisteredForRemoteNotifications(UIApplication application, NSData deviceToken)
         {
             pushService.DidRegisterForRemoteNotifications(deviceToken);
+
+            if (UserDefault.IsAuthenticated)
+            {
+                try
+                {
+                    await pushService.RegisterPushNotificationToken();
+                }
+                catch (Exception exception)
+                {
+                    Console.WriteLine(exception);
+                }
+            }
         }
 
         public override void ReceivedLocalNotification(UIApplication application, UILocalNotification notification)

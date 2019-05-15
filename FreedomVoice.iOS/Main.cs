@@ -5,6 +5,7 @@ using System;
 using FreedomVoice.Core.Services.Interfaces;
 using FreedomVoice.Core.Utils;
 using FreedomVoice.Core.ViewModels;
+using FreedomVoice.iOS.PushNotifications;
 using FreedomVoice.iOS.Utilities.Helpers;
 using UIKit;
 
@@ -21,6 +22,9 @@ namespace FreedomVoice.iOS
             
             ServiceRegistrar.Startup();
             ServiceContainer.Register<IContactNameProvider>(() => new ContactNameProvider());
+            ServiceContainer.Register<IPushNotificationTokenDataStore>(() => new PushNotificationTokenDataStore());
+            ServiceContainer.Register<IPushNotificationsService>(() => new PushNotificationsService());
+            ServiceContainer.Register<IAppNavigator>(() => new AppNavigator());
 
             UIApplication.Main(args, null, "AppDelegate");
         }

@@ -88,6 +88,9 @@
     <MtouchExtraArgs>-v -v -v -v</MtouchExtraArgs>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">
+      <HintPath>..\..\..\..\.nuget\packages\newtonsoft.json\11.0.2\lib\netstandard2.0\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
@@ -104,8 +107,11 @@
     <None Include="Entitlements.plist" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\Data.cs" />
+    <Compile Include="Models\Message.cs" />
+    <Compile Include="Models\PushNotification.cs" />
+    <Compile Include="Models\PushNotificationKeys.cs" />
     <Compile Include="NotificationService.cs" />
-    <Compile Include="PushNotificationKeys.cs" />
     <Compile Include="Utils\Contacts.cs" />
     <Compile Include="Utils\DataFormatUtils.cs" />
     <Compile Include="Utils\String.cs" />
