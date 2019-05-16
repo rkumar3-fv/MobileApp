@@ -1,11 +1,11 @@
 using System;
 using FreedomVoice.Core.Utils;
+using FreedomVoice.Core.ViewModels;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.PushNotifications.PushModel;
 using FreedomVoice.iOS.ViewControllers;
 using FreedomVoice.iOS.ViewControllers.Texts;
 using Microsoft.Extensions.Options;
-using UIKit;
 using UserNotifications;
 
 namespace FreedomVoice.iOS.PushNotifications
@@ -28,10 +28,14 @@ namespace FreedomVoice.iOS.PushNotifications
 			}
 
 			Console.WriteLine($"[{GetType()}] Try to show conversation page");
+
+			var contactNameProvider = ServiceContainer.Resolve<IContactNameProvider>();
+			var phoneHolder = contactNameProvider.GetNameOrNull(contactNameProvider.GetClearPhoneNumber(pushNotificationData.data?.message?.fromPhoneNumber));
+			
 			var controller = new ConversationViewController();
 			controller.ConversationId = pushNotificationData.data.message.conversationId;
 			controller.CurrentPhone = new PresentationNumber(pushNotificationData.data.message.toPhoneNumber);
-			controller.Title = pushNotificationData.data?.message?.fromPhoneNumber;
+			controller.Title = phoneHolder ?? pushNotificationData.data?.message?.fromPhoneNumber;
 			
 			ServiceContainer.Resolve<IAppNavigator>().CurrentController.NavigationController.PushViewController(controller, true);
 		}
@@ -40,37 +44,6 @@ namespace FreedomVoice.iOS.PushNotifications
 		{
 			Console.WriteLine($"[{GetType()}] WillPresentNotification");
 			completionHandler?.Invoke(UNNotificationPresentationOptions.Alert);
-		}
-	}
-
-	public interface IAppNavigator
-	{
-		BaseViewController CurrentController { get; }
-		void Configure(AppDelegate app);
-
-		void UpdateCurrentController(BaseViewController currentController);
-
-	}
-	
-	public class AppNavigator: IAppNavigator
-	{
-		public BaseViewController CurrentController { get; private set; }
-
-		public AppNavigator()
-		{
-		}
-
-		public void Configure(AppDelegate app)
-		{
-			app.Window = new UIWindow(UIScreen.MainScreen.Bounds);
-
-			app.Window.BackgroundColor = UIColor.White;
-			app.Window.MakeKeyAndVisible();
-		}
-
-		public void UpdateCurrentController(BaseViewController currentController)
-		{
-			CurrentController = currentController;
 		}
 	}
 }

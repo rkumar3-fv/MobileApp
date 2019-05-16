@@ -126,6 +126,7 @@
     <CodesignKey>iPhone Distribution</CodesignKey>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AppNavigator.cs" />
     <Compile Include="Data\IosDbPath.cs" />
     <Compile Include="Entities\CallReservation.cs" />
     <Compile Include="Entities\ExtensionWithCount.cs" />

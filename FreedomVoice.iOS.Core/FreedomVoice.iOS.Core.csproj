@@ -50,7 +50,9 @@
     <Folder Include="Utilities\Extensions\" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="iOSCoreConfigurator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utilities\Helpers\ContactNameProvider.cs" />
     <Compile Include="Utilities\Helpers\Contacts.cs" />
     <Compile Include="Utilities\Extensions\String.cs" />
   </ItemGroup>

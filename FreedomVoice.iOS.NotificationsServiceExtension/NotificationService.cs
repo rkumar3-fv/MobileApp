@@ -5,8 +5,8 @@ using Foundation;
 using FreedomVoice.iOS.NotificationsServiceExtension.Models;
 using UserNotifications;
 using ContactsHelper = FreedomVoice.iOS.Core.Utilities.Helpers.Contacts;
-using FreedomVoice.Core;
 using FreedomVoice.Core.Utils;
+using FreedomVoice.Core.ViewModels;
 
 namespace FreedomVoice.iOS.NotificationsServiceExtension
 {
@@ -16,8 +16,11 @@ namespace FreedomVoice.iOS.NotificationsServiceExtension
         Action<UNNotificationContent> ContentHandler { get; set; }
         UNMutableNotificationContent BestAttemptContent { get; set; }
         
+        
         protected NotificationService(IntPtr handle) : base(handle)
         {
+            FreedomVoice.iOS.Core.iOSCoreConfigurator.RegisterServices();
+            
             Console.WriteLine($"[{this.GetType()}] DidReceiveNotificationRequest");
             // Note: this .ctor should not contain any initialization logic.
         }
@@ -26,32 +29,40 @@ namespace FreedomVoice.iOS.NotificationsServiceExtension
         {
             Console.WriteLine($"[{this.GetType()}] DidReceiveNotificationRequest");
             Console.WriteLine($"[{this.GetType()}] Original content: {request.Content}");
-
+            
             // Save handler and cope push content
             ContentHandler = contentHandler;
             BestAttemptContent = (UNMutableNotificationContent)request.Content.MutableCopy();
-           
+            var contactNameProvider = ServiceContainer.Resolve<IContactNameProvider>();
             var pushNotificationData = new PushNotification(request.Content);
-            Console.WriteLine($"[{this.GetType()}] User data: \n{pushNotificationData}");
-            
+
+            if (pushNotificationData?.data?.message == null)
+            {
+                Console.WriteLine($"[{this.GetType()}] Message data is missing in Push data");
+                ContentHandler?.Invoke(BestAttemptContent);
+                return;
+
+            }
+
+            Console.WriteLine($"[{this.GetType()}] User data: \n{pushNotificationData}");            
+
             // Fetch contacts book
             await ContactsHelper.GetContactsListAsync();
-
+            
             // Display debug info about contacts book
             DebugPrintContracts();
-
+            
             // Try fetch phone number from push
             var phoneFromPush = pushNotificationData.data?.message?.fromPhoneNumber;
-            Console.WriteLine($"[{this.GetType()}] phone: {phoneFromPush}");
+            phoneFromPush = contactNameProvider.GetClearPhoneNumber(phoneFromPush);
+            Console.WriteLine($"[{this.GetType()}] Phone from push: {phoneFromPush}");
 
             // Find contact from Contact book by phone
-            var matchedContact = ContactsHelper.ContactList.FirstOrDefault(contact =>
-                contact.Phones.FirstOrDefault(phone => DataFormatUtils.NormalizePhone(phone.Number) == DataFormatUtils.NormalizePhone(phoneFromPush))?.Label != null
-            );
-            Console.WriteLine($"[{this.GetType()}] Contact is found: {matchedContact}");
+            var matchedContactName = contactNameProvider.GetNameOrNull(phoneFromPush);
+            Console.WriteLine($"[{this.GetType()}] Contact is found: {matchedContactName}");
 
             // Set custom push title
-            BestAttemptContent.Title = matchedContact?.DisplayName ?? request.Content?.Title;
+            BestAttemptContent.Title = string.IsNullOrWhiteSpace(matchedContactName) ? request.Content?.Title : matchedContactName;
             Console.WriteLine($"[{this.GetType()}] Modified content: {BestAttemptContent}");
 
             ContentHandler?.Invoke(BestAttemptContent);
