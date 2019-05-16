@@ -805,6 +805,15 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             }
         }
 
+        public async void UnregisterFcm()
+        {
+            var instanceToken = FirebaseInstanceId.Instance.Token;
+            if (!string.IsNullOrEmpty(instanceToken))
+            {
+                await _pushService.Unregister(DeviceType.Android, instanceToken);
+            }
+        }
+
         /// <summary>
         /// Responses from ComService
         /// </summary>
@@ -1123,6 +1132,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 
                 // Login action response
                 case "LogoutResponse":
+                    UnregisterFcm();
                     DoLogout(response.RequestId);
                     break;
 

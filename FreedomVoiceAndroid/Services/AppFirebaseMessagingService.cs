@@ -7,6 +7,8 @@ using Android.Provider;
 using Android.Support.V4.App;
 using Android.Support.V4.Content;
 using Firebase.Messaging;
+using FreedomVoice.Core.Utils;
+using FreedomVoice.Core.ViewModels;
 using FreedomVoice.Entities.PushContract;
 using Newtonsoft.Json;
 
@@ -16,11 +18,13 @@ namespace com.FreedomVoice.MobileApp.Android.Services
     [IntentFilter(new[] {"com.google.firebase.MESSAGING_EVENT"})]
     public class AppFirebaseMessagingService : Firebase.Messaging.FirebaseMessagingService
     {
+        private IContactNameProvider _contactNameProvider;
         private const string DataKey = "data";
 
         public override void OnCreate()
         {
             base.OnCreate();
+            _contactNameProvider = ServiceContainer.Resolve<IContactNameProvider>();
         }
 
         public override void OnMessageReceived(RemoteMessage message)
@@ -34,7 +38,16 @@ namespace com.FreedomVoice.MobileApp.Android.Services
                 PushNotification pushNotification =
                     JsonConvert.DeserializeObject<PushNotification>(message.Data[DataKey]);
 
-                ShowNotification(pushNotification);
+                using (var h = new Handler(Looper.MainLooper))
+                {
+                    h.Post(() =>
+                    {
+                        var name = _contactNameProvider.GetName(pushNotification.Data.Message.From.PhoneNumber);
+                        pushNotification.Aps.Alert.Title = name;
+        
+                        ShowNotification(pushNotification);
+                    });
+                }
             }
             catch (Exception e)
             {
