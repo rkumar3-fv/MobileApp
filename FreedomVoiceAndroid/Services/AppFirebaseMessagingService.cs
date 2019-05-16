@@ -6,11 +6,15 @@ using Android.OS;
 using Android.Provider;
 using Android.Support.V4.App;
 using Android.Support.V4.Content;
+using com.FreedomVoice.MobileApp.Android.Activities;
 using Firebase.Messaging;
 using FreedomVoice.Core.Utils;
 using FreedomVoice.Core.ViewModels;
 using FreedomVoice.Entities.PushContract;
+using Java.Lang;
 using Newtonsoft.Json;
+using Exception = System.Exception;
+using TaskStackBuilder = Android.Support.V4.App.TaskStackBuilder;
 
 namespace com.FreedomVoice.MobileApp.Android.Services
 {
@@ -44,8 +48,8 @@ namespace com.FreedomVoice.MobileApp.Android.Services
                     {
                         var name = _contactNameProvider.GetName(pushNotification.Data.Message.From.PhoneNumber);
                         pushNotification.Aps.Alert.Title = name;
-        
-                        ShowNotification(pushNotification);
+
+                        ShowConversationMessagePush(pushNotification);
                     });
                 }
             }
@@ -55,15 +59,32 @@ namespace com.FreedomVoice.MobileApp.Android.Services
             }
         }
 
-        private void ShowNotification(PushNotification push)
+        private void ShowConversationMessagePush(PushNotification push)
         {
             var manager = NotificationManagerCompat.From(this);
             var channelId = GetString(Resource.String.DefaultNotificationChannel);
-            var launchIntent = PackageManager.GetLaunchIntentForPackage(ApplicationContext.PackageName);
-            var pLaunchIntent = PendingIntent.GetActivity(this, 0, launchIntent, PendingIntentFlags.UpdateCurrent);
+
+            PendingIntent pLaunchIntent;
+            if (App.GetApplication(this).ApplicationHelper.ActionsHelper.IsLoggedIn)
+            {
+                var launchIntent =
+                    ChatActivity.OpenChat(this, push.Data.Message.Id, push.Data.Message.From.PhoneNumber);
+                pLaunchIntent = PendingIntent.GetActivity(this, 0, launchIntent, PendingIntentFlags.UpdateCurrent);
+            }
+            else
+            {
+                pLaunchIntent = TaskStackBuilder.Create(this)
+                    .AddParentStack(Class.FromType(typeof(ContentActivity)))
+                    .AddNextIntent(new Intent(this, typeof(ContentActivity)))
+                    .AddNextIntent( // TODO replace push.Data.Message.Id to push.Data.Message.ConversationID !!
+                        ChatActivity.OpenChat(this, push.Data.Message.Id, push.Data.Message.From.PhoneNumber)
+                    ).GetPendingIntent(0, (int) PendingIntentFlags.UpdateCurrent);
+            }
+
+
             var notification = new NotificationCompat.Builder(this, channelId)
                 .SetChannelId(channelId)
-                .SetSmallIcon(Resource.Drawable.ic_sms)
+                .SetSmallIcon(Resource.Drawable.ic_default_notification)
                 .SetColor(ContextCompat.GetColor(this, Resource.Color.colorActivatedControls))
                 .SetAutoCancel(true)
                 .SetSound(Settings.System.DefaultNotificationUri)
