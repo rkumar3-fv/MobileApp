@@ -49,7 +49,6 @@ namespace FreedomVoice.Core.Presenters
         public ConversationsPresenter()
         {
             _currentDate = DateTime.Now;
-            Console.WriteLine(_currentDate.ToString("t"));
             _currentPage = 1;
             Items = new List<ConversationViewModel>();
             HasMore = false;
@@ -59,6 +58,7 @@ namespace FreedomVoice.Core.Presenters
 
         public async void ReloadAsync()
         {
+            //var res = _nameProvider.SearchNumbers("s");
             if (_isLoading) return;
             _currentDate = DateTime.Now;
             _currentPage = 1;
