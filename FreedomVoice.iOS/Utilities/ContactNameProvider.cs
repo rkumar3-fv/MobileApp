@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using FreedomVoice.Core.ViewModels;
@@ -22,7 +23,13 @@ namespace FreedomVoice.iOS.Utilities
 
         public List<string> SearchNumbers(string query)
         {
-            return new List<string>();
+            var res = new List<string>();
+            var contacts = Helpers.Contacts.ContactList.Where(c => Helpers.Contacts.ContactMatchPredicate(c, query)).Distinct().ToList();
+            foreach (var contact in contacts)
+            {
+                res.AddRange(contact.Phones.Select(phone => phone.Number));
+            }
+            return res;
         }
 
         public void RequestContacts()

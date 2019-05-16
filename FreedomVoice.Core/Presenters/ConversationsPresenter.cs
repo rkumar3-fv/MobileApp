@@ -58,7 +58,7 @@ namespace FreedomVoice.Core.Presenters
 
         public async void ReloadAsync()
         {
-            //var res = _nameProvider.SearchNumbers("s");
+//            var res = _nameProvider.SearchNumbers("an");
             if (_isLoading) return;
             _currentDate = DateTime.Now;
             _currentPage = 1;
