@@ -1,12 +1,9 @@
-﻿using FreedomVoice.Core.Cache;
-using FreedomVoice.iOS.Data;
-using FreedomVoice.iOS.Utilities;
+﻿using FreedomVoice.iOS.Utilities;
 using System;
-using FreedomVoice.Core.Services.Interfaces;
 using FreedomVoice.Core.Utils;
 using FreedomVoice.Core.ViewModels;
 using FreedomVoice.iOS.PushNotifications;
-using FreedomVoice.iOS.Utilities.Helpers;
+using FreedomVoice.iOS.Core.Utilities.Helpers;
 using UIKit;
 
 namespace FreedomVoice.iOS

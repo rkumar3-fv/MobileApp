@@ -5,7 +5,7 @@ using Foundation;
 using FreedomVoice.iOS.TableViewCells;
 using UIKit;
 using Xamarin.Contacts;
-using ContactsHelper = FreedomVoice.iOS.Utilities.Helpers.Contacts;
+using ContactsHelper = FreedomVoice.iOS.Core.Utilities.Helpers.Contacts;
 
 namespace FreedomVoice.iOS.TableViewSources
 {

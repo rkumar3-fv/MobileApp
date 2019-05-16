@@ -27,8 +27,8 @@ namespace FreedomVoice.iOS.ViewControllers
 
 			var selectedCallerId = MainTabBarInstance.GetSelectedPresentationNumber().PhoneNumber;
 
-			var person = IsSearchMode ? _filteredContactList.Where(c => Utilities.Helpers.Contacts.ContactSearchPredicate(c, ContactSource.Keys[e.IndexPath.Section])).ToList()[e.IndexPath.Row]
-				: Utilities.Helpers.Contacts.ContactList.Where(c => Utilities.Helpers.Contacts.ContactSearchPredicate(c, ContactSource.Keys[e.IndexPath.Section])).ToList()[e.IndexPath.Row];
+			var person = IsSearchMode ? _filteredContactList.Where(c => Core.Utilities.Helpers.Contacts.ContactSearchPredicate(c, ContactSource.Keys[e.IndexPath.Section])).ToList()[e.IndexPath.Row]
+				: Core.Utilities.Helpers.Contacts.ContactList.Where(c => Core.Utilities.Helpers.Contacts.ContactSearchPredicate(c, ContactSource.Keys[e.IndexPath.Section])).ToList()[e.IndexPath.Row];
 
 			var phoneNumbers = person.Phones.ToList();
 

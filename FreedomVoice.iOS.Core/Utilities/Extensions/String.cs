@@ -1,6 +1,6 @@
 using System;
 
-namespace FreedomVoice.iOS.NotificationsServiceExtension.Utils
+namespace FreedomVoice.iOS.Core.Utilities.Extensions
 {
 	public static class String
 	{

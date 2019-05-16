@@ -1,12 +1,12 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
 using System.Text;
 using Foundation;
 using FreedomVoice.iOS.NotificationsServiceExtension.Models;
-using FreedomVoice.iOS.NotificationsServiceExtension.Utils;
-using Newtonsoft.Json;
 using UserNotifications;
+using ContactsHelper = FreedomVoice.iOS.Core.Utilities.Helpers.Contacts;
+using FreedomVoice.Core;
+using FreedomVoice.Core.Utils;
 
 namespace FreedomVoice.iOS.NotificationsServiceExtension
 {
@@ -35,7 +35,7 @@ namespace FreedomVoice.iOS.NotificationsServiceExtension
             Console.WriteLine($"[{this.GetType()}] User data: \n{pushNotificationData}");
             
             // Fetch contacts book
-            await Utils.Contacts.GetContactsListAsync();
+            await ContactsHelper.GetContactsListAsync();
 
             // Display debug info about contacts book
             DebugPrintContracts();
@@ -45,7 +45,7 @@ namespace FreedomVoice.iOS.NotificationsServiceExtension
             Console.WriteLine($"[{this.GetType()}] phone: {phoneFromPush}");
 
             // Find contact from Contact book by phone
-            var matchedContact = Utils.Contacts.ContactList.FirstOrDefault(contact =>
+            var matchedContact = ContactsHelper.ContactList.FirstOrDefault(contact =>
                 contact.Phones.FirstOrDefault(phone => DataFormatUtils.NormalizePhone(phone.Number) == DataFormatUtils.NormalizePhone(phoneFromPush))?.Label != null
             );
             Console.WriteLine($"[{this.GetType()}] Contact is found: {matchedContact}");
@@ -70,7 +70,7 @@ namespace FreedomVoice.iOS.NotificationsServiceExtension
         private void DebugPrintContracts()
         {
             var contactsDebugList = new StringBuilder();
-            foreach (var c in Utils.Contacts.ContactList)
+            foreach (var c in ContactsHelper.ContactList)
             {
                 var phones = new StringBuilder();
                 foreach (var phone in c.Phones)

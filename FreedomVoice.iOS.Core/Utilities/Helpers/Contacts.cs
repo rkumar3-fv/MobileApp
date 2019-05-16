@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,11 +9,12 @@ using Contacts;
 using Foundation;
 using FreedomVoice.Core.Utils;
 using FreedomVoice.Core.ViewModels;
-using FreedomVoice.iOS.Utilities.Extensions;
+using FreedomVoice.iOS.Core.Utilities.Extensions;
+using UIKit;
 using Xamarin.Contacts;
 using String = System.String;
 
-namespace FreedomVoice.iOS.Utilities.Helpers
+namespace FreedomVoice.iOS.Core.Utilities.Helpers
 {
     public static class Contacts
     {
@@ -49,7 +50,7 @@ namespace FreedomVoice.iOS.Utilities.Helpers
 
         public static void SubscribeToContactsChange()
         {
-            if (AppDelegate.SystemVersion == 9)
+            if (UIDevice.CurrentDevice.CheckSystemVersion(9, 0))
             {
                 NotificationContactStore = new CNContactStore();
                 NSNotificationCenter.DefaultCenter.AddObserver(CNContactStore.NotificationDidChange, MyAddressBookExternalChangeCallback);
@@ -241,7 +242,7 @@ namespace FreedomVoice.iOS.Utilities.Helpers
         }
     }
 
-    class ContactNameProvider: IContactNameProvider
+    public class ContactNameProvider: IContactNameProvider
     {
 
         private Dictionary<string, string> _contactNames = new Dictionary<string, string>();
@@ -353,7 +354,5 @@ namespace FreedomVoice.iOS.Utilities.Helpers
             return phoneParser.Replace( phoneNumber, format );
 
         }
-
-
     }
 }
