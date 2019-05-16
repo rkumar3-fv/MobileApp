@@ -81,6 +81,22 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                 _presenter.ReloadAsync();
             }
         }
+        
+        public override void OnResume()
+        {
+            base.OnResume();
+            ContentActivity.SearchListener.OnChange += SearchListenerOnChange;
+            ContentActivity.SearchListener.OnApply += SearchListenerOnApply;
+            ContentActivity.SearchListener.OnCollapse += SearchListenerOnCancel;
+        }      
+
+        public override void OnPause()
+        {
+            base.OnPause();
+            ContentActivity.SearchListener.OnChange -= SearchListenerOnChange;
+            ContentActivity.SearchListener.OnApply -= SearchListenerOnApply;
+            ContentActivity.SearchListener.OnCollapse -= SearchListenerOnCancel;
+        }
 
         private void ProviderOnContactsUpdated(object sender, EventArgs e)
         {
@@ -114,6 +130,23 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             _noResultText.Visibility = isEmpty ? ViewStates.Visible : ViewStates.Gone;
             _recyclerView.Visibility = isEmpty ? ViewStates.Gone : ViewStates.Visible;
             _adapter.Update(newList);
+        }
+        
+        private void SearchListenerOnCancel(object sender, bool b)
+        {
+            _presenter.Query = null;
+            _presenter.ReloadAsync();
+        }
+
+        private void SearchListenerOnApply(object sender, string s)
+        {
+            _presenter.Query = s;
+            _presenter.ReloadAsync();
+        }
+
+        private void SearchListenerOnChange(object sender, string s)
+        {
+            _presenter.Query = s;
         }
     }
 }
