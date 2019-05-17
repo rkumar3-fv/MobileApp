@@ -17,7 +17,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
     {
 
         public long ConversationId;
-        public PresentationNumber CurrentPhone;
+        public PresentationNumber SystemPhone;
  
         private readonly UITableView _tableView;
         private readonly CallerIdView _callerIdView;
@@ -161,7 +161,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
         private void _SetupData()
         {
             View.AddGestureRecognizer(new UITapGestureRecognizer((obj) => View.EndEditing(true)));
-            _callerIdView.UpdatePickerData(CurrentPhone);
+            _callerIdView.UpdatePickerData(SystemPhone);
             CallerIdEvent.CallerIdChanged += CallerIdEventOnCallerIdChanged;
             var source = new ConversationSource(_tableView);
             source.NeedMoreEvent += (sender, args) =>

@@ -8,8 +8,8 @@ namespace FreedomVoice.Core.ViewModels
 {
     public class ConversationViewModel
     {
-        private readonly string _RawCollocutor;
-        public string Collocutor => _contactNameProvider.GetName(_RawCollocutor);
+        private readonly string _RawTo;
+        public string To => _contactNameProvider.GetName(_RawTo);
         public readonly string Date;
         public readonly string LastMessage;
         public readonly bool IsNew;
@@ -20,7 +20,7 @@ namespace FreedomVoice.Core.ViewModels
         public ConversationViewModel(Conversation entity, IContactNameProvider contactNameProvider)
         {
             _contactNameProvider = contactNameProvider;
-            _RawCollocutor = Regex.Replace(entity.CollocutorPhone.PhoneNumber, @"\D", "");
+            _RawTo = Regex.Replace(entity.ToPhone.PhoneNumber, @"\D", "");
             var message = entity.Messages.OrderByDescending(x => x.CreatedAt).FirstOrDefault();
             if (message == null) return;
             LastMessage = message.Text;
