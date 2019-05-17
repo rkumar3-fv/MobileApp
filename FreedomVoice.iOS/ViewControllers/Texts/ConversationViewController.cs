@@ -24,7 +24,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             TableFooterView = new UIView(),
         };
         
-        protected readonly CallerIdView _callerIdView = new CallerIdView(new RectangleF(0, 0, (float)Theme.ScreenBounds.Width, 40), MainTabBarInstance.GetPresentationNumbers())
+        protected readonly CallerIdView _callerIdView = new CallerIdView(new RectangleF(0, 0, (float)Theme.ScreenBounds.Width, 40), MainTabBarInstance?.GetPresentationNumbers())
         {
             TranslatesAutoresizingMaskIntoConstraints = false,
             IsReadOnly = true

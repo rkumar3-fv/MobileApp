@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Foundation;
+using FreedomVoice.Core.Utils;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.TableViewCells;
 using FreedomVoice.iOS.Utilities;
@@ -59,6 +60,8 @@ namespace FreedomVoice.iOS.TableViewSources
                 _navigationController.PushViewController(mainTabBarController, false);
             else
                 (UIApplication.SharedApplication.Delegate as AppDelegate)?.PassToAuthentificationProcess();
+            
+            ServiceContainer.Resolve<IAppNavigator>()?.UpdateMainTabBarController(mainTabBarController);
         }
     }
 }

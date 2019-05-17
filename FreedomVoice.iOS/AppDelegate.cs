@@ -68,17 +68,13 @@ namespace FreedomVoice.iOS
             InitializeAnalytics();
 
             Theme.Apply();
-
-            if (UserDefault.IsAuthenticated)
-                ProceedWithAuthenticatedUser();
-            else
-                PassToAuthentificationProcess();
-
-
             UNUserNotificationCenter.Current.Delegate = pushServiceCenter;
+
             if (UserDefault.IsAuthenticated)
             {
-                pushService.RegisterForPushNotifications(UNAuthorizationOptions.Alert | UNAuthorizationOptions.Badge | UNAuthorizationOptions.Sound, async _ =>
+                ProceedWithAuthenticatedUser();
+
+                pushService.RegisterForPushNotifications(async _ =>
                     {
                         try
                         {
@@ -86,9 +82,14 @@ namespace FreedomVoice.iOS
                         }
                         catch (Exception e)
                         {
-                            Console.WriteLine(e);
+                            Console.WriteLine(e); 
                         }
                     });
+                Core.Utilities.Helpers.Contacts.GetContactsListAsync();
+            }
+            else
+            {
+                PassToAuthentificationProcess();
             }
             
             return true;
@@ -110,10 +111,13 @@ namespace FreedomVoice.iOS
                 }
             });
 
+
             var viewModel = new PoolingIntervalViewModel();
             await viewModel.GetPoolingIntervalAsync();
 
             await ProceedGetAccountsList(true);
+            iOS.Core.Utilities.Helpers.Contacts.GetContactsListAsync();
+
         }
 
         private async void ProceedWithAuthenticatedUser()
@@ -217,6 +221,7 @@ namespace FreedomVoice.iOS
 
                 navigationController = new UINavigationController(mainTabController);
                 Theme.TransitionController(navigationController, false);
+                ServiceContainer.Resolve<IAppNavigator>()?.UpdateMainTabBarController(mainTabController);
             }
             else
             if (!string.IsNullOrEmpty(UserDefault.LastUsedAccount))
@@ -241,6 +246,7 @@ namespace FreedomVoice.iOS
 
                 navigationController.PushViewController(mainTabController, false);
                 Theme.TransitionController(navigationController, false);
+                ServiceContainer.Resolve<IAppNavigator>()?.UpdateMainTabBarController(mainTabController);
             }
             else
             {

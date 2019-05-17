@@ -7,7 +7,7 @@ using UIKit;
 
 namespace FreedomVoice.iOS.ViewControllers
 {
-    public class BaseViewController : UIViewController
+public class BaseViewController : UIViewController
     {
         /// <summary>
         /// Required constructor for Storyboard to work

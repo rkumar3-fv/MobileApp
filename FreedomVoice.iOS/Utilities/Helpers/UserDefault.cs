@@ -1,10 +1,14 @@
-﻿using Foundation;
+﻿using System;
+using Foundation;
 using FreedomVoice.Core.Utils;
 
 namespace FreedomVoice.iOS.Utilities.Helpers
 {
     public static class UserDefault
     {
+
+        public static Action IsAuthenticatedChanged;
+        
         public static bool IsAuthenticated
         {
             get { return NSUserDefaults.StandardUserDefaults.BoolForKey("IsAuthenticatedUserKey"); }
