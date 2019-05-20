@@ -149,6 +149,8 @@ namespace FreedomVoice.iOS.Core.Utilities.Helpers
 
             List<FVContact> contacts = new List<FVContact>();
 
+            Console.WriteLine($"Contact list form book : {contactList.Count()}");
+
             foreach (var cnContact in contactList)
             {
                 var phones = new List<FVPhone>();
@@ -172,6 +174,7 @@ namespace FreedomVoice.iOS.Core.Utilities.Helpers
                 });
             }
 
+            Console.WriteLine($"Contact list form book : {contacts.Count()}");
             completed?.Invoke(contacts);
         }
         
@@ -314,13 +317,11 @@ namespace FreedomVoice.iOS.Core.Utilities.Helpers
 
         public static string NormalizePhoneNumber(string number)
         {
-          // var normalizedPhoneNumber = Regex.Replace(number, @"[^\d]", "");
-
             var normalizedPhoneNumber = "";
             var pattern = "0123456789";
             foreach (var c in number)
                 if (pattern.Contains(c))
-                    normalizedPhoneNumber.Append(c);
+                    normalizedPhoneNumber += c;
 
             return normalizedPhoneNumber.Length == 11 && normalizedPhoneNumber.StartsWith("1") ? normalizedPhoneNumber.Substring(1) : normalizedPhoneNumber;
         }

@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Text;
 using Foundation;
-using FreedomVoice.iOS.NotificationsServiceExtension.Models;
 using UserNotifications;
 using ContactsHelper = FreedomVoice.iOS.Core.Utilities.Helpers.Contacts;
 using FreedomVoice.Core.Utils;
@@ -10,6 +9,7 @@ using FreedomVoice.Core.ViewModels;
 using FreedomVoice.iOS.Core;
 using System.Collections.Generic;
 using FreedomVoice.iOS.Core.Utilities.Helpers;
+using FreedomVoice.iOS.NotificationsServiceExtension.Models;
 
 namespace FreedomVoice.iOS.NotificationsServiceExtension
 {
@@ -52,12 +52,14 @@ namespace FreedomVoice.iOS.NotificationsServiceExtension
             // Fetch contacts book
             ContactsHelper.GetContactsList(contacts =>
             {
+                _logger.Debug($"{nameof(NotificationService)}", $"{nameof(NotificationService)}", $"Contacts from book: {contacts.Count()}");
+
                 // Display debug info about contacts book
-                DebugPrintContracts();
-            
+                DebugPrintContracts(contacts);
+
                 // Try fetch phone number from push
                 var phoneFromPush = pushNotificationData.data?.message?.fromPhoneNumber;
-               // phoneFromPush = ContactsHelper.NormalizePhoneNumber(phoneFromPush);
+                phoneFromPush = ContactsHelper.NormalizePhoneNumber(phoneFromPush);
                 _logger.Debug($"{nameof(NotificationService)}", $"{nameof(NotificationService)}", $"Phone from push: {phoneFromPush}");
 
                 // Find contact from Contact book by phone
@@ -73,6 +75,8 @@ namespace FreedomVoice.iOS.NotificationsServiceExtension
         }
 
         private FVContact FirstContact(IEnumerable<FVContact> contacts, string byPhoneNumber) {
+            _logger.Debug($"{nameof(NotificationService)}", $"{nameof(NotificationService)}", $"Try to find contact by {byPhoneNumber}");
+
             foreach (var contact in contacts)
                 if (contact.Phones != null && contact.Phones.Count() > 0)
                     foreach (var phone in contact.Phones)
@@ -93,10 +97,10 @@ namespace FreedomVoice.iOS.NotificationsServiceExtension
             ContentHandler?.Invoke(BestAttemptContent);
         }
         
-        private void DebugPrintContracts()
+        private void DebugPrintContracts(IEnumerable<FVContact> contacts)
         {
             var contactsDebugList = new StringBuilder();
-            foreach (var c in ContactsHelper.ContactList)
+            foreach (var c in contacts)
             {
                 var phones = new StringBuilder();
                 foreach (var phone in c.Phones)

@@ -3,6 +3,7 @@ using System.Drawing;
 using CoreGraphics;
 using FreedomVoice.Core.Presenters;
 using FreedomVoice.iOS.Entities;
+using FreedomVoice.iOS.PushNotifications;
 using FreedomVoice.iOS.TableViewSources.Texting;
 using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.Utilities.Events;
