@@ -15,7 +15,6 @@ using FreedomVoice.Entities.Enums;
 using FreedomVoice.Entities.Request;
 using Java.Lang;
 using Newtonsoft.Json;
-using Enum = System.Enum;
 using Exception = System.Exception;
 using TaskStackBuilder = Android.Support.V4.App.TaskStackBuilder;
 
@@ -26,8 +25,7 @@ namespace com.FreedomVoice.MobileApp.Android.Services
     public class AppFirebaseMessagingService : Firebase.Messaging.FirebaseMessagingService
     {
         private IContactNameProvider _contactNameProvider;
-        private const string DataKey = "data";
-        private const string PushTypeKey = "pushType";
+        private const string DataKey = "Data";
 
         public override void OnCreate()
         {
@@ -39,24 +37,24 @@ namespace com.FreedomVoice.MobileApp.Android.Services
         {
             base.OnMessageReceived(message);
 
-            if (message.Data == null || !message.Data.ContainsKey(DataKey) ||
-                !message.Data.ContainsKey(PushTypeKey)) return;
+            if (message.Data == null || !message.Data.ContainsKey(DataKey)) return;
 
             try
             {
-                Enum.TryParse(message.Data[PushTypeKey], true, out PushType pushType);
+                var pushMessageRequest = JsonConvert.DeserializeObject<PushMessageRequest<object>>(message.Data[DataKey]);
+                var pushType = pushMessageRequest.PushType;
 
                 switch (pushType)
                 {
                     case PushType.NewMessage:
-                        var deserializeObject = JsonConvert.DeserializeObject<Push>(message.Data[DataKey]);
-                        ProcessNewMessage(deserializeObject);
+                        var deserializeObject = JsonConvert.DeserializeObject<PushMessageRequest<Push>>(message.Data[DataKey]);
+                        ProcessNewMessage(deserializeObject.Data);
                         break;
                     case PushType.StatusChanged:
                         // todo process status changed
                         break;
                     default:
-                        throw new IllegalStateException($"unknown PushType ${message.Data[PushTypeKey]}");
+                        throw new IllegalStateException($"unknown PushType");
                 }
             }
             catch (Exception e)
