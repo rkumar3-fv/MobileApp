@@ -70,5 +70,13 @@ namespace FreedomVoice.Core.Services.Interfaces
         /// <param name="startTime"></param>
         /// <returns></returns>
         DateTime GetLastConversationUpdateDate(DateTime startTime);
+        
+        /// <summary>
+        /// One message by Id and conversation Id
+        /// </summary>
+        /// <param name="conversationId"></param>
+        /// <param name="messageId"></param>
+        /// <returns></returns>
+        Message GetMessageBy(long conversationId, long messageId);
     }
 }
