@@ -204,7 +204,7 @@ namespace FreedomVoice.Core.Services
                 .Include(conversation => conversation.Conversation)
                 .Include(conversation => conversation.From)
                 .Include(conversation => conversation.To)
-                .Where(x => conversation.Conversation.Id == conversationId);
+                .Where(conversation => conversation.Conversation.Id == conversationId);
             if (conversationWithMessages == null) return new List<Message>();
             return conversationWithMessages.Skip(start).Take(limit);
         }
