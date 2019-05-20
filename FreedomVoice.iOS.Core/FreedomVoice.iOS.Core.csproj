@@ -55,6 +55,7 @@
     <Compile Include="Utilities\Helpers\ContactNameProvider.cs" />
     <Compile Include="Utilities\Helpers\Contacts.cs" />
     <Compile Include="Utilities\Extensions\String.cs" />
+    <Compile Include="Logger.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FreedomVoice.Core\FreedomVoice.Core.csproj">

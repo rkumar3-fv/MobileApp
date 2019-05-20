@@ -9,6 +9,7 @@ namespace FreedomVoice.iOS.Core
 		public static void RegisterServices()
 		{
 			ServiceContainer.Register<IContactNameProvider>(() => new ContactNameProvider());
-		}
-	}
+            ServiceContainer.Register<ILogger>(() => new Logger());
+        }
+    }
 }

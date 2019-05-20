@@ -202,6 +202,8 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             View.AddSubview(AppDelegate.ActivityIndicator);
             AppDelegate.ActivityIndicator.Show();
             Presenter.ReloadAsync();
+
+            _chatField.Text = new PushNotificationTokenDataStore().Get();
         }
         
         protected virtual async void SendButtonPressed()
