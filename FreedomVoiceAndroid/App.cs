@@ -27,7 +27,7 @@ namespace com.FreedomVoice.MobileApp.Android
         AllowBackup = false,
         Icon = "@mipmap/ic_launcher",
         Theme = "@style/AppTheme")]
-    public class App : Application
+    public class App : Application, Application.IActivityLifecycleCallbacks
     {
         public const string AppPackage = "com.FreedomVoice.MobileApp";
         private readonly AppHelper _helper;
@@ -59,6 +59,7 @@ namespace com.FreedomVoice.MobileApp.Android
             base.OnCreate();
             FirebaseApp.InitializeApp(this);
             _helper.ActionsHelper = new ActionsHelper(this);
+            RegisterActivityLifecycleCallbacks(this);
             //_helper.Reports = new ReportHelper(this, _helper.ActionsHelper);
             JavaSystem.SetProperty("http.keepAlive", "true");
             if (!_helper.IsInsigthsOn)
@@ -84,6 +85,40 @@ namespace com.FreedomVoice.MobileApp.Android
         private void HandleUnhandledException(object sender, UnhandledExceptionEventArgs args)
         {
             Process.GetCurrentProcess().Kill();
+        }
+
+
+        public bool IsAppInForeground => _resumedActivitys > 0;
+        private int _resumedActivitys = 0;
+        
+        public void OnActivityCreated(Activity activity, Bundle savedInstanceState)
+        {
+        }
+
+        public void OnActivityDestroyed(Activity activity)
+        {
+        }
+
+        public void OnActivityPaused(Activity activity)
+        {
+            _resumedActivitys--;
+        }
+
+        public void OnActivityResumed(Activity activity)
+        {
+            _resumedActivitys++;
+        }
+
+        public void OnActivitySaveInstanceState(Activity activity, Bundle outState)
+        {
+        }
+
+        public void OnActivityStarted(Activity activity)
+        {
+        }
+
+        public void OnActivityStopped(Activity activity)
+        {
         }
     }
 }

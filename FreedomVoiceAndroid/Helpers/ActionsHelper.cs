@@ -217,7 +217,8 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                         IsLoggedIn = true;
                         if ((AccountsList == null) || (SelectedAccount == null))
                         {
-                            GetAccounts();
+                            if (Build.VERSION.SdkInt < BuildVersionCodes.O)
+                                GetAccounts();
                             if (watcher.IsRunning)
                                 watcher.Stop();
                             _initHelperTime = watcher.ElapsedMilliseconds;
@@ -237,7 +238,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                         if (watcher.IsRunning)
                             watcher.Stop();
                         _initHelperTime = watcher.ElapsedMilliseconds;
-                        _app.StartActivity(intent);
+//                        _app.StartActivity(intent);
                         return;
                     }
                 }
