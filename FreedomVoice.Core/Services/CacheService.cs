@@ -230,5 +230,16 @@ namespace FreedomVoice.Core.Services
                 return new DateTime();
             return _conversationRepository.TableNoTracking.Where(conversation => conversation.LastSyncDate < startTime).Max(conversation => conversation.LastSyncDate);
         }
+
+        public Message GetMessageBy(long conversationId, long messageId)
+        {
+            var conversationWithMessages = _messagesRepository.TableNoTracking
+                .Include(conversation => conversation.Conversation)
+                .Include(conversation => conversation.From)
+                .Include(conversation => conversation.To)
+                .Where(conversation => conversation.Conversation.Id == conversationId && conversation.Id == messageId);
+
+            return conversationWithMessages.FirstOrDefault();
+        }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FreedomVoice.Core.Services;
 using FreedomVoice.Core.Services.Interfaces;
 using FreedomVoice.Core.Utils;
 using FreedomVoice.Core.ViewModels;
@@ -27,7 +28,7 @@ namespace FreedomVoice.Core.Presenters
         private DateTime _currentDate;
         private int _currentPage;
         private bool _isLoading = false;
-        private const int DEFAULT_COUNT = 50;
+        private const int DefaultCount = 50;
 
         private string _phoneNumber;
         public string PhoneNumber
@@ -54,6 +55,31 @@ namespace FreedomVoice.Core.Presenters
             HasMore = false;
             _service = ServiceContainer.Resolve<IConversationService>();
             _nameProvider = ServiceContainer.Resolve<IContactNameProvider>();
+            
+            NotificationMessageService.Instance().NewMessageEventHandler += OnNewMessageEventHandler;
+        }
+
+        ~ConversationsPresenter()
+        {
+            NotificationMessageService.Instance().NewMessageEventHandler -= OnNewMessageEventHandler;
+        }
+
+        private void OnNewMessageEventHandler(object sender, ConversationEventArg e)
+        {
+            var conversation = e.Conversation;
+            var viewModel = new ConversationViewModel(conversation, _nameProvider);
+            var index = Items.FindIndex(model => model.ConversationId == conversation.Id);
+            if (index < 0)
+            {
+                Items.Add(viewModel);
+            }
+            else
+            {
+                Items[index] = viewModel;
+            }
+
+            Items = Items.OrderByDescending(item => item.Date).ToList();
+            ItemsChanged?.Invoke(this, new ConversationsEventArgs(Items));
         }
 
         public async void ReloadAsync()
@@ -75,12 +101,13 @@ namespace FreedomVoice.Core.Presenters
         private async Task _PerformLoading()
         {
             _isLoading = true;
-            var res = await _service.GetList(_phoneNumber, _currentDate, DEFAULT_COUNT, _currentPage);
+            var res = await _service.GetList(_phoneNumber, _currentDate, DefaultCount, _currentPage);
             HasMore = !res.IsEnd;
 
 
             Items.AddRange(res.Conversations?.Select(row =>
-                new ConversationViewModel(row, _nameProvider)));
+                               new ConversationViewModel(row, _nameProvider)) ?? throw new Exception()
+            );
             
             ItemsChanged?.Invoke(this, new ConversationsEventArgs(Items));
             _isLoading = false;
