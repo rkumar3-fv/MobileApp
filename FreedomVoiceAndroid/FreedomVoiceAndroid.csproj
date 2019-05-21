@@ -1596,6 +1596,12 @@
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\ic_default_notification.png" />
   </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\ic_anim_sending.xml" />
+    <AndroidResource Include="Resources\drawable\ic_sending_1.png" />
+    <AndroidResource Include="Resources\drawable\ic_sending_2.png" />
+    <AndroidResource Include="Resources\drawable\ic_sending_3.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
