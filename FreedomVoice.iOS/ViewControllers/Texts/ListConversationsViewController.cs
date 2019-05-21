@@ -24,6 +24,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
         {
             public static readonly nfloat NoItemsLabelHeight = 40;
             public static readonly nfloat CallerIdViewHeight = 40;
+            public static readonly nfloat SearchViewHeight = 44;
             public static readonly nfloat LeftMargin = 15;
             public static readonly nfloat RightMargin = -15;
             public static readonly nfloat SeparatorHeight = 0.5f;
@@ -31,6 +32,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
         }
         
         protected override string PageName => "Texts";
+        private UISearchBar _searchBar;
 
         private UILabel _noItemsLabel;
         private UITableView _tableView;
@@ -69,10 +71,54 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             {
                 TranslatesAutoresizingMaskIntoConstraints = false
             };
+            
+            _searchBar = new UISearchBar
+            {
+                TranslatesAutoresizingMaskIntoConstraints = false,
+                Placeholder = ContactsViewControllerTexts.Search,
+                AutocapitalizationType = UITextAutocapitalizationType.None,
+                SpellCheckingType = UITextSpellCheckingType.No,
+                AutocorrectionType = UITextAutocorrectionType.No,
+                BarTintColor = Theme.BarBackgroundColor
+            };
+            
+            var contactsSearchBarCancelButton = UIBarButtonItem.AppearanceWhenContainedIn(typeof(UISearchBar));
+            var textAttributes = new UITextAttributes { Font = UIFont.SystemFontOfSize(17, UIFontWeight.Medium), TextColor = Theme.BarButtonColor };
+            contactsSearchBarCancelButton.SetTitleTextAttributes(textAttributes, UIControlState.Normal);
+            
+            _searchBar.SearchButtonClicked += _searchButtonClicked;
+            _searchBar.CancelButtonClicked += _searchCancelClicked;
+            _searchBar.ShouldBeginEditing += SearchBarOnShouldBeginEditing;
+            _searchBar.ShouldEndEditing += SearchBarOnShouldEndEditing;
 
             _refreshControl = new UIRefreshControl();
             _refreshControl.ValueChanged += _refreshControlValueChanged;
 
+        }
+
+        private void _searchCancelClicked(object sender, EventArgs e)
+        {
+            _searchBar.Text = "";
+            _presenter.Query = "";
+            _reloadData();
+        }
+
+        private void _searchButtonClicked(object sender, EventArgs e)
+        {
+            _presenter.Query = _searchBar.Text;
+            _reloadData();
+        }
+        
+        private bool SearchBarOnShouldEndEditing(UISearchBar searchBar)
+        {
+            _searchBar.ShowsCancelButton = false;
+            return true;
+        }
+
+        private bool SearchBarOnShouldBeginEditing(UISearchBar searchBar)
+        {
+            _searchBar.ShowsCancelButton = true;
+            return true;
         }
 
         public override void ViewDidLoad()
@@ -108,6 +154,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             View.AddSubview(_lineView);
             View.AddSubview(_tableView);
             View.AddSubview(_noItemsLabel);
+            View.AddSubview(_searchBar);
 
             var createButton = new UIBarButtonItem(UIBarButtonSystemItem.Compose, (sender, e) =>
             {
@@ -125,7 +172,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             else 
             {
                 _tableView.AddSubview(_refreshControl);
-            }
+            }            
         }
         
         private void _SetupConstraints()
@@ -134,8 +181,13 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             _noItemsLabel.LeadingAnchor.ConstraintEqualTo(View.LeadingAnchor, Appearance.LeftMargin).Active = true;
             _noItemsLabel.TrailingAnchor.ConstraintEqualTo(View.TrailingAnchor, Appearance.RightMargin).Active = true;
             _noItemsLabel.HeightAnchor.ConstraintEqualTo(Appearance.NoItemsLabelHeight).Active = true;
+            
+            _searchBar.TopAnchor.ConstraintEqualTo(View.TopAnchor).Active = true;
+            _searchBar.LeadingAnchor.ConstraintEqualTo(View.LeadingAnchor).Active = true;
+            _searchBar.TrailingAnchor.ConstraintEqualTo(View.TrailingAnchor).Active = true;
+            _searchBar.HeightAnchor.ConstraintEqualTo(Appearance.SearchViewHeight).Active = true;
 
-            _callerIdView.TopAnchor.ConstraintEqualTo(View.TopAnchor).Active = true;
+            _callerIdView.TopAnchor.ConstraintEqualTo(_searchBar.BottomAnchor).Active = true;
             _callerIdView.LeadingAnchor.ConstraintEqualTo(View.LeadingAnchor).Active = true;
             _callerIdView.TrailingAnchor.ConstraintEqualTo(View.TrailingAnchor).Active = true;
             _callerIdView.HeightAnchor.ConstraintEqualTo(Appearance.CallerIdViewHeight).Active = true;
@@ -201,6 +253,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
 
         private void _reloadData()
         {
+            View.EndEditing(true);
             View.AddSubview(AppDelegate.ActivityIndicator);
             AppDelegate.ActivityIndicator.Show();
             _presenter.ReloadAsync();

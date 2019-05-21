@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace FreedomVoice.Core.ViewModels
 {
@@ -10,6 +11,8 @@ namespace FreedomVoice.Core.ViewModels
 
         string GetFormattedPhoneNumber(string phoneNumber);
         string GetClearPhoneNumber(string formattedPhoneNumber);
+        
+        List<string> SearchNumbers(string query);
         
         void RequestContacts();
         event EventHandler ContactsUpdated;

@@ -9,6 +9,7 @@ using com.FreedomVoice.MobileApp.Android.Data;
 #endif
 using com.FreedomVoice.MobileApp.Android.Helpers;
 using com.FreedomVoice.MobileApp.Android.Utils;
+using Firebase;
 using FreedomVoice.Core.Cache;
 using FreedomVoice.Core.Services.Interfaces;
 using FreedomVoice.Core.Utils;
@@ -56,6 +57,7 @@ namespace com.FreedomVoice.MobileApp.Android
         public override void OnCreate()
         {
             base.OnCreate();
+            FirebaseApp.InitializeApp(this);
             _helper.ActionsHelper = new ActionsHelper(this);
             //_helper.Reports = new ReportHelper(this, _helper.ActionsHelper);
             JavaSystem.SetProperty("http.keepAlive", "true");

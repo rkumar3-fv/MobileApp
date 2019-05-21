@@ -106,7 +106,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             View.AddSubview(_tableView);
         }
 
-        protected virtual void _SubscribeToEvents()
+        protected void _SubscribeToEvents()
         {
             _observer1 = UIKeyboard.Notifications.ObserveWillShow(WillShowNotification);
             _observer2 = UIKeyboard.Notifications.ObserveWillHide(WillHideNotification);

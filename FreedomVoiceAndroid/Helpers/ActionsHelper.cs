@@ -26,6 +26,9 @@ using Java.Util.Concurrent.Atomic;
 using Pair = Android.Support.V4.Util.Pair;
 using Uri = Android.Net.Uri;
 using com.FreedomVoice.MobileApp.Android.Data;
+using Firebase.Iid;
+using FreedomVoice.Core.Services.Interfaces;
+using FreedomVoice.Entities.Enums;
 
 namespace com.FreedomVoice.MobileApp.Android.Helpers
 {
@@ -138,6 +141,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         private readonly AppDbHelper _dbHelper;
         private readonly AtomicLong _idCounter;
         private readonly AppPreferencesHelper _preferencesHelper;
+        private readonly IPushService _pushService;
         private long _preferencesTime;
         private long _initHelperTime;
 
@@ -172,6 +176,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             ServiceContainer.Register<IDeviceCacheStorage>(() => cacheImpl);
             ServiceContainer.Register<IDeviceCookieStorage>(() => cookieImpl);
             CoreModules.Load(AndroidDbPath.GetDatabasePath("freedomvoice.db"));
+            _pushService = ServiceContainer.Resolve<IPushService>();
             RecentsDictionary = new SortedDictionary<long, RecentHolder>(Comparer<long>.Create((x, y) => y.CompareTo(x)));
             ExtensionsList = new List<Extension>();
             SelectedExtension = -1;
@@ -791,6 +796,24 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             _app.ApplicationHelper.SetMyPhoneNumber(number);
         }
 
+        public async void RegisterFcm()
+        {
+            var instanceToken = FirebaseInstanceId.Instance.Token;
+            if (!string.IsNullOrEmpty(instanceToken))
+            {
+                await _pushService.Register(DeviceType.Android, instanceToken);
+            }
+        }
+
+        public async void UnregisterFcm()
+        {
+            var instanceToken = FirebaseInstanceId.Instance.Token;
+            if (!string.IsNullOrEmpty(instanceToken))
+            {
+                await _pushService.Unregister(DeviceType.Android, instanceToken);
+            }
+        }
+
         /// <summary>
         /// Responses from ComService
         /// </summary>
@@ -1073,6 +1096,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                 case "LoginResponse":
                     _preferencesHelper.SaveCredentials(_userLogin, _userPassword, AppHelper.InsightsKey);
                     WaitingRequestArray.Remove(response.RequestId);
+                    RegisterFcm();
                     if (IsLoggedIn)
                         break;
                     IsLoggedIn = true;
@@ -1108,6 +1132,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 
                 // Login action response
                 case "LogoutResponse":
+                    UnregisterFcm();
                     DoLogout(response.RequestId);
                     break;
 
