@@ -55,4 +55,5 @@
   <color name="colorSeekFill">#038ac1</color>
   <color name="colorChatTextSecondary">#989898</color>
   <color name="colorBlack">#000</color>
+  <color name="color_notification_default">@color/colorActivatedControls</color>
 </resources>

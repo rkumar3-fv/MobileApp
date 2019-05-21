@@ -285,7 +285,7 @@ namespace FreedomVoice.iOS.Core.Utilities.Helpers
             if (string.IsNullOrEmpty(c.DisplayName)) return false;
             var fullNameParts = c.DisplayName.Split(Separators);
 
-            return searchPhraseParts.All(phrase => fullNameParts.Any(part => part.StartsWith(phrase, StringComparison.OrdinalIgnoreCase)));
+            return searchPhraseParts.All(phrase => fullNameParts.Any(part => part.Contains(phrase, StringComparison.OrdinalIgnoreCase)));
         }
 
         public static bool ContactSearchPredicate(Contact c, string key)

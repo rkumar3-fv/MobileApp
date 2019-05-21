@@ -2,6 +2,7 @@
 <resources>
   <string name="ApplicationName">FreedomVoice</string>
   <string name="ApplicationTitle">Freedom Voice</string>
+  <string name="DefaultNotificationChannel">Freedom Voice</string>
   <string name="MenuItem_logout">Logout</string>
   <string name="MenuItem_clear">Clear recents</string>
   <string name="MenuItem_new_conversation">New Conversation</string>

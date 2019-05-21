@@ -219,6 +219,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                     break;
                 case 4:
                     _toolbar.InflateMenu(Resource.Menu.menu_conversations);
+                    ContactsBarRestore();
                     break;
             }
         }
@@ -370,15 +371,13 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 MenuItemCompat.GetActionView(menu.FindItem(Resource.Id.menu_action_search))
                     .JavaCast<SearchView>();
             var menuItem = menu.FindItem(Resource.Id.menu_action_search);
-            if ((menuItem != null) && (searchView != null))
-            {
-                MenuItemCompat.SetOnActionExpandListener(menuItem, SearchListener);
-                MenuItemCompat.SetActionView(menuItem, searchView);
-                searchView.SetOnQueryTextListener(SearchListener);
-                var editText = searchView.FindViewById<EditText>(Resource.Id.search_src_text);
-                editText.SetTextColor(_whiteColor);
-                editText.SetHintTextColor(_grayColor);
-            }
+            if (menuItem == null || searchView == null) return;
+            MenuItemCompat.SetOnActionExpandListener(menuItem, SearchListener);
+            MenuItemCompat.SetActionView(menuItem, searchView);
+            searchView.SetOnQueryTextListener(SearchListener);
+            var editText = searchView.FindViewById<EditText>(Resource.Id.search_src_text);
+            editText.SetTextColor(_whiteColor);
+            editText.SetHintTextColor(_grayColor);
         }
     }
 }
