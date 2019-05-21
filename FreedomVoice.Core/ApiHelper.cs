@@ -184,11 +184,27 @@ namespace FreedomVoice.Core
             return await MakeAsyncFileDownload($"/api/v1/systems/{systemPhoneNumber}/mailboxes/{mailboxNumber}/folders/{folder}/messages/{messageId}/media/{mediaType}", token);
         }
         
-        public static async Task<BaseResult<List<Conversation>>> GetConversations(string phone, DateTime startDate, DateTime lastUpdateDate, int start, int limit)
+        public static async Task<BaseResult<List<Conversation>>> GetConversations(string phone, DateTime startDate, DateTime lastUpdateDate, int start, int limit, ConversationRequest searchRequest = null)
         {
-            var result = await MakeAsyncGetRequest<List<Conversation>>(
-                $"/api/v1/system/forward/{phone}/conversations?_from={startDate.Ticks}&_to={lastUpdateDate.Ticks}&_start={start}&_limit={limit}",
-                CancellationToken.None, LongTimeOut);
+            BaseResult<List<Conversation>> result;
+            var path =
+                $"/api/v1/system/forward/{phone}/conversations?_from={startDate.Ticks}&_to={lastUpdateDate.Ticks}&_start={start}&_limit={limit}";
+            if (searchRequest != null)
+            {
+                var content = JsonConvert.SerializeObject(searchRequest);
+                result = await MakeAsyncPostRequest<List<Conversation>>(
+                    path,
+                    content,
+                    "application/json",
+                    CancellationToken.None);
+            }
+            else
+            {
+                result = await MakeAsyncGetRequest<List<Conversation>>(
+                    path,
+                    CancellationToken.None, LongTimeOut);    
+            }
+            
             return result;
         }
 

@@ -25,6 +25,7 @@ namespace FreedomVoice.Core.Presenters
         public event EventHandler ItemsChanged;
         private readonly IConversationService _service;
         private readonly IContactNameProvider _nameProvider;
+        
         private DateTime _currentDate;
         private int _currentPage;
         private bool _isLoading = false;
@@ -42,6 +43,8 @@ namespace FreedomVoice.Core.Presenters
 
             }
         }
+
+        public string AccountNumber { get; set; }
 
         public bool HasMore { get; private set; }
         public string Query { get; set; }
@@ -84,7 +87,6 @@ namespace FreedomVoice.Core.Presenters
 
         public async void ReloadAsync()
         {
-//            var res = _nameProvider.SearchNumbers("an");
             if (_isLoading) return;
             _currentDate = DateTime.Now;
             _currentPage = 1;
@@ -102,7 +104,15 @@ namespace FreedomVoice.Core.Presenters
         private async Task _PerformLoading()
         {
             _isLoading = true;
-            var res = await _service.GetList(_phoneNumber, _currentDate, DefaultCount, _currentPage);
+            var res = await _service.GetList(
+                _phoneNumber,
+                _currentDate, 
+                DefaultCount, 
+                _currentPage, 
+                AccountNumber, 
+                Query, 
+                _nameProvider.SearchNumbers(Query).ToArray()
+                );
             HasMore = !res.IsEnd;
 
 
