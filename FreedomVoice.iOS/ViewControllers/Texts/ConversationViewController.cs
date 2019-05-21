@@ -16,7 +16,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
     {
         #region Subviews
 
-        private readonly UIRefreshControl refreshControl = new UIRefreshControl();
+        private readonly UIRefreshControl _refreshControl = new UIRefreshControl();
 
         private readonly UITableView _tableView = new UITableView
         {
@@ -42,13 +42,9 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
         
         #endregion
 
-        public long ConversationId;
-        public PresentationNumber SystemPhone;
- 
-        private readonly UITableView _tableView;
-        private readonly CallerIdView _callerIdView;
-        private readonly LineView _lineView;
-        private readonly ChatTextView _chatField;
+        public long? ConversationId;
+        public PresentationNumber CurrentPhone;
+        
         private IDisposable _observer1;
         private IDisposable _observer2;
         private static MainTabBarController MainTabBarInstance => MainTabBarController.SharedInstance;
@@ -115,7 +111,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             _observer1 = UIKeyboard.Notifications.ObserveWillShow(WillShowNotification);
             _observer2 = UIKeyboard.Notifications.ObserveWillHide(WillHideNotification);
             _chatField.SendButtonPressed += SendButtonPressed;
-            refreshControl.ValueChanged += RefreshControlOnValueChanged;
+            _refreshControl.ValueChanged += RefreshControlOnValueChanged;
         }
 
         private void _UnsubscribeFromEvents()
@@ -123,7 +119,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             _observer1.Dispose();
             _observer2.Dispose();
             _chatField.SendButtonPressed -= SendButtonPressed;
-            refreshControl.ValueChanged += RefreshControlOnValueChanged;
+            _refreshControl.ValueChanged += RefreshControlOnValueChanged;
         }
         
 
@@ -175,7 +171,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
         protected virtual void _SetupData()
         {
             View.AddGestureRecognizer(new UITapGestureRecognizer((obj) => View.EndEditing(true)));
-            _callerIdView.UpdatePickerData(SystemPhone);
+            _callerIdView.UpdatePickerData(CurrentPhone);
             CallerIdEvent.CallerIdChanged += CallerIdEventOnCallerIdChanged;
             var source = new ConversationSource(_tableView);
             source.NeedMoreEvent += (sender, args) =>
@@ -188,9 +184,9 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             _tableView.Source = source;
 
             if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0))
-                _tableView.RefreshControl = refreshControl;
+                _tableView.RefreshControl = _refreshControl;
             else
-                _tableView.AddSubview(refreshControl);
+                _tableView.AddSubview(_refreshControl);
             
             Presenter = new ConversationPresenter
             {
@@ -201,7 +197,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
                 var items = Presenter.Items;
                 source.UpdateItems(items);
                 AppDelegate.ActivityIndicator.Hide();
-                refreshControl.EndRefreshing();
+                _refreshControl.EndRefreshing();
             };
             View.AddSubview(AppDelegate.ActivityIndicator);
             AppDelegate.ActivityIndicator.Show();

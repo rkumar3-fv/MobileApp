@@ -111,8 +111,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
 
             var createButton = new UIBarButtonItem(UIBarButtonSystemItem.Compose, (sender, e) =>
             {
-                var controller = new NewConversationViewController();
-                controller.CurrentPhone = _callerIdView.SelectedNumber;
+                var controller = new NewConversationViewController {CurrentPhone = _callerIdView.SelectedNumber};
                 NavigationController?.PushViewController(controller, true);
             });
 
@@ -216,7 +215,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             View.EndEditing(true);
             var controller = AppDelegate.GetViewController<ConversationViewController>();
             controller.ConversationId = arg.ConversationId;
-            controller.SystemPhone = _callerIdView.SelectedNumber;
+            controller.CurrentPhone = _callerIdView.SelectedNumber;
             controller.Title = arg.Name;
             NavigationController.PushViewController(controller, true);
         }

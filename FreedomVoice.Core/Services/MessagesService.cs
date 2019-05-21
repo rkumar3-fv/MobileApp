@@ -48,7 +48,7 @@ namespace FreedomVoice.Core.Services
             var conversation = _cacheService.GetConversation(conversationId);
             if (conversation == null)
                 throw new ArgumentException("Conversation not found");
-            return await SendMessage(conversation.CurrentPhone.PhoneNumber, conversation.CollocutorPhone.PhoneNumber, text);
+            return await SendMessage(conversation.SystemPhone.PhoneNumber, conversation.ToPhone.PhoneNumber, text);
         }
 
         public async Task<SendingResponse<DAL.DbEntities.Conversation>> SendMessage(string currentNumber, string to, string text)
