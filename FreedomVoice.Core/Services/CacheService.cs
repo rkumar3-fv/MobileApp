@@ -86,10 +86,11 @@ namespace FreedomVoice.Core.Services
                     if (alreadyCreatedPhones.All(phone => phone.Id != message.From.Id))
                         alreadyCreatedPhones.Add(message.From);
                 }
-                if (message.To != null)
+
+                if (message.To == null) continue;
                 {
                     message.To = _phoneRepository.Table.FirstOrDefault(phone => phone.Id == message.To.Id) ??
-                    alreadyCreatedPhones.FirstOrDefault(phone => phone.Id == message.To.Id) ?? message.To;
+                                 alreadyCreatedPhones.FirstOrDefault(phone => phone.Id == message.To.Id) ?? message.To;
                     if (alreadyCreatedPhones.All(phone => phone.Id != message.To.Id))
                         alreadyCreatedPhones.Add(message.To);
                 }
@@ -104,7 +105,7 @@ namespace FreedomVoice.Core.Services
         /// <param name="conversations"></param>
         public void UpdateConversationsCache(IEnumerable<FreedomVoice.Entities.Response.Conversation> conversations)
         {
-            List<Phone> usedPhones = new List<Phone>();
+            var usedPhones = new List<Phone>();
             foreach (var conversation in conversations)
             {
                 var cachedConversation = _conversationRepository.Table.Include(row => row.Messages).FirstOrDefault(row => conversation.Id == row.Id);
