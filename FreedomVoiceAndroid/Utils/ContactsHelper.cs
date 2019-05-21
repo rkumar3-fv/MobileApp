@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Android.Content;
 using Android.Database;
@@ -14,8 +15,10 @@ namespace com.FreedomVoice.MobileApp.Android.Utils
     /// </summary>
     public class ContactsHelper
     {
+
         private static volatile ContactsHelper _instance;
         private static readonly object Locker = new object();
+        public event EventHandler ContactsPermissionUpdated;
         private readonly Context _context;
         private readonly Dictionary<string, string> _phonesCache;
         private readonly AppHelper _appHelper;
@@ -33,6 +36,8 @@ namespace com.FreedomVoice.MobileApp.Android.Utils
         {
            if ((_phonesCache != null)&&(_phonesCache.Count > 0))
                 _phonesCache.Clear();
+
+            ContactsPermissionUpdated?.Invoke(null, null);
         }
 
         /// <summary>
@@ -109,5 +114,6 @@ namespace com.FreedomVoice.MobileApp.Android.Utils
         {
             _phonesCache.Add(phone, name);
         }
+       
     }
 }

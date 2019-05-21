@@ -1,6 +1,6 @@
 // WARNING
 //
-// This file has been generated automatically by Xamarin Studio from the outlets and
+// This file has been generated automatically by Visual Studio from the outlets and
 // actions declared in your storyboard file.
 // Manual changes to this file will not be maintained.
 //
@@ -11,19 +11,19 @@ using UIKit;
 
 namespace FreedomVoice.iOS.ViewControllers
 {
-	[Register ("MainTabBarController")]
-	partial class MainTabBarController
-	{
-		[Outlet]
-		[GeneratedCode ("iOS Designer", "1.0")]
-		UITabBar MainTabBar { get; set; }
+    [Register ("MainTabBarController")]
+    partial class MainTabBarController
+    {
+        [Outlet]
+        [GeneratedCode ("iOS Designer", "1.0")]
+        UIKit.UITabBar MainTabBar { get; set; }
 
-		void ReleaseDesignerOutlets ()
-		{
-			if (MainTabBar != null) {
-				MainTabBar.Dispose ();
-				MainTabBar = null;
-			}
-		}
-	}
+        void ReleaseDesignerOutlets ()
+        {
+            if (MainTabBar != null) {
+                MainTabBar.Dispose ();
+                MainTabBar = null;
+            }
+        }
+    }
 }

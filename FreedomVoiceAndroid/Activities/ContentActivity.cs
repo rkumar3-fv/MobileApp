@@ -72,6 +72,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             var keypadFragment = new KeypadFragment();
             var messagesFragment = new MessagesFragment();
             var recentsFragment = new RecentsFragment();
+            var conversationsFragment = new ConversationsFragment();
             if (_viewPager != null)
             {
                 _viewPager.AllowSwipe = false;
@@ -80,11 +81,17 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 _pagerAdapter.AddFragment(_contactsFragment, Resource.String.FragmentContacts_title, Resource.Drawable.ic_tab_contacts);
                 _pagerAdapter.AddFragment(keypadFragment, Resource.String.FragmentKeypad_title, Resource.Drawable.ic_tab_keypad);
                 _pagerAdapter.AddFragment(messagesFragment, Resource.String.FragmentMessages_title, Resource.Drawable.ic_tab_messages);
+                _pagerAdapter.AddFragment(conversationsFragment, Resource.String.FragmentConversations_title, Resource.Drawable.ic_conversations);
                 _viewPager.Adapter = _pagerAdapter;
                 _viewPager.CurrentItem = 2;
                 _viewPager.PageSelected += ViewPagerOnPageSelected;
             }
             _tabLayout.SetupWithViewPager(_viewPager);
+            _tabLayout.GetTabAt(0).SetIcon(Resource.Drawable.ic_tab_history);
+            _tabLayout.GetTabAt(1).SetIcon(Resource.Drawable.ic_tab_contacts);
+            _tabLayout.GetTabAt(2).SetIcon(Resource.Drawable.ic_tab_keypad);
+            _tabLayout.GetTabAt(3).SetIcon(Resource.Drawable.ic_tab_messages);
+            _tabLayout.GetTabAt(4).SetIcon(Resource.Drawable.ic_conversations);
         }
 
         protected override void OnStart()
@@ -139,7 +146,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         private void ViewPagerOnPageSelected(object sender, ViewPager.PageSelectedEventArgs pageSelectedEventArgs)
         {
             SetToolbarContent();
-            if ((_viewPager.CurrentItem == 1)&&(!Appl.ApplicationHelper.CheckContactsPermission()))
+            if ((_viewPager.CurrentItem == 1 || _viewPager.CurrentItem == 4) && (!Appl.ApplicationHelper.CheckContactsPermission()))
             {
                 var snackPerm = Snackbar.Make(RootLayout, Resource.String.Snack_noContactsPermission, Snackbar.LengthLong);
                 snackPerm.SetAction(Resource.String.Snack_noPhonePermissionAction, OnSetContactsPermission);
@@ -210,6 +217,9 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                     _toolbar.InflateMenu(Resource.Menu.menu_content);
                     ExpandToolbar();
                     break;
+                case 4:
+                    _toolbar.InflateMenu(Resource.Menu.menu_conversations);
+                    break;
             }
         }
 
@@ -236,6 +246,9 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                     var transaction = SupportFragmentManager.BeginTransaction();
                     transaction.Add(clearDialog, GetString(Resource.String.DlgLogout_title));
                     transaction.CommitAllowingStateLoss();
+                    return true;
+                case Resource.Id.menu_conversation_new:
+                    ChatActivity.StartNewChat(this, null);
                     return true;
                 default:
                     return base.OnOptionsItemSelected(item);

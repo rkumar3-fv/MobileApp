@@ -62,8 +62,8 @@ namespace FreedomVoice.iOS.ViewControllers
         /// </summary>
 	    private void FillInLoginData()
 	    {
-            _usernameTextField.Text = _loginViewModel.Username = "freedomvoice.adm.267055@gmail.com";
-            _passwordTextField.Text = _loginViewModel.Password = "adm654654";
+            _usernameTextField.Text = _loginViewModel.Username = "dani@fvscloud.com";
+            _passwordTextField.Text = _loginViewModel.Password = "test12";
         }
 
         public override void ViewWillAppear(bool animated)

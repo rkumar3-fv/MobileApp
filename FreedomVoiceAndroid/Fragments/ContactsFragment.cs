@@ -1,21 +1,26 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using Android.App;
+using Android.Content;
 using Android.Database;
 using Android.OS;
 using Android.Provider;
 using Android.Runtime;
-using Android.Support.V4.Content;
 using Android.Support.V7.Widget;
 #if DEBUG
 using Android.Util;
 #endif
 using Android.Views;
 using Android.Widget;
+using com.FreedomVoice.MobileApp.Android.Activities;
 using com.FreedomVoice.MobileApp.Android.Adapters;
 using com.FreedomVoice.MobileApp.Android.CustomControls;
 using com.FreedomVoice.MobileApp.Android.Dialogs;
 using com.FreedomVoice.MobileApp.Android.Entities;
 using FreedomVoice.Core.Utils;
+using AlertDialog = Android.Support.V7.App.AlertDialog;
+using CursorLoader = Android.Support.V4.Content.CursorLoader;
 using Uri = Android.Net.Uri;
 
 namespace com.FreedomVoice.MobileApp.Android.Fragments
@@ -74,36 +79,87 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
 
         private void AdapterOnItemClick(object sender, Contact contact)
         {
-
+            ContentActivity.HideKeyboard();
+            
+            
             foreach (var phone in contact.PhonesList)
             {
 #if DEBUG
                 Log.Debug(App.AppPackage, $"{phone.PhoneNumber} - {phone.TypeCode}");
+
 #else
                 App.GetApplication(Context).ApplicationHelper.Reports?.Log($"{phone.PhoneNumber} - {phone.TypeCode}");
 #endif
             }
 
-            ContentActivity.HideKeyboard();
-            switch (contact.PhonesList.Count)
+            var selectView = LayoutInflater.From(Context).Inflate(Resource.Layout.dlg_contact_select_action, null, false);
+            var phoneView = selectView.FindViewById<ViewGroup>(Resource.Id.dlg_contact_select_phone_block);
+            var smsView = selectView.FindViewById<ViewGroup>(Resource.Id.dlg_contact_select_sms_block);
+
+            AlertDialog alertDialog = new AlertDialog.Builder(Context)
+                .SetTitle("Select:")
+                .SetView(selectView)
+                .SetNegativeButton("Cancel", (o, args) =>
+                {
+                    (o as Dialog)?.Dismiss();
+                })
+                .Create();
+
+
+            phoneView.Click += (o, args) =>
             {
-                case 0:
-                    var noPhonesDialog = new NoContactsDialogFragment(contact);
-                    var transaction = ContentActivity.SupportFragmentManager.BeginTransaction();
-                    transaction.Add(noPhonesDialog, GetString(Resource.String.DlgNumbers_content));
-                    transaction.CommitAllowingStateLoss();
-                    break;
-                case 1:
-                    ContentActivity.Call(contact.PhonesList[0].PhoneNumber);
-                    break;
-                default:
-                    var multiPhonesDialog = new MultiContactsDialogFragment(contact, ContentActivity);
-                    multiPhonesDialog.PhoneClick += MultiPhonesDialogOnPhoneClick;
-                    var transactionMultiPhones = ContentActivity.SupportFragmentManager.BeginTransaction();
-                    transactionMultiPhones.Add(multiPhonesDialog, GetString(Resource.String.DlgNumbers_title));
-                    transactionMultiPhones.CommitAllowingStateLoss();
-                    break;
-            }
+                alertDialog.Dismiss();
+                switch (contact.PhonesList.Count)
+                {
+                    case 0:
+                        var noPhonesDialog = new NoContactsDialogFragment(contact);
+                        var transaction = ContentActivity.SupportFragmentManager.BeginTransaction();
+                        transaction.Add(noPhonesDialog, GetString(Resource.String.DlgNumbers_content));
+                        transaction.CommitAllowingStateLoss();
+                        break;
+                    case 1:
+                        ContentActivity.Call(contact.PhonesList[0].PhoneNumber);
+                        break;
+                    default:
+                        var multiPhonesDialog = new MultiContactsDialogFragment(contact, ContentActivity);
+                        multiPhonesDialog.PhoneClick += MultiPhonesDialogOnPhoneClick;
+                        var transactionMultiPhones = ContentActivity.SupportFragmentManager.BeginTransaction();
+                        transactionMultiPhones.Add(multiPhonesDialog,
+                            GetString(Resource.String.DlgNumbers_title));
+                        transactionMultiPhones.CommitAllowingStateLoss();
+                        break;
+                }
+            };
+
+            smsView.Click += (o, args) =>
+            {
+                alertDialog.Dismiss();
+                switch (contact.PhonesList.Count)
+                {
+                    case 0:
+                        var noPhonesDialog = new NoContactsDialogFragment(contact);
+                        var transaction = ContentActivity.SupportFragmentManager.BeginTransaction();
+                        transaction.Add(noPhonesDialog, GetString(Resource.String.DlgNumbers_content));
+                        transaction.CommitAllowingStateLoss();
+                        break;
+                    case 1:
+                        ChatActivity.StartNewChat(Activity, contact.PhonesList[0].PhoneNumber);
+                        break;
+                    default:
+                        var multiPhonesDialog = new MultiContactsDialogFragment(contact, ContentActivity);
+                        multiPhonesDialog.PhoneClick += (sender1, phone) =>
+                        {
+                            ChatActivity.StartNewChat(Activity, phone.PhoneNumber);
+                        };
+                        var transactionMultiPhones = ContentActivity.SupportFragmentManager.BeginTransaction();
+                        transactionMultiPhones.Add(multiPhonesDialog,
+                            GetString(Resource.String.DlgNumbers_title));
+                        transactionMultiPhones.CommitAllowingStateLoss();
+                        break;
+                }
+            };
+          
+            alertDialog.Show();
         }
 
         private void MultiPhonesDialogOnPhoneClick(object sender, Phone phone)

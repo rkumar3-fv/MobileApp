@@ -53,4 +53,6 @@
   <color name="colorToggleUnchecked">#ffffff</color>
   <color name="colorSeekEmpty">#1a000000</color>
   <color name="colorSeekFill">#038ac1</color>
+  <color name="colorChatTextSecondary">#989898</color>
+  <color name="colorBlack">#000</color>
 </resources>
