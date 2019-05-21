@@ -42,7 +42,6 @@ namespace FreedomVoice.Core.Services
 
         public void ReceivedNotification(PushType type, FreedomVoice.Entities.Response.Conversation model)
         {
-            var savedMessage = _saveMessage(model);
             switch (type)
             {
                 case PushType.NewMessage:
@@ -53,6 +52,7 @@ namespace FreedomVoice.Core.Services
                 case PushType.StatusChanged:
                     break;
             }
+            var savedMessage = _saveMessage(model);
             MessageUpdatedHandler?.Invoke(this, new MessageEventArg {Message = savedMessage});
         }
 
