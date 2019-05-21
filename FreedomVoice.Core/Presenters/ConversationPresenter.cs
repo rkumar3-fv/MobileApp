@@ -69,6 +69,21 @@ namespace FreedomVoice.Core.Presenters
             await _PerformLoading();
         }
 
+        public async void SendMessageAsync(string text)
+        {
+            var res = await _service.SendMessage(_conversationId, text);
+            switch (res.State)
+            {
+                case FreedomVoice.Entities.Enums.SendingState.Error:
+                    break;
+                case FreedomVoice.Entities.Enums.SendingState.Sending:
+                    break;
+                case FreedomVoice.Entities.Enums.SendingState.Success:
+                    break;
+
+            }
+        }
+
         private void ResetState()
         {
             _currentDate = DateTime.Now;

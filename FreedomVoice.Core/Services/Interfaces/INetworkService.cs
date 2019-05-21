@@ -1,4 +1,5 @@
 ﻿using FreedomVoice.Core.Entities.Base;
+using FreedomVoice.Entities.Request;
 using FreedomVoice.Entities.Response;
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,14 @@ namespace FreedomVoice.Core.Services.Interfaces
         Task<BaseResult<List<Conversation>>> GetConversations(string phone, DateTime startDate, DateTime lastUpdateDate, int start, int limit);
 
         /// <summary>
+        /// Get conversation by current phone and collocutor phone
+        /// </summary>
+        /// <param name="currentPhone"></param>
+        /// <param name="collocutorPhone"></param>
+        /// <returns></returns>
+        Task<BaseResult<Conversation>> GetConversation(string currentPhone, string collocutorPhone);
+
+        /// <summary>
         /// Get messages from API by provided parameters
         /// </summary>
         /// <param name="conversationId"></param>
@@ -29,5 +38,12 @@ namespace FreedomVoice.Core.Services.Interfaces
         /// <param name="limit"></param>
         /// <returns></returns>
         Task<BaseResult<List<FreedomVoice.Entities.Message>>> GetMessages(long conversationId, DateTime startDate, DateTime lastUpdateDate, int start, int limit);
+
+        /// <summary>
+        /// Sending message to API by provided parameter
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns>Response from API about sending results</returns>
+        Task<BaseResult<SendingResponse<Conversation>>> SendMessage(MessageRequest request);
     }
 }

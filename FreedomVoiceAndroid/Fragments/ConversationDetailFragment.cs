@@ -10,6 +10,8 @@ using Android.Views;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Adapters;
 using FreedomVoice.Core.Presenters;
+using FreedomVoice.Core.Services.Interfaces;
+using FreedomVoice.Core.Utils;
 using FreedomVoice.Core.ViewModels;
 using FreedomVoice.DAL.DbEntities;
 using Message = FreedomVoice.DAL.DbEntities.Message;
@@ -37,6 +39,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             args.PutLong(ExtraConversationId, conversationId);
             args.PutString(ExtraConversationPhone, phone);
             fragment.Arguments = args;
+            
             return fragment;
         }
 

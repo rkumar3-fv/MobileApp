@@ -38,6 +38,13 @@ namespace FreedomVoice.Core.Services.Interfaces
         IEnumerable<Conversation> GetConversations(string phone, int limit, int start);
 
         /// <summary>
+        /// Get conversation by Id
+        /// </summary>
+        /// <param name="conversationId"></param>
+        /// <returns>Conversation from cache</returns>
+        Conversation GetConversation(long conversationId);
+
+        /// <summary>
         /// Get list of cached messages for <paramref name="conversation"/> object from <paramref name="start"/> position 
         /// with limitation count of entities by <paramref name="limit"/>
         /// </summary>

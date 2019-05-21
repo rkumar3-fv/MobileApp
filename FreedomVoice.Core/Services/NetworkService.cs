@@ -2,6 +2,7 @@
 using FreedomVoice.Core.Entities.Base;
 using FreedomVoice.Core.Services.Interfaces;
 using FreedomVoice.Entities;
+using FreedomVoice.Entities.Request;
 using FreedomVoice.Entities.Response;
 using System;
 using System.Collections.Generic;
@@ -48,6 +49,27 @@ namespace FreedomVoice.Core.Services
             }
         }
 
+        public async Task<BaseResult<Conversation>> GetConversation(string currentPhone, string collocutorPhone)
+        {
+            try
+            {
+                BaseResult<Conversation> result = await ApiHelper.GetConversation(currentPhone, collocutorPhone);
+                
+                if (result.Code == Entities.Enums.ErrorCodes.Ok && result.Result != null)
+                    _cacheService.UpdateConversationsCache(new[] { result.Result });
+
+                return result;
+            }
+            catch (Exception)
+            {
+                return new BaseResult<Conversation>()
+                {
+                    Code = Entities.Enums.ErrorCodes.ConnectionLost,
+                    Result = null
+                };
+            }
+        }
+
         public async Task<BaseResult<List<Message>>> GetMessages(long conversationId, DateTime startDate, DateTime lastUpdateDate, int start, int limit)
         {
             try
@@ -72,6 +94,15 @@ namespace FreedomVoice.Core.Services
                     Result = _cacheService.GetMessagesByConversation(conversationId, limit, start).Select(x => _mapper.Map<Message>(x)).ToList()
                 };
             }
+        }
+
+        public async Task<BaseResult<SendingResponse<Conversation>>> SendMessage(MessageRequest request)
+        {
+            var result = await ApiHelper.SendMessage(request);
+            if(result.Result != null && result.Result.Entity != null)
+                _cacheService.UpdateConversationsCache(new[] { result.Result.Entity });
+
+            return result;
         }
     }
 }

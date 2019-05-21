@@ -13,12 +13,28 @@ namespace FreedomVoice.iOS.Views
         private nfloat minHeight => 36;
         private nfloat maxHeight => 156;
 
+        public Action SendButtonPressed;
+        
         public ChatTextView() 
         {
             Init();
 
             _setupViews();
             _setupConstraints();
+        }
+
+
+        public override void MovedToSuperview()
+        {
+            base.MovedToSuperview();
+            _button.TouchUpInside += ButtonOnTouchUpInside;
+        }
+
+
+        public override void RemoveFromSuperview()
+        {
+            base.RemoveFromSuperview();
+            _button.TouchUpInside -= ButtonOnTouchUpInside;
         }
 
         private void _setupViews()
@@ -68,6 +84,7 @@ namespace FreedomVoice.iOS.Views
             _button.HeightAnchor.ConstraintEqualTo(32).Active = true;
             _button.WidthAnchor.ConstraintEqualTo(32).Active = true;
         }
+        
 
         [Foundation.Export("textViewDidChange:")]
         public virtual void Changed(UITextView textView)
@@ -86,6 +103,11 @@ namespace FreedomVoice.iOS.Views
 
             if (newHeight == _heightConstraint.Constant) return;
             _heightConstraint.Constant = newHeight;
+        }
+        
+        private void ButtonOnTouchUpInside(object sender, EventArgs e)
+        {
+            SendButtonPressed?.Invoke();
         }
     }
 }

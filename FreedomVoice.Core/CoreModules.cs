@@ -36,7 +36,7 @@ namespace FreedomVoice.Core
             ServiceContainer.Register<IConversationService>(() => new ConversationService(ServiceContainer.Resolve<ICacheService>(), 
                 ServiceContainer.Resolve<INetworkService>(), ServiceContainer.Resolve<IMapper>()));
             ServiceContainer.Register<IMessagesService>(() => new MessageService(ServiceContainer.Resolve<ICacheService>(),
-                ServiceContainer.Resolve<INetworkService>(), ServiceContainer.Resolve<IMapper>()));
+                ServiceContainer.Resolve<INetworkService>(), ServiceContainer.Resolve<IMapper>(), ServiceContainer.Resolve<IConversationService>()));
         }
     }
 }

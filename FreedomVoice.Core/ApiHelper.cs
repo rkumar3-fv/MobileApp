@@ -10,11 +10,13 @@ using System.Threading.Tasks;
 using FreedomVoice.Core.Cache;
 using FreedomVoice.Core.Cookies;
 using FreedomVoice.Core.Entities;
+using FreedomVoice.Entities.Response;
 using FreedomVoice.Core.Entities.Base;
 using FreedomVoice.Core.Entities.Enums;
 using FreedomVoice.Core.Utils;
 using ModernHttpClient;
 using Newtonsoft.Json;
+using FreedomVoice.Entities.Request;
 
 namespace FreedomVoice.Core
 {
@@ -182,34 +184,46 @@ namespace FreedomVoice.Core
             return await MakeAsyncFileDownload($"/api/v1/systems/{systemPhoneNumber}/mailboxes/{mailboxNumber}/folders/{folder}/messages/{messageId}/media/{mediaType}", token);
         }
         
-        public static async Task<BaseResult<List<FreedomVoice.Entities.Response.Conversation>>> GetConversations(string phone, DateTime startDate, DateTime lastUpdateDate, int start, int limit)
+        public static async Task<BaseResult<List<Conversation>>> GetConversations(string phone, DateTime startDate, DateTime lastUpdateDate, int start, int limit)
         {
-            //api/v1/system/[controller]/conversations/{telephoneNumber}/{lastModify}/{start}/{limit}
-            // return await MakeAsyncGetRequest<List<FreedomVoice.Entities.Response.Conversation>>(
-            // $"/api/v1/systems/forward/{phone}/conversations?startDate={startDate.Ticks}&lastModify={lastUpdateDate.Ticks}&start={start}&limit={limit}",
-            //var oldBaseAddress = Client.BaseAddress;
-            //Client.BaseAddress = new Uri("https://freedomvoice.wavea.cc/");
-            var result = await MakeAsyncGetRequest<List<FreedomVoice.Entities.Response.Conversation>>(
+            var result = await MakeAsyncGetRequest<List<Conversation>>(
                 $"/api/v1/system/forward/{phone}/conversations?_from={startDate.Ticks}&_to={lastUpdateDate.Ticks}&_start={start}&_limit={limit}",
-                //$"/api/v1/{phone}/conversations?_from={startDate.Ticks}&_to={lastUpdateDate.Ticks}&_start={start}&_limit={limit}",
                 CancellationToken.None, LongTimeOut);
-            //Client.BaseAddress = oldBaseAddress;
+            return result;
+        }
+
+        public static async Task<BaseResult<Conversation>> GetConversation(string currentPhone, string collocutorPhone)
+        {
+            var result = await MakeAsyncGetRequest<Conversation>(
+                $"/api/v1/system/forward/{currentPhone}/conversation/{collocutorPhone}",
+                CancellationToken.None, LongTimeOut);
             return result;
         }
 
         public static async Task<BaseResult<List<FreedomVoice.Entities.Message>>> GetMessages(long coversationId, DateTime startDate, DateTime lastUpdateDate, int start, int limit)
         {
-            //api/v1/system/[controller]/conversations/{telephoneNumber}/{lastModify}/{start}/{limit}
-            // return await MakeAsyncGetRequest<List<FreedomVoice.Entities.Response.Conversation>>(
-            // $"/api/v1/systems/forward/{phone}/conversations?startDate={startDate.Ticks}&lastModify={lastUpdateDate.Ticks}&start={start}&limit={limit}",
-            //var oldBaseAddress = Client.BaseAddress;
-            //Client.BaseAddress = new Uri("https://freedomvoice.wavea.cc/");
             var result = await MakeAsyncGetRequest<List<FreedomVoice.Entities.Message>>(
                 $"/api/v1/system/forward/{coversationId}/messages?_from={startDate.Ticks}&_to={lastUpdateDate.Ticks}&_start={start}&_limit={limit}",
-                //$"/api/v1/{coversationId}/messages?_from={startDate.Ticks}&_to={lastUpdateDate.Ticks}&_start={start}&_limit={limit}",
                 CancellationToken.None, LongTimeOut);
-            //Client.BaseAddress = oldBaseAddress;
             return result;
+        }
+
+        public static async Task<BaseResult<SendingResponse<Conversation>>> SendMessage(MessageRequest request)
+        {
+            try
+            {
+                var content = JsonConvert.SerializeObject(request);
+                var result = await MakeAsyncPostRequest<SendingResponse<Conversation>>(
+                    $"/api/v1/system/forward/sendMessage",
+                    content,
+                    "application/json",
+                    CancellationToken.None);
+                return result;
+            }
+            catch(Exception)
+            {
+                return new BaseResult<SendingResponse<Conversation>> { Code = ErrorCodes.BadRequest };
+            }
         }
 
         private static HttpClient CreateClient()
@@ -247,10 +261,10 @@ namespace FreedomVoice.Core
             try
             {
                 var content = new StringContent(postData, Encoding.UTF8, contentType);
-                var postResp = Client.PostAsync(url, content, ct);
+                var postResp = await Client.PostAsync(url, content, ct);
                 baseRes = await GetResponse<T>(postResp, ct);
             }
-            catch (WebException)
+            catch (WebException ex)
             {
                 baseRes = new BaseResult<T>
                 {
@@ -313,6 +327,31 @@ namespace FreedomVoice.Core
             return retResult;
         }
 
+        private static async Task<BaseResult<T>> GetResponse<T>(HttpResponseMessage response, CancellationToken ct)
+        {
+            BaseResult<T> retResult;
+            string content = null;
+            try
+            {
+                if (ct.IsCancellationRequested)
+                    return new BaseResult<T> { Code = ErrorCodes.Cancelled };
+                content = await response.Content.ReadAsStringAsync();
+                response.EnsureSuccessStatusCode();
+                retResult = new BaseResult<T>
+                {
+                    Code = ErrorCodes.Ok,
+                    Result = JsonConvert.DeserializeObject<T>(content),
+                    HttpCode = (int)response.StatusCode
+                };
+            }
+            catch (HttpRequestException ex)
+            {
+                return content != null ? HandleErrorState<T>(response.StatusCode, ex, content) : HandleErrorState<T>(response.StatusCode, ex);
+            }
+
+            return retResult;
+        }
+
         private static async Task<BaseResult<T>> GetResponse<T>(Task<HttpResponseMessage> r, CancellationToken ct)
         {
             BaseResult<T> retResult;
@@ -321,24 +360,7 @@ namespace FreedomVoice.Core
             {
                 using (var response = await r)
                 {
-                    string content = null;
-                    try
-                    {
-                        if (ct.IsCancellationRequested)
-                            return new BaseResult<T> { Code = ErrorCodes.Cancelled };
-                        content = await response.Content.ReadAsStringAsync();
-                        response.EnsureSuccessStatusCode();         
-                        retResult = new BaseResult<T>
-                        {
-                            Code = ErrorCodes.Ok,
-                            Result = JsonConvert.DeserializeObject<T>(content),
-                            HttpCode = (int)response.StatusCode
-                        };
-                    }
-                    catch (HttpRequestException ex)
-                    {
-                        return content != null ? HandleErrorState<T>(response.StatusCode, ex, content) : HandleErrorState<T>(response.StatusCode, ex);
-                    }
+                    retResult = await GetResponse<T>(response, ct);
                 }
             }
             catch (Exception ex2)
