@@ -104,7 +104,7 @@
     <None Include="Info.plist" />
     <None Include="Entitlements.plist" />
   </ItemGroup>
-    <ItemGroup>
+  <ItemGroup>
     <Reference Include="AutoMapper, Version=8.0.0.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
       <HintPath>..\packages\AutoMapper.8.0.0\lib\netstandard2.0\AutoMapper.dll</HintPath>
     </Reference>
@@ -229,13 +229,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\Data.cs" />
-    <Compile Include="Models\Message.cs" />
-    <Compile Include="Models\PushNotification.cs" />
-    <Compile Include="Models\PushNotificationKeys.cs" />
     <Compile Include="NotificationService.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\FreedomVoice.Entities\FreedomVoice.Entities.csproj">
+      <Project>{9c83001c-e1c6-461d-b0d3-1f6ba63000a6}</Project>
+      <Name>FreedomVoice.Entities</Name>
+    </ProjectReference>
     <ProjectReference Include="..\FreedomVoice.iOS.Core\FreedomVoice.iOS.Core.csproj">
       <Project>{6F11EB92-C06F-4592-8ADB-0337410CE27B}</Project>
       <Name>FreedomVoice.iOS.Core</Name>

@@ -317,7 +317,7 @@ namespace FreedomVoice.iOS.Core.Utilities.Helpers
 
         public static string NormalizePhoneNumber(string number)
         {
-            var normalizedPhoneNumber = "";
+             var normalizedPhoneNumber = "";
             var pattern = "0123456789";
             foreach (var c in number)
                 if (pattern.Contains(c))

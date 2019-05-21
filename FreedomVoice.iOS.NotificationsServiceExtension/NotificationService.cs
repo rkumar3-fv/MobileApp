@@ -3,30 +3,30 @@ using System.Linq;
 using System.Text;
 using Foundation;
 using UserNotifications;
-using ContactsHelper = FreedomVoice.iOS.Core.Utilities.Helpers.Contacts;
 using FreedomVoice.Core.Utils;
-using FreedomVoice.Core.ViewModels;
 using FreedomVoice.iOS.Core;
 using System.Collections.Generic;
+using FreedomVoice.Entities.Enums;
+using FreedomVoice.Entities.Request;
+using FreedomVoice.Entities.Response;
 using FreedomVoice.iOS.Core.Utilities.Helpers;
-using FreedomVoice.iOS.NotificationsServiceExtension.Models;
+using FreedomVoice.iOS.Core.Utilities.Extensions;
+using ContactsHelper = FreedomVoice.iOS.Core.Utilities.Helpers.Contacts;
 
 namespace FreedomVoice.iOS.NotificationsServiceExtension
 {
     [Register("NotificationService")]
     public class NotificationService : UNNotificationServiceExtension
     {
-        Action<UNNotificationContent> ContentHandler { get; set; }
-        UNMutableNotificationContent BestAttemptContent { get; set; }
-
-        private ILogger _logger;
+        private Action<UNNotificationContent> ContentHandler;
+        private UNMutableNotificationContent BestAttemptContent;
+        private readonly ILogger _logger;
         
         protected NotificationService(IntPtr handle) : base(handle)
         {
             FreedomVoice.iOS.Core.iOSCoreConfigurator.RegisterServices();
             _logger = ServiceContainer.Resolve<ILogger>();
             _logger.Debug($"{nameof(NotificationService)}", $"{nameof(NotificationService)} init", "");
-            // Note: this .ctor should not contain any initialization logic.
         }
 
         public override void DidReceiveNotificationRequest(UNNotificationRequest request, Action<UNNotificationContent> contentHandler)
@@ -37,16 +37,37 @@ namespace FreedomVoice.iOS.NotificationsServiceExtension
             // Save handler and cope push content
             ContentHandler = contentHandler;
             BestAttemptContent = (UNMutableNotificationContent)request.Content.MutableCopy();
-            var contactNameProvider = ServiceContainer.Resolve<IContactNameProvider>();
-            var pushNotificationData = new PushNotification(request.Content);
+            var pushNotificationData = PushResponseExtension.CreateFrom(request.Content.UserInfo);
 
-            if (pushNotificationData?.data?.message == null)
+            if (pushNotificationData?.Data == null)
             {
                 _logger.Debug($"{nameof(NotificationService)}", $"{nameof(NotificationService)}", "Message data is missing in Push data");
                 ContentHandler?.Invoke(BestAttemptContent);
                 return;
             }
 
+            switch (pushNotificationData.PushType)
+            {
+                case PushType.NewMessage: // Handler only this type
+                    ProcessNewMessagePushNotification(pushNotificationData);
+                    break;
+
+                default: // Don't handler another types
+                    _logger.Debug($"{nameof(NotificationService)}", $"{nameof(NotificationService)}", $"Push-notification type({pushNotificationData.PushType}) is not supported");
+                    ContentHandler?.Invoke(BestAttemptContent);
+                    break;
+            }
+        }
+        
+        private void ProcessNewMessagePushNotification(PushResponse<Conversation> pushNotificationData)
+        {
+            if (string.IsNullOrWhiteSpace(pushNotificationData.Data.CollocutorPhone?.PhoneNumber))
+            {
+                _logger.Debug($"{nameof(NotificationService)}", $"{nameof(NotificationService)}", "Collocutor phone is missing in push data");
+                ContentHandler?.Invoke(BestAttemptContent);
+                return;
+            }
+            
             _logger.Debug($"{nameof(NotificationService)}", $"{nameof(NotificationService)}", $"User data: \n{pushNotificationData}");
 
             // Fetch contacts book
@@ -58,16 +79,15 @@ namespace FreedomVoice.iOS.NotificationsServiceExtension
                 DebugPrintContracts(contacts);
 
                 // Try fetch phone number from push
-                var phoneFromPush = pushNotificationData.data?.message?.fromPhoneNumber;
-                phoneFromPush = ContactsHelper.NormalizePhoneNumber(phoneFromPush);
+                var phoneFromPush = ContactsHelper.NormalizePhoneNumber(pushNotificationData.Data.CollocutorPhone.PhoneNumber);
                 _logger.Debug($"{nameof(NotificationService)}", $"{nameof(NotificationService)}", $"Phone from push: {phoneFromPush}");
 
                 // Find contact from Contact book by phone
-                string matchedContactName = FirstContact(contacts, phoneFromPush)?.DisplayName;
+                var matchedContactName = FirstContact(contacts, phoneFromPush)?.DisplayName;
                 _logger.Debug($"{nameof(NotificationService)}", $"{nameof(NotificationService)}", $"Contact is found: {matchedContactName}");
 
                 // Set custom push title
-                BestAttemptContent.Title = string.IsNullOrWhiteSpace(matchedContactName) ? request.Content?.Title : matchedContactName;
+                BestAttemptContent.Title = string.IsNullOrWhiteSpace(matchedContactName) ? BestAttemptContent.Title : matchedContactName;
                 _logger.Debug($"{nameof(NotificationService)}", $"{nameof(NotificationService)}", $"Modified content: {BestAttemptContent}");
 
                 ContentHandler?.Invoke(BestAttemptContent);
@@ -77,6 +97,7 @@ namespace FreedomVoice.iOS.NotificationsServiceExtension
         private FVContact FirstContact(IEnumerable<FVContact> contacts, string byPhoneNumber) {
             _logger.Debug($"{nameof(NotificationService)}", $"{nameof(NotificationService)}", $"Try to find contact by {byPhoneNumber}");
 
+            // Linq is not used here, because Linq works very poorly in iOS extensions.
             foreach (var contact in contacts)
                 if (contact.Phones != null && contact.Phones.Count() > 0)
                     foreach (var phone in contact.Phones)
@@ -85,7 +106,6 @@ namespace FreedomVoice.iOS.NotificationsServiceExtension
 
             return null;
         }
-
 
         public override void TimeWillExpire()
         {

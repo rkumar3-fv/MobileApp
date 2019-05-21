@@ -39,6 +39,7 @@
     <Reference Include="Xamarin.Mobile">
       <HintPath>..\Components\xamarin.mobile-0.7.7\lib\ios-unified\Xamarin.Mobile.dll</HintPath>
     </Reference>
+    <Reference Include="System.Json" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Condition="'$(CreateUITestProject)' == true" Include="Xamarin.TestCloud.Agent" Version="0.21.7" />
@@ -56,11 +57,16 @@
     <Compile Include="Utilities\Helpers\Contacts.cs" />
     <Compile Include="Utilities\Extensions\String.cs" />
     <Compile Include="Logger.cs" />
+    <Compile Include="Utilities\Extensions\PushResponseExtension.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FreedomVoice.Core\FreedomVoice.Core.csproj">
       <Project>{AA1B2017-3A77-46FA-BC08-35E20FA24DE3}</Project>
       <Name>FreedomVoice.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FreedomVoice.Entities\FreedomVoice.Entities.csproj">
+      <Project>{9C83001C-E1C6-461D-B0D3-1F6BA63000A6}</Project>
+      <Name>FreedomVoice.Entities</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />

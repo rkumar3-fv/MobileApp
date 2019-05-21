@@ -35,14 +35,13 @@ namespace FreedomVoice.iOS
         public static string ActivePlayerMessageId;
 
         public static CancellationTokenSource ActiveDownloadCancelationToken;
-
         public static ActivityIndicator ActivityIndicator { get; private set; }
 
         public static string TempFolderPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments, Environment.SpecialFolderOption.DoNotVerify), "..", "tmp");
 
         private static UIStoryboard MainStoryboard => UIStoryboard.FromName("MainStoryboard", NSBundle.MainBundle);
         private static IPushNotificationsService pushService;
-        private static UNUserNotificationCenterDelegate pushServiceCenter = new NotificationCenterDelegate();
+        private static readonly NotificationCenterDelegate PushServiceCenter = new NotificationCenterDelegate();
 
         public static T GetViewController<T>() where T : UIViewController
         {
@@ -68,7 +67,7 @@ namespace FreedomVoice.iOS
             InitializeAnalytics();
 
             Theme.Apply();
-            UNUserNotificationCenter.Current.Delegate = pushServiceCenter;
+            UNUserNotificationCenter.Current.Delegate = PushServiceCenter;
 
             if (UserDefault.IsAuthenticated)
             {
@@ -453,18 +452,15 @@ namespace FreedomVoice.iOS
 
         public override void ReceivedLocalNotification(UIApplication application, UILocalNotification notification)
         {
-          //  base.ReceivedLocalNotification(application, notification);
         }
 
         public override void DidReceiveRemoteNotification(UIApplication application, NSDictionary userInfo, Action<UIBackgroundFetchResult> completionHandler)
         {
-
-           // base.DidReceiveRemoteNotification(application, userInfo, completionHandler);
+            PushServiceCenter.DidReceiveSilentRemoteNotification(userInfo, completionHandler);
         }
 
         public override void DidRegisterUserNotificationSettings(UIApplication application, UIUserNotificationSettings notificationSettings)
         {
-          //  base.DidRegisterUserNotificationSettings(application, notificationSettings);
         }
 
         public override void FailedToRegisterForRemoteNotifications(UIApplication application, NSError error)
