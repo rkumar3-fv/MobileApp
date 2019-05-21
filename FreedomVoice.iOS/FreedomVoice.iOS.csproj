@@ -140,7 +140,6 @@
     <Compile Include="Services\IPoolingIntervalService.cs" />
     <Compile Include="Services\Responses\EmptyResponse.cs" />
     <Compile Include="Services\Responses\PollingIntervalResponse.cs" />
-    <Compile Include="Utilities\ContactNameProvider.cs" />
     <Compile Include="Utilities\DeviceHardware.cs" />
     <Compile Include="Utilities\DownloadIndicator.cs" />
     <Compile Include="Utilities\Extensions\CopyPasteLabel.cs" />

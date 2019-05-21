@@ -52,13 +52,9 @@ namespace FreedomVoice.iOS.PushNotifications
 			
 			switch (pushNotificationData.PushType)
 			{
-				case PushType.NewMessage:
-					_messagesService.ReceivedNotification(NotificationMessageService.NotificationType.Incoming, pushNotificationData.Data);
-					completionHandler?.Invoke(UIBackgroundFetchResult.NewData);
-					break;
-
+				case PushType.NewMessage: 
 				case PushType.StatusChanged:
-					_messagesService.ReceivedNotification(NotificationMessageService.NotificationType.Update, pushNotificationData.Data);
+					_messagesService.ReceivedNotification(pushNotificationData.PushType, pushNotificationData.Data);
 					completionHandler?.Invoke(UIBackgroundFetchResult.NewData);
 					break;
 				
@@ -110,7 +106,7 @@ namespace FreedomVoice.iOS.PushNotifications
 				return;
 			}
 			
-			_messagesService.ReceivedNotification(NotificationMessageService.NotificationType.Update, pushNotificationData.Data);
+			_messagesService.ReceivedNotification(pushNotificationData.PushType, pushNotificationData.Data);
 			pushNotificationData = null;
 			_logger.Debug(nameof(NotificationCenterDelegate), nameof(ProcessStatusChangedPushNotification), "StatusChanged notification has been processed.");
 
