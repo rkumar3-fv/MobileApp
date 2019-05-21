@@ -120,10 +120,10 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                 Helper.GetAccounts();
             else if ((Helper.SelectedAccount.PresentationNumbers == null)||(Helper.SelectedAccount.PresentationNumbers.Count == 0))
                 Helper.GetPresentationNumbers();
-            var intent = new Intent(ContentActivity, typeof(LoadingActivity));
+            var intent = new Intent(Activity, typeof(LoadingActivity));
             intent.SetFlags(ActivityFlags.NewTask);
             intent.SetFlags(ActivityFlags.ClearTop);
-            ContentActivity.StartActivity(intent);
+            Activity.StartActivity(intent);
             return false;
         }
     }

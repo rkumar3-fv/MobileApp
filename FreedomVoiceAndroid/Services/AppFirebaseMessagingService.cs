@@ -1,17 +1,22 @@
 ﻿using System;
-using System.Drawing;
+using System.Linq;
 using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Provider;
 using Android.Support.V4.App;
 using Android.Support.V4.Content;
+using Android.Util;
 using com.FreedomVoice.MobileApp.Android.Activities;
 using Firebase.Messaging;
+using FreedomVoice.Core.Services;
 using FreedomVoice.Core.Utils;
 using FreedomVoice.Core.ViewModels;
-using FreedomVoice.Entities.PushContract;
+using FreedomVoice.Entities.Enums;
+using FreedomVoice.Entities.Request;
+using FreedomVoice.Entities.Response;
 using Java.Lang;
+using Microsoft.EntityFrameworkCore.Internal;
 using Newtonsoft.Json;
 using Exception = System.Exception;
 using TaskStackBuilder = Android.Support.V4.App.TaskStackBuilder;
@@ -23,7 +28,7 @@ namespace com.FreedomVoice.MobileApp.Android.Services
     public class AppFirebaseMessagingService : Firebase.Messaging.FirebaseMessagingService
     {
         private IContactNameProvider _contactNameProvider;
-        private const string DataKey = "data";
+        private const string DataKey = "Data";
 
         public override void OnCreate()
         {
@@ -39,46 +44,84 @@ namespace com.FreedomVoice.MobileApp.Android.Services
 
             try
             {
-                PushNotification pushNotification =
-                    JsonConvert.DeserializeObject<PushNotification>(message.Data[DataKey]);
+                var pushMessageRequest =
+                    JsonConvert.DeserializeObject<PushMessageRequest<object>>(message.Data[DataKey]);
+                var pushType = pushMessageRequest.PushType;
 
-                using (var h = new Handler(Looper.MainLooper))
+                switch (pushType)
                 {
-                    h.Post(() =>
-                    {
-                        var name = _contactNameProvider.GetName(pushNotification.Data.Message.From.PhoneNumber);
-                        pushNotification.Aps.Alert.Title = name;
-
-                        ShowConversationMessagePush(pushNotification);
-                    });
+                    case PushType.NewMessage:
+                        var newMessageRequest = JsonConvert.DeserializeObject<PushMessageRequest<Conversation>>(message.Data[DataKey]);
+                        ProcessNewMessage(newMessageRequest.Data);
+                        NotificationMessageService.Instance().ReceivedNotification(pushType, newMessageRequest.Data);
+                        break;
+                    case PushType.StatusChanged:
+                        var pushChangeRequest = JsonConvert.DeserializeObject<PushMessageRequest<Conversation>>(message.Data[DataKey]);
+                        NotificationMessageService.Instance().ReceivedNotification(pushType, pushChangeRequest.Data);
+                        break;
+                    default:
+                        throw new IllegalStateException($"unknown PushType");
                 }
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                Log.Error(PackageName, e.Message);
             }
         }
 
-        private void ShowConversationMessagePush(PushNotification push)
+        private void ProcessNewMessage(Conversation conversation)
+        {
+            using (var h = new Handler(Looper.MainLooper))
+            {
+                h.Post(() =>
+                {
+                    try
+                    {
+                        var contactNameOrPhone = _contactNameProvider.GetName(conversation.CollocutorPhone.PhoneNumber);
+                        ShowConversationMessagePush(
+                            conversation.Id,
+                            conversation.CollocutorPhone.PhoneNumber,
+                            contactNameOrPhone,
+                            conversation.Messages?.FirstOr(null)?.Text ?? "new message"
+                        );
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Error(PackageName, e.Message);
+                    }
+                });
+            }
+        }
+
+        private void ShowConversationMessagePush(long conversationId, string phoneNumber, string title, string body)
         {
             var manager = NotificationManagerCompat.From(this);
             var channelId = GetString(Resource.String.DefaultNotificationChannel);
 
             PendingIntent pLaunchIntent;
+
             if (App.GetApplication(this).ApplicationHelper.ActionsHelper.IsLoggedIn)
             {
-                var launchIntent =
-                    ChatActivity.OpenChat(this, push.Data.Message.Id, push.Data.Message.From.PhoneNumber);
-                pLaunchIntent = PendingIntent.GetActivity(this, 0, launchIntent, PendingIntentFlags.UpdateCurrent);
+                if (App.GetApplication(this).IsAppInForeground)
+                {
+                    var launchIntent =
+                        ChatActivity.OpenChat(this, conversationId, phoneNumber);
+                    pLaunchIntent = PendingIntent.GetActivity(this, 0, launchIntent, PendingIntentFlags.UpdateCurrent);
+                }
+                else
+                {
+                    pLaunchIntent = TaskStackBuilder.Create(this)
+                        .AddParentStack(Class.FromType(typeof(ContentActivity)))
+                        .AddNextIntent(new Intent(this, typeof(ContentActivity)))
+                        .AddNextIntent(
+                            ChatActivity.OpenChat(this, conversationId, phoneNumber)
+                        ).GetPendingIntent(0, (int) PendingIntentFlags.UpdateCurrent);
+                }
             }
             else
             {
-                pLaunchIntent = TaskStackBuilder.Create(this)
-                    .AddParentStack(Class.FromType(typeof(ContentActivity)))
-                    .AddNextIntent(new Intent(this, typeof(ContentActivity)))
-                    .AddNextIntent( // TODO replace push.Data.Message.Id to push.Data.Message.ConversationID !!
-                        ChatActivity.OpenChat(this, push.Data.Message.Id, push.Data.Message.From.PhoneNumber)
-                    ).GetPendingIntent(0, (int) PendingIntentFlags.UpdateCurrent);
+                pLaunchIntent = PendingIntent.GetActivity(this, 0,
+                    PackageManager.GetLaunchIntentForPackage(PackageName), PendingIntentFlags.UpdateCurrent);
             }
 
 
@@ -89,12 +132,11 @@ namespace com.FreedomVoice.MobileApp.Android.Services
                 .SetAutoCancel(true)
                 .SetSound(Settings.System.DefaultNotificationUri)
                 .SetContentIntent(pLaunchIntent)
-                .SetContentTitle(push.Aps.Alert.Title)
-                .SetSubText(push.Aps.Alert.Subtitle)
-                .SetContentText(push.Aps.Alert.Body);
+                .SetContentTitle(title)
+                .SetContentText(body);
 
 
-            if (Build.VERSION.SdkInt >= Build.VERSION_CODES.O)
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
             {
                 if (GetSystemService(Context.NotificationService) is NotificationManager newManager)
                 {
@@ -108,7 +150,7 @@ namespace com.FreedomVoice.MobileApp.Android.Services
                 }
             }
 
-            manager.Notify(1, notification.Build());
+            manager.Notify(Convert.ToInt32(conversationId), notification.Build());
         }
     }
 }

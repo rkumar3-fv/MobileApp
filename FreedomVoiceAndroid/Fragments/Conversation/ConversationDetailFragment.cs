@@ -111,7 +111,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                 _selectContactContainer.Visibility = ViewStates.Gone;
 
                 _presenter.ConversationId = ConversationId.Value;
-                _presenter.PhoneNumber = Helper.SelectedAccount.PresentationNumber;
+                _presenter.PhoneNumber = Helper.SelectedAccount?.PresentationNumber;
                 
                 _progressBar.Visibility = ViewStates.Visible;
                 _presenter.ReloadAsync();
@@ -174,6 +174,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
 
         protected virtual async void SendMessage()
         {
+            _progressBar.Visibility = ViewStates.Visible;
             await _presenter.SendMessageAsync(_messageEt.Text);
         }
 
