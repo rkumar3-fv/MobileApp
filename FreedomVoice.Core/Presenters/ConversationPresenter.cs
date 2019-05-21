@@ -22,21 +22,51 @@ namespace FreedomVoice.Core.Presenters
 
     public class ConversationPresenter
     {
-        private readonly IMessagesService _service;
-        private readonly IContactNameProvider _nameProvider;
+        
+        #region Private services 
+        
+        private readonly IConversationService _conversationService = ServiceContainer.Resolve<IConversationService>();
+        private readonly IContactNameProvider _contactNameProvider = ServiceContainer.Resolve<IContactNameProvider>();
+        private readonly IMessagesService _messagesService = ServiceContainer.Resolve<IMessagesService>();
+       
+        #endregion
+
+        #region Private variables
+
         private DateTime _currentDate;
         private int _currentPage;
         private bool _isLoading;
         private const int DEFAULT_COUNT = 50;
         private Dictionary<string, List<IChatMessage>> _rawData;
 
+        private long? _conversationId;
+        private string _phoneNumber;
+        
+        #endregion
+
+        #region Public events
+
+        public event EventHandler ContactsUpdated;
         public event EventHandler ItemsChanged;
+
+        #endregion
+
+        #region Public variables
+
         public List<IChatMessage> Items;
         public bool HasMore { get; private set; }
-
-        public long ConversationId;
-
-        private string _phoneNumber;
+        
+        public long? ConversationId
+        {
+            get => _conversationId;
+            set
+            {
+                if (value == _conversationId)
+                    return;
+                _conversationId = value;
+            }
+        }
+        
         public string PhoneNumber
         {
             get => _phoneNumber;
@@ -45,15 +75,17 @@ namespace FreedomVoice.Core.Presenters
                 if (_phoneNumber != null && value == _phoneNumber)
                     return;
                 _phoneNumber = value;
-
             }
         }
 
+        #endregion
+
+
         public ConversationPresenter()
         {
+            _contactNameProvider.RequestContacts();
+            _contactNameProvider.ContactsUpdated += ContactNameProviderOnContactsUpdated;
             ResetState();
-            _service = ServiceContainer.Resolve<IMessagesService>();
-            _nameProvider = ServiceContainer.Resolve<IContactNameProvider>();
         }
 
         public async void ReloadAsync()
@@ -69,20 +101,121 @@ namespace FreedomVoice.Core.Presenters
             await _PerformLoading();
         }
 
-        public async void SendMessageAsync(string text)
+        public async Task SendMessageAsync(string text)
         {
-            var res = await _service.SendMessage(_conversationId, text);
+            if (!_conversationId.HasValue)
+            {
+                return;
+            }
+            
+            var res = await _messagesService.SendMessage(_conversationId.Value, text);
             switch (res.State)
             {
                 case FreedomVoice.Entities.Enums.SendingState.Error:
+                    MessagedSentError(res.Entity);
                     break;
+                
                 case FreedomVoice.Entities.Enums.SendingState.Sending:
+                    MessagedSentSending(res.Entity);
                     break;
+                
                 case FreedomVoice.Entities.Enums.SendingState.Success:
+                    MessagedSentSuccess(res.Entity);
                     break;
-
             }
         }
+        
+        public async Task<long?> SendMessage(string currentPhone, string collocutorPhone, string text)
+        {
+            var clearedCurrentPhone = GetClearPhoneNumber(currentPhone);
+            var clearedCollocutorPhone = GetClearPhoneNumber(collocutorPhone);
+            
+            if (string.IsNullOrWhiteSpace(clearedCurrentPhone) || string.IsNullOrWhiteSpace(clearedCollocutorPhone))
+                return null;
+            
+            var res = await _messagesService.SendMessage(clearedCurrentPhone, clearedCollocutorPhone, text);
+            
+            switch (res.State)
+            {
+                case FreedomVoice.Entities.Enums.SendingState.Error:
+                    MessagedSentError(res.Entity);
+                    break;
+                
+                case FreedomVoice.Entities.Enums.SendingState.Sending:
+                    MessagedSentSending(res.Entity);
+                    break;
+                
+                case FreedomVoice.Entities.Enums.SendingState.Success:
+                    MessagedSentSuccess(res.Entity);
+                    break;
+            }
+
+            _conversationId = res.Entity?.Id;
+            return _conversationId;
+        }
+
+        public void Clear()
+        {
+            ResetState();
+            _updateItems();
+            _isLoading = false;
+            ItemsChanged?.Invoke(this, new ConversationCollectionEventArgs(Items));
+        }
+        
+        public string GetFormattedPhoneNumber(string phoneNumber)
+        {
+            return _contactNameProvider.GetFormattedPhoneNumber(phoneNumber);
+        }
+
+        public string GetClearPhoneNumber(string formattedPhoneNumber)
+        {
+            return _contactNameProvider.GetClearPhoneNumber(formattedPhoneNumber);
+        }
+
+        public string GetNameOrNull(string phone)
+        {
+            var clearPhone = GetClearPhoneNumber(phone);
+            return _contactNameProvider.GetNameOrNull(clearPhone);
+        }
+
+        public async Task<long?> GetConversationId(string currentPhone, string collocutorPhone)
+        {
+            var clearedCurrentPhone = GetClearPhoneNumber(currentPhone);
+            var clearedCollocutorPhone = GetClearPhoneNumber(collocutorPhone);
+
+            if (string.IsNullOrWhiteSpace(clearedCurrentPhone) || string.IsNullOrWhiteSpace(clearedCollocutorPhone))
+                return null;
+            
+            var conversation = await _conversationService.Get(clearedCurrentPhone, clearedCollocutorPhone);
+            return conversation?.Conversation?.Id;
+        }
+
+        #region Send message handlers
+
+        private void MessagedSentSuccess(Conversation conversation)
+        {
+            var lastMessage = conversation?.Messages?.Last();
+            if (lastMessage == null)
+            {
+                //TODO Show error?
+                return;
+            }
+            
+            Items.Insert(0, new OutgoingMessageViewModel(lastMessage));
+            ItemsChanged?.Invoke(this, new ConversationCollectionEventArgs(Items)); 
+        }
+
+        private void MessagedSentError(Conversation conversation)
+        {
+            //TODO
+        }
+
+        private void MessagedSentSending(Conversation conversation)
+        {
+            //TODO
+        }
+
+        #endregion
 
         private void ResetState()
         {
@@ -93,11 +226,18 @@ namespace FreedomVoice.Core.Presenters
             HasMore = false;
         }
 
-
         private async Task _PerformLoading()
         {
+            if (!_conversationId.HasValue)
+            {
+                _updateItems();
+                ItemsChanged?.Invoke(this, new ConversationCollectionEventArgs(Items));
+                _isLoading = false;
+                return;
+            }
+
             _isLoading = true;
-            var res = await _service.GetList(ConversationId, _currentDate, DEFAULT_COUNT, _currentPage);
+            var res = await _messagesService.GetList(_conversationId.Value, _currentDate, DEFAULT_COUNT, _currentPage);
             HasMore = !res.IsEnd;
 
             foreach (var row in res.Messages)
@@ -132,6 +272,11 @@ namespace FreedomVoice.Core.Presenters
                 Items.AddRange(group.Value);
                 Items.Add(new DateMessageViewModel(date));
             }
+        }
+        
+        private void ContactNameProviderOnContactsUpdated(object sender, EventArgs e)
+        {
+            ContactsUpdated?.Invoke(sender, e);
         }
     }
 }

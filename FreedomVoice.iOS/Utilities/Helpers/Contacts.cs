@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using AddressBook;
@@ -249,6 +250,7 @@ namespace FreedomVoice.iOS.Utilities.Helpers
         
         public ContactNameProvider()
         {
+            ContactItemsDidReceive(null, null);
             Contacts.ItemsChanged += ContactItemsDidReceive;
         }
         
@@ -261,7 +263,28 @@ namespace FreedomVoice.iOS.Utilities.Helpers
         {
             return _contactNames.ContainsKey(phone) ? _contactNames[phone] : FormatPhoneNumber(phone);
         }
+
+        public string GetNameOrNull(string phone)
+        {
+            return _contactNames.ContainsKey(phone) ? _contactNames[phone] : null;
+        }
+
+        public string GetFormattedPhoneNumber(string phoneNumber)
+        {
+            return FormatPhoneNumber(phoneNumber);
+        }
         
+        public string GetClearPhoneNumber(string formattedNumber)
+        {
+            const string pattern = @"\d"; 
+        
+            var sb = new StringBuilder(); 
+            foreach (Match m in Regex.Matches(formattedNumber, pattern)) 
+                sb.Append(m); 
+
+            return sb.ToString();
+        }
+
         private void ContactItemsDidReceive(object sender, EventArgs e)
         {
             foreach(var contact in Contacts.ContactList)
@@ -277,7 +300,7 @@ namespace FreedomVoice.iOS.Utilities.Helpers
 
         }
         
-        private string FormatPhoneNumber( string phoneNumber ) {
+        private string FormatPhoneNumber(string phoneNumber) {
 
             if ( String.IsNullOrEmpty(phoneNumber) )
                 return phoneNumber;
@@ -330,5 +353,7 @@ namespace FreedomVoice.iOS.Utilities.Helpers
             return phoneParser.Replace( phoneNumber, format );
 
         }
+
+
     }
 }

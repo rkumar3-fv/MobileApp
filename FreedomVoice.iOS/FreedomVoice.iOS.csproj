@@ -146,6 +146,7 @@
     <Compile Include="Utilities\Helpers\HttpClientHelper.cs" />
     <Compile Include="Utilities\Helpers\Log.cs" />
     <Compile Include="Utilities\Helpers\Recents.cs" />
+    <Compile Include="Utilities\UIAlertHelper.cs" />
     <Compile Include="ViewControllers\ContactsPickerViewController.cs" />
     <Compile Include="ViewControllers\SplashViewController.cs" />
     <Compile Include="ViewControllers\SplashViewController.designer.cs">
@@ -212,6 +213,7 @@
     <Compile Include="Views\BubbleView.cs" />
     <Compile Include="Views\ChatTextView.cs" />
     <Compile Include="Views\NoAccessToContactsView.cs" />
+    <Compile Include="Views\SelectActionDialog.cs" />
     <Compile Include="Views\Shared\LineView.cs" />
     <Compile Include="Views\Shared\CallerIdView.cs" />
     <Compile Include="TableViewCells\ContactCell.cs" />
@@ -291,6 +293,7 @@
     <Compile Include="AppDelegate.cs" />
     <Compile Include="ViewModels\MessagesViewModel.cs" />
     <Compile Include="Views\SliderBackgorundView.cs" />
+    <Compile Include="Views\VerticalButton.cs" />
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
@@ -563,6 +566,10 @@
     <BundleResource Include="Resources\arrow_right%402x.png" />
     <BundleResource Include="Resources\arrow_right%403x.png" />
     <BundleResource Include="Resources\keypad_call_small%402x.png" />
+    <Content Include="Resources\phone@2x.png" />
+    <Content Include="Resources\phone@3x.png" />
+    <Content Include="Resources\sms@2x.png" />
+    <Content Include="Resources\sms@3x.png" />
     <Content Include="Settings.bundle\Root.plist">
       <SubType>Designer</SubType>
     </Content>

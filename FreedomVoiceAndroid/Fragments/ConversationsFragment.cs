@@ -71,8 +71,11 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                     {PhoneNumber = Helper?.SelectedAccount?.PresentationNumber};
                 _presenter.ItemsChanged += (sender, e) =>
                 {
-                    _swipeToRefresh.Refreshing = false;
-                    UpdateList(_presenter.Items);
+                    Activity?.RunOnUiThread(() =>
+                    {
+                        _swipeToRefresh.Refreshing = false;
+                        UpdateList(_presenter.Items);
+                    });
                 };
 
                 _presenter.ReloadAsync();
@@ -81,7 +84,11 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
 
         private void ProviderOnContactsUpdated(object sender, EventArgs e)
         {
-            UpdateList(_presenter.Items);
+            Activity?.RunOnUiThread(() =>
+            {
+                _swipeToRefresh.Refreshing = false;
+                UpdateList(_presenter.Items);
+            });
         }
 
         private void SwipeRefresh(object sender, EventArgs e)

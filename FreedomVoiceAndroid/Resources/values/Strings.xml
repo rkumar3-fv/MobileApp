@@ -149,4 +149,6 @@
   <string name="Extra_pdfReaderPath">com.google.android.apps.pdfviewer</string>
   <string name="Extra_notificationBroadcast">com.freedomvoice.android.notif</string>
   <string name="ConversationDetails_message">Message</string>
+  <string name="ConversationDetails_new_message">New message</string>
+  <string name="ConversationDetails_select_contact_hint">To</string>
 </resources>

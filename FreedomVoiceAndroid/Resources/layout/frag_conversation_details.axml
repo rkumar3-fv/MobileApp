@@ -48,28 +48,93 @@
         </RelativeLayout>
     </LinearLayout>
 
-    <TextView
-            android:id="@+id/conversationDetailsFragment_noResultText"
-            style="@style/ListBackgroundText"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_horizontal"
-            android:text="@string/FragmentConversations_empty"
-            android:layout_below="@id/contactsFragment_spinnerArea"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="@dimen/content_activity_no_res_margin"
-            android:visibility="gone"/>
-
-    <android.support.v7.widget.RecyclerView
-            android:id="@+id/conversationDetailsFragment_recyclerView"
-            style="@style/ScrollTheme"
+    <LinearLayout
+            android:id="@+id/conversationDetailsFragment_select_phone"
+            android:visibility="visible"
             android:layout_below="@+id/conversationDetailsFragment_spinnerArea"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                >
+
+            <EditText
+                    android:id="@+id/conversationDetailsFragment_et_contact_phone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/ConversationMessageEt"
+                    android:layout_centerVertical="true"
+                    android:hint="@string/ConversationDetails_select_contact_hint"
+                    android:inputType="phone"
+                    android:layout_toLeftOf="@+id/conversationDetailsFragment_iv_select_contact"
+                    android:layout_toStartOf="@+id/conversationDetailsFragment_iv_select_contact">
+
+            </EditText>
+
+            <ImageView
+                    android:id="@+id/conversationDetailsFragment_iv_select_contact"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="8dp"
+                    android:visibility="visible"
+                    android:src="@drawable/ic_add_black"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginStart="8dp"
+                    android:layout_alignParentEnd="true"/>
+
+        </RelativeLayout>
+
+        <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/colorBackgroundProgress"/>
+
+    </LinearLayout>
+
+
+    <FrameLayout
+            android:layout_below="@+id/conversationDetailsFragment_select_phone"
             android:layout_above="@+id/conversationDetailsFragment_write_lock"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingTop="@dimen/fragment_msg_element_padding"
-            android:paddingBottom="@dimen/fragment_msg_element_padding"
-            android:clipToPadding="false"/>
+            android:layout_height="match_parent">
+
+
+        <TextView
+                android:id="@+id/conversationDetailsFragment_noResultText"
+                style="@style/ListBackgroundText"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_horizontal"
+                android:text="@string/FragmentConversations_empty"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/content_activity_no_res_margin"
+                android:visibility="gone"/>
+
+        <android.support.v7.widget.RecyclerView
+                android:id="@+id/conversationDetailsFragment_recyclerView"
+                style="@style/ScrollTheme"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingTop="@dimen/fragment_msg_element_padding"
+                android:paddingBottom="@dimen/fragment_msg_element_padding"
+                android:clipToPadding="false"/>
+
+        <ProgressBar
+                android:layout_gravity="center"
+                android:id="@+id/progressBar"
+                android:visibility="gone"
+                style="@style/InWhiteButtonProgressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        
+    </FrameLayout>
+
 
     <LinearLayout
             android:id="@+id/conversationDetailsFragment_write_lock"

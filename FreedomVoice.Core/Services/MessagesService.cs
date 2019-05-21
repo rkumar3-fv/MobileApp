@@ -43,7 +43,7 @@ namespace FreedomVoice.Core.Services
             return result;
         }
 
-        public async Task<SendingResponse<FreedomVoice.Entities.Response.Conversation>> SendMessage(long conversationId, string text)
+        public async Task<SendingResponse<DAL.DbEntities.Conversation>> SendMessage(long conversationId, string text)
         {
             var conversation = _cacheService.GetConversation(conversationId);
             if (conversation == null)
@@ -51,12 +51,17 @@ namespace FreedomVoice.Core.Services
             return await SendMessage(conversation.CurrentPhone.PhoneNumber, conversation.CollocutorPhone.PhoneNumber, text);
         }
 
-        public async Task<SendingResponse<FreedomVoice.Entities.Response.Conversation>> SendMessage(string currentNumber, string to, string text)
+        public async Task<SendingResponse<DAL.DbEntities.Conversation>> SendMessage(string currentNumber, string to, string text)
         {
             var sendingResult = await _networkService.SendMessage(new FreedomVoice.Entities.Request.MessageRequest { From = currentNumber, To = to, Text = text });
             if (sendingResult.Code != Entities.Enums.ErrorCodes.Ok || sendingResult.Result == null)
-                return new SendingResponse<FreedomVoice.Entities.Response.Conversation> { ErrorMessage = sendingResult.ErrorText, State = FreedomVoice.Entities.Enums.SendingState.Error };
-            return sendingResult.Result;
+                return new SendingResponse<DAL.DbEntities.Conversation> { ErrorMessage = sendingResult.ErrorText, State = FreedomVoice.Entities.Enums.SendingState.Error };
+            return new SendingResponse<DAL.DbEntities.Conversation>
+            {
+                ErrorMessage = sendingResult.Result.ErrorMessage,
+                State = sendingResult.Result.State,
+                Entity = _mapper.Map<DAL.DbEntities.Conversation>(sendingResult.Result.Entity)
+            };
         }
     }
 }

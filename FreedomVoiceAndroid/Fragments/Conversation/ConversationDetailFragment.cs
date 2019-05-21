@@ -21,16 +21,28 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
 {
     public class ConversationDetailFragment : CallerFragment
     {
-        private EditText _messageEt;
-        private ImageView _sendIv;
-        private RecyclerView _recycler;
-        private TextView _placeHolder;
-        private ConversationMessageRecyclerAdapter _adapter;
-
         private const string ExtraConversationId = "EXTRA_CONVERSATION_ID";
         private const string ExtraConversationPhone = "EXTRA_CONVERSATION_PHONE";
-        private ConversationPresenter _presenter;
-        private LinearLayoutManager _manager;
+
+        protected EditText _messageEt;
+        protected ImageView _sendIv;
+        protected RecyclerView _recycler;
+        protected TextView _placeHolder;
+        protected ActionBar Toolbar;
+        protected ViewGroup _spinnerContainer;
+
+        protected ViewGroup _selectContactContainer;
+        protected ImageView _contactsIcon;
+        protected EditText _contactPhoneEt;
+
+        protected ConversationPresenter _presenter = new ConversationPresenter();
+        protected ConversationMessageRecyclerAdapter _adapter;
+        protected LinearLayoutManager _manager;
+
+        protected string ConversationPhone;
+        protected long? ConversationId;
+        protected ProgressBar _progressBar;
+
 
         public static ConversationDetailFragment NewInstance(long conversationId, string phone)
         {
@@ -39,7 +51,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             args.PutLong(ExtraConversationId, conversationId);
             args.PutString(ExtraConversationPhone, phone);
             fragment.Arguments = args;
-            
+
             return fragment;
         }
 
@@ -50,38 +62,69 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             _sendIv = view.FindViewById<ImageView>(Resource.Id.conversationDetailsFragment_iv_send);
             _recycler = view.FindViewById<RecyclerView>(Resource.Id.conversationDetailsFragment_recyclerView);
             _placeHolder = view.FindViewById<TextView>(Resource.Id.conversationDetailsFragment_noResultText);
+            _spinnerContainer = view.FindViewById<ViewGroup>(Resource.Id.conversationDetailsFragment_spinnerArea);
             IdSpinner = view.FindViewById<Spinner>(Resource.Id.conversationDetailsFragment_idSpinner);
             SingleId = view.FindViewById<TextView>(Resource.Id.conversationDetailsFragment_singleId);
+            _selectContactContainer = view.FindViewById<ViewGroup>(Resource.Id.conversationDetailsFragment_select_phone);
+            _contactsIcon = view.FindViewById<ImageView>(Resource.Id.conversationDetailsFragment_iv_select_contact);
+            _contactPhoneEt = view.FindViewById<EditText>(Resource.Id.conversationDetailsFragment_et_contact_phone);
+            _progressBar = view.FindViewById<ProgressBar>(Resource.Id.progressBar);
             return view;
-        }
-
-        public override void OnCreate(Bundle savedInstanceState)
-        {
-            base.OnCreate(savedInstanceState);
-            _presenter = new ConversationPresenter()
-            {
-                ConversationId = Arguments.GetLong(ExtraConversationId)
-            };
         }
 
         public override void OnActivityCreated(Bundle savedInstanceState)
         {
             base.OnActivityCreated(savedInstanceState);
-            var bar = ((AppCompatActivity) Activity).SupportActionBar;
-            bar.SetIcon(Resource.Drawable.ic_account_white);
-            bar.SetHomeAsUpIndicator(Resource.Drawable.ic_action_back);
-            bar.SetDisplayShowHomeEnabled(true);
-            bar.SetDisplayHomeAsUpEnabled(true);
-            bar.Title = Arguments.GetString(ExtraConversationPhone);
-            _presenter.PhoneNumber = Helper.SelectedAccount.PresentationNumber;
-            _presenter.ReloadAsync();
+            Toolbar = ((AppCompatActivity) Activity).SupportActionBar;
+            Toolbar.SetDisplayHomeAsUpEnabled(true);
+            Toolbar.SetHomeAsUpIndicator(Resource.Drawable.ic_action_back);
+            SetTitle(null);
+
+            ConversationPhone = Arguments?.GetString(ExtraConversationPhone);
+            var convId = Arguments?.GetLong(ExtraConversationId, -1);
+            ConversationId = convId == -1 ? null : convId;
+            
+            ConversationSelected();
+        }
+
+        
+        protected void SetTitle(string title)
+        {
+            if (title == null || title.Length <= 0)
+            {
+                Toolbar.Title = Context.GetString(Resource.String.ConversationDetails_new_message);
+            }
+            else
+            {
+                Toolbar.Title = title;
+            }
+        }
+       
+        protected void ConversationSelected()
+        {
+            if (ConversationPhone != null && ConversationId != null)
+            {
+                Toolbar.SetIcon(Resource.Drawable.ic_account_white);
+                Toolbar.SetDisplayShowHomeEnabled(true);
+                Toolbar.Title = ConversationPhone;
+                _spinnerContainer.Visibility = ViewStates.Visible;
+                _selectContactContainer.Visibility = ViewStates.Gone;
+
+                _presenter.ConversationId = ConversationId.Value;
+                _presenter.PhoneNumber = Helper.SelectedAccount.PresentationNumber;
+                
+                _progressBar.Visibility = ViewStates.Visible;
+                _presenter.ReloadAsync();
+            }
         }
 
         public override void OnViewCreated(View view, Bundle savedInstanceState)
         {
             base.OnViewCreated(view, savedInstanceState);
+            _contactsIcon.SetColorFilter(new Color(ContextCompat.GetColor(Context, Resource.Color.colorBlack)),
+                PorterDuff.Mode.SrcAtop);
+            
             UpdateSendButton();
-
             _manager = new LinearLayoutManager(Context);
             _manager.ReverseLayout = true;
             _recycler.SetLayoutManager(_manager);
@@ -112,8 +155,8 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         {
             var visibleItemCount = _manager.ChildCount;
 
-            var pastVisiblesItems = _manager.FindLastVisibleItemPosition();
-            if (visibleItemCount + pastVisiblesItems + 15 >= _presenter.Items.Count && _presenter.HasMore)
+            var pastVisibleItems = _manager.FindLastVisibleItemPosition();
+            if (visibleItemCount + pastVisibleItems + 15 >= _presenter.Items.Count && _presenter.HasMore)
             {
                 _presenter.LoadMoreAsync();
             }
@@ -125,25 +168,39 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
 
         private void ClickSend(object sender, EventArgs e)
         {
-            // todo call vm.SendMessage(_messageEt.Text)
+            SendMessage();
             _messageEt.SetText("", TextView.BufferType.Editable);
         }
 
-        private void UpdateList()
+        protected virtual async void SendMessage()
         {
-            _adapter.UpdateItems(_presenter.Items);
-            _adapter.NotifyDataSetChanged();
+            await _presenter.SendMessageAsync(_messageEt.Text);
         }
 
-        private void UpdateSendButton()
+        protected void UpdateSendButton()
         {
-            var btnColor = _messageEt.Text.Length > 0
+            var buttonEnabled = IsSendButtonEnabled();
+
+            var btnColor = buttonEnabled
                 ? Resource.Color.colorActivatedControls
                 : Resource.Color.colorFieldsHint;
+            _sendIv.Enabled = buttonEnabled;
             _sendIv.SetColorFilter(
                 new Color(ContextCompat.GetColor(Context, btnColor)),
                 PorterDuff.Mode.SrcAtop
             );
+        }
+
+        protected virtual bool IsSendButtonEnabled()
+        {
+            return _messageEt.Text.Length > 0;
+        }
+
+        private void UpdateList()
+        {
+            _progressBar.Visibility = ViewStates.Gone;
+            _adapter.UpdateItems(_presenter.Items);
+            _adapter.NotifyDataSetChanged();
         }
     }
 }

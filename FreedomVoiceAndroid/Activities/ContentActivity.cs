@@ -146,7 +146,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         private void ViewPagerOnPageSelected(object sender, ViewPager.PageSelectedEventArgs pageSelectedEventArgs)
         {
             SetToolbarContent();
-            if ((_viewPager.CurrentItem == 1 || _viewPager.CurrentItem == 4) &&(!Appl.ApplicationHelper.CheckContactsPermission()))
+            if ((_viewPager.CurrentItem == 1 || _viewPager.CurrentItem == 4) && (!Appl.ApplicationHelper.CheckContactsPermission()))
             {
                 var snackPerm = Snackbar.Make(RootLayout, Resource.String.Snack_noContactsPermission, Snackbar.LengthLong);
                 snackPerm.SetAction(Resource.String.Snack_noPhonePermissionAction, OnSetContactsPermission);
@@ -246,6 +246,9 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                     var transaction = SupportFragmentManager.BeginTransaction();
                     transaction.Add(clearDialog, GetString(Resource.String.DlgLogout_title));
                     transaction.CommitAllowingStateLoss();
+                    return true;
+                case Resource.Id.menu_conversation_new:
+                    ChatActivity.StartNewChat(this, null);
                     return true;
                 default:
                     return base.OnOptionsItemSelected(item);
