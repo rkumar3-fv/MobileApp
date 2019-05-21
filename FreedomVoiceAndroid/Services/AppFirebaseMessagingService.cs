@@ -16,6 +16,7 @@ using FreedomVoice.Entities.Enums;
 using FreedomVoice.Entities.Request;
 using FreedomVoice.Entities.Response;
 using Java.Lang;
+using Microsoft.EntityFrameworkCore.Internal;
 using Newtonsoft.Json;
 using Exception = System.Exception;
 using TaskStackBuilder = Android.Support.V4.App.TaskStackBuilder;
@@ -81,7 +82,7 @@ namespace com.FreedomVoice.MobileApp.Android.Services
                             conversation.Id,
                             conversation.CollocutorPhone.PhoneNumber,
                             contactNameOrPhone,
-                            conversation.Messages.First()?.Text ?? "new message"
+                            conversation.Messages?.FirstOr(null)?.Text ?? "new message"
                         );
                     }
                     catch (Exception e)
