@@ -31,9 +31,9 @@
 		<service android:name="com.google.android.gms.analytics.CampaignTrackingService" />-->
 
 		<!--FCM-->
-		<!--<meta-data-->
-		<!--android:name="com.google.firebase.messaging.default_notification_icon"-->
-		<!--android:resource="@drawable/notification_logo" />-->
+		<meta-data
+				android:name="com.google.firebase.messaging.default_notification_icon"
+				android:resource="@drawable/ic_default_notification" />
 		<meta-data
 				android:name="com.google.firebase.messaging.default_notification_color"
 				android:resource="@color/color_notification_default"/>
