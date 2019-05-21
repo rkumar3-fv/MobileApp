@@ -4,6 +4,7 @@ using System.Linq;
 using FreedomVoice.Core.Services.Interfaces;
 using FreedomVoice.Core.Utils;
 using FreedomVoice.DAL.DbEntities;
+using FreedomVoice.Entities.Enums;
 
 namespace FreedomVoice.Core.Services
 {
@@ -37,31 +38,19 @@ namespace FreedomVoice.Core.Services
             _instance = new NotificationMessageService();
             return _instance;
         }
-        
 
-        public enum NotificationType
-        {   
-            /// <summary>
-            /// Update message (status, text, etc)
-            /// </summary>
-            Update,
-            /// <summary>
-            /// New incoming message
-            /// </summary>
-            Incoming
-        }
 
-        public void ReceivedNotification(NotificationType type, FreedomVoice.Entities.Response.Conversation model)
+        public void ReceivedNotification(PushType type, FreedomVoice.Entities.Response.Conversation model)
         {
             var savedMessage = _saveMessage(model);
             switch (type)
             {
-                case NotificationType.Incoming:
+                case PushType.NewMessage:
                     var savedConversation = _saveConversation(model);
                     NewMessageEventHandler?.Invoke(this,
                         new ConversationEventArg {Conversation = savedConversation});
                     break;
-                case NotificationType.Update:
+                case PushType.StatusChanged:
                     break;
             }
             MessageUpdatedHandler?.Invoke(this, new MessageEventArg {Message = savedMessage});

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Android.App;
 using Android.Content;
 using Android.OS;
@@ -8,11 +9,12 @@ using Android.Support.V4.Content;
 using Android.Util;
 using com.FreedomVoice.MobileApp.Android.Activities;
 using Firebase.Messaging;
+using FreedomVoice.Core.Services;
 using FreedomVoice.Core.Utils;
 using FreedomVoice.Core.ViewModels;
-using FreedomVoice.Entities;
 using FreedomVoice.Entities.Enums;
 using FreedomVoice.Entities.Request;
+using FreedomVoice.Entities.Response;
 using Java.Lang;
 using Newtonsoft.Json;
 using Exception = System.Exception;
@@ -41,17 +43,20 @@ namespace com.FreedomVoice.MobileApp.Android.Services
 
             try
             {
-                var pushMessageRequest = JsonConvert.DeserializeObject<PushMessageRequest<object>>(message.Data[DataKey]);
+                var pushMessageRequest =
+                    JsonConvert.DeserializeObject<PushMessageRequest<object>>(message.Data[DataKey]);
                 var pushType = pushMessageRequest.PushType;
 
                 switch (pushType)
                 {
                     case PushType.NewMessage:
-                        var deserializeObject = JsonConvert.DeserializeObject<PushMessageRequest<Push>>(message.Data[DataKey]);
-                        ProcessNewMessage(deserializeObject.Data);
+                        var newMessageRequest = JsonConvert.DeserializeObject<PushMessageRequest<Conversation>>(message.Data[DataKey]);
+                        ProcessNewMessage(newMessageRequest.Data);
+                        NotificationMessageService.Instance().ReceivedNotification(pushType, newMessageRequest.Data);
                         break;
                     case PushType.StatusChanged:
-                        // todo process status changed
+                        var pushChangeRequest = JsonConvert.DeserializeObject<PushMessageRequest<Conversation>>(message.Data[DataKey]);
+                        NotificationMessageService.Instance().ReceivedNotification(pushType, pushChangeRequest.Data);
                         break;
                     default:
                         throw new IllegalStateException($"unknown PushType");
@@ -63,7 +68,7 @@ namespace com.FreedomVoice.MobileApp.Android.Services
             }
         }
 
-        private void ProcessNewMessage(Push push)
+        private void ProcessNewMessage(Conversation conversation)
         {
             using (var h = new Handler(Looper.MainLooper))
             {
@@ -71,12 +76,12 @@ namespace com.FreedomVoice.MobileApp.Android.Services
                 {
                     try
                     {
-                        var contactNameOrPhone = _contactNameProvider.GetName(push.FromPhoneNumber);
+                        var contactNameOrPhone = _contactNameProvider.GetName(conversation.CollocutorPhone.PhoneNumber);
                         ShowConversationMessagePush(
-                            push.ConversationId,
-                            push.FromPhoneNumber,
+                            conversation.Id,
+                            conversation.CollocutorPhone.PhoneNumber,
                             contactNameOrPhone,
-                            push.Message.Text
+                            conversation.Messages.First()?.Text ?? "new message"
                         );
                     }
                     catch (Exception e)
