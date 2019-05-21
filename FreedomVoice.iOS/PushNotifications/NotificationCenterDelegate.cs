@@ -126,13 +126,13 @@ namespace FreedomVoice.iOS.PushNotifications
 				return;
 			}
 			
-			if (string.IsNullOrWhiteSpace(pushNotificationData?.Data?.CollocutorPhone?.PhoneNumber))
+			if (string.IsNullOrWhiteSpace(pushNotificationData?.Data?.ToPhone?.PhoneNumber))
 			{
 				_logger.Debug(nameof(NotificationCenterDelegate), nameof(ProcessNewMessagePushNotification), "CollocutorPhone is missing.");
 				return;
 			}
 			
-			if (string.IsNullOrWhiteSpace(pushNotificationData?.Data?.CurrentPhone?.PhoneNumber))
+			if (string.IsNullOrWhiteSpace(pushNotificationData?.Data?.ToPhone?.PhoneNumber))
 			{
 				_logger.Debug(nameof(NotificationCenterDelegate), nameof(ProcessNewMessagePushNotification), "CurrentPhone is missing.");
 				return;
@@ -191,12 +191,12 @@ namespace FreedomVoice.iOS.PushNotifications
 			_appNavigator.MainTabBarControllerChanged -= MainTabBarControllerChanged;
 			_appNavigator.CurrentControllerChanged -= CurrentControllerChanged;
 			
-			var phoneHolder = _contactNameProvider.GetNameOrNull(_contactNameProvider.GetClearPhoneNumber(pushNotificationData.Data.CollocutorPhone.PhoneNumber));
+			var phoneHolder = _contactNameProvider.GetNameOrNull(_contactNameProvider.GetClearPhoneNumber(pushNotificationData.Data.ToPhone.PhoneNumber));
 
 			var controller = new ConversationViewController();
 			controller.ConversationId = pushNotificationData.Data.Id;
-			controller.CurrentPhone = new PresentationNumber(pushNotificationData.Data.CurrentPhone.PhoneNumber);
-			controller.Title = phoneHolder ?? pushNotificationData.Data.CollocutorPhone.PhoneNumber;
+			controller.CurrentPhone = new PresentationNumber(pushNotificationData.Data.ToPhone.PhoneNumber);
+			controller.Title = phoneHolder ?? pushNotificationData.Data.ToPhone.PhoneNumber;
 			_appNavigator.CurrentController.NavigationController?.PushViewController(controller, true);
 			pushNotificationData = null;
 		}

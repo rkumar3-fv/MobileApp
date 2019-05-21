@@ -36,8 +36,8 @@ namespace FreedomVoice.iOS.Core.Utilities.Extensions
 
             var dataMainJsonValue = JsonValue.Parse(jsonValue["Data"].ToString());
             var dataJsonValue = JsonValue.Parse(dataMainJsonValue["Data"].ToString());
-            var collocutorPhoneJsonValue = JsonValue.Parse(dataJsonValue["CollocutorPhone"].ToString());
-            var currentPhoneJsonValue = JsonValue.Parse(dataJsonValue["CurrentPhone"].ToString());
+            var toPhoneJsonValue = JsonValue.Parse(dataJsonValue["ToPhone"].ToString());
+            var systemPhoneJsonValue = JsonValue.Parse(dataJsonValue["SystemPhone"].ToString());
             long pushTypeLongValue = dataMainJsonValue["PushType"];
 
             var pushResponse = new PushResponse<Conversation>
@@ -46,15 +46,15 @@ namespace FreedomVoice.iOS.Core.Utilities.Extensions
                 Data = new Conversation
                 {
                     Id = dataJsonValue["Id"],
-                    CollocutorPhone = new Phone
+                    ToPhone = new Phone
                     {
-                        PhoneNumber = collocutorPhoneJsonValue["PhoneNumber"],
-                        Id = collocutorPhoneJsonValue["Id"]
+                        PhoneNumber = toPhoneJsonValue["PhoneNumber"],
+                        Id = toPhoneJsonValue["Id"]
                     },
-                    CurrentPhone = new Phone
+                    SystemPhone = new Phone
                     {
-                        PhoneNumber = currentPhoneJsonValue["PhoneNumber"],
-                        Id = currentPhoneJsonValue["Id"]
+                        PhoneNumber = systemPhoneJsonValue["PhoneNumber"],
+                        Id = systemPhoneJsonValue["Id"]
                     }
                 }
             };

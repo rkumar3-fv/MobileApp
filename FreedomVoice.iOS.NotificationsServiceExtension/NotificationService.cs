@@ -61,7 +61,7 @@ namespace FreedomVoice.iOS.NotificationsServiceExtension
         
         private void ProcessNewMessagePushNotification(PushResponse<Conversation> pushNotificationData)
         {
-            if (string.IsNullOrWhiteSpace(pushNotificationData.Data.CollocutorPhone?.PhoneNumber))
+            if (string.IsNullOrWhiteSpace(pushNotificationData.Data.ToPhone?.PhoneNumber))
             {
                 _logger.Debug($"{nameof(NotificationService)}", $"{nameof(NotificationService)}", "Collocutor phone is missing in push data");
                 ContentHandler?.Invoke(BestAttemptContent);
@@ -79,7 +79,7 @@ namespace FreedomVoice.iOS.NotificationsServiceExtension
                 DebugPrintContracts(contacts);
 
                 // Try fetch phone number from push
-                var phoneFromPush = ContactsHelper.NormalizePhoneNumber(pushNotificationData.Data.CollocutorPhone.PhoneNumber);
+                var phoneFromPush = ContactsHelper.NormalizePhoneNumber(pushNotificationData.Data.ToPhone.PhoneNumber);
                 _logger.Debug($"{nameof(NotificationService)}", $"{nameof(NotificationService)}", $"Phone from push: {phoneFromPush}");
 
                 // Find contact from Contact book by phone
