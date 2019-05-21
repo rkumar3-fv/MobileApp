@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FreedomVoice.Core.Services;
 using FreedomVoice.Core.Services.Interfaces;
 using FreedomVoice.Core.Utils;
 using FreedomVoice.Core.ViewModels;
@@ -36,7 +37,8 @@ namespace FreedomVoice.Core.Presenters
         private DateTime _currentDate;
         private int _currentPage;
         private bool _isLoading;
-        private const int DEFAULT_COUNT = 50;
+        private const int DefaultCount = 50;
+        private const string DateFormat = "MM/dd/yyyy";
         private Dictionary<string, List<IChatMessage>> _rawData;
 
         private long? _conversationId;
@@ -85,7 +87,20 @@ namespace FreedomVoice.Core.Presenters
         {
             _contactNameProvider.RequestContacts();
             _contactNameProvider.ContactsUpdated += ContactNameProviderOnContactsUpdated;
+            NotificationMessageService.Instance().NewMessageEventHandler += OnNewMessageEventHandler;
+            NotificationMessageService.Instance().MessageUpdatedHandler += OnMessageUpdatedHandler;
             ResetState();
+        }
+
+        private void OnMessageUpdatedHandler(object sender, MessageEventArg e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void OnNewMessageEventHandler(object sender, ConversationEventArg e)
+        {
+            var model = new IncomingMessageViewModel(e.Conversation.Messages.Last());
+            _addMessage(model);
         }
 
         public async void ReloadAsync()
@@ -200,9 +215,7 @@ namespace FreedomVoice.Core.Presenters
                 //TODO Show error?
                 return;
             }
-            
-            Items.Insert(0, new OutgoingMessageViewModel(lastMessage));
-            ItemsChanged?.Invoke(this, new ConversationCollectionEventArgs(Items)); 
+            _addMessage(new OutgoingMessageViewModel(lastMessage));
         }
 
         private void MessagedSentError(Conversation conversation)
@@ -217,6 +230,13 @@ namespace FreedomVoice.Core.Presenters
 
         #endregion
 
+        private void _addMessage(IChatMessage message)
+        {
+            var dateStr = message.Date.ToString(DateFormat);
+            var pack = _rawData.ContainsKey(dateStr) ? _rawData[dateStr] : new List<IChatMessage>();
+            pack.Add(message);
+            ItemsChanged?.Invoke(this, new ConversationCollectionEventArgs(Items)); 
+        } 
         private void ResetState()
         {
             _currentDate = DateTime.Now;
@@ -237,13 +257,13 @@ namespace FreedomVoice.Core.Presenters
             }
 
             _isLoading = true;
-            var res = await _messagesService.GetList(_conversationId.Value, _currentDate, DEFAULT_COUNT, _currentPage);
+            var res = await _messagesService.GetList(_conversationId.Value, _currentDate, DefaultCount, _currentPage);
             HasMore = !res.IsEnd;
 
             foreach (var row in res.Messages)
             {
                 if (row.From == null) continue;
-                var dateStr = row.CreatedAt?.ToString("MM/dd/yyyy");
+                var dateStr = row.CreatedAt?.ToString(DateFormat);
                 if (dateStr == null) continue;
                 var pack = _rawData.ContainsKey(dateStr) ? _rawData[dateStr] : new List<IChatMessage>();
                 if (row.From.PhoneNumber.Equals(PhoneNumber))
@@ -268,7 +288,7 @@ namespace FreedomVoice.Core.Presenters
             foreach (var group in _rawData)
             {
                 var date = DateTime.MinValue;
-                DateTime.TryParseExact(group.Key, "MM/dd/yyyy", null, System.Globalization.DateTimeStyles.None, out date);
+                DateTime.TryParseExact(group.Key, DateFormat, null, System.Globalization.DateTimeStyles.None, out date);
                 Items.AddRange(group.Value);
                 Items.Add(new DateMessageViewModel(date));
             }
