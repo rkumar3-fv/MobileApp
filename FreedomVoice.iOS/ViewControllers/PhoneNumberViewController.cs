@@ -60,7 +60,6 @@ namespace FreedomVoice.iOS.ViewControllers
                 return;
 
             UserDefault.AccountPhoneNumber = phoneNumber;
-
             MoveToEmergencyDisclaimerViewController();
         }
 

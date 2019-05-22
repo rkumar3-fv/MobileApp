@@ -74,6 +74,13 @@ namespace FreedomVoice.iOS.ViewControllers
             base.ViewWillAppear(animated);
         }
 
+        public override async void ViewDidAppear(bool animated)
+        {
+            base.ViewDidAppear(animated);
+            (UIApplication.SharedApplication.Delegate as AppDelegate)?.RegisterRemotePushNotifications();
+            await FreedomVoice.iOS.Core.Utilities.Helpers.Contacts.GetContactsListAsync();
+        }
+
         public List<PresentationNumber> GetPresentationNumbers()
         {
             return PresentationNumbers;
