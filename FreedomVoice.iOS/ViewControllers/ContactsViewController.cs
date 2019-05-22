@@ -12,7 +12,7 @@ using FreedomVoice.iOS.Views;
 using FreedomVoice.iOS.Views.Shared;
 using UIKit;
 using Xamarin.Contacts;
-using ContactsHelper = FreedomVoice.iOS.Utilities.Helpers.Contacts;
+using ContactsHelper = FreedomVoice.iOS.Core.Utilities.Helpers.Contacts;
 
 namespace FreedomVoice.iOS.ViewControllers
 {

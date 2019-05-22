@@ -3,11 +3,11 @@ using System.Linq;
 using AddressBook;
 using Foundation;
 using FreedomVoice.Core.Utils;
+using FreedomVoice.iOS.Core.Utilities.Extensions;
 using FreedomVoice.iOS.Utilities;
-using FreedomVoice.iOS.Utilities.Extensions;
 using UIKit;
 using Xamarin.Contacts;
-using ContactsHelper = FreedomVoice.iOS.Utilities.Helpers.Contacts;
+using ContactsHelper = FreedomVoice.iOS.Core.Utilities.Helpers.Contacts;
 
 namespace FreedomVoice.iOS.TableViewCells
 {

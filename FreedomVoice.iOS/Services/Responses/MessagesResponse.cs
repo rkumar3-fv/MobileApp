@@ -11,7 +11,7 @@ namespace FreedomVoice.iOS.Services.Responses
         /// Response init for MessagesService
         /// </summary>
         /// <param name="messages">Messages</param>
-        public MessagesResponse(IEnumerable<Core.Entities.Message> messages)
+        public MessagesResponse(IEnumerable<FreedomVoice.Core.Entities.Message> messages)
         {
             MessagesList = new List<Message>();
 
