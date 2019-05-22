@@ -10,6 +10,7 @@ using FreedomVoice.Core.Utils;
 using FreedomVoice.Core.ViewModels;
 using FreedomVoice.DAL.DbEntities;
 using FreedomVoice.Entities.Enums;
+using SendingState = FreedomVoice.Entities.Enums.SendingState;
 
 namespace FreedomVoice.Core.Presenters
 {

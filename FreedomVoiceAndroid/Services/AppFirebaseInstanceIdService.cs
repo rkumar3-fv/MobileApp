@@ -26,8 +26,7 @@ namespace com.FreedomVoice.MobileApp.Android.Services
             base.OnTokenRefresh();
             if (_actionsHelper.IsLoggedIn)
             {
-                var instanceToken = FirebaseInstanceId.Instance.Token;
-                await _pushService.Register(DeviceType.Android, instanceToken, _actionsHelper.GetPresentationNumbers().ToString());
+                _actionsHelper.RegisterFcm();
             }
         }
     }
