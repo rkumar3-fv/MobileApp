@@ -72,6 +72,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 _progressLayout.Visibility = ViewStates.Visible;
             Helper.SelectedAccount = Helper.AccountsList[position];
             Helper.GetPresentationNumbers();
+            Helper.RegisterFcm();
         }
 
         protected override void OnResume()

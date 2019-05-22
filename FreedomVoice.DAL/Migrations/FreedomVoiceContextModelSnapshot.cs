@@ -45,6 +45,8 @@ namespace FreedomVoice.DAL.Migrations
 
                     b.Property<long?>("FromId");
 
+                    b.Property<DateTime?>("LastUpdateDate");
+
                     b.Property<DateTime?>("ReadAt");
 
                     b.Property<DateTime?>("SentAt");

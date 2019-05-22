@@ -206,5 +206,11 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                 _adapter.NotifyDataSetChanged();
             });
         }
+
+        public override void OnDestroy()
+        {
+            base.OnDestroy();
+            _presenter?.Dispose();
+        }
     }
 }

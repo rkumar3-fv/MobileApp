@@ -42,7 +42,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             base.OnViewCreated(view, savedInstanceState);
             _adapter = new ConversationRecyclerAdapter((sender, account) =>
             {
-                ChatActivity.OpenChat(Activity, account.ConversationId, account.To);
+                StartActivity(ChatActivity.OpenChat(Activity, account.ConversationId, account.To));
             });
             _layoutManager = new LinearLayoutManager(Context);
             _recyclerView.SetLayoutManager(_layoutManager);
@@ -150,6 +150,12 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         private void SearchListenerOnChange(object sender, string s)
         {
             _presenter.Query = s;
+        }
+
+        public override void OnDestroy()
+        {
+            base.OnDestroy();
+            _presenter?.Dispose();
         }
     }
 }

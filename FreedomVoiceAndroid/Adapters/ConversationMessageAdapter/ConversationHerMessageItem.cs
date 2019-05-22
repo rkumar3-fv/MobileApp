@@ -38,25 +38,25 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
             var vh = holder as ConversationHerMessageVh;
             vh.MessageTv.SetText(_chatMessage.Message, TextView.BufferType.Normal);
             vh.Date.SetText(_chatMessage.Time, TextView.BufferType.Normal);
-            
-//            switch (_chatMessage.SendingState)
-//            {
-//                case SendingState.Error:
-//                    vh.Icon.SetImageResource(Resource.Drawable.ic_error);
-//                    vh.Icon.Visibility = ViewStates.Visible;
-//                    break;
-//                case SendingState.Sending:
-//                    vh.Icon.SetImageResource(Resource.Drawable.ic_anim_sending);
-//                    var sendAnimationDrawable = vh.Icon.Drawable as AnimationDrawable;
-//                    sendAnimationDrawable.SetCallback(vh.Icon);
-//                    sendAnimationDrawable.SetVisible(true, true);
-//                    sendAnimationDrawable.Start();
-//                    vh.Icon.Visibility = ViewStates.Visible;
-//                    break;
-//                default:
-//                    vh.Icon.Visibility = ViewStates.Gone;
-//                    break;
-//            }
+
+            switch (_chatMessage.SendingState)
+            {
+                case SendingState.Error:
+                    vh.Icon.SetImageResource(Resource.Drawable.ic_error);
+                    vh.Icon.Visibility = ViewStates.Visible;
+                    break;
+                case SendingState.Sending:
+                    vh.Icon.SetImageResource(Resource.Drawable.ic_anim_sending);
+                    var sendAnimationDrawable = vh.Icon.Drawable as AnimationDrawable;
+                    sendAnimationDrawable.SetCallback(vh.Icon);
+                    sendAnimationDrawable.SetVisible(true, true);
+                    sendAnimationDrawable.Start();
+                    vh.Icon.Visibility = ViewStates.Visible;
+                    break;
+                default:
+                    vh.Icon.Visibility = ViewStates.Gone;
+                    break;
+            }
         }
     }
 }

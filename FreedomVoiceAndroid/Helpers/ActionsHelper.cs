@@ -800,18 +800,20 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         public async void RegisterFcm()
         {
             var instanceToken = FirebaseInstanceId.Instance.Token;
-            if (!string.IsNullOrEmpty(instanceToken))
+            var systemPhone = SelectedAccount?.AccountName;
+            if (!string.IsNullOrEmpty(instanceToken) && !string.IsNullOrEmpty(systemPhone))
             {
-                await _pushService.Register(DeviceType.Android, instanceToken);
+                await _pushService.Register(DeviceType.Android, instanceToken, SelectedAccount.AccountName);
             }
         }
 
         public async void UnregisterFcm()
         {
             var instanceToken = FirebaseInstanceId.Instance.Token;
-            if (!string.IsNullOrEmpty(instanceToken))
+            var systemPhone = SelectedAccount?.AccountName;
+            if (!string.IsNullOrEmpty(instanceToken) && !string.IsNullOrEmpty(systemPhone))
             {
-                await _pushService.Unregister(DeviceType.Android, instanceToken);
+                await _pushService.Unregister(DeviceType.Android, instanceToken, SelectedAccount.AccountName);
             }
         }
 
@@ -1097,7 +1099,6 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                 case "LoginResponse":
                     _preferencesHelper.SaveCredentials(_userLogin, _userPassword, AppHelper.InsightsKey);
                     WaitingRequestArray.Remove(response.RequestId);
-                    RegisterFcm();
                     if (IsLoggedIn)
                         break;
                     IsLoggedIn = true;

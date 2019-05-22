@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FreedomVoice.DAL.DbEntities;
+using FreedomVoice.DAL.DbEntities.Enums;
 
 namespace FreedomVoice.Core
 {
@@ -19,6 +20,7 @@ namespace FreedomVoice.Core
             CreateMap<Message, FreedomVoice.Entities.Message>()  
                 .ForMember(x => x.LastUpdateDate, opt => opt.Ignore());
             
+            CreateMap<FreedomVoice.Entities.Enums.SendingState, SendingState>();
         }
     }
 }

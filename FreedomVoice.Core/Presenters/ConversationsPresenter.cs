@@ -19,7 +19,7 @@ namespace FreedomVoice.Core.Presenters
         }
     }
 
-    public class ConversationsPresenter
+    public class ConversationsPresenter : IDisposable
     {
         public List<ConversationViewModel> Items;
         public event EventHandler ItemsChanged;
@@ -62,6 +62,11 @@ namespace FreedomVoice.Core.Presenters
         }
 
         ~ConversationsPresenter()
+        {
+            NotificationMessageService.Instance().NewMessageEventHandler -= OnNewMessageEventHandler;
+        }
+
+        public void Dispose()
         {
             NotificationMessageService.Instance().NewMessageEventHandler -= OnNewMessageEventHandler;
         }
