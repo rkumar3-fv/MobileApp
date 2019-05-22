@@ -274,6 +274,12 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             NavigationController.PushViewController(controller, true);
         }
 
+        protected override void Dispose(bool disposing)
+        {
+            _presenter.Dispose();
+            base.Dispose(disposing);
+        }
+
     }
 }
 

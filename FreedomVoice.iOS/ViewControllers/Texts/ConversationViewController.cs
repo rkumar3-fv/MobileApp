@@ -227,6 +227,12 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
         {
             Presenter.ReloadAsync();
         }
+
+        protected override void Dispose(bool disposing)
+        {
+            Presenter.Dispose();
+            base.Dispose(disposing);
+        }
     }
 }
 
