@@ -45,18 +45,18 @@ namespace com.FreedomVoice.MobileApp.Android.Services
             try
             {
                 var pushMessageRequest =
-                    JsonConvert.DeserializeObject<PushMessageRequest<object>>(message.Data[DataKey]);
+                    JsonConvert.DeserializeObject<PushResponse<object>>(message.Data[DataKey]);
                 var pushType = pushMessageRequest.PushType;
 
                 switch (pushType)
                 {
                     case PushType.NewMessage:
-                        var newMessageRequest = JsonConvert.DeserializeObject<PushMessageRequest<Conversation>>(message.Data[DataKey]);
+                        var newMessageRequest = JsonConvert.DeserializeObject<PushResponse<Conversation>>(message.Data[DataKey]);
                         ProcessNewMessage(newMessageRequest.Data);
                         NotificationMessageService.Instance().ReceivedNotification(pushType, newMessageRequest.Data);
                         break;
                     case PushType.StatusChanged:
-                        var pushChangeRequest = JsonConvert.DeserializeObject<PushMessageRequest<Conversation>>(message.Data[DataKey]);
+                        var pushChangeRequest = JsonConvert.DeserializeObject<PushResponse<Conversation>>(message.Data[DataKey]);
                         NotificationMessageService.Instance().ReceivedNotification(pushType, pushChangeRequest.Data);
                         break;
                     default:
@@ -77,10 +77,10 @@ namespace com.FreedomVoice.MobileApp.Android.Services
                 {
                     try
                     {
-                        var contactNameOrPhone = _contactNameProvider.GetName(conversation.CollocutorPhone.PhoneNumber);
+                        var contactNameOrPhone = _contactNameProvider.GetName(conversation.ToPhone.PhoneNumber);
                         ShowConversationMessagePush(
                             conversation.Id,
-                            conversation.CollocutorPhone.PhoneNumber,
+                            conversation.ToPhone.PhoneNumber,
                             contactNameOrPhone,
                             conversation.Messages?.FirstOr(null)?.Text ?? "new message"
                         );
