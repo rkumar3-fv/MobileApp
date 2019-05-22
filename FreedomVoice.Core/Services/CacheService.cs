@@ -185,14 +185,10 @@ namespace FreedomVoice.Core.Services
         /// <returns>Conversation from cache</returns>
         public Conversation GetConversation(long conversationId)
         {
-<<<<<<< HEAD
             return _conversationRepository.TableNoTracking
-                .Include(x => x.CurrentPhone)
-                .Include(x => x.CollocutorPhone)
+                .Include(x => x.SystemPhone)
+                .Include(x => x.ToPhone)
                 .FirstOrDefault(x => x.Id == conversationId);
-=======
-            return _conversationRepository.TableNoTracking.Include(x => x.SystemPhone).Include(x => x.ToPhone).FirstOrDefault(x => x.Id == conversationId);
->>>>>>> origin/dev
         }
 
         /// <summary>
