@@ -1,4 +1,5 @@
 ﻿using System;
+using FreedomVoice.DAL.DbEntities.Enums;
 
 namespace FreedomVoice.DAL.DbEntities
 {
@@ -11,5 +12,7 @@ namespace FreedomVoice.DAL.DbEntities
         public DateTime? CreatedAt { get; set; }
         public DateTime? ReadAt { get; set; }
         public Conversation Conversation { get; set; }
+        
+        public SendingState State { get; set; }
     }
 }

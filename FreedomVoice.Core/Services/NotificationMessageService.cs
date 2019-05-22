@@ -47,6 +47,7 @@ namespace FreedomVoice.Core.Services
             {
                 case PushType.NewMessage:
                     var savedConversation = _saveConversation(model);
+                    savedConversation.Messages = new List<Message> {savedMessage};
                     NewMessageEventHandler?.Invoke(this,
                         new ConversationEventArg {Conversation = savedConversation});
                     break;

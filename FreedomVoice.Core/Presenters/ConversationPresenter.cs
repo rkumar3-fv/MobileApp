@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using AutoMapper;
 using FreedomVoice.Core.Services;
 using FreedomVoice.Core.Services.Interfaces;
 using FreedomVoice.Core.Utils;
 using FreedomVoice.Core.ViewModels;
 using FreedomVoice.DAL.DbEntities;
+using FreedomVoice.Entities.Enums;
 
 namespace FreedomVoice.Core.Presenters
 {
@@ -94,11 +97,25 @@ namespace FreedomVoice.Core.Presenters
 
         private void OnMessageUpdatedHandler(object sender, MessageEventArg e)
         {
-            throw new NotImplementedException();
+            
         }
 
         private void OnNewMessageEventHandler(object sender, ConversationEventArg e)
         {
+            var message = e.Conversation.Messages.LastOrDefault();
+            if (message == null)
+            {
+                return;
+            }
+
+            var rawTo = Regex.Replace(message.To.PhoneNumber, @"\D", "");
+            var rawFrom = Regex.Replace(message.From.PhoneNumber, @"\D", "");
+            var current = Regex.Replace(PhoneNumber, @"\D", "");
+            
+            if (rawFrom.Equals(current) || !rawTo.Equals(current) )
+            {
+                return;
+            }
             var model = new IncomingMessageViewModel(e.Conversation.Messages.Last());
             _addMessage(model);
         }
@@ -126,15 +143,15 @@ namespace FreedomVoice.Core.Presenters
             var res = await _messagesService.SendMessage(_conversationId.Value, text);
             switch (res.State)
             {
-                case FreedomVoice.Entities.Enums.SendingState.Error:
+                case SendingState.Error:
                     MessagedSentError(res.Entity);
                     break;
                 
-                case FreedomVoice.Entities.Enums.SendingState.Sending:
+                case SendingState.Sending:
                     MessagedSentSending(res.Entity);
                     break;
                 
-                case FreedomVoice.Entities.Enums.SendingState.Success:
+                case SendingState.Success:
                     MessagedSentSuccess(res.Entity);
                     break;
             }
@@ -152,15 +169,15 @@ namespace FreedomVoice.Core.Presenters
             
             switch (res.State)
             {
-                case FreedomVoice.Entities.Enums.SendingState.Error:
+                case SendingState.Error:
                     MessagedSentError(res.Entity);
                     break;
                 
-                case FreedomVoice.Entities.Enums.SendingState.Sending:
+                case SendingState.Sending:
                     MessagedSentSending(res.Entity);
                     break;
                 
-                case FreedomVoice.Entities.Enums.SendingState.Success:
+                case SendingState.Success:
                     MessagedSentSuccess(res.Entity);
                     break;
             }
@@ -209,10 +226,11 @@ namespace FreedomVoice.Core.Presenters
 
         private void MessagedSentSuccess(Conversation conversation)
         {
+            var entity = ServiceContainer.Resolve<IMapper>().Map<FreedomVoice.Entities.Response.Conversation>(conversation);
+            NotificationMessageService.Instance().ReceivedNotification(PushType.NewMessage, entity);
             var lastMessage = conversation?.Messages?.Last();
             if (lastMessage == null)
             {
-                //TODO Show error?
                 return;
             }
             _addMessage(new OutgoingMessageViewModel(lastMessage));
@@ -220,12 +238,17 @@ namespace FreedomVoice.Core.Presenters
 
         private void MessagedSentError(Conversation conversation)
         {
-            //TODO
+            var lastMessage = conversation?.Messages?.Last();
+            if (lastMessage == null)
+            {
+                return;
+            }
+            _addMessage(new OutgoingMessageViewModel(lastMessage));
         }
 
         private void MessagedSentSending(Conversation conversation)
         {
-            //TODO
+            MessagedSentSuccess(conversation);
         }
 
         #endregion
@@ -235,6 +258,8 @@ namespace FreedomVoice.Core.Presenters
             var dateStr = message.Date.ToString(DateFormat);
             var pack = _rawData.ContainsKey(dateStr) ? _rawData[dateStr] : new List<IChatMessage>();
             pack.Add(message);
+            _rawData[dateStr] = pack;
+            _updateItems();
             ItemsChanged?.Invoke(this, new ConversationCollectionEventArgs(Items)); 
         } 
         private void ResetState()
@@ -285,7 +310,7 @@ namespace FreedomVoice.Core.Presenters
         private void _updateItems()
         {
             Items = new List<IChatMessage>();
-            foreach (var group in _rawData)
+            foreach (var group in _rawData.OrderByDescending(item => item.Key))
             {
                 var date = DateTime.MinValue;
                 DateTime.TryParseExact(group.Key, DateFormat, null, System.Globalization.DateTimeStyles.None, out date);
