@@ -39,7 +39,6 @@ namespace FreedomVoice.Core.Services
             return _instance;
         }
 
-
         public void ReceivedNotification(PushType type, FreedomVoice.Entities.Response.Conversation model)
         {
             var savedMessage = _saveMessage(model);
@@ -61,7 +60,10 @@ namespace FreedomVoice.Core.Services
         {
             var list = new[] {conversation};
             _cacheService.UpdateConversationsCache(list);
-            return _cacheService.GetConversation(conversation.Id);
+            var messageBy = _cacheService.GetMessageBy(conversation.Id, conversation.Messages.First().Id);
+            var saveConversation = _cacheService.GetConversation(conversation.Id);
+            saveConversation.Messages = new List<Message>() {messageBy};
+            return saveConversation;
         }
         
         private Message _saveMessage(FreedomVoice.Entities.Response.Conversation conversation)

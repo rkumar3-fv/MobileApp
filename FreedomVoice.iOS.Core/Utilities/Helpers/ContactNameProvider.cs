@@ -5,7 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using FreedomVoice.Core.ViewModels;
 
-namespace FreedomVoice.iOS.Utilities
+namespace FreedomVoice.iOS.Core.Utilities.Helpers
 {
     class ContactNameProvider: IContactNameProvider
     {

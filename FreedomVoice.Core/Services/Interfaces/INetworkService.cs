@@ -53,6 +53,6 @@ namespace FreedomVoice.Core.Services.Interfaces
         /// <param name="request"></param>
         /// <param name="isRegistration"></param>
         /// <returns></returns>
-        Task<BaseResult<bool>> SendPushToken(PushRequest request, bool isRegistration);
+        Task<BaseResult<string>> SendPushToken(PushRequest request, bool isRegistration);
     }
 }
