@@ -28,7 +28,7 @@ namespace FreedomVoice.Core.Presenters
         
         private DateTime _currentDate;
         private int _currentPage;
-        private bool _isLoading = false;
+        private bool _isLoading;
         private const int DefaultCount = 50;
 
         private string _phoneNumber;
@@ -47,8 +47,7 @@ namespace FreedomVoice.Core.Presenters
         public string AccountNumber { get; set; }
 
         public bool HasMore { get; private set; }
-        public string Query { get; set; }
-
+        public string Query { get; set; } = "";
 
         public ConversationsPresenter()
         {
@@ -70,6 +69,10 @@ namespace FreedomVoice.Core.Presenters
         private void OnNewMessageEventHandler(object sender, ConversationEventArg e)
         {
             var conversation = e.Conversation;
+            if ( !conversation.SystemPhone.PhoneNumber.Equals(PhoneNumber) )
+            {
+                return;
+            }
             var viewModel = new ConversationViewModel(conversation, _nameProvider);
             var index = Items.FindIndex(model => model.ConversationId == conversation.Id);
             if (index < 0)

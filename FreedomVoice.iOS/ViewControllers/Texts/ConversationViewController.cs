@@ -3,6 +3,7 @@ using System.Drawing;
 using CoreGraphics;
 using FreedomVoice.Core.Presenters;
 using FreedomVoice.iOS.Entities;
+using FreedomVoice.iOS.PushNotifications;
 using FreedomVoice.iOS.TableViewSources.Texting;
 using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.Utilities.Events;
@@ -24,7 +25,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             TableFooterView = new UIView(),
         };
         
-        protected readonly CallerIdView _callerIdView = new CallerIdView(new RectangleF(0, 0, (float)Theme.ScreenBounds.Width, 40), MainTabBarInstance.GetPresentationNumbers())
+        protected readonly CallerIdView _callerIdView = new CallerIdView(new RectangleF(0, 0, (float)Theme.ScreenBounds.Width, 40), MainTabBarInstance?.GetPresentationNumbers())
         {
             TranslatesAutoresizingMaskIntoConstraints = false,
             IsReadOnly = true
@@ -54,7 +55,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
         protected ConversationPresenter Presenter;
 
 
-        protected ConversationViewController()
+        public ConversationViewController()
         {
         }
 

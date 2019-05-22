@@ -1,13 +1,13 @@
 ﻿using System;
 using FreedomVoice.Core.Entities.Enums;
 using FreedomVoice.Core.Utils;
-using ContactsHelper = FreedomVoice.iOS.Utilities.Helpers.Contacts;
+using ContactsHelper = FreedomVoice.iOS.Core.Utilities.Helpers.Contacts;
 
 namespace FreedomVoice.iOS.Entities
 {
     public class Message
     {
-        public Message(Core.Entities.Message message)
+        public Message(FreedomVoice.Core.Entities.Message message)
         {
             Id = message.Id;
             Name = message.Name;

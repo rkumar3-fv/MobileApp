@@ -1,4 +1,4 @@
-﻿namespace FreedomVoice.DAL.DbEntities
+namespace FreedomVoice.DAL.DbEntities.Enums
 {
     public enum SendingState
     {

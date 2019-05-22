@@ -242,13 +242,13 @@ namespace FreedomVoice.Core
             }
         }
 
-        public static async Task<BaseResult<bool>> SendPushToken(PushRequest request, bool isRegistration)
+        public static async Task<BaseResult<string>> SendPushToken(PushRequest request, bool isRegistration)
         {
             try
             {
                 var content = JsonConvert.SerializeObject(request);
-                var result = await MakeAsyncPostRequest<bool>(
-                    isRegistration ? "/api/v1/system/forward/pushRegister" : "/api/v1/system/forward/pushUnregister",
+                var result = await MakeAsyncPostRequest<string>(
+                    isRegistration ? "/api/v1/system/forward/push/subscribe" : "/api/v1/system/forward/push/unsubscribe",
                     content,
                     "application/json",
                     CancellationToken.None);
@@ -256,7 +256,7 @@ namespace FreedomVoice.Core
             }
             catch (Exception)
             {
-                return new BaseResult<bool> { Code = ErrorCodes.BadRequest };
+                return new BaseResult<string> { Code = ErrorCodes.BadRequest };
             }
         }
 
