@@ -140,6 +140,7 @@ namespace FreedomVoice.iOS
 
             UserDefault.IsAuthenticated = false;
             UserDefault.LastUsedAccount = string.Empty;
+            UserDefault.AccountPhoneNumber = string.Empty;
 
             try
             {

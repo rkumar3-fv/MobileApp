@@ -143,6 +143,7 @@
     <Compile Include="Utilities\DeviceHardware.cs" />
     <Compile Include="Utilities\DownloadIndicator.cs" />
     <Compile Include="Utilities\Extensions\CopyPasteLabel.cs" />
+    <Compile Include="Utilities\Extensions\PushResponseExtension.cs" />
     <Compile Include="Utilities\Helpers\DeviceCacheStorage.cs" />
     <Compile Include="Utilities\Helpers\Cookies.cs" />
     <Compile Include="Utilities\Helpers\DeviceCookieStorage.cs" />

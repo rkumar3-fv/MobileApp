@@ -168,11 +168,11 @@ namespace FreedomVoice.iOS.PushNotifications
 		public async Task RegisterPushNotificationToken()
 		{
 			var savedToken = _tokenDataStore.Get();
-			if (string.IsNullOrWhiteSpace(savedToken))
+			if (string.IsNullOrWhiteSpace(savedToken) || string.IsNullOrWhiteSpace(UserDefault.AccountPhoneNumber))
 			{
 				var errorText = $"[{GetType()}] Push notification token is null or empty";
 				Console.WriteLine(errorText);
-				throw new Exception(errorText);
+				return;
 			}
 
 			try

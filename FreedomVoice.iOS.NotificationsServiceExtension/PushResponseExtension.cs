@@ -1,15 +1,23 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Json;
+using System.Linq;
 using Foundation;
 using FreedomVoice.Core.Utils;
 using FreedomVoice.Entities;
 using FreedomVoice.Entities.Enums;
 using FreedomVoice.Entities.Response;
+using FreedomVoice.iOS.Core;
 
-namespace FreedomVoice.iOS.Core.Utilities.Extensions
+namespace FreedomVoice.iOS.NotificationsServiceExtension
 {
-    public static class PushResponseExtension
+    internal static class PushResponseExtension
     {
+        public static string TextMessageReceivedFromNumber(this PushResponse<Conversation> self)
+        {
+            return self?.Data?.Messages.First()?.From?.PhoneNumber;
+        }
+        
         public static PushResponse<Conversation> CreateFrom(NSDictionary userInfo)
         {
             var logger = ServiceContainer.Resolve<ILogger>();
@@ -19,7 +27,7 @@ namespace FreedomVoice.iOS.Core.Utilities.Extensions
             {
                 var jsonData = NSJsonSerialization.Serialize(userInfo, NSJsonWritingOptions.PrettyPrinted, out var error);
                 logger.Debug(nameof(PushResponseExtension), nameof(CreateFrom), $"Parsed json data: {jsonData}");
-
+            
                 if (error != null)
                 {
                     logger.Debug(nameof(PushResponseExtension), nameof(CreateFrom), $"PushResponse<Conversation> has been parsed with error: {error}");
@@ -33,11 +41,9 @@ namespace FreedomVoice.iOS.Core.Utilities.Extensions
 
                 if (!jsonValue.ContainsKey("data"))
                     return null;
-
+                
                 var dataMainJsonValue = JsonValue.Parse(jsonValue["data"].ToString());
                 var dataJsonValue = JsonValue.Parse(dataMainJsonValue["data"].ToString());
-                var toPhoneJsonValue = JsonValue.Parse(dataJsonValue["toPhone"].ToString());
-                var systemPhoneJsonValue = JsonValue.Parse(dataJsonValue["systemPhone"].ToString());
                 long pushTypeLongValue = dataMainJsonValue["pushType"];
 
                 var pushResponse = new PushResponse<Conversation>
@@ -46,15 +52,16 @@ namespace FreedomVoice.iOS.Core.Utilities.Extensions
                     Data = new Conversation
                     {
                         Id = dataJsonValue["id"],
-                        ToPhone = new Phone
+                        Messages = new List<Message>
                         {
-                            PhoneNumber = toPhoneJsonValue["phoneNumber"],
-                            Id = toPhoneJsonValue["id"]
-                        },
-                        SystemPhone = new Phone
-                        {
-                            PhoneNumber = systemPhoneJsonValue["phoneNumber"],
-                            Id = systemPhoneJsonValue["id"]
+                            new Message
+                            {
+                               From = new Phone
+                               {
+                                   Id = dataJsonValue["messages"][0]["from"]["id"],
+                                   PhoneNumber = dataJsonValue["messages"][0]["from"]["phoneNumber"]
+                               }
+                            }
                         }
                     }
                 };
