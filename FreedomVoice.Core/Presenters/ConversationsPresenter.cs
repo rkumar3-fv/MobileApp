@@ -69,6 +69,10 @@ namespace FreedomVoice.Core.Presenters
         private void OnNewMessageEventHandler(object sender, ConversationEventArg e)
         {
             var conversation = e.Conversation;
+            if ( !conversation.SystemPhone.PhoneNumber.Equals(PhoneNumber) )
+            {
+                return;
+            }
             var viewModel = new ConversationViewModel(conversation, _nameProvider);
             var index = Items.FindIndex(model => model.ConversationId == conversation.Id);
             if (index < 0)
