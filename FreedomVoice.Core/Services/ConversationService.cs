@@ -39,7 +39,7 @@ namespace FreedomVoice.Core.Services
                 search = new ConversationRequest
                 {
                     Telnumbers = foundInNumbers,
-                    SystemNumber = systemPhone,
+                    SystemPhone = systemPhone,
                     Text = query
                 };
             }
