@@ -108,8 +108,10 @@ namespace FreedomVoice.Core.Presenters
 
         private void OnNewMessageEventHandler(object sender, ConversationEventArg e)
         {
-            var model = new IncomingMessageViewModel(e.Conversation.Messages.Last());
-            _addMessage(model);
+            var message = e.Conversation?.Messages?.Last();
+            if (message == null) return;
+
+            _addMessage(new IncomingMessageViewModel(message));
         }
 
         public async void ReloadAsync()
@@ -244,6 +246,8 @@ namespace FreedomVoice.Core.Presenters
             var dateStr = message.Date.ToString(DateFormat);
             var pack = _rawData.ContainsKey(dateStr) ? _rawData[dateStr] : new List<IChatMessage>();
             pack.Add(message);
+            _rawData.Add(dateStr, pack);
+            _updateItems();
             ItemsChanged?.Invoke(this, new ConversationCollectionEventArgs(Items)); 
         } 
         private void ResetState()
