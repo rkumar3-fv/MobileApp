@@ -4,9 +4,7 @@ using Foundation;
 using FreedomVoice.Core.Utils;
 using FreedomVoice.Entities;
 using FreedomVoice.Entities.Enums;
-using FreedomVoice.Entities.Request;
 using FreedomVoice.Entities.Response;
-using UserNotifications;
 
 namespace FreedomVoice.iOS.Core.Utilities.Extensions
 {
@@ -16,51 +14,59 @@ namespace FreedomVoice.iOS.Core.Utilities.Extensions
         {
             var logger = ServiceContainer.Resolve<ILogger>();
             logger.Debug(nameof(PushResponseExtension), nameof(CreateFrom), $"Try parse PushResponse<Conversation> from userInfo: {userInfo}");
-            
-            var jsonData = NSJsonSerialization.Serialize(userInfo, NSJsonWritingOptions.PrettyPrinted, out var error);
-            logger.Debug(nameof(PushResponseExtension), nameof(CreateFrom), $"Parsed json data: {jsonData}");
 
-            if (error != null)
+            try
             {
-                logger.Debug(nameof(PushResponseExtension), nameof(CreateFrom), $"PushResponse<Conversation> has been parsed with error: {error}");
+                var jsonData = NSJsonSerialization.Serialize(userInfo, NSJsonWritingOptions.PrettyPrinted, out var error);
+                logger.Debug(nameof(PushResponseExtension), nameof(CreateFrom), $"Parsed json data: {jsonData}");
+
+                if (error != null)
+                {
+                    logger.Debug(nameof(PushResponseExtension), nameof(CreateFrom), $"PushResponse<Conversation> has been parsed with error: {error}");
+                    return null;
+                }
+
+                var jsonString = NSString.FromData(jsonData, NSStringEncoding.UTF8);
+                logger.Debug(nameof(PushResponseExtension), nameof(CreateFrom), $"Parsed json string: {jsonString}");
+
+                var jsonValue = JsonValue.Parse(jsonString);
+
+                if (!jsonValue.ContainsKey("data"))
+                    return null;
+
+                var dataMainJsonValue = JsonValue.Parse(jsonValue["data"].ToString());
+                var dataJsonValue = JsonValue.Parse(dataMainJsonValue["data"].ToString());
+                var toPhoneJsonValue = JsonValue.Parse(dataJsonValue["toPhone"].ToString());
+                var systemPhoneJsonValue = JsonValue.Parse(dataJsonValue["systemPhone"].ToString());
+                long pushTypeLongValue = dataMainJsonValue["pushType"];
+
+                var pushResponse = new PushResponse<Conversation>
+                {
+                    PushType = (PushType)pushTypeLongValue,
+                    Data = new Conversation
+                    {
+                        Id = dataJsonValue["id"],
+                        ToPhone = new Phone
+                        {
+                            PhoneNumber = toPhoneJsonValue["phoneNumber"],
+                            Id = toPhoneJsonValue["id"]
+                        },
+                        SystemPhone = new Phone
+                        {
+                            PhoneNumber = systemPhoneJsonValue["phoneNumber"],
+                            Id = systemPhoneJsonValue["id"]
+                        }
+                    }
+                };
+
+                logger.Debug(nameof(PushResponseExtension), nameof(CreateFrom), $"PushResponse<Conversation> has been parsed: {pushResponse}");
+                return pushResponse;
+            }
+            catch (Exception ex)
+            {
+                logger.Debug(nameof(PushResponseExtension), nameof(CreateFrom), $"PushResponse<Conversation> has been failed: {ex}");
                 return null;
             }
-
-            var jsonString = NSString.FromData(jsonData, NSStringEncoding.UTF8);
-            logger.Debug(nameof(PushResponseExtension), nameof(CreateFrom), $"Parsed json string: {jsonString}");
-
-            var jsonValue = JsonValue.Parse(jsonString);
-
-            if (!jsonValue.ContainsKey("Data"))
-                return null;
-
-            var dataMainJsonValue = JsonValue.Parse(jsonValue["Data"].ToString());
-            var dataJsonValue = JsonValue.Parse(dataMainJsonValue["Data"].ToString());
-            var toPhoneJsonValue = JsonValue.Parse(dataJsonValue["ToPhone"].ToString());
-            var systemPhoneJsonValue = JsonValue.Parse(dataJsonValue["SystemPhone"].ToString());
-            long pushTypeLongValue = dataMainJsonValue["PushType"];
-
-            var pushResponse = new PushResponse<Conversation>
-            {
-                PushType = (PushType) pushTypeLongValue,
-                Data = new Conversation
-                {
-                    Id = dataJsonValue["Id"],
-                    ToPhone = new Phone
-                    {
-                        PhoneNumber = toPhoneJsonValue["PhoneNumber"],
-                        Id = toPhoneJsonValue["Id"]
-                    },
-                    SystemPhone = new Phone
-                    {
-                        PhoneNumber = systemPhoneJsonValue["PhoneNumber"],
-                        Id = systemPhoneJsonValue["Id"]
-                    }
-                }
-            };
-
-            logger.Debug(nameof(PushResponseExtension), nameof(CreateFrom), $"PushResponse<Conversation> has been parsed: {pushResponse}");
-            return pushResponse;
         }
     }
 }

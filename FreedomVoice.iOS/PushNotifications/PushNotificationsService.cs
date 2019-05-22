@@ -5,6 +5,7 @@ using Foundation;
 using FreedomVoice.Core.Services.Interfaces;
 using FreedomVoice.Core.Utils;
 using FreedomVoice.Entities.Enums;
+using FreedomVoice.iOS.Utilities.Helpers;
 using UIKit;
 using UserNotifications;
 
@@ -67,13 +68,13 @@ namespace FreedomVoice.iOS.PushNotifications
 		/// Method registers push-token on the server.
 		/// </summary>
 		/// <returns></returns>
-		Task<bool> RegisterPushNotificationToken();
+		Task RegisterPushNotificationToken();
 		
 		/// <summary>
 		/// Method unregisters push-token on the server.
 		/// </summary>
 		/// <returns></returns>
-		Task<bool> UnregisterPushNotificationToken();
+		Task UnregisterPushNotificationToken();
 	}
 	
 	class PushNotificationsService: IPushNotificationsService
@@ -164,7 +165,7 @@ namespace FreedomVoice.iOS.PushNotifications
 		}
 
 		/// <inheritdoc/>
-		public async Task<bool> RegisterPushNotificationToken()
+		public async Task RegisterPushNotificationToken()
 		{
 			var savedToken = _tokenDataStore.Get();
 			if (string.IsNullOrWhiteSpace(savedToken))
@@ -176,13 +177,9 @@ namespace FreedomVoice.iOS.PushNotifications
 
 			try
 			{
-				var result = await _pushService.Register(DeviceType.IOS, savedToken);
-				if (result)
-					Console.WriteLine($"[{GetType()}] Token ({savedToken}) has been registrated");
-				else 
-					Console.WriteLine($"[{GetType()}] Token ({savedToken}) hasn't been registrated");
-
-				return result;
+				
+				var _ = await _pushService.Register(DeviceType.IOS, savedToken, iOS.Core.Utilities.Helpers.Contacts.NormalizePhoneNumber(UserDefault.AccountPhoneNumber));
+				Console.WriteLine($"[{GetType()}] Token ({savedToken}) has been registrated");
 			}
 			catch (Exception exception)
 			{
@@ -192,19 +189,14 @@ namespace FreedomVoice.iOS.PushNotifications
 		}
 
 		/// <inheritdoc/>
-		public async Task<bool> UnregisterPushNotificationToken()
+		public async Task UnregisterPushNotificationToken()
 		{
 			var savedToken = _tokenDataStore.Get();
 
 			try
 			{
-				var result = await _pushService.Unregister(DeviceType.IOS, savedToken);
-				if (result)
-					Console.WriteLine($"[{GetType()}] Token ({savedToken}) has been unregistrated");
-				else 
-					Console.WriteLine($"[{GetType()}] Token ({savedToken}) hasn't been unregistrated");
-
-				return result;
+				var _ = await _pushService.Unregister(DeviceType.IOS, savedToken, UserDefault.AccountPhoneNumber);
+                Console.WriteLine($"[{GetType()}] Token ({savedToken}) has been unregistrated");
 			}
 			catch (Exception exception)
 			{

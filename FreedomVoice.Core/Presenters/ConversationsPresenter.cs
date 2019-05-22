@@ -47,7 +47,7 @@ namespace FreedomVoice.Core.Presenters
         public string AccountNumber { get; set; }
 
         public bool HasMore { get; private set; }
-        public string Query { get; set; }
+        public string Query { get; set; } = "";
 
 
         public ConversationsPresenter()

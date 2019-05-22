@@ -72,18 +72,7 @@ namespace FreedomVoice.iOS
             if (UserDefault.IsAuthenticated)
             {
                 ProceedWithAuthenticatedUser();
-
-                pushService.RegisterForPushNotifications(async _ =>
-                    {
-                        try
-                        {
-                            await pushService.RegisterPushNotificationToken();
-                        }
-                        catch (Exception e)
-                        {
-                            Console.WriteLine(e); 
-                        }
-                    });
+                RegisterRemotePushNotifications();
                 Core.Utilities.Helpers.Contacts.GetContactsListAsync();
             }
             else
@@ -436,18 +425,6 @@ namespace FreedomVoice.iOS
         public override async void RegisteredForRemoteNotifications(UIApplication application, NSData deviceToken)
         {
             pushService.DidRegisterForRemoteNotifications(deviceToken);
-
-            if (UserDefault.IsAuthenticated)
-            {
-                try
-                {
-                    await pushService.RegisterPushNotificationToken();
-                }
-                catch (Exception exception)
-                {
-                    Console.WriteLine(exception);
-                }
-            }
         }
 
         public override void ReceivedLocalNotification(UIApplication application, UILocalNotification notification)
@@ -466,6 +443,21 @@ namespace FreedomVoice.iOS
         public override void FailedToRegisterForRemoteNotifications(UIApplication application, NSError error)
         {
             pushService.DidFailToRegisterForRemoteNotifications(error);
+        }
+
+        public void RegisterRemotePushNotifications()
+        {
+            pushService.RegisterForPushNotifications(async _ =>
+            {
+                try
+                {
+                    await pushService.RegisterPushNotificationToken();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e); 
+                }
+            });
         }
 
         #endregion

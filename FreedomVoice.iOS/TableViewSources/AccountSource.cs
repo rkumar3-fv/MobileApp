@@ -42,6 +42,7 @@ namespace FreedomVoice.iOS.TableViewSources
             var selectedAccount = _accounts[indexPath.Row];
 
             UserDefault.LastUsedAccount = selectedAccount.PhoneNumber;
+            UserDefault.AccountPhoneNumber = selectedAccount.PhoneNumber;
 
             if (!UserDefault.IsLaunchedBefore)
             {
@@ -62,6 +63,7 @@ namespace FreedomVoice.iOS.TableViewSources
                 (UIApplication.SharedApplication.Delegate as AppDelegate)?.PassToAuthentificationProcess();
             
             ServiceContainer.Resolve<IAppNavigator>()?.UpdateMainTabBarController(mainTabBarController);
+            (UIApplication.SharedApplication.Delegate as AppDelegate)?.RegisterRemotePushNotifications();
         }
     }
 }

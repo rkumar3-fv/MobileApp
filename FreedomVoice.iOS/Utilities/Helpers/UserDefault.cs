@@ -12,7 +12,11 @@ namespace FreedomVoice.iOS.Utilities.Helpers
         public static bool IsAuthenticated
         {
             get { return NSUserDefaults.StandardUserDefaults.BoolForKey("IsAuthenticatedUserKey"); }
-            set { NSUserDefaults.StandardUserDefaults.SetBool(value, "IsAuthenticatedUserKey"); }
+            set
+            {
+                NSUserDefaults.StandardUserDefaults.SetBool(value, "IsAuthenticatedUserKey");
+                IsAuthenticatedChanged?.Invoke();
+            }
         }
 
         public static bool IsLaunchedBefore

@@ -15,15 +15,15 @@ namespace FreedomVoice.Core.Services
             _networkService = networkService;
         }
         
-        public async Task<bool> Register(DeviceType deviceType, string token)
+        public async Task<string> Register(DeviceType deviceType, string token, string systemPhone)
         {
-            var res = await _networkService.SendPushToken(new PushRequest {Token = token, Type = deviceType}, true);
+            var res = await _networkService.SendPushToken(new PushRequest {Token = token, Type = deviceType, SystemPhone = systemPhone }, true);
             return res.Result;
         }
 
-        public async Task<bool> Unregister(DeviceType deviceType, string token)
+        public async Task<string> Unregister(DeviceType deviceType, string token, string systemPhone)
         {
-            var res = await _networkService.SendPushToken(new PushRequest {Token = token, Type = deviceType}, false);
+            var res = await _networkService.SendPushToken(new PushRequest {Token = token, Type = deviceType, SystemPhone = systemPhone }, false);
             return res.Result;
         }
     }

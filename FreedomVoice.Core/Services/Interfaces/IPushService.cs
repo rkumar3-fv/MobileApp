@@ -14,7 +14,7 @@ namespace FreedomVoice.Core.Services.Interfaces
         /// <param name="deviceType"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        Task<bool> Register(DeviceType deviceType, string token);
+        Task<string> Register(DeviceType deviceType, string token, string systemPhone);
         
         /// <summary>
         /// Unsubscribe device to getting push-notifications
@@ -22,6 +22,6 @@ namespace FreedomVoice.Core.Services.Interfaces
         /// <param name="deviceType"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        Task<bool> Unregister(DeviceType deviceType, string token);
+        Task<string> Unregister(DeviceType deviceType, string token, string systemPhone);
     }
 }
