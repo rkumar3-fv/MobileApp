@@ -802,7 +802,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             var instanceToken = FirebaseInstanceId.Instance.Token;
             if (!string.IsNullOrEmpty(instanceToken))
             {
-                await _pushService.Register(DeviceType.Android, instanceToken);
+                await _pushService.Register(DeviceType.Android, instanceToken, SelectedAccount.AccountName);
             }
         }
 
@@ -811,7 +811,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             var instanceToken = FirebaseInstanceId.Instance.Token;
             if (!string.IsNullOrEmpty(instanceToken))
             {
-                await _pushService.Unregister(DeviceType.Android, instanceToken);
+                await _pushService.Unregister(DeviceType.Android, instanceToken, SelectedAccount.AccountName);
             }
         }
 

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FreedomVoice.DAL.DbEntities;
+using FreedomVoice.DAL.DbEntities.Enums;
 
 namespace FreedomVoice.Core
 {

@@ -1,5 +1,6 @@
 ﻿using System;
 using FreedomVoice.DAL.DbEntities;
+using FreedomVoice.DAL.DbEntities.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
