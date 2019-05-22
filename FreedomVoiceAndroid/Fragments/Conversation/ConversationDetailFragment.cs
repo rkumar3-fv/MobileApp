@@ -199,9 +199,12 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
 
         private void UpdateList()
         {
-            _progressBar.Visibility = ViewStates.Gone;
-            _adapter.UpdateItems(_presenter.Items);
-            _adapter.NotifyDataSetChanged();
+            Activity.RunOnUiThread(() =>
+            {
+                _progressBar.Visibility = ViewStates.Gone;
+                _adapter.UpdateItems(_presenter.Items);
+                _adapter.NotifyDataSetChanged();
+            });
         }
     }
 }
