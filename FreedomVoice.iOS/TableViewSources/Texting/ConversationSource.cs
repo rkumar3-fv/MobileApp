@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using CoreGraphics;
 using Foundation;
 using FreedomVoice.Core.ViewModels;
+using FreedomVoice.Entities.Enums;
 using FreedomVoice.iOS.TableViewCells.Texting.Messaging;
 using UIKit;
 
@@ -51,7 +52,7 @@ namespace FreedomVoice.iOS.TableViewSources.Texting
                     outCell.ContentView.Transform = CGAffineTransform.MakeScale(1, -1);
                     outCell.Text = item.Message;
                     outCell.Time = item.Time;
-                    outCell.State = item.SendingState;
+                    outCell.State = SendingState.Sending;
                     return outCell;
                 default:
                     throw new ArgumentOutOfRangeException();

@@ -59,6 +59,13 @@ namespace FreedomVoice.iOS.TableViewCells.Texting.Messaging
                 view.ClipsToBounds = true;
                 view.Layer.CornerRadius = view.Frame.Width / 2;
             }
+
+            ErrorButton.ClipsToBounds = true;
+            ErrorButton.Layer.CornerRadius = ErrorButton.Frame.Width / 2;
+            ErrorButton.Layer.BorderWidth = 1;
+            ErrorButton.Layer.BorderColor = ErrorButton.TitleColor(UIControlState.Normal).CGColor;
+
+
         }
 
         public string Text
