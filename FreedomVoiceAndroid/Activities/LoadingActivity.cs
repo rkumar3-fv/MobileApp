@@ -63,7 +63,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             _timer.Start();
             if (Helper.IsLoggedIn)
             {
-                Helper.RegisterFcm();
                 if ((Helper.AccountsList == null) || (Helper.SelectedAccount == null))
                 {
                     Helper.GetAccounts();

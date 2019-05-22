@@ -50,13 +50,8 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             _recyclerView.SetAdapter(_adapter);
             _recyclerView.NestedScrollingEnabled = false;
             _recyclerView.ScrollChange += (sender, args) => { ListScrolled(); };
-
-            _contactNameProvider = ServiceContainer.Resolve<IContactNameProvider>();
-            _contactNameProvider.ContactsUpdated += ProviderOnContactsUpdated;
-
             _swipeToRefresh.Refresh += SwipeRefresh;
-            var provider = ServiceContainer.Resolve<IContactNameProvider>();
-            provider.ContactsUpdated += ProviderOnContactsUpdated;
+            _contactNameProvider = ServiceContainer.Resolve<IContactNameProvider>();
         }
 
         protected override void OnHelperEvent(ActionsHelperEventArgs args)
@@ -68,19 +63,8 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                 if (code != ActionsHelperEventArgs.ChangePresentation) continue;
 
                 _presenter = new ConversationsPresenter()
-                {
-                    PhoneNumber = Helper?.SelectedAccount?.PresentationNumber,
-                    AccountNumber = Helper.SelectedAccount.AccountName
-                };
-                _presenter.ItemsChanged += (sender, e) =>
-                {
-                    Activity?.RunOnUiThread(() =>
-                    {
-                        _swipeToRefresh.Refreshing = false;
-                        UpdateList(_presenter.Items);
-                    });
-                };
-
+                    {PhoneNumber = Helper?.SelectedAccount?.PresentationNumber};
+                _presenter.ItemsChanged += UpdateList;
                 _presenter.ReloadAsync();
             }
         }
@@ -91,23 +75,24 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             ContentActivity.SearchListener.OnChange += SearchListenerOnChange;
             ContentActivity.SearchListener.OnApply += SearchListenerOnApply;
             ContentActivity.SearchListener.OnCollapse += SearchListenerOnCancel;
+            _contactNameProvider.ContactsUpdated += ProviderOnContactsUpdated;
+            _contactNameProvider.ContactsUpdated += ProviderOnContactsUpdated;
         }      
 
         public override void OnPause()
         {
             base.OnPause();
+            if (_presenter != null)_presenter.ItemsChanged -= UpdateList;
             ContentActivity.SearchListener.OnChange -= SearchListenerOnChange;
             ContentActivity.SearchListener.OnApply -= SearchListenerOnApply;
             ContentActivity.SearchListener.OnCollapse -= SearchListenerOnCancel;
+            _contactNameProvider.ContactsUpdated -= ProviderOnContactsUpdated;
+            _contactNameProvider.ContactsUpdated -= ProviderOnContactsUpdated;
         }
 
         private void ProviderOnContactsUpdated(object sender, EventArgs e)
         {
-            Activity?.RunOnUiThread(() =>
-            {
-                _swipeToRefresh.Refreshing = false;
-                UpdateList(_presenter.Items);
-            });
+            UpdateList(null, null);
         }
 
         private void SwipeRefresh(object sender, EventArgs e)
@@ -127,12 +112,17 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             }
         }
 
-        private void UpdateList(List<ConversationViewModel> newList)
+        private void UpdateList(object sender, EventArgs eventArgs)
         {
-            var isEmpty = newList == null || newList.Count == 0;
-            _noResultText.Visibility = isEmpty ? ViewStates.Visible : ViewStates.Gone;
-            _recyclerView.Visibility = isEmpty ? ViewStates.Gone : ViewStates.Visible;
-            _adapter.Update(newList);
+            Activity?.RunOnUiThread(() =>
+            {
+                var newList = _presenter.Items;
+                _swipeToRefresh.Refreshing = false;
+                var isEmpty = newList == null || newList.Count == 0;
+                _noResultText.Visibility = isEmpty ? ViewStates.Visible : ViewStates.Gone;
+                _recyclerView.Visibility = isEmpty ? ViewStates.Gone : ViewStates.Visible;
+                _adapter.Update(newList);
+            });
         }
         
         private void SearchListenerOnCancel(object sender, bool b)
