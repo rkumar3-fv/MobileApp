@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FreedomVoice.Entities.Request;
 
 namespace FreedomVoice.Core.Services
 {
@@ -24,15 +25,25 @@ namespace FreedomVoice.Core.Services
             _mapper = mapper;
         }
 
-        public async Task<ConversationListResponse> GetList(string phone, DateTime current, int count = 10, int page = 1)
+        public async Task<ConversationListResponse> GetList(string phone, DateTime current, int count = 10, int page = 1, string systemPhone = null, string query = null,
+            string[] foundInNumbers = null)
         {
             if (page <= 0) throw new ArgumentException(nameof(page));
             if (count <= 0) throw new ArgumentException(nameof(count));
-
             var result = new ConversationListResponse();
             var lastSyncDate = _cacheService.GetLastConversationUpdateDate(current);
             var start = count * (page - 1);
-            var netConversations = await _networkService.GetConversations(phone, current, lastSyncDate, start, count);
+            ConversationRequest search = null;
+            if (!string.IsNullOrEmpty(query) && !string.IsNullOrEmpty(systemPhone))
+            {
+                search = new ConversationRequest
+                {
+                    Telnumbers = foundInNumbers,
+                    SystemNumber = systemPhone,
+                    Text = query
+                };
+            }
+            var netConversations = await _networkService.GetConversations(phone, current, lastSyncDate, start, count, search);
             result.ResponseCode = netConversations.Code;
             result.Message = netConversations.ErrorText;
             result.Conversations = netConversations.Result.Select(x => _mapper.Map<Conversation>(x));
@@ -40,10 +51,10 @@ namespace FreedomVoice.Core.Services
             return result;
         }
 
-        public async Task<ConversationResponse> Get(string currentPhone, string collocutorPhone)
+        public async Task<ConversationResponse> Get(string currentPhone, string toPhone)
         {
             var result = new ConversationResponse();
-            var netConversation = await _networkService.GetConversation(currentPhone, collocutorPhone);
+            var netConversation = await _networkService.GetConversation(currentPhone, toPhone);
             result.ResponseCode = netConversation.Code;
             result.Message = netConversation.ErrorText;
             result.Conversation = _mapper.Map<Conversation>(netConversation.Result);

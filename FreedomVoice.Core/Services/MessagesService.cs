@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Conversation = FreedomVoice.Entities.Response.Conversation;
 
 namespace FreedomVoice.Core.Services
 {
@@ -48,7 +49,12 @@ namespace FreedomVoice.Core.Services
             var conversation = _cacheService.GetConversation(conversationId);
             if (conversation == null)
                 throw new ArgumentException("Conversation not found");
-            return await SendMessage(conversation.CurrentPhone.PhoneNumber, conversation.CollocutorPhone.PhoneNumber, text);
+            var res = await SendMessage(conversation.SystemPhone.PhoneNumber, conversation.ToPhone.PhoneNumber, text);
+            if (res.Entity == null) return res;
+            var mapped = _mapper.Map<Conversation>(res.Entity);
+            _cacheService.UpdateConversationsCache(new []{ mapped });
+
+            return res;
         }
 
         public async Task<SendingResponse<DAL.DbEntities.Conversation>> SendMessage(string currentNumber, string to, string text)

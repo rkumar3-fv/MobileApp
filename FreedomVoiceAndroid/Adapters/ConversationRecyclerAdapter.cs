@@ -35,7 +35,7 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
             var vh = holder as AccountVh;
             var item = _items[position];
 
-            vh.UserName.SetText(item.Collocutor, TextView.BufferType.Normal);
+            vh.UserName.SetText(item.To, TextView.BufferType.Normal);
             vh.UserName.SetTypeface(Typeface.Default, item.IsNew ? TypefaceStyle.Bold : TypefaceStyle.Normal );
             vh.LastMessage.SetText(item.LastMessage, TextView.BufferType.Normal);
             vh.LastMessage.SetTypeface(Typeface.Default, item.IsNew ? TypefaceStyle.Bold : TypefaceStyle.Normal );

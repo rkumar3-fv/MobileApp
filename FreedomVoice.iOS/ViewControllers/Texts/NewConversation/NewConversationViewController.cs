@@ -20,19 +20,19 @@ namespace FreedomVoice.iOS.ViewControllers.Texts.NewConversation
 
 	public class NewConversationViewController: ConversationViewController
 	{
-		private readonly string _preselectedCollocutorPhone;
+		private readonly string _preselectedToPhone;
 
 		private readonly AddContactView _addContactView = new AddContactView();
 
 		public NewConversationViewController()
 		{
-			_preselectedCollocutorPhone = null;
+			_preselectedToPhone = null;
 		}
 		
-		public NewConversationViewController(string currentNumber, string collocutorPhone)
+		public NewConversationViewController(string currentNumber, string toPhone)
 		{
 			CurrentPhone = new PresentationNumber(currentNumber);
-			_preselectedCollocutorPhone = collocutorPhone;
+			_preselectedToPhone = toPhone;
 		}
 
 		public override void ViewDidLoad()
@@ -84,8 +84,8 @@ namespace FreedomVoice.iOS.ViewControllers.Texts.NewConversation
 		protected override void _SetupData()
 		{
 			base._SetupData();
-			_addContactView.Text = _preselectedCollocutorPhone;
-			UpdateTitle(_preselectedCollocutorPhone);
+			_addContactView.Text = _preselectedToPhone;
+			UpdateTitle(_preselectedToPhone);
 			CheckCurrentConversation();
 		}
 

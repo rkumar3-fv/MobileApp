@@ -23,16 +23,16 @@ namespace FreedomVoice.iOS.Views.Shared
         private UITextField _callerIdTextField;
         private UIImageView _dropdownImage;
 
-        private bool _isReadOnly = false;
+        private bool _isReadOnly;
         public bool IsReadOnly
         {
-            get
-            {
-                return _isReadOnly;
-            }
+            get => _isReadOnly;
             set {
                 _isReadOnly = value;
-                _dropdownImage.Hidden = _isReadOnly;
+                if (_dropdownImage != null)
+                {
+                    _dropdownImage.Hidden = _isReadOnly;
+                }
             }
         }
 

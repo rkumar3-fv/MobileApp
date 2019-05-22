@@ -25,8 +25,8 @@
     <MtouchArch>i386, x86_64</MtouchArch>
     <MtouchLink>SdkOnly</MtouchLink>
     <MtouchDebug>true</MtouchDebug>
-    <CodesignKey>iPhone Developer: Александр Пятаков (TRSB9P63FJ)</CodesignKey>
-    <CodesignProvision>e4550f35-55a5-4b52-bf0d-0ebdf39f79ea</CodesignProvision>
+    <CodesignKey>iPhone Developer: Evgeni Kalyada (7BXF4TS6ML)</CodesignKey>
+    <CodesignProvision>Provision Profile 2019</CodesignProvision>
     <CodesignEntitlements />
     <CodesignResourceRules />
     <CodesignExtraArgs />
