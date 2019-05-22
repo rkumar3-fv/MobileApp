@@ -25,7 +25,7 @@ namespace FreedomVoice.Core.Presenters
         }
     }
 
-    public class ConversationPresenter
+    public class ConversationPresenter : IDisposable
     {
         
         #region Private services 
@@ -337,6 +337,13 @@ namespace FreedomVoice.Core.Presenters
         private void ContactNameProviderOnContactsUpdated(object sender, EventArgs e)
         {
             ContactsUpdated?.Invoke(sender, e);
+        }
+
+        public void Dispose()
+        {
+            _contactNameProvider.ContactsUpdated -= ContactNameProviderOnContactsUpdated;
+            NotificationMessageService.Instance().NewMessageEventHandler -= OnNewMessageEventHandler;
+            NotificationMessageService.Instance().MessageUpdatedHandler -= OnMessageUpdatedHandler;
         }
     }
 }

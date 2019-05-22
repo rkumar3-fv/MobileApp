@@ -148,5 +148,11 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         {
             _presenter.Query = s;
         }
+
+        public override void OnDestroy()
+        {
+            base.OnDestroy();
+            _presenter?.Dispose();
+        }
     }
 }
