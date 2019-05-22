@@ -246,7 +246,7 @@ namespace FreedomVoice.Core.Presenters
             var dateStr = message.Date.ToString(DateFormat);
             var pack = _rawData.ContainsKey(dateStr) ? _rawData[dateStr] : new List<IChatMessage>();
             pack.Add(message);
-            _rawData.Add(dateStr, pack);
+            _rawData[dateStr] = pack;
             _updateItems();
             ItemsChanged?.Invoke(this, new ConversationCollectionEventArgs(Items)); 
         } 

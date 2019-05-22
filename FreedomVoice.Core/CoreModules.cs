@@ -1,14 +1,10 @@
 ﻿using AutoMapper;
-using FreedomVoice.Core.Cache;
 using FreedomVoice.Core.Services;
 using FreedomVoice.Core.Services.Interfaces;
 using FreedomVoice.Core.Utils;
 using FreedomVoice.DAL;
 using FreedomVoice.DAL.DbEntities;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace FreedomVoice.Core
 {

@@ -12,15 +12,14 @@ namespace FreedomVoice.Core.ViewModels
 		public string Time => Date.ToString("t");
 		public DateTime Date { get; }
 
-		public SendingState SendingState { get; } = SendingState.Success;
+		public SendingState SendingState { get; }
 
 		public IncomingMessageViewModel(DAL.DbEntities.Message entity)
 		{
 			Message = entity.Text;
 			MessageId = entity.Id;
 			Date = entity.CreatedAt ?? DateTime.Now;
-			// todo
-//			SendingState = entity.SendingState;
+			SendingState = (SendingState) entity.State;
 		}
 	}
 }

@@ -13,6 +13,7 @@ namespace FreedomVoice.Core
                 .ForMember(x => x.IsRemoved, opt => opt.Ignore());
             CreateMap<FreedomVoice.Entities.Phone, Phone>();
             CreateMap<FreedomVoice.Entities.Message, Message>();
+            CreateMap<FreedomVoice.Entities.Enums.SendingState, SendingState>();
         }
     }
 }

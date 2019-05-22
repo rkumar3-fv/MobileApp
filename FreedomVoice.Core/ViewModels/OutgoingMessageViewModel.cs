@@ -10,7 +10,7 @@ namespace FreedomVoice.Core.ViewModels
 
 		public string Message { get; }
 		public DateTime Date { get; }
-		public SendingState SendingState { get; } = SendingState.Success;
+		public SendingState SendingState { get; }
 		public string Time => Date.ToString("t");
 
 		public OutgoingMessageViewModel(DAL.DbEntities.Message entity)
@@ -18,7 +18,7 @@ namespace FreedomVoice.Core.ViewModels
 			Message = entity.Text;
 			MessageId = entity.Id;
 			Date = entity.CreatedAt ?? DateTime.Now;
-			// todo SendingState = entity.SendingState
+			SendingState = (SendingState) entity.State;
 		}
 	}
 }

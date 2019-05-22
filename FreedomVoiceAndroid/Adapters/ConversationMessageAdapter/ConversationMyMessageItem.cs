@@ -1,7 +1,9 @@
+using Android.Graphics.Drawables;
 using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
 using FreedomVoice.Core.ViewModels;
+using FreedomVoice.Entities.Enums;
 
 namespace com.FreedomVoice.MobileApp.Android.Adapters
 {
@@ -39,24 +41,24 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
             vh.MessageTv.SetText(_chatMessage.Message, TextView.BufferType.Normal);
             vh.Date.SetText(_chatMessage.Time, TextView.BufferType.Normal);
             
-//            switch (_chatMessage.SendingState)
-//            {
-//                case SendingState.Error:
-//                    vh.Icon.SetImageResource(Resource.Drawable.ic_error);
-//                    vh.Icon.Visibility = ViewStates.Visible;
-//                    break;
-//                case SendingState.Sending:
-//                    vh.Icon.SetImageResource(Resource.Drawable.ic_anim_sending);
-//                    var sendAnimationDrawable = vh.Icon.Drawable as AnimationDrawable;
-//                    sendAnimationDrawable.SetCallback(vh.Icon);
-//                    sendAnimationDrawable.SetVisible(true, true);
-//                    sendAnimationDrawable.Start();
-//                    vh.Icon.Visibility = ViewStates.Visible;
-//                    break;
-//                default:
-//                    vh.Icon.Visibility = ViewStates.Gone;
-//                    break;
-//            }
+            switch (_chatMessage.SendingState)
+            {
+                case SendingState.Error:
+                    vh.Icon.SetImageResource(Resource.Drawable.ic_error);
+                    vh.Icon.Visibility = ViewStates.Visible;
+                    break;
+                case SendingState.Sending:
+                    vh.Icon.SetImageResource(Resource.Drawable.ic_anim_sending);
+                    var sendAnimationDrawable = vh.Icon.Drawable as AnimationDrawable;
+                    sendAnimationDrawable.SetCallback(vh.Icon);
+                    sendAnimationDrawable.SetVisible(true, true);
+                    sendAnimationDrawable.Start();
+                    vh.Icon.Visibility = ViewStates.Visible;
+                    break;
+                default:
+                    vh.Icon.Visibility = ViewStates.Gone;
+                    break;
+            }
         }
     }
 }
