@@ -1,4 +1,6 @@
 using System;
+using System.Linq;
+using System.Threading.Tasks;
 using Foundation;
 using FreedomVoice.Core.Services;
 using FreedomVoice.Core.Utils;
@@ -7,6 +9,8 @@ using FreedomVoice.Entities.Enums;
 using FreedomVoice.Entities.Response;
 using FreedomVoice.iOS.Core;
 using FreedomVoice.iOS.Entities;
+using FreedomVoice.iOS.Services;
+using FreedomVoice.iOS.Services.Responses;
 using FreedomVoice.iOS.Utilities.Helpers;
 using FreedomVoice.iOS.ViewControllers;
 using FreedomVoice.iOS.ViewControllers.Texts;
@@ -36,7 +40,7 @@ namespace FreedomVoice.iOS.PushNotifications
 			DidReceiveSilentRemoteNotification(notification.Request.Content.UserInfo, null);
 		}
 
-		public void DidReceiveSilentRemoteNotification(NSDictionary userInfo, Action<UIBackgroundFetchResult> completionHandler)
+		public async void DidReceiveSilentRemoteNotification(NSDictionary userInfo, Action<UIBackgroundFetchResult> completionHandler)
 		{
 			_logger.Debug(nameof(NotificationCenterDelegate), nameof(DidReceiveSilentRemoteNotification), $"userInfo: {userInfo}");
 
@@ -49,10 +53,10 @@ namespace FreedomVoice.iOS.PushNotifications
 				return;
 			}
 
-			if (NormalizePhoneNumber(pushNotificationData.TextMessageReceivedToNumber()) != NormalizePhoneNumber(UserDefault.AccountPhoneNumber))
+			if (!await CheckCurrentNumber())
 			{
 				_logger.Debug(nameof(NotificationCenterDelegate), nameof(DidReceiveSilentRemoteNotification), "Push recipient is not current user");
-				completionHandler?.Invoke(UIBackgroundFetchResult.NoData);
+				completionHandler?.Invoke(UIBackgroundFetchResult.Failed);
 				return;
 			}
 
@@ -71,7 +75,7 @@ namespace FreedomVoice.iOS.PushNotifications
 			}
 		}
 
-		public override void DidReceiveNotificationResponse(UNUserNotificationCenter center, UNNotificationResponse response, Action completionHandler)
+		public override async void DidReceiveNotificationResponse(UNUserNotificationCenter center, UNNotificationResponse response, Action completionHandler)
 		{
 			_logger.Debug(nameof(NotificationCenterDelegate), nameof(DidReceiveNotificationResponse), "DidReceiveNotificationResponse");
 
@@ -92,7 +96,7 @@ namespace FreedomVoice.iOS.PushNotifications
 				return;
 			}
 
-			if (NormalizePhoneNumber(pushNotificationData.TextMessageReceivedToNumber()) != NormalizePhoneNumber(UserDefault.AccountPhoneNumber))
+			if (!await CheckCurrentNumber())
 			{
 				_logger.Debug(nameof(NotificationCenterDelegate), nameof(DidReceiveNotificationResponse), "Push recipient is not current user");
 				completionHandler?.Invoke();
@@ -113,6 +117,16 @@ namespace FreedomVoice.iOS.PushNotifications
 					_logger.Debug(nameof(NotificationCenterDelegate), nameof(DidReceiveNotificationResponse), $"Push-notification type({pushNotificationData.PushType}) is not supported");
 					break;
 			}
+		}
+
+		private async Task<bool> CheckCurrentNumber()
+		{
+			var systemNumber = NormalizePhoneNumber(UserDefault.AccountPhoneNumber);
+
+			var service = ServiceContainer.Resolve<IPresentationNumbersService>();
+			var requestResult = await service.ExecuteRequest(systemNumber, false);
+			var accountNumbers = requestResult as PresentationNumbersResponse;
+			return accountNumbers.PresentationNumbers.Any(x => NormalizePhoneNumber(x.PhoneNumber) == systemNumber);
 		}
 
 		private void ProcessStatusChangedPushNotification()
