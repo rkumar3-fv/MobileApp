@@ -39,9 +39,9 @@ namespace FreedomVoice.Core.Services
             return _instance;
         }
 
-
         public void ReceivedNotification(PushType type, FreedomVoice.Entities.Response.Conversation model)
         {
+            var savedMessage = _saveMessage(model);
             switch (type)
             {
                 case PushType.NewMessage:
@@ -51,10 +51,9 @@ namespace FreedomVoice.Core.Services
                         new ConversationEventArg {Conversation = savedConversation});
                     break;
                 case PushType.StatusChanged:
-                    var savedMessage = _saveMessage(model);
-                    MessageUpdatedHandler?.Invoke(this, new MessageEventArg {Message = savedMessage});
                     break;
             }
+            MessageUpdatedHandler?.Invoke(this, new MessageEventArg {Message = savedMessage});
         }
 
         private Conversation _saveConversation(FreedomVoice.Entities.Response.Conversation conversation)
