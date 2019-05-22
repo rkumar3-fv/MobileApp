@@ -61,20 +61,20 @@ namespace FreedomVoice.Core.Services
 
         private Conversation UpdatePhones(Conversation conversation, List<Phone> alreadyCreatedPhones)
         {
-            if(conversation.CurrentPhone != null)
+            if(conversation.SystemPhone != null)
             {
-                conversation.CurrentPhone = _phoneRepository.Table.FirstOrDefault(phone => phone.Id == conversation.CurrentPhone.Id) ??
-                    alreadyCreatedPhones.FirstOrDefault(phone => phone.Id == conversation.CurrentPhone.Id) ?? conversation.CurrentPhone;
+                conversation.SystemPhone = _phoneRepository.Table.FirstOrDefault(phone => phone.Id == conversation.SystemPhone.Id) ??
+                    alreadyCreatedPhones.FirstOrDefault(phone => phone.Id == conversation.SystemPhone.Id) ?? conversation.SystemPhone;
 
-                if (alreadyCreatedPhones.All(phone => phone.Id != conversation.CurrentPhone.Id))
-                    alreadyCreatedPhones.Add(conversation.CurrentPhone);
+                if (alreadyCreatedPhones.All(phone => phone.Id != conversation.SystemPhone.Id))
+                    alreadyCreatedPhones.Add(conversation.SystemPhone);
             }
-            if (conversation.CollocutorPhone != null)
+            if (conversation.ToPhone != null)
             {
-                conversation.CollocutorPhone = _phoneRepository.Table.FirstOrDefault(phone => phone.Id == conversation.CollocutorPhone.Id) ??
-                    alreadyCreatedPhones.FirstOrDefault(phone => phone.Id == conversation.CollocutorPhone.Id) ?? conversation.CollocutorPhone;
-                if (alreadyCreatedPhones.All(phone => phone.Id != conversation.CollocutorPhone.Id))
-                    alreadyCreatedPhones.Add(conversation.CollocutorPhone);
+                conversation.ToPhone = _phoneRepository.Table.FirstOrDefault(phone => phone.Id == conversation.ToPhone.Id) ??
+                    alreadyCreatedPhones.FirstOrDefault(phone => phone.Id == conversation.ToPhone.Id) ?? conversation.ToPhone;
+                if (alreadyCreatedPhones.All(phone => phone.Id != conversation.ToPhone.Id))
+                    alreadyCreatedPhones.Add(conversation.ToPhone);
             }
 
             foreach (var message in conversation.Messages)
@@ -86,10 +86,11 @@ namespace FreedomVoice.Core.Services
                     if (alreadyCreatedPhones.All(phone => phone.Id != message.From.Id))
                         alreadyCreatedPhones.Add(message.From);
                 }
-                if (message.To != null)
+
+                if (message.To == null) continue;
                 {
                     message.To = _phoneRepository.Table.FirstOrDefault(phone => phone.Id == message.To.Id) ??
-                    alreadyCreatedPhones.FirstOrDefault(phone => phone.Id == message.To.Id) ?? message.To;
+                                 alreadyCreatedPhones.FirstOrDefault(phone => phone.Id == message.To.Id) ?? message.To;
                     if (alreadyCreatedPhones.All(phone => phone.Id != message.To.Id))
                         alreadyCreatedPhones.Add(message.To);
                 }
@@ -104,7 +105,7 @@ namespace FreedomVoice.Core.Services
         /// <param name="conversations"></param>
         public void UpdateConversationsCache(IEnumerable<FreedomVoice.Entities.Response.Conversation> conversations)
         {
-            List<Phone> usedPhones = new List<Phone>();
+            var usedPhones = new List<Phone>();
             foreach (var conversation in conversations)
             {
                 var cachedConversation = _conversationRepository.Table.Include(row => row.Messages).FirstOrDefault(row => conversation.Id == row.Id);
@@ -156,9 +157,9 @@ namespace FreedomVoice.Core.Services
         {
             var conversations = _conversationRepository
                 .TableNoTracking
-                .Include(conversation => conversation.CurrentPhone)
-                .Include(conversation => conversation.CollocutorPhone)
-                .Where(conversation => conversation.CurrentPhone != null && conversation.CurrentPhone.PhoneNumber == phone)
+                .Include(conversation => conversation.SystemPhone)
+                .Include(conversation => conversation.ToPhone)
+                .Where(conversation => conversation.SystemPhone != null && conversation.SystemPhone.PhoneNumber == phone)
                 .OrderByDescending(conversation => conversation.LastSyncDate)
                 .Skip(start)
                 .Take(limit);
@@ -184,10 +185,14 @@ namespace FreedomVoice.Core.Services
         /// <returns>Conversation from cache</returns>
         public Conversation GetConversation(long conversationId)
         {
+<<<<<<< HEAD
             return _conversationRepository.TableNoTracking
                 .Include(x => x.CurrentPhone)
                 .Include(x => x.CollocutorPhone)
                 .FirstOrDefault(x => x.Id == conversationId);
+=======
+            return _conversationRepository.TableNoTracking.Include(x => x.SystemPhone).Include(x => x.ToPhone).FirstOrDefault(x => x.Id == conversationId);
+>>>>>>> origin/dev
         }
 
         /// <summary>

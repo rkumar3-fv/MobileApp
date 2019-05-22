@@ -21,12 +21,12 @@ namespace FreedomVoice.Core.Services.Interfaces
         Task<BaseResult<List<Conversation>>> GetConversations(string phone, DateTime startDate, DateTime lastUpdateDate, int start, int limit);
 
         /// <summary>
-        /// Get conversation by current phone and collocutor phone
+        /// Get conversation by current phone and to phone
         /// </summary>
         /// <param name="currentPhone"></param>
-        /// <param name="collocutorPhone"></param>
+        /// <param name="toPhone"></param>
         /// <returns></returns>
-        Task<BaseResult<Conversation>> GetConversation(string currentPhone, string collocutorPhone);
+        Task<BaseResult<Conversation>> GetConversation(string currentPhone, string toPhone);
 
         /// <summary>
         /// Get messages from API by provided parameters

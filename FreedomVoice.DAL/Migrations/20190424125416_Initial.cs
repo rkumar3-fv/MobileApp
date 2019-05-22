@@ -24,22 +24,22 @@ namespace FreedomVoice.DAL.Migrations
                 columns: table => new
                 {
                     Id = table.Column<long>(nullable: false),
-                    CurrentPhoneId = table.Column<long>(nullable: true),
-                    CollocutorPhoneId = table.Column<long>(nullable: true),
+                    SystemPhoneId = table.Column<long>(nullable: true),
+                    ToPhoneId = table.Column<long>(nullable: true),
                     LastSyncDate = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Conversation", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Conversation_Phone_CollocutorPhoneId",
-                        column: x => x.CollocutorPhoneId,
+                        name: "FK_Conversation_Phone_ToPhoneId",
+                        column: x => x.ToPhoneId,
                         principalTable: "Phone",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Conversation_Phone_CurrentPhoneId",
-                        column: x => x.CurrentPhoneId,
+                        name: "FK_Conversation_Phone_SystemPhoneId",
+                        column: x => x.SystemPhoneId,
                         principalTable: "Phone",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -82,14 +82,14 @@ namespace FreedomVoice.DAL.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Conversation_CollocutorPhoneId",
+                name: "IX_Conversation_ToPhoneId",
                 table: "Conversation",
-                column: "CollocutorPhoneId");
+                column: "ToPhoneId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Conversation_CurrentPhoneId",
+                name: "IX_Conversation_SystemPhoneId",
                 table: "Conversation",
-                column: "CurrentPhoneId");
+                column: "SystemPhoneId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Message_ConversationId",

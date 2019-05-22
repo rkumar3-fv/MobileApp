@@ -151,15 +151,15 @@ namespace FreedomVoice.Core.Presenters
             }
         }
         
-        public async Task<long?> SendMessage(string currentPhone, string collocutorPhone, string text)
+        public async Task<long?> SendMessage(string currentPhone, string toPhone, string text)
         {
             var clearedCurrentPhone = GetClearPhoneNumber(currentPhone);
-            var clearedCollocutorPhone = GetClearPhoneNumber(collocutorPhone);
+            var clearedToPhone = GetClearPhoneNumber(toPhone);
             
-            if (string.IsNullOrWhiteSpace(clearedCurrentPhone) || string.IsNullOrWhiteSpace(clearedCollocutorPhone))
+            if (string.IsNullOrWhiteSpace(clearedCurrentPhone) || string.IsNullOrWhiteSpace(clearedToPhone))
                 return null;
             
-            var res = await _messagesService.SendMessage(clearedCurrentPhone, clearedCollocutorPhone, text);
+            var res = await _messagesService.SendMessage(clearedCurrentPhone, clearedToPhone, text);
             
             switch (res.State)
             {
@@ -204,15 +204,15 @@ namespace FreedomVoice.Core.Presenters
             return _contactNameProvider.GetNameOrNull(clearPhone);
         }
 
-        public async Task<long?> GetConversationId(string currentPhone, string collocutorPhone)
+        public async Task<long?> GetConversationId(string currentPhone, string toPhone)
         {
             var clearedCurrentPhone = GetClearPhoneNumber(currentPhone);
-            var clearedCollocutorPhone = GetClearPhoneNumber(collocutorPhone);
+            var clearedToPhone = GetClearPhoneNumber(toPhone);
 
-            if (string.IsNullOrWhiteSpace(clearedCurrentPhone) || string.IsNullOrWhiteSpace(clearedCollocutorPhone))
+            if (string.IsNullOrWhiteSpace(clearedCurrentPhone) || string.IsNullOrWhiteSpace(clearedToPhone))
                 return null;
             
-            var conversation = await _conversationService.Get(clearedCurrentPhone, clearedCollocutorPhone);
+            var conversation = await _conversationService.Get(clearedCurrentPhone, clearedToPhone);
             return conversation?.Conversation?.Id;
         }
 

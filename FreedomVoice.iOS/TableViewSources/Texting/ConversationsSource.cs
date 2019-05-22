@@ -66,7 +66,7 @@ namespace FreedomVoice.iOS.TableViewSources.Texting
             {
                 var item = _presenter.Items[indexPath.Row];
 
-                cell.Title = item.Collocutor;
+                cell.Title = item.To;
                 cell.Detail = item.LastMessage;
                 cell.Date = item.Date;
                 cell.isNew = item.IsNew;
@@ -90,7 +90,7 @@ namespace FreedomVoice.iOS.TableViewSources.Texting
             tableView.DeselectRow(indexPath, true);
             if (indexPath.Row >= _presenter.Items.Count) return;
             var item = _presenter.Items[indexPath.Row];
-            ItemDidSelected?.Invoke(this, new ConversationSelectEventArgs(item.ConversationId, item.Collocutor));
+            ItemDidSelected?.Invoke(this, new ConversationSelectEventArgs(item.ConversationId, item.To));
         }
 
         public override void WillDisplay(UITableView tableView, UITableViewCell cell, NSIndexPath indexPath)

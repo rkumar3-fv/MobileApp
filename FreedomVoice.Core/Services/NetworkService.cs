@@ -49,11 +49,11 @@ namespace FreedomVoice.Core.Services
             }
         }
 
-        public async Task<BaseResult<Conversation>> GetConversation(string currentPhone, string collocutorPhone)
+        public async Task<BaseResult<Conversation>> GetConversation(string currentPhone, string toPhone)
         {
             try
             {
-                BaseResult<Conversation> result = await ApiHelper.GetConversation(currentPhone, collocutorPhone);
+                BaseResult<Conversation> result = await ApiHelper.GetConversation(currentPhone, toPhone);
                 
                 if (result.Code == Entities.Enums.ErrorCodes.Ok && result.Result != null)
                     _cacheService.UpdateConversationsCache(new[] { result.Result });
@@ -62,7 +62,7 @@ namespace FreedomVoice.Core.Services
             }
             catch (Exception)
             {
-                return new BaseResult<Conversation>()
+                return new BaseResult<Conversation>
                 {
                     Code = Entities.Enums.ErrorCodes.ConnectionLost,
                     Result = null
