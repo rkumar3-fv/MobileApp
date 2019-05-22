@@ -168,17 +168,23 @@ namespace FreedomVoice.iOS.PushNotifications
 		public async Task RegisterPushNotificationToken()
 		{
 			var savedToken = _tokenDataStore.Get();
-			if (string.IsNullOrWhiteSpace(savedToken) || string.IsNullOrWhiteSpace(UserDefault.AccountPhoneNumber))
+			if (string.IsNullOrWhiteSpace(savedToken) )
 			{
 				var errorText = $"[{GetType()}] Push notification token is null or empty";
 				Console.WriteLine(errorText);
 				return;
 			}
 
-			try
+            if (string.IsNullOrWhiteSpace(UserDefault.AccountPhoneNumber))
+            {
+                var errorText = $"[{GetType()}] AccountPhoneNumber is null or empty";
+                Console.WriteLine(errorText);
+                return;
+            }
+
+            try
 			{
-				
-				var _ = await _pushService.Register(DeviceType.IOS, savedToken, iOS.Core.Utilities.Helpers.Contacts.NormalizePhoneNumber(UserDefault.AccountPhoneNumber));
+				await _pushService.Register(DeviceType.IOS, savedToken, iOS.Core.Utilities.Helpers.Contacts.NormalizePhoneNumber(UserDefault.AccountPhoneNumber));
 				Console.WriteLine($"[{GetType()}] Token ({savedToken}) has been registrated");
 			}
 			catch (Exception exception)

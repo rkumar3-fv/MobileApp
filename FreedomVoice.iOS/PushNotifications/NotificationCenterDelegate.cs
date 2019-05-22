@@ -27,7 +27,6 @@ namespace FreedomVoice.iOS.PushNotifications
 		public NotificationCenterDelegate()
 		{
 			UserDefault.IsAuthenticatedChanged += IsAuthenticatedChanged;
-			_contactNameProvider.RequestContacts();
 		}
 
 		public override void WillPresentNotification(UNUserNotificationCenter center, UNNotification notification, Action<UNNotificationPresentationOptions> completionHandler)
