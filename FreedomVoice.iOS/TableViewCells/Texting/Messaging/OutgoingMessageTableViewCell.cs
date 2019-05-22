@@ -27,12 +27,13 @@ namespace FreedomVoice.iOS.TableViewCells.Texting.Messaging
         {
             foreach (var item in SendingView.ArrangedSubviews.ToList().Select((r, i) => new {Row=r, Index=i}))
             {
-                Animate(
-                    0.8f,
-                    item.Index,
-                    UIViewAnimationOptions.Repeat | UIViewAnimationOptions.Autoreverse | UIViewAnimationOptions.CurveEaseIn,
-                    () => item.Row.Alpha = 0.5f,
-                    null);
+                var animation = CAKeyFrameAnimation.GetFromKeyPath("opacity");
+                animation.RepeatCount = float.PositiveInfinity;
+                animation.AutoReverses = true;
+                animation.Values = new NSObject[] { FromObject(1.0f), FromObject(0.5f) };
+
+                animation.KeyTimes = new NSNumber[] { NSNumber.FromFloat(0.0f + (float)item.Index / 3), NSNumber.FromFloat(2.0f + (float)item.Index / 3) };
+                item.Row.Layer.AddAnimation(animation, $"blinking{item.Index}");
             }
         }
 

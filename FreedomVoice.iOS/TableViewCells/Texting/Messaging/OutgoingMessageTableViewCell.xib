@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait">
         <adaptation id="fullscreen"/>
@@ -6,7 +6,6 @@
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
-        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
@@ -15,14 +14,14 @@
             <rect key="frame" x="0.0" y="0.0" width="367" height="123"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="cxk-wN-pdQ" id="YTl-1W-gDM">
-                <rect key="frame" x="0.0" y="0.0" width="367" height="122"/>
+                <rect key="frame" x="0.0" y="0.0" width="367" height="122.5"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <stackView opaque="NO" contentMode="scaleToFill" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="85W-NZ-wG7" misplaced="YES">
-                        <rect key="frame" x="261" y="8" width="98" height="106.5"/>
+                    <stackView opaque="NO" contentMode="scaleToFill" misplaced="YES" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="85W-NZ-wG7">
+                        <rect key="frame" x="261" y="8" width="146" height="106.5"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="b8i-Gt-XS2">
-                                <rect key="frame" x="0.0" y="0.0" width="2" height="106.5"/>
+                                <rect key="frame" x="0.0" y="0.0" width="50" height="106.5"/>
                                 <subviews>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalCompressionResistancePriority="1" verticalCompressionResistancePriority="1" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="94C-Xo-785">
                                         <rect key="frame" x="4" y="0.0" width="46" height="33.5"/>
@@ -49,13 +48,14 @@
                                     <constraint firstAttribute="bottom" secondItem="VP2-tz-dI0" secondAttribute="bottom" constant="8" id="gZ6-Mg-xeh"/>
                                 </constraints>
                             </view>
-                            <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Czt-GO-k0M" misplaced="YES">
-                                <rect key="frame" x="10" y="0.0" width="40" height="106.5"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Czt-GO-k0M">
+                                <rect key="frame" x="58" y="0.0" width="40" height="106.5"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iTG-cd-Dwf">
-                                        <rect key="frame" x="0.0" y="33.5" width="40" height="40"/>
+                                        <rect key="frame" x="5" y="38.5" width="30" height="30"/>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="40" id="tLo-J5-wKh"/>
+                                            <constraint firstAttribute="width" secondItem="iTG-cd-Dwf" secondAttribute="height" multiplier="1:1" id="iIv-TM-CjY"/>
+                                            <constraint firstAttribute="height" constant="30" id="tLo-J5-wKh"/>
                                         </constraints>
                                         <fontDescription key="fontDescription" type="system" pointSize="21"/>
                                         <state key="normal" title="!">
@@ -63,16 +63,15 @@
                                         </state>
                                     </button>
                                 </subviews>
-                                <color key="backgroundColor" red="0.19215686269999999" green="0.70980392160000005" blue="0.57254901960000004" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="40" id="DFp-ZB-ZpT"/>
-                                    <constraint firstAttribute="trailing" secondItem="iTG-cd-Dwf" secondAttribute="trailing" id="RUC-8B-Jb7"/>
-                                    <constraint firstItem="iTG-cd-Dwf" firstAttribute="leading" secondItem="Czt-GO-k0M" secondAttribute="leading" id="SB8-WU-g1p"/>
                                     <constraint firstItem="iTG-cd-Dwf" firstAttribute="centerY" secondItem="Czt-GO-k0M" secondAttribute="centerY" id="pdV-NB-tzk"/>
+                                    <constraint firstItem="iTG-cd-Dwf" firstAttribute="centerX" secondItem="Czt-GO-k0M" secondAttribute="centerX" id="w3I-0F-iIX"/>
                                 </constraints>
                             </view>
-                            <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" alignment="center" spacing="4" translatesAutoresizingMaskIntoConstraints="NO" id="GlS-Tw-Q1X" misplaced="YES">
-                                <rect key="frame" x="58" y="0.0" width="40" height="106.5"/>
+                            <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" alignment="center" spacing="4" translatesAutoresizingMaskIntoConstraints="NO" id="GlS-Tw-Q1X">
+                                <rect key="frame" x="106" y="0.0" width="40" height="106.5"/>
                                 <subviews>
                                     <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ayl-G4-1Tl">
                                         <rect key="frame" x="0.0" y="48" width="10.5" height="10.5"/>
@@ -138,8 +137,8 @@
                 <outlet property="ErrorButton" destination="iTG-cd-Dwf" id="name-outlet-iTG-cd-Dwf"/>
                 <outlet property="ErrorContainer" destination="Czt-GO-k0M" id="name-outlet-Czt-GO-k0M"/>
                 <outlet property="MessageLabel" destination="VP2-tz-dI0" id="name-outlet-VP2-tz-dI0"/>
-                <outlet property="TimeLabel" destination="n4Z-wa-s5a" id="name-outlet-n4Z-wa-s5a"/>
                 <outlet property="SendingView" destination="GlS-Tw-Q1X" id="name-outlet-GlS-Tw-Q1X"/>
+                <outlet property="TimeLabel" destination="n4Z-wa-s5a" id="name-outlet-n4Z-wa-s5a"/>
             </connections>
             <point key="canvasLocation" x="67.391304347826093" y="132.25446428571428"/>
         </tableViewCell>
