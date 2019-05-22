@@ -70,16 +70,10 @@ namespace FreedomVoice.iOS
             UNUserNotificationCenter.Current.Delegate = PushServiceCenter;
 
             if (UserDefault.IsAuthenticated)
-            {
                 ProceedWithAuthenticatedUser();
-                RegisterRemotePushNotifications();
-                Core.Utilities.Helpers.Contacts.GetContactsListAsync();
-            }
             else
-            {
                 PassToAuthentificationProcess();
-            }
-            
+
             return true;
         }
 
@@ -87,26 +81,11 @@ namespace FreedomVoice.iOS
         {
             UserDefault.IsAuthenticated = true;
 
-            pushService.RegisterForPushNotifications(async _ =>
-            {
-                try
-                {
-                    await pushService.RegisterPushNotificationToken();
-                }
-                catch (Exception exception)
-                {
-                    Console.WriteLine(exception);
-                }
-            });
-
-
             var viewModel = new PoolingIntervalViewModel();
             await viewModel.GetPoolingIntervalAsync();
 
             await ProceedGetAccountsList(true);
-            iOS.Core.Utilities.Helpers.Contacts.GetContactsListAsync();
-
-        }
+            }
 
         private async void ProceedWithAuthenticatedUser()
         {

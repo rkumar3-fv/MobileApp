@@ -63,7 +63,6 @@ namespace FreedomVoice.iOS.TableViewSources
                 (UIApplication.SharedApplication.Delegate as AppDelegate)?.PassToAuthentificationProcess();
             
             ServiceContainer.Resolve<IAppNavigator>()?.UpdateMainTabBarController(mainTabBarController);
-            (UIApplication.SharedApplication.Delegate as AppDelegate)?.RegisterRemotePushNotifications();
         }
     }
 }
