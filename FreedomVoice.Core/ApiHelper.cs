@@ -208,10 +208,10 @@ namespace FreedomVoice.Core
             return result;
         }
 
-        public static async Task<BaseResult<Conversation>> GetConversation(string currentPhone, string collocutorPhone)
+        public static async Task<BaseResult<Conversation>> GetConversation(string currentPhone, string toPhone)
         {
             var result = await MakeAsyncGetRequest<Conversation>(
-                $"/api/v1/system/forward/{currentPhone}/conversations/{collocutorPhone}",
+                $"/api/v1/system/forward/{currentPhone}/conversations/{toPhone}",
                 CancellationToken.None, LongTimeOut);
             return result;
         }

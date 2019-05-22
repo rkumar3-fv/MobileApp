@@ -30,11 +30,11 @@ namespace FreedomVoice.Core.Services.Interfaces
         );
 
         /// <summary>
-        /// Get conversation by current phone and collocutor phone
+        /// Get conversation by current phone and to phone
         /// </summary>
         /// <param name="currentPhone"></param>
-        /// <param name="collocutorPhone"></param>
+        /// <param name="toPhone"></param>
         /// <returns></returns>
-        Task<ConversationResponse> Get(string currentPhone, string collocutorPhone);
+        Task<ConversationResponse> Get(string currentPhone, string toPhone);
     }
 }

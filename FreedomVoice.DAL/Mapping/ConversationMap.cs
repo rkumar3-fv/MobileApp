@@ -13,8 +13,8 @@ namespace FreedomVoice.DAL.Mapping
             builder.Property(x => x.Id).ValueGeneratedNever();
             builder.Property(x => x.LastSyncDate);
 
-            builder.HasOne(x => x.CurrentPhone);
-            builder.HasOne(x => x.CollocutorPhone);
+            builder.HasOne(x => x.SystemPhone);
+            builder.HasOne(x => x.ToPhone);
             builder.HasMany(x => x.Messages).WithOne(x => x.Conversation).IsRequired();
 
             builder.ToTable("Conversation");
