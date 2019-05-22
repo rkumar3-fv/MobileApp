@@ -96,6 +96,7 @@
     <Reference Include="Xamarin.Mobile">
       <HintPath>..\Components\xamarin.mobile-0.7.7\lib\ios-unified\Xamarin.Mobile.dll</HintPath>
     </Reference>
+    <Reference Include="System.Json" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\" />
@@ -230,6 +231,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="NotificationService.cs" />
+    <Compile Include="PushResponseExtension.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FreedomVoice.Entities\FreedomVoice.Entities.csproj">

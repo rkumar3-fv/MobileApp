@@ -5,8 +5,9 @@ using FreedomVoice.Core.Utils;
 using FreedomVoice.Entities;
 using FreedomVoice.Entities.Enums;
 using FreedomVoice.Entities.Response;
+using FreedomVoice.iOS.Core;
 
-namespace FreedomVoice.iOS.Core.Utilities.Extensions
+namespace FreedomVoice.iOS.NotificationsServiceExtension
 {
     public static class PushResponseExtension
     {
@@ -19,7 +20,7 @@ namespace FreedomVoice.iOS.Core.Utilities.Extensions
             {
                 var jsonData = NSJsonSerialization.Serialize(userInfo, NSJsonWritingOptions.PrettyPrinted, out var error);
                 logger.Debug(nameof(PushResponseExtension), nameof(CreateFrom), $"Parsed json data: {jsonData}");
-
+            
                 if (error != null)
                 {
                     logger.Debug(nameof(PushResponseExtension), nameof(CreateFrom), $"PushResponse<Conversation> has been parsed with error: {error}");

@@ -73,7 +73,7 @@ namespace FreedomVoice.iOS.NotificationsServiceExtension
             // Fetch contacts book
             ContactsHelper.GetContactsList(contacts =>
             {
-                _logger.Debug($"{nameof(NotificationService)}", $"{nameof(NotificationService)}", $"Contacts from book: {contacts.Count()}");
+                _logger.Debug($"{nameof(NotificationService)}", $"{nameof(NotificationService)}", $"Contacts from book: {contacts}");
 
                 // Display debug info about contacts book
                 DebugPrintContracts(contacts);

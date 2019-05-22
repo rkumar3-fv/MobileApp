@@ -41,7 +41,7 @@ namespace FreedomVoice.iOS.PushNotifications
 		{
 			_logger.Debug(nameof(NotificationCenterDelegate), nameof(DidReceiveSilentRemoteNotification), $"userInfo: {userInfo}");
 
-			var pushNotificationData = PushResponseExtension.CreateFrom(userInfo);
+			var pushNotificationData = PushResponseExtension.CreateFromFromJson(userInfo);
 			
 			if (pushNotificationData?.Data == null)
 			{
@@ -74,7 +74,7 @@ namespace FreedomVoice.iOS.PushNotifications
 			if(!UserDefault.IsAuthenticated)
 				return;
 
-			pushNotificationData = PushResponseExtension.CreateFrom(response.Notification.Request.Content.UserInfo);
+			pushNotificationData = PushResponseExtension.CreateFromFromJson(response.Notification.Request.Content.UserInfo);
 
 			if (pushNotificationData == null)
 			{
