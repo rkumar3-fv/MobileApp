@@ -28,7 +28,7 @@ namespace com.FreedomVoice.MobileApp.Android.Services
     public class AppFirebaseMessagingService : Firebase.Messaging.FirebaseMessagingService
     {
         private IContactNameProvider _contactNameProvider;
-        private const string DataKey = "Data";
+        private const string DataKey = "data";
 
         public override void OnCreate()
         {

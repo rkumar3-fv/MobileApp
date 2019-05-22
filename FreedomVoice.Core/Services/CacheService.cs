@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using FreedomVoice.DAL.DbEntities.Enums;
 
 namespace FreedomVoice.Core.Services
 {
@@ -53,7 +54,10 @@ namespace FreedomVoice.Core.Services
                     conversation.Messages.Add(_mapper.Map<Message>(messageFromApi));
                 // Updating
                 else
+                {
                     message.ReadAt = messageFromApi.ReadAt;
+                    message.State = (SendingState) messageFromApi.State;
+                }
             }
 
             UpdatePhones(conversation, alreadyCreatedPhones);

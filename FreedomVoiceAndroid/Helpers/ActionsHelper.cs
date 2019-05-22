@@ -800,7 +800,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         public async void RegisterFcm()
         {
             var instanceToken = FirebaseInstanceId.Instance.Token;
-            var systemPhone = SelectedAccount.AccountName;
+            var systemPhone = SelectedAccount?.AccountName;
             if (!string.IsNullOrEmpty(instanceToken) && !string.IsNullOrEmpty(systemPhone))
             {
                 await _pushService.Register(DeviceType.Android, instanceToken, SelectedAccount.AccountName);
@@ -810,7 +810,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         public async void UnregisterFcm()
         {
             var instanceToken = FirebaseInstanceId.Instance.Token;
-            var systemPhone = SelectedAccount.AccountName;
+            var systemPhone = SelectedAccount?.AccountName;
             if (!string.IsNullOrEmpty(instanceToken) && !string.IsNullOrEmpty(systemPhone))
             {
                 await _pushService.Unregister(DeviceType.Android, instanceToken, SelectedAccount.AccountName);

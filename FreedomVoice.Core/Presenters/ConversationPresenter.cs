@@ -98,7 +98,16 @@ namespace FreedomVoice.Core.Presenters
 
         private void OnMessageUpdatedHandler(object sender, MessageEventArg e)
         {
+            if (!e.Message.CreatedAt.HasValue || !_rawData.ContainsKey(e.Message.CreatedAt.Value.ToString(DateFormat))) return;
+            var chatMessages = _rawData[e.Message.CreatedAt.Value.ToString(DateFormat)];
+            if (chatMessages == null) return;
             
+            var visibleItemIndex = chatMessages.FindIndex(chatMessage => chatMessage.MessageId == e.Message.Id);
+            if (visibleItemIndex == -1) return;
+
+            chatMessages[visibleItemIndex] = CreateChatMessage(e.Message);
+            _updateItems();
+            ItemsChanged?.Invoke(this, new ConversationCollectionEventArgs(Items));
         }
 
         private void OnNewMessageEventHandler(object sender, ConversationEventArg e)
@@ -292,20 +301,25 @@ namespace FreedomVoice.Core.Presenters
                 var dateStr = row.CreatedAt?.ToString(DateFormat);
                 if (dateStr == null) continue;
                 var pack = _rawData.ContainsKey(dateStr) ? _rawData[dateStr] : new List<IChatMessage>();
-                if (row.From.PhoneNumber.Equals(PhoneNumber))
-                {
-                    pack.Add(new OutgoingMessageViewModel(row));
-                }
-                else
-                {
-                    pack.Add(new IncomingMessageViewModel(row));
-                }
+                pack.Add(CreateChatMessage(row));
                 _rawData[dateStr] = pack;
             }
 
             _updateItems();
             ItemsChanged?.Invoke(this, new ConversationCollectionEventArgs(Items));
             _isLoading = false;
+        }
+
+        private IChatMessage CreateChatMessage(Message row)
+        {
+            if (row.From.PhoneNumber.Equals(PhoneNumber))
+            {
+                return new OutgoingMessageViewModel(row);
+            }
+            else
+            {
+                return new IncomingMessageViewModel(row);
+            }
         }
 
         private void _updateItems()
