@@ -1157,6 +1157,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                             AccountsList = accsResponse.AccountsList;
                             SelectedAccount = AccountsList[0];
                             GetPresentationNumbers();
+                            RegisterFcm();
                             break;
 
                         // More than one active accounts
@@ -1171,6 +1172,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                                     foreach (var account in AccountsList.Where(account => account.Equals(selAccount)))
                                     {
                                         SelectedAccount = account;
+                                        RegisterFcm();
                                         break;
                                     }
                                 }
