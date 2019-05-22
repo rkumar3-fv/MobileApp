@@ -7,10 +7,7 @@ using FreedomVoice.Core.Utils;
 using FreedomVoice.iOS.Core;
 using System.Collections.Generic;
 using FreedomVoice.Entities.Enums;
-using FreedomVoice.Entities.Request;
-using FreedomVoice.Entities.Response;
 using FreedomVoice.iOS.Core.Utilities.Helpers;
-using FreedomVoice.iOS.Core.Utilities.Extensions;
 using ContactsHelper = FreedomVoice.iOS.Core.Utilities.Helpers.Contacts;
 
 namespace FreedomVoice.iOS.NotificationsServiceExtension
@@ -49,7 +46,7 @@ namespace FreedomVoice.iOS.NotificationsServiceExtension
             switch (pushNotificationData.PushType)
             {
                 case PushType.NewMessage: // Handler only this type
-                    ProcessNewMessagePushNotification(pushNotificationData);
+                    ProcessNewMessagePushNotification(pushNotificationData.TextMessageReceivedFromNumber());
                     break;
 
                 default: // Don't handler another types
@@ -59,39 +56,46 @@ namespace FreedomVoice.iOS.NotificationsServiceExtension
             }
         }
         
-        private void ProcessNewMessagePushNotification(PushResponse<Conversation> pushNotificationData)
+        private void ProcessNewMessagePushNotification(string fromPhoneNumber)
         {
-            if (string.IsNullOrWhiteSpace(pushNotificationData.Data.ToPhone?.PhoneNumber))
+            try
             {
-                _logger.Debug($"{nameof(NotificationService)}", $"{nameof(NotificationService)}", "Collocutor phone is missing in push data");
-                ContentHandler?.Invoke(BestAttemptContent);
-                return;
+                if (string.IsNullOrWhiteSpace(fromPhoneNumber))
+                {
+                    _logger.Debug($"{nameof(NotificationService)}", $"{nameof(NotificationService)}", "Collocutor phone is missing in push data");
+                    ContentHandler?.Invoke(BestAttemptContent);
+                    return;
+                }
+
+                _logger.Debug($"{nameof(NotificationService)}", $"{nameof(NotificationService)}", $"Collocutor phone is {fromPhoneNumber}");
+
+                // Fetch contacts book
+                ContactsHelper.GetContactsList(contacts =>
+                {
+                    _logger.Debug($"{nameof(NotificationService)}", $"{nameof(NotificationService)}", $"Contacts from book: {contacts}");
+
+                    // Display debug info about contacts book
+                    DebugPrintContracts(contacts);
+
+                    // Try fetch phone number from push
+                    var fromPhoneNumberNormalized = ContactsHelper.NormalizePhoneNumber(fromPhoneNumber);
+                        _logger.Debug($"{nameof(NotificationService)}", $"{nameof(NotificationService)}", $"Phone from push: {fromPhoneNumberNormalized}");
+
+                    // Find contact from Contact book by phone
+                    var matchedContactName = FirstContact(contacts, fromPhoneNumberNormalized)?.DisplayName;
+                        _logger.Debug($"{nameof(NotificationService)}", $"{nameof(NotificationService)}", $"Contact is found: {matchedContactName}");
+
+                    // Set custom push title
+                    BestAttemptContent.Title = string.IsNullOrWhiteSpace(matchedContactName) ? BestAttemptContent.Title : matchedContactName;
+                    _logger.Debug($"{nameof(NotificationService)}", $"{nameof(NotificationService)}", $"Modified content: {BestAttemptContent}");
+
+                    ContentHandler?.Invoke(BestAttemptContent);
+                });
             }
-            
-            _logger.Debug($"{nameof(NotificationService)}", $"{nameof(NotificationService)}", $"User data: \n{pushNotificationData}");
-
-            // Fetch contacts book
-            ContactsHelper.GetContactsList(contacts =>
+            catch(Exception e)
             {
-                _logger.Debug($"{nameof(NotificationService)}", $"{nameof(NotificationService)}", $"Contacts from book: {contacts}");
-
-                // Display debug info about contacts book
-                DebugPrintContracts(contacts);
-
-                // Try fetch phone number from push
-                var phoneFromPush = ContactsHelper.NormalizePhoneNumber(pushNotificationData.Data.ToPhone.PhoneNumber);
-                _logger.Debug($"{nameof(NotificationService)}", $"{nameof(NotificationService)}", $"Phone from push: {phoneFromPush}");
-
-                // Find contact from Contact book by phone
-                var matchedContactName = FirstContact(contacts, phoneFromPush)?.DisplayName;
-                _logger.Debug($"{nameof(NotificationService)}", $"{nameof(NotificationService)}", $"Contact is found: {matchedContactName}");
-
-                // Set custom push title
-                BestAttemptContent.Title = string.IsNullOrWhiteSpace(matchedContactName) ? BestAttemptContent.Title : matchedContactName;
-                _logger.Debug($"{nameof(NotificationService)}", $"{nameof(NotificationService)}", $"Modified content: {BestAttemptContent}");
-
-                ContentHandler?.Invoke(BestAttemptContent);
-            });
+                Console.WriteLine(e);
+            }
         }
 
         private FVContact FirstContact(IEnumerable<FVContact> contacts, string byPhoneNumber) {

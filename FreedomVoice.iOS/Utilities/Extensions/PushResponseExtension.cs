@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Foundation;
 using FreedomVoice.Core.Utils;
 using FreedomVoice.Entities.Response;
@@ -8,6 +9,16 @@ namespace FreedomVoice.iOS
 {
     public static class PushResponseExtension
     {
+        public static string TextMessageReceivedFromNumber(this PushResponse<Conversation> self)
+        {
+            return self?.Data?.Messages.FirstOrDefault()?.From?.PhoneNumber;
+        }
+
+        public static string TextMessageReceivedToNumber(this PushResponse<Conversation> self)
+        {
+            return self?.Data?.Messages.FirstOrDefault()?.To?.PhoneNumber;
+        }
+
         public static PushResponse<Conversation> CreateFromFromJson(NSDictionary userInfo)
         {
             var logger = ServiceContainer.Resolve<Core.ILogger>();
