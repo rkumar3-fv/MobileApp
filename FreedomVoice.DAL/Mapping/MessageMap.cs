@@ -14,6 +14,7 @@ namespace FreedomVoice.DAL.Mapping
             builder.Property(x => x.ReadAt);
             builder.Property(x => x.CreatedAt);
             builder.Property(x => x.SentAt);
+            builder.Property(x => x.State);
 
             builder.HasOne(x => x.From);
             builder.HasOne(x => x.To);

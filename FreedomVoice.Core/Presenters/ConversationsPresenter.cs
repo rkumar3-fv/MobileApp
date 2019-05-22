@@ -28,7 +28,7 @@ namespace FreedomVoice.Core.Presenters
         
         private DateTime _currentDate;
         private int _currentPage;
-        private bool _isLoading = false;
+        private bool _isLoading;
         private const int DefaultCount = 50;
 
         private string _phoneNumber;
@@ -48,7 +48,6 @@ namespace FreedomVoice.Core.Presenters
 
         public bool HasMore { get; private set; }
         public string Query { get; set; } = "";
-
 
         public ConversationsPresenter()
         {
