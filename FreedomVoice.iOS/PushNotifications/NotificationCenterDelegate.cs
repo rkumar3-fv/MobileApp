@@ -208,19 +208,29 @@ namespace FreedomVoice.iOS.PushNotifications
 
 		private void ShowConversationController()
 		{
-			if (pushNotificationData == null)
+			if (pushNotificationData?.Data == null)
 			{
+				pushNotificationData = null;
 				_appNavigator.MainTabBarControllerChanged -= MainTabBarControllerChanged;
 				_appNavigator.CurrentControllerChanged -= CurrentControllerChanged;
 				return;
 			}
-			
-			if (_appNavigator.MainTabBarController == null || _appNavigator.CurrentController == null) 
+
+			if (_appNavigator.MainTabBarController == null || _appNavigator.CurrentController == null)
 				return;
-			
+
+			if (_appNavigator.CurrentController is ConversationViewController)
+			{
+				_logger.Debug(nameof(NotificationCenterDelegate), nameof(ShowConversationController), "Conversation page have already opened)");
+				pushNotificationData = null;
+				_appNavigator.MainTabBarControllerChanged -= MainTabBarControllerChanged;
+				_appNavigator.CurrentControllerChanged -= CurrentControllerChanged;
+				return;
+			}
+
 			_appNavigator.MainTabBarControllerChanged -= MainTabBarControllerChanged;
 			_appNavigator.CurrentControllerChanged -= CurrentControllerChanged;
-			
+
 			var phoneHolder = _contactNameProvider.GetNameOrNull(_contactNameProvider.GetClearPhoneNumber(pushNotificationData.Data.ToPhone.PhoneNumber));
 
 			var controller = new ConversationViewController();

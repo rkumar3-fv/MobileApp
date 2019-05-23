@@ -75,6 +75,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         public override void OnResume()
         {
             base.OnResume();
+            if (_presenter != null)_presenter.ItemsChanged += UpdateList;
             ContentActivity.SearchListener.OnChange += SearchListenerOnChange;
             ContentActivity.SearchListener.OnApply += SearchListenerOnApply;
             ContentActivity.SearchListener.OnCollapse += SearchListenerOnCancel;
@@ -119,12 +120,13 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         {
             Activity?.RunOnUiThread(() =>
             {
-                var newList = _presenter.Items;
                 _swipeToRefresh.Refreshing = false;
+                var newList = _presenter.Items;
                 var isEmpty = newList == null || newList.Count == 0;
                 _noResultText.Visibility = isEmpty ? ViewStates.Visible : ViewStates.Gone;
                 _recyclerView.Visibility = isEmpty ? ViewStates.Gone : ViewStates.Visible;
                 _adapter.Update(newList);
+                _swipeToRefresh.Refreshing = false;
             });
         }
         

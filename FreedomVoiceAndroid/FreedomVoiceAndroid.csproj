@@ -333,11 +333,10 @@
     <Compile Include="Adapters\CallerIdSpinnerAdapter.cs" />
     <Compile Include="Adapters\ContactsRecyclerAdapter.cs" />
     <Compile Include="Adapters\ContentPagerAdapter.cs" />
-    <Compile Include="Adapters\ConversationMessageAdapter\ConversationHerMessageItem.cs" />
-    <Compile Include="Adapters\ConversationMessageAdapter\ConversationMessageDate.cs" />
-    <Compile Include="Adapters\ConversationMessageAdapter\ConversationMyMessageItem.cs" />
+    <Compile Include="Adapters\ConversationMessageAdapter\ConversationHerMessageVh.cs" />
+    <Compile Include="Adapters\ConversationMessageAdapter\ConversationMessageDateVh.cs" />
+    <Compile Include="Adapters\ConversationMessageAdapter\ConversationMyMessageVh.cs" />
     <Compile Include="Adapters\ConversationMessageAdapter\ConversationMessageRecyclerAdapter.cs" />
-    <Compile Include="Adapters\ConversationMessageAdapter\ConversationMessageRecyclerItem.cs" />
     <Compile Include="Adapters\ConversationRecyclerAdapter.cs" />
     <Compile Include="Adapters\MessagesRecyclerAdapter.cs" />
     <Compile Include="Adapters\AccountsRecyclerAdapter.cs" />
