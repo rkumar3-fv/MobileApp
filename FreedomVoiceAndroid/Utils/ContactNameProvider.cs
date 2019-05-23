@@ -82,7 +82,7 @@ namespace com.FreedomVoice.MobileApp.Android.Utils
                 while (phoneCursor != null && phoneCursor.MoveToNext())
                 {
                     var phone = DataFormatUtils.NormalizePhone(phoneCursor.GetString(phoneCursor.GetColumnIndex(projection[1])));
-                    res.Add(phone);
+                    res.Add(GetClearPhoneNumber(phone));
                 }
                 phoneCursor.Close();
 

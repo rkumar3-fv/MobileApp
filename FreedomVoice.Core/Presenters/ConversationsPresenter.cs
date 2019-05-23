@@ -71,7 +71,7 @@ namespace FreedomVoice.Core.Presenters
         public void Dispose()
         {
             NotificationMessageService.Instance().NewMessageEventHandler -= OnNewMessageEventHandler;
-            NotificationMessageService.Instance().MessageUpdatedHandler -= OnMessageUpdatedHandler;
+
         }
 
         private void OnNewMessageEventHandler(object sender, ConversationEventArg e)
@@ -139,8 +139,8 @@ namespace FreedomVoice.Core.Presenters
                 _phoneNumber,
                 _currentDate, 
                 DefaultCount, 
-                _currentPage, 
-                AccountNumber, 
+                _currentPage,
+                _phoneNumber, 
                 Query, 
                 _nameProvider.SearchNumbers(Query).ToArray()
                 );
