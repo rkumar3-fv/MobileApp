@@ -2598,6 +2598,9 @@ namespace com.FreedomVoice.MobileApp.Android
 			// aapt resource value: 0x7f0a00ca
 			public const int inactive_activity_text_margin = 2131361994;
 			
+			// aapt resource value: 0x7f0a011e
+			public const int item_message_text_max_width = 2131362078;
+			
 			// aapt resource value: 0x7f0a0003
 			public const int item_touch_helper_max_drag_scroll_per_frame = 2131361795;
 			
