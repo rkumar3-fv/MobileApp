@@ -98,7 +98,9 @@ namespace FreedomVoice.Core.Presenters
 
         private void OnMessageUpdatedHandler(object sender, MessageEventArg e)
         {
-            if (!e.Message.CreatedAt.HasValue || !_rawData.ContainsKey(e.Message.CreatedAt.Value.ToString(DateFormat))) return;
+            if (!e.Message.CreatedAt.HasValue ||
+                !_rawData.ContainsKey(e.Message.CreatedAt.Value.ToString(DateFormat)) ||
+                                      e.Message.Conversation?.Id != _conversationId.Value) return;
             var chatMessages = _rawData[e.Message.CreatedAt.Value.ToString(DateFormat)];
             if (chatMessages == null)
             {
@@ -121,7 +123,7 @@ namespace FreedomVoice.Core.Presenters
         private void OnNewMessageEventHandler(object sender, ConversationEventArg e)
         {
             var message = e.Conversation.Messages.LastOrDefault();
-            if (message == null)
+            if (message == null || !_conversationId.HasValue || e.Conversation.Id != _conversationId.Value)
             {
                 return;
             }
@@ -130,7 +132,7 @@ namespace FreedomVoice.Core.Presenters
             var rawFrom = Regex.Replace(message.From.PhoneNumber, @"\D", "");
             var current = Regex.Replace(PhoneNumber, @"\D", "");
             
-            if (rawFrom.Equals(current) || !rawTo.Equals(current) )
+            if (rawFrom.Equals(current) || !rawTo.Equals(current))
             {
                 return;
             }

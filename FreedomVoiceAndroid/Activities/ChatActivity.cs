@@ -15,6 +15,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         Icon = "@mipmap/ic_launcher",
         ScreenOrientation = ScreenOrientation.Portrait,
         WindowSoftInputMode = SoftInput.AdjustResize,
+        LaunchMode = LaunchMode.SingleTask,
         Theme = "@style/AuthAppTheme")]
     public class ChatActivity : BaseActivity
     {
@@ -65,6 +66,13 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             SupportFragmentManager.BeginTransaction()
                 .Replace(Resource.Id.chatActivity_container, fragment)
                 .Commit();
+        }
+
+        protected override void OnNewIntent(Intent intent)
+        {
+            base.OnNewIntent(intent);
+            Intent = intent;
+            Recreate();
         }
     }
 }

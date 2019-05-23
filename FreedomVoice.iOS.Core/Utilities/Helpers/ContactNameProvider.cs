@@ -17,17 +17,17 @@ namespace FreedomVoice.iOS.Core.Utilities.Helpers
         public ContactNameProvider()
         {
             ContactItemsDidReceive(null, null);
-            
-            Helpers.Contacts.ItemsChanged += ContactItemsDidReceive;
+
+            Contacts.ItemsChanged += ContactItemsDidReceive;
         }
 
         public List<string> SearchNumbers(string query)
         {
             var res = new List<string>();
-            var contacts = Helpers.Contacts.ContactList.Where(c => Helpers.Contacts.ContactMatchPredicate(c, query)).Distinct().ToList();
+            var contacts = Contacts.ContactList.Where(c => Contacts.ContactMatchPredicate(c, query)).Distinct().ToList();
             foreach (var contact in contacts)
             {
-                res.AddRange(contact.Phones.Select(phone => phone.Number));
+                res.AddRange(contact.Phones.Select(phone => GetClearPhoneNumber(phone.Number)));
             }
             return res;
         }

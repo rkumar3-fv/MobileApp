@@ -44,7 +44,7 @@ namespace FreedomVoice.Core.ViewModels
 
             if (timeSpan <= TimeSpan.FromDays(1))
             {
-                result = dateTime.ToString("HH:mm");
+                result = dateTime.ToString("t");
             }
             else if (timeSpan <= TimeSpan.FromDays(7))
             {
