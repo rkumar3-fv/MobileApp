@@ -81,6 +81,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             ContentActivity.SearchListener.OnCollapse += SearchListenerOnCancel;
             _contactNameProvider.ContactsUpdated += ProviderOnContactsUpdated;
             _contactNameProvider.ContactsUpdated += ProviderOnContactsUpdated;
+            if (_presenter != null) UpdateList(null, null);
         }      
 
         public override void OnPause()

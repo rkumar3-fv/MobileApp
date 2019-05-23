@@ -71,7 +71,7 @@ namespace FreedomVoice.Core.Presenters
         public void Dispose()
         {
             NotificationMessageService.Instance().NewMessageEventHandler -= OnNewMessageEventHandler;
-
+            NotificationMessageService.Instance().MessageUpdatedHandler -= OnMessageUpdatedHandler;
         }
 
         private void OnNewMessageEventHandler(object sender, ConversationEventArg e)
@@ -110,6 +110,7 @@ namespace FreedomVoice.Core.Presenters
             {
                 Items[index] = viewModel;
             }
+            Items = Items.OrderByDescending(item => item.DateTime).ToList();
             ItemsChanged?.Invoke(this, new ConversationsEventArgs(Items));
         }
 
