@@ -59,6 +59,7 @@ namespace FreedomVoice.Core.Presenters
             _nameProvider = ServiceContainer.Resolve<IContactNameProvider>();
             
             NotificationMessageService.Instance().NewMessageEventHandler += OnNewMessageEventHandler;
+            NotificationMessageService.Instance().MessageUpdatedHandler += OnMessageUpdatedHandler;
         }
 
         ~ConversationsPresenter()
@@ -74,10 +75,29 @@ namespace FreedomVoice.Core.Presenters
         private void OnNewMessageEventHandler(object sender, ConversationEventArg e)
         {
             var conversation = e.Conversation;
-            if ( !conversation.SystemPhone.PhoneNumber.Equals(PhoneNumber) )
-            {
-                return;
-            }
+            var message = conversation.Messages.FirstOrDefault();
+            if (message == null) return;
+            if ( !message.To.PhoneNumber.Equals(PhoneNumber) ) return;
+
+            _updateConversation(conversation);
+        }
+
+        void OnMessageUpdatedHandler(object sender, MessageEventArg e)
+        {
+            var conversation = e.Message.Conversation;
+            var message = e.Message;
+            if (conversation == null) return;
+            if (message == null) return;
+            if (!message.From.PhoneNumber.Equals(PhoneNumber)) return;
+            conversation.Messages = new List<DAL.DbEntities.Message>{ message };
+            conversation.SystemPhone = message.From;
+            conversation.ToPhone = message.To;
+
+            _updateConversation(conversation);
+        }
+
+        private void _updateConversation(DAL.DbEntities.Conversation conversation)
+        {
             var viewModel = new ConversationViewModel(conversation, _nameProvider);
             var index = Items.FindIndex(model => model.ConversationId == conversation.Id);
             if (index < 0)
@@ -92,6 +112,7 @@ namespace FreedomVoice.Core.Presenters
             Items = Items.OrderByDescending(item => item.Date).ToList();
             ItemsChanged?.Invoke(this, new ConversationsEventArgs(Items));
         }
+
 
         public async void ReloadAsync()
         {

@@ -100,10 +100,18 @@ namespace FreedomVoice.Core.Presenters
         {
             if (!e.Message.CreatedAt.HasValue || !_rawData.ContainsKey(e.Message.CreatedAt.Value.ToString(DateFormat))) return;
             var chatMessages = _rawData[e.Message.CreatedAt.Value.ToString(DateFormat)];
-            if (chatMessages == null) return;
+            if (chatMessages == null)
+            {
+                _addOutgoingMessage(e.Message);
+                return;
+            }
             
             var visibleItemIndex = chatMessages.FindIndex(chatMessage => chatMessage.MessageId == e.Message.Id);
-            if (visibleItemIndex == -1) return;
+            if (visibleItemIndex == -1)
+            {
+                _addOutgoingMessage(e.Message);
+                return;
+            };
 
             chatMessages[visibleItemIndex] = CreateChatMessage(e.Message);
             _updateItems();
@@ -127,6 +135,20 @@ namespace FreedomVoice.Core.Presenters
                 return;
             }
             var model = new IncomingMessageViewModel(e.Conversation.Messages.Last());
+            _addMessage(model);
+        }
+
+        private void _addOutgoingMessage(Message message)
+        {
+            var rawTo = Regex.Replace(message.To.PhoneNumber, @"\D", "");
+            var rawFrom = Regex.Replace(message.From.PhoneNumber, @"\D", "");
+            var current = Regex.Replace(PhoneNumber, @"\D", "");
+
+            if (rawTo.Equals(current) || !rawFrom.Equals(current))
+            {
+                return;
+            }
+            var model = new OutgoingMessageViewModel(message);
             _addMessage(model);
         }
 
