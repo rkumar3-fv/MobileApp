@@ -65,11 +65,13 @@ namespace FreedomVoice.Core.Presenters
         ~ConversationsPresenter()
         {
             NotificationMessageService.Instance().NewMessageEventHandler -= OnNewMessageEventHandler;
+            NotificationMessageService.Instance().MessageUpdatedHandler -= OnMessageUpdatedHandler;
         }
 
         public void Dispose()
         {
             NotificationMessageService.Instance().NewMessageEventHandler -= OnNewMessageEventHandler;
+            NotificationMessageService.Instance().MessageUpdatedHandler -= OnMessageUpdatedHandler;
         }
 
         private void OnNewMessageEventHandler(object sender, ConversationEventArg e)
