@@ -110,8 +110,6 @@ namespace FreedomVoice.Core.Presenters
             {
                 Items[index] = viewModel;
             }
-
-            Items = Items.OrderByDescending(item => item.Date).ToList();
             ItemsChanged?.Invoke(this, new ConversationsEventArgs(Items));
         }
 
