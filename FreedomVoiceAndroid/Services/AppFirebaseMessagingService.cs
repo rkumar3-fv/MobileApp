@@ -77,10 +77,11 @@ namespace com.FreedomVoice.MobileApp.Android.Services
                 {
                     try
                     {
+                        var formattedPhoneNumber = _contactNameProvider.GetFormattedPhoneNumber(conversation.ToPhone.PhoneNumber);
                         var contactNameOrPhone = _contactNameProvider.GetName(conversation.ToPhone.PhoneNumber);
                         ShowConversationMessagePush(
                             conversation.Id,
-                            conversation.ToPhone.PhoneNumber,
+                            formattedPhoneNumber,
                             contactNameOrPhone,
                             conversation.Messages?.FirstOr(null)?.Text ?? "new message"
                         );
