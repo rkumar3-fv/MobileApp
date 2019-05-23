@@ -55,6 +55,7 @@ namespace FreedomVoice.Core.Services
                 // Updating
                 else
                 {
+                    message.Conversation = conversation;
                     message.ReadAt = messageFromApi.ReadAt;
                     message.State = (SendingState) messageFromApi.State;
                 }
@@ -112,7 +113,10 @@ namespace FreedomVoice.Core.Services
             var usedPhones = new List<Phone>();
             foreach (var conversation in conversations)
             {
-                var cachedConversation = _conversationRepository.Table.Include(row => row.Messages).FirstOrDefault(row => conversation.Id == row.Id);
+                var cachedConversation = _conversationRepository.Table.Include(row => row.Messages)
+                    .Include(row => row.SystemPhone)
+                    .Include(row => row.ToPhone)
+                    .FirstOrDefault(row => conversation.Id == row.Id);
                 // Adding
                 if (cachedConversation == null && !conversation.IsRemoved)
                     _conversationRepository.InsertWithoutSaving(UpdatePhones(_mapper.Map<Conversation>(conversation), usedPhones));

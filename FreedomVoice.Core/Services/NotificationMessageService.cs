@@ -60,6 +60,10 @@ namespace FreedomVoice.Core.Services
             var list = new[] {conversation};
             _cacheService.UpdateConversationsCache(list);
             var messageBy = _cacheService.GetMessageBy(conversation.Id, conversation.Messages.First().Id);
+            if (messageBy == null)
+            {
+                messageBy = _saveMessage(conversation);
+            }
             var saveConversation = _cacheService.GetConversation(conversation.Id);
             saveConversation.Messages = new List<Message>() {messageBy};
             return saveConversation;

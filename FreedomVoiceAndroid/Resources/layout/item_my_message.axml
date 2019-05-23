@@ -7,7 +7,7 @@
         android:layout_width="match_parent"
         android:layout_marginTop="4dp"
         android:layout_marginBottom="4dp"
-        android:layout_marginLeft="56dp"
+        android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:gravity="right"
         >
@@ -29,13 +29,13 @@
                 android:layout_alignParentRight="true"
                 android:src="@drawable/ic_chat"
                 android:visibility="gone"
+                tools:visibility="visible"
                 />
 
         <FrameLayout
                 android:id="@+id/item_my_message_fl_text_block"
                 android:background="@drawable/bg_message_cloud_right"
                 android:layout_toLeftOf="@+id/item_my_message_iv"
-                android:layout_toRightOf="@+id/item_message_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
 
@@ -43,25 +43,27 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="8dp"
-                    android:layout_gravity="right"
-                    tools:text="Test message Test message Test message Test message"
+                    android:maxWidth="@dimen/item_message_text_max_width"
+                    android:gravity="right"
+                    tools:text="Test message Test message Test message Test message Test messageTest message"
                     android:textColor="#FFFBFF"
                     android:id="@+id/conversation_message_tv"
                     />
 
         </FrameLayout>
 
-		<TextView
-			android:id="@+id/item_message_date"
-			tools:text="23:23"
-			android:layout_marginRight="4dp"
-			android:textColor="@color/colorChatTextSecondary"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_centerVertical="true"
-            android:textStyle="italic"
-            android:textSize="12sp"
-        />
+        <TextView
+                android:id="@+id/item_message_date"
+                tools:text="23:23"
+                android:layout_marginRight="4dp"
+                android:layout_toLeftOf="@+id/item_my_message_fl_text_block"
+                android:textColor="@color/colorChatTextSecondary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:textStyle="italic"
+                android:textSize="12sp"
+                />
 
     </RelativeLayout>
 
