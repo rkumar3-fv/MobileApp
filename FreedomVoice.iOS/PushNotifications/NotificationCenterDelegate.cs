@@ -236,8 +236,8 @@ namespace FreedomVoice.iOS.PushNotifications
 
 			var controller = new ConversationViewController();
 			controller.ConversationId = pushNotificationData.Data.Id;
-			controller.CurrentPhone = new PresentationNumber(pushNotificationData.TextMessageReceivedFromNumber());
-			controller.Title = phoneHolder ?? pushNotificationData.TextMessageReceivedToNumber();
+			controller.CurrentPhone = new PresentationNumber(pushNotificationData.TextMessageReceivedToNumber());
+			controller.Title = phoneHolder ?? pushNotificationData.TextMessageReceivedFromNumber();
 			_appNavigator.CurrentController.NavigationController?.PushViewController(controller, true);
 			pushNotificationData = null;
 		}
