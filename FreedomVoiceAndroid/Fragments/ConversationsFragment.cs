@@ -63,7 +63,8 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                 if (code != ActionsHelperEventArgs.ChangePresentation) continue;
 
                 _presenter = new ConversationsPresenter()
-                    {PhoneNumber = Helper?.SelectedAccount?.PresentationNumber
+                {
+                    PhoneNumber = Helper?.SelectedAccount?.PresentationNumber,
                     AccountNumber = Helper?.SelectedAccount?.AccountName
                 };
                 _presenter.ItemsChanged += UpdateList;
