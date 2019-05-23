@@ -139,13 +139,13 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
         {
             base.ViewDidAppear(animated);
             ServiceContainer.Resolve<IContactNameProvider>().RequestContacts();
-            CallerIdEvent.CallerIdChanged += UpdateCallerId;
+            CallerIdEvent.CallerIdFinished += UpdateCallerId;
         }
 
         public override void ViewWillDisappear(bool animated)
         {
             base.ViewWillDisappear(animated);
-            CallerIdEvent.CallerIdChanged -= UpdateCallerId;
+            CallerIdEvent.CallerIdFinished -= UpdateCallerId;
         }
 
         private void _SetupViews()
