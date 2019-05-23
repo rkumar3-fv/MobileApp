@@ -14,13 +14,14 @@ using FreedomVoice.iOS.Services.Responses;
 using FreedomVoice.iOS.Utilities.Helpers;
 using FreedomVoice.iOS.ViewControllers;
 using FreedomVoice.iOS.ViewControllers.Texts;
+using PushKit;
 using UIKit;
 using UserNotifications;
 using static FreedomVoice.iOS.Core.Utilities.Helpers.Contacts;
 
 namespace FreedomVoice.iOS.PushNotifications
 {
-	class NotificationCenterDelegate: UNUserNotificationCenterDelegate
+	class NotificationCenterDelegate: UNUserNotificationCenterDelegate, IPKPushRegistryDelegate
 	{
 		private readonly IAppNavigator _appNavigator = ServiceContainer.Resolve<IAppNavigator>();
 		private readonly IContactNameProvider _contactNameProvider = ServiceContainer.Resolve<IContactNameProvider>();
@@ -229,6 +230,82 @@ namespace FreedomVoice.iOS.PushNotifications
 			controller.Title = phoneHolder ?? pushNotificationData.TextMessageReceivedToNumber();
 			_appNavigator.CurrentController.NavigationController?.PushViewController(controller, true);
 			pushNotificationData = null;
+		}
+		
+		public event Action<NSData> DidUpdatePushToken;
+		
+		public void DidUpdatePushCredentials(PKPushRegistry registry, PKPushCredentials credentials, string type)
+		{
+			_logger.Debug(nameof(NotificationCenterDelegate), nameof(DidUpdatePushCredentials), $"DidUpdatePushCredentials: {credentials.Token} {type}");
+			DidUpdatePushToken?.Invoke(credentials.Token);
+		}
+
+		public void DidReceiveIncomingPush(PKPushRegistry registry, PKPushPayload payload, string type)
+		{
+			_logger.Debug(nameof(NotificationCenterDelegate), nameof(DidUpdatePushCredentials), $"DidUpdatePushCredentials: {payload} {type}");
+
+			var apsValue = payload.DictionaryPayload["aps"] as NSDictionary;
+
+			if (apsValue.ContainsKey(new NSString("content-available")))
+			{
+				var contentAvailable = apsValue["content-available"] as NSNumber;
+				if (contentAvailable != null && contentAvailable.Int32Value == 1)
+				{
+					//Todo silencs
+					return;
+				}
+			}
+
+			if (!apsValue.ContainsKey(new NSString("alert")))
+				return;
+
+			var alertValue = apsValue["alert"] as NSDictionary;
+			
+			if (!alertValue.ContainsKey(new NSString("title")) || !alertValue.ContainsKey(new NSString("body")))
+				return;
+			
+			var titleValue = alertValue["title"] as NSString;
+			var bodyValue = alertValue["body"] as NSString;
+
+			var pushResponseData = PushResponseExtension.CreateFromFromJson(payload.DictionaryPayload);
+
+			if (pushResponseData == null)
+			{
+				_logger.Debug(nameof(NotificationCenterDelegate), nameof(DidUpdatePushCredentials), $"Can't parse Data(PushResponse).");
+				ShowPushNotificationsNow(titleValue, bodyValue);
+				return;
+			}
+
+			var fromPhone = pushResponseData.TextMessageReceivedFromNumber();
+			var phoneHolder = _contactNameProvider.GetNameOrNull(NormalizePhoneNumber(fromPhone));
+
+			if (string.IsNullOrWhiteSpace(phoneHolder))
+			{
+				_logger.Debug(nameof(NotificationCenterDelegate), nameof(DidUpdatePushCredentials), $"Can't parse 'From phone number'.");
+				ShowPushNotificationsNow(titleValue, bodyValue);
+				return;
+			}
+			
+			_logger.Debug(nameof(NotificationCenterDelegate), nameof(DidUpdatePushCredentials), $"'From' phone number has been found: {phoneHolder}");
+			ShowPushNotificationsNow(phoneHolder, bodyValue);
+		}
+
+		private void ShowPushNotificationsNow(string title, string body)
+		{
+			_logger.Debug(nameof(NotificationCenterDelegate), nameof(ShowPushNotificationsNow), $"Show alerts as title: {title}, body: {body}");
+
+			var notificationContent = new UNMutableNotificationContent();
+			notificationContent.Title = title;
+			notificationContent.Body = body;
+			notificationContent.Sound = UNNotificationSound.Default;
+
+			var trigger = UNTimeIntervalNotificationTrigger.CreateTrigger(1, false);
+			var localNotificationRequest = UNNotificationRequest.FromIdentifier(new NSUuid().AsString(), notificationContent, trigger);
+			
+			UNUserNotificationCenter.Current.AddNotificationRequest(localNotificationRequest, error =>
+			{
+                _logger.Debug(nameof(NotificationCenterDelegate), nameof(ShowPushNotificationsNow), $"Push has been showed. Error: {error}");
+			});
 		}
 	}
 }

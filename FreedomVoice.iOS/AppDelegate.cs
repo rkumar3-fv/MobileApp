@@ -54,6 +54,8 @@ namespace FreedomVoice.iOS
 
             ServiceContainer.Register(Window);
             ServiceContainer.Register<ISynchronizeInvoke>(() => new SynchronizeInvoke());
+            ServiceContainer.Register<IPushNotificationsService>(() => new PushNotificationsService(PushServiceCenter));
+
             pushService = ServiceContainer.Resolve<IPushNotificationsService>();
             
             ActivityIndicator = new ActivityIndicator(Theme.ScreenBounds);
@@ -67,6 +69,7 @@ namespace FreedomVoice.iOS
             InitializeAnalytics();
 
             Theme.Apply();
+            
             UNUserNotificationCenter.Current.Delegate = PushServiceCenter;
 
             if (UserDefault.IsAuthenticated)

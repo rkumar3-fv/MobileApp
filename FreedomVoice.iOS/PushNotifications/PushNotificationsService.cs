@@ -5,114 +5,62 @@ using Foundation;
 using FreedomVoice.Core.Services.Interfaces;
 using FreedomVoice.Core.Utils;
 using FreedomVoice.Entities.Enums;
+using FreedomVoice.iOS.Core;
 using FreedomVoice.iOS.Utilities.Helpers;
-using UIKit;
 using UserNotifications;
+using PushKit;
+using static FreedomVoice.iOS.Core.Utilities.Helpers.Contacts;
 
 namespace FreedomVoice.iOS.PushNotifications
 {
-	
-	/// <summary>
-	/// Enum Describes possible errors during registration.
-	/// </summary>
-	enum PushRegistrationErrors
-	{
-		/// <summary>
-		/// Registration is not completed or access is not denied
-		/// </summary>
-		accessNotGranted,
-		
-		/// <summary>
-		/// Registration completed with a error
-		/// </summary>
-		registrationFailed
-	}
-
-	interface IPushNotificationsService
-	{
-		/// <summary>
-		/// Method to start push notifications configuration
-		/// </summary>
-		/// <param name="options">Constants for requesting authorization to interact with the user.</param>
-		/// <param name="registrationCompletionBlock">The method which will be invoked after registration</param>
-		void RegisterForPushNotifications(UNAuthorizationOptions options, Action<PushRegistrationErrors?> registrationCompletionBlock);
-		
-		/// <summary>
-		/// Method to start push notifications configuration
-		/// </summary>
-		/// <remarks>This method use the following options:: UNAuthorizationOptions.Alert | UNAuthorizationOptions.Sound | UNAuthorizationOptions.Badge </remarks>
-		/// <param name="registrationCompletionBlock">The method which will be invoked after registration</param>
-		void RegisterForPushNotifications(Action<PushRegistrationErrors?> registrationCompletionBlock);
-		
-		/// <summary>
-		/// Will return current App notification settings: Granted, Not Allowed etc.
-		/// </summary>
-		/// <param name="completion"></param>
-		void GetNotificationSettings(Action<UNNotificationSettings> completion);
-		
-		/// <summary>
-		/// Method saves push-token and invokes registrationCompletionBlock
-		/// </summary>
-		/// <remarks>Must be called from AppDelegate, don't call this manually</remarks>
-		/// <param name="deviceToken"></param>
-		void DidRegisterForRemoteNotifications(NSData deviceToken);
-		
-		/// <summary>
-		/// Method invokes registrationCompletionBlock with error
-		/// </summary>
-		/// <remarks>Must be called from AppDelegate, don't call this manually</remarks>
-		/// <param name="deviceToken"></param>
-		void DidFailToRegisterForRemoteNotifications(NSError error);
-
-		/// <summary>
-		/// Method registers push-token on the server.
-		/// </summary>
-		/// <returns></returns>
-		Task RegisterPushNotificationToken();
-		
-		/// <summary>
-		/// Method unregisters push-token on the server.
-		/// </summary>
-		/// <returns></returns>
-		Task UnregisterPushNotificationToken();
-	}
-	
-	class PushNotificationsService: IPushNotificationsService
+	class PushNotificationsService : NSObject, IPushNotificationsService
 	{
 		private readonly UNUserNotificationCenter _notificationCenter;
 		private Action<PushRegistrationErrors?> registrationCompletionBlock;
 
+		private readonly ILogger _logger;
 		private readonly IPushNotificationTokenDataStore _tokenDataStore;
 		private readonly IPushService _pushService;
+		private readonly NotificationCenterDelegate _voipPushNotificationsCenterDelegate;
 
-		public PushNotificationsService(UNUserNotificationCenter notificationCenter, IPushNotificationTokenDataStore tokenDataStore, IPushService pushService)
+		public PushNotificationsService(
+			UNUserNotificationCenter notificationCenter,
+			IPushNotificationTokenDataStore tokenDataStore,
+			IPushService pushService,
+			NotificationCenterDelegate voipPushNotificationsCenterDelegate,
+			ILogger logger)
 		{
 			_tokenDataStore = tokenDataStore;
 			_pushService = pushService;
 			_notificationCenter = notificationCenter;
+			_voipPushNotificationsCenterDelegate = voipPushNotificationsCenterDelegate;
+			_logger = logger;
 		}
-		
-		public PushNotificationsService()
+
+		public PushNotificationsService(NotificationCenterDelegate notificationCenterDelegate)
 		{
 			_tokenDataStore = ServiceContainer.Resolve<IPushNotificationTokenDataStore>();
 			_pushService = ServiceContainer.Resolve<IPushService>();
 			_notificationCenter = UNUserNotificationCenter.Current;
+			_voipPushNotificationsCenterDelegate = notificationCenterDelegate;
+			_logger = ServiceContainer.Resolve<ILogger>();
+			_voipPushNotificationsCenterDelegate.DidUpdatePushToken += DidRegisterForRemoteNotifications;
 		}
-		
+
 		/// <inheritdoc/>
 		public void RegisterForPushNotifications(Action<PushRegistrationErrors?> registrationCompletionBlock)
 		{
-			RegisterForPushNotifications( UNAuthorizationOptions.Alert | UNAuthorizationOptions.Sound | UNAuthorizationOptions.Badge, registrationCompletionBlock);
+			RegisterForPushNotifications(UNAuthorizationOptions.Alert | UNAuthorizationOptions.Sound | UNAuthorizationOptions.Badge, registrationCompletionBlock);
 		}
-		
+
 		/// <inheritdoc/>
 		public void RegisterForPushNotifications(UNAuthorizationOptions options, Action<PushRegistrationErrors?> registrationCompletionBlock)
 		{
-			Console.WriteLine($"[{GetType()}] Registration for PushNotifications with options: {options}");
+			_logger.Debug(nameof(PushNotificationsService), nameof(RegisterForPushNotifications), $"Registration for PushNotifications with options: {options}");
 
 			_notificationCenter.RequestAuthorization(options, (granted, error) =>
 			{
-				Console.WriteLine($"[{GetType()}] RequestAuthorization finished: granted: {granted}, error: {error}");
+				_logger.Debug(nameof(PushNotificationsService), nameof(RegisterForPushNotifications), $"RequestAuthorization finished: granted: {granted}, error: {error}");
 
 				if (!granted)
 				{
@@ -122,7 +70,7 @@ namespace FreedomVoice.iOS.PushNotifications
 
 				_notificationCenter.GetNotificationSettings((settings) =>
 				{
-					Console.WriteLine($"[{GetType()}] GetNotificationSettings finished: settings: {settings}");
+					_logger.Debug(nameof(PushNotificationsService), nameof(RegisterForPushNotifications), $"GetNotificationSettings finished: settings: {settings}");
 
 					if (settings.AuthorizationStatus != UNAuthorizationStatus.Authorized)
 					{
@@ -134,8 +82,13 @@ namespace FreedomVoice.iOS.PushNotifications
 
 					DispatchQueue.MainQueue.DispatchAsync(() =>
 					{
-						Console.WriteLine($"[{GetType()}] try to RegisterForRemoteNotifications");
-						UIApplication.SharedApplication.RegisterForRemoteNotifications();
+						_logger.Debug(nameof(PushNotificationsService), nameof(RegisterForPushNotifications), "try to RegisterForRemoteNotifications");
+
+						var voipRegistry = new PKPushRegistry(DispatchQueue.MainQueue);
+						voipRegistry.DesiredPushTypes = new NSSet(new NSObject[] {PKPushType.Voip});
+						voipRegistry.Delegate = _voipPushNotificationsCenterDelegate;
+						
+//						UIApplication.SharedApplication.RegisterForRemoteNotifications();
 					});
 				});
 			});
@@ -152,15 +105,15 @@ namespace FreedomVoice.iOS.PushNotifications
 		{
 			var token = deviceToken.Description.Trim('<').Trim('>').Replace(" ", "").ToUpper();
 			_tokenDataStore.Save(token);
-		
-			Console.WriteLine($"[{GetType()}] Did register for RemoteNotifications: {token}");
+
+			_logger.Debug(nameof(PushNotificationsService), nameof(DidRegisterForRemoteNotifications), $"Did register for RemoteNotifications: {token}");
 			registrationCompletionBlock?.Invoke(null);
 		}
 
 		/// <inheritdoc/>
 		public void DidFailToRegisterForRemoteNotifications(NSError error)
 		{
-			Console.WriteLine($"[{GetType()}] Did fail to register for RemoteNotifications: {error.LocalizedDescription}");
+			_logger.Debug(nameof(PushNotificationsService), nameof(DidFailToRegisterForRemoteNotifications), $"Did fail to register for RemoteNotifications: {error.LocalizedDescription}");
 			registrationCompletionBlock?.Invoke(PushRegistrationErrors.registrationFailed);
 		}
 
@@ -168,28 +121,26 @@ namespace FreedomVoice.iOS.PushNotifications
 		public async Task RegisterPushNotificationToken()
 		{
 			var savedToken = _tokenDataStore.Get();
-			if (string.IsNullOrWhiteSpace(savedToken) )
+			if (string.IsNullOrWhiteSpace(savedToken))
 			{
-				var errorText = $"[{GetType()}] Push notification token is null or empty";
-				Console.WriteLine(errorText);
+				_logger.Debug(nameof(PushNotificationsService), nameof(RegisterPushNotificationToken), "Push notification token is null or empty");
 				return;
 			}
 
-            if (string.IsNullOrWhiteSpace(UserDefault.AccountPhoneNumber))
-            {
-                var errorText = $"[{GetType()}] AccountPhoneNumber is null or empty";
-                Console.WriteLine(errorText);
-                return;
-            }
-
-            try
+			if (string.IsNullOrWhiteSpace(UserDefault.AccountPhoneNumber))
 			{
-				await _pushService.Register(DeviceType.IOS, savedToken, iOS.Core.Utilities.Helpers.Contacts.NormalizePhoneNumber(UserDefault.AccountPhoneNumber));
-				Console.WriteLine($"[{GetType()}] Token ({savedToken}) has been registrated");
+				_logger.Debug(nameof(PushNotificationsService), nameof(RegisterPushNotificationToken), "AccountPhoneNumber is null or empty");
+				return;
+			}
+
+			try
+			{
+				await _pushService.Register(DeviceType.IOS, savedToken, NormalizePhoneNumber(UserDefault.AccountPhoneNumber));
+				_logger.Debug(nameof(PushNotificationsService), nameof(RegisterPushNotificationToken), $"Token ({savedToken}) has been registered");
 			}
 			catch (Exception exception)
 			{
-				Console.WriteLine($"[{GetType()}] Registration token ({savedToken}) has been failed: {exception}");
+				_logger.Debug(nameof(PushNotificationsService), nameof(RegisterPushNotificationToken), $"Registration token ({savedToken}) has been failed: {exception}");
 				throw;
 			}
 		}
@@ -201,12 +152,12 @@ namespace FreedomVoice.iOS.PushNotifications
 
 			try
 			{
-				var _ = await _pushService.Unregister(DeviceType.IOS, savedToken, UserDefault.AccountPhoneNumber);
-                Console.WriteLine($"[{GetType()}] Token ({savedToken}) has been unregistrated");
+				await _pushService.Unregister(DeviceType.IOS, savedToken, UserDefault.AccountPhoneNumber);
+				_logger.Debug(nameof(PushNotificationsService), nameof(UnregisterPushNotificationToken), $"Token ({savedToken}) has been unregistered");
 			}
 			catch (Exception exception)
 			{
-				Console.WriteLine($"[{GetType()}] Registration token ({savedToken}) has been failed: {exception}");
+				_logger.Debug(nameof(PushNotificationsService), nameof(UnregisterPushNotificationToken), $"Unregistration token ({savedToken}) has been failed: {exception}");
 				throw;
 			}
 		}

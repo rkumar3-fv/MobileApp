@@ -81,6 +81,9 @@
 	<string>Access to your contacts allows you to identify who is calling or texting your FreedomVoice number. Your contacts are never stored on FreedomVoice servers.</string>
 	<key>UIBackgroundModes</key>
 	<array>
+		<string>audio</string>
+		<string>voip</string>
+		<string>fetch</string>
 		<string>remote-notification</string>
 	</array>
 </dict>
