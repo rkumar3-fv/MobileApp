@@ -9,6 +9,7 @@ using Android.Text;
 using Android.Views;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Adapters;
+using com.FreedomVoice.MobileApp.Android.Utils;
 using FreedomVoice.Core.Presenters;
 using FreedomVoice.Core.Services.Interfaces;
 using FreedomVoice.Core.Utils;
@@ -106,13 +107,14 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             {
                 Toolbar.SetIcon(Resource.Drawable.ic_account_white);
                 Toolbar.SetDisplayShowHomeEnabled(true);
-                Toolbar.Title = ConversationPhone;
+                ContactsHelper.Instance(Context).GetName(ConversationPhone, out var name);
+                Toolbar.Title = string.IsNullOrEmpty(name) ? ConversationPhone : name;
                 _spinnerContainer.Visibility = ViewStates.Visible;
                 _selectContactContainer.Visibility = ViewStates.Gone;
 
                 _presenter.ConversationId = ConversationId.Value;
                 _presenter.PhoneNumber = Helper.SelectedAccount?.PresentationNumber;
-                
+
                 _progressBar.Visibility = ViewStates.Visible;
                 _presenter.ReloadAsync();
             }
