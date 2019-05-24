@@ -1,11 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using FreedomVoice.Core.Utils;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.Utilities.Events;
 using FreedomVoice.iOS.ViewControllers.Texts;
-using Google.Analytics;
 using UIKit;
 
 namespace FreedomVoice.iOS.ViewControllers
@@ -24,8 +22,6 @@ namespace FreedomVoice.iOS.ViewControllers
         {
             SharedInstance = this;
 
-            Gai.SharedInstance.DefaultTracker.Set(GaiConstants.ScreenName, "Main Tab Bar Screen");
-            Gai.SharedInstance.DefaultTracker.Send(DictionaryBuilder.CreateScreenView().Build());
         }
 
 	    public override void ViewDidLoad()

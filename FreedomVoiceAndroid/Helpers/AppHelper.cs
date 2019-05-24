@@ -1,15 +1,12 @@
 using Android;
 using Android.Content;
 using Android.Content.PM;
-using Android.Gms.Analytics;
 using Android.Net;
 using Android.OS;
 using Android.Provider;
 using Android.Runtime;
 using Android.Telephony;
 using com.FreedomVoice.MobileApp.Android.Storage;
-using Java.Util;
-using Xamarin;
 using Environment = Android.OS.Environment;
 
 namespace com.FreedomVoice.MobileApp.Android.Helpers
@@ -126,57 +123,14 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 #endregion
 
 #region Analytics
-        private bool _isInsightsOn;
-        private const int GaUpdatePeriod = 180;
-        private const string GaKey = "UA-587407-95";
+
         public const string InsightsKey = "d8bf081e25b6c01b8a852a950d1f7b446d33662d";
-        private const string RequestKey = "API_REQUEST";
-        private const string LoadingKey = "LOADING_FILE";
-        private const string ActionKey = "LONG_ACTION";
-        private const string OtherKey = "OTHER";
-        private const string LowMemoryKey = "LOW_MEMORY";
 
         /// <summary>
         /// Check Google Analytics state
         /// </summary>
         public bool IsGoogleAnalyticsOn { get; private set; }
 
-        /// <summary>
-        /// Check Xamarin Insights state
-        /// </summary>
-        public bool IsInsigthsOn => (_isInsightsOn && CheckFilesPermissions());
-
-        /// <summary>
-        /// Get GA tracker or NULL if not active
-        /// </summary>
-        public Tracker AnalyticsTracker { get; private set; }
-
-        /// <summary>
-        /// Initialize GA tracking
-        /// </summary>
-        /// <returns>GA state</returns>
-        public bool InitGa()
-        {
-            if (IsGoogleAnalyticsOn) return true;
-            if (CheckInternetPermissions() && CheckWakeLockPermission())
-            {
-                var analytics = GoogleAnalytics.GetInstance(_context);
-                analytics.SetLocalDispatchPeriod(GaUpdatePeriod);
-                AnalyticsTracker = analytics.NewTracker(GaKey);
-                AnalyticsTracker.EnableAutoActivityTracking(false);
-                AnalyticsTracker.EnableExceptionReporting(false);
-                AnalyticsTracker.EnableAdvertisingIdCollection(false);
-                var pInfo = _context.PackageManager.GetPackageInfo(App.AppPackage, 0);
-                AnalyticsTracker.SetAppName(_context.GetString(Resource.String.ApplicationName));
-                AnalyticsTracker.SetAppVersion($"{pInfo.VersionCode} ({pInfo.VersionName})");
-                AnalyticsTracker.SetLanguage(Locale.Default.Language);
-                AnalyticsTracker.SetScreenResolution(_context.Resources.DisplayMetrics.WidthPixels, _context.Resources.DisplayMetrics.HeightPixels);
-                IsGoogleAnalyticsOn = true;
-                return true;
-            }
-            IsGoogleAnalyticsOn = false;
-            return false;
-        }
 
         /// <summary>
         /// Time reporting via GA
@@ -187,75 +141,53 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         /// <param name="time">action duration</param>
         public bool ReportTime(TimingEvent type, string name, string result, long time)
         {
-            if (!IsGoogleAnalyticsOn) return false;
-            if (AnalyticsTracker == null) return false;
-            var timingTracker = new HitBuilders.TimingBuilder();
-            switch (type)
-            {
-                case TimingEvent.Request:
-                    timingTracker.SetCategory(RequestKey);
-                    break;
-                case TimingEvent.FileLoading:
-                    timingTracker.SetCategory(LoadingKey);
-                    break;
-                case TimingEvent.LongAction:
-                    timingTracker.SetCategory(ActionKey);
-                    break;
-                default:
-                    timingTracker.SetCategory(OtherKey);
-                    break;
-            }
-            timingTracker.SetVariable(name);
-            timingTracker.SetLabel(result);
-            timingTracker.SetValue(time);
-            AnalyticsTracker.Send(timingTracker.Build());
+//            if (!IsGoogleAnalyticsOn) return false;
+//            if (AnalyticsTracker == null) return false;
+//            var timingTracker = new HitBuilders.TimingBuilder();
+//            switch (type)
+//            {
+//                case TimingEvent.Request:
+//                    timingTracker.SetCategory(RequestKey);
+//                    break;
+//                case TimingEvent.FileLoading:
+//                    timingTracker.SetCategory(LoadingKey);
+//                    break;
+//                case TimingEvent.LongAction:
+//                    timingTracker.SetCategory(ActionKey);
+//                    break;
+//                default:
+//                    timingTracker.SetCategory(OtherKey);
+//                    break;
+//            }
+//            timingTracker.SetVariable(name);
+//            timingTracker.SetLabel(result);
+//            timingTracker.SetValue(time);
+//            AnalyticsTracker.Send(timingTracker.Build());
             return true;
         }
 
         public bool ReportEvent(SpecialEvent type, string name, string result)
         {
-            if (!IsGoogleAnalyticsOn) return false;
-            if (AnalyticsTracker == null) return false;
-            var eventTracker = new HitBuilders.EventBuilder();
-            switch (type)
-            {
-                case SpecialEvent.LowMemory:
-                    eventTracker.SetCategory(LowMemoryKey);
-                    break;
-                default:
-                    eventTracker.SetCategory(OtherKey);
-                    break;
-            }
-            eventTracker.SetAction(name);
-            eventTracker.SetLabel(result);
-            eventTracker.SetValue(1);
-            AnalyticsTracker.Send(eventTracker.Build());
+//            if (!IsGoogleAnalyticsOn) return false;
+//            if (AnalyticsTracker == null) return false;
+//            var eventTracker = new HitBuilders.EventBuilder();
+//            switch (type)
+//            {
+//                case SpecialEvent.LowMemory:
+//                    eventTracker.SetCategory(LowMemoryKey);
+//                    break;
+//                default:
+//                    eventTracker.SetCategory(OtherKey);
+//                    break;
+//            }
+//            eventTracker.SetAction(name);
+//            eventTracker.SetLabel(result);
+//            eventTracker.SetValue(1);
+//            AnalyticsTracker.Send(eventTracker.Build());
             return true;
         }
 
-        /// <summary>
-        /// Initialize Xamarin Insights tracking
-        /// </summary>
-        /// <returns>Xamarin Insights state</returns>
-        public bool InitInsights()
-        {
-            if (IsInsigthsOn) return true;
-            if (!CheckInternetPermissions() || !CheckFilesPermissions())
-            {
-                _isInsightsOn = false;
-                return false;
-            }
-            Insights.HasPendingCrashReport += (sender, isStartupCrash) =>
-            {
-                if (isStartupCrash)
-                    Insights.PurgePendingCrashReports().Wait();
-            };
-            Insights.Initialize(InsightsKey, _context);
-            _isInsightsOn = true;
-            return true;
-        }
-
-#endregion
+        #endregion
 
 #region Device State
         private string _phoneNumber;
