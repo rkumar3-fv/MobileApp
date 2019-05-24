@@ -1,4 +1,5 @@
 using Android.App;
+using Android.Content;
 using Android.Content.PM;
 using Android.Gms.Analytics;
 using Android.Graphics;
@@ -16,6 +17,7 @@ using com.FreedomVoice.MobileApp.Android.CustomControls;
 using com.FreedomVoice.MobileApp.Android.CustomControls.Callbacks;
 using com.FreedomVoice.MobileApp.Android.Dialogs;
 using com.FreedomVoice.MobileApp.Android.Fragments;
+using com.FreedomVoice.MobileApp.Android.Helpers;
 using com.FreedomVoice.MobileApp.Android.Utils;
 using SearchView = Android.Support.V7.Widget.SearchView;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
@@ -44,6 +46,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         private string _request;
 
         private ContactsFragment _contactsFragment;
+        private NavigationRedirectHelper _navigationRedirectHelper;
 
         /// <summary>
         /// Contacts search listener
@@ -54,6 +57,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         {
             base.OnCreate(bundle);
             SetContentView(Resource.Layout.act_content);
+            _navigationRedirectHelper = App.GetApplication(this).ApplicationHelper.NavigationRedirectHelper;
             _rootLayout = FindViewById<CoordinatorLayout>(Resource.Id.contentActivity_rootBar);
             RootLayout = _rootLayout;
             _whiteColor = new Color(ContextCompat.GetColor(this, Resource.Color.colorActionBarText));
@@ -123,6 +127,21 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             var param = _toolbar.LayoutParameters.JavaCast<AppBarLayout.LayoutParams>();
             param.ScrollFlags = AppBarLayout.LayoutParams.ScrollFlagScroll | AppBarLayout.LayoutParams.ScrollFlagEnterAlways;
             _tabLayout.Visibility = ViewStates.Visible;
+
+            _navigationRedirectHelper.OnNewRedirect += OnRedirect;
+            _navigationRedirectHelper.Resume();
+        }
+        
+        
+
+        private void OnRedirect(object sender, NavigationRedirectHelper.IRedirect e)
+        {
+            switch (e.ScreenKey)
+            {
+                case Screens.ChatScreen:
+                    StartActivity(e.Payload as Intent);
+                    break;
+            }
         }
 
         protected override void OnPause()
@@ -141,6 +160,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 }
             }
             _request = null;
+
+            _navigationRedirectHelper.OnNewRedirect -= OnRedirect;
         }
 
         private void ViewPagerOnPageSelected(object sender, ViewPager.PageSelectedEventArgs pageSelectedEventArgs)

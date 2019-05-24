@@ -89,6 +89,7 @@ namespace com.FreedomVoice.MobileApp.Android
 
 
         public bool IsAppInForeground => _resumedActivitys > 0;
+        public bool IsColdStart = true;
         private int _resumedActivitys = 0;
         
         public void OnActivityCreated(Activity activity, Bundle savedInstanceState)
@@ -107,6 +108,7 @@ namespace com.FreedomVoice.MobileApp.Android
         public void OnActivityResumed(Activity activity)
         {
             _resumedActivitys++;
+            IsColdStart = false;
         }
 
         public void OnActivitySaveInstanceState(Activity activity, Bundle outState)
