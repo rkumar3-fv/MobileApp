@@ -8,6 +8,7 @@ using Android.Support.V4.App;
 using Android.Support.V4.Content;
 using Android.Util;
 using com.FreedomVoice.MobileApp.Android.Activities;
+using com.FreedomVoice.MobileApp.Android.Receivers;
 using Firebase.Messaging;
 using FreedomVoice.Core.Services;
 using FreedomVoice.Core.Utils;
@@ -99,33 +100,13 @@ namespace com.FreedomVoice.MobileApp.Android.Services
             var manager = NotificationManagerCompat.From(this);
             var channelId = GetString(Resource.String.DefaultNotificationChannel);
 
-            PendingIntent pLaunchIntent;
-
-            if (App.GetApplication(this).ApplicationHelper.ActionsHelper.IsLoggedIn)
-            {
-                if (App.GetApplication(this).IsAppInForeground)
-                {
-                    var launchIntent =
-                        ChatActivity.OpenChat(this, conversationId, phoneNumber);
-                    pLaunchIntent = PendingIntent.GetActivity(this, 0, launchIntent, PendingIntentFlags.UpdateCurrent);
-                }
-                else
-                {
-                    pLaunchIntent = TaskStackBuilder.Create(this)
-                        .AddParentStack(Class.FromType(typeof(ContentActivity)))
-                        .AddNextIntent(new Intent(this, typeof(ContentActivity)))
-                        .AddNextIntent(
-                            ChatActivity.OpenChat(this, conversationId, phoneNumber)
-                        ).GetPendingIntent(0, (int) PendingIntentFlags.UpdateCurrent);
-                }
-            }
-            else
-            {
-                pLaunchIntent = PendingIntent.GetActivity(this, 0,
-                    PackageManager.GetLaunchIntentForPackage(PackageName), PendingIntentFlags.UpdateCurrent);
-            }
-
-
+            var intent = new Intent(this, typeof(NotificationBroadcastReceiver));
+            var openChatIntent = ChatActivity.OpenChat(this, conversationId, phoneNumber);
+            intent.PutExtra(BaseActivity.NavigationRedirectActivityName, Class.FromType(typeof(ChatActivity)).Name);
+            intent.PutExtra(BaseActivity.NavigatePayloadBundle, openChatIntent.Extras);
+            
+            var pLaunchIntent = PendingIntent.GetBroadcast(this, 0, intent, PendingIntentFlags.UpdateCurrent);
+            
             var notification = new NotificationCompat.Builder(this, channelId)
                 .SetChannelId(channelId)
                 .SetSmallIcon(Resource.Drawable.ic_default_notification)

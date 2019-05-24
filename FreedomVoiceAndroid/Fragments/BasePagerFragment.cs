@@ -20,7 +20,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            Inflater = inflater ?? LayoutInflater.From(ContentActivity);
+            Inflater = inflater ?? LayoutInflater.From(Activity);
             View view;
             if (RootView == null)
                 view = null;
