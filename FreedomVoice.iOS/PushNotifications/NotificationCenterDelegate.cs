@@ -16,7 +16,7 @@ using FreedomVoice.iOS.ViewControllers;
 using FreedomVoice.iOS.ViewControllers.Texts;
 using UIKit;
 using UserNotifications;
-using static FreedomVoice.iOS.Core.Utilities.Helpers.Contacts;
+using ContactsHelper = FreedomVoice.iOS.Core.Utilities.Helpers.Contacts;
 
 namespace FreedomVoice.iOS.PushNotifications
 {
@@ -31,7 +31,7 @@ namespace FreedomVoice.iOS.PushNotifications
 		public NotificationCenterDelegate()
 		{
 			UserDefault.IsAuthenticatedChanged += IsAuthenticatedChanged;
-		}
+        }
 
 		public override void WillPresentNotification(UNUserNotificationCenter center, UNNotification notification, Action<UNNotificationPresentationOptions> completionHandler)
 		{
@@ -106,7 +106,7 @@ namespace FreedomVoice.iOS.PushNotifications
 			switch (pushNotificationData.PushType)
 			{
 				case PushType.NewMessage:
-					ProcessNewMessagePushNotification();
+					await ProcessNewMessagePushNotification();
 					break;
 
 				case PushType.StatusChanged:
@@ -121,12 +121,12 @@ namespace FreedomVoice.iOS.PushNotifications
 
 		private async Task<bool> CheckCurrentNumber()
 		{
-			var systemNumber = NormalizePhoneNumber(UserDefault.AccountPhoneNumber);
+			var systemNumber = ContactsHelper.NormalizePhoneNumber(UserDefault.AccountPhoneNumber);
 
 			var service = ServiceContainer.Resolve<IPresentationNumbersService>();
 			var requestResult = await service.ExecuteRequest(systemNumber, false);
 			var accountNumbers = requestResult as PresentationNumbersResponse;
-			return accountNumbers.PresentationNumbers.Any(x => NormalizePhoneNumber(x.PhoneNumber) == systemNumber);
+			return accountNumbers.PresentationNumbers.Any(x => ContactsHelper.NormalizePhoneNumber(x.PhoneNumber) == systemNumber);
 		}
 
 		private void ProcessStatusChangedPushNotification()
@@ -142,7 +142,7 @@ namespace FreedomVoice.iOS.PushNotifications
 			_logger.Debug(nameof(NotificationCenterDelegate), nameof(ProcessStatusChangedPushNotification), "StatusChanged notification has been processed.");
 		}
 		
-		private void ProcessNewMessagePushNotification()
+		private async Task ProcessNewMessagePushNotification()
 		{
 			if (pushNotificationData.Data == null)
 			{
@@ -171,7 +171,7 @@ namespace FreedomVoice.iOS.PushNotifications
 			if (_appNavigator.MainTabBarController != null || _appNavigator.CurrentController != null)
 			{
 				_logger.Debug(nameof(NotificationCenterDelegate), nameof(ProcessNewMessagePushNotification), "ShowConversationController");
-				ShowConversationController();
+				await ShowConversationController();
 			}
 			else
 			{
@@ -196,17 +196,17 @@ namespace FreedomVoice.iOS.PushNotifications
 			pushNotificationData = null;
 		}
 
-		private void CurrentControllerChanged(BaseViewController obj)
+		private async void CurrentControllerChanged(BaseViewController obj)
 		{
-			ShowConversationController();
+			await ShowConversationController();
 		}
 
-		private void MainTabBarControllerChanged(MainTabBarController obj)
+		private async void MainTabBarControllerChanged(MainTabBarController obj)
 		{
-			ShowConversationController();
+			await ShowConversationController();
 		}
 
-		private void ShowConversationController()
+		private async Task ShowConversationController()
 		{
 			if (pushNotificationData?.Data == null)
 			{
@@ -231,8 +231,16 @@ namespace FreedomVoice.iOS.PushNotifications
 			_appNavigator.MainTabBarControllerChanged -= MainTabBarControllerChanged;
 			_appNavigator.CurrentControllerChanged -= CurrentControllerChanged;
 
-			var phoneHolder = _contactNameProvider.GetNameOrNull(_contactNameProvider.GetClearPhoneNumber(pushNotificationData.Data.ToPhone.PhoneNumber));
+            try
+            {
+                await ContactsHelper.GetContactsListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.Debug(nameof(NotificationCenterDelegate), nameof(ShowConversationController), $"GetContactsListAsync failed: {ex}");
+            }
 
+            var phoneHolder = _contactNameProvider.GetNameOrNull(_contactNameProvider.GetClearPhoneNumber(pushNotificationData.Data.ToPhone.PhoneNumber));
 			var controller = new ConversationViewController();
 			controller.ConversationId = pushNotificationData.Data.Id;
 			controller.CurrentPhone = new PresentationNumber(pushNotificationData.TextMessageReceivedToNumber());
