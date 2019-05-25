@@ -11,6 +11,7 @@ namespace FreedomVoice.Core.ViewModels
         private readonly string _RawTo;
         public string To => _contactNameProvider.GetName(_RawTo);
         public readonly string Date;
+        public readonly DateTime DateTime;
         public readonly string LastMessage;
         public readonly bool IsNew;
         public readonly long ConversationId;
@@ -24,16 +25,16 @@ namespace FreedomVoice.Core.ViewModels
             var message = entity.Messages.OrderByDescending(x => x.CreatedAt).FirstOrDefault();
             if (message == null) return;
             LastMessage = message.Text;
-            //var from = Regex.Replace(message.From.PhoneNumber, @"\D", "");
-            //last message not from us
             if (message.CreatedAt != null)
             {
                 Date = TimeAgo((DateTime) message.CreatedAt);
+                DateTime = (DateTime)message.CreatedAt;
                 IsNew = message.ReadAt == null;
             }
             else if ( message.SentAt != null )
             {
                 Date = TimeAgo((DateTime) message.SentAt);
+                DateTime = (DateTime)message.SentAt;
                 IsNew = false;
             }
             ConversationId = entity.Id;
@@ -46,7 +47,7 @@ namespace FreedomVoice.Core.ViewModels
 
             if (timeSpan <= TimeSpan.FromDays(1))
             {
-                result = dateTime.ToString("HH:mm");
+                result = dateTime.ToString("t");
             }
             else if (timeSpan <= TimeSpan.FromDays(7))
             {

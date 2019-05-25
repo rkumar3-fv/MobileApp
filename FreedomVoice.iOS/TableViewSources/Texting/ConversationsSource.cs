@@ -62,15 +62,13 @@ namespace FreedomVoice.iOS.TableViewSources.Texting
             var cell = tableView.DequeueReusableCell("cell") as ConversationItemTableViewCell;
             Debug.Assert(cell != null, nameof(cell) + " != null");
 
-            if (indexPath.Row < _presenter.Items.Count)
-            {
-                var item = _presenter.Items[indexPath.Row];
+            if (indexPath.Row >= _presenter.Items.Count) return cell;
+            var item = _presenter.Items[indexPath.Row];
 
-                cell.Title = item.To;
-                cell.Detail = item.LastMessage;
-                cell.Date = item.Date;
-                cell.isNew = item.IsNew;
-            }
+            cell.Title = item.To;
+            cell.Detail = item.LastMessage;
+            cell.Date = item.Date;
+            cell.isNew = item.IsNew;
 
             return cell;
         }

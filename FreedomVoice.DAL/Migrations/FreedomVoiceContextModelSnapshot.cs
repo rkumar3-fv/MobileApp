@@ -20,17 +20,17 @@ namespace FreedomVoice.DAL.Migrations
                 {
                     b.Property<long>("Id");
 
-                    b.Property<long?>("ToPhoneId");
+                    b.Property<DateTime>("LastSyncDate");
 
                     b.Property<long?>("SystemPhoneId");
 
-                    b.Property<DateTime>("LastSyncDate");
+                    b.Property<long?>("ToPhoneId");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ToPhoneId");
-
                     b.HasIndex("SystemPhoneId");
+
+                    b.HasIndex("ToPhoneId");
 
                     b.ToTable("Conversation");
                 });
@@ -45,9 +45,13 @@ namespace FreedomVoice.DAL.Migrations
 
                     b.Property<long?>("FromId");
 
+                    b.Property<DateTime?>("LastUpdateDate");
+
                     b.Property<DateTime?>("ReadAt");
 
                     b.Property<DateTime?>("SentAt");
+
+                    b.Property<int>("State");
 
                     b.Property<string>("Text")
                         .IsRequired();
@@ -79,13 +83,13 @@ namespace FreedomVoice.DAL.Migrations
 
             modelBuilder.Entity("FreedomVoice.DAL.DbEntities.Conversation", b =>
                 {
-                    b.HasOne("FreedomVoice.DAL.DbEntities.Phone", "ToPhone")
-                        .WithMany()
-                        .HasForeignKey("ToPhoneId");
-
                     b.HasOne("FreedomVoice.DAL.DbEntities.Phone", "SystemPhone")
                         .WithMany()
                         .HasForeignKey("SystemPhoneId");
+
+                    b.HasOne("FreedomVoice.DAL.DbEntities.Phone", "ToPhone")
+                        .WithMany()
+                        .HasForeignKey("ToPhoneId");
                 });
 
             modelBuilder.Entity("FreedomVoice.DAL.DbEntities.Message", b =>

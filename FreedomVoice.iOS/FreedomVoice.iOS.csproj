@@ -25,8 +25,8 @@
     <MtouchArch>i386, x86_64</MtouchArch>
     <MtouchLink>SdkOnly</MtouchLink>
     <MtouchDebug>true</MtouchDebug>
-    <CodesignKey>iPhone Developer: Александр Пятаков (TRSB9P63FJ)</CodesignKey>
-    <CodesignProvision>e4550f35-55a5-4b52-bf0d-0ebdf39f79ea</CodesignProvision>
+    <CodesignKey>iPhone Developer: Evgeni Kalyada (7BXF4TS6ML)</CodesignKey>
+    <CodesignProvision>Provision Profile 2019</CodesignProvision>
     <CodesignEntitlements />
     <CodesignResourceRules />
     <CodesignExtraArgs />
@@ -54,17 +54,13 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
-    <MtouchArch>ARMv7, ARM64</MtouchArch>
+    <MtouchArch>ARM64</MtouchArch>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
     <CodesignKey>iPhone Developer: Evgeni Kalyada (7BXF4TS6ML)</CodesignKey>
-    <MtouchDebug>True</MtouchDebug>
-    <MtouchSdkVersion>12.2</MtouchSdkVersion>
     <MtouchLink>SdkOnly</MtouchLink>
     <MtouchProfiling>False</MtouchProfiling>
-    <MtouchFastDev>False</MtouchFastDev>
     <MtouchUseLlvm>False</MtouchUseLlvm>
     <MtouchUseThumb>False</MtouchUseThumb>
-    <DeviceSpecificBuild>False</DeviceSpecificBuild>
     <OptimizePNGs>True</OptimizePNGs>
     <MtouchFloat32>False</MtouchFloat32>
     <MtouchEnableBitcode>False</MtouchEnableBitcode>
@@ -72,6 +68,10 @@
     <MtouchHttpClientHandler>HttpClientHandler</MtouchHttpClientHandler>
     <CodesignProvision>Provision Profile 2019</CodesignProvision>
     <MtouchEnableSGenConc>false</MtouchEnableSGenConc>
+    <MtouchExtraArgs>-v -v -v -v</MtouchExtraArgs>
+    <DeviceSpecificBuild>true</DeviceSpecificBuild>
+    <MtouchDebug>true</MtouchDebug>
+    <MtouchFastDev>true</MtouchFastDev>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
     <DebugType>none</DebugType>
@@ -92,7 +92,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>False</ConsolePause>
-    <MtouchArch>ARMv7, ARM64</MtouchArch>
+    <MtouchArch>ARM64</MtouchArch>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
     <BuildIpa>True</BuildIpa>
     <CodesignKey>iPhone Distribution: CallCatchers Inc. (P63QDD35U7)</CodesignKey>
@@ -126,12 +126,16 @@
     <CodesignKey>iPhone Distribution</CodesignKey>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AppNavigator.cs" />
     <Compile Include="Data\IosDbPath.cs" />
     <Compile Include="Entities\CallReservation.cs" />
     <Compile Include="Entities\ExtensionWithCount.cs" />
     <Compile Include="Entities\FolderWithCount.cs" />
     <Compile Include="Entities\Message.cs" />
     <Compile Include="Entities\PresentationNumber.cs" />
+    <Compile Include="PushNotifications\NotificationCenterDelegate.cs" />
+    <Compile Include="PushNotifications\PushNotificationsService.cs" />
+    <Compile Include="PushNotifications\PushNotificationTokenDataStore.cs" />
     <Compile Include="Services\Implementations\PollingIntervalService.cs" />
     <Compile Include="Services\IPoolingIntervalService.cs" />
     <Compile Include="Services\Responses\EmptyResponse.cs" />
@@ -139,7 +143,7 @@
     <Compile Include="Utilities\DeviceHardware.cs" />
     <Compile Include="Utilities\DownloadIndicator.cs" />
     <Compile Include="Utilities\Extensions\CopyPasteLabel.cs" />
-    <Compile Include="Utilities\Extensions\String.cs" />
+    <Compile Include="Utilities\Extensions\PushResponseExtension.cs" />
     <Compile Include="Utilities\Helpers\DeviceCacheStorage.cs" />
     <Compile Include="Utilities\Helpers\Cookies.cs" />
     <Compile Include="Utilities\Helpers\DeviceCookieStorage.cs" />
@@ -153,7 +157,6 @@
       <DependentUpon>SplashViewController.cs</DependentUpon>
     </Compile>
     <Compile Include="Utilities\DownloadBytesProgress.cs" />
-    <Compile Include="Utilities\Helpers\Contacts.cs" />
     <Compile Include="Utilities\Helpers\KeyChain.cs" />
     <Compile Include="Utilities\PhoneCall.cs" />
     <Compile Include="ViewControllers\FaxViewController.cs" />
@@ -653,6 +656,15 @@
     <ProjectReference Include="..\FreedomVoice.Entities\FreedomVoice.Entities.csproj">
       <Project>{9C83001C-E1C6-461D-B0D3-1F6BA63000A6}</Project>
       <Name>FreedomVoice.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FreedomVoice.iOS.NotificationsServiceExtension\FreedomVoice.iOS.NotificationsServiceExtension.csproj">
+      <IsAppExtension>true</IsAppExtension>
+      <Project>{A059CAEB-A0A7-40A1-B70D-7E3A429E387B}</Project>
+      <Name>FreedomVoice.iOS.NotificationsServiceExtension</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FreedomVoice.iOS.Core\FreedomVoice.iOS.Core.csproj">
+      <Project>{6F11EB92-C06F-4592-8ADB-0337410CE27B}</Project>
+      <Name>FreedomVoice.iOS.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

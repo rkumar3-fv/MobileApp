@@ -10,6 +10,7 @@ using Foundation;
 using FreedomVoice.Core;
 using FreedomVoice.Core.Utils;
 using FreedomVoice.iOS.Entities;
+using FreedomVoice.iOS.PushNotifications;
 using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.Utilities.Helpers;
 using FreedomVoice.iOS.ViewControllers;
@@ -17,6 +18,7 @@ using FreedomVoice.iOS.ViewModels;
 using FreedomVoice.iOS.Views;
 using Google.Analytics;
 using UIKit;
+using UserNotifications;
 using Xamarin;
 
 namespace FreedomVoice.iOS
@@ -33,12 +35,13 @@ namespace FreedomVoice.iOS
         public static string ActivePlayerMessageId;
 
         public static CancellationTokenSource ActiveDownloadCancelationToken;
-
         public static ActivityIndicator ActivityIndicator { get; private set; }
 
         public static string TempFolderPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments, Environment.SpecialFolderOption.DoNotVerify), "..", "tmp");
 
         private static UIStoryboard MainStoryboard => UIStoryboard.FromName("MainStoryboard", NSBundle.MainBundle);
+        private static IPushNotificationsService pushService;
+        private static readonly NotificationCenterDelegate PushServiceCenter = new NotificationCenterDelegate();
 
         public static T GetViewController<T>() where T : UIViewController
         {
@@ -51,10 +54,11 @@ namespace FreedomVoice.iOS
 
             ServiceContainer.Register(Window);
             ServiceContainer.Register<ISynchronizeInvoke>(() => new SynchronizeInvoke());
-
+            pushService = ServiceContainer.Resolve<IPushNotificationsService>();
+            
             ActivityIndicator = new ActivityIndicator(Theme.ScreenBounds);
 
-            Utilities.Helpers.Contacts.SubscribeToContactsChange();
+            Core.Utilities.Helpers.Contacts.SubscribeToContactsChange();
 
             NSHttpCookieStorage.SharedStorage.AcceptPolicy = NSHttpCookieAcceptPolicy.Always;
 
@@ -63,6 +67,7 @@ namespace FreedomVoice.iOS
             InitializeAnalytics();
 
             Theme.Apply();
+            UNUserNotificationCenter.Current.Delegate = PushServiceCenter;
 
             if (UserDefault.IsAuthenticated)
                 ProceedWithAuthenticatedUser();
@@ -80,7 +85,7 @@ namespace FreedomVoice.iOS
             await viewModel.GetPoolingIntervalAsync();
 
             await ProceedGetAccountsList(true);
-        }
+            }
 
         private async void ProceedWithAuthenticatedUser()
         {
@@ -114,6 +119,16 @@ namespace FreedomVoice.iOS
 
             UserDefault.IsAuthenticated = false;
             UserDefault.LastUsedAccount = string.Empty;
+            UserDefault.AccountPhoneNumber = string.Empty;
+
+            try
+            {
+                await pushService.UnregisterPushNotificationToken();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
 
             Recents.ClearRecents();
 
@@ -174,6 +189,7 @@ namespace FreedomVoice.iOS
 
                 navigationController = new UINavigationController(mainTabController);
                 Theme.TransitionController(navigationController, false);
+                ServiceContainer.Resolve<IAppNavigator>()?.UpdateMainTabBarController(mainTabController);
             }
             else
             if (!string.IsNullOrEmpty(UserDefault.LastUsedAccount))
@@ -198,6 +214,7 @@ namespace FreedomVoice.iOS
 
                 navigationController.PushViewController(mainTabController, false);
                 Theme.TransitionController(navigationController, false);
+                ServiceContainer.Resolve<IAppNavigator>()?.UpdateMainTabBarController(mainTabController);
             }
             else
             {
@@ -382,5 +399,47 @@ namespace FreedomVoice.iOS
         {
             Insights.Initialize(InsightsApiKey);
         }
+
+        #region PushNotifications
+       
+        public override async void RegisteredForRemoteNotifications(UIApplication application, NSData deviceToken)
+        {
+            pushService.DidRegisterForRemoteNotifications(deviceToken);
+        }
+
+        public override void ReceivedLocalNotification(UIApplication application, UILocalNotification notification)
+        {
+        }
+
+        public override void DidReceiveRemoteNotification(UIApplication application, NSDictionary userInfo, Action<UIBackgroundFetchResult> completionHandler)
+        {
+            PushServiceCenter.DidReceiveSilentRemoteNotification(userInfo, completionHandler);
+        }
+
+        public override void DidRegisterUserNotificationSettings(UIApplication application, UIUserNotificationSettings notificationSettings)
+        {
+        }
+
+        public override void FailedToRegisterForRemoteNotifications(UIApplication application, NSError error)
+        {
+            pushService.DidFailToRegisterForRemoteNotifications(error);
+        }
+
+        public void RegisterRemotePushNotifications()
+        {
+            pushService.RegisterForPushNotifications(async _ =>
+            {
+                try
+                {
+                    await pushService.RegisterPushNotificationToken();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e); 
+                }
+            });
+        }
+
+        #endregion
     }
 }

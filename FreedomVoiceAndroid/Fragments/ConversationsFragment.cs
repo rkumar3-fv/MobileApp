@@ -42,7 +42,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             base.OnViewCreated(view, savedInstanceState);
             _adapter = new ConversationRecyclerAdapter((sender, account) =>
             {
-                ChatActivity.StartChat(Activity, account.ConversationId, account.To);
+                StartActivity(ChatActivity.OpenChat(Activity, account.ConversationId, account.To));
             });
             _layoutManager = new LinearLayoutManager(Context);
             _recyclerView.SetLayoutManager(_layoutManager);
@@ -50,13 +50,8 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             _recyclerView.SetAdapter(_adapter);
             _recyclerView.NestedScrollingEnabled = false;
             _recyclerView.ScrollChange += (sender, args) => { ListScrolled(); };
-
-            _contactNameProvider = ServiceContainer.Resolve<IContactNameProvider>();
-            _contactNameProvider.ContactsUpdated += ProviderOnContactsUpdated;
-
             _swipeToRefresh.Refresh += SwipeRefresh;
-            var provider = ServiceContainer.Resolve<IContactNameProvider>();
-            provider.ContactsUpdated += ProviderOnContactsUpdated;
+            _contactNameProvider = ServiceContainer.Resolve<IContactNameProvider>();
         }
 
         protected override void OnHelperEvent(ActionsHelperEventArgs args)
@@ -68,27 +63,41 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                 if (code != ActionsHelperEventArgs.ChangePresentation) continue;
 
                 _presenter = new ConversationsPresenter()
-                    {PhoneNumber = Helper?.SelectedAccount?.PresentationNumber};
-                _presenter.ItemsChanged += (sender, e) =>
                 {
-                    Activity?.RunOnUiThread(() =>
-                    {
-                        _swipeToRefresh.Refreshing = false;
-                        UpdateList(_presenter.Items);
-                    });
+                    PhoneNumber = Helper?.SelectedAccount?.PresentationNumber,
+                    AccountNumber = Helper?.SelectedAccount?.AccountName
                 };
-
+                _presenter.ItemsChanged += UpdateList;
                 _presenter.ReloadAsync();
             }
+        }
+        
+        public override void OnResume()
+        {
+            base.OnResume();
+            if (_presenter != null)_presenter.ItemsChanged += UpdateList;
+            ContentActivity.SearchListener.OnChange += SearchListenerOnChange;
+            ContentActivity.SearchListener.OnApply += SearchListenerOnApply;
+            ContentActivity.SearchListener.OnCollapse += SearchListenerOnCancel;
+            _contactNameProvider.ContactsUpdated += ProviderOnContactsUpdated;
+            _contactNameProvider.ContactsUpdated += ProviderOnContactsUpdated;
+            if (_presenter != null) UpdateList(null, null);
+        }      
+
+        public override void OnPause()
+        {
+            base.OnPause();
+            if (_presenter != null)_presenter.ItemsChanged -= UpdateList;
+            ContentActivity.SearchListener.OnChange -= SearchListenerOnChange;
+            ContentActivity.SearchListener.OnApply -= SearchListenerOnApply;
+            ContentActivity.SearchListener.OnCollapse -= SearchListenerOnCancel;
+            _contactNameProvider.ContactsUpdated -= ProviderOnContactsUpdated;
+            _contactNameProvider.ContactsUpdated -= ProviderOnContactsUpdated;
         }
 
         private void ProviderOnContactsUpdated(object sender, EventArgs e)
         {
-            Activity?.RunOnUiThread(() =>
-            {
-                _swipeToRefresh.Refreshing = false;
-                UpdateList(_presenter.Items);
-            });
+            UpdateList(null, null);
         }
 
         private void SwipeRefresh(object sender, EventArgs e)
@@ -108,12 +117,41 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             }
         }
 
-        private void UpdateList(List<ConversationViewModel> newList)
+        private void UpdateList(object sender, EventArgs eventArgs)
         {
-            var isEmpty = newList == null || newList.Count == 0;
-            _noResultText.Visibility = isEmpty ? ViewStates.Visible : ViewStates.Gone;
-            _recyclerView.Visibility = isEmpty ? ViewStates.Gone : ViewStates.Visible;
-            _adapter.Update(newList);
+            Activity?.RunOnUiThread(() =>
+            {
+                _swipeToRefresh.Refreshing = false;
+                var newList = _presenter.Items;
+                var isEmpty = newList == null || newList.Count == 0;
+                _noResultText.Visibility = isEmpty ? ViewStates.Visible : ViewStates.Gone;
+                _recyclerView.Visibility = isEmpty ? ViewStates.Gone : ViewStates.Visible;
+                _adapter.Update(newList);
+                _swipeToRefresh.Refreshing = false;
+            });
+        }
+        
+        private void SearchListenerOnCancel(object sender, bool b)
+        {
+            _presenter.Query = null;
+            _presenter.ReloadAsync();
+        }
+
+        private void SearchListenerOnApply(object sender, string s)
+        {
+            _presenter.Query = s;
+            _presenter.ReloadAsync();
+        }
+
+        private void SearchListenerOnChange(object sender, string s)
+        {
+            _presenter.Query = s;
+        }
+
+        public override void OnDestroy()
+        {
+            base.OnDestroy();
+            _presenter?.Dispose();
         }
     }
 }

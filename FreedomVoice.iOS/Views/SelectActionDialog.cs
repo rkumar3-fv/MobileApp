@@ -53,25 +53,23 @@ namespace FreedomVoice.iOS.Views
 		{
 			_containerView.TranslatesAutoresizingMaskIntoConstraints = false;
 			_containerView.Layer.CornerRadius = 5;
-			_containerView.Layer.BorderColor = UIColor.Black.CGColor;
-			_containerView.Layer.BorderWidth = 1;
 			_containerView.Layer.ShadowColor = UIColor.Black.CGColor;
 			_containerView.Layer.ShadowOpacity = 0.5f;
 			_containerView.Layer.ShadowOffset = new CGSize(3, 3);
 			_containerView.BackgroundColor = UIColor.White;
 
 			_callPhoneButton.TranslatesAutoresizingMaskIntoConstraints = false;
-			_callPhoneButton.SetTitle(new NSAttributedString(ContactsViewControllerTexts.CallPhone, underlineStyle: NSUnderlineStyle.Single));
+			_callPhoneButton.SetTitle(ContactsViewControllerTexts.CallPhone);
 			_callPhoneButton.SetImage(UIImage.FromFile("phone.png"));
 			_callPhoneButton.SetTitleColor(UIColor.FromRGB(74, 152, 247));
-			_callPhoneButton.SetTitleFont(UIFont.SystemFontOfSize(12));
+			_callPhoneButton.SetTitleFont(UIFont.SystemFontOfSize(14));
 			_callPhoneButton.TouchUpInside += () => CallPhoneButtonPressed?.Invoke();
 
 			_sentSmsButton.TranslatesAutoresizingMaskIntoConstraints = false;
-			_sentSmsButton.SetTitle(new NSAttributedString(ContactsViewControllerTexts.SendSMS, underlineStyle: NSUnderlineStyle.Single));
+			_sentSmsButton.SetTitle(ContactsViewControllerTexts.SendSMS);
 			_sentSmsButton.SetImage(UIImage.FromFile("sms.png"));
 			_sentSmsButton.SetTitleColor(UIColor.FromRGB(74, 152, 247));
-			_sentSmsButton.SetTitleFont(UIFont.SystemFontOfSize(12));
+			_sentSmsButton.SetTitleFont(UIFont.SystemFontOfSize(14));
 			_sentSmsButton.TouchUpInside += () => SendSMSButtonPressed?.Invoke();
 
 			_titleLabel.TranslatesAutoresizingMaskIntoConstraints = false;

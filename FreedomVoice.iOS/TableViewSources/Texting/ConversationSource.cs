@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using CoreGraphics;
 using Foundation;
 using FreedomVoice.Core.ViewModels;
+using FreedomVoice.Entities.Enums;
 using FreedomVoice.iOS.TableViewCells.Texting.Messaging;
 using UIKit;
 
@@ -38,6 +39,7 @@ namespace FreedomVoice.iOS.TableViewSources.Texting
                     var dateCell = tableView.DequeueReusableCell(MessageDateTableViewCell.Key) as MessageDateTableViewCell;
                     dateCell.ContentView.Transform = CGAffineTransform.MakeScale(1, -1);
                     dateCell.Date = item.Message;
+
                     return dateCell;
                 case ChatMessageType.Incoming:
                     var incCell = tableView.DequeueReusableCell(IncomingMessageTableViewCell.Key) as IncomingMessageTableViewCell;
@@ -50,6 +52,7 @@ namespace FreedomVoice.iOS.TableViewSources.Texting
                     outCell.ContentView.Transform = CGAffineTransform.MakeScale(1, -1);
                     outCell.Text = item.Message;
                     outCell.Time = item.Time;
+                    outCell.State = item.SendingState;
                     return outCell;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -62,7 +65,10 @@ namespace FreedomVoice.iOS.TableViewSources.Texting
             {
                 NeedMoreEvent?.Invoke(this, null);
             }
+            var outCell = cell as OutgoingMessageTableViewCell;
+            outCell?.VisibilityUpdated();
         }
+
 
         public override nint RowsInSection(UITableView tableview, nint section)
         {

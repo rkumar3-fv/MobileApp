@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using FreedomVoice.DAL.DbEntities.Enums;
 
 namespace FreedomVoice.Core.Services
 {
@@ -53,7 +54,11 @@ namespace FreedomVoice.Core.Services
                     conversation.Messages.Add(_mapper.Map<Message>(messageFromApi));
                 // Updating
                 else
+                {
+                    message.Conversation = conversation;
                     message.ReadAt = messageFromApi.ReadAt;
+                    message.State = (SendingState) messageFromApi.State;
+                }
             }
 
             UpdatePhones(conversation, alreadyCreatedPhones);
@@ -108,7 +113,10 @@ namespace FreedomVoice.Core.Services
             var usedPhones = new List<Phone>();
             foreach (var conversation in conversations)
             {
-                var cachedConversation = _conversationRepository.Table.Include(row => row.Messages).FirstOrDefault(row => conversation.Id == row.Id);
+                var cachedConversation = _conversationRepository.Table.Include(row => row.Messages)
+                    .Include(row => row.SystemPhone)
+                    .Include(row => row.ToPhone)
+                    .FirstOrDefault(row => conversation.Id == row.Id);
                 // Adding
                 if (cachedConversation == null && !conversation.IsRemoved)
                     _conversationRepository.InsertWithoutSaving(UpdatePhones(_mapper.Map<Conversation>(conversation), usedPhones));
@@ -185,7 +193,10 @@ namespace FreedomVoice.Core.Services
         /// <returns>Conversation from cache</returns>
         public Conversation GetConversation(long conversationId)
         {
-            return _conversationRepository.TableNoTracking.Include(x => x.SystemPhone).Include(x => x.ToPhone).FirstOrDefault(x => x.Id == conversationId);
+            return _conversationRepository.TableNoTracking
+                .Include(x => x.SystemPhone)
+                .Include(x => x.ToPhone)
+                .FirstOrDefault(x => x.Id == conversationId);
         }
 
         /// <summary>
@@ -230,6 +241,17 @@ namespace FreedomVoice.Core.Services
             if (!_conversationRepository.TableNoTracking.Any(conversation => conversation.LastSyncDate < startTime))
                 return new DateTime();
             return _conversationRepository.TableNoTracking.Where(conversation => conversation.LastSyncDate < startTime).Max(conversation => conversation.LastSyncDate);
+        }
+
+        public Message GetMessageBy(long conversationId, long messageId)
+        {
+            var conversationWithMessages = _messagesRepository.TableNoTracking
+                .Include(conversation => conversation.Conversation)
+                .Include(conversation => conversation.From)
+                .Include(conversation => conversation.To)
+                .Where(conversation => conversation.Conversation.Id == conversationId && conversation.Id == messageId);
+
+            return conversationWithMessages.FirstOrDefault();
         }
     }
 }

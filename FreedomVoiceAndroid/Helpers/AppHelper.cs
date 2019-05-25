@@ -49,6 +49,8 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         /// App preferences helper
         /// </summary>
         public AppPreferencesHelper PreferencesHelper { get; }
+        
+        public NavigationRedirectHelper NavigationRedirectHelper { get; } = new NavigationRedirectHelper();
 
 #region Permissions
         public const string MakeCallsPermission = Manifest.Permission.CallPhone;

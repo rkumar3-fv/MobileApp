@@ -19,7 +19,19 @@ namespace FreedomVoice.iOS.TableViewCells.Texting.Messaging
 
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
+        UIKit.UIButton ErrorButton { get; set; }
+
+        [Outlet]
+        [GeneratedCode ("iOS Designer", "1.0")]
+        UIKit.UIView ErrorContainer { get; set; }
+
+        [Outlet]
+        [GeneratedCode ("iOS Designer", "1.0")]
         UIKit.UILabel MessageLabel { get; set; }
+
+        [Outlet]
+        [GeneratedCode ("iOS Designer", "1.0")]
+        UIKit.UIStackView SendingView { get; set; }
 
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
@@ -32,9 +44,24 @@ namespace FreedomVoice.iOS.TableViewCells.Texting.Messaging
                 BubbleView = null;
             }
 
+            if (ErrorButton != null) {
+                ErrorButton.Dispose ();
+                ErrorButton = null;
+            }
+
+            if (ErrorContainer != null) {
+                ErrorContainer.Dispose ();
+                ErrorContainer = null;
+            }
+
             if (MessageLabel != null) {
                 MessageLabel.Dispose ();
                 MessageLabel = null;
+            }
+
+            if (SendingView != null) {
+                SendingView.Dispose ();
+                SendingView = null;
             }
 
             if (TimeLabel != null) {

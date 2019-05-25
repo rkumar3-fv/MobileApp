@@ -1,14 +1,10 @@
 ﻿using AutoMapper;
-using FreedomVoice.Core.Cache;
 using FreedomVoice.Core.Services;
 using FreedomVoice.Core.Services.Interfaces;
 using FreedomVoice.Core.Utils;
 using FreedomVoice.DAL;
 using FreedomVoice.DAL.DbEntities;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace FreedomVoice.Core
 {
@@ -37,6 +33,8 @@ namespace FreedomVoice.Core
                 ServiceContainer.Resolve<INetworkService>(), ServiceContainer.Resolve<IMapper>()));
             ServiceContainer.Register<IMessagesService>(() => new MessageService(ServiceContainer.Resolve<ICacheService>(),
                 ServiceContainer.Resolve<INetworkService>(), ServiceContainer.Resolve<IMapper>(), ServiceContainer.Resolve<IConversationService>()));
+            
+            ServiceContainer.Register<IPushService>(() => new PushService(ServiceContainer.Resolve<INetworkService>()));
         }
     }
 }

@@ -1,20 +1,67 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using AddressBook;
 using Contacts;
 using Foundation;
 using FreedomVoice.Core.Utils;
-using FreedomVoice.Core.ViewModels;
-using FreedomVoice.iOS.Utilities.Extensions;
+using FreedomVoice.iOS.Core.Utilities.Extensions;
+using UIKit;
 using Xamarin.Contacts;
-using String = System.String;
 
-namespace FreedomVoice.iOS.Utilities.Helpers
+namespace FreedomVoice.iOS.Core.Utilities.Helpers
 {
+    public class FVPhone
+    {
+        public string Label { get; set; }
+
+        public string Number { get; set; }
+    }
+    
+    public class FVContact
+    {
+        public string DisplayName
+        {
+            get
+            {
+                var displayName = "";
+                if (!string.IsNullOrEmpty(FirstName))
+                {
+                    displayName = FirstName;
+                }
+
+                if (!string.IsNullOrEmpty(MiddleName))
+                {
+                    if (!string.IsNullOrEmpty(displayName))
+                        displayName += " " + MiddleName;
+                    else
+                        displayName = MiddleName;
+                }
+
+                if (!string.IsNullOrEmpty(LastName))
+                {
+                    if (!string.IsNullOrEmpty(displayName))
+                        displayName += " " + LastName;
+                    else
+                        displayName = LastName;
+                }
+
+                return displayName;
+            }
+        }
+
+        public string FirstName { get; set; }
+
+        public string MiddleName { get; set; }
+
+        public string LastName { get; set; }
+
+        public IEnumerable<FVPhone> Phones { get; set; }
+        
+    }
+
     public static class Contacts
     {
         private static readonly char[] Separators = { ' ', '-', '.', '/', '@' };
@@ -49,7 +96,7 @@ namespace FreedomVoice.iOS.Utilities.Helpers
 
         public static void SubscribeToContactsChange()
         {
-            if (AppDelegate.SystemVersion == 9)
+            if (UIDevice.CurrentDevice.CheckSystemVersion(9, 0))
             {
                 NotificationContactStore = new CNContactStore();
                 NSNotificationCenter.DefaultCenter.AddObserver(CNContactStore.NotificationDidChange, MyAddressBookExternalChangeCallback);
@@ -92,6 +139,45 @@ namespace FreedomVoice.iOS.Utilities.Helpers
             await GetContactsListAsync();
         }
 
+        public static void GetContactsList(Action<IEnumerable<FVContact>> completed)
+        {
+            var requiredKeys = new [] { CNContactKey.GivenName, CNContactKey.FamilyName, CNContactKey.MiddleName, CNContactKey.PhoneNumbers, CNContactKey.Type };
+            var defaultContainerIdentifier = new CNContactStore().DefaultContainerIdentifier;
+
+            var contactStore = new CNContactStore();
+            var contactList = contactStore.GetUnifiedContacts(CNContact.GetPredicateForContactsInContainer(defaultContainerIdentifier), requiredKeys, out var error);
+
+            List<FVContact> contacts = new List<FVContact>();
+
+            Console.WriteLine($"Contact list form book : {contactList.Count()}");
+
+            foreach (var cnContact in contactList)
+            {
+                var phones = new List<FVPhone>();
+                
+                if (cnContact.PhoneNumbers != null)
+                    foreach (var p in cnContact.PhoneNumbers)
+                    {
+                        phones.Add(new FVPhone
+                        {
+                            Label = p.Label,
+                            Number = p.Value.StringValue,
+                        });
+                    }
+
+                contacts.Add(new FVContact
+                {
+                    Phones = phones,
+                    MiddleName = cnContact.MiddleName,
+                    FirstName = cnContact.GivenName,
+                    LastName = cnContact.FamilyName,
+                });
+            }
+
+            Console.WriteLine($"Contact list form book : {contacts.Count()}");
+            completed?.Invoke(contacts);
+        }
+        
         public async static Task GetContactsListAsync()
         {
             if (ContactsRequested)
@@ -119,10 +205,10 @@ namespace FreedomVoice.iOS.Utilities.Helpers
             switch (ContactSortOrder)
             {
                 case ABPersonSortBy.LastName:
-                    sortedContacts = ContactNameFormat == ABPersonCompositeNameFormat.LastNameFirst ? contactsList.OrderBy(c => c.DisplayName) : contactsList.OrderBy(c => c.LastName ?? c.FirstName ?? c.Emails.FirstOrDefault()?.Address ?? c.Phones.FirstOrDefault()?.Number);
+                    sortedContacts = ContactNameFormat == ABPersonCompositeNameFormat.LastNameFirst ? contactsList.OrderBy(c => c.DisplayName) : contactsList.OrderBy(c => c.LastName ?? c.FirstName ?? c.Emails?.FirstOrDefault()?.Address ?? c.Phones?.FirstOrDefault()?.Number);
                     break;
                 case ABPersonSortBy.FirstName:
-                    sortedContacts = ContactNameFormat == ABPersonCompositeNameFormat.FirstNameFirst ? contactsList.OrderBy(c => c.DisplayName) : contactsList.OrderBy(c => c.FirstName ?? c.LastName ?? c.Emails.FirstOrDefault()?.Address ?? c.Phones.FirstOrDefault()?.Number);
+                    sortedContacts = ContactNameFormat == ABPersonCompositeNameFormat.FirstNameFirst ? contactsList.OrderBy(c => c.DisplayName) : contactsList.OrderBy(c => c.FirstName ?? c.LastName ?? c.Emails?.FirstOrDefault()?.Address ?? c.Phones?.FirstOrDefault()?.Number);
                     break;
                 default:
                     sortedContacts = contactsList.OrderBy(c => c.DisplayName);
@@ -137,6 +223,7 @@ namespace FreedomVoice.iOS.Utilities.Helpers
             var mergedContacts = new List<Contact>();
 
             var groups = contacts.GroupBy(c => c.DisplayName);
+            Console.WriteLine(groups.Count());
             foreach (var @group in groups)
             {
                 if (@group.Count() == 1)
@@ -198,7 +285,7 @@ namespace FreedomVoice.iOS.Utilities.Helpers
             if (string.IsNullOrEmpty(c.DisplayName)) return false;
             var fullNameParts = c.DisplayName.Split(Separators);
 
-            return searchPhraseParts.All(phrase => fullNameParts.Any(part => part.StartsWith(phrase, StringComparison.OrdinalIgnoreCase)));
+            return searchPhraseParts.All(phrase => fullNameParts.Any(part => part.Contains(phrase, StringComparison.OrdinalIgnoreCase)));
         }
 
         public static bool ContactSearchPredicate(Contact c, string key)
@@ -230,7 +317,14 @@ namespace FreedomVoice.iOS.Utilities.Helpers
 
         public static string NormalizePhoneNumber(string number)
         {
-            var normalizedPhoneNumber = Regex.Replace(number, @"[^\d]", "");
+            if (string.IsNullOrEmpty(number))
+                return number;
+            
+             var normalizedPhoneNumber = "";
+            var pattern = "0123456789";
+            foreach (var c in number)
+                if (pattern.Contains(c))
+                    normalizedPhoneNumber += c;
 
             return normalizedPhoneNumber.Length == 11 && normalizedPhoneNumber.StartsWith("1") ? normalizedPhoneNumber.Substring(1) : normalizedPhoneNumber;
         }
@@ -239,121 +333,5 @@ namespace FreedomVoice.iOS.Utilities.Helpers
         {
             return ContactList.FirstOrDefault(c => c.Phones.Any(p => NormalizePhoneNumber(p.Number) == NormalizePhoneNumber(number)));
         }
-    }
-
-    class ContactNameProvider: IContactNameProvider
-    {
-
-        private Dictionary<string, string> _contactNames = new Dictionary<string, string>();
-
-        public event EventHandler ContactsUpdated;
-        
-        public ContactNameProvider()
-        {
-            ContactItemsDidReceive(null, null);
-            Contacts.ItemsChanged += ContactItemsDidReceive;
-        }
-        
-        public void RequestContacts()
-        {
-            Contacts.GetContactsListAsync();
-        }
-        
-        public string GetName(string phone)
-        {
-            return _contactNames.ContainsKey(phone) ? _contactNames[phone] : FormatPhoneNumber(phone);
-        }
-
-        public string GetNameOrNull(string phone)
-        {
-            return _contactNames.ContainsKey(phone) ? _contactNames[phone] : null;
-        }
-
-        public string GetFormattedPhoneNumber(string phoneNumber)
-        {
-            return FormatPhoneNumber(phoneNumber);
-        }
-        
-        public string GetClearPhoneNumber(string formattedNumber)
-        {
-            const string pattern = @"\d"; 
-        
-            var sb = new StringBuilder(); 
-            foreach (Match m in Regex.Matches(formattedNumber, pattern)) 
-                sb.Append(m); 
-
-            return sb.ToString();
-        }
-
-        private void ContactItemsDidReceive(object sender, EventArgs e)
-        {
-            foreach(var contact in Contacts.ContactList)
-            {
-                foreach(var phone in contact.Phones) {
-                    var raw = Regex.Replace(phone.Number, @"\D", "");
-                    _contactNames[raw] = contact.DisplayName;
-                }
-
-            }
-            Contacts.ItemsChanged -= ContactItemsDidReceive;
-            ContactsUpdated?.Invoke(this, null);
-
-        }
-        
-        private string FormatPhoneNumber(string phoneNumber) {
-
-            if ( String.IsNullOrEmpty(phoneNumber) )
-                return phoneNumber;
-
-            Regex phoneParser;
-            string format;
-
-            switch( phoneNumber.Length ) {
-
-                case 5 :
-                    phoneParser = new Regex(@"(\d{3})(\d{2})");
-                    format      = "$1 $2";
-                    break;
-
-                case 6 :
-                    phoneParser = new Regex(@"(\d{2})(\d{2})(\d{2})");
-                    format      = "$1 $2 $3";
-                    break;
-
-                case 7 :
-                    phoneParser = new Regex(@"(\d{3})(\d{2})(\d{2})");
-                    format      = "$1 $2 $3";
-                    break;
-
-                case 8 :
-                    phoneParser = new Regex(@"(\d{4})(\d{2})(\d{2})");
-                    format      = "$1 $2 $3";
-                    break;
-
-                case 9 :
-                    phoneParser = new Regex(@"(\d{4})(\d{3})(\d{2})(\d{2})");
-                    format      = "($1 $2 $3 $4";
-                    break;
-
-                case 10 :
-                    phoneParser = new Regex(@"(\d{3})(\d{3})(\d{2})(\d{2})");
-                    format      = "($1) $2-$3$4";
-                    break;
-
-                case 11 :
-                    phoneParser = new Regex(@"(\d{4})(\d{3})(\d{2})(\d{2})");
-                    format      = "$1 $2 $3 $4";
-                    break;
-
-                default:
-                    return phoneNumber;
-
-            }
-
-            return phoneParser.Replace( phoneNumber, format );
-
-        }
-
-
     }
 }

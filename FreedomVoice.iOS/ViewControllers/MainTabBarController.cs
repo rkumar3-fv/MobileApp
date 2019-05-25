@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using FreedomVoice.Core.Utils;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.Utilities.Events;
 using FreedomVoice.iOS.ViewControllers.Texts;
@@ -71,6 +72,13 @@ namespace FreedomVoice.iOS.ViewControllers
             NavigationController.NavigationBarHidden = true;
 
             base.ViewWillAppear(animated);
+        }
+
+        public override async void ViewDidAppear(bool animated)
+        {
+            base.ViewDidAppear(animated);
+            (UIApplication.SharedApplication.Delegate as AppDelegate)?.RegisterRemotePushNotifications();
+            await FreedomVoice.iOS.Core.Utilities.Helpers.Contacts.GetContactsListAsync();
         }
 
         public List<PresentationNumber> GetPresentationNumbers()

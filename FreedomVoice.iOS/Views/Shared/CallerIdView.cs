@@ -101,6 +101,7 @@ namespace FreedomVoice.iOS.Views.Shared
                 _dropdownImage.Frame =  new CGRect(_callerIdTextField.Frame.X + phoneNumberFieldWidth + 5, _dropdownImage.Frame.Y, _dropdownImage.Frame.Width, _dropdownImage.Frame.Height);
                 _callerIdTextField.Text = _selectedPresentationNumber.FormattedPhoneNumber;
                 _callerIdTextField.ResignFirstResponder();
+                CallerIdEvent.OnCallerIdFinishedEvent(new CallerIdEventArgs(_selectedPresentationNumber));
             }) { TintColor = Theme.BlueColor };
 
             toolbar.SetItems(new[] { doneButton }, true);

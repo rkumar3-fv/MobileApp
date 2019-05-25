@@ -21,17 +21,17 @@ namespace FreedomVoice.Core.Services
             _cacheService = cacheService;
             _mapper = mapper;
         }
-
-        public async Task<BaseResult<List<Conversation>>> GetConversations(string phone, DateTime startDate, DateTime lastUpdateDate, int start, int limit)
+        
+        public async Task<BaseResult<List<Conversation>>> GetConversations(string phone, DateTime startDate, DateTime lastUpdateDate, int start, int limit, ConversationRequest searchRequest = null)
         {
             try
             {
-                BaseResult<List<Conversation>> result = await ApiHelper.GetConversations(phone, startDate, lastUpdateDate, start, limit);
+                BaseResult<List<Conversation>> result = await ApiHelper.GetConversations(phone, startDate, lastUpdateDate, start, limit, searchRequest);
                 
                 if (result.Result == null)
                     result.Result = _cacheService.GetConversations(phone, limit, start).Select(x => _mapper.Map<Conversation>(x)).ToList();
                 
-                if (result.Code == Entities.Enums.ErrorCodes.Ok)
+                if (result.Code == Entities.Enums.ErrorCodes.Ok && searchRequest == null) 
                     _cacheService.UpdateConversationsCache(result.Result);
 
                 result.Result = result.Result.Where(x => !x.IsRemoved).ToList();
@@ -101,6 +101,15 @@ namespace FreedomVoice.Core.Services
             var result = await ApiHelper.SendMessage(request);
             if(result.Result != null && result.Result.Entity != null)
                 _cacheService.UpdateConversationsCache(new[] { result.Result.Entity });
+
+            return result;
+        }
+
+        public async Task<BaseResult<string>> SendPushToken(PushRequest request, bool isRegistration)
+        {
+            var result = await ApiHelper.SendPushToken(request, isRegistration: isRegistration);
+            //if (result.Result != null && result.Result.Entity != null)
+                //_cacheService.UpdateConversationsCache(new[] { result.Result.Entity });
 
             return result;
         }

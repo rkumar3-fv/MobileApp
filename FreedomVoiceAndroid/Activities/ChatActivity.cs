@@ -15,6 +15,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         Icon = "@mipmap/ic_launcher",
         ScreenOrientation = ScreenOrientation.Portrait,
         WindowSoftInputMode = SoftInput.AdjustResize,
+        LaunchMode = LaunchMode.SingleTask,
         Theme = "@style/AuthAppTheme")]
     public class ChatActivity : BaseActivity
     {
@@ -24,13 +25,13 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         private const string ExtraConversationId = "EXTRA_CONVERSATION_ID";
         private const string ExtraConversationPhone = "EXTRA_CONVERSATION_PHONE";
 
-        public static void StartChat(Activity context, long conversationId, string phone)
+        public static Intent OpenChat(Context context, long conversationId, string phone)
         {
             var intent = new Intent(context, typeof(ChatActivity));
             intent.PutExtra(ExtraScreen, ExtraScreenValueChat);
             intent.PutExtra(ExtraConversationId, conversationId);
             intent.PutExtra(ExtraConversationPhone, phone);
-            context.StartActivity(intent);
+            return intent;
         }
 
         public static void StartNewChat(Activity context, string phone)
@@ -65,6 +66,13 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             SupportFragmentManager.BeginTransaction()
                 .Replace(Resource.Id.chatActivity_container, fragment)
                 .Commit();
+        }
+
+        protected override void OnNewIntent(Intent intent)
+        {
+            base.OnNewIntent(intent);
+            Intent = intent;
+            Recreate();
         }
     }
 }

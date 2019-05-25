@@ -21,6 +21,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
     /// </summary>
     public abstract class BaseActivity : AppCompatActivity
     {
+        public static string NavigationRedirectActivityName = "NavigateScreen";
+        public static string NavigatePayloadBundle = "NavigatePayload";
         private const string AirDlgTag = "AIR_DLG_TAG";
         protected ActionsHelper Helper;
         protected App Appl;

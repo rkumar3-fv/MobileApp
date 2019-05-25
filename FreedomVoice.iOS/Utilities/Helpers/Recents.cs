@@ -40,7 +40,7 @@ namespace FreedomVoice.iOS.Utilities.Helpers
 
         public static void AddRecent(string phoneNumber, string title = "", string contactId = "")
         {
-            var existingRecent = RecentsList.FirstOrDefault(r => Contacts.NormalizePhoneNumber(r.PhoneNumber) == Contacts.NormalizePhoneNumber(phoneNumber));
+            var existingRecent = RecentsList.FirstOrDefault(r => Core.Utilities.Helpers.Contacts.NormalizePhoneNumber(r.PhoneNumber) == Core.Utilities.Helpers.Contacts.NormalizePhoneNumber(phoneNumber));
             if (existingRecent == null)
                 RecentsList.Add(new Recent(title, phoneNumber, DateTime.Now, contactId));
             else

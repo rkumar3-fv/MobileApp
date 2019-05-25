@@ -18,7 +18,7 @@ namespace FreedomVoice.Core.Services.Interfaces
         /// <param name="start"></param>
         /// <param name="limit"></param>
         /// <returns></returns>
-        Task<BaseResult<List<Conversation>>> GetConversations(string phone, DateTime startDate, DateTime lastUpdateDate, int start, int limit);
+        Task<BaseResult<List<Conversation>>> GetConversations(string phone, DateTime startDate, DateTime lastUpdateDate, int start, int limit, ConversationRequest searchRequest = null);
 
         /// <summary>
         /// Get conversation by current phone and to phone
@@ -45,5 +45,14 @@ namespace FreedomVoice.Core.Services.Interfaces
         /// <param name="request"></param>
         /// <returns>Response from API about sending results</returns>
         Task<BaseResult<SendingResponse<Conversation>>> SendMessage(MessageRequest request);
+
+        
+        /// <summary>
+        /// Sending push-token to API by provided parameter 
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="isRegistration"></param>
+        /// <returns></returns>
+        Task<BaseResult<string>> SendPushToken(PushRequest request, bool isRegistration);
     }
 }

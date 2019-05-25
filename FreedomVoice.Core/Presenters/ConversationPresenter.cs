@@ -1,11 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using AutoMapper;
+using FreedomVoice.Core.Services;
 using FreedomVoice.Core.Services.Interfaces;
 using FreedomVoice.Core.Utils;
 using FreedomVoice.Core.ViewModels;
 using FreedomVoice.DAL.DbEntities;
+using FreedomVoice.Entities.Enums;
+using SendingState = FreedomVoice.Entities.Enums.SendingState;
 
 namespace FreedomVoice.Core.Presenters
 {
@@ -20,7 +25,7 @@ namespace FreedomVoice.Core.Presenters
         }
     }
 
-    public class ConversationPresenter
+    public class ConversationPresenter : IDisposable
     {
         
         #region Private services 
@@ -36,7 +41,8 @@ namespace FreedomVoice.Core.Presenters
         private DateTime _currentDate;
         private int _currentPage;
         private bool _isLoading;
-        private const int DEFAULT_COUNT = 50;
+        private const int DefaultCount = 50;
+        private const string DateFormat = "MM/dd/yyyy";
         private Dictionary<string, List<IChatMessage>> _rawData;
 
         private long? _conversationId;
@@ -85,7 +91,67 @@ namespace FreedomVoice.Core.Presenters
         {
             _contactNameProvider.RequestContacts();
             _contactNameProvider.ContactsUpdated += ContactNameProviderOnContactsUpdated;
+            NotificationMessageService.Instance().NewMessageEventHandler += OnNewMessageEventHandler;
+            NotificationMessageService.Instance().MessageUpdatedHandler += OnMessageUpdatedHandler;
             ResetState();
+        }
+
+        private void OnMessageUpdatedHandler(object sender, MessageEventArg e)
+        {
+            if (!e.Message.CreatedAt.HasValue ||
+                !_rawData.ContainsKey(e.Message.CreatedAt.Value.ToString(DateFormat)) ||
+                                      e.Message.Conversation?.Id != _conversationId.Value) return;
+            var chatMessages = _rawData[e.Message.CreatedAt.Value.ToString(DateFormat)];
+            if (chatMessages == null)
+            {
+                _addOutgoingMessage(e.Message);
+                return;
+            }
+            
+            var visibleItemIndex = chatMessages.FindIndex(chatMessage => chatMessage.MessageId == e.Message.Id);
+            if (visibleItemIndex == -1)
+            {
+                _addOutgoingMessage(e.Message);
+                return;
+            };
+
+            chatMessages[visibleItemIndex] = CreateChatMessage(e.Message);
+            _updateItems();
+            ItemsChanged?.Invoke(this, new ConversationCollectionEventArgs(Items));
+        }
+
+        private void OnNewMessageEventHandler(object sender, ConversationEventArg e)
+        {
+            var message = e.Conversation.Messages.LastOrDefault();
+            if (message == null || !_conversationId.HasValue || e.Conversation.Id != _conversationId.Value)
+            {
+                return;
+            }
+
+            var rawTo = Regex.Replace(message.To.PhoneNumber, @"\D", "");
+            var rawFrom = Regex.Replace(message.From.PhoneNumber, @"\D", "");
+            var current = Regex.Replace(PhoneNumber, @"\D", "");
+            
+            if (rawFrom.Equals(current) || !rawTo.Equals(current))
+            {
+                return;
+            }
+            var model = new IncomingMessageViewModel(e.Conversation.Messages.Last());
+            _addMessage(model);
+        }
+
+        private void _addOutgoingMessage(Message message)
+        {
+            var rawTo = Regex.Replace(message.To.PhoneNumber, @"\D", "");
+            var rawFrom = Regex.Replace(message.From.PhoneNumber, @"\D", "");
+            var current = Regex.Replace(PhoneNumber, @"\D", "");
+
+            if (rawTo.Equals(current) || !rawFrom.Equals(current))
+            {
+                return;
+            }
+            var model = new OutgoingMessageViewModel(message);
+            _addMessage(model);
         }
 
         public async void ReloadAsync()
@@ -111,15 +177,15 @@ namespace FreedomVoice.Core.Presenters
             var res = await _messagesService.SendMessage(_conversationId.Value, text);
             switch (res.State)
             {
-                case FreedomVoice.Entities.Enums.SendingState.Error:
+                case SendingState.Error:
                     MessagedSentError(res.Entity);
                     break;
                 
-                case FreedomVoice.Entities.Enums.SendingState.Sending:
+                case SendingState.Sending:
                     MessagedSentSending(res.Entity);
                     break;
                 
-                case FreedomVoice.Entities.Enums.SendingState.Success:
+                case SendingState.Success:
                     MessagedSentSuccess(res.Entity);
                     break;
             }
@@ -137,15 +203,15 @@ namespace FreedomVoice.Core.Presenters
             
             switch (res.State)
             {
-                case FreedomVoice.Entities.Enums.SendingState.Error:
+                case SendingState.Error:
                     MessagedSentError(res.Entity);
                     break;
                 
-                case FreedomVoice.Entities.Enums.SendingState.Sending:
+                case SendingState.Sending:
                     MessagedSentSending(res.Entity);
                     break;
                 
-                case FreedomVoice.Entities.Enums.SendingState.Success:
+                case SendingState.Success:
                     MessagedSentSuccess(res.Entity);
                     break;
             }
@@ -194,29 +260,42 @@ namespace FreedomVoice.Core.Presenters
 
         private void MessagedSentSuccess(Conversation conversation)
         {
+            var entity = ServiceContainer.Resolve<IMapper>().Map<FreedomVoice.Entities.Response.Conversation>(conversation);
+            NotificationMessageService.Instance().ReceivedNotification(PushType.NewMessage, entity);
             var lastMessage = conversation?.Messages?.Last();
             if (lastMessage == null)
             {
-                //TODO Show error?
                 return;
             }
-            
-            Items.Insert(0, new OutgoingMessageViewModel(lastMessage));
-            ItemsChanged?.Invoke(this, new ConversationCollectionEventArgs(Items)); 
+            _addMessage(new OutgoingMessageViewModel(lastMessage));
         }
 
         private void MessagedSentError(Conversation conversation)
         {
-            //TODO
+            var lastMessage = conversation?.Messages?.Last();
+            if (lastMessage == null)
+            {
+                return;
+            }
+            _addMessage(new OutgoingMessageViewModel(lastMessage));
         }
 
         private void MessagedSentSending(Conversation conversation)
         {
-            //TODO
+            MessagedSentSuccess(conversation);
         }
 
         #endregion
 
+        private void _addMessage(IChatMessage message)
+        {
+            var dateStr = message.Date.ToString(DateFormat);
+            var pack = _rawData.ContainsKey(dateStr) ? _rawData[dateStr] : new List<IChatMessage>();
+            pack.Insert(0, message);
+            _rawData[dateStr] = pack;
+            _updateItems();
+            ItemsChanged?.Invoke(this, new ConversationCollectionEventArgs(Items)); 
+        } 
         private void ResetState()
         {
             _currentDate = DateTime.Now;
@@ -237,23 +316,16 @@ namespace FreedomVoice.Core.Presenters
             }
 
             _isLoading = true;
-            var res = await _messagesService.GetList(_conversationId.Value, _currentDate, DEFAULT_COUNT, _currentPage);
+            var res = await _messagesService.GetList(_conversationId.Value, _currentDate, DefaultCount, _currentPage);
             HasMore = !res.IsEnd;
 
             foreach (var row in res.Messages)
             {
                 if (row.From == null) continue;
-                var dateStr = row.CreatedAt?.ToString("MM/dd/yyyy");
+                var dateStr = row.CreatedAt?.ToString(DateFormat);
                 if (dateStr == null) continue;
                 var pack = _rawData.ContainsKey(dateStr) ? _rawData[dateStr] : new List<IChatMessage>();
-                if (row.From.PhoneNumber.Equals(PhoneNumber))
-                {
-                    pack.Add(new OutgoingMessageViewModel(row));
-                }
-                else
-                {
-                    pack.Add(new IncomingMessageViewModel(row));
-                }
+                pack.Add(CreateChatMessage(row));
                 _rawData[dateStr] = pack;
             }
 
@@ -262,13 +334,25 @@ namespace FreedomVoice.Core.Presenters
             _isLoading = false;
         }
 
+        private IChatMessage CreateChatMessage(Message row)
+        {
+            if (row.From.PhoneNumber.Equals(PhoneNumber))
+            {
+                return new OutgoingMessageViewModel(row);
+            }
+            else
+            {
+                return new IncomingMessageViewModel(row);
+            }
+        }
+
         private void _updateItems()
         {
             Items = new List<IChatMessage>();
-            foreach (var group in _rawData)
+            foreach (var group in _rawData.OrderByDescending(item => item.Key))
             {
                 var date = DateTime.MinValue;
-                DateTime.TryParseExact(group.Key, "MM/dd/yyyy", null, System.Globalization.DateTimeStyles.None, out date);
+                DateTime.TryParseExact(group.Key, DateFormat, null, System.Globalization.DateTimeStyles.None, out date);
                 Items.AddRange(group.Value);
                 Items.Add(new DateMessageViewModel(date));
             }
@@ -277,6 +361,13 @@ namespace FreedomVoice.Core.Presenters
         private void ContactNameProviderOnContactsUpdated(object sender, EventArgs e)
         {
             ContactsUpdated?.Invoke(sender, e);
+        }
+
+        public void Dispose()
+        {
+            _contactNameProvider.ContactsUpdated -= ContactNameProviderOnContactsUpdated;
+            NotificationMessageService.Instance().NewMessageEventHandler -= OnNewMessageEventHandler;
+            NotificationMessageService.Instance().MessageUpdatedHandler -= OnMessageUpdatedHandler;
         }
     }
 }
