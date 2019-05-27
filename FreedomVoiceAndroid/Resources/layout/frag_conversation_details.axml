@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:background="@color/colorBackground"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -132,7 +133,7 @@
                 style="@style/InWhiteButtonProgressBar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
-        
+
     </FrameLayout>
 
 
@@ -161,19 +162,39 @@
                     style="@style/ConversationMessageEt"
                     android:hint="@string/ConversationDetails_message"
                     android:layout_centerVertical="true"
-                    android:layout_toLeftOf="@+id/conversationDetailsFragment_iv_send"
+                    android:layout_toLeftOf="@+id/conversationDetailsFragment_send_container"
                     />
 
-            <ImageView
-                    android:id="@+id/conversationDetailsFragment_iv_send"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
+            <FrameLayout
+                    android:id="@+id/conversationDetailsFragment_send_container"
+                    android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="8dp"
-                    android:visibility="visible"
-                    android:src="@drawable/ic_send_folder"
-                    android:layout_alignParentRight="true"
-                    />
+                    android:layout_width="48dp"
+                    android:layout_height="48dp">
+
+                <ImageView
+                        android:id="@+id/conversationDetailsFragment_iv_send"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:visibility="visible"
+                        android:src="@drawable/ic_send_folder"
+                        />
+
+                <ProgressBar
+                        android:id="@+id/conversationDetailsFragment_pb_send"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:visibility="gone"
+                        android:padding="2dp"
+                        style="@style/InWhiteButtonProgressBar"
+                        android:layout_gravity="center"
+                        android:indeterminate="true"
+                        />
+
+            </FrameLayout>
+
 
         </RelativeLayout>
     </LinearLayout>

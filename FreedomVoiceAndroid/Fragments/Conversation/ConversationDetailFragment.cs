@@ -43,6 +43,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         protected string ConversationPhone;
         protected long? ConversationId;
         protected ProgressBar _progressBar;
+        private ProgressBar _sendProgress;
 
 
         public static ConversationDetailFragment NewInstance(long conversationId, string phone)
@@ -61,6 +62,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             var view = Inflater.Inflate(Resource.Layout.frag_conversation_details, null, false);
             _messageEt = view.FindViewById<EditText>(Resource.Id.conversationDetailsFragment_et_message);
             _sendIv = view.FindViewById<ImageView>(Resource.Id.conversationDetailsFragment_iv_send);
+            _sendProgress = view.FindViewById<ProgressBar>(Resource.Id.conversationDetailsFragment_pb_send);
             _recycler = view.FindViewById<RecyclerView>(Resource.Id.conversationDetailsFragment_recyclerView);
             _placeHolder = view.FindViewById<TextView>(Resource.Id.conversationDetailsFragment_noResultText);
             _spinnerContainer = view.FindViewById<ViewGroup>(Resource.Id.conversationDetailsFragment_spinnerArea);
@@ -108,7 +110,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                 Toolbar.SetIcon(Resource.Drawable.ic_account_white);
                 Toolbar.SetDisplayShowHomeEnabled(true);
                 ContactsHelper.Instance(Context).GetName(ConversationPhone, out var name);
-                Toolbar.Title = string.IsNullOrEmpty(name) ? ConversationPhone : name;
+                Toolbar.Title = string.IsNullOrEmpty(name) || name.Length < ConversationPhone.Length ? ConversationPhone : name;
                 _spinnerContainer.Visibility = ViewStates.Visible;
                 _selectContactContainer.Visibility = ViewStates.Gone;
 
@@ -171,13 +173,22 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         private void ClickSend(object sender, EventArgs e)
         {
             SendMessage();
-            _messageEt.SetText("", TextView.BufferType.Editable);
+            _messageEt.InputType = InputTypes.Null;
+            _messageEt.SetTextColor(new Color(ContextCompat.GetColor(Context, Resource.Color.colorBlackFieldsHint)));
+            _sendIv.Clickable = false;
+            _sendIv.Visibility = ViewStates.Gone;
+            _sendProgress.Visibility = ViewStates.Visible;
         }
 
         protected virtual async void SendMessage()
         {
-            _progressBar.Visibility = ViewStates.Visible;
             await _presenter.SendMessageAsync(_messageEt.Text);
+            _messageEt.SetTextColor(new Color(ContextCompat.GetColor(Context, Resource.Color.textColorPrimary)));
+            _sendIv.Visibility = ViewStates.Visible;
+            _sendProgress.Visibility = ViewStates.Gone;
+            _messageEt.InputType = InputTypes.TextFlagImeMultiLine;
+            _sendIv.Clickable = true;
+            _messageEt.SetText("", TextView.BufferType.Editable);
         }
 
         protected void UpdateSendButton()
