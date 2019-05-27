@@ -52,12 +52,14 @@ namespace com.FreedomVoice.MobileApp.Android.Services
                 switch (pushType)
                 {
                     case PushType.NewMessage:
-                        var newMessageRequest = JsonConvert.DeserializeObject<PushResponse<Conversation>>(message.Data[DataKey]);
+                        var newMessageRequest =
+                            JsonConvert.DeserializeObject<PushResponse<Conversation>>(message.Data[DataKey]);
                         ProcessNewMessage(newMessageRequest.Data);
                         NotificationMessageService.Instance().ReceivedNotification(pushType, newMessageRequest.Data);
                         break;
                     case PushType.StatusChanged:
-                        var pushChangeRequest = JsonConvert.DeserializeObject<PushResponse<Conversation>>(message.Data[DataKey]);
+                        var pushChangeRequest =
+                            JsonConvert.DeserializeObject<PushResponse<Conversation>>(message.Data[DataKey]);
                         NotificationMessageService.Instance().ReceivedNotification(pushType, pushChangeRequest.Data);
                         break;
                     default:
@@ -72,17 +74,23 @@ namespace com.FreedomVoice.MobileApp.Android.Services
 
         private void ProcessNewMessage(Conversation conversation)
         {
+            var myPresentationPhone = conversation?.Messages?.FirstOrDefault()?.To?.PhoneNumber;
+            myPresentationPhone = _contactNameProvider.GetFormattedPhoneNumber(myPresentationPhone);
+            
+            var conversationToPhoneNumber =
+                _contactNameProvider.GetFormattedPhoneNumber(conversation.ToPhone.PhoneNumber);
+
             using (var h = new Handler(Looper.MainLooper))
             {
                 h.Post(() =>
                 {
                     try
                     {
-                        var formattedPhoneNumber = _contactNameProvider.GetFormattedPhoneNumber(conversation.ToPhone.PhoneNumber);
                         var contactNameOrPhone = _contactNameProvider.GetName(conversation.ToPhone.PhoneNumber);
                         ShowConversationMessagePush(
                             conversation.Id,
-                            formattedPhoneNumber,
+                            conversationToPhoneNumber,
+                            myPresentationPhone,
                             contactNameOrPhone,
                             conversation.Messages?.FirstOr(null)?.Text ?? "new message"
                         );
@@ -95,7 +103,7 @@ namespace com.FreedomVoice.MobileApp.Android.Services
             }
         }
 
-        private void ShowConversationMessagePush(long conversationId, string phoneNumber, string title, string body)
+        private void ShowConversationMessagePush(long conversationId, string phoneNumber, string subText, string title, string body)
         {
             var manager = NotificationManagerCompat.From(this);
             var channelId = GetString(Resource.String.DefaultNotificationChannel);
@@ -104,9 +112,9 @@ namespace com.FreedomVoice.MobileApp.Android.Services
             var openChatIntent = ChatActivity.OpenChat(this, conversationId, phoneNumber);
             intent.PutExtra(BaseActivity.NavigationRedirectActivityName, Class.FromType(typeof(ChatActivity)).Name);
             intent.PutExtra(BaseActivity.NavigatePayloadBundle, openChatIntent.Extras);
-            
+
             var pLaunchIntent = PendingIntent.GetBroadcast(this, 0, intent, PendingIntentFlags.UpdateCurrent);
-            
+
             var notification = new NotificationCompat.Builder(this, channelId)
                 .SetChannelId(channelId)
                 .SetSmallIcon(Resource.Drawable.ic_default_notification)
@@ -115,6 +123,7 @@ namespace com.FreedomVoice.MobileApp.Android.Services
                 .SetSound(Settings.System.DefaultNotificationUri)
                 .SetContentIntent(pLaunchIntent)
                 .SetContentTitle(title)
+                .SetSubText(subText)
                 .SetContentText(body);
 
 
