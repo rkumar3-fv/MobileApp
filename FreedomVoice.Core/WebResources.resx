@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AppUrl" xml:space="preserve">
-    <value>https://freedomvoice.wavea.cc</value>
-    <comment>https://api.freedomvoice.com</comment>
+    <comment>https://freedomvoice.wavea.cc</comment>
+    <value>https://api.freedomvoice.com</value>
   </data>
 </root>

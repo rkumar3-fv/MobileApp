@@ -82,6 +82,7 @@
   <string name="ActivityVoice_title">Voicemail</string>
   <string name="ActivityVoice_speaker">Speaker</string>
   <string name="ActivityVoice_callback">Call back</string>
+  <string name="ActivityVoice_sms">Send Text</string>
   <string name="ActivityRecord_title">Call Record</string>
   <string name="ActivityFax_title">Fax</string>
   <string name="ActivityFax_view">View Fax</string>

@@ -29,6 +29,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         protected TextView EndTextView;
         protected ToggleButton SpeakerButton;
         protected Button CallBackButton;
+        protected Button SmsButton;
         protected SeekBar PlayerSeek;
         protected RelativeLayout TouchLayout;
         private AudioManager _audioManager;
@@ -58,8 +59,13 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             SpeakerButton.Checked = _audioManager.SpeakerphoneOn;
             SpeakerButton.CheckedChange += SpeakerButtonOnClick;
             CallBackButton.Click += CallBackButtonOnClick;
+            SmsButton.Click += SmsButtonOnClick;
             if (Msg.FromNumber.Length < 2)
+            {
                 CallBackButton.Enabled = false;
+                SmsButton.Enabled = false;
+            }
+            
             PlayerButton.Click += PlayerButtonOnClick;
             MessageStamp.Text = DataFormatUtils.ToDuration(Msg.Length);
             EndTextView.Text = $"-{DataFormatUtils.ToDuration(Msg.Length)}";
@@ -182,6 +188,15 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 MarkForRemove = -1;
             Pause();
             Call(Msg.FromNumber);
+        }
+        
+        /// <summary>
+        /// Sms action
+        /// </summary>
+        private void SmsButtonOnClick(object sender, EventArgs eventArgs)
+        {
+            Pause();
+            ChatActivity.StartNewChat(this, Msg.FromNumber);
         }
 
         private void PlayerAction()
