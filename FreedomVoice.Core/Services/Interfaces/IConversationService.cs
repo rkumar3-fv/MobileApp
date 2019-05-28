@@ -15,19 +15,20 @@ namespace FreedomVoice.Core.Services.Interfaces
         /// <param name="current"></param>
         /// <param name="count"></param>
         /// <param name="page"></param>
+        /// <returns></returns>
+        Task<ConversationListResponse> GetList(string phone, DateTime current, int count = 10, int page = 1);
+
+        /// <summary>
+        /// Search list of conversation by provided parameters
+        /// </summary>
         /// <param name="systemPhone"></param>
         /// <param name="query"></param>
         /// <param name="foundInNumbers"></param>
+        /// <param name="current"></param>
+        /// <param name="count"></param>
+        /// <param name="page"></param>
         /// <returns></returns>
-        Task<ConversationListResponse> GetList(
-            string phone, 
-            DateTime current, 
-            int count = 10, 
-            int page = 1,
-            string systemPhone = null,
-            string query = null, 
-            string[] foundInNumbers = null 
-        );
+        Task<ConversationListResponse> Search(string systemPhone, string query, string[] foundInNumbers, DateTime current, int count = 10, int page = 1);
 
         /// <summary>
         /// Get conversation by current phone and to phone

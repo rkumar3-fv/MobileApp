@@ -184,44 +184,44 @@ namespace FreedomVoice.Core
             return await MakeAsyncFileDownload($"/api/v1/systems/{systemPhoneNumber}/mailboxes/{mailboxNumber}/folders/{folder}/messages/{messageId}/media/{mediaType}", token);
         }
         
-        public static async Task<BaseResult<List<Conversation>>> GetConversations(string phone, DateTime startDate, DateTime lastUpdateDate, int start, int limit, ConversationRequest searchRequest = null)
+        public static async Task<BaseResult<List<Conversation>>> GetConversations(
+            ConversationsRequest conversationsRequest, CancellationToken cancellationToken = default(CancellationToken))
         {
-            BaseResult<List<Conversation>> result;
-            var path =
-                $"/api/v1/system/forward/{phone}/conversations?_from={startDate.Ticks}&_to={lastUpdateDate.Ticks}&_start={start}&_limit={limit}";
-            if (searchRequest != null)
-            {
-                var content = JsonConvert.SerializeObject(searchRequest);
-                result = await MakeAsyncPostRequest<List<Conversation>>(
-                    path,
-                    content,
-                    "application/json",
-                    CancellationToken.None);
-            }
-            else
-            {
-                result = await MakeAsyncGetRequest<List<Conversation>>(
-                    path,
-                    CancellationToken.None, LongTimeOut);    
-            }
-            
-            return result;
+            return await MakeAsyncPostRequest<List<Conversation>>(
+                $"/api/v1/system/forward/conversations",
+                JsonConvert.SerializeObject(conversationsRequest),
+                "application/json",
+                cancellationToken);
         }
 
-        public static async Task<BaseResult<Conversation>> GetConversation(string currentPhone, string toPhone)
+        public static async Task<BaseResult<List<Conversation>>> SearchConversations(
+            SearchConversationRequest searchConversationRequest, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var result = await MakeAsyncGetRequest<Conversation>(
-                $"/api/v1/system/forward/{currentPhone}/conversations/{toPhone}",
-                CancellationToken.None, LongTimeOut);
-            return result;
+            return await MakeAsyncPostRequest<List<Conversation>>(
+                $"/api/v1/system/forward/conversations/search",
+                JsonConvert.SerializeObject(searchConversationRequest),
+                "application/json",
+                cancellationToken);
         }
 
-        public static async Task<BaseResult<List<FreedomVoice.Entities.Message>>> GetMessages(long coversationId, DateTime startDate, DateTime lastUpdateDate, int start, int limit)
+        public static async Task<BaseResult<Conversation>> GetConversation(
+            ConversationRequest conversationRequest, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var result = await MakeAsyncGetRequest<List<FreedomVoice.Entities.Message>>(
-                $"/api/v1/system/forward/{coversationId}/messages?_from={startDate.Ticks}&_to={lastUpdateDate.Ticks}&_start={start}&_limit={limit}",
-                CancellationToken.None, LongTimeOut);
-            return result;
+            return await MakeAsyncPostRequest<Conversation>(
+                $"/api/v1/system/forward/conversation",
+                JsonConvert.SerializeObject(conversationRequest),
+                "application/json",
+                cancellationToken);
+        }
+
+        public static async Task<BaseResult<List<FreedomVoice.Entities.Message>>> GetMessages(
+            MessagesRequest messagesRequest, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            return await MakeAsyncPostRequest<List<FreedomVoice.Entities.Message>>(
+                $"/api/v1/system/forward/messages",
+                JsonConvert.SerializeObject(messagesRequest),
+                "application/json",
+                cancellationToken);
         }
 
         public static async Task<BaseResult<SendingResponse<Conversation>>> SendMessage(MessageRequest request)
