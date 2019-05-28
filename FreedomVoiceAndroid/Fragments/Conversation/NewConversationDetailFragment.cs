@@ -90,8 +90,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
 
         protected override async void SendMessage()
         {
-            _progressBar.Visibility = ViewStates.Visible;
-            
+            ShowSendMessageProgress(true); 
             if (ConversationId == null)
             {
                 ConversationPhone = _contactPhoneEt.Text;
@@ -100,9 +99,9 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                     ConversationPhone,
                     _messageEt.Text
                 );
-    
-                ConversationId = convId.Value;
+                ConversationId = convId;
                 ConversationSelected();
+                ShowSendMessageProgress(false);
             }
             else
             {

@@ -173,24 +173,37 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         private void ClickSend(object sender, EventArgs e)
         {
             SendMessage();
-            _messageEt.SetTextColor(new Color(ContextCompat.GetColor(Context, Resource.Color.colorBlackFieldsHint)));
-            _messageEt.Focusable = false;
-            _sendIv.Clickable = false;
-            _sendIv.Visibility = ViewStates.Gone;
-            _sendProgress.Visibility = ViewStates.Visible;
+            ShowSendMessageProgress(true);  
         }
 
         protected virtual async void SendMessage()
         {
             await _presenter.SendMessageAsync(_messageEt.Text);
-            _messageEt.SetTextColor(new Color(ContextCompat.GetColor(Context, Resource.Color.textColorPrimary)));
-            _messageEt.Focusable = true;
-            _messageEt.FocusableInTouchMode = true;
-            _messageEt.RequestFocusFromTouch();
-            _sendIv.Visibility = ViewStates.Visible;
-            _sendProgress.Visibility = ViewStates.Gone;
-            _sendIv.Clickable = true;
-            _messageEt.SetText("", TextView.BufferType.Editable);
+            ShowSendMessageProgress(false);  
+        }
+
+        protected void ShowSendMessageProgress(bool isInProgress)
+        {
+            if (isInProgress)
+            {
+                _messageEt.SetTextColor(
+                    new Color(ContextCompat.GetColor(Context, Resource.Color.colorBlackFieldsHint)));
+                _messageEt.Focusable = false;
+                _sendIv.Clickable = false;
+                _sendIv.Visibility = ViewStates.Gone;
+                _sendProgress.Visibility = ViewStates.Visible;
+            }
+            else
+            {
+                _messageEt.SetTextColor(new Color(ContextCompat.GetColor(Context, Resource.Color.textColorPrimary)));
+                _messageEt.Focusable = true;
+                _messageEt.FocusableInTouchMode = true;
+                _messageEt.RequestFocusFromTouch();
+                _sendIv.Visibility = ViewStates.Visible;
+                _sendProgress.Visibility = ViewStates.Gone;
+                _sendIv.Clickable = true;
+                _messageEt.SetText("", TextView.BufferType.Editable);
+            }
         }
 
         protected void UpdateSendButton()
