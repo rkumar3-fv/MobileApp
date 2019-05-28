@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Firebase.Core;
 using Foundation;
 using FreedomVoice.Core;
 using FreedomVoice.Core.Utils;
@@ -379,21 +380,14 @@ namespace FreedomVoice.iOS
 
         private static void InitializeAnalytics()
         {
-            InitializeGoogleAnalytics();
-            InitializeXamarinInsights();
+            InitializeFirebaseAnalytics();
         }
-
-        private const string GoogleAnalyticsTrackingId = "UA-587407-96";
-        private static void InitializeGoogleAnalytics()
+        
+        private static void InitializeFirebaseAnalytics()
         {
-           
+//           App.Configure();
         }
-
-        private const string InsightsApiKey = "d3d8eb1b7ea6654b812ec9a8dea5fb8224e3a2b5";
-        private static void InitializeXamarinInsights()
-        {
-            
-        }
+        
 
         #region PushNotifications
        

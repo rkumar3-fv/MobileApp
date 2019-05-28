@@ -7,6 +7,7 @@ using Android.Provider;
 using Android.Runtime;
 using Android.Telephony;
 using com.FreedomVoice.MobileApp.Android.Storage;
+using Firebase.Analytics;
 using Environment = Android.OS.Environment;
 
 namespace com.FreedomVoice.MobileApp.Android.Helpers
@@ -127,13 +128,22 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         public const string InsightsKey = "d8bf081e25b6c01b8a852a950d1f7b446d33662d";
 
         /// <summary>
-        /// Check Google Analytics state
+        /// Check Google FirebaseTracker state
         /// </summary>
-        public bool IsGoogleAnalyticsOn { get; private set; }
+        public FirebaseAnalytics FirebaseTracker { get; private set; }
+        private const string RequestKey = "API_REQUEST";
+        private const string LoadingKey = "LOADING_FILE";
+        private const string ActionKey = "LONG_ACTION";
+        private const string OtherKey = "OTHER";
+        private const string LowMemoryKey = "LOW_MEMORY";
 
-
+        public void InitFirebaseAnalytics()
+        {
+            FirebaseTracker = FirebaseAnalytics.GetInstance(_context);
+        }
+        
         /// <summary>
-        /// Time reporting via GA
+        /// Time reporting via Firebase
         /// </summary>
         /// <param name="type">action type</param>
         /// <param name="name">action name</param>
@@ -141,49 +151,47 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         /// <param name="time">action duration</param>
         public bool ReportTime(TimingEvent type, string name, string result, long time)
         {
-//            if (!IsGoogleAnalyticsOn) return false;
-//            if (AnalyticsTracker == null) return false;
-//            var timingTracker = new HitBuilders.TimingBuilder();
-//            switch (type)
-//            {
-//                case TimingEvent.Request:
-//                    timingTracker.SetCategory(RequestKey);
-//                    break;
-//                case TimingEvent.FileLoading:
-//                    timingTracker.SetCategory(LoadingKey);
-//                    break;
-//                case TimingEvent.LongAction:
-//                    timingTracker.SetCategory(ActionKey);
-//                    break;
-//                default:
-//                    timingTracker.SetCategory(OtherKey);
-//                    break;
-//            }
-//            timingTracker.SetVariable(name);
-//            timingTracker.SetLabel(result);
-//            timingTracker.SetValue(time);
-//            AnalyticsTracker.Send(timingTracker.Build());
+            if (FirebaseTracker == null) return false;
+            var bundle = new Bundle();
+            
+            switch (type)
+            {
+                case TimingEvent.Request:
+                    bundle.PutString(FirebaseAnalytics.Param.ItemCategory, RequestKey);
+                    break;
+                case TimingEvent.FileLoading:
+                    bundle.PutString(FirebaseAnalytics.Param.ItemCategory, LoadingKey);
+                    break;
+                case TimingEvent.LongAction:
+                    bundle.PutString(FirebaseAnalytics.Param.ItemCategory, ActionKey);
+                    break;
+                default:
+                    bundle.PutString(FirebaseAnalytics.Param.ItemCategory, OtherKey);
+                    break;
+            }
+            bundle.PutString(FirebaseAnalytics.Param.ItemName, name);
+            bundle.PutString(FirebaseAnalytics.Param.Value, result);
+            bundle.PutLong(FirebaseAnalytics.Param.StartDate, time);
+            FirebaseTracker.LogEvent("report_time", bundle);
             return true;
         }
 
         public bool ReportEvent(SpecialEvent type, string name, string result)
         {
-//            if (!IsGoogleAnalyticsOn) return false;
-//            if (AnalyticsTracker == null) return false;
-//            var eventTracker = new HitBuilders.EventBuilder();
-//            switch (type)
-//            {
-//                case SpecialEvent.LowMemory:
-//                    eventTracker.SetCategory(LowMemoryKey);
-//                    break;
-//                default:
-//                    eventTracker.SetCategory(OtherKey);
-//                    break;
-//            }
-//            eventTracker.SetAction(name);
-//            eventTracker.SetLabel(result);
-//            eventTracker.SetValue(1);
-//            AnalyticsTracker.Send(eventTracker.Build());
+            if (FirebaseTracker == null) return false;
+            var bundle = new Bundle();
+            switch (type)
+            {
+                case SpecialEvent.LowMemory:
+                    bundle.PutString(FirebaseAnalytics.Param.ItemCategory, LoadingKey);
+                    break;
+                default:
+                    bundle.PutString(FirebaseAnalytics.Param.ItemCategory, OtherKey);
+                    break;
+            }
+            bundle.PutString(FirebaseAnalytics.Param.ItemName, name);
+            bundle.PutString(FirebaseAnalytics.Param.Value, result);
+            FirebaseTracker.LogEvent("special_event", bundle);
             return true;
         }
 
