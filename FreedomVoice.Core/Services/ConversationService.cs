@@ -25,25 +25,39 @@ namespace FreedomVoice.Core.Services
             _mapper = mapper;
         }
 
-        public async Task<ConversationListResponse> GetList(string phone, DateTime current, int count = 10, int page = 1, string systemPhone = null, string query = null,
-            string[] foundInNumbers = null)
+        public async Task<ConversationListResponse> GetList(string phone, DateTime current, int count = 10, int page = 1)
         {
             if (page <= 0) throw new ArgumentException(nameof(page));
             if (count <= 0) throw new ArgumentException(nameof(count));
             var result = new ConversationListResponse();
             var lastSyncDate = _cacheService.GetLastConversationUpdateDate(current);
             var start = count * (page - 1);
-            ConversationRequest search = null;
-            if (!string.IsNullOrEmpty(query) && !string.IsNullOrEmpty(systemPhone))
+
+            var netConversations = await _networkService.GetConversations(phone, current, lastSyncDate, start, count);
+            result.ResponseCode = netConversations.Code;
+            result.Message = netConversations.ErrorText;
+            result.Conversations = netConversations.Result.Select(x => _mapper.Map<Conversation>(x));
+            result.IsEnd = netConversations.Result == null || netConversations.Result.Count < count;
+            return result;
+        }
+
+        public async Task<ConversationListResponse> Search(string systemPhone, string query, string[] foundInNumbers, DateTime current, int count = 10, int page = 1)
+        {
+            if (string.IsNullOrEmpty(query)) throw new ArgumentException(nameof(query));
+            if (string.IsNullOrEmpty(systemPhone)) throw new ArgumentException(nameof(systemPhone));
+            var result = new ConversationListResponse();
+            var start = count * (page - 1);
+            SearchConversationRequest search = new SearchConversationRequest
             {
-                search = new ConversationRequest
-                {
-                    Telnumbers = foundInNumbers,
-                    SystemPhone = systemPhone,
-                    Text = query
-                };
-            }
-            var netConversations = await _networkService.GetConversations(phone, current, lastSyncDate, start, count, search);
+                From = current.Ticks,
+                To = current.Ticks,
+                Limit = count,
+                Start = start,
+                Telnumbers = foundInNumbers,
+                SystemPhone = systemPhone,
+                Text = query
+            };
+            var netConversations = await _networkService.SearchConversations(search);
             result.ResponseCode = netConversations.Code;
             result.Message = netConversations.ErrorText;
             result.Conversations = netConversations.Result.Select(x => _mapper.Map<Conversation>(x));
