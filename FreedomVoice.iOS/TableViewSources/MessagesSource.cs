@@ -7,6 +7,8 @@ using FreedomVoice.iOS.TableViewCells;
 using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.Utilities.Events;
 using FreedomVoice.iOS.Utilities.Helpers;
+using FreedomVoice.iOS.ViewControllers;
+using FreedomVoice.iOS.ViewControllers.Texts.NewConversation;
 using FreedomVoice.iOS.ViewModels;
 using UIKit;
 
@@ -62,6 +64,14 @@ namespace FreedomVoice.iOS.TableViewSources
             _expandedCell.OnViewFaxClick += OnViewFaxClick(indexPath);
             _expandedCell.OnPlayClick += OnPlayClick(indexPath);
             _expandedCell.OnDeleteMessageClick += OnDeleteMessageClick(tableView);
+            _expandedCell.OnSMSMessageClick += OnSmsMessageClick;
+        }
+
+        void OnSmsMessageClick(object sender, ExpandedCellButtonClickEventArgs e)
+        {
+
+            var controller = new NewConversationViewController(MainTabBarController.SharedInstance.GetSelectedPresentationNumber().PhoneNumber, e.SelectedMessage.SourceNumber);
+            _viewController.NavigationController?.PushViewController(controller, true);
         }
 
         private EventHandler<ExpandedCellButtonClickEventArgs> OnViewFaxClick(NSIndexPath indexPath)
