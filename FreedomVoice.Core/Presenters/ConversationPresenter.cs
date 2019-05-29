@@ -72,15 +72,16 @@ namespace FreedomVoice.Core.Presenters
                 _conversationId = value;
             }
         }
-        
+
         public string PhoneNumber
         {
             get => _phoneNumber;
             set
             {
-                if (_phoneNumber != null && value == _phoneNumber)
+                var newValue = PhoneService.GetClearPhone(value);
+                if (_phoneNumber != null && newValue == _phoneNumber)
                     return;
-                _phoneNumber = value;
+                _phoneNumber = newValue;
             }
         }
 

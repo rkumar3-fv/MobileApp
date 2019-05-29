@@ -91,7 +91,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         protected override async void SendMessage()
         {
             ShowSendMessageProgress(true); 
-            if (ConversationId == null)
+            if (_selectContactContainer.Visibility == ViewStates.Visible)
             {
                 ConversationPhone = _contactPhoneEt.Text;
                 var convId = await _presenter.SendMessage(
