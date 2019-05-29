@@ -128,5 +128,21 @@
             android:layout_marginLeft="@dimen/details_activity_actions_spacing"
             android:layout_alignParentTop="true"
             android:layout_toEndOf="@id/voicemailActivity_speakerButton" />
+
+        <Button
+                android:id="@+id/voicemailActivity_smsButton"
+                style="@style/BorderlessMessagesButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/details_activity_actions_height"
+                android:drawableLeft="@drawable/ic_conversations"
+                android:drawableTint="@color/colorDlgButton"
+                android:drawablePadding="@dimen/details_activity_actions_spacing"
+                android:text="@string/ActivityVoice_sms"
+                android:layout_marginTop="@dimen/details_activity_actions_margin"
+                android:layout_marginLeft="@dimen/details_activity_actions_spacing"
+                android:layout_alignParentTop="true"
+                android:layout_toRightOf="@id/voicemailActivity_callbackButton"
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
+        />
     </RelativeLayout>
 </LinearLayout>

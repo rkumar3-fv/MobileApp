@@ -24,6 +24,16 @@ namespace FreedomVoice.Core.Presenters
             Conversations = conversations;
         }
     }
+    
+    public class MessageSentEventArgs : EventArgs
+    {
+        public bool IsSuccess;
+
+        public MessageSentEventArgs(bool isSuccess)
+        {
+            IsSuccess = isSuccess;
+        }
+    }
 
     public class ConversationPresenter : IDisposable
     {
@@ -54,6 +64,8 @@ namespace FreedomVoice.Core.Presenters
 
         public event EventHandler ContactsUpdated;
         public event EventHandler ItemsChanged;
+        public event EventHandler MessageSent;
+        
 
         #endregion
 
@@ -168,11 +180,11 @@ namespace FreedomVoice.Core.Presenters
             await _PerformLoading();
         }
 
-        public async Task SendMessageAsync(string text)
+        public async Task<long?> SendMessageAsync(string text)
         {
             if (!_conversationId.HasValue)
             {
-                return;
+                return null;
             }
             
             var res = await _messagesService.SendMessage(_conversationId.Value, text);
@@ -190,6 +202,9 @@ namespace FreedomVoice.Core.Presenters
                     MessagedSentSuccess(res.Entity);
                     break;
             }
+
+            return res.Entity.Id;
+
         }
         
         public async Task<long?> SendMessage(string currentPhone, string toPhone, string text)
@@ -279,6 +294,7 @@ namespace FreedomVoice.Core.Presenters
                 return;
             }
             _addMessage(new OutgoingMessageViewModel(lastMessage));
+            MessageSent?.Invoke(this, new MessageSentEventArgs(false));
         }
 
         private void MessagedSentSending(Conversation conversation)
@@ -295,7 +311,8 @@ namespace FreedomVoice.Core.Presenters
             pack.Insert(0, message);
             _rawData[dateStr] = pack;
             _updateItems();
-            ItemsChanged?.Invoke(this, new ConversationCollectionEventArgs(Items)); 
+            ItemsChanged?.Invoke(this, new ConversationCollectionEventArgs(Items));
+            MessageSent?.Invoke(this, new MessageSentEventArgs(false));
         } 
         private void ResetState()
         {

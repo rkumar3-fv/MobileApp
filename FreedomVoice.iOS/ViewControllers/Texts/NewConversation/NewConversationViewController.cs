@@ -14,8 +14,6 @@ namespace FreedomVoice.iOS.ViewControllers.Texts.NewConversation
 		public const string OK = "Ok";
 		public const string To = "To:";
 		public const string Plus = "+";
-		public const string ErrorMessage = "Something went wrong. Try later.";
-		public const string ErrorTitle = "Error";
 	}
 
 	public class NewConversationViewController: ConversationViewController
@@ -45,6 +43,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts.NewConversation
 		{
 			base.ViewWillAppear(animated);
 			Presenter.ContactsUpdated += ProviderOnContactsUpdated;
+			Presenter.MessageSent += PresenterOnMessageSent;
 			_addContactView.AddContactButtonPressed += AddContactButtonPressed;
 			_addContactView.PhoneNumberChanged += PhoneNumberChanged;
 		}
@@ -56,6 +55,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts.NewConversation
 			_addContactView.AddContactButtonPressed -= AddContactButtonPressed;
 			_addContactView.PhoneNumberChanged -= PhoneNumberChanged;
 			Presenter.ContactsUpdated -= ProviderOnContactsUpdated;
+			Presenter.MessageSent -= PresenterOnMessageSent;
 		}
 
 		public override void ViewDidAppear(bool animated)
@@ -112,30 +112,24 @@ namespace FreedomVoice.iOS.ViewControllers.Texts.NewConversation
 
 			if (string.IsNullOrWhiteSpace(CurrentPhone.PhoneNumber) || string.IsNullOrWhiteSpace(_addContactView.Text))
 				return;
-
-			View.AddSubview(AppDelegate.ActivityIndicator);
-			AppDelegate.ActivityIndicator.Show();
-
+                
+			_chatField.SetSending(true);
+			
 			var conversationId = await Presenter.SendMessage(CurrentPhone.PhoneNumber, _addContactView.Text, _chatField.Text);
 			ConversationId = Presenter.ConversationId = conversationId;
 
-			AppDelegate.ActivityIndicator.Hide();
+			_chatField.SetSending(false);
 
+			CheckSentResult(conversationId);
 			if (conversationId.HasValue)
 			{
-				_chatField.Text = "";
 				UIView.Animate(0.24, () =>
 				{
 					_callerIdView.Alpha = 1;
 					_addContactView.Alpha = 0;
 				});
-
 				
 				UpdateTitle(_addContactView.Text, phonePlaceholder: Presenter.GetFormattedPhoneNumber(_addContactView.Text));
-			}
-			else
-			{
-				UIAlertHelper.ShowAlert(this, NewConversationTexts.ErrorTitle, NewConversationTexts.ErrorMessage);
 			}
 		}
 
@@ -181,6 +175,11 @@ namespace FreedomVoice.iOS.ViewControllers.Texts.NewConversation
 
 			var clearPhone = Presenter.GetClearPhoneNumber(phone);
 			UpdateTitle(clearPhone);
+		}
+		
+		private void PresenterOnMessageSent(object sender, EventArgs e)
+		{
+			
 		}
 
 		private void UpdateTitle(string phone, string name = null, string phonePlaceholder = NewConversationTexts.NewMessage)

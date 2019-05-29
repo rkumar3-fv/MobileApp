@@ -30,6 +30,7 @@ namespace FreedomVoice.iOS.TableViewCells
         private AVPlayerView _player;
 
         private UIButton _callBackButton;
+        private UIButton _smsButton;
         private UIButton _speakerButton;
         private UIButton _viewFaxButton;
         private UIButton _deleteButton;
@@ -144,6 +145,12 @@ namespace FreedomVoice.iOS.TableViewCells
                     _callBackButton?.RemoveFromSuperview();
                     _callBackButton = null;
                 }
+                else
+                if (Equals(subView, _smsButton))
+                {
+                    _smsButton?.RemoveFromSuperview();
+                    _smsButton = null;
+                }
             }
         }
 
@@ -181,10 +188,16 @@ namespace FreedomVoice.iOS.TableViewCells
             {
                 _callBackButton?.RemoveFromSuperview();
                 _callBackButton = null;
+
+                _smsButton?.RemoveFromSuperview();
+                _smsButton = null;
             }
             else
             if (_callBackButton == null)
                 AddSubview(GetCallBackButton());
+
+            if (_smsButton == null)
+                AddSubview(GetSMSButton());
 
             if (_message.Id != AppDelegate.ActivePlayerMessageId)
             {
@@ -200,7 +213,7 @@ namespace FreedomVoice.iOS.TableViewCells
 
         private void InitCommonStyles()
         {
-            foreach (var btn in new List<UIButton> { _callBackButton, _viewFaxButton, _speakerButton }.Where(btn => btn != null))
+            foreach (var btn in new List<UIButton> { _smsButton, _callBackButton, _viewFaxButton, _speakerButton }.Where(btn => btn != null))
             {
                 btn.Font = UIFont.SystemFontOfSize(14);
                 btn.TitleEdgeInsets = new UIEdgeInsets(0, 5, 0, 0);
@@ -259,8 +272,21 @@ namespace FreedomVoice.iOS.TableViewCells
             _callBackButton.SetImage(UIImage.FromFile("call_back.png"), UIControlState.Normal);
             _callBackButton.Layer.BorderColor = UIColor.FromRGBA(198, 242, 138, 110).CGColor;
             _callBackButton.TouchUpInside += OnCallBackButtonTouchUpInside;
+            _callBackButton.TintColor = UIColor.FromRGB(198, 242, 138);
 
             return _callBackButton;
+        }
+
+        private UIButton GetSMSButton()
+        {
+            _smsButton = new UIButton(new CGRect(255, 98, 101, 28));
+            _smsButton.SetTitle("Send Text", UIControlState.Normal);
+            _smsButton.SetTitleColor(UIColor.FromRGB(198, 242, 138), UIControlState.Normal);
+            _smsButton.SetImage(UIImage.FromFile("sms.png"), UIControlState.Normal);
+            _smsButton.Layer.BorderColor = UIColor.FromRGBA(198, 242, 138, 90).CGColor;
+            _smsButton.TouchUpInside += OnFaxButtonTouchUpInside;
+
+            return _smsButton;
         }
 
         private UIButton GetDeleteButton()

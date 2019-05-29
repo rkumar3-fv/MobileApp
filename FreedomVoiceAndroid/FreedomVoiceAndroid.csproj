@@ -516,6 +516,7 @@
     </AndroidResource>
     <AndroidResource Include="Resources\layout\act_record.axml">
       <SubType>AndroidResource</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </AndroidResource>
     <AndroidResource Include="Resources\layout-v21\act_record.axml" />
     <AndroidResource Include="Resources\layout-v21\act_voicemail.axml" />
