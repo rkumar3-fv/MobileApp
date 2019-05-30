@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Firebase.Core;
 using Foundation;
 using FreedomVoice.Core;
 using FreedomVoice.Core.Utils;
@@ -16,10 +17,8 @@ using FreedomVoice.iOS.Utilities.Helpers;
 using FreedomVoice.iOS.ViewControllers;
 using FreedomVoice.iOS.ViewModels;
 using FreedomVoice.iOS.Views;
-using Google.Analytics;
 using UIKit;
 using UserNotifications;
-using Xamarin;
 
 namespace FreedomVoice.iOS
 {
@@ -266,8 +265,7 @@ namespace FreedomVoice.iOS
 
         public static async Task RenewAuthorization(bool redirectToLoginOnError = true)
 	    {
-            var appDelegate = UIApplication.SharedApplication.Delegate as AppDelegate;
-            if (appDelegate != null)
+            if (UIApplication.SharedApplication.Delegate is AppDelegate appDelegate)
                 await appDelegate.LoginWithStoredCredentials(redirectToLoginOnError);
         }
 
@@ -382,23 +380,14 @@ namespace FreedomVoice.iOS
 
         private static void InitializeAnalytics()
         {
-            InitializeGoogleAnalytics();
-            InitializeXamarinInsights();
+            InitializeFirebaseAnalytics();
         }
-
-        private const string GoogleAnalyticsTrackingId = "UA-587407-96";
-        private static void InitializeGoogleAnalytics()
+        
+        private static void InitializeFirebaseAnalytics()
         {
-            Gai.SharedInstance.DispatchInterval = 20;
-            Gai.SharedInstance.TrackUncaughtExceptions = true;
-            Gai.SharedInstance.GetTracker(GoogleAnalyticsTrackingId);
+//           App.Configure();
         }
-
-        private const string InsightsApiKey = "d3d8eb1b7ea6654b812ec9a8dea5fb8224e3a2b5";
-        private static void InitializeXamarinInsights()
-        {
-            Insights.Initialize(InsightsApiKey);
-        }
+        
 
         #region PushNotifications
        

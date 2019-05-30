@@ -1,7 +1,6 @@
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
-using Android.Gms.Analytics;
 using Android.Graphics;
 using Android.OS;
 using Android.Runtime;
@@ -174,10 +173,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 snackPerm.SetActionTextColor(ContextCompat.GetColor(this, Resource.Color.colorUndoList));
                 snackPerm.Show();
             }
-            if (!Appl.ApplicationHelper.IsGoogleAnalyticsOn) return;
-            Appl.ApplicationHelper.AnalyticsTracker.SetScreenName(
-                    $"Activity {GetType().Name}, Screen {_pagerAdapter.GetItem(_viewPager.CurrentItem).GetType().Name}");
-            Appl.ApplicationHelper.AnalyticsTracker.Send(new HitBuilders.ScreenViewBuilder().Build());
         }
 
         public void SetToolbarContent()
