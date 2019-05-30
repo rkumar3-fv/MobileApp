@@ -577,10 +577,10 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Settings.bundle\en.lproj\Root.strings" />
+    <Content Include="GoogleService-Info.plist" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Entitlements.plist" />
-    <Content Include="GoogleService-Info.plist" />
     <BundleResource Include="Resources\keypad_call%402x.png" />
     <BundleResource Include="Resources\Login-568h%402x.png" />
     <BundleResource Include="Resources\contacts_access%402x.png" />

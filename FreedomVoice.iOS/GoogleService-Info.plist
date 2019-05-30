@@ -2,23 +2,35 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>TRACKING_ID</key>
-	<string>UA-69040520-2</string>
+	<key>CLIENT_ID</key>
+	<string>1068185592768-78h4lnll8kphrnepjpfhehn8fo92jcbm.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.1068185592768-78h4lnll8kphrnepjpfhehn8fo92jcbm</string>
+	<key>API_KEY</key>
+	<string>AIzaSyAk8FicRlr9gDH5A44ZQy2Fs5k69m4jb3s</string>
+	<key>GCM_SENDER_ID</key>
+	<string>1068185592768</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.freedomvoice</string>
+	<string>com.freedomvoice.mobileapp</string>
+	<key>PROJECT_ID</key>
+	<string>freedomvoice-6353c</string>
+	<key>STORAGE_BUCKET</key>
+	<string>freedomvoice-6353c.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
-	<false/>
+	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
-	<true/>
+	<false></false>
 	<key>IS_APPINVITE_ENABLED</key>
-	<false/>
+	<true></true>
 	<key>IS_GCM_ENABLED</key>
-	<false/>
+	<true></true>
 	<key>IS_SIGNIN_ENABLED</key>
-	<false/>
+	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:866135067482:ios:5d933939ef178a90</string>
+	<string>1:1068185592768:ios:f189ee754ce251e7</string>
+	<key>DATABASE_URL</key>
+	<string>https://freedomvoice-6353c.firebaseio.com</string>
 </dict>
 </plist>
