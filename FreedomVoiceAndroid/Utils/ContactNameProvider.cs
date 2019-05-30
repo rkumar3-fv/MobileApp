@@ -8,6 +8,7 @@ using Android.Provider;
 using Android.Runtime;
 using com.FreedomVoice.MobileApp.Android.Entities;
 using FreedomVoice.Core.Utils;
+using FreedomVoice.Core.Utils.Interfaces;
 using FreedomVoice.Core.ViewModels;
 using Java.Lang;
 using Microsoft.Extensions.Primitives;
@@ -17,11 +18,13 @@ namespace com.FreedomVoice.MobileApp.Android.Utils
     public class ContactNameProvider: IContactNameProvider
     {
         private readonly Context _context;
+        private readonly IPhoneFormatter _formatter;
         public event EventHandler ContactsUpdated;
 
         public ContactNameProvider(Context context)
         {
             _context = context;
+            _formatter = ServiceContainer.Resolve<IPhoneFormatter>();
             ContactsHelper.Instance(_context).ContactsPermissionUpdated += ProviderOnContactsUpdated;
         }
 
@@ -107,50 +110,7 @@ namespace com.FreedomVoice.MobileApp.Android.Utils
             if ( string.IsNullOrEmpty(phoneNumber) )
                 return phoneNumber;
 
-            Regex phoneParser;
-            string format;
-
-            switch( phoneNumber.Length ) {
-
-                case 5 :
-                    phoneParser = new Regex(@"(\d{3})(\d{2})");
-                    format      = "$1 $2";
-                    break;
-
-                case 6 :
-                    phoneParser = new Regex(@"(\d{2})(\d{2})(\d{2})");
-                    format      = "$1 $2 $3";
-                    break;
-
-                case 7 :
-                    phoneParser = new Regex(@"(\d{3})(\d{2})(\d{2})");
-                    format      = "$1 $2 $3";
-                    break;
-
-                case 8 :
-                    phoneParser = new Regex(@"(\d{4})(\d{2})(\d{2})");
-                    format      = "$1 $2 $3";
-                    break;
-
-                case 9 :
-                    phoneParser = new Regex(@"(\d{4})(\d{3})(\d{2})(\d{2})");
-                    format      = "($1 $2 $3 $4";
-                    break;
-
-                case 10 :
-                    phoneParser = new Regex(@"(\d{3})(\d{3})(\d{2})(\d{2})");
-                    format      = "($1) $2-$3$4";
-                    break;
-
-                case 11 :
-                    phoneParser = new Regex(@"(\d{4})(\d{3})(\d{2})(\d{2})");
-                    format      = "$1 $2 $3 $4";
-                    break;
-
-                default:
-                    return phoneNumber;
-            }
-            return phoneParser.Replace( phoneNumber, format );
+            return _formatter.Format(phoneNumber);
         }
 
     }
