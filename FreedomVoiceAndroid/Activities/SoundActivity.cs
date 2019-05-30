@@ -84,6 +84,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         protected override void OnStop()
         {
             base.OnStop();
+            SmsButton.Click -= SmsButtonOnClick;
             if (!_isPlayed)
             {
                 _audioManager.Mode = Mode.Normal;
