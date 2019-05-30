@@ -73,6 +73,8 @@ namespace FreedomVoice.iOS
             else
                 PassToAuthentificationProcess();
 
+            application.ApplicationIconBadgeNumber = 0;
+
             return true;
         }
 
@@ -385,7 +387,8 @@ namespace FreedomVoice.iOS
         
         private static void InitializeFirebaseAnalytics()
         {
-//           App.Configure();
+            App.Configure();
+            Firebase.Analytics.Analytics.LogEvent("test", new NSDictionary<NSString, NSObject>());
         }
         
 
