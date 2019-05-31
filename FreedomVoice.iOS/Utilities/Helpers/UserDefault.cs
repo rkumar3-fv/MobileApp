@@ -1,6 +1,7 @@
 ﻿using System;
 using Foundation;
 using FreedomVoice.Core.Utils;
+using FreedomVoice.Core.Utils.Interfaces;
 
 namespace FreedomVoice.iOS.Utilities.Helpers
 {
@@ -59,7 +60,7 @@ namespace FreedomVoice.iOS.Utilities.Helpers
         {
             get { return NSUserDefaults.StandardUserDefaults.StringForKey("AccountPhoneNumberKey"); }
             set {
-                var accountPhoneNumber = DataFormatUtils.ToPhoneNumber(value);
+                var accountPhoneNumber = ServiceContainer.Resolve<IPhoneFormatter>().Normalize(value);
                 NSUserDefaults.StandardUserDefaults.SetString(accountPhoneNumber, "AccountPhoneNumberKey");
             }
         }

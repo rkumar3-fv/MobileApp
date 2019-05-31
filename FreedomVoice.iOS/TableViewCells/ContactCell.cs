@@ -3,8 +3,10 @@ using System.Linq;
 using AddressBook;
 using Foundation;
 using FreedomVoice.Core.Utils;
+using FreedomVoice.Core.Utils.Interfaces;
 using FreedomVoice.iOS.Core.Utilities.Extensions;
 using FreedomVoice.iOS.Utilities;
+using PhoneNumbers;
 using UIKit;
 using Xamarin.Contacts;
 using ContactsHelper = FreedomVoice.iOS.Core.Utilities.Helpers.Contacts;
@@ -52,12 +54,14 @@ namespace FreedomVoice.iOS.TableViewCells
                 return;
             }
 
-            var normalizedSearchText = DataFormatUtils.NormalizePhone(searchText);
-            var phoneNumber = person.Phones.FirstOrDefault(p => !string.IsNullOrEmpty(normalizedSearchText) && DataFormatUtils.NormalizePhone(p.Number).Contains(normalizedSearchText))?.Number;
+            var formatter = ServiceContainer.Resolve<IPhoneFormatter>();
+
+            var normalizedSearchText = formatter.Normalize(searchText);
+            var phoneNumber = person.Phones.FirstOrDefault(p => !string.IsNullOrEmpty(normalizedSearchText) && formatter.Normalize(p.Number).Contains(normalizedSearchText))?.Number;
 
             if (!string.IsNullOrEmpty(phoneNumber))
             {
-                DetailTextLabel.AttributedText = GetDetailTextAttributedString(DataFormatUtils.NormalizePhone(phoneNumber), normalizedSearchText);
+                DetailTextLabel.AttributedText = GetDetailTextAttributedString(formatter.Normalize(phoneNumber), normalizedSearchText);
                 return;
             }
 

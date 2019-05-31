@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using FreedomVoice.Core.Utils.Interfaces;
 using FreedomVoice.Core.ViewModels;
 
 namespace FreedomVoice.iOS.Core.Utilities.Helpers
@@ -73,60 +75,14 @@ namespace FreedomVoice.iOS.Core.Utilities.Helpers
                 }
 
             }
-            Helpers.Contacts.ItemsChanged -= ContactItemsDidReceive;
+            Contacts.ItemsChanged -= ContactItemsDidReceive;
             ContactsUpdated?.Invoke(this, null);
 
         }
         
-        private string FormatPhoneNumber(string phoneNumber) {
-
-            if ( string.IsNullOrEmpty(phoneNumber) )
-                return phoneNumber;
-
-            Regex phoneParser;
-            string format;
-
-            switch( phoneNumber.Length ) {
-
-                case 5 :
-                    phoneParser = new Regex(@"(\d{3})(\d{2})");
-                    format      = "$1 $2";
-                    break;
-
-                case 6 :
-                    phoneParser = new Regex(@"(\d{2})(\d{2})(\d{2})");
-                    format      = "$1 $2 $3";
-                    break;
-
-                case 7 :
-                    phoneParser = new Regex(@"(\d{3})(\d{2})(\d{2})");
-                    format      = "$1 $2 $3";
-                    break;
-
-                case 8 :
-                    phoneParser = new Regex(@"(\d{4})(\d{2})(\d{2})");
-                    format      = "$1 $2 $3";
-                    break;
-
-                case 9 :
-                    phoneParser = new Regex(@"(\d{4})(\d{3})(\d{2})(\d{2})");
-                    format      = "($1 $2 $3 $4";
-                    break;
-
-                case 10 :
-                    phoneParser = new Regex(@"(\d{3})(\d{3})(\d{2})(\d{2})");
-                    format      = "($1) $2-$3$4";
-                    break;
-
-                case 11 :
-                    phoneParser = new Regex(@"(\d{4})(\d{3})(\d{2})(\d{2})");
-                    format      = "$1 $2 $3 $4";
-                    break;
-
-                default:
-                    return phoneNumber;
-            }
-            return phoneParser.Replace( phoneNumber, format );
+        private string FormatPhoneNumber(string phoneNumber)
+        {
+            return string.IsNullOrEmpty(phoneNumber) ? phoneNumber : FreedomVoice.Core.Utils.ServiceContainer.Resolve<IPhoneFormatter>().Format(phoneNumber);
         }
     }
 }

@@ -75,6 +75,15 @@ namespace FreedomVoice.iOS.Views.Shared
                 _selectedPresentationNumber = _callerIdPickerModel.SelectedItem;
                 CallerIdEvent.OnCallerIdChangedEvent(new CallerIdEventArgs(_selectedPresentationNumber));
             };
+            
+            CallerIdEvent.CallerIdFinished += (sender, args) =>
+            {
+                var selectedPresentationNumber = (args as CallerIdEventArgs)?.SelectedPresentationNumber;
+                if( selectedPresentationNumber.Equals(SelectedNumber) ) return;
+                _selectedPresentationNumber = selectedPresentationNumber;
+                UpdatePickerData(selectedPresentationNumber);
+
+            };
 
             _pickerField = new UIPickerView
             {

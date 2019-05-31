@@ -1,5 +1,6 @@
 ﻿using System;
 using FreedomVoice.Core.Utils;
+using FreedomVoice.Core.Utils.Interfaces;
 
 namespace FreedomVoice.iOS.Entities
 {
@@ -13,7 +14,7 @@ namespace FreedomVoice.iOS.Entities
 
         public string FormatedDialDate => DataFormatUtils.ToShortFormattedDate("Yesterday", DialDate);
 
-        public string TitleOrNumber => string.Concat(!string.IsNullOrEmpty(Title) ? Title : DataFormatUtils.ToPhoneNumber(PhoneNumber), CallsQuantity > 1 ? " (" + CallsQuantity + ")" : "");
+        public string TitleOrNumber => string.Concat(!string.IsNullOrEmpty(Title) ? Title : ServiceContainer.Resolve<IPhoneFormatter>().Format(PhoneNumber), CallsQuantity > 1 ? " (" + CallsQuantity + ")" : "");
 
         public Recent(string title, string phoneNumber, DateTime dialDate, string contactId = "")
         {

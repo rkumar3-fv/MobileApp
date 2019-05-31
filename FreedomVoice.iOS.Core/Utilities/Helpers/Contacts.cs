@@ -7,6 +7,7 @@ using AddressBook;
 using Contacts;
 using Foundation;
 using FreedomVoice.Core.Utils;
+using FreedomVoice.Core.Utils.Interfaces;
 using FreedomVoice.iOS.Core.Utilities.Extensions;
 using UIKit;
 using Xamarin.Contacts;
@@ -279,7 +280,7 @@ namespace FreedomVoice.iOS.Core.Utilities.Helpers
             var searchPhraseParts = searchText.Split(Separators);
 
             var normalizedSearchParts = searchPhraseParts.Select(DataFormatUtils.NormalizeSearchText).ToArray();
-            if (normalizedSearchParts.All(phrase => c.Phones.Any(p => !string.IsNullOrEmpty(phrase) && DataFormatUtils.NormalizePhone(p.Number).Contains(phrase))))
+            if (normalizedSearchParts.All(phrase => c.Phones.Any(p => !string.IsNullOrEmpty(phrase) && NormalizePhoneNumber(p.Number).Contains(phrase))))
                 return true;
 
             if (string.IsNullOrEmpty(c.DisplayName)) return false;
@@ -317,16 +318,7 @@ namespace FreedomVoice.iOS.Core.Utilities.Helpers
 
         public static string NormalizePhoneNumber(string number)
         {
-            if (string.IsNullOrEmpty(number))
-                return number;
-            
-             var normalizedPhoneNumber = "";
-            var pattern = "0123456789";
-            foreach (var c in number)
-                if (pattern.Contains(c))
-                    normalizedPhoneNumber += c;
-
-            return normalizedPhoneNumber.Length == 11 && normalizedPhoneNumber.StartsWith("1") ? normalizedPhoneNumber.Substring(1) : normalizedPhoneNumber;
+            return string.IsNullOrEmpty(number) ? number : ServiceContainer.Resolve<IPhoneFormatter>().Normalize(number);
         }
 
         public static Contact FindContactByNumber(string number)
