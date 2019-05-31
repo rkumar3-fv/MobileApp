@@ -17,12 +17,12 @@
 	<uses-feature android:name="android.hardware.telephony" android:required="false" />
 	<application android:label="@string/ApplicationName" android:allowBackup="false" android:theme="@style/SplashTheme">
 		<meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
-		<receiver android:name="com.google.android.gms.analytics.AnalyticsReceiver" android:enabled="true">
+		<receiver android:name="com.google.android.gms.analytics.FirebaseTrackerReceiver" android:enabled="true">
 			<intent-filter>
 				<action android:name="com.google.android.gms.analytics.ANALYTICS_DISPATCH" />
 			</intent-filter>
 		</receiver>
-		<service android:name="com.google.android.gms.analytics.AnalyticsService" android:enabled="true" android:exported="false" />
+		<service android:name="com.google.android.gms.analytics.FirebaseTrackerService" android:enabled="true" android:exported="false" />
 		<!--<receiver android:name="com.google.android.gms.analytics.CampaignTrackingReceiver" android:exported="true">
 			<intent-filter>
 				<action android:name="com.android.vending.INSTALL_REFERRER" />
@@ -33,8 +33,8 @@
 		<meta-data android:name="com.google.firebase.messaging.default_notification_icon" android:resource="@drawable/ic_default_notification" />
 		<meta-data android:name="com.google.firebase.messaging.default_notification_color" android:resource="@color/color_notification_default" />
 		<meta-data android:name="com.google.firebase.messaging.default_notification_channel_id" android:value="@string/DefaultNotificationChannel" />
-		<receiver android:name="com.google.firebase.iid.FirebaseInstanceIdInternalReceiver" android:exported="false" />
-		<receiver android:name="com.google.firebase.iid.FirebaseInstanceIdReceiver" android:exported="true" android:permission="com.google.android.c2dm.permission.SEND">
+		<receiver android:name="com.google.firebase.iid.FirebaseTrackerInstanceIdInternalReceiver" android:exported="false" />
+		<receiver android:name="com.google.firebase.iid.FirebaseTrackerInstanceIdReceiver" android:exported="true" android:permission="com.google.android.c2dm.permission.SEND">
 			<intent-filter>
 				<action android:name="com.google.android.c2dm.intent.RECEIVE" />
 				<action android:name="com.google.android.c2dm.intent.REGISTRATION" />

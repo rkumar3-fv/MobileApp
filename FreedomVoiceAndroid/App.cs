@@ -60,10 +60,7 @@ namespace com.FreedomVoice.MobileApp.Android
             FirebaseApp.InitializeApp(this);
             _helper.ActionsHelper = new ActionsHelper(this);
             RegisterActivityLifecycleCallbacks(this);
-            //_helper.Reports = new ReportHelper(this, _helper.ActionsHelper);
             JavaSystem.SetProperty("http.keepAlive", "true");
-            if (!_helper.IsInsigthsOn)
-                AppDomain.CurrentDomain.UnhandledException += HandleUnhandledException;
         }
 
         public override void OnLowMemory()

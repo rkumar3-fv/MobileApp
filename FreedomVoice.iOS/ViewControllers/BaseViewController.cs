@@ -1,8 +1,6 @@
 ﻿using System;
 using Foundation;
 using FreedomVoice.Core.Utils;
-using FreedomVoice.iOS.PushNotifications;
-using Google.Analytics;
 using UIKit;
 
 namespace FreedomVoice.iOS.ViewControllers
@@ -27,8 +25,7 @@ public class BaseViewController : UIViewController
 
         protected virtual void InternalInit()
         {
-            Gai.SharedInstance.DefaultTracker.Set(GaiConstants.ScreenName, PageName);
-            Gai.SharedInstance.DefaultTracker.Send(DictionaryBuilder.CreateScreenView().Build());
+            
 
             if (!HandlesKeyboardNotifications) return;
 

@@ -127,7 +127,6 @@ namespace FreedomVoice.iOS.Core.Utilities.Helpers
                     return phoneNumber;
             }
             return phoneParser.Replace( phoneNumber, format );
-
         }
     }
 }

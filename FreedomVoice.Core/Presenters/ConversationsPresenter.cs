@@ -37,9 +37,10 @@ namespace FreedomVoice.Core.Presenters
             get => _phoneNumber;
             set
             {
-                if (_phoneNumber != null && value == _phoneNumber)
+                var newValue = PhoneService.GetClearPhone(value);
+                if (_phoneNumber != null && newValue == _phoneNumber)
                     return;
-                _phoneNumber = value;
+                _phoneNumber = newValue;
 
             }
         }
@@ -134,17 +135,13 @@ namespace FreedomVoice.Core.Presenters
         private async Task _PerformLoading()
         {
             _isLoading = true;
-            var res = await _service.GetList(
-                _phoneNumber,
-                _currentDate, 
-                DefaultCount, 
-                _currentPage,
-                _phoneNumber, 
-                Query, 
-                _nameProvider.SearchNumbers(Query).ToArray()
-                );
-            HasMore = !res.IsEnd;
+            Entities.Texting.ConversationListResponse res;
 
+            res = string.IsNullOrEmpty(Query) 
+                ? await _service.GetList( _phoneNumber, _currentDate, DefaultCount, _currentPage)
+                : await _service.Search(_phoneNumber, Query, _nameProvider.SearchNumbers(Query).ToArray(), _currentDate, DefaultCount, _currentPage);
+
+            HasMore = !res.IsEnd;
 
             Items.AddRange(res.Conversations?.Select(row =>
                                new ConversationViewModel(row, _nameProvider)) ?? throw new Exception()

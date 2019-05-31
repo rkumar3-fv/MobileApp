@@ -8,6 +8,7 @@ namespace FreedomVoice.iOS.Views
     {
         private UITextView _textView;
         private UIButton _button;
+        private UIActivityIndicatorView _indicatorView;
         private NSLayoutConstraint _heightConstraint;
 
         private nfloat minHeight => 36;
@@ -45,6 +46,21 @@ namespace FreedomVoice.iOS.Views
             _button.TouchUpInside -= ButtonOnTouchUpInside;
         }
 
+        public void SetSending(bool sending)
+        {
+            _button.Hidden = sending;
+            _indicatorView.Hidden = !sending;
+            if(sending)
+            {
+                _indicatorView.StartAnimating();
+            }
+            else
+            {
+                _indicatorView.StopAnimating();
+            }
+
+        }
+
         private void _setupViews()
         {
             _textView = new UITextView(CGRect.Empty)
@@ -61,8 +77,8 @@ namespace FreedomVoice.iOS.Views
             {
                 TranslatesAutoresizingMaskIntoConstraints = false,
                 BackgroundColor = UIColor.LightGray
-
             };
+
             _button.SetTitleColor(UIColor.White, UIControlState.Normal);
             _button.SetImage(new UIImage("arrow_right"), UIControlState.Normal);
             _button.Layer.CornerRadius = 17;
@@ -73,6 +89,13 @@ namespace FreedomVoice.iOS.Views
             _textView.Layer.CornerRadius = 18;
             _textView.Layer.BorderWidth = 0.5f;
             _textView.Layer.BorderColor = new UIColor(0.90f, 0.90f, 0.91f, 1.0f).CGColor;
+
+            _indicatorView = new UIActivityIndicatorView(UIActivityIndicatorViewStyle.Gray)
+            {
+                TranslatesAutoresizingMaskIntoConstraints = false
+            };
+            _indicatorView.Hidden = true;
+            AddSubview(_indicatorView);
         }
 
         private void _setupConstraints()
@@ -91,6 +114,10 @@ namespace FreedomVoice.iOS.Views
             _button.RightAnchor.ConstraintEqualTo(RightAnchor, -8).Active = true;
             _button.HeightAnchor.ConstraintEqualTo(32).Active = true;
             _button.WidthAnchor.ConstraintEqualTo(32).Active = true;
+
+            _indicatorView.CenterXAnchor.ConstraintEqualTo(_button.CenterXAnchor).Active = true;
+            _indicatorView.CenterYAnchor.ConstraintEqualTo(_button.CenterYAnchor).Active = true;
+
         }
         
 

@@ -167,6 +167,7 @@ namespace FreedomVoice.Core.Services
                 .TableNoTracking
                 .Include(conversation => conversation.SystemPhone)
                 .Include(conversation => conversation.ToPhone)
+                .Include(conversation => conversation.Messages)
                 .Where(conversation => conversation.SystemPhone != null && conversation.SystemPhone.PhoneNumber == phone)
                 .OrderByDescending(conversation => conversation.LastSyncDate)
                 .Skip(start)

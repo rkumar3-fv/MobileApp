@@ -13,6 +13,12 @@ using UIKit;
 
 namespace FreedomVoice.iOS.ViewControllers.Texts
 {
+    
+    internal struct ConversationTexts
+    {
+        public const string ErrorMessage = "Something went wrong. Try later.";
+        public const string ErrorTitle = "Error";
+    }
     public partial class ConversationViewController : BaseViewController
     {
         #region Subviews
@@ -209,12 +215,23 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
         {
             if (string.IsNullOrWhiteSpace(_chatField.Text))
                 return;
-            
-            View.AddSubview(AppDelegate.ActivityIndicator);
-            AppDelegate.ActivityIndicator.Show();
-            await Presenter.SendMessageAsync(_chatField.Text);
-            _chatField.Text = "";
-            AppDelegate.ActivityIndicator.Hide();
+
+            _chatField.SetSending(true);
+            var res = await Presenter.SendMessageAsync(_chatField.Text);
+            _chatField.SetSending(false);
+            CheckSentResult(res);
+        }
+
+        protected void CheckSentResult(long? conversationId)
+        {
+            if (conversationId.HasValue)
+            {
+                _chatField.Text = "";
+            }
+            else
+            {
+                UIAlertHelper.ShowAlert(this, ConversationTexts.ErrorTitle, ConversationTexts.ErrorMessage);
+            }
         }
 
         private void CallerIdEventOnCallerIdChanged(object sender, EventArgs e)
