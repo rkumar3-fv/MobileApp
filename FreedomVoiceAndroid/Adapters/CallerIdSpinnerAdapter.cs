@@ -4,6 +4,7 @@ using Android.Views;
 using Android.Widget;
 using Object = Java.Lang.Object;
 using FreedomVoice.Core.Utils;
+using FreedomVoice.Core.Utils.Interfaces;
 
 namespace com.FreedomVoice.MobileApp.Android.Adapters
 {
@@ -77,7 +78,7 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
                 view.Tag = holder;
             }
             if (_numbersList != null)
-                holder.SpinnerValue.Text = DataFormatUtils.ToPhoneNumber(_numbersList[position]);
+                holder.SpinnerValue.Text = ServiceContainer.Resolve<IPhoneFormatter>().Format(_numbersList[position]);
             return view;
         }
 
@@ -96,7 +97,7 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
                 view.Tag = holder;
             }
             if (_numbersList != null)
-                holder.SpinnerValue.Text = DataFormatUtils.ToPhoneNumber(_numbersList[position]);
+                holder.SpinnerValue.Text = ServiceContainer.Resolve<IPhoneFormatter>().Format(_numbersList[position]);
             return view;
         }
 

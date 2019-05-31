@@ -9,6 +9,7 @@ using Android.Views;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Entities;
 using FreedomVoice.Core.Utils;
+using FreedomVoice.Core.Utils.Interfaces;
 using Java.Interop;
 
 namespace com.FreedomVoice.MobileApp.Android.Adapters
@@ -56,7 +57,7 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
                     var phonesDict = new Dictionary<string, Phone>();
                     while (cursor.MoveToNext())
                     {
-                        var phone = DataFormatUtils.NormalizePhone(cursor.GetString(cursor.GetColumnIndex(projection[1])));
+                        var phone = ServiceContainer.Resolve<IPhoneFormatter>().Format(cursor.GetString(cursor.GetColumnIndex(projection[1])));
                         var type = Convert.ToInt32(cursor.GetString(cursor.GetColumnIndex(projection[2])));
                         if (!phonesDict.ContainsKey(phone))
                             phonesDict.Add(phone, new Phone(phone, type));

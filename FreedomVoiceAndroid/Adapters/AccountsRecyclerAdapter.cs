@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Entities;
 using FreedomVoice.Core.Utils;
+using FreedomVoice.Core.Utils.Interfaces;
 
 namespace com.FreedomVoice.MobileApp.Android.Adapters
 {
@@ -14,6 +16,7 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
     public class AccountsRecyclerAdapter : RecyclerView.Adapter
     {
         private List<Account> _accountsList;
+        private IPhoneFormatter _formatter;
 
         /// <summary>
         /// Item short click event
@@ -27,6 +30,7 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
 
         public AccountsRecyclerAdapter(List<Account> accountsList)
         {
+            _formatter = ServiceContainer.Resolve<IPhoneFormatter>();
             _accountsList = accountsList;
         }
 
@@ -55,9 +59,10 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
 
         public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
         {
-            var viewHolder = holder as ViewHolder;
-            if (viewHolder != null)
-                viewHolder.AccountText.Text = DataFormatUtils.ToPhoneNumber(_accountsList[position].AccountName);
+            if (holder is ViewHolder viewHolder)
+            {
+                viewHolder.AccountText.Text = _formatter.Format(_accountsList[position].AccountName);
+            }
         }
 
         public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)

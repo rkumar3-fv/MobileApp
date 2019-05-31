@@ -6,6 +6,7 @@ using com.FreedomVoice.MobileApp.Android.Activities;
 using com.FreedomVoice.MobileApp.Android.Adapters;
 using com.FreedomVoice.MobileApp.Android.Helpers;
 using FreedomVoice.Core.Utils;
+using FreedomVoice.Core.Utils.Interfaces;
 
 namespace com.FreedomVoice.MobileApp.Android.Fragments
 {
@@ -55,7 +56,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                     IdSpinner.Visibility = ViewStates.Invisible;
                 if (SingleId.Visibility == ViewStates.Invisible)
                 {
-                    SingleId.Text = DataFormatUtils.ToPhoneNumber(Helper.SelectedAccount.PresentationNumber);
+                    SingleId.Text = ServiceContainer.Resolve<IPhoneFormatter>().Format(Helper.SelectedAccount.PresentationNumber);
                     SingleId.Visibility = ViewStates.Visible;
                 }
             }
@@ -92,7 +93,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                                         IdSpinner.Visibility = ViewStates.Invisible;
                                     if (SingleId.Visibility == ViewStates.Invisible)
                                     {
-                                        SingleId.Text = DataFormatUtils.ToPhoneNumber(Helper.SelectedAccount.PresentationNumber);
+                                        SingleId.Text = ServiceContainer.Resolve<IPhoneFormatter>().Format(Helper.SelectedAccount.PresentationNumber);
                                         SingleId.Visibility = ViewStates.Visible;
                                     }
                                 }

@@ -84,7 +84,7 @@ namespace com.FreedomVoice.MobileApp.Android.Utils
                 }
                 while (phoneCursor != null && phoneCursor.MoveToNext())
                 {
-                    var phone = DataFormatUtils.NormalizePhone(phoneCursor.GetString(phoneCursor.GetColumnIndex(projection[1])));
+                    var phone = ServiceContainer.Resolve<IPhoneFormatter>().Normalize(phoneCursor.GetString(phoneCursor.GetColumnIndex(projection[1])));
                     res.Add(GetClearPhoneNumber(phone));
                 }
                 phoneCursor.Close();

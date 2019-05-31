@@ -1,4 +1,5 @@
-﻿using FreedomVoice.Core.Utils.Interfaces;
+﻿using System;
+using FreedomVoice.Core.Utils.Interfaces;
 using PhoneNumbers;
 
 namespace FreedomVoice.Core.Utils
@@ -10,13 +11,28 @@ namespace FreedomVoice.Core.Utils
 
         public string Format(string phone)
         {
-            var number = Util.Parse(phone, DefaultRegion);
-            return Util.Format(number, PhoneNumberFormat.NATIONAL);
+            var obj = Parse(phone);
+            return obj != null ? Util.Format(obj, PhoneNumberFormat.NATIONAL) : "";
         }
 
-        public string Parse(string phone)
+        public string Normalize(string phone)
         {
-            return Util.Parse(phone, DefaultRegion).ToString();
+            var obj = Parse(phone);
+            return obj != null ? obj.ToString() : "";
         }
+
+        private PhoneNumber Parse(string phone)
+        {
+            try
+            {
+                return Util.Parse(phone, DefaultRegion);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            return null;
+        }
+        
     }
 }

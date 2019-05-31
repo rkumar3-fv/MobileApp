@@ -7,6 +7,7 @@ using Android.Provider;
 using com.FreedomVoice.MobileApp.Android.Activities;
 using com.FreedomVoice.MobileApp.Android.Helpers;
 using FreedomVoice.Core.Utils;
+using FreedomVoice.Core.Utils.Interfaces;
 using Java.Interop;
 using Uri = Android.Net.Uri;
 
@@ -72,7 +73,7 @@ namespace com.FreedomVoice.MobileApp.Android.Utils
     /// <returns>Is in contacts</returns>
     public bool GetName(string normalizedPhone, out string name)
         {
-            var phone = DataFormatUtils.NormalizePhone(normalizedPhone);
+            var phone = ServiceContainer.Resolve<IPhoneFormatter>().Normalize(normalizedPhone);
             if (_phonesCache.ContainsKey(phone))
             {
                 name = _phonesCache[phone];
@@ -97,7 +98,7 @@ namespace com.FreedomVoice.MobileApp.Android.Utils
             
             if (cursor == null)
             {
-                name = DataFormatUtils.ToPhoneNumber(phone);
+                name = ServiceContainer.Resolve<IPhoneFormatter>().Format(phone);
                 return false;
             }
             if (cursor.MoveToFirst())
@@ -107,7 +108,7 @@ namespace com.FreedomVoice.MobileApp.Android.Utils
                 cursor.Close();
                 return true;
             }
-            name = DataFormatUtils.ToPhoneNumber(phone);
+            name = ServiceContainer.Resolve<IPhoneFormatter>().Format(phone);
             cursor.Close();
             return false;
         }
@@ -146,7 +147,7 @@ namespace com.FreedomVoice.MobileApp.Android.Utils
                     }
                 }
 
-                var uriPhones = Uri.Parse($"content://com.android.contacts/data/phones/filter/*{DataFormatUtils.NormalizePhone(query)}*");
+                var uriPhones = Uri.Parse($"content://com.android.contacts/data/phones/filter/*{ServiceContainer.Resolve<IPhoneFormatter>().Normalize(query)}*");
                 string[] projectionPhones = { "contact_id", ContactsContract.Contacts.InterfaceConsts.DisplayName,
                 ContactsContract.Contacts.InterfaceConsts.HasPhoneNumber, ContactsContract.Contacts.InterfaceConsts.PhotoUri };
                 string selectionPhones;
