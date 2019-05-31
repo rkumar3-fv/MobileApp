@@ -318,7 +318,7 @@ namespace FreedomVoice.iOS.PushNotifications
 			if (pushResponseData == null)
 			{
 				_logger.Debug(nameof(NotificationCenterDelegate), nameof(DidUpdatePushCredentials), $"Can't parse Data(PushResponse).");
-				ShowPushNotificationsNow(titleValue, bodyValue);
+				ShowPushNotificationsNow(titleValue, bodyValue, payload.DictionaryPayload);
 				return;
 			}
 
@@ -328,15 +328,15 @@ namespace FreedomVoice.iOS.PushNotifications
 			if (string.IsNullOrWhiteSpace(phoneHolder))
 			{
 				_logger.Debug(nameof(NotificationCenterDelegate), nameof(DidUpdatePushCredentials), $"Can't parse 'From phone number'.");
-				ShowPushNotificationsNow(titleValue, bodyValue);
+				ShowPushNotificationsNow(titleValue, bodyValue, payload.DictionaryPayload);
 				return;
 			}
 
 			_logger.Debug(nameof(NotificationCenterDelegate), nameof(DidUpdatePushCredentials), $"'From' phone number has been found: {phoneHolder}");
-			ShowPushNotificationsNow(phoneHolder, bodyValue);
+			ShowPushNotificationsNow(phoneHolder, bodyValue, payload.DictionaryPayload);
 		}
 
-		private void ShowPushNotificationsNow(string title, string body)
+		private void ShowPushNotificationsNow(string title, string body, NSDictionary userInfo)
 		{
 			_logger.Debug(nameof(NotificationCenterDelegate), nameof(ShowPushNotificationsNow), $"Show alerts as title: {title}, body: {body}");
 
@@ -344,8 +344,10 @@ namespace FreedomVoice.iOS.PushNotifications
 			notificationContent.Title = title;
 			notificationContent.Body = body;
 			notificationContent.Sound = UNNotificationSound.Default;
+            notificationContent.UserInfo = userInfo;
 
-			var trigger = UNTimeIntervalNotificationTrigger.CreateTrigger(1, false);
+
+            var trigger = UNTimeIntervalNotificationTrigger.CreateTrigger(1, false);
 			var localNotificationRequest = UNNotificationRequest.FromIdentifier(new NSUuid().AsString(), notificationContent, trigger);
 			
 			UNUserNotificationCenter.Current.AddNotificationRequest(localNotificationRequest, error =>
