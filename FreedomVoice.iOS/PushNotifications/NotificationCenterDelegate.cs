@@ -6,6 +6,7 @@ using FreedomVoice.Core.Services;
 using FreedomVoice.Core.Utils;
 using FreedomVoice.Core.ViewModels;
 using FreedomVoice.Entities.Enums;
+using FreedomVoice.Entities.PushContract;
 using FreedomVoice.Entities.Response;
 using FreedomVoice.iOS.Core;
 using FreedomVoice.iOS.Entities;
@@ -28,11 +29,19 @@ namespace FreedomVoice.iOS.PushNotifications
 		private readonly ILogger _logger = ServiceContainer.Resolve<ILogger>();
 		private readonly NotificationMessageService _messagesService = NotificationMessageService.Instance();
 		private PushResponse<Conversation> pushNotificationData;
+		
+		private readonly NSString ApsKey = new NSString("aps");
+		private readonly NSString ContentAvailableKey = new NSString("content-available");
+		private readonly NSString AlertKey = new NSString("alert");
+		private readonly NSString TitleKey = new NSString("title");
+		private readonly NSString BodyKey = new NSString("body");
+		
+		public event Action<NSData> DidUpdatePushToken;
 
 		public NotificationCenterDelegate()
 		{
 			UserDefault.IsAuthenticatedChanged += IsAuthenticatedChanged;
-        }
+		}
 
 		public override void WillPresentNotification(UNUserNotificationCenter center, UNNotification notification, Action<UNNotificationPresentationOptions> completionHandler)
 		{
@@ -232,16 +241,16 @@ namespace FreedomVoice.iOS.PushNotifications
 			_appNavigator.MainTabBarControllerChanged -= MainTabBarControllerChanged;
 			_appNavigator.CurrentControllerChanged -= CurrentControllerChanged;
 
-            try
-            {
-                await ContactsHelper.GetContactsListAsync();
-            }
-            catch (Exception ex)
-            {
-                _logger.Debug(nameof(NotificationCenterDelegate), nameof(ShowConversationController), $"GetContactsListAsync failed: {ex}");
-            }
+			try
+			{
+				await ContactsHelper.GetContactsListAsync();
+			}
+			catch (Exception ex)
+			{
+				_logger.Debug(nameof(NotificationCenterDelegate), nameof(ShowConversationController), $"GetContactsListAsync failed: {ex}");
+			}
 
-            var phoneHolder = _contactNameProvider.GetNameOrNull(_contactNameProvider.GetClearPhoneNumber(pushNotificationData.Data.ToPhone.PhoneNumber));
+			var phoneHolder = _contactNameProvider.GetNameOrNull(_contactNameProvider.GetClearPhoneNumber(pushNotificationData.Data.ToPhone.PhoneNumber));
 			var controller = new ConversationViewController();
 			controller.ConversationId = pushNotificationData.Data.Id;
 			controller.CurrentPhone = new PresentationNumber(pushNotificationData.TextMessageReceivedToNumber());
@@ -249,44 +258,63 @@ namespace FreedomVoice.iOS.PushNotifications
 			_appNavigator.CurrentController.NavigationController?.PushViewController(controller, true);
 			pushNotificationData = null;
 		}
-		
-		public event Action<NSData> DidUpdatePushToken;
-		
+
+		#region IPKPushRegistryDelegate implementation
+
 		public void DidUpdatePushCredentials(PKPushRegistry registry, PKPushCredentials credentials, string type)
 		{
 			_logger.Debug(nameof(NotificationCenterDelegate), nameof(DidUpdatePushCredentials), $"DidUpdatePushCredentials: {credentials.Token} {type}");
 			DidUpdatePushToken?.Invoke(credentials.Token);
 		}
-
+	
 		public void DidReceiveIncomingPush(PKPushRegistry registry, PKPushPayload payload, string type)
 		{
 			_logger.Debug(nameof(NotificationCenterDelegate), nameof(DidUpdatePushCredentials), $"DidUpdatePushCredentials: {payload} {type}");
 
-			var apsValue = payload.DictionaryPayload["aps"] as NSDictionary;
-
-			if (apsValue.ContainsKey(new NSString("content-available")))
+			if (!payload.DictionaryPayload.ContainsKey(new NSString(ApsKey)))
 			{
-				var contentAvailable = apsValue["content-available"] as NSNumber;
-				if (contentAvailable != null && contentAvailable.Int32Value == 1)
-				{
-					//Todo silencs
-					return;
-				}
+				_logger.Debug(nameof(NotificationCenterDelegate), nameof(DidUpdatePushCredentials), "APS key is missing");
+				return;
+			}
+			
+			var apsValue = payload.DictionaryPayload[ApsKey] as NSDictionary;
+			
+			if (apsValue.ContainsKey(new NSString(ContentAvailableKey)) && apsValue[ContentAvailableKey] is NSNumber contentAvailable && contentAvailable.Int32Value == 1)
+			{
+				DidReceiveSilentRemoteNotification(payload.DictionaryPayload, null);
+				return;
 			}
 
-			if (!apsValue.ContainsKey(new NSString("alert")))
+			if (!apsValue.ContainsKey(new NSString(AlertKey)))
+			{
+				_logger.Debug(nameof(NotificationCenterDelegate), nameof(DidUpdatePushCredentials), "Alert key is missing");
 				return;
+			}
 
-			var alertValue = apsValue["alert"] as NSDictionary;
-			
-			if (!alertValue.ContainsKey(new NSString("title")) || !alertValue.ContainsKey(new NSString("body")))
-				return;
-			
-			var titleValue = alertValue["title"] as NSString;
-			var bodyValue = alertValue["body"] as NSString;
+			string titleValue = null;
+			string bodyValue = null;
+
+			switch (apsValue[AlertKey])
+			{
+				case NSDictionary alertValue when !alertValue.ContainsKey(new NSString(TitleKey)) || !alertValue.ContainsKey(new NSString(BodyKey)):
+					_logger.Debug(nameof(NotificationCenterDelegate), nameof(DidUpdatePushCredentials), $"APS doesn't have title and body");
+					return;
+				
+				case NSDictionary alertValue:
+					titleValue = alertValue[TitleKey] as NSString;
+					bodyValue = alertValue[BodyKey] as NSString;
+					break;
+				
+				case NSString apsTitle:
+					titleValue = apsTitle;
+					break;
+				
+				default:
+					_logger.Debug(nameof(NotificationCenterDelegate), nameof(DidUpdatePushCredentials), "APS doesn't have title content");
+					return;
+			}
 
 			var pushResponseData = PushResponseExtension.CreateFromFromJson(payload.DictionaryPayload);
-
 			if (pushResponseData == null)
 			{
 				_logger.Debug(nameof(NotificationCenterDelegate), nameof(DidUpdatePushCredentials), $"Can't parse Data(PushResponse).");
@@ -295,7 +323,7 @@ namespace FreedomVoice.iOS.PushNotifications
 			}
 
 			var fromPhone = pushResponseData.TextMessageReceivedFromNumber();
-			var phoneHolder = _contactNameProvider.GetNameOrNull(NormalizePhoneNumber(fromPhone));
+			var phoneHolder = _contactNameProvider.GetNameOrNull(ContactsHelper.NormalizePhoneNumber(fromPhone));
 
 			if (string.IsNullOrWhiteSpace(phoneHolder))
 			{
@@ -303,7 +331,7 @@ namespace FreedomVoice.iOS.PushNotifications
 				ShowPushNotificationsNow(titleValue, bodyValue);
 				return;
 			}
-			
+
 			_logger.Debug(nameof(NotificationCenterDelegate), nameof(DidUpdatePushCredentials), $"'From' phone number has been found: {phoneHolder}");
 			ShowPushNotificationsNow(phoneHolder, bodyValue);
 		}
@@ -322,8 +350,11 @@ namespace FreedomVoice.iOS.PushNotifications
 			
 			UNUserNotificationCenter.Current.AddNotificationRequest(localNotificationRequest, error =>
 			{
-                _logger.Debug(nameof(NotificationCenterDelegate), nameof(ShowPushNotificationsNow), $"Push has been showed. Error: {error}");
+				_logger.Debug(nameof(NotificationCenterDelegate), nameof(ShowPushNotificationsNow), $"Push has been showed. Error: {error}");
 			});
 		}
+		
+		#endregion
+
 	}
 }

@@ -84,11 +84,13 @@ namespace FreedomVoice.iOS.PushNotifications
 					{
 						_logger.Debug(nameof(PushNotificationsService), nameof(RegisterForPushNotifications), "try to RegisterForRemoteNotifications");
 
+						//INFO: Registration for PushKit.
 						var voipRegistry = new PKPushRegistry(DispatchQueue.MainQueue);
 						voipRegistry.DesiredPushTypes = new NSSet(new NSObject[] {PKPushType.Voip});
 						voipRegistry.Delegate = _voipPushNotificationsCenterDelegate;
 						
-//						UIApplication.SharedApplication.RegisterForRemoteNotifications();
+						//INFO: Registration for regular notification. Disabled now.
+						//UIApplication.SharedApplication.RegisterForRemoteNotifications();
 					});
 				});
 			});

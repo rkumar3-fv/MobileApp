@@ -407,7 +407,8 @@ namespace FreedomVoice.iOS
        
         public override async void RegisteredForRemoteNotifications(UIApplication application, NSData deviceToken)
         {
-            pushService.DidRegisterForRemoteNotifications(deviceToken);
+            //INFO: Regular push notification. Disabled.
+            //pushService.DidRegisterForRemoteNotifications(deviceToken);
         }
 
         public override void ReceivedLocalNotification(UIApplication application, UILocalNotification notification)
@@ -416,7 +417,8 @@ namespace FreedomVoice.iOS
 
         public override void DidReceiveRemoteNotification(UIApplication application, NSDictionary userInfo, Action<UIBackgroundFetchResult> completionHandler)
         {
-            PushServiceCenter.DidReceiveSilentRemoteNotification(userInfo, completionHandler);
+            //INFO: Regular push notification. Disabled.
+            //PushServiceCenter.DidReceiveSilentRemoteNotification(userInfo, completionHandler);
         }
 
         public override void DidRegisterUserNotificationSettings(UIApplication application, UIUserNotificationSettings notificationSettings)
@@ -425,7 +427,8 @@ namespace FreedomVoice.iOS
 
         public override void FailedToRegisterForRemoteNotifications(UIApplication application, NSError error)
         {
-            pushService.DidFailToRegisterForRemoteNotifications(error);
+            //INFO: Regular push notification. Disabled.
+            //pushService.DidFailToRegisterForRemoteNotifications(error);
         }
 
         public void RegisterRemotePushNotifications()
