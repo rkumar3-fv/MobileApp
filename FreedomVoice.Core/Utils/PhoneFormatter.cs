@@ -18,7 +18,13 @@ namespace FreedomVoice.Core.Utils
         public string Normalize(string phone)
         {
             var obj = Parse(phone);
-            return obj == null ? phone : $"{obj.HasCountryCode}{obj.NationalNumber}{obj.Extension}";
+            return obj == null ? phone : $"{obj.CountryCode}{obj.NationalNumber}{obj.Extension}";
+        }
+
+        public string NormalizeNational(string phone)
+        {
+            var obj = Parse(phone);
+            return obj == null ? phone : $"{obj.NationalNumber}{obj.Extension}";
         }
 
         private PhoneNumber Parse(string phone)

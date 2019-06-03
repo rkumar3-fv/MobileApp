@@ -13,6 +13,7 @@ namespace FreedomVoice.iOS.Core.Utilities.Helpers
     {
 
         private Dictionary<string, string> _contactNames = new Dictionary<string, string>();
+        private readonly IPhoneFormatter _phoneFormatter = FreedomVoice.Core.Utils.ServiceContainer.Resolve<IPhoneFormatter>();
 
         public event EventHandler ContactsUpdated;
         
@@ -56,24 +57,22 @@ namespace FreedomVoice.iOS.Core.Utilities.Helpers
         
         public string GetClearPhoneNumber(string formattedNumber)
         {
-            const string pattern = @"\d"; 
-        
-            var sb = new StringBuilder(); 
-            foreach (Match m in Regex.Matches(formattedNumber, pattern)) 
-                sb.Append(m); 
-
-            return sb.ToString();
+            return _phoneFormatter.Normalize(formattedNumber);
         }
 
         private void ContactItemsDidReceive(object sender, EventArgs e)
         {
-            foreach(var contact in Helpers.Contacts.ContactList)
+            foreach(var contact in Contacts.ContactList)
             {
                 foreach(var phone in contact.Phones) {
-                    var raw = Regex.Replace(phone.Number, @"\D", "");
+                    var raw = _phoneFormatter.Normalize(phone.Number);
                     _contactNames[raw] = contact.DisplayName;
+                    var rawNational = _phoneFormatter.NormalizeNational(phone.Number);
+                    if( !raw.Equals(rawNational) )
+                    {
+                        _contactNames[rawNational] = contact.DisplayName;
+                    }
                 }
-
             }
             Contacts.ItemsChanged -= ContactItemsDidReceive;
             ContactsUpdated?.Invoke(this, null);
@@ -82,7 +81,7 @@ namespace FreedomVoice.iOS.Core.Utilities.Helpers
         
         private string FormatPhoneNumber(string phoneNumber)
         {
-            return string.IsNullOrEmpty(phoneNumber) ? phoneNumber : FreedomVoice.Core.Utils.ServiceContainer.Resolve<IPhoneFormatter>().Format(phoneNumber);
+            return string.IsNullOrEmpty(phoneNumber) ? phoneNumber : _phoneFormatter.Format(phoneNumber);
         }
     }
 }
