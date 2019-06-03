@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Foundation;
 using FreedomVoice.Core.Utils;
+using FreedomVoice.Core.Utils.Interfaces;
 using FreedomVoice.iOS.Utilities.Helpers;
 using FreedomVoice.iOS.ViewModels;
 using UIKit;
@@ -86,7 +87,7 @@ namespace FreedomVoice.iOS.Utilities
 
         private static string FormatPhoneNumber(string unformattedPhoneNumber)
         {
-            return string.IsNullOrEmpty(unformattedPhoneNumber) ? string.Empty : DataFormatUtils.NormalizePhone(unformattedPhoneNumber);
+            return string.IsNullOrEmpty(unformattedPhoneNumber) ? string.Empty : ServiceContainer.Resolve<IPhoneFormatter>().Normalize(unformattedPhoneNumber);
         }
     }
 }

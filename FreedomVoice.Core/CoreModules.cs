@@ -2,6 +2,7 @@
 using FreedomVoice.Core.Services;
 using FreedomVoice.Core.Services.Interfaces;
 using FreedomVoice.Core.Utils;
+using FreedomVoice.Core.Utils.Interfaces;
 using FreedomVoice.DAL;
 using FreedomVoice.DAL.DbEntities;
 using Microsoft.EntityFrameworkCore;
@@ -35,6 +36,8 @@ namespace FreedomVoice.Core
                 ServiceContainer.Resolve<INetworkService>(), ServiceContainer.Resolve<IMapper>(), ServiceContainer.Resolve<IConversationService>()));
             
             ServiceContainer.Register<IPushService>(() => new PushService(ServiceContainer.Resolve<INetworkService>()));
+
+            ServiceContainer.Register<IPhoneFormatter>(() => new PhoneFormatter());
         }
     }
 }

@@ -5,6 +5,7 @@ using Android.Views;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Helpers;
 using FreedomVoice.Core.Utils;
+using FreedomVoice.Core.Utils.Interfaces;
 
 namespace com.FreedomVoice.MobileApp.Android.Fragments
 {
@@ -136,7 +137,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
 
         private void SetupNewText()
         {
-            _dialEdit.Text = DataFormatUtils.ToPhoneNumber(_enteredNumber);
+            _dialEdit.Text = ServiceContainer.Resolve<IPhoneFormatter>().Format(_enteredNumber);
         }
 
         protected override void OnHelperEvent(ActionsHelperEventArgs args)

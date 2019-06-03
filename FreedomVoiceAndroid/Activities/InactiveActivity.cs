@@ -10,6 +10,7 @@ using Android.Util;
 using Android.Views;
 using com.FreedomVoice.MobileApp.Android.Dialogs;
 using FreedomVoice.Core.Utils;
+using FreedomVoice.Core.Utils.Interfaces;
 using Uri = Android.Net.Uri;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
@@ -34,9 +35,9 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             RootLayout = FindViewById(Resource.Id.inactiveActivity_root);
             ActionButton = FindViewById<CardView>(Resource.Id.inactiveActivity_dialButton);
             if (extra != null)
-                SupportActionBar.Title = DataFormatUtils.ToPhoneNumber(extra);
+                SupportActionBar.Title = ServiceContainer.Resolve<IPhoneFormatter>().Format(extra);
             else if (Helper.SelectedAccount != null)
-                SupportActionBar.Title = DataFormatUtils.ToPhoneNumber(Helper.SelectedAccount.AccountName);
+                SupportActionBar.Title = ServiceContainer.Resolve<IPhoneFormatter>().Format(Helper.SelectedAccount.AccountName);
             else
                 SupportActionBar.SetTitle(Resource.String.ActivityInactive_title);
         }
