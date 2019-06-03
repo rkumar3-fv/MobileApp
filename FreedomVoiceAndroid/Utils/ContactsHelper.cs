@@ -25,6 +25,7 @@ namespace com.FreedomVoice.MobileApp.Android.Utils
         private readonly Context _context;
         private readonly Dictionary<string, string> _phonesCache;
         private readonly AppHelper _appHelper;
+        private readonly IPhoneFormatter _phoneFormatter = ServiceContainer.Resolve<IPhoneFormatter>();
 
         private ContactsHelper(Context context)
         {
@@ -66,21 +67,32 @@ namespace com.FreedomVoice.MobileApp.Android.Utils
             contactsObserver.ContactsChangingEvent += ContactsObserverOnContactsChangingEvent;
         }
 
-    /// <summary>
-    /// Get contact name by phone
-    /// </summary>
-    /// <param name="normalizedPhone">normalized phone</param>
-    /// <returns>Is in contacts</returns>
-    public bool GetName(string normalizedPhone, out string name)
+        /// <summary>
+        /// Get contact name by phone
+        /// </summary>
+        /// <param name="phone">normalized phone</param>
+        /// <returns>Is in contacts</returns>
+        public bool GetName(string phone, out string name)
         {
-            var phone = ServiceContainer.Resolve<IPhoneFormatter>().Normalize(normalizedPhone);
-            if (_phonesCache.ContainsKey(phone))
+            var rawNumber = _phoneFormatter.Normalize(phone);
+            var res = _GetName(rawNumber, out name);
+
+            if (!res) {
+                rawNumber = _phoneFormatter.NormalizeNational(phone);
+                res = _GetName(rawNumber, out name);
+            }
+            return res;
+        }
+
+        private bool _GetName(string normalizedPhone, out string name)
+        {
+            if (_phonesCache.ContainsKey(normalizedPhone))
             {
-                name = _phonesCache[phone];
+                name = _phonesCache[normalizedPhone];
                 return true;
             }
 
-            var uri = Uri.WithAppendedPath(ContactsContract.PhoneLookup.ContentFilterUri, Uri.Encode(phone));
+            var uri = Uri.WithAppendedPath(ContactsContract.PhoneLookup.ContentFilterUri, Uri.Encode(normalizedPhone));
             string[] projection = { ContactsContract.Contacts.InterfaceConsts.DisplayName };
             var selection = string.Format("(({0} IS NOT NULL) AND ({0} != '') AND ({1} = '1'))",
                 ContactsContract.Contacts.InterfaceConsts.DisplayName, ContactsContract.Contacts.InterfaceConsts.InVisibleGroup);
@@ -94,25 +106,26 @@ namespace com.FreedomVoice.MobileApp.Android.Utils
             {
                 cursor = null;
             }
-            
-            
+
+
             if (cursor == null)
             {
-                name = ServiceContainer.Resolve<IPhoneFormatter>().Format(phone);
+                name = _phoneFormatter.Format(normalizedPhone);
                 return false;
             }
             if (cursor.MoveToFirst())
             {
                 name = cursor.GetString(0);
-                AddToCache(phone, name);
+                AddToCache(normalizedPhone, name);
                 cursor.Close();
                 return true;
             }
-            name = ServiceContainer.Resolve<IPhoneFormatter>().Format(phone);
+            name = _phoneFormatter.Format(normalizedPhone);
             cursor.Close();
             return false;
         }
-        
+
+
         public ICursor Search(string enteredQuery)
         {
             var query = enteredQuery.Trim();
