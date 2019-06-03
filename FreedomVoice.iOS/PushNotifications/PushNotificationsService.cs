@@ -137,7 +137,8 @@ namespace FreedomVoice.iOS.PushNotifications
 
 			try
 			{
-				await _pushService.Register(DeviceType.IOS, savedToken, NormalizePhoneNumber(UserDefault.AccountPhoneNumber));
+				//INFO: Regular push notification. Disabled. DeviceType.iOS - for regular, IOSPushKit - for PushKit
+				await _pushService.Register(DeviceType.IOSPushKit, savedToken, NormalizePhoneNumber(UserDefault.AccountPhoneNumber));
 				_logger.Debug(nameof(PushNotificationsService), nameof(RegisterPushNotificationToken), $"Token ({savedToken}) has been registered");
 			}
 			catch (Exception exception)
@@ -154,7 +155,8 @@ namespace FreedomVoice.iOS.PushNotifications
 
 			try
 			{
-				await _pushService.Unregister(DeviceType.IOS, savedToken, UserDefault.AccountPhoneNumber);
+				//INFO: Regular push notification. Disabled. DeviceType.iOS - for regular, IOSPushKit - for PushKit
+				await _pushService.Unregister(DeviceType.IOSPushKit, savedToken, UserDefault.AccountPhoneNumber);
 				_logger.Debug(nameof(PushNotificationsService), nameof(UnregisterPushNotificationToken), $"Token ({savedToken}) has been unregistered");
 			}
 			catch (Exception exception)
