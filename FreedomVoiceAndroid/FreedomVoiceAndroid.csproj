@@ -83,6 +83,10 @@
     <Reference Include="AutoMapper, Version=8.0.0.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
       <HintPath>..\packages\AutoMapper.8.0.0\lib\netstandard2.0\AutoMapper.dll</HintPath>
     </Reference>
+    <Reference Include="FreedomVoice.Entities, Version=1.0.9.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\FreedomVoice.Entities.1.0.9\lib\netstandard2.0\FreedomVoice.Entities.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Java.Interop" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Data.Sqlite, Version=2.2.3.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
@@ -1522,10 +1526,6 @@
     <ProjectReference Include="..\FreedomVoice.DAL\FreedomVoice.DAL.csproj">
       <Project>{7118A53F-93AF-4FAD-A18F-5CF6F6289B32}</Project>
       <Name>FreedomVoice.DAL</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\FreedomVoice.Entities\FreedomVoice.Entities.csproj">
-      <Project>{9c83001c-e1c6-461d-b0d3-1f6ba63000a6}</Project>
-      <Name>FreedomVoice.Entities</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

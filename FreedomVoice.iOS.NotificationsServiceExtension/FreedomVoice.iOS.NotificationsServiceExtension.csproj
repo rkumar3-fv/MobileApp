@@ -86,6 +86,9 @@
     <MtouchFastDev>true</MtouchFastDev>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FreedomVoice.Entities, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\FreedomVoice.Entities\bin\Debug\netstandard2.0\FreedomVoice.Entities.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">
       <HintPath>..\..\..\..\.nuget\packages\newtonsoft.json\11.0.2\lib\netstandard2.0\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -227,10 +230,6 @@
     <Compile Include="PushResponseExtension.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FreedomVoice.Entities\FreedomVoice.Entities.csproj">
-      <Project>{9c83001c-e1c6-461d-b0d3-1f6ba63000a6}</Project>
-      <Name>FreedomVoice.Entities</Name>
-    </ProjectReference>
     <ProjectReference Include="..\FreedomVoice.iOS.Core\FreedomVoice.iOS.Core.csproj">
       <Project>{6F11EB92-C06F-4592-8ADB-0337410CE27B}</Project>
       <Name>FreedomVoice.iOS.Core</Name>
