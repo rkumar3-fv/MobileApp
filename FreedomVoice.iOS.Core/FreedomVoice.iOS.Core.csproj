@@ -63,10 +63,6 @@
       <Project>{AA1B2017-3A77-46FA-BC08-35E20FA24DE3}</Project>
       <Name>FreedomVoice.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\FreedomVoice.Entities\FreedomVoice.Entities.csproj">
-      <Project>{9C83001C-E1C6-461D-B0D3-1F6BA63000A6}</Project>
-      <Name>FreedomVoice.Entities</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 </Project>

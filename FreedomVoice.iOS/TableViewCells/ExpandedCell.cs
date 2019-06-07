@@ -30,9 +30,14 @@ namespace FreedomVoice.iOS.TableViewCells
         private AVPlayerView _player;
 
         private UIButton _callBackButton;
+        private UIButton _smsButton;
         private UIButton _speakerButton;
         private UIButton _viewFaxButton;
         private UIButton _deleteButton;
+        private bool IsIphone5
+        {
+            get => UIScreen.MainScreen.Bounds.Width <= 320;
+        }
 
         #endregion
 
@@ -144,6 +149,12 @@ namespace FreedomVoice.iOS.TableViewCells
                     _callBackButton?.RemoveFromSuperview();
                     _callBackButton = null;
                 }
+                else
+                if (Equals(subView, _smsButton))
+                {
+                    _smsButton?.RemoveFromSuperview();
+                    _smsButton = null;
+                }
             }
         }
 
@@ -181,10 +192,16 @@ namespace FreedomVoice.iOS.TableViewCells
             {
                 _callBackButton?.RemoveFromSuperview();
                 _callBackButton = null;
+
+                _smsButton?.RemoveFromSuperview();
+                _smsButton = null;
             }
             else
             if (_callBackButton == null)
                 AddSubview(GetCallBackButton());
+
+            if (_smsButton == null)
+                AddSubview(GetSMSButton());
 
             if (_message.Id != AppDelegate.ActivePlayerMessageId)
             {
@@ -200,7 +217,7 @@ namespace FreedomVoice.iOS.TableViewCells
 
         private void InitCommonStyles()
         {
-            foreach (var btn in new List<UIButton> { _callBackButton, _viewFaxButton, _speakerButton }.Where(btn => btn != null))
+            foreach (var btn in new List<UIButton> { _smsButton, _callBackButton, _viewFaxButton, _speakerButton }.Where(btn => btn != null))
             {
                 btn.Font = UIFont.SystemFontOfSize(14);
                 btn.TitleEdgeInsets = new UIEdgeInsets(0, 5, 0, 0);
@@ -253,14 +270,28 @@ namespace FreedomVoice.iOS.TableViewCells
 
         private UIButton GetCallBackButton()
         {
-            _callBackButton = new UIButton(new CGRect(151, 98, 104, 28));
-            _callBackButton.SetTitle("Call Back", UIControlState.Normal);
+            _callBackButton = new UIButton(new CGRect(151, 98, IsIphone5 ? 74.5f : 104, 28));
+            _callBackButton.SetTitle(IsIphone5 ? "Call" : "Call Back", UIControlState.Normal);
             _callBackButton.SetTitleColor(UIColor.FromRGB(198, 242, 138), UIControlState.Normal);
             _callBackButton.SetImage(UIImage.FromFile("call_back.png"), UIControlState.Normal);
             _callBackButton.Layer.BorderColor = UIColor.FromRGBA(198, 242, 138, 110).CGColor;
             _callBackButton.TouchUpInside += OnCallBackButtonTouchUpInside;
+            _callBackButton.TintColor = UIColor.FromRGB(198, 242, 138);
 
             return _callBackButton;
+        }
+
+        private UIButton GetSMSButton()
+        {
+            _smsButton = new UIButton(new CGRect(IsIphone5 ? 235.5f : 265, 98, IsIphone5 ? 74.5f : 104, 28));
+            _smsButton.SetTitle(IsIphone5 ? "Text" : "Send Text", UIControlState.Normal);
+            _smsButton.SetTitleColor(UIColor.FromRGB(198, 242, 138), UIControlState.Normal);
+            _smsButton.SetImage(UIImage.FromFile("sms.png").ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate), UIControlState.Normal);
+            _smsButton.Layer.BorderColor = UIColor.FromRGBA(198, 242, 138, 90).CGColor;
+            _smsButton.TintColor = UIColor.FromRGB(198, 242, 138);
+            _smsButton.TouchUpInside += OnSmsButtonTouchUpInside;
+
+            return _smsButton;
         }
 
         private UIButton GetDeleteButton()
@@ -269,6 +300,7 @@ namespace FreedomVoice.iOS.TableViewCells
             _deleteButton.SetImage(UIImage.FromFile("delete.png"), UIControlState.Normal);
             _deleteButton.ImageEdgeInsets = new UIEdgeInsets(15, 18, 15, 12);
             _deleteButton.TouchUpInside += OnDeleteButtonTouchUpInside;
+            _deleteButton.Hidden = true;
 
             return _deleteButton;
         }
@@ -295,6 +327,11 @@ namespace FreedomVoice.iOS.TableViewCells
             await viewModel.GetMediaAsync();
 
             return viewModel.FilePath;
+        }
+
+        private void OnSmsButtonTouchUpInside(object sender, EventArgs args)
+        {
+            OnSMSMessageClick?.Invoke(this, new ExpandedCellButtonClickEventArgs(_message));
         }
 
         private async void OnFaxButtonTouchUpInside(object sender, EventArgs args)
@@ -328,11 +365,13 @@ namespace FreedomVoice.iOS.TableViewCells
             OnPlayClick = null;
             OnViewFaxClick = null;
             OnDeleteMessageClick = null;
+            OnSMSMessageClick = null;
         }
 
         public event EventHandler<ExpandedCellButtonClickEventArgs> OnCallbackClick;
         public event EventHandler<ExpandedCellButtonClickEventArgs> OnPlayClick;
         public event EventHandler<ExpandedCellButtonClickEventArgs> OnViewFaxClick;
         public event EventHandler<ExpandedCellButtonClickEventArgs> OnDeleteMessageClick;
+        public event EventHandler<ExpandedCellButtonClickEventArgs> OnSMSMessageClick;
     }
 }

@@ -8,6 +8,7 @@ using Android.Provider;
 using Android.Runtime;
 using com.FreedomVoice.MobileApp.Android.Entities;
 using FreedomVoice.Core.Utils;
+using FreedomVoice.Core.Utils.Interfaces;
 using FreedomVoice.Core.ViewModels;
 using Java.Lang;
 using Microsoft.Extensions.Primitives;
@@ -17,11 +18,13 @@ namespace com.FreedomVoice.MobileApp.Android.Utils
     public class ContactNameProvider: IContactNameProvider
     {
         private readonly Context _context;
+        private readonly IPhoneFormatter _formatter;
         public event EventHandler ContactsUpdated;
 
         public ContactNameProvider(Context context)
         {
             _context = context;
+            _formatter = ServiceContainer.Resolve<IPhoneFormatter>();
             ContactsHelper.Instance(_context).ContactsPermissionUpdated += ProviderOnContactsUpdated;
         }
 
@@ -40,7 +43,7 @@ namespace com.FreedomVoice.MobileApp.Android.Utils
 
         public string GetFormattedPhoneNumber(string phoneNumber)
         {
-            return phoneNumber;
+            return FormatPhoneNumber(phoneNumber);
         }
 
         public string GetClearPhoneNumber(string formattedPhoneNumber)
@@ -81,7 +84,7 @@ namespace com.FreedomVoice.MobileApp.Android.Utils
                 }
                 while (phoneCursor != null && phoneCursor.MoveToNext())
                 {
-                    var phone = DataFormatUtils.NormalizePhone(phoneCursor.GetString(phoneCursor.GetColumnIndex(projection[1])));
+                    var phone = ServiceContainer.Resolve<IPhoneFormatter>().Normalize(phoneCursor.GetString(phoneCursor.GetColumnIndex(projection[1])));
                     res.Add(GetClearPhoneNumber(phone));
                 }
                 phoneCursor.Close();
@@ -100,6 +103,14 @@ namespace com.FreedomVoice.MobileApp.Android.Utils
         {
             ContactsHelper.Instance(_context).ContactsPermissionUpdated -= ProviderOnContactsUpdated;
             ContactsUpdated?.Invoke(null, null);
+        }
+        
+        private string FormatPhoneNumber(string phoneNumber) {
+
+            if ( string.IsNullOrEmpty(phoneNumber) )
+                return phoneNumber;
+
+            return _formatter.Format(phoneNumber);
         }
 
     }

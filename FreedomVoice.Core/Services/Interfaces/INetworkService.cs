@@ -18,7 +18,14 @@ namespace FreedomVoice.Core.Services.Interfaces
         /// <param name="start"></param>
         /// <param name="limit"></param>
         /// <returns></returns>
-        Task<BaseResult<List<Conversation>>> GetConversations(string phone, DateTime startDate, DateTime lastUpdateDate, int start, int limit, ConversationRequest searchRequest = null);
+        Task<BaseResult<List<Conversation>>> GetConversations(string phone, DateTime startDate, DateTime lastUpdateDate, int start, int limit);
+
+        /// <summary>
+        /// Search conversations from API by provided parameters
+        /// </summary>
+        /// <param name="searchConversationRequest"></param>
+        /// <returns></returns>
+        Task<BaseResult<List<Conversation>>> SearchConversations(SearchConversationRequest searchConversationRequest);
 
         /// <summary>
         /// Get conversation by current phone and to phone

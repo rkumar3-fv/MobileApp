@@ -1,6 +1,4 @@
-﻿using Google.Analytics;
-
-namespace FreedomVoice.iOS.Utilities.Helpers
+﻿namespace FreedomVoice.iOS.Utilities.Helpers
 {
     public static class Log
     {
@@ -35,12 +33,12 @@ namespace FreedomVoice.iOS.Utilities.Helpers
                     break;
             }
 
-            Gai.SharedInstance.DefaultTracker.Send(DictionaryBuilder.CreateTiming(category, time, name, result).Build());
+//            Gai.SharedInstance.DefaultTracker.Send(DictionaryBuilder.CreateTiming(category, time, name, result).Build());
         }
 
         public static void ReportEvent(string name, string result)
         {
-            Gai.SharedInstance.DefaultTracker.Send(DictionaryBuilder.CreateEvent(OtherKey, name, result, 1).Build());
+//            Gai.SharedInstance.DefaultTracker.Send(DictionaryBuilder.CreateEvent(OtherKey, name, result, 1).Build());
         }
     }
 }

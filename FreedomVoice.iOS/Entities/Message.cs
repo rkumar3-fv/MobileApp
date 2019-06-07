@@ -1,6 +1,7 @@
 ﻿using System;
 using FreedomVoice.Core.Entities.Enums;
 using FreedomVoice.Core.Utils;
+using FreedomVoice.Core.Utils.Interfaces;
 using ContactsHelper = FreedomVoice.iOS.Core.Utilities.Helpers.Contacts;
 
 namespace FreedomVoice.iOS.Entities
@@ -49,7 +50,7 @@ namespace FreedomVoice.iOS.Entities
             if (!string.IsNullOrEmpty(SourceName))
                 return SourceName;
 
-            return !string.IsNullOrEmpty(SourceNumber) ? DataFormatUtils.ToPhoneNumber(SourceNumber) : "Unavailable";
+            return !string.IsNullOrEmpty(SourceNumber) ? ServiceContainer.Resolve<IPhoneFormatter>().Format(SourceNumber) : "Unavailable";
         }
     }
 }

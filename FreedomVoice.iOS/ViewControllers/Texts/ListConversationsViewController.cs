@@ -127,8 +127,14 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             _SetupViews();
             _SetupConstraints();
             _SetupData();
+            CallerIdEvent.CallerIdFinished += UpdateCallerId;
         }
 
+        public override void ViewDidUnload()
+        {
+            base.ViewDidUnload();
+            CallerIdEvent.CallerIdFinished -= UpdateCallerId;
+        }
         public override void ViewWillAppear(bool animated)
         {
             NavigationItem.Title = PageName;
@@ -139,13 +145,6 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
         {
             base.ViewDidAppear(animated);
             ServiceContainer.Resolve<IContactNameProvider>().RequestContacts();
-            CallerIdEvent.CallerIdFinished += UpdateCallerId;
-        }
-
-        public override void ViewWillDisappear(bool animated)
-        {
-            base.ViewWillDisappear(animated);
-            CallerIdEvent.CallerIdFinished -= UpdateCallerId;
         }
 
         private void _SetupViews()

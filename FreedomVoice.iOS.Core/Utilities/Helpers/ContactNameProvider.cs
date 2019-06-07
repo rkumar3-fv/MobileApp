@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using FreedomVoice.Core.Utils.Interfaces;
 using FreedomVoice.Core.ViewModels;
 
 namespace FreedomVoice.iOS.Core.Utilities.Helpers
@@ -11,6 +13,7 @@ namespace FreedomVoice.iOS.Core.Utilities.Helpers
     {
 
         private Dictionary<string, string> _contactNames = new Dictionary<string, string>();
+        private readonly IPhoneFormatter _phoneFormatter = FreedomVoice.Core.Utils.ServiceContainer.Resolve<IPhoneFormatter>();
 
         public event EventHandler ContactsUpdated;
         
@@ -54,80 +57,31 @@ namespace FreedomVoice.iOS.Core.Utilities.Helpers
         
         public string GetClearPhoneNumber(string formattedNumber)
         {
-            const string pattern = @"\d"; 
-        
-            var sb = new StringBuilder(); 
-            foreach (Match m in Regex.Matches(formattedNumber, pattern)) 
-                sb.Append(m); 
-
-            return sb.ToString();
+            return _phoneFormatter.Normalize(formattedNumber);
         }
 
         private void ContactItemsDidReceive(object sender, EventArgs e)
         {
-            foreach(var contact in Helpers.Contacts.ContactList)
+            foreach(var contact in Contacts.ContactList)
             {
                 foreach(var phone in contact.Phones) {
-                    var raw = Regex.Replace(phone.Number, @"\D", "");
+                    var raw = _phoneFormatter.Normalize(phone.Number);
                     _contactNames[raw] = contact.DisplayName;
+                    var rawNational = _phoneFormatter.NormalizeNational(phone.Number);
+                    if( !raw.Equals(rawNational) )
+                    {
+                        _contactNames[rawNational] = contact.DisplayName;
+                    }
                 }
-
             }
-            Helpers.Contacts.ItemsChanged -= ContactItemsDidReceive;
+            Contacts.ItemsChanged -= ContactItemsDidReceive;
             ContactsUpdated?.Invoke(this, null);
 
         }
         
-        private string FormatPhoneNumber(string phoneNumber) {
-
-            if ( string.IsNullOrEmpty(phoneNumber) )
-                return phoneNumber;
-
-            Regex phoneParser;
-            string format;
-
-            switch( phoneNumber.Length ) {
-
-                case 5 :
-                    phoneParser = new Regex(@"(\d{3})(\d{2})");
-                    format      = "$1 $2";
-                    break;
-
-                case 6 :
-                    phoneParser = new Regex(@"(\d{2})(\d{2})(\d{2})");
-                    format      = "$1 $2 $3";
-                    break;
-
-                case 7 :
-                    phoneParser = new Regex(@"(\d{3})(\d{2})(\d{2})");
-                    format      = "$1 $2 $3";
-                    break;
-
-                case 8 :
-                    phoneParser = new Regex(@"(\d{4})(\d{2})(\d{2})");
-                    format      = "$1 $2 $3";
-                    break;
-
-                case 9 :
-                    phoneParser = new Regex(@"(\d{4})(\d{3})(\d{2})(\d{2})");
-                    format      = "($1 $2 $3 $4";
-                    break;
-
-                case 10 :
-                    phoneParser = new Regex(@"(\d{3})(\d{3})(\d{2})(\d{2})");
-                    format      = "($1) $2-$3$4";
-                    break;
-
-                case 11 :
-                    phoneParser = new Regex(@"(\d{4})(\d{3})(\d{2})(\d{2})");
-                    format      = "$1 $2 $3 $4";
-                    break;
-
-                default:
-                    return phoneNumber;
-            }
-            return phoneParser.Replace( phoneNumber, format );
-
+        private string FormatPhoneNumber(string phoneNumber)
+        {
+            return string.IsNullOrEmpty(phoneNumber) ? phoneNumber : _phoneFormatter.Format(phoneNumber);
         }
     }
 }
