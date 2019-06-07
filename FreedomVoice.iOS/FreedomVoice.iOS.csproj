@@ -376,6 +376,9 @@
       <HintPath>..\packages\Xamarin.Firebase.iOS.InstanceID.3.4.0\lib\Xamarin.iOS10\Firebase.InstanceID.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="FreedomVoice.Entities, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\FreedomVoice.Entities\bin\Debug\netstandard2.0\FreedomVoice.Entities.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Data.Sqlite, Version=2.2.3.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Data.Sqlite.Core.2.2.3\lib\netstandard2.0\Microsoft.Data.Sqlite.dll</HintPath>
@@ -657,10 +660,6 @@
     <ProjectReference Include="..\FreedomVoice.DAL\FreedomVoice.DAL.csproj">
       <Project>{7118A53F-93AF-4FAD-A18F-5CF6F6289B32}</Project>
       <Name>FreedomVoice.DAL</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\FreedomVoice.Entities\FreedomVoice.Entities.csproj">
-      <Project>{9C83001C-E1C6-461D-B0D3-1F6BA63000A6}</Project>
-      <Name>FreedomVoice.Entities</Name>
     </ProjectReference>
     <ProjectReference Include="..\FreedomVoice.iOS.NotificationsServiceExtension\FreedomVoice.iOS.NotificationsServiceExtension.csproj">
       <IsAppExtension>true</IsAppExtension>

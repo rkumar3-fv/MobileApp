@@ -1,34 +1,34 @@
 {
   "project_info": {
-    "project_number": "154663238822",
-    "firebase_url": "https://freedomvoice-ab91a.firebaseio.com",
-    "project_id": "freedomvoice-ab91a",
-    "storage_bucket": "freedomvoice-ab91a.appspot.com"
+    "project_number": "838924970804",
+    "firebase_url": "https://freedomvoice-dbd38.firebaseio.com",
+    "project_id": "freedomvoice-dbd38",
+    "storage_bucket": "freedomvoice-dbd38.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:154663238822:android:4424e97c15329028",
+        "mobilesdk_app_id": "1:838924970804:android:4424e97c15329028",
         "android_client_info": {
           "package_name": "com.FreedomVoice.MobileApp"
         }
       },
       "oauth_client": [
         {
-          "client_id": "154663238822-ij41r9086iin72pn9j8c7mhia7ah2c86.apps.googleusercontent.com",
+          "client_id": "838924970804-chus4euqjs2eooae2votcffl2quqbqp8.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDFqUYZbAhMu70l5Q2GUDmYXJQSiIy3apE"
+          "current_key": "AIzaSyDdiHb8fQ7ZUCLxn0gExWZipwczfXRzYyE"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "154663238822-ij41r9086iin72pn9j8c7mhia7ah2c86.apps.googleusercontent.com",
+              "client_id": "838924970804-chus4euqjs2eooae2votcffl2quqbqp8.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
