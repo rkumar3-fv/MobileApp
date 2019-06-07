@@ -35,8 +35,9 @@ namespace FreedomVoice.iOS.PushNotifications
 		private readonly NSString AlertKey = new NSString("alert");
 		private readonly NSString TitleKey = new NSString("title");
 		private readonly NSString BodyKey = new NSString("body");
-		
-		public event Action<NSData> DidUpdatePushToken;
+        private readonly NSString SubtitleKey = new NSString("subtitle");
+
+        public event Action<NSData> DidUpdatePushToken;
 
 		public NotificationCenterDelegate()
 		{
@@ -293,17 +294,16 @@ namespace FreedomVoice.iOS.PushNotifications
 
 			string titleValue = null;
 			string bodyValue = null;
+            string subtitleValue = null;
 
-			switch (apsValue[AlertKey])
+            switch (apsValue[AlertKey])
 			{
-				case NSDictionary alertValue when !alertValue.ContainsKey(new NSString(TitleKey)) || !alertValue.ContainsKey(new NSString(BodyKey)):
-					_logger.Debug(nameof(NotificationCenterDelegate), nameof(DidUpdatePushCredentials), $"APS doesn't have title and body");
-					return;
-				
-				case NSDictionary alertValue:
+                case NSDictionary alertValue:
 					titleValue = alertValue[TitleKey] as NSString;
 					bodyValue = alertValue[BodyKey] as NSString;
-					break;
+                    subtitleValue = alertValue[SubtitleKey] as NSString;
+
+                    break;
 				
 				case NSString apsTitle:
 					titleValue = apsTitle;
@@ -318,7 +318,7 @@ namespace FreedomVoice.iOS.PushNotifications
 			if (pushResponseData == null)
 			{
 				_logger.Debug(nameof(NotificationCenterDelegate), nameof(DidUpdatePushCredentials), $"Can't parse Data(PushResponse).");
-				ShowPushNotificationsNow(titleValue, bodyValue, payload.DictionaryPayload);
+				ShowPushNotificationsNow(titleValue, bodyValue, subtitleValue, payload.DictionaryPayload);
 				return;
 			}
 
@@ -328,21 +328,22 @@ namespace FreedomVoice.iOS.PushNotifications
 			if (string.IsNullOrWhiteSpace(phoneHolder))
 			{
 				_logger.Debug(nameof(NotificationCenterDelegate), nameof(DidUpdatePushCredentials), $"Can't parse 'From phone number'.");
-				ShowPushNotificationsNow(titleValue, bodyValue, payload.DictionaryPayload);
+				ShowPushNotificationsNow(titleValue, bodyValue, subtitleValue, payload.DictionaryPayload);
 				return;
 			}
 
 			_logger.Debug(nameof(NotificationCenterDelegate), nameof(DidUpdatePushCredentials), $"'From' phone number has been found: {phoneHolder}");
-			ShowPushNotificationsNow(phoneHolder, bodyValue, payload.DictionaryPayload);
+			ShowPushNotificationsNow(phoneHolder, bodyValue, subtitleValue, payload.DictionaryPayload);
 		}
 
-		private void ShowPushNotificationsNow(string title, string body, NSDictionary userInfo)
+		private void ShowPushNotificationsNow(string title, string body, string subtitle, NSDictionary userInfo)
 		{
 			_logger.Debug(nameof(NotificationCenterDelegate), nameof(ShowPushNotificationsNow), $"Show alerts as title: {title}, body: {body}");
 
 			var notificationContent = new UNMutableNotificationContent();
             if (title != null) notificationContent.Title = title;
             if (body != null) notificationContent.Body = body;
+            if (subtitle != null) notificationContent.Subtitle = subtitle;
             if (userInfo != null) notificationContent.UserInfo = userInfo;
             notificationContent.Sound = UNNotificationSound.Default;
 
