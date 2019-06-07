@@ -269,7 +269,7 @@ namespace FreedomVoice.iOS.PushNotifications
 	
 		public void DidReceiveIncomingPush(PKPushRegistry registry, PKPushPayload payload, string type)
 		{
-			_logger.Debug(nameof(NotificationCenterDelegate), nameof(DidUpdatePushCredentials), $"DidUpdatePushCredentials: {payload} {type}");
+ 			_logger.Debug(nameof(NotificationCenterDelegate), nameof(DidUpdatePushCredentials), $"DidUpdatePushCredentials: {payload} {type}");
 
 			if (!payload.DictionaryPayload.ContainsKey(new NSString(ApsKey)))
 			{
@@ -341,11 +341,10 @@ namespace FreedomVoice.iOS.PushNotifications
 			_logger.Debug(nameof(NotificationCenterDelegate), nameof(ShowPushNotificationsNow), $"Show alerts as title: {title}, body: {body}");
 
 			var notificationContent = new UNMutableNotificationContent();
-			notificationContent.Title = title;
-			notificationContent.Body = body;
-			notificationContent.Sound = UNNotificationSound.Default;
-            notificationContent.UserInfo = userInfo;
-
+            if (title != null) notificationContent.Title = title;
+            if (body != null) notificationContent.Body = body;
+            if (userInfo != null) notificationContent.UserInfo = userInfo;
+            notificationContent.Sound = UNNotificationSound.Default;
 
             var trigger = UNTimeIntervalNotificationTrigger.CreateTrigger(1, false);
 			var localNotificationRequest = UNNotificationRequest.FromIdentifier(new NSUuid().AsString(), notificationContent, trigger);
