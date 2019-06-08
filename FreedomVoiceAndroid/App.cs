@@ -5,9 +5,15 @@ using Android.OS;
 using Android.Runtime;
 #if DEBUG
 using Android.Util;
+using com.FreedomVoice.MobileApp.Android.Data;
 #endif
 using com.FreedomVoice.MobileApp.Android.Helpers;
+using com.FreedomVoice.MobileApp.Android.Utils;
+using Firebase;
+using FreedomVoice.Core.Cache;
+using FreedomVoice.Core.Services.Interfaces;
 using FreedomVoice.Core.Utils;
+using FreedomVoice.Core.ViewModels;
 using Java.Lang;
 using Process = System.Diagnostics.Process;
 
@@ -21,7 +27,7 @@ namespace com.FreedomVoice.MobileApp.Android
         AllowBackup = false,
         Icon = "@mipmap/ic_launcher",
         Theme = "@style/AppTheme")]
-    public class App : Application
+    public class App : Application, Application.IActivityLifecycleCallbacks
     {
         public const string AppPackage = "com.FreedomVoice.MobileApp";
         private readonly AppHelper _helper;
@@ -34,6 +40,7 @@ namespace com.FreedomVoice.MobileApp.Android
         public App(IntPtr javaReference, JniHandleOwnership transfer) : base(javaReference, transfer)
         {
             _helper = new AppHelper(this);
+            ServiceContainer.Register<IContactNameProvider>(() => new ContactNameProvider(this));
         }
 
         /// <summary>
@@ -50,11 +57,10 @@ namespace com.FreedomVoice.MobileApp.Android
         public override void OnCreate()
         {
             base.OnCreate();
+            FirebaseApp.InitializeApp(this);
             _helper.ActionsHelper = new ActionsHelper(this);
-            //_helper.Reports = new ReportHelper(this, _helper.ActionsHelper);
+            RegisterActivityLifecycleCallbacks(this);
             JavaSystem.SetProperty("http.keepAlive", "true");
-            if (!_helper.IsInsigthsOn)
-                AppDomain.CurrentDomain.UnhandledException += HandleUnhandledException;
         }
 
         public override void OnLowMemory()
@@ -76,6 +82,42 @@ namespace com.FreedomVoice.MobileApp.Android
         private void HandleUnhandledException(object sender, UnhandledExceptionEventArgs args)
         {
             Process.GetCurrentProcess().Kill();
+        }
+
+
+        public bool IsAppInForeground => _resumedActivitys > 0;
+        public bool IsColdStart = true;
+        private int _resumedActivitys = 0;
+        
+        public void OnActivityCreated(Activity activity, Bundle savedInstanceState)
+        {
+        }
+
+        public void OnActivityDestroyed(Activity activity)
+        {
+        }
+
+        public void OnActivityPaused(Activity activity)
+        {
+            _resumedActivitys--;
+        }
+
+        public void OnActivityResumed(Activity activity)
+        {
+            _resumedActivitys++;
+            IsColdStart = false;
+        }
+
+        public void OnActivitySaveInstanceState(Activity activity, Bundle outState)
+        {
+        }
+
+        public void OnActivityStarted(Activity activity)
+        {
+        }
+
+        public void OnActivityStopped(Activity activity)
+        {
         }
     }
 }

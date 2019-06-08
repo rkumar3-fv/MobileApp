@@ -1,14 +1,23 @@
-﻿using Foundation;
+﻿using System;
+using Foundation;
 using FreedomVoice.Core.Utils;
+using FreedomVoice.Core.Utils.Interfaces;
 
 namespace FreedomVoice.iOS.Utilities.Helpers
 {
     public static class UserDefault
     {
+
+        public static Action IsAuthenticatedChanged;
+        
         public static bool IsAuthenticated
         {
             get { return NSUserDefaults.StandardUserDefaults.BoolForKey("IsAuthenticatedUserKey"); }
-            set { NSUserDefaults.StandardUserDefaults.SetBool(value, "IsAuthenticatedUserKey"); }
+            set
+            {
+                NSUserDefaults.StandardUserDefaults.SetBool(value, "IsAuthenticatedUserKey");
+                IsAuthenticatedChanged?.Invoke();
+            }
         }
 
         public static bool IsLaunchedBefore
@@ -51,7 +60,7 @@ namespace FreedomVoice.iOS.Utilities.Helpers
         {
             get { return NSUserDefaults.StandardUserDefaults.StringForKey("AccountPhoneNumberKey"); }
             set {
-                var accountPhoneNumber = DataFormatUtils.ToPhoneNumber(value);
+                var accountPhoneNumber = ServiceContainer.Resolve<IPhoneFormatter>().Normalize(value);
                 NSUserDefaults.StandardUserDefaults.SetString(accountPhoneNumber, "AccountPhoneNumberKey");
             }
         }

@@ -9,6 +9,7 @@ using Android.Views;
 using Android.Widget;
 #if DEBUG
 using Android.Util;
+using FreedomVoice.Core.Utils.Interfaces;
 #endif
 using FreedomVoice.Core.Utils;
 using com.FreedomVoice.MobileApp.Android.Adapters;
@@ -64,7 +65,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         {
             if (position >= Helper.AccountsList.Count) return;
 #if DEBUG
-            Log.Debug(App.AppPackage, $"ACTIVITY {GetType().Name}: select account #{DataFormatUtils.ToPhoneNumber(_adapter.AccountName(position))}");
+            Log.Debug(App.AppPackage, $"ACTIVITY {GetType().Name}: select account #{ServiceContainer.Resolve<IPhoneFormatter>().Format(_adapter.AccountName(position))}");
 #else
             Appl.ApplicationHelper.Reports?.Log($"ACTIVITY {GetType().Name}: select account #{DataFormatUtils.ToPhoneNumber(_adapter.AccountName(position))}");
 #endif
@@ -72,6 +73,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 _progressLayout.Visibility = ViewStates.Visible;
             Helper.SelectedAccount = Helper.AccountsList[position];
             Helper.GetPresentationNumbers();
+            Helper.RegisterFcm();
         }
 
         protected override void OnResume()

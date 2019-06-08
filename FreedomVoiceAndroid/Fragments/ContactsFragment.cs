@@ -1,21 +1,27 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using Android.App;
+using Android.Content;
 using Android.Database;
 using Android.OS;
 using Android.Provider;
 using Android.Runtime;
-using Android.Support.V4.Content;
 using Android.Support.V7.Widget;
 #if DEBUG
 using Android.Util;
 #endif
 using Android.Views;
 using Android.Widget;
+using com.FreedomVoice.MobileApp.Android.Activities;
 using com.FreedomVoice.MobileApp.Android.Adapters;
 using com.FreedomVoice.MobileApp.Android.CustomControls;
 using com.FreedomVoice.MobileApp.Android.Dialogs;
 using com.FreedomVoice.MobileApp.Android.Entities;
+using com.FreedomVoice.MobileApp.Android.Utils;
 using FreedomVoice.Core.Utils;
+using AlertDialog = Android.Support.V7.App.AlertDialog;
+using CursorLoader = Android.Support.V4.Content.CursorLoader;
 using Uri = Android.Net.Uri;
 
 namespace com.FreedomVoice.MobileApp.Android.Fragments
@@ -28,6 +34,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         private RecyclerView _contactsView;
         private ContactsRecyclerAdapter _adapter;
         private TextView _noResTextView;
+        private ContactsHelper _helper;
 
         protected override View InitView()
         {
@@ -44,6 +51,8 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         public override void OnActivityCreated(Bundle savedInstanceState)
         {
             base.OnActivityCreated(savedInstanceState);
+            
+            _helper = ContactsHelper.Instance(ContentActivity);
 
             _adapter = new ContactsRecyclerAdapter(ContentActivity);
             _adapter.ItemClick += AdapterOnItemClick;
@@ -74,36 +83,87 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
 
         private void AdapterOnItemClick(object sender, Contact contact)
         {
-
+            ContentActivity.HideKeyboard();
+            
+            
             foreach (var phone in contact.PhonesList)
             {
 #if DEBUG
                 Log.Debug(App.AppPackage, $"{phone.PhoneNumber} - {phone.TypeCode}");
+
 #else
                 App.GetApplication(Context).ApplicationHelper.Reports?.Log($"{phone.PhoneNumber} - {phone.TypeCode}");
 #endif
             }
 
-            ContentActivity.HideKeyboard();
-            switch (contact.PhonesList.Count)
+            var selectView = LayoutInflater.From(Context).Inflate(Resource.Layout.dlg_contact_select_action, null, false);
+            var phoneView = selectView.FindViewById<ViewGroup>(Resource.Id.dlg_contact_select_phone_block);
+            var smsView = selectView.FindViewById<ViewGroup>(Resource.Id.dlg_contact_select_sms_block);
+
+            AlertDialog alertDialog = new AlertDialog.Builder(Context)
+                .SetTitle("Select:")
+                .SetView(selectView)
+                .SetNegativeButton("Cancel", (o, args) =>
+                {
+                    (o as Dialog)?.Dismiss();
+                })
+                .Create();
+
+
+            phoneView.Click += (o, args) =>
             {
-                case 0:
-                    var noPhonesDialog = new NoContactsDialogFragment(contact);
-                    var transaction = ContentActivity.SupportFragmentManager.BeginTransaction();
-                    transaction.Add(noPhonesDialog, GetString(Resource.String.DlgNumbers_content));
-                    transaction.CommitAllowingStateLoss();
-                    break;
-                case 1:
-                    ContentActivity.Call(contact.PhonesList[0].PhoneNumber);
-                    break;
-                default:
-                    var multiPhonesDialog = new MultiContactsDialogFragment(contact, ContentActivity);
-                    multiPhonesDialog.PhoneClick += MultiPhonesDialogOnPhoneClick;
-                    var transactionMultiPhones = ContentActivity.SupportFragmentManager.BeginTransaction();
-                    transactionMultiPhones.Add(multiPhonesDialog, GetString(Resource.String.DlgNumbers_title));
-                    transactionMultiPhones.CommitAllowingStateLoss();
-                    break;
-            }
+                alertDialog.Dismiss();
+                switch (contact.PhonesList.Count)
+                {
+                    case 0:
+                        var noPhonesDialog = new NoContactsDialogFragment(contact);
+                        var transaction = ContentActivity.SupportFragmentManager.BeginTransaction();
+                        transaction.Add(noPhonesDialog, GetString(Resource.String.DlgNumbers_content));
+                        transaction.CommitAllowingStateLoss();
+                        break;
+                    case 1:
+                        ContentActivity.Call(contact.PhonesList[0].PhoneNumber);
+                        break;
+                    default:
+                        var multiPhonesDialog = new MultiContactsDialogFragment(contact, ContentActivity);
+                        multiPhonesDialog.PhoneClick += MultiPhonesDialogOnPhoneClick;
+                        var transactionMultiPhones = ContentActivity.SupportFragmentManager.BeginTransaction();
+                        transactionMultiPhones.Add(multiPhonesDialog,
+                            GetString(Resource.String.DlgNumbers_title));
+                        transactionMultiPhones.CommitAllowingStateLoss();
+                        break;
+                }
+            };
+
+            smsView.Click += (o, args) =>
+            {
+                alertDialog.Dismiss();
+                switch (contact.PhonesList.Count)
+                {
+                    case 0:
+                        var noPhonesDialog = new NoContactsDialogFragment(contact);
+                        var transaction = ContentActivity.SupportFragmentManager.BeginTransaction();
+                        transaction.Add(noPhonesDialog, GetString(Resource.String.DlgNumbers_content));
+                        transaction.CommitAllowingStateLoss();
+                        break;
+                    case 1:
+                        ChatActivity.StartNewChat(Activity, contact.PhonesList[0].PhoneNumber);
+                        break;
+                    default:
+                        var multiPhonesDialog = new MultiContactsDialogFragment(contact, ContentActivity);
+                        multiPhonesDialog.PhoneClick += (sender1, phone) =>
+                        {
+                            ChatActivity.StartNewChat(Activity, phone.PhoneNumber);
+                        };
+                        var transactionMultiPhones = ContentActivity.SupportFragmentManager.BeginTransaction();
+                        transactionMultiPhones.Add(multiPhonesDialog,
+                            GetString(Resource.String.DlgNumbers_title));
+                        transactionMultiPhones.CommitAllowingStateLoss();
+                        break;
+                }
+            };
+          
+            alertDialog.Show();
         }
 
         private void MultiPhonesDialogOnPhoneClick(object sender, Phone phone)
@@ -176,66 +236,8 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
 
         private ICursor Search(string enteredQuery)
         {
-            var query = enteredQuery.Trim();
-            var sortOrder = $"{ContactsContract.Contacts.InterfaceConsts.DisplayName} COLLATE LOCALIZED ASC";
-            ICursor phonesCursor = null;
-            var uri = ContactsContract.Contacts.ContentUri;
-            string[] projection = { ContactsContract.Contacts.InterfaceConsts.Id, ContactsContract.Contacts.InterfaceConsts.DisplayName,
-                ContactsContract.Contacts.InterfaceConsts.HasPhoneNumber, ContactsContract.Contacts.InterfaceConsts.PhotoUri };
-            var selection = string.Format("(({0} IS NOT NULL) AND ({0} != '') AND ({1} = '1') AND ({0} like '%{2}%'))",
-                ContactsContract.Contacts.InterfaceConsts.DisplayName, ContactsContract.Contacts.InterfaceConsts.InVisibleGroup, query);
-            var loader = new CursorLoader(ContentActivity, uri, projection, selection, null, sortOrder);
-            ICursor namesCursor;
-            try
-            {
-                namesCursor = loader.LoadInBackground().JavaCast<ICursor>();
-            }
-            catch (Java.Lang.RuntimeException)
-            {
-                namesCursor = null;
-            }
-
-            if (Regex.IsMatch(query, @"^[0-9+()\-\s]+$"))
-            {
-                var iDs = new List<string>();
-                if ((namesCursor != null) && (namesCursor.Count > 0))
-                {
-                    while (namesCursor.MoveToNext())
-                    {
-                        var id = namesCursor.GetString(namesCursor.GetColumnIndex(projection[0]));
-                        if (!string.IsNullOrEmpty(id))
-                            iDs.Add(id);
-                    }
-                }
-
-                var uriPhones = Uri.Parse($"content://com.android.contacts/data/phones/filter/*{DataFormatUtils.NormalizePhone(query)}*");
-                string[] projectionPhones = { "contact_id", ContactsContract.Contacts.InterfaceConsts.DisplayName,
-                ContactsContract.Contacts.InterfaceConsts.HasPhoneNumber, ContactsContract.Contacts.InterfaceConsts.PhotoUri };
-                string selectionPhones;
-                if (iDs.Count == 0)
-                    selectionPhones = string.Format("(({0} IS NOT NULL) AND ({0} != '') AND ({1} = '1'))",
-                    ContactsContract.Contacts.InterfaceConsts.DisplayName, ContactsContract.Contacts.InterfaceConsts.InVisibleGroup);
-                else
-                    selectionPhones = string.Format("(({0} IS NOT NULL) AND ({0} != '') AND ({1} = '1') AND ({2} NOT IN ('{3}')))",
-                ContactsContract.Contacts.InterfaceConsts.DisplayName, ContactsContract.Contacts.InterfaceConsts.InVisibleGroup, "contact_id", string.Join("', '", iDs.ToArray()));
-                var loaderPhones = new CursorLoader(ContentActivity, uriPhones, projectionPhones, selectionPhones, null, sortOrder);
-                try
-                {
-                    phonesCursor = loaderPhones.LoadInBackground().JavaCast<ICursor>();
-                }
-                catch (Java.Lang.RuntimeException)
-                {
-                    phonesCursor = null;
-                }
-            }
-
-            if (phonesCursor == null)
-                return namesCursor;
-            if ((namesCursor == null)||(namesCursor.Count == 0))
-                return phonesCursor;
-            return new MergeCursor(new[] {phonesCursor, namesCursor});
+            return _helper.Search(enteredQuery);
         }
-
 
         public void ReloadContacts()
         {

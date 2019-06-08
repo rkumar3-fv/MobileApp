@@ -7,6 +7,7 @@ using Android.Views;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Entities;
 using FreedomVoice.Core.Utils;
+using FreedomVoice.Core.Utils.Interfaces;
 
 namespace com.FreedomVoice.MobileApp.Android.Adapters
 {
@@ -46,7 +47,7 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
         {
             var viewHolder = holder as ViewHolder;
             if (viewHolder == null) return;
-            viewHolder.Phone.Text = DataFormatUtils.ToPhoneNumber(_phonesList[position].PhoneNumber);
+            viewHolder.Phone.Text = ServiceContainer.Resolve<IPhoneFormatter>().Format(_phonesList[position].PhoneNumber);
             PhoneDataKind dataKind;
             switch (_phonesList[position].TypeCode)
             {

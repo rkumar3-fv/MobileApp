@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:background="@color/colorBackground"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <LinearLayout
+            android:id="@+id/conversationDetailsFragment_spinnerArea"
+            android:layout_alignParentTop="true"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:elevation="@dimen/content_activity_id_elevation"
+            android:background="@color/colorCallerId"
+            android:weightSum="1.0">
+
+        <TextView
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                style="@style/CallerIdSpinnerText"
+                android:layout_centerHorizontal="true"
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:text="@string/FragmentKeypad_callerId"
+                android:layout_weight="0.4"/>
+
+        <RelativeLayout
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:layout_width="0dip"
+                android:layout_height="@dimen/fragment_keypad_spinner_size"
+                android:layout_weight="0.6">
+
+            <com.FreedomVoice.MobileApp.Android.CustomControls.AlwaysTopSpinner
+                    android:id="@+id/conversationDetailsFragment_idSpinner"
+                    android:layout_width="@dimen/fragment_keypad_spinner_width_collapsed"
+                    android:layout_height="@dimen/fragment_keypad_spinner_size"
+                    android:dropDownWidth="@dimen/fragment_keypad_spinner_width"
+                    android:spinnerMode="dropdown"/>
+
+            <TextView
+                    android:id="@+id/conversationDetailsFragment_singleId"
+                    style="@style/CallerIdSpinnerText"
+                    android:visibility="invisible"
+                    android:layout_centerVertical="true"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+        </RelativeLayout>
+    </LinearLayout>
+
+    <LinearLayout
+            android:id="@+id/conversationDetailsFragment_select_phone"
+            android:visibility="visible"
+            android:layout_below="@+id/conversationDetailsFragment_spinnerArea"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                >
+
+            <EditText
+                    android:id="@+id/conversationDetailsFragment_et_contact_phone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/ConversationMessageEt"
+                    android:layout_centerVertical="true"
+                    android:hint="@string/ConversationDetails_select_contact_hint"
+                    android:inputType="phone"
+                    android:layout_toLeftOf="@+id/conversationDetailsFragment_iv_select_contact"
+                    android:layout_toStartOf="@+id/conversationDetailsFragment_iv_select_contact">
+
+            </EditText>
+
+            <ImageView
+                    android:id="@+id/conversationDetailsFragment_iv_select_contact"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="8dp"
+                    android:visibility="visible"
+                    android:src="@drawable/ic_add_black"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginStart="8dp"
+                    android:layout_alignParentEnd="true"/>
+
+        </RelativeLayout>
+
+        <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/colorBackgroundProgress"/>
+
+    </LinearLayout>
+
+
+    <FrameLayout
+            android:layout_below="@+id/conversationDetailsFragment_select_phone"
+            android:layout_above="@+id/conversationDetailsFragment_write_lock"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+        <TextView
+                android:id="@+id/conversationDetailsFragment_noResultText"
+                style="@style/ListBackgroundText"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_horizontal"
+                android:text="@string/FragmentConversations_empty"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/content_activity_no_res_margin"
+                android:visibility="gone"/>
+
+        <android.support.v7.widget.RecyclerView
+                android:id="@+id/conversationDetailsFragment_recyclerView"
+                style="@style/ScrollTheme"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingTop="@dimen/fragment_msg_element_padding"
+                android:paddingBottom="@dimen/fragment_msg_element_padding"
+                android:clipToPadding="false"/>
+
+        <ProgressBar
+                android:layout_gravity="center"
+                android:id="@+id/progressBar"
+                android:visibility="gone"
+                style="@style/InWhiteButtonProgressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+    </FrameLayout>
+
+
+    <LinearLayout
+            android:id="@+id/conversationDetailsFragment_write_lock"
+            android:layout_width="match_parent"
+            android:layout_alignParentBottom="true"
+            android:orientation="vertical"
+            android:layout_height="wrap_content">
+
+        <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/colorBackgroundProgress"/>
+
+        <RelativeLayout
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            <EditText
+                    android:id="@+id/conversationDetailsFragment_et_message"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/ConversationMessageEt"
+                    android:hint="@string/ConversationDetails_message"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@+id/conversationDetailsFragment_send_container"
+                    />
+
+            <FrameLayout
+                    android:id="@+id/conversationDetailsFragment_send_container"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="8dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp">
+
+                <ImageView
+                        android:id="@+id/conversationDetailsFragment_iv_send"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:visibility="visible"
+                        android:src="@drawable/ic_send_folder"
+                        />
+
+                <ProgressBar
+                        android:id="@+id/conversationDetailsFragment_pb_send"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:visibility="gone"
+                        android:padding="2dp"
+                        style="@style/InWhiteButtonProgressBar"
+                        android:layout_gravity="center"
+                        android:indeterminate="true"
+                        />
+
+            </FrameLayout>
+
+
+        </RelativeLayout>
+    </LinearLayout>
+
+</RelativeLayout>

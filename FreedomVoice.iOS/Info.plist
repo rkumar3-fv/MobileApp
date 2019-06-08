@@ -13,7 +13,7 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>MinimumOSVersion</key>
-	<string>8.0</string>
+	<string>10.0</string>
 	<key>UIDeviceFamily</key>
 	<array>
 		<integer>1</integer>
@@ -79,5 +79,9 @@
 	<string>FreedomVoice</string>
 	<key>NSContactsUsageDescription</key>
 	<string>Access to your contacts allows you to identify who is calling or texting your FreedomVoice number. Your contacts are never stored on FreedomVoice servers.</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+	</array>
 </dict>
 </plist>

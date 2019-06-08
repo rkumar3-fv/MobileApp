@@ -25,6 +25,10 @@ using FreedomVoice.Core.Utils;
 using Java.Util.Concurrent.Atomic;
 using Pair = Android.Support.V4.Util.Pair;
 using Uri = Android.Net.Uri;
+using com.FreedomVoice.MobileApp.Android.Data;
+using Firebase.Iid;
+using FreedomVoice.Core.Services.Interfaces;
+using FreedomVoice.Entities.Enums;
 
 namespace com.FreedomVoice.MobileApp.Android.Helpers
 {
@@ -137,6 +141,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         private readonly AppDbHelper _dbHelper;
         private readonly AtomicLong _idCounter;
         private readonly AppPreferencesHelper _preferencesHelper;
+        private readonly IPushService _pushService;
         private long _preferencesTime;
         private long _initHelperTime;
 
@@ -170,6 +175,8 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             var cookieImpl = new PclCookieImpl(_app);
             ServiceContainer.Register<IDeviceCacheStorage>(() => cacheImpl);
             ServiceContainer.Register<IDeviceCookieStorage>(() => cookieImpl);
+            CoreModules.Load(AndroidDbPath.GetDatabasePath("freedomvoice.db"));
+            _pushService = ServiceContainer.Resolve<IPushService>();
             RecentsDictionary = new SortedDictionary<long, RecentHolder>(Comparer<long>.Create((x, y) => y.CompareTo(x)));
             ExtensionsList = new List<Extension>();
             SelectedExtension = -1;
@@ -210,7 +217,8 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                         IsLoggedIn = true;
                         if ((AccountsList == null) || (SelectedAccount == null))
                         {
-                            GetAccounts();
+                            if (Build.VERSION.SdkInt < BuildVersionCodes.O)
+                                GetAccounts();
                             if (watcher.IsRunning)
                                 watcher.Stop();
                             _initHelperTime = watcher.ElapsedMilliseconds;
@@ -230,7 +238,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                         if (watcher.IsRunning)
                             watcher.Stop();
                         _initHelperTime = watcher.ElapsedMilliseconds;
-                        _app.StartActivity(intent);
+//                        _app.StartActivity(intent);
                         return;
                     }
                 }
@@ -789,6 +797,26 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             _app.ApplicationHelper.SetMyPhoneNumber(number);
         }
 
+        public async void RegisterFcm()
+        {
+            var instanceToken = FirebaseInstanceId.Instance.Token;
+            var systemPhone = SelectedAccount?.AccountName;
+            if (!string.IsNullOrEmpty(instanceToken) && !string.IsNullOrEmpty(systemPhone))
+            {
+                await _pushService.Register(DeviceType.Android, instanceToken, SelectedAccount.AccountName);
+            }
+        }
+
+        public async void UnregisterFcm()
+        {
+            var instanceToken = FirebaseInstanceId.Instance.Token;
+            var systemPhone = SelectedAccount?.AccountName;
+            if (!string.IsNullOrEmpty(instanceToken) && !string.IsNullOrEmpty(systemPhone))
+            {
+                await _pushService.Unregister(DeviceType.Android, instanceToken, SelectedAccount.AccountName);
+            }
+        }
+
         /// <summary>
         /// Responses from ComService
         /// </summary>
@@ -1106,6 +1134,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 
                 // Login action response
                 case "LogoutResponse":
+                    UnregisterFcm();
                     DoLogout(response.RequestId);
                     break;
 
@@ -1128,6 +1157,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                             AccountsList = accsResponse.AccountsList;
                             SelectedAccount = AccountsList[0];
                             GetPresentationNumbers();
+                            RegisterFcm();
                             break;
 
                         // More than one active accounts
@@ -1142,6 +1172,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                                     foreach (var account in AccountsList.Where(account => account.Equals(selAccount)))
                                     {
                                         SelectedAccount = account;
+                                        RegisterFcm();
                                         break;
                                     }
                                 }

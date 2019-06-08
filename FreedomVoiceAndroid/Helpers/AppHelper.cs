@@ -1,15 +1,13 @@
 using Android;
 using Android.Content;
 using Android.Content.PM;
-using Android.Gms.Analytics;
 using Android.Net;
 using Android.OS;
 using Android.Provider;
 using Android.Runtime;
 using Android.Telephony;
 using com.FreedomVoice.MobileApp.Android.Storage;
-using Java.Util;
-using Xamarin;
+using Firebase.Analytics;
 using Environment = Android.OS.Environment;
 
 namespace com.FreedomVoice.MobileApp.Android.Helpers
@@ -49,6 +47,8 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         /// App preferences helper
         /// </summary>
         public AppPreferencesHelper PreferencesHelper { get; }
+        
+        public NavigationRedirectHelper NavigationRedirectHelper { get; } = new NavigationRedirectHelper();
 
 #region Permissions
         public const string MakeCallsPermission = Manifest.Permission.CallPhone;
@@ -124,60 +124,26 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
 #endregion
 
 #region Analytics
-        private bool _isInsightsOn;
-        private const int GaUpdatePeriod = 180;
-        private const string GaKey = "UA-587407-95";
+
         public const string InsightsKey = "d8bf081e25b6c01b8a852a950d1f7b446d33662d";
+
+        /// <summary>
+        /// Check Google FirebaseTracker state
+        /// </summary>
+        public FirebaseAnalytics FirebaseTracker { get; private set; }
         private const string RequestKey = "API_REQUEST";
         private const string LoadingKey = "LOADING_FILE";
         private const string ActionKey = "LONG_ACTION";
         private const string OtherKey = "OTHER";
         private const string LowMemoryKey = "LOW_MEMORY";
 
-        /// <summary>
-        /// Check Google Analytics state
-        /// </summary>
-        public bool IsGoogleAnalyticsOn { get; private set; }
-
-        /// <summary>
-        /// Check Xamarin Insights state
-        /// </summary>
-        public bool IsInsigthsOn => (_isInsightsOn && CheckFilesPermissions());
-
-        /// <summary>
-        /// Get GA tracker or NULL if not active
-        /// </summary>
-        public Tracker AnalyticsTracker { get; private set; }
-
-        /// <summary>
-        /// Initialize GA tracking
-        /// </summary>
-        /// <returns>GA state</returns>
-        public bool InitGa()
+        public void InitFirebaseAnalytics()
         {
-            if (IsGoogleAnalyticsOn) return true;
-            if (CheckInternetPermissions() && CheckWakeLockPermission())
-            {
-                var analytics = GoogleAnalytics.GetInstance(_context);
-                analytics.SetLocalDispatchPeriod(GaUpdatePeriod);
-                AnalyticsTracker = analytics.NewTracker(GaKey);
-                AnalyticsTracker.EnableAutoActivityTracking(false);
-                AnalyticsTracker.EnableExceptionReporting(false);
-                AnalyticsTracker.EnableAdvertisingIdCollection(false);
-                var pInfo = _context.PackageManager.GetPackageInfo(App.AppPackage, 0);
-                AnalyticsTracker.SetAppName(_context.GetString(Resource.String.ApplicationName));
-                AnalyticsTracker.SetAppVersion($"{pInfo.VersionCode} ({pInfo.VersionName})");
-                AnalyticsTracker.SetLanguage(Locale.Default.Language);
-                AnalyticsTracker.SetScreenResolution(_context.Resources.DisplayMetrics.WidthPixels, _context.Resources.DisplayMetrics.HeightPixels);
-                IsGoogleAnalyticsOn = true;
-                return true;
-            }
-            IsGoogleAnalyticsOn = false;
-            return false;
+            FirebaseTracker = FirebaseAnalytics.GetInstance(_context);
         }
-
+        
         /// <summary>
-        /// Time reporting via GA
+        /// Time reporting via Firebase
         /// </summary>
         /// <param name="type">action type</param>
         /// <param name="name">action name</param>
@@ -185,75 +151,51 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         /// <param name="time">action duration</param>
         public bool ReportTime(TimingEvent type, string name, string result, long time)
         {
-            if (!IsGoogleAnalyticsOn) return false;
-            if (AnalyticsTracker == null) return false;
-            var timingTracker = new HitBuilders.TimingBuilder();
+            if (FirebaseTracker == null) return false;
+            var bundle = new Bundle();
+            
             switch (type)
             {
                 case TimingEvent.Request:
-                    timingTracker.SetCategory(RequestKey);
+                    bundle.PutString(FirebaseAnalytics.Param.ItemCategory, RequestKey);
                     break;
                 case TimingEvent.FileLoading:
-                    timingTracker.SetCategory(LoadingKey);
+                    bundle.PutString(FirebaseAnalytics.Param.ItemCategory, LoadingKey);
                     break;
                 case TimingEvent.LongAction:
-                    timingTracker.SetCategory(ActionKey);
+                    bundle.PutString(FirebaseAnalytics.Param.ItemCategory, ActionKey);
                     break;
                 default:
-                    timingTracker.SetCategory(OtherKey);
+                    bundle.PutString(FirebaseAnalytics.Param.ItemCategory, OtherKey);
                     break;
             }
-            timingTracker.SetVariable(name);
-            timingTracker.SetLabel(result);
-            timingTracker.SetValue(time);
-            AnalyticsTracker.Send(timingTracker.Build());
+            bundle.PutString(FirebaseAnalytics.Param.ItemName, name);
+            bundle.PutString(FirebaseAnalytics.Param.Value, result);
+            bundle.PutLong(FirebaseAnalytics.Param.StartDate, time);
+            FirebaseTracker.LogEvent("report_time", bundle);
             return true;
         }
 
         public bool ReportEvent(SpecialEvent type, string name, string result)
         {
-            if (!IsGoogleAnalyticsOn) return false;
-            if (AnalyticsTracker == null) return false;
-            var eventTracker = new HitBuilders.EventBuilder();
+            if (FirebaseTracker == null) return false;
+            var bundle = new Bundle();
             switch (type)
             {
                 case SpecialEvent.LowMemory:
-                    eventTracker.SetCategory(LowMemoryKey);
+                    bundle.PutString(FirebaseAnalytics.Param.ItemCategory, LoadingKey);
                     break;
                 default:
-                    eventTracker.SetCategory(OtherKey);
+                    bundle.PutString(FirebaseAnalytics.Param.ItemCategory, OtherKey);
                     break;
             }
-            eventTracker.SetAction(name);
-            eventTracker.SetLabel(result);
-            eventTracker.SetValue(1);
-            AnalyticsTracker.Send(eventTracker.Build());
+            bundle.PutString(FirebaseAnalytics.Param.ItemName, name);
+            bundle.PutString(FirebaseAnalytics.Param.Value, result);
+            FirebaseTracker.LogEvent("special_event", bundle);
             return true;
         }
 
-        /// <summary>
-        /// Initialize Xamarin Insights tracking
-        /// </summary>
-        /// <returns>Xamarin Insights state</returns>
-        public bool InitInsights()
-        {
-            if (IsInsigthsOn) return true;
-            if (!CheckInternetPermissions() || !CheckFilesPermissions())
-            {
-                _isInsightsOn = false;
-                return false;
-            }
-            Insights.HasPendingCrashReport += (sender, isStartupCrash) =>
-            {
-                if (isStartupCrash)
-                    Insights.PurgePendingCrashReports().Wait();
-            };
-            Insights.Initialize(InsightsKey, _context);
-            _isInsightsOn = true;
-            return true;
-        }
-
-#endregion
+        #endregion
 
 #region Device State
         private string _phoneNumber;

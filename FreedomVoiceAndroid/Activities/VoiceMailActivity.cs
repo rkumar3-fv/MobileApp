@@ -27,6 +27,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             MessageDate = FindViewById<TextView>(Resource.Id.voicemailActivity_dateText);
             MessageStamp = FindViewById<TextView>(Resource.Id.voicemailActivity_stampText);
             CallBackButton = FindViewById<Button>(Resource.Id.voicemailActivity_callbackButton);
+            SmsButton = FindViewById<Button>(Resource.Id.voicemailActivity_smsButton);
             SpeakerButton = FindViewById<ToggleButton>(Resource.Id.voicemailActivity_speakerButton);
             Progress = FindViewById<ProgressBar>(Resource.Id.voicemailActivity_progress);
             PlayerButton = FindViewById<ImageButton>(Resource.Id.voicemailActivity_playerButton);

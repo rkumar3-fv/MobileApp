@@ -1,5 +1,6 @@
 using System;
 using CoreGraphics;
+using FreedomVoice.Core.Utils;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.Utilities.Helpers;
@@ -59,6 +60,7 @@ namespace FreedomVoice.iOS.ViewControllers
                 var navigationController = new UINavigationController(mainTabBarController);
                 Theme.TransitionController(navigationController);
             }
+            ServiceContainer.Resolve<IAppNavigator>()?.UpdateMainTabBarController(mainTabBarController);
 	    }
 
         #region Controls Initialization

@@ -13,6 +13,7 @@ using com.FreedomVoice.MobileApp.Android.Receivers;
 using com.FreedomVoice.MobileApp.Android.Services;
 using com.FreedomVoice.MobileApp.Android.Utils;
 using FreedomVoice.Core.Utils;
+using FreedomVoice.Core.Utils.Interfaces;
 using Message = com.FreedomVoice.MobileApp.Android.Entities.Message;
 using NotificationCompat = Android.Support.V7.App.NotificationCompat;
 
@@ -165,7 +166,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                     _cacheDictionary.Add(successReport.Id, successReport.Path);
                     if ((OnFinish == null) || (OnFinish.GetInvocationList().Length == 0))
                     {
-                        _builder.SetContentText(DataFormatUtils.ToPhoneNumber(report.Msg.FromNumber));
+                        _builder.SetContentText(ServiceContainer.Resolve<IPhoneFormatter>().Format(report.Msg.FromNumber));
                         string title;
                         int icon;
                         Intent intent;

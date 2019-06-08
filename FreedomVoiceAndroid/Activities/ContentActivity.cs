@@ -1,6 +1,6 @@
 using Android.App;
+using Android.Content;
 using Android.Content.PM;
-using Android.Gms.Analytics;
 using Android.Graphics;
 using Android.OS;
 using Android.Runtime;
@@ -16,6 +16,7 @@ using com.FreedomVoice.MobileApp.Android.CustomControls;
 using com.FreedomVoice.MobileApp.Android.CustomControls.Callbacks;
 using com.FreedomVoice.MobileApp.Android.Dialogs;
 using com.FreedomVoice.MobileApp.Android.Fragments;
+using com.FreedomVoice.MobileApp.Android.Helpers;
 using com.FreedomVoice.MobileApp.Android.Utils;
 using SearchView = Android.Support.V7.Widget.SearchView;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
@@ -44,6 +45,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         private string _request;
 
         private ContactsFragment _contactsFragment;
+        private NavigationRedirectHelper _navigationRedirectHelper;
 
         /// <summary>
         /// Contacts search listener
@@ -54,6 +56,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         {
             base.OnCreate(bundle);
             SetContentView(Resource.Layout.act_content);
+            _navigationRedirectHelper = App.GetApplication(this).ApplicationHelper.NavigationRedirectHelper;
             _rootLayout = FindViewById<CoordinatorLayout>(Resource.Id.contentActivity_rootBar);
             RootLayout = _rootLayout;
             _whiteColor = new Color(ContextCompat.GetColor(this, Resource.Color.colorActionBarText));
@@ -72,6 +75,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             var keypadFragment = new KeypadFragment();
             var messagesFragment = new MessagesFragment();
             var recentsFragment = new RecentsFragment();
+            var conversationsFragment = new ConversationsFragment();
             if (_viewPager != null)
             {
                 _viewPager.AllowSwipe = false;
@@ -80,11 +84,17 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 _pagerAdapter.AddFragment(_contactsFragment, Resource.String.FragmentContacts_title, Resource.Drawable.ic_tab_contacts);
                 _pagerAdapter.AddFragment(keypadFragment, Resource.String.FragmentKeypad_title, Resource.Drawable.ic_tab_keypad);
                 _pagerAdapter.AddFragment(messagesFragment, Resource.String.FragmentMessages_title, Resource.Drawable.ic_tab_messages);
+                _pagerAdapter.AddFragment(conversationsFragment, Resource.String.FragmentConversations_title, Resource.Drawable.ic_conversations);
                 _viewPager.Adapter = _pagerAdapter;
                 _viewPager.CurrentItem = 2;
                 _viewPager.PageSelected += ViewPagerOnPageSelected;
             }
             _tabLayout.SetupWithViewPager(_viewPager);
+            _tabLayout.GetTabAt(0).SetIcon(Resource.Drawable.ic_tab_history);
+            _tabLayout.GetTabAt(1).SetIcon(Resource.Drawable.ic_tab_contacts);
+            _tabLayout.GetTabAt(2).SetIcon(Resource.Drawable.ic_tab_keypad);
+            _tabLayout.GetTabAt(3).SetIcon(Resource.Drawable.ic_tab_messages);
+            _tabLayout.GetTabAt(4).SetIcon(Resource.Drawable.ic_conversations);
         }
 
         protected override void OnStart()
@@ -116,6 +126,21 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             var param = _toolbar.LayoutParameters.JavaCast<AppBarLayout.LayoutParams>();
             param.ScrollFlags = AppBarLayout.LayoutParams.ScrollFlagScroll | AppBarLayout.LayoutParams.ScrollFlagEnterAlways;
             _tabLayout.Visibility = ViewStates.Visible;
+
+            _navigationRedirectHelper.OnNewRedirect += OnRedirect;
+            _navigationRedirectHelper.Resume();
+        }
+        
+        
+
+        private void OnRedirect(object sender, NavigationRedirectHelper.IRedirect e)
+        {
+            switch (e.ScreenKey)
+            {
+                case Screens.ChatScreen:
+                    StartActivity(e.Payload as Intent);
+                    break;
+            }
         }
 
         protected override void OnPause()
@@ -134,22 +159,20 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 }
             }
             _request = null;
+
+            _navigationRedirectHelper.OnNewRedirect -= OnRedirect;
         }
 
         private void ViewPagerOnPageSelected(object sender, ViewPager.PageSelectedEventArgs pageSelectedEventArgs)
         {
             SetToolbarContent();
-            if ((_viewPager.CurrentItem == 1)&&(!Appl.ApplicationHelper.CheckContactsPermission()))
+            if ((_viewPager.CurrentItem == 1 || _viewPager.CurrentItem == 4) && (!Appl.ApplicationHelper.CheckContactsPermission()))
             {
                 var snackPerm = Snackbar.Make(RootLayout, Resource.String.Snack_noContactsPermission, Snackbar.LengthLong);
                 snackPerm.SetAction(Resource.String.Snack_noPhonePermissionAction, OnSetContactsPermission);
                 snackPerm.SetActionTextColor(ContextCompat.GetColor(this, Resource.Color.colorUndoList));
                 snackPerm.Show();
             }
-            if (!Appl.ApplicationHelper.IsGoogleAnalyticsOn) return;
-            Appl.ApplicationHelper.AnalyticsTracker.SetScreenName(
-                    $"Activity {GetType().Name}, Screen {_pagerAdapter.GetItem(_viewPager.CurrentItem).GetType().Name}");
-            Appl.ApplicationHelper.AnalyticsTracker.Send(new HitBuilders.ScreenViewBuilder().Build());
         }
 
         public void SetToolbarContent()
@@ -210,6 +233,10 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                     _toolbar.InflateMenu(Resource.Menu.menu_content);
                     ExpandToolbar();
                     break;
+                case 4:
+                    _toolbar.InflateMenu(Resource.Menu.menu_conversations);
+                    ContactsBarRestore();
+                    break;
             }
         }
 
@@ -236,6 +263,9 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                     var transaction = SupportFragmentManager.BeginTransaction();
                     transaction.Add(clearDialog, GetString(Resource.String.DlgLogout_title));
                     transaction.CommitAllowingStateLoss();
+                    return true;
+                case Resource.Id.menu_conversation_new:
+                    ChatActivity.StartNewChat(this, null);
                     return true;
                 default:
                     return base.OnOptionsItemSelected(item);
@@ -357,15 +387,13 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 MenuItemCompat.GetActionView(menu.FindItem(Resource.Id.menu_action_search))
                     .JavaCast<SearchView>();
             var menuItem = menu.FindItem(Resource.Id.menu_action_search);
-            if ((menuItem != null) && (searchView != null))
-            {
-                MenuItemCompat.SetOnActionExpandListener(menuItem, SearchListener);
-                MenuItemCompat.SetActionView(menuItem, searchView);
-                searchView.SetOnQueryTextListener(SearchListener);
-                var editText = searchView.FindViewById<EditText>(Resource.Id.search_src_text);
-                editText.SetTextColor(_whiteColor);
-                editText.SetHintTextColor(_grayColor);
-            }
+            if (menuItem == null || searchView == null) return;
+            MenuItemCompat.SetOnActionExpandListener(menuItem, SearchListener);
+            MenuItemCompat.SetActionView(menuItem, searchView);
+            searchView.SetOnQueryTextListener(SearchListener);
+            var editText = searchView.FindViewById<EditText>(Resource.Id.search_src_text);
+            editText.SetTextColor(_whiteColor);
+            editText.SetHintTextColor(_grayColor);
         }
     }
 }

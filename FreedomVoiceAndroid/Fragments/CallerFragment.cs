@@ -6,6 +6,7 @@ using com.FreedomVoice.MobileApp.Android.Activities;
 using com.FreedomVoice.MobileApp.Android.Adapters;
 using com.FreedomVoice.MobileApp.Android.Helpers;
 using FreedomVoice.Core.Utils;
+using FreedomVoice.Core.Utils.Interfaces;
 
 namespace com.FreedomVoice.MobileApp.Android.Fragments
 {
@@ -55,7 +56,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                     IdSpinner.Visibility = ViewStates.Invisible;
                 if (SingleId.Visibility == ViewStates.Invisible)
                 {
-                    SingleId.Text = DataFormatUtils.ToPhoneNumber(Helper.SelectedAccount.PresentationNumber);
+                    SingleId.Text = ServiceContainer.Resolve<IPhoneFormatter>().Format(Helper.SelectedAccount.PresentationNumber);
                     SingleId.Visibility = ViewStates.Visible;
                 }
             }
@@ -92,7 +93,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                                         IdSpinner.Visibility = ViewStates.Invisible;
                                     if (SingleId.Visibility == ViewStates.Invisible)
                                     {
-                                        SingleId.Text = DataFormatUtils.ToPhoneNumber(Helper.SelectedAccount.PresentationNumber);
+                                        SingleId.Text = ServiceContainer.Resolve<IPhoneFormatter>().Format(Helper.SelectedAccount.PresentationNumber);
                                         SingleId.Visibility = ViewStates.Visible;
                                     }
                                 }
@@ -120,10 +121,10 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                 Helper.GetAccounts();
             else if ((Helper.SelectedAccount.PresentationNumbers == null)||(Helper.SelectedAccount.PresentationNumbers.Count == 0))
                 Helper.GetPresentationNumbers();
-            var intent = new Intent(ContentActivity, typeof(LoadingActivity));
+            var intent = new Intent(Activity, typeof(LoadingActivity));
             intent.SetFlags(ActivityFlags.NewTask);
             intent.SetFlags(ActivityFlags.ClearTop);
-            ContentActivity.StartActivity(intent);
+            Activity.StartActivity(intent);
             return false;
         }
     }

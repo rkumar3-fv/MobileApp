@@ -23,6 +23,21 @@ namespace FreedomVoice.iOS.Views.Shared
         private UITextField _callerIdTextField;
         private UIImageView _dropdownImage;
 
+        private bool _isReadOnly;
+        public bool IsReadOnly
+        {
+            get => _isReadOnly;
+            set {
+                _isReadOnly = value;
+                if (_dropdownImage != null)
+                {
+                    _dropdownImage.Hidden = _isReadOnly;
+                }
+            }
+        }
+
+        public PresentationNumber SelectedNumber => _selectedPresentationNumber;
+
         public CallerIdView(RectangleF bounds, IList<PresentationNumber> numbers) : base(bounds)
         {
             Initialize(numbers);
@@ -60,6 +75,15 @@ namespace FreedomVoice.iOS.Views.Shared
                 _selectedPresentationNumber = _callerIdPickerModel.SelectedItem;
                 CallerIdEvent.OnCallerIdChangedEvent(new CallerIdEventArgs(_selectedPresentationNumber));
             };
+            
+            CallerIdEvent.CallerIdFinished += (sender, args) =>
+            {
+                var selectedPresentationNumber = (args as CallerIdEventArgs)?.SelectedPresentationNumber;
+                if( selectedPresentationNumber.Equals(SelectedNumber) ) return;
+                _selectedPresentationNumber = selectedPresentationNumber;
+                UpdatePickerData(selectedPresentationNumber);
+
+            };
 
             _pickerField = new UIPickerView
             {
@@ -86,10 +110,15 @@ namespace FreedomVoice.iOS.Views.Shared
                 _dropdownImage.Frame =  new CGRect(_callerIdTextField.Frame.X + phoneNumberFieldWidth + 5, _dropdownImage.Frame.Y, _dropdownImage.Frame.Width, _dropdownImage.Frame.Height);
                 _callerIdTextField.Text = _selectedPresentationNumber.FormattedPhoneNumber;
                 _callerIdTextField.ResignFirstResponder();
+                CallerIdEvent.OnCallerIdFinishedEvent(new CallerIdEventArgs(_selectedPresentationNumber));
             }) { TintColor = Theme.BlueColor };
 
             toolbar.SetItems(new[] { doneButton }, true);
 
+            _callerIdTextField.ShouldBeginEditing = t =>
+            {
+                return !_isReadOnly;
+            };
             _callerIdTextField.InputView = _pickerField;
             _callerIdTextField.InputView.BackgroundColor = UIColor.White;
             _callerIdTextField.InputAccessoryView = toolbar;

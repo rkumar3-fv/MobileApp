@@ -1,6 +1,5 @@
 using System;
 using Android.Content;
-using Android.Gms.Analytics;
 using Android.OS;
 using Android.Provider;
 using Android.Support.Design.Widget;
@@ -21,6 +20,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
     /// </summary>
     public abstract class BaseActivity : AppCompatActivity
     {
+        public static string NavigationRedirectActivityName = "NavigateScreen";
+        public static string NavigatePayloadBundle = "NavigatePayload";
         private const string AirDlgTag = "AIR_DLG_TAG";
         protected ActionsHelper Helper;
         protected App Appl;
@@ -34,16 +35,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 return;
             Helper = Appl.ApplicationHelper.ActionsHelper;
         }
-
-        protected override void OnStart()
-        {
-            base.OnStart();
-            if (Appl.ApplicationHelper.InitGa())
-            {
-                Appl.ApplicationHelper.AnalyticsTracker.SetScreenName($"Activity {GetType().Name}");
-                Appl.ApplicationHelper.AnalyticsTracker.Send(new HitBuilders.ScreenViewBuilder().Build());
-            }
-        }
+        
 
         protected override void OnPause()
         {

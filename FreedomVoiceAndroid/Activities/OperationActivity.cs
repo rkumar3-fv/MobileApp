@@ -9,6 +9,7 @@ using Android.Util;
 using com.FreedomVoice.MobileApp.Android.Dialogs;
 using com.FreedomVoice.MobileApp.Android.Helpers;
 using FreedomVoice.Core.Utils;
+using FreedomVoice.Core.Utils.Interfaces;
 using Java.Lang;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
@@ -57,9 +58,9 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                     {
                         if (phone.Length > 4)
                         {
-                            var normalizedNumber = DataFormatUtils.NormalizePhone(phone);
+                            var normalizedNumber = ServiceContainer.Resolve<IPhoneFormatter>().Format(phone);
 #if DEBUG
-                            Log.Debug(App.AppPackage, $"DIAL TO {DataFormatUtils.ToPhoneNumber(phone)}");
+                            Log.Debug(App.AppPackage, $"DIAL TO {ServiceContainer.Resolve<IPhoneFormatter>().Format(phone)}");
 #else
                             Appl.ApplicationHelper.Reports?.Log($"DIAL TO {DataFormatUtils.ToPhoneNumber(phone)}");
 #endif

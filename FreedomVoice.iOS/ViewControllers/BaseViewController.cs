@@ -1,11 +1,11 @@
 ﻿using System;
 using Foundation;
-using Google.Analytics;
+using FreedomVoice.Core.Utils;
 using UIKit;
 
 namespace FreedomVoice.iOS.ViewControllers
 {
-    public class BaseViewController : UIViewController
+public class BaseViewController : UIViewController
     {
         /// <summary>
         /// Required constructor for Storyboard to work
@@ -15,8 +15,17 @@ namespace FreedomVoice.iOS.ViewControllers
         /// </param>
         protected BaseViewController(IntPtr handle) : base(handle)
         {
-            Gai.SharedInstance.DefaultTracker.Set(GaiConstants.ScreenName, PageName);
-            Gai.SharedInstance.DefaultTracker.Send(DictionaryBuilder.CreateScreenView().Build());
+            InternalInit();
+        }
+
+        protected BaseViewController()
+        {
+            InternalInit();
+        }
+
+        protected virtual void InternalInit()
+        {
+            
 
             if (!HandlesKeyboardNotifications) return;
 
@@ -56,5 +65,11 @@ namespace FreedomVoice.iOS.ViewControllers
         /// Calculated height of the keyboard (width not generally needed here)
         /// </param>
         protected virtual void OnKeyboardChanged(bool visible, nfloat height) { }
+
+        public override void ViewWillAppear(bool animated)
+        {
+            base.ViewWillAppear(animated);
+            ServiceContainer.Resolve<IAppNavigator>().UpdateCurrentController(this);
+        }
     }
 }

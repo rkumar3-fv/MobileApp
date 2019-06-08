@@ -2,6 +2,7 @@ using System;
 using System.Drawing;
 using CoreGraphics;
 using FreedomVoice.Core.Utils;
+using FreedomVoice.Core.Utils.Interfaces;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.Utilities.Helpers;
@@ -123,7 +124,7 @@ namespace FreedomVoice.iOS.ViewControllers
             if (button == null) return;
 
             PhoneNumber += button.TextLabel.Text;
-            _phoneLabel.Text = DataFormatUtils.ToPhoneNumber(PhoneNumber);
+            _phoneLabel.Text = ServiceContainer.Resolve<IPhoneFormatter>().Format(PhoneNumber);
             ChangeClearPhoneButtonVisibility();
         }
 
@@ -132,7 +133,7 @@ namespace FreedomVoice.iOS.ViewControllers
             if (recognizer.State != UIGestureRecognizerState.Began) return;
 
             PhoneNumber += "+";
-            _phoneLabel.Text = DataFormatUtils.ToPhoneNumber(PhoneNumber);
+            _phoneLabel.Text = ServiceContainer.Resolve<IPhoneFormatter>().Format(PhoneNumber);
             ChangeClearPhoneButtonVisibility();
         }
 
@@ -153,7 +154,7 @@ namespace FreedomVoice.iOS.ViewControllers
             else
             {
                 PhoneNumber = PhoneNumber.Substring(0, PhoneNumber.Length - 1);
-                _phoneLabel.Text = DataFormatUtils.ToPhoneNumber(PhoneNumber);
+                _phoneLabel.Text = ServiceContainer.Resolve<IPhoneFormatter>().Format(PhoneNumber);
             }
             ChangeClearPhoneButtonVisibility();
         }
@@ -176,7 +177,7 @@ namespace FreedomVoice.iOS.ViewControllers
                 if (Recents.RecentsCount == 0) return;
 
                 PhoneNumber = Recents.GetLastRecent().PhoneNumber;
-                _phoneLabel.Text = DataFormatUtils.ToPhoneNumber(PhoneNumber);
+                _phoneLabel.Text = ServiceContainer.Resolve<IPhoneFormatter>().Format(PhoneNumber);
                 ChangeClearPhoneButtonVisibility();
                 return;
             }
