@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 using Foundation;
 using FreedomVoice.Core.Services;
 using FreedomVoice.Core.Utils;
+using FreedomVoice.Core.Utils.Interfaces;
 using FreedomVoice.Core.ViewModels;
 using FreedomVoice.Entities.Enums;
-using FreedomVoice.Entities.PushContract;
 using FreedomVoice.Entities.Response;
 using FreedomVoice.iOS.Core;
 using FreedomVoice.iOS.Entities;
@@ -18,7 +18,6 @@ using FreedomVoice.iOS.ViewControllers.Texts;
 using PushKit;
 using UIKit;
 using UserNotifications;
-using ContactsHelper = FreedomVoice.iOS.Core.Utilities.Helpers.Contacts;
 
 namespace FreedomVoice.iOS.PushNotifications
 {
@@ -27,6 +26,7 @@ namespace FreedomVoice.iOS.PushNotifications
 		private readonly IAppNavigator _appNavigator = ServiceContainer.Resolve<IAppNavigator>();
 		private readonly IContactNameProvider _contactNameProvider = ServiceContainer.Resolve<IContactNameProvider>();
 		private readonly ILogger _logger = ServiceContainer.Resolve<ILogger>();
+        private readonly IPhoneFormatter _phoneFormatter = ServiceContainer.Resolve<IPhoneFormatter>();
 		private readonly NotificationMessageService _messagesService = NotificationMessageService.Instance();
 		private PushResponse<Conversation> pushNotificationData;
 		
@@ -132,12 +132,12 @@ namespace FreedomVoice.iOS.PushNotifications
 
 		private async Task<bool> CheckCurrentNumber()
 		{
-			var systemNumber = ContactsHelper.NormalizePhoneNumber(UserDefault.AccountPhoneNumber);
+			var systemNumber = _phoneFormatter.Normalize(UserDefault.AccountPhoneNumber);
 
 			var service = ServiceContainer.Resolve<IPresentationNumbersService>();
 			var requestResult = await service.ExecuteRequest(systemNumber, false);
 			var accountNumbers = requestResult as PresentationNumbersResponse;
-			return accountNumbers.PresentationNumbers.Any(x => ContactsHelper.NormalizePhoneNumber(x.PhoneNumber) == systemNumber);
+			return accountNumbers.PresentationNumbers.Any(x => _phoneFormatter.Normalize(x.PhoneNumber) == systemNumber);
 		}
 
 		private void ProcessStatusChangedPushNotification()
@@ -244,7 +244,7 @@ namespace FreedomVoice.iOS.PushNotifications
 
 			try
 			{
-				await ContactsHelper.GetContactsListAsync();
+				await FreedomVoice.iOS.Core.Utilities.Helpers.Contacts.GetContactsListAsync();
 			}
 			catch (Exception ex)
 			{
@@ -323,7 +323,7 @@ namespace FreedomVoice.iOS.PushNotifications
 			}
 
 			var fromPhone = pushResponseData.TextMessageReceivedFromNumber();
-			var phoneHolder = _contactNameProvider.GetNameOrNull(ContactsHelper.NormalizePhoneNumber(fromPhone));
+			var phoneHolder = _contactNameProvider.GetNameOrNull(_phoneFormatter.Normalize(fromPhone));
 
 			if (string.IsNullOrWhiteSpace(phoneHolder))
 			{
@@ -338,9 +338,20 @@ namespace FreedomVoice.iOS.PushNotifications
 
 		private void ShowPushNotificationsNow(string title, string body, string subtitle, NSDictionary userInfo)
 		{
-			_logger.Debug(nameof(NotificationCenterDelegate), nameof(ShowPushNotificationsNow), $"Show alerts as title: {title}, body: {body}");
+			_logger.Debug(nameof(NotificationCenterDelegate), nameof(ShowPushNotificationsNow), $"Show alerts as title: {title}, subtitle: {subtitle} body: {body}");
 
-			var notificationContent = new UNMutableNotificationContent();
+            if (UIDevice.CurrentDevice.CheckSystemVersion(12, 0))
+                ShowPushNotificationsNowForiOS12AndLater(title, body, subtitle, userInfo);
+            else
+                ShowPushNotificationsNowForiOS11AndLess(title, body, subtitle, userInfo);
+           
+		}
+
+        private void ShowPushNotificationsNowForiOS12AndLater(string title, string body, string subtitle, NSDictionary userInfo) 
+        {
+            _logger.Debug(nameof(NotificationCenterDelegate), nameof(ShowPushNotificationsNowForiOS12AndLater), $"Show alert for iOS 12 and later.");
+
+            var notificationContent = new UNMutableNotificationContent();
             if (title != null) notificationContent.Title = title;
             if (body != null) notificationContent.Body = body;
             if (subtitle != null) notificationContent.Subtitle = subtitle;
@@ -348,15 +359,31 @@ namespace FreedomVoice.iOS.PushNotifications
             notificationContent.Sound = UNNotificationSound.Default;
 
             var trigger = UNTimeIntervalNotificationTrigger.CreateTrigger(1, false);
-			var localNotificationRequest = UNNotificationRequest.FromIdentifier(new NSUuid().AsString(), notificationContent, trigger);
-			
-			UNUserNotificationCenter.Current.AddNotificationRequest(localNotificationRequest, error =>
-			{
-				_logger.Debug(nameof(NotificationCenterDelegate), nameof(ShowPushNotificationsNow), $"Push has been showed. Error: {error}");
-			});
-		}
-		
-		#endregion
+            var localNotificationRequest = UNNotificationRequest.FromIdentifier(new NSUuid().AsString(), notificationContent, trigger);
 
-	}
+            UNUserNotificationCenter.Current.AddNotificationRequest(localNotificationRequest, error =>
+            {
+                _logger.Debug(nameof(NotificationCenterDelegate), nameof(ShowPushNotificationsNow), $"Push has been showed. Error: {error}");
+            });
+        }
+
+        private void ShowPushNotificationsNowForiOS11AndLess(string title, string body, string subtitle, NSDictionary userInfo)
+        {
+            _logger.Debug(nameof(NotificationCenterDelegate), nameof(ShowPushNotificationsNowForiOS11AndLess), $"Show alert for iOS 11 and less.");
+
+            UILocalNotification notification = new UILocalNotification();
+            notification.TimeZone = NSTimeZone.SystemTimeZone;
+            notification.FireDate = NSDate.Now.AddSeconds(1);
+
+            if (title != null) notification.AlertTitle = title;
+            if (userInfo != null) notification.UserInfo = userInfo;
+            notification.AlertBody = $"{(string.IsNullOrWhiteSpace(subtitle) ? "" : subtitle + "\n")}{body ?? ""}";
+
+            notification.SoundName = UILocalNotification.DefaultSoundName;
+            UIApplication.SharedApplication.ScheduleLocalNotification(notification);
+        }
+
+        #endregion
+
+    }
 }
