@@ -349,38 +349,52 @@ namespace FreedomVoice.iOS.PushNotifications
 
         private void ShowPushNotificationsNowForiOS12AndLater(string title, string body, string subtitle, NSDictionary userInfo) 
         {
-            _logger.Debug(nameof(NotificationCenterDelegate), nameof(ShowPushNotificationsNowForiOS12AndLater), $"Show alert for iOS 12 and later.");
-
-            var notificationContent = new UNMutableNotificationContent();
-            if (title != null) notificationContent.Title = title;
-            if (body != null) notificationContent.Body = body;
-            if (subtitle != null) notificationContent.Subtitle = subtitle;
-            if (userInfo != null) notificationContent.UserInfo = userInfo;
-            notificationContent.Sound = UNNotificationSound.Default;
-
-            var trigger = UNTimeIntervalNotificationTrigger.CreateTrigger(1, false);
-            var localNotificationRequest = UNNotificationRequest.FromIdentifier(new NSUuid().AsString(), notificationContent, trigger);
-
-            UNUserNotificationCenter.Current.AddNotificationRequest(localNotificationRequest, error =>
+            try
             {
-                _logger.Debug(nameof(NotificationCenterDelegate), nameof(ShowPushNotificationsNow), $"Push has been showed. Error: {error}");
-            });
+                _logger.Debug(nameof(NotificationCenterDelegate), nameof(ShowPushNotificationsNowForiOS12AndLater), $"Show alert for iOS 12 and later.");
+
+                var notificationContent = new UNMutableNotificationContent();
+                if (title != null) notificationContent.Title = title;
+                if (body != null) notificationContent.Body = body;
+                if (subtitle != null) notificationContent.Subtitle = subtitle;
+                if (userInfo != null) notificationContent.UserInfo = userInfo;
+                notificationContent.Sound = UNNotificationSound.Default;
+
+                var trigger = UNTimeIntervalNotificationTrigger.CreateTrigger(1, false);
+                var localNotificationRequest = UNNotificationRequest.FromIdentifier(new NSUuid().AsString(), notificationContent, trigger);
+
+                UNUserNotificationCenter.Current.AddNotificationRequest(localNotificationRequest, error =>
+                {
+                    _logger.Debug(nameof(NotificationCenterDelegate), nameof(ShowPushNotificationsNow), $"Push has been showed. Error: {error}");
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.Debug(nameof(NotificationCenterDelegate), nameof(ShowPushNotificationsNowForiOS12AndLater), $"Cannot show alert. Error: {ex.Message}");
+            }
         }
 
         private void ShowPushNotificationsNowForiOS11AndLess(string title, string body, string subtitle, NSDictionary userInfo)
         {
             _logger.Debug(nameof(NotificationCenterDelegate), nameof(ShowPushNotificationsNowForiOS11AndLess), $"Show alert for iOS 11 and less.");
 
-            UILocalNotification notification = new UILocalNotification();
-            notification.TimeZone = NSTimeZone.SystemTimeZone;
-            notification.FireDate = NSDate.Now.AddSeconds(1);
+            try
+            {
+                UILocalNotification notification = new UILocalNotification();
+                notification.TimeZone = NSTimeZone.SystemTimeZone;
+                notification.FireDate = NSDate.Now.AddSeconds(1);
 
-            if (title != null) notification.AlertTitle = title;
-            if (userInfo != null) notification.UserInfo = userInfo;
-            notification.AlertBody = $"{(string.IsNullOrWhiteSpace(subtitle) ? "" : subtitle + "\n")}{body ?? ""}";
+                if (title != null) notification.AlertTitle = title;
+                if (userInfo != null) notification.UserInfo = userInfo;
+                notification.AlertBody = $"{(string.IsNullOrWhiteSpace(subtitle) ? "" : subtitle + "\n")}{body ?? ""}";
 
-            notification.SoundName = UILocalNotification.DefaultSoundName;
-            UIApplication.SharedApplication.ScheduleLocalNotification(notification);
+                notification.SoundName = UILocalNotification.DefaultSoundName;
+                UIApplication.SharedApplication.ScheduleLocalNotification(notification);
+            }
+            catch (Exception ex)
+            {
+                _logger.Debug(nameof(NotificationCenterDelegate), nameof(ShowPushNotificationsNowForiOS11AndLess), $"Cannot show alert. Error: {ex.Message}");
+            }
         }
 
         #endregion
