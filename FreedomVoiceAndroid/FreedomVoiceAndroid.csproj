@@ -241,9 +241,6 @@
     <Reference Include="Xamarin.Android.Support.Vector.Drawable, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Xamarin.Android.Support.Vector.Drawable.26.0.2\lib\MonoAndroid80\Xamarin.Android.Support.Vector.Drawable.dll</HintPath>
     </Reference>
-    <Reference Include="Xamarin.Firebase.AppIndexing, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Xamarin.Firebase.AppIndexing.60.1142.1\lib\MonoAndroid80\Xamarin.Firebase.AppIndexing.dll</HintPath>
-    </Reference>
     <Reference Include="Xamarin.GooglePlayServices.Base, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Xamarin.GooglePlayServices.Base.60.1142.1\lib\MonoAndroid80\Xamarin.GooglePlayServices.Base.dll</HintPath>
     </Reference>
@@ -270,6 +267,9 @@
     </Reference>
     <Reference Include="Xamarin.Firebase.Analytics">
       <HintPath>..\packages\Xamarin.Firebase.Analytics.60.1142.1\lib\MonoAndroid80\Xamarin.Firebase.Analytics.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Firebase.AppIndexing">
+      <HintPath>..\packages\Xamarin.Firebase.AppIndexing.60.1142.1\lib\MonoAndroid80\Xamarin.Firebase.AppIndexing.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

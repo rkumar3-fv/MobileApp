@@ -133,6 +133,7 @@
     <Compile Include="Entities\FolderWithCount.cs" />
     <Compile Include="Entities\Message.cs" />
     <Compile Include="Entities\PresentationNumber.cs" />
+    <Compile Include="PushNotifications\IPushNotificationsService.cs" />
     <Compile Include="PushNotifications\NotificationCenterDelegate.cs" />
     <Compile Include="PushNotifications\PushNotificationsService.cs" />
     <Compile Include="PushNotifications\PushNotificationTokenDataStore.cs" />

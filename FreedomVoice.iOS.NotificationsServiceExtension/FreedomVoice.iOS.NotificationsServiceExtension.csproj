@@ -86,9 +86,6 @@
     <MtouchFastDev>true</MtouchFastDev>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">
-      <HintPath>..\..\..\..\.nuget\packages\newtonsoft.json\11.0.2\lib\netstandard2.0\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="PhoneNumbers, Version=8.10.12.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\libphonenumber-csharp.8.10.12\lib\netstandard2.0\PhoneNumbers.dll</HintPath>
       <Private>True</Private>
