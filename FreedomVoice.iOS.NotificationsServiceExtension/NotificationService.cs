@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using FreedomVoice.Entities.Enums;
 using FreedomVoice.iOS.Core.Utilities.Helpers;
 using ContactsHelper = FreedomVoice.iOS.Core.Utilities.Helpers.Contacts;
+using FreedomVoice.Core.Utils.Interfaces;
 
 namespace FreedomVoice.iOS.NotificationsServiceExtension
 {
@@ -22,6 +23,7 @@ namespace FreedomVoice.iOS.NotificationsServiceExtension
         protected NotificationService(IntPtr handle) : base(handle)
         {
             FreedomVoice.iOS.Core.iOSCoreConfigurator.RegisterServices();
+            ServiceContainer.Register<IPhoneFormatter>(() => new PhoneFormatter());
             _logger = ServiceContainer.Resolve<ILogger>();
             _logger.Debug($"{nameof(NotificationService)}", $"{nameof(NotificationService)} init", "");
         }
@@ -78,12 +80,12 @@ namespace FreedomVoice.iOS.NotificationsServiceExtension
                     DebugPrintContracts(contacts);
 
                     // Try fetch phone number from push
-                    var fromPhoneNumberNormalized = ContactsHelper.NormalizePhoneNumber(fromPhoneNumber);
-                        _logger.Debug($"{nameof(NotificationService)}", $"{nameof(NotificationService)}", $"Phone from push: {fromPhoneNumberNormalized}");
+                    var fromPhoneNumberNormalized = NormalizePhoneNumber(fromPhoneNumber);
+                    _logger.Debug($"{nameof(NotificationService)}", $"{nameof(NotificationService)}", $"Phone from push: {fromPhoneNumberNormalized}");
 
                     // Find contact from Contact book by phone
                     var matchedContactName = FirstContact(contacts, fromPhoneNumberNormalized)?.DisplayName;
-                        _logger.Debug($"{nameof(NotificationService)}", $"{nameof(NotificationService)}", $"Contact is found: {matchedContactName}");
+                    _logger.Debug($"{nameof(NotificationService)}", $"{nameof(NotificationService)}", $"Contact is found: {matchedContactName}");
 
                     // Set custom push title
                     BestAttemptContent.Title = string.IsNullOrWhiteSpace(matchedContactName) ? BestAttemptContent.Title : matchedContactName;
@@ -95,6 +97,7 @@ namespace FreedomVoice.iOS.NotificationsServiceExtension
             catch(Exception e)
             {
                 Console.WriteLine(e);
+                ContentHandler?.Invoke(BestAttemptContent);
             }
         }
 
@@ -105,7 +108,7 @@ namespace FreedomVoice.iOS.NotificationsServiceExtension
             foreach (var contact in contacts)
                 if (contact.Phones != null && contact.Phones.Count() > 0)
                     foreach (var phone in contact.Phones)
-                        if (ContactsHelper.NormalizePhoneNumber(phone.Number) == ContactsHelper.NormalizePhoneNumber(byPhoneNumber))
+                        if (NormalizePhoneNumber(phone.Number) == NormalizePhoneNumber(byPhoneNumber))
                             return contact;
 
             return null;
@@ -137,6 +140,17 @@ namespace FreedomVoice.iOS.NotificationsServiceExtension
             }
 
             _logger.Debug($"{nameof(NotificationService)}", $"{nameof(NotificationService)}", $"Contacts.ContactList: {contactsDebugList.ToString()}");
+        }
+
+        private string NormalizePhoneNumber(string fromPhoneNumber)
+        {
+            var result = "";
+            var pattern = "0123456789";
+            foreach (var c in fromPhoneNumber)
+                if (pattern.Contains(c))
+                    result.Append(c);
+
+            return result;
         }
     }
 }

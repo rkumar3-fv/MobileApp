@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Foundation;
 using FreedomVoice.Core.Services;
 using FreedomVoice.Core.Utils;
+using FreedomVoice.Core.Utils.Interfaces;
 using FreedomVoice.Core.ViewModels;
 using FreedomVoice.Entities.Enums;
 using FreedomVoice.Entities.Response;
@@ -14,24 +15,34 @@ using FreedomVoice.iOS.Services.Responses;
 using FreedomVoice.iOS.Utilities.Helpers;
 using FreedomVoice.iOS.ViewControllers;
 using FreedomVoice.iOS.ViewControllers.Texts;
+using PushKit;
 using UIKit;
 using UserNotifications;
-using ContactsHelper = FreedomVoice.iOS.Core.Utilities.Helpers.Contacts;
 
 namespace FreedomVoice.iOS.PushNotifications
 {
-	class NotificationCenterDelegate: UNUserNotificationCenterDelegate
+	class NotificationCenterDelegate: UNUserNotificationCenterDelegate, IPKPushRegistryDelegate
 	{
 		private readonly IAppNavigator _appNavigator = ServiceContainer.Resolve<IAppNavigator>();
 		private readonly IContactNameProvider _contactNameProvider = ServiceContainer.Resolve<IContactNameProvider>();
 		private readonly ILogger _logger = ServiceContainer.Resolve<ILogger>();
+        private readonly IPhoneFormatter _phoneFormatter = ServiceContainer.Resolve<IPhoneFormatter>();
 		private readonly NotificationMessageService _messagesService = NotificationMessageService.Instance();
 		private PushResponse<Conversation> pushNotificationData;
+		
+		private readonly NSString ApsKey = new NSString("aps");
+		private readonly NSString ContentAvailableKey = new NSString("content-available");
+		private readonly NSString AlertKey = new NSString("alert");
+		private readonly NSString TitleKey = new NSString("title");
+		private readonly NSString BodyKey = new NSString("body");
+        private readonly NSString SubtitleKey = new NSString("subtitle");
+
+        public event Action<NSData> DidUpdatePushToken;
 
 		public NotificationCenterDelegate()
 		{
 			UserDefault.IsAuthenticatedChanged += IsAuthenticatedChanged;
-        }
+		}
 
 		public override void WillPresentNotification(UNUserNotificationCenter center, UNNotification notification, Action<UNNotificationPresentationOptions> completionHandler)
 		{
@@ -121,12 +132,12 @@ namespace FreedomVoice.iOS.PushNotifications
 
 		private async Task<bool> CheckCurrentNumber()
 		{
-			var systemNumber = ContactsHelper.NormalizePhoneNumber(UserDefault.AccountPhoneNumber);
+			var systemNumber = _phoneFormatter.Normalize(UserDefault.AccountPhoneNumber);
 
 			var service = ServiceContainer.Resolve<IPresentationNumbersService>();
 			var requestResult = await service.ExecuteRequest(systemNumber, false);
 			var accountNumbers = requestResult as PresentationNumbersResponse;
-			return accountNumbers.PresentationNumbers.Any(x => ContactsHelper.NormalizePhoneNumber(x.PhoneNumber) == systemNumber);
+			return accountNumbers.PresentationNumbers.Any(x => _phoneFormatter.Normalize(x.PhoneNumber) == systemNumber);
 		}
 
 		private void ProcessStatusChangedPushNotification()
@@ -231,16 +242,16 @@ namespace FreedomVoice.iOS.PushNotifications
 			_appNavigator.MainTabBarControllerChanged -= MainTabBarControllerChanged;
 			_appNavigator.CurrentControllerChanged -= CurrentControllerChanged;
 
-            try
-            {
-                await ContactsHelper.GetContactsListAsync();
-            }
-            catch (Exception ex)
-            {
-                _logger.Debug(nameof(NotificationCenterDelegate), nameof(ShowConversationController), $"GetContactsListAsync failed: {ex}");
-            }
+			try
+			{
+				await FreedomVoice.iOS.Core.Utilities.Helpers.Contacts.GetContactsListAsync();
+			}
+			catch (Exception ex)
+			{
+				_logger.Debug(nameof(NotificationCenterDelegate), nameof(ShowConversationController), $"GetContactsListAsync failed: {ex}");
+			}
 
-            var phoneHolder = _contactNameProvider.GetNameOrNull(_contactNameProvider.GetClearPhoneNumber(pushNotificationData.Data.ToPhone.PhoneNumber));
+			var phoneHolder = _contactNameProvider.GetNameOrNull(_contactNameProvider.GetClearPhoneNumber(pushNotificationData.Data.ToPhone.PhoneNumber));
 			var controller = new ConversationViewController();
 			controller.ConversationId = pushNotificationData.Data.Id;
 			controller.CurrentPhone = new PresentationNumber(pushNotificationData.TextMessageReceivedToNumber());
@@ -248,5 +259,145 @@ namespace FreedomVoice.iOS.PushNotifications
 			_appNavigator.CurrentController.NavigationController?.PushViewController(controller, true);
 			pushNotificationData = null;
 		}
-	}
+
+		#region IPKPushRegistryDelegate implementation
+
+		public void DidUpdatePushCredentials(PKPushRegistry registry, PKPushCredentials credentials, string type)
+		{
+			_logger.Debug(nameof(NotificationCenterDelegate), nameof(DidUpdatePushCredentials), $"DidUpdatePushCredentials: {credentials.Token} {type}");
+			DidUpdatePushToken?.Invoke(credentials.Token);
+		}
+	
+		public void DidReceiveIncomingPush(PKPushRegistry registry, PKPushPayload payload, string type)
+		{
+ 			_logger.Debug(nameof(NotificationCenterDelegate), nameof(DidUpdatePushCredentials), $"DidUpdatePushCredentials: {payload} {type}");
+
+			if (!payload.DictionaryPayload.ContainsKey(new NSString(ApsKey)))
+			{
+				_logger.Debug(nameof(NotificationCenterDelegate), nameof(DidUpdatePushCredentials), "APS key is missing");
+				return;
+			}
+			
+			var apsValue = payload.DictionaryPayload[ApsKey] as NSDictionary;
+			
+			if (apsValue.ContainsKey(new NSString(ContentAvailableKey)) && apsValue[ContentAvailableKey] is NSNumber contentAvailable && contentAvailable.Int32Value == 1)
+			{
+				DidReceiveSilentRemoteNotification(payload.DictionaryPayload, null);
+				return;
+			}
+
+			if (!apsValue.ContainsKey(new NSString(AlertKey)))
+			{
+				_logger.Debug(nameof(NotificationCenterDelegate), nameof(DidUpdatePushCredentials), "Alert key is missing");
+				return;
+			}
+
+			string titleValue = null;
+			string bodyValue = null;
+            string subtitleValue = null;
+
+            switch (apsValue[AlertKey])
+			{
+                case NSDictionary alertValue:
+					titleValue = alertValue[TitleKey] as NSString;
+					bodyValue = alertValue[BodyKey] as NSString;
+                    subtitleValue = alertValue[SubtitleKey] as NSString;
+
+                    break;
+				
+				case NSString apsTitle:
+					titleValue = apsTitle;
+					break;
+				
+				default:
+					_logger.Debug(nameof(NotificationCenterDelegate), nameof(DidUpdatePushCredentials), "APS doesn't have title content");
+					return;
+			}
+
+			var pushResponseData = PushResponseExtension.CreateFromFromJson(payload.DictionaryPayload);
+			if (pushResponseData == null)
+			{
+				_logger.Debug(nameof(NotificationCenterDelegate), nameof(DidUpdatePushCredentials), $"Can't parse Data(PushResponse).");
+				ShowPushNotificationsNow(titleValue, bodyValue, subtitleValue, payload.DictionaryPayload);
+				return;
+			}
+
+			var fromPhone = pushResponseData.TextMessageReceivedFromNumber();
+			var phoneHolder = _contactNameProvider.GetNameOrNull(_phoneFormatter.Normalize(fromPhone));
+
+			if (string.IsNullOrWhiteSpace(phoneHolder))
+			{
+				_logger.Debug(nameof(NotificationCenterDelegate), nameof(DidUpdatePushCredentials), $"Can't parse 'From phone number'.");
+				ShowPushNotificationsNow(titleValue, bodyValue, subtitleValue, payload.DictionaryPayload);
+				return;
+			}
+
+			_logger.Debug(nameof(NotificationCenterDelegate), nameof(DidUpdatePushCredentials), $"'From' phone number has been found: {phoneHolder}");
+			ShowPushNotificationsNow(phoneHolder, bodyValue, subtitleValue, payload.DictionaryPayload);
+		}
+
+		private void ShowPushNotificationsNow(string title, string body, string subtitle, NSDictionary userInfo)
+		{
+			_logger.Debug(nameof(NotificationCenterDelegate), nameof(ShowPushNotificationsNow), $"Show alerts as title: {title}, subtitle: {subtitle} body: {body}");
+
+            if (UIDevice.CurrentDevice.CheckSystemVersion(12, 0))
+                ShowPushNotificationsNowForiOS12AndLater(title, body, subtitle, userInfo);
+            else
+                ShowPushNotificationsNowForiOS11AndLess(title, body, subtitle, userInfo);
+           
+		}
+
+        private void ShowPushNotificationsNowForiOS12AndLater(string title, string body, string subtitle, NSDictionary userInfo) 
+        {
+            try
+            {
+                _logger.Debug(nameof(NotificationCenterDelegate), nameof(ShowPushNotificationsNowForiOS12AndLater), $"Show alert for iOS 12 and later.");
+
+                var notificationContent = new UNMutableNotificationContent();
+                if (title != null) notificationContent.Title = title;
+                if (body != null) notificationContent.Body = body;
+                if (subtitle != null) notificationContent.Subtitle = subtitle;
+                if (userInfo != null) notificationContent.UserInfo = userInfo;
+                notificationContent.Sound = UNNotificationSound.Default;
+
+                var trigger = UNTimeIntervalNotificationTrigger.CreateTrigger(1, false);
+                var localNotificationRequest = UNNotificationRequest.FromIdentifier(new NSUuid().AsString(), notificationContent, trigger);
+
+                UNUserNotificationCenter.Current.AddNotificationRequest(localNotificationRequest, error =>
+                {
+                    _logger.Debug(nameof(NotificationCenterDelegate), nameof(ShowPushNotificationsNow), $"Push has been showed. Error: {error}");
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.Debug(nameof(NotificationCenterDelegate), nameof(ShowPushNotificationsNowForiOS12AndLater), $"Cannot show alert. Error: {ex.Message}");
+            }
+        }
+
+        private void ShowPushNotificationsNowForiOS11AndLess(string title, string body, string subtitle, NSDictionary userInfo)
+        {
+            _logger.Debug(nameof(NotificationCenterDelegate), nameof(ShowPushNotificationsNowForiOS11AndLess), $"Show alert for iOS 11 and less.");
+
+            try
+            {
+                UILocalNotification notification = new UILocalNotification();
+                notification.TimeZone = NSTimeZone.SystemTimeZone;
+                notification.FireDate = NSDate.Now.AddSeconds(1);
+
+                if (title != null) notification.AlertTitle = title;
+                if (userInfo != null) notification.UserInfo = userInfo;
+                notification.AlertBody = $"{(string.IsNullOrWhiteSpace(subtitle) ? "" : subtitle + "\n")}{body ?? ""}";
+
+                notification.SoundName = UILocalNotification.DefaultSoundName;
+                UIApplication.SharedApplication.ScheduleLocalNotification(notification);
+            }
+            catch (Exception ex)
+            {
+                _logger.Debug(nameof(NotificationCenterDelegate), nameof(ShowPushNotificationsNowForiOS11AndLess), $"Cannot show alert. Error: {ex.Message}");
+            }
+        }
+
+        #endregion
+
+    }
 }

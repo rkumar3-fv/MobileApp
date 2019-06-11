@@ -18,7 +18,6 @@ namespace FreedomVoice.iOS
             
             ServiceRegistrar.Startup();
             ServiceContainer.Register<IPushNotificationTokenDataStore>(() => new PushNotificationTokenDataStore());
-            ServiceContainer.Register<IPushNotificationsService>(() => new PushNotificationsService());
             ServiceContainer.Register<IAppNavigator>(() => new AppNavigator());
             
             FreedomVoice.iOS.Core.iOSCoreConfigurator.RegisterServices();
