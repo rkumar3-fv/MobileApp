@@ -78,7 +78,7 @@
 	<key>CFBundleName</key>
 	<string>FreedomVoice</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>This app needs access to photos.</string>
+	<string>Access to your photos allows you save images to your camera roll.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>This app needs access to location.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
