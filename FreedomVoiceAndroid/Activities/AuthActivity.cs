@@ -75,8 +75,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         {
             base.OnResume();
 
-            if (!Appl.ApplicationHelper.IsInsigthsOn)
-                Appl.ApplicationHelper.InitInsights();
+            
         }
 #endif
 
