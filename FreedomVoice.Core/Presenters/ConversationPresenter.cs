@@ -7,6 +7,7 @@ using AutoMapper;
 using FreedomVoice.Core.Services;
 using FreedomVoice.Core.Services.Interfaces;
 using FreedomVoice.Core.Utils;
+using FreedomVoice.Core.Utils.Interfaces;
 using FreedomVoice.Core.ViewModels;
 using FreedomVoice.DAL.DbEntities;
 using FreedomVoice.Entities.Enums;
@@ -43,7 +44,8 @@ namespace FreedomVoice.Core.Presenters
         private readonly IConversationService _conversationService = ServiceContainer.Resolve<IConversationService>();
         private readonly IContactNameProvider _contactNameProvider = ServiceContainer.Resolve<IContactNameProvider>();
         private readonly IMessagesService _messagesService = ServiceContainer.Resolve<IMessagesService>();
-       
+        private readonly IPhoneFormatter _formatter = ServiceContainer.Resolve<IPhoneFormatter>();
+
         #endregion
 
         #region Private variables
@@ -90,7 +92,7 @@ namespace FreedomVoice.Core.Presenters
             get => _phoneNumber;
             set
             {
-                var newValue = PhoneService.GetClearPhone(value);
+                var newValue = _formatter.Normalize(value);
                 if (_phoneNumber != null && newValue == _phoneNumber)
                     return;
                 _phoneNumber = newValue;
@@ -141,9 +143,10 @@ namespace FreedomVoice.Core.Presenters
                 return;
             }
 
-            var rawTo = Regex.Replace(message.To.PhoneNumber, @"\D", "");
-            var rawFrom = Regex.Replace(message.From.PhoneNumber, @"\D", "");
-            var current = Regex.Replace(PhoneNumber, @"\D", "");
+            var rawTo = _formatter.Normalize(message.To.PhoneNumber);
+                
+            var rawFrom = _formatter.Normalize(message.From.PhoneNumber);
+            var current = _formatter.Normalize(PhoneNumber);
             
             if (rawFrom.Equals(current) || !rawTo.Equals(current))
             {
@@ -155,9 +158,9 @@ namespace FreedomVoice.Core.Presenters
 
         private void _addOutgoingMessage(Message message)
         {
-            var rawTo = Regex.Replace(message.To.PhoneNumber, @"\D", "");
-            var rawFrom = Regex.Replace(message.From.PhoneNumber, @"\D", "");
-            var current = Regex.Replace(PhoneNumber, @"\D", "");
+            var rawTo = _formatter.Normalize(message.To.PhoneNumber);
+            var rawFrom = _formatter.Normalize(message.From.PhoneNumber);
+            var current = _formatter.Normalize(PhoneNumber);
 
             if (rawTo.Equals(current) || !rawFrom.Equals(current))
             {

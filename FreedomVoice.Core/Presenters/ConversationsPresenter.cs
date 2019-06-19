@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using FreedomVoice.Core.Services;
 using FreedomVoice.Core.Services.Interfaces;
 using FreedomVoice.Core.Utils;
+using FreedomVoice.Core.Utils.Interfaces;
 using FreedomVoice.Core.ViewModels;
 
 namespace FreedomVoice.Core.Presenters
@@ -25,7 +26,8 @@ namespace FreedomVoice.Core.Presenters
         public event EventHandler ItemsChanged;
         private readonly IConversationService _service;
         private readonly IContactNameProvider _nameProvider;
-        
+        private readonly IPhoneFormatter _formatter;
+
         private DateTime _currentDate;
         private int _currentPage;
         private bool _isLoading;
@@ -37,7 +39,7 @@ namespace FreedomVoice.Core.Presenters
             get => _phoneNumber;
             set
             {
-                var newValue = PhoneService.GetClearPhone(value);
+                var newValue = _formatter.Normalize(value);
                 if (_phoneNumber != null && newValue == _phoneNumber)
                     return;
                 _phoneNumber = newValue;
@@ -58,7 +60,8 @@ namespace FreedomVoice.Core.Presenters
             HasMore = false;
             _service = ServiceContainer.Resolve<IConversationService>();
             _nameProvider = ServiceContainer.Resolve<IContactNameProvider>();
-            
+            _formatter = ServiceContainer.Resolve<IPhoneFormatter>();
+
             NotificationMessageService.Instance().NewMessageEventHandler += OnNewMessageEventHandler;
             NotificationMessageService.Instance().MessageUpdatedHandler += OnMessageUpdatedHandler;
         }
@@ -101,7 +104,7 @@ namespace FreedomVoice.Core.Presenters
 
         private void _updateConversation(DAL.DbEntities.Conversation conversation)
         {
-            var viewModel = new ConversationViewModel(conversation, _nameProvider);
+            var viewModel = new ConversationViewModel(conversation, _nameProvider, _formatter);
             var index = Items.FindIndex(model => model.ConversationId == conversation.Id);
             if (index < 0)
             {
@@ -144,7 +147,7 @@ namespace FreedomVoice.Core.Presenters
             HasMore = !res.IsEnd;
 
             Items.AddRange(res.Conversations?.Select(row =>
-                               new ConversationViewModel(row, _nameProvider)) ?? throw new Exception()
+                               new ConversationViewModel(row, _nameProvider, _formatter)) ?? throw new Exception()
             );
             
             ItemsChanged?.Invoke(this, new ConversationsEventArgs(Items));
