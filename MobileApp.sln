@@ -15,9 +15,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreedomVoice.iOS.Notificati
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreedomVoice.iOS.Core", "FreedomVoice.iOS.Core\FreedomVoice.iOS.Core.csproj", "{6F11EB92-C06F-4592-8ADB-0337410CE27B}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "FreedomVoice.MigrationHelper", "FreedomVoice.DummyEFConsoleApp\FreedomVoice.MigrationHelper.csproj", "{3E697547-6A66-4924-98B6-F6AF0BA3BD5E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreedomVoice.MigrationHelper", "FreedomVoice.DummyEFConsoleApp\FreedomVoice.MigrationHelper.csproj", "{3E697547-6A66-4924-98B6-F6AF0BA3BD5E}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "FreedomVoice.ApiTests", "FreedomVoice.ApiTests\FreedomVoice.ApiTests.csproj", "{DECB20A6-6121-4F1C-B24D-11C4E7758BF7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreedomVoice.ApiTests", "FreedomVoice.ApiTests\FreedomVoice.ApiTests.csproj", "{DECB20A6-6121-4F1C-B24D-11C4E7758BF7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
