@@ -182,7 +182,7 @@ namespace FreedomVoice.Core.Presenters
 
         public async Task<long?> SendMessageAsync(string text)
         {
-            if (!_conversationId.HasValue)
+            if (!_conversationId.HasValue || _conversationId.Value <= 0)
             {
                 return null;
             }

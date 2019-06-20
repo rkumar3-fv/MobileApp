@@ -15,6 +15,7 @@ using FreedomVoice.Core.Utils;
 using com.FreedomVoice.MobileApp.Android.Adapters;
 using com.FreedomVoice.MobileApp.Android.CustomControls;
 using com.FreedomVoice.MobileApp.Android.Helpers;
+using FreedomVoice.Core.Utils.Interfaces;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
 {
@@ -67,7 +68,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
 #if DEBUG
             Log.Debug(App.AppPackage, $"ACTIVITY {GetType().Name}: select account #{ServiceContainer.Resolve<IPhoneFormatter>().Format(_adapter.AccountName(position))}");
 #else
-            Appl.ApplicationHelper.Reports?.Log($"ACTIVITY {GetType().Name}: select account #{DataFormatUtils.ToPhoneNumber(_adapter.AccountName(position))}");
+            Appl.ApplicationHelper.Reports?.Log($"ACTIVITY {GetType().Name}: select account #{ServiceContainer.Resolve<IPhoneFormatter>().Format(_adapter.AccountName(position))}");
 #endif
             if (_progressLayout.Visibility == ViewStates.Gone)
                 _progressLayout.Visibility = ViewStates.Visible;

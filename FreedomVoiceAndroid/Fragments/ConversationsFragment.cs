@@ -24,6 +24,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         private ConversationsPresenter _presenter;
         private IContactNameProvider _contactNameProvider;
         private SwipeRefreshLayout _swipeToRefresh;
+        private ProgressBar _progressBar;
 
         protected override View InitView()
         {
@@ -31,6 +32,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             _swipeToRefresh = view.FindViewById<SwipeRefreshLayout>(Resource.Id.conversationFragment_swipeRefresh);
             _recyclerView = view.FindViewById<RecyclerView>(Resource.Id.conversationFragment_recyclerView);
             _noResultText = view.FindViewById<TextView>(Resource.Id.conversationFragment_noResultText);
+            _progressBar = view.FindViewById<ProgressBar>(Resource.Id.conversationFragment_pb_loading1);
             IdSpinner = view.FindViewById<Spinner>(Resource.Id.contatnsFragment_idSpinner);
             SingleId = view.FindViewById<TextView>(Resource.Id.contactsFragment_singleId);
 
@@ -128,6 +130,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                 _recyclerView.Visibility = isEmpty ? ViewStates.Gone : ViewStates.Visible;
                 _adapter.Update(newList);
                 _swipeToRefresh.Refreshing = false;
+                _progressBar.Visibility = ViewStates.Gone;
             });
         }
         

@@ -5,6 +5,7 @@ using FreedomVoice.Core.Utils;
 using FreedomVoice.Core.Utils.Interfaces;
 using FreedomVoice.DAL;
 using FreedomVoice.DAL.DbEntities;
+using FreedomVoice.Entities.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace FreedomVoice.Core
@@ -13,12 +14,14 @@ namespace FreedomVoice.Core
     {
         public static void Load(string dbPath)
         {
+            AutoMapper.Mappers.EnumToEnumMapper.Map<SendingState, DAL.DbEntities.Enums.SendingState>(SendingState.Sending);
             var mappingConfig = new MapperConfiguration(mc =>
             {
                 mc.AddProfile(new MappingProfile());
             });
             IMapper mapper = mappingConfig.CreateMapper();
             ServiceContainer.Register(mapper);
+            
 
             FreedomVoiceContext context = new FreedomVoiceContext(dbPath);
             context.Database.Migrate();
