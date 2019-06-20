@@ -38,7 +38,7 @@
     </DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <CodesignKey>iPhone Developer: Evgeni Kalyada (7BXF4TS6ML)</CodesignKey>
+    <CodesignKey>iPhone Distribution: CallCatchers Inc. (P63QDD35U7)</CodesignKey>
     <MtouchUseLlvm>true</MtouchUseLlvm>
     <MtouchFloat32>true</MtouchFloat32>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
@@ -47,8 +47,7 @@
     <MtouchHttpClientHandler>NSUrlSessionHandler</MtouchHttpClientHandler>
     <MtouchVerbosity>
     </MtouchVerbosity>
-    <MtouchSdkVersion>12.2</MtouchSdkVersion>
-    <CodesignProvision>Provision Profile Service Extension 2019</CodesignProvision>
+    <CodesignProvision>TF Ext Profile</CodesignProvision>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
     <DebugType>pdbonly</DebugType>

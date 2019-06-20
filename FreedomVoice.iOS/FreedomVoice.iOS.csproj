@@ -25,8 +25,8 @@
     <MtouchArch>i386, x86_64</MtouchArch>
     <MtouchLink>SdkOnly</MtouchLink>
     <MtouchDebug>true</MtouchDebug>
-    <CodesignKey>iPhone Developer: Evgeni Kalyada (7BXF4TS6ML)</CodesignKey>
-    <CodesignProvision>Provision Profile 2019</CodesignProvision>
+    <CodesignKey>iPhone Developer: Dani Chankhour (VN8BSPV2JG)</CodesignKey>
+    <CodesignProvision>VS: WildCard Development</CodesignProvision>
     <CodesignEntitlements />
     <CodesignResourceRules />
     <CodesignExtraArgs />
@@ -42,8 +42,8 @@
     <MtouchLink>None</MtouchLink>
     <MtouchArch>i386</MtouchArch>
     <ConsolePause>false</ConsolePause>
-    <CodesignProvision>Ad Hoc Provision Profile 2019</CodesignProvision>
-    <CodesignKey>iPhone Distribution: CallCatchers Inc. (P63QDD35U7)</CodesignKey>
+    <CodesignProvision>VS: WildCard Development</CodesignProvision>
+    <CodesignKey>iPhone Developer: Dani Chankhour (VN8BSPV2JG)</CodesignKey>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
     <DebugSymbols>true</DebugSymbols>
@@ -56,7 +56,7 @@
     <ConsolePause>false</ConsolePause>
     <MtouchArch>ARM64</MtouchArch>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
-    <CodesignKey>iPhone Developer: Evgeni Kalyada (7BXF4TS6ML)</CodesignKey>
+    <CodesignKey>iPhone Developer: Dani Chankhour (VN8BSPV2JG)</CodesignKey>
     <MtouchLink>SdkOnly</MtouchLink>
     <MtouchProfiling>False</MtouchProfiling>
     <MtouchUseLlvm>False</MtouchUseLlvm>
@@ -66,7 +66,7 @@
     <MtouchEnableBitcode>False</MtouchEnableBitcode>
     <MtouchTlsProvider>Default</MtouchTlsProvider>
     <MtouchHttpClientHandler>HttpClientHandler</MtouchHttpClientHandler>
-    <CodesignProvision>Provision Profile 2019</CodesignProvision>
+    <CodesignProvision>VS: WildCard Development</CodesignProvision>
     <MtouchEnableSGenConc>false</MtouchEnableSGenConc>
     <MtouchExtraArgs>-v -v -v -v</MtouchExtraArgs>
     <DeviceSpecificBuild>true</DeviceSpecificBuild>
@@ -83,7 +83,8 @@
     <MtouchArch>ARMv7, ARM64</MtouchArch>
     <ConsolePause>false</ConsolePause>
     <CodesignKey>iPhone Distribution: CallCatchers Inc. (P63QDD35U7)</CodesignKey>
-    <CodesignProvision>Ad Hoc Provision Profile 2019</CodesignProvision>
+    <CodesignProvision>TF Profile</CodesignProvision>
+    <MtouchFloat32>true</MtouchFloat32>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Ad-Hoc|iPhone' ">
     <DebugType>none</DebugType>
@@ -95,7 +96,7 @@
     <MtouchArch>ARM64</MtouchArch>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
     <BuildIpa>True</BuildIpa>
-    <CodesignKey>iPhone Developer: Evgeni Kalyada (7BXF4TS6ML)</CodesignKey>
+    <CodesignKey>iPhone Developer: Dani Chankhour (VN8BSPV2JG)</CodesignKey>
     <IpaIncludeArtwork>False</IpaIncludeArtwork>
     <IpaPackageName>FreedomVoice-1.0.33</IpaPackageName>
     <MtouchSdkVersion>12.2</MtouchSdkVersion>
@@ -110,7 +111,7 @@
     <MtouchEnableBitcode>False</MtouchEnableBitcode>
     <MtouchTlsProvider>Default</MtouchTlsProvider>
     <MtouchHttpClientHandler>HttpClientHandler</MtouchHttpClientHandler>
-    <CodesignProvision>Provision Profile 2019</CodesignProvision>
+    <CodesignProvision>VS: WildCard Development</CodesignProvision>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|iPhone' ">
     <DebugType>none</DebugType>
@@ -122,8 +123,8 @@
     <MtouchArch>ARMv7, ARM64</MtouchArch>
     <CodesignEntitlements>
     </CodesignEntitlements>
-    <CodesignProvision>Automatic:AppStore</CodesignProvision>
-    <CodesignKey>iPhone Distribution</CodesignKey>
+    <CodesignProvision>VS: WildCard Development</CodesignProvision>
+    <CodesignKey>iPhone Developer: Dani Chankhour (VN8BSPV2JG)</CodesignKey>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AppNavigator.cs" />
@@ -346,7 +347,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <BundleResource Include="Resources\Default-568h%402x.png" />
     <BundleResource Include="Resources\tab_texts%402x.png" />
     <BundleResource Include="Resources\tab_texts%403x.png" />
     <BundleResource Include="Resources\disclosure%402x.png" />
@@ -586,6 +586,7 @@
     </Content>
     <Content Include="Settings.bundle\en.lproj\Root.strings" />
     <Content Include="GoogleService-Info.plist" />
+    <ITunesArtwork Include="iTunesArtwork" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Entitlements.plist" />
@@ -651,6 +652,9 @@
     <ImageAsset Include="Resources/Media.xcassets/AppIcons.appiconset/Icon-Small@3x.png">
       <Visible>false</Visible>
     </ImageAsset>
+    <ImageAsset Include="Resources\Media.xcassets\LaunchImage.launchimage\Contents.json" />
+    <ImageAsset Include="Resources\Media.xcassets\LaunchImage.launchimage\Default-568h%402x.png" />
+    <ImageAsset Include="Resources\Media.xcassets\AppIcons.appiconset\Icon%402x.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FreedomVoice.Core\FreedomVoice.Core.csproj">

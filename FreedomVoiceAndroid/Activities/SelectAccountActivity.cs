@@ -65,11 +65,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         private void SelectViewOnClick(object sender, int position)
         {
             if (position >= Helper.AccountsList.Count) return;
-#if DEBUG
-            Log.Debug(App.AppPackage, $"ACTIVITY {GetType().Name}: select account #{ServiceContainer.Resolve<IPhoneFormatter>().Format(_adapter.AccountName(position))}");
-#else
-            Appl.ApplicationHelper.Reports?.Log($"ACTIVITY {GetType().Name}: select account #{ServiceContainer.Resolve<IPhoneFormatter>().Format(_adapter.AccountName(position))}");
-#endif
+
             if (_progressLayout.Visibility == ViewStates.Gone)
                 _progressLayout.Visibility = ViewStates.Visible;
             Helper.SelectedAccount = Helper.AccountsList[position];

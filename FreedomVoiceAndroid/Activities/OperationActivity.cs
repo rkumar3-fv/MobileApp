@@ -59,11 +59,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                         if (phone.Length > 4)
                         {
                             var normalizedNumber = ServiceContainer.Resolve<IPhoneFormatter>().Format(phone);
-#if DEBUG
-                            Log.Debug(App.AppPackage, $"DIAL TO {ServiceContainer.Resolve<IPhoneFormatter>().Format(phone)}");
-#else
-                            Appl.ApplicationHelper.Reports?.Log($"DIAL TO {ServiceContainer.Resolve<IPhoneFormatter>().Format(phone)}");
-#endif
+
                             Helper.Call(normalizedNumber);
                             JavaSystem.Gc();
                         }

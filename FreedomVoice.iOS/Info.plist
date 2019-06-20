@@ -7,9 +7,9 @@
 	<key>CFBundleIdentifier</key>
 	<string>com.freedomvoice.mobileapp</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0.36</string>
+	<string>1.0.38</string>
 	<key>CFBundleVersion</key>
-	<string>1.0.36</string>
+	<string>1.0.38</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>MinimumOSVersion</key>
@@ -77,6 +77,12 @@
 	<string>MainStoryboard</string>
 	<key>CFBundleName</key>
 	<string>FreedomVoice</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Access to your photos allows you save images to your camera roll.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>This app needs access to location.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This app needs access to location.</string>
 	<key>NSContactsUsageDescription</key>
 	<string>Access to your contacts allows you to identify who is calling or texting your FreedomVoice number. Your contacts are never stored on FreedomVoice servers.</string>
 	<key>UIBackgroundModes</key>
@@ -86,5 +92,7 @@
 		<string>fetch</string>
 		<string>remote-notification</string>
 	</array>
+	<key>XSLaunchImageAssets</key>
+	<string>Resources/Media.xcassets/LaunchImage.launchimage</string>
 </dict>
 </plist>
