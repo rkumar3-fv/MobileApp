@@ -48,13 +48,7 @@ namespace com.FreedomVoice.MobileApp.Android.Utils
 
         public string GetClearPhoneNumber(string formattedPhoneNumber)
         {
-            const string pattern = @"\d"; 
-        
-            var sb = "";
-            foreach (Match m in Regex.Matches(formattedPhoneNumber, pattern))
-                sb += m;
-
-            return sb;
+            return _formatter.Normalize(formattedPhoneNumber);
         }
 
         public List<string> SearchNumbers(string query)

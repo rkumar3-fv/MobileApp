@@ -26,7 +26,7 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
             {
                 case ChatMessageType.Date:
                     var vh1 = holder as ConversationMessageDateVh;
-                    vh1.DateTv.SetText(message.Time, TextView.BufferType.Normal);
+                    vh1.DateTv.SetText(message.Message, TextView.BufferType.Normal);
                     break;
                 case ChatMessageType.Incoming:
                     var vh2 = holder as ConversationHerMessageVh;

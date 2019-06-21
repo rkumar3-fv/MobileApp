@@ -15,6 +15,7 @@ using FreedomVoice.Core.Utils;
 using com.FreedomVoice.MobileApp.Android.Adapters;
 using com.FreedomVoice.MobileApp.Android.CustomControls;
 using com.FreedomVoice.MobileApp.Android.Helpers;
+using FreedomVoice.Core.Utils.Interfaces;
 
 namespace com.FreedomVoice.MobileApp.Android.Activities
 {

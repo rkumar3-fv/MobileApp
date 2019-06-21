@@ -39,6 +39,7 @@ namespace com.FreedomVoice.MobileApp.Android
 
         public App(IntPtr javaReference, JniHandleOwnership transfer) : base(javaReference, transfer)
         {
+            var preserveDateTimeMethods = DateTime.Now.AddYears(1).AddMonths(1).AddDays(1).AddHours(1).AddMinutes(1).AddSeconds(1);
             _helper = new AppHelper(this);
             ServiceContainer.Register<IContactNameProvider>(() => new ContactNameProvider(this));
         }

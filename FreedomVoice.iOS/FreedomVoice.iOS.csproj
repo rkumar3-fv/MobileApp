@@ -99,7 +99,7 @@
     <CodesignKey>iPhone Developer: Dani Chankhour (VN8BSPV2JG)</CodesignKey>
     <IpaIncludeArtwork>False</IpaIncludeArtwork>
     <IpaPackageName>FreedomVoice-1.0.33</IpaPackageName>
-    <MtouchSdkVersion>9.3</MtouchSdkVersion>
+    <MtouchSdkVersion>12.2</MtouchSdkVersion>
     <MtouchLink>SdkOnly</MtouchLink>
     <MtouchDebug>False</MtouchDebug>
     <MtouchProfiling>False</MtouchProfiling>

@@ -45,6 +45,7 @@
                     android:layout_centerVertical="true"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
+                    
         </RelativeLayout>
     </LinearLayout>
 
@@ -88,5 +89,14 @@
         </android.support.v4.widget.NestedScrollView>
 
     </android.support.v4.widget.SwipeRefreshLayout>
-
+    
+    <ProgressBar
+        android:id="@+id/conversationFragment_pb_loading1"
+        android:layout_width="@dimen/select_acc_activity_progress_size"
+        android:layout_height="@dimen/select_acc_activity_progress_size"
+        android:layout_centerInParent="true"
+        style="@style/InWhiteButtonProgressBar"
+        android:indeterminate="true"
+        />
+    
 </RelativeLayout>

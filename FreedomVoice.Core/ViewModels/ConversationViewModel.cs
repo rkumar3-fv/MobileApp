@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
+using FreedomVoice.Core.Utils.Interfaces;
 using FreedomVoice.DAL.DbEntities;
 
 namespace FreedomVoice.Core.ViewModels
@@ -18,10 +19,11 @@ namespace FreedomVoice.Core.ViewModels
         private readonly IContactNameProvider _contactNameProvider;
 
 
-        public ConversationViewModel(Conversation entity, IContactNameProvider contactNameProvider)
+        public ConversationViewModel(Conversation entity, IContactNameProvider contactNameProvider, IPhoneFormatter formatter)
         {
             _contactNameProvider = contactNameProvider;
-            _RawTo = Regex.Replace(entity.ToPhone.PhoneNumber, @"\D", "");
+
+            _RawTo = formatter.Normalize(entity.ToPhone.PhoneNumber);
             var message = entity.Messages.OrderByDescending(x => x.CreatedAt).FirstOrDefault();
             if (message == null) return;
             LastMessage = message.Text;

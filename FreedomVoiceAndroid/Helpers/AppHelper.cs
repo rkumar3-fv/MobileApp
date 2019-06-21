@@ -31,6 +31,8 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
     {
         private readonly Context _context;
 
+        public bool IsInsigthsOn => true;
+
         public ReportHelper Reports { get; set; }
 
         /// <summary>
@@ -60,6 +62,8 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         public const string InternetPermission = Manifest.Permission.Internet;
         public const string ReadPhoneStatePermission = Manifest.Permission.ReadPhoneState;
 
+
+        public void InitInsights() { }
         /// <summary>
         /// Check CALL_PHONE permission
         /// </summary>

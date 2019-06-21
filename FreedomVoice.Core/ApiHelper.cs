@@ -22,8 +22,8 @@ namespace FreedomVoice.Core
 {
     public static class ApiHelper
     {
-        private const int TimeOut = 20;
-        private const int LongTimeOut = 60;
+        private const int TimeOut = 60;
+        private const int LongTimeOut = 120;
 
         public static CookieContainer CookieContainer => _clientHandler.CookieContainer;
 
