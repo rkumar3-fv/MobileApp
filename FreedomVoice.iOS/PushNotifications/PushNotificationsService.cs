@@ -152,7 +152,7 @@ namespace FreedomVoice.iOS.PushNotifications
 		public async Task UnregisterPushNotificationToken()
 		{
 			var savedToken = _tokenDataStore.Get();
-
+            if (savedToken == null) { return; }
 			try
 			{
 				//INFO: Regular push notification. Disabled. DeviceType.iOS - for regular, IOSPushKit - for PushKit

@@ -147,7 +147,7 @@ namespace FreedomVoice.Core.Presenters
             HasMore = !res.IsEnd;
 
             Items.AddRange(res.Conversations?.Select(row =>
-                               new ConversationViewModel(row, _nameProvider, _formatter)) ?? throw new Exception()
+                               new ConversationViewModel(row, _nameProvider, _formatter)).Where(row => row.ConversationId > 0) ?? throw new Exception()
             );
             
             ItemsChanged?.Invoke(this, new ConversationsEventArgs(Items));

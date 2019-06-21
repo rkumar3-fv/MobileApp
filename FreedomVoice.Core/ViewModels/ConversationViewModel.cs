@@ -17,14 +17,13 @@ namespace FreedomVoice.Core.ViewModels
         public readonly bool IsNew;
         public readonly long ConversationId;
         private readonly IContactNameProvider _contactNameProvider;
-        private readonly IPhoneFormatter _formatter;
 
 
         public ConversationViewModel(Conversation entity, IContactNameProvider contactNameProvider, IPhoneFormatter formatter)
         {
             _contactNameProvider = contactNameProvider;
 
-            _RawTo = _formatter.Normalize(entity.ToPhone.PhoneNumber);
+            _RawTo = formatter.Normalize(entity.ToPhone.PhoneNumber);
             var message = entity.Messages.OrderByDescending(x => x.CreatedAt).FirstOrDefault();
             if (message == null) return;
             LastMessage = message.Text;
