@@ -191,6 +191,13 @@ namespace FreedomVoice.Core.Presenters
             }
             
             var res = await _messagesService.SendMessage(_conversationId.Value, text);
+
+            if (res == null || res.Entity == null)
+            {
+                MessagedSentError(null);
+                return null;
+            }
+
             switch (res.State)
             {
                 case SendingState.Error:
@@ -219,7 +226,13 @@ namespace FreedomVoice.Core.Presenters
                 return null;
             
             var res = await _messagesService.SendMessage(clearedCurrentPhone, clearedToPhone, text);
-            
+
+            if (res == null || res.Entity == null)
+            {
+                MessagedSentError(null);
+                return null;
+            }
+
             switch (res.State)
             {
                 case SendingState.Error:
