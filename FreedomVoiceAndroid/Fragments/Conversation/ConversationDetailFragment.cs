@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using Android.Graphics;
 using Android.OS;
 using Android.Support.V4.Content;
@@ -8,17 +7,14 @@ using Android.Support.V7.Widget;
 using Android.Text;
 using Android.Views;
 using Android.Widget;
+using Android.Content;
 using com.FreedomVoice.MobileApp.Android.Adapters;
 using com.FreedomVoice.MobileApp.Android.Utils;
 using FreedomVoice.Core.Presenters;
-using FreedomVoice.Core.Services.Interfaces;
-using FreedomVoice.Core.Utils;
-using FreedomVoice.Core.ViewModels;
-using FreedomVoice.DAL.DbEntities;
-using Message = FreedomVoice.DAL.DbEntities.Message;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 using AlertDialog = Android.Support.V7.App.AlertDialog;
 using Dialog = Android.App.Dialog;
+using com.FreedomVoice.MobileApp.Android.Dialogs;
 
 namespace com.FreedomVoice.MobileApp.Android.Fragments
 {
@@ -189,14 +185,11 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             var res = await _presenter.SendMessageAsync(_messageEt.Text);
             if (!res.HasValue)
             {
-                var alertDialog = new AlertDialog.Builder(Context)
-                .SetTitle("Something went wrong. Try later.")
-                .SetNeutralButton("Ok", (o, args) =>
-                {
-                    (o as Dialog)?.Dismiss();
-                })
-                .Create();
-                alertDialog.Show();
+                var airplaneDialog = new ErrorDialogFragment();
+               
+                var transaction = Activity.SupportFragmentManager.BeginTransaction();
+                transaction.Add(airplaneDialog, "ERROR_DLG_TAG");
+                transaction.CommitAllowingStateLoss();
             }
             else
             {

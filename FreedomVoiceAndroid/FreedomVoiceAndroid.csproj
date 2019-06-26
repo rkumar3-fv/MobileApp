@@ -411,6 +411,7 @@
     <Compile Include="Utils\SecurityHelper.cs" />
     <Compile Include="Utils\TouchHelper.cs" />
     <Compile Include="Fragments\ConversationsFragment.cs" />
+    <Compile Include="Dialogs\ErrorDialogFragment.cs" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\bg_message_cloud_right.xml">
@@ -421,6 +422,7 @@
     <AndroidResource Include="Resources\layout\frag_conversations.axml">
       <SubType>AndroidResource</SubType>
     </AndroidResource>
+    <AndroidResource Include="Resources\layout\dlg_error.axml" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\item_her_message.axml">
