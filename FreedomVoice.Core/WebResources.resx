@@ -119,7 +119,7 @@
   </resheader>
   <data name="AppUrl" xml:space="preserve">
     <!-- <value>https://freedomvoice-app.wavea.cc</value> -->
-    <value>https://api.dev.fvscloud.com</value>
+    <value>https://api.qa.fvscloud.com/</value>
     <comment>https://api.freedomvoice.com</comment>
   </data>
 </root>
