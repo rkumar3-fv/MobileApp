@@ -246,7 +246,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             if (selectedPresentationNumber == null)
                 return;
             _presenter.PhoneNumber = selectedPresentationNumber.PhoneNumber;
-            _presenter.AccountNumber = UserDefault.AccountPhoneNumber;
+            _presenter.AccountNumber = UserDefault.LastUsedAccount;
             _reloadData();
         }
 
