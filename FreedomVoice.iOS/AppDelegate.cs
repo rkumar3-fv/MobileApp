@@ -173,6 +173,7 @@ namespace FreedomVoice.iOS
             if (accountsList.Count == 1)
             {
                 var account = accountsList.First();
+                UserDefault.LastUsedAccount = account.PhoneNumber;
 
                 if (!UserDefault.IsLaunchedBefore)
                 {

@@ -129,7 +129,7 @@ namespace FreedomVoice.iOS.PushNotifications
 				return;
 			}
 
-			if (string.IsNullOrWhiteSpace(UserDefault.AccountPhoneNumber))
+			if (string.IsNullOrWhiteSpace(UserDefault.LastUsedAccount))
 			{
 				_logger.Debug(nameof(PushNotificationsService), nameof(RegisterPushNotificationToken), "AccountPhoneNumber is null or empty");
 				return;
