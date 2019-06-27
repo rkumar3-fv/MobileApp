@@ -129,7 +129,7 @@ namespace FreedomVoice.iOS.PushNotifications
 				return;
 			}
 
-			if (string.IsNullOrWhiteSpace(UserDefault.AccountPhoneNumber))
+			if (string.IsNullOrWhiteSpace(UserDefault.LastUsedAccount))
 			{
 				_logger.Debug(nameof(PushNotificationsService), nameof(RegisterPushNotificationToken), "AccountPhoneNumber is null or empty");
 				return;
@@ -138,7 +138,7 @@ namespace FreedomVoice.iOS.PushNotifications
 			try
 			{
 				//INFO: Regular push notification. Disabled. DeviceType.iOS - for regular, IOSPushKit - for PushKit
-				await _pushService.Register(DeviceType.IOSPushKit, savedToken, NormalizePhoneNumber(UserDefault.AccountPhoneNumber));
+				await _pushService.Register(DeviceType.IOSPushKit, savedToken, NormalizePhoneNumber(UserDefault.LastUsedAccount));
 				_logger.Debug(nameof(PushNotificationsService), nameof(RegisterPushNotificationToken), $"Token ({savedToken}) has been registered");
 			}
 			catch (Exception exception)
@@ -156,7 +156,7 @@ namespace FreedomVoice.iOS.PushNotifications
 			try
 			{
 				//INFO: Regular push notification. Disabled. DeviceType.iOS - for regular, IOSPushKit - for PushKit
-				await _pushService.Unregister(DeviceType.IOSPushKit, savedToken, UserDefault.AccountPhoneNumber);
+				await _pushService.Unregister(DeviceType.IOSPushKit, savedToken, UserDefault.LastUsedAccount);
 				_logger.Debug(nameof(PushNotificationsService), nameof(UnregisterPushNotificationToken), $"Token ({savedToken}) has been unregistered");
 			}
 			catch (Exception exception)

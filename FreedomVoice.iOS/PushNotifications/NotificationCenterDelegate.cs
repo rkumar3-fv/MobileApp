@@ -132,7 +132,7 @@ namespace FreedomVoice.iOS.PushNotifications
 
 		private async Task<bool> CheckCurrentNumber()
 		{
-			var systemNumber = _phoneFormatter.Normalize(UserDefault.AccountPhoneNumber);
+			var systemNumber = _phoneFormatter.Normalize(UserDefault.LastUsedAccount);
 
 			var service = ServiceContainer.Resolve<IPresentationNumbersService>();
 			var requestResult = await service.ExecuteRequest(systemNumber, false);
