@@ -44,6 +44,7 @@ namespace FreedomVoice.Core.ViewModels
         
         private string TimeAgo(DateTime dateTime)
         {
+            dateTime = dateTime.ToLocalTime();
             string result;
             var timeSpan = DateTime.Now.Subtract(dateTime);
 

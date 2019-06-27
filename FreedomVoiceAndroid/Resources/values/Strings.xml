@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="ApplicationName">FreedomVoice</string>
   <string name="ApplicationTitle">Freedom Voice</string>
@@ -115,6 +115,7 @@
   <string name="Dlg_settings">SETTINGS</string>
   <string name="DlgPhone_content">To make calls with this app, please enter your device\'s phone number by going to the app menu > Edit Phone Number.</string>
   <string name="DlgPhone_ok">EDIT NUMBER</string>
+  <string name="DlgError_content">Something went wrong. Try later.</string>
   <string name="Timestamp_yesterday">Yesterday</string>
   <string name="Toast_noMailClient">You haven\'t e-mail client. Please install one</string>
   <string name="Snack_noPhonePermission">Application Needs Permission For Making Calls</string>

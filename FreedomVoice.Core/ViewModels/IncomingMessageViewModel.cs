@@ -9,7 +9,7 @@ namespace FreedomVoice.Core.ViewModels
 		public long MessageId { get; }
 
 		public string Message { get; }
-		public string Time => Date.ToString("t");
+		public string Time => Date.ToLocalTime().ToString("t");
 		public DateTime Date { get; }
 
 		public SendingState SendingState { get; }

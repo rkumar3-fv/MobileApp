@@ -198,5 +198,15 @@
 
         </RelativeLayout>
     </LinearLayout>
+    
+     <ProgressBar
+        android:id="@+id/conversationDetailFragment_pb_loading1"
+        android:layout_width="@dimen/select_acc_activity_progress_size"
+        android:layout_height="@dimen/select_acc_activity_progress_size"
+        android:layout_centerInParent="true"
+        style="@style/InWhiteButtonProgressBar"
+        android:indeterminate="true"
+        />
+
 
 </RelativeLayout>
