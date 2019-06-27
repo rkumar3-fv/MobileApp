@@ -47,6 +47,8 @@ namespace FreedomVoice.Core.Presenters
             }
         }
 
+        public bool IsLoading { get => _isLoading; }
+
         public string AccountNumber { get; set; }
 
         public bool HasMore { get; private set; }

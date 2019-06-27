@@ -8,8 +8,8 @@ namespace FreedomVoice.Core.ViewModels
 		public long MessageId { get; } = -1;
 		public ChatMessageType Type => ChatMessageType.Date;
 
-		public string Message => Date.ToString("MM/dd/yyyy");
-		public string Time => Date.ToString("t");
+		public string Message => Date.ToLocalTime().ToString("MM/dd/yyyy");
+		public string Time => Date.ToUniversalTime().ToString("t");
 		public DateTime Date { get; }
 		public SendingState SendingState { get; }
 

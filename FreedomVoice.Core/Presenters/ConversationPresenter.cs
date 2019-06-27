@@ -213,7 +213,7 @@ namespace FreedomVoice.Core.Presenters
                     break;
             }
 
-            return res.Entity.Id;
+            return res.Entity?.Id;
 
         }
         

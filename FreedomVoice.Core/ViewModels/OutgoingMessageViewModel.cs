@@ -11,7 +11,7 @@ namespace FreedomVoice.Core.ViewModels
 		public string Message { get; }
 		public DateTime Date { get; }
 		public SendingState SendingState { get; }
-		public string Time => Date.ToString("t");
+		public string Time => Date.ToLocalTime().ToString("t");
 
 		public OutgoingMessageViewModel(DAL.DbEntities.Message entity)
 		{

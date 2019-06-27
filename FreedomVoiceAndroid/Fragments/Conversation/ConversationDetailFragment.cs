@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using Android.Graphics;
 using Android.OS;
 using Android.Support.V4.Content;
@@ -8,15 +7,14 @@ using Android.Support.V7.Widget;
 using Android.Text;
 using Android.Views;
 using Android.Widget;
+using Android.Content;
 using com.FreedomVoice.MobileApp.Android.Adapters;
 using com.FreedomVoice.MobileApp.Android.Utils;
 using FreedomVoice.Core.Presenters;
-using FreedomVoice.Core.Services.Interfaces;
-using FreedomVoice.Core.Utils;
-using FreedomVoice.Core.ViewModels;
-using FreedomVoice.DAL.DbEntities;
-using Message = FreedomVoice.DAL.DbEntities.Message;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
+using AlertDialog = Android.Support.V7.App.AlertDialog;
+using Dialog = Android.App.Dialog;
+using com.FreedomVoice.MobileApp.Android.Dialogs;
 
 namespace com.FreedomVoice.MobileApp.Android.Fragments
 {
@@ -44,6 +42,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         protected long? ConversationId;
         protected ProgressBar _progressBar;
         private ProgressBar _sendProgress;
+        private ProgressBar _commonProgress;
 
 
         public static ConversationDetailFragment NewInstance(long conversationId, string phone)
@@ -72,6 +71,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             _contactsIcon = view.FindViewById<ImageView>(Resource.Id.conversationDetailsFragment_iv_select_contact);
             _contactPhoneEt = view.FindViewById<EditText>(Resource.Id.conversationDetailsFragment_et_contact_phone);
             _progressBar = view.FindViewById<ProgressBar>(Resource.Id.progressBar);
+            _commonProgress = view.FindViewById<ProgressBar>(Resource.Id.conversationDetailFragment_pb_loading1);
             return view;
         }
 
@@ -166,7 +166,11 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             }
         }
 
-        private void ItemsChanged(object sender, EventArgs e) => UpdateList();
+        private void ItemsChanged(object sender, EventArgs e)
+        {
+            _commonProgress.Visibility = ViewStates.Gone;
+            UpdateList();
+        }
 
         private void MessageTextChanged(object sender, TextChangedEventArgs args) => UpdateSendButton();
 
@@ -178,7 +182,19 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
 
         protected virtual async void SendMessage()
         {
-            await _presenter.SendMessageAsync(_messageEt.Text);
+            var res = await _presenter.SendMessageAsync(_messageEt.Text);
+            if (!res.HasValue)
+            {
+                var airplaneDialog = new ErrorDialogFragment();
+               
+                var transaction = Activity.SupportFragmentManager.BeginTransaction();
+                transaction.Add(airplaneDialog, "ERROR_DLG_TAG");
+                transaction.CommitAllowingStateLoss();
+            }
+            else
+            {
+                _messageEt.SetText("", TextView.BufferType.Editable);
+            }
             ShowSendMessageProgress(false);  
         }
 
@@ -202,7 +218,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                 _sendIv.Visibility = ViewStates.Visible;
                 _sendProgress.Visibility = ViewStates.Gone;
                 _sendIv.Clickable = true;
-                _messageEt.SetText("", TextView.BufferType.Editable);
+                
             }
         }
 

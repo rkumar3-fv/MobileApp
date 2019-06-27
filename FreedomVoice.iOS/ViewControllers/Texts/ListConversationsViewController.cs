@@ -229,7 +229,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
 
         void _refreshControlValueChanged(object sender, EventArgs e)
         {
-            _reloadData();
+            _reloadData(false);
         }
 
         private void ProviderOnContactsUpdated(object sender, EventArgs e)
@@ -250,11 +250,14 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             _reloadData();
         }
 
-        private void _reloadData()
+        private void _reloadData(bool withIndicator = true)
         {
             View.EndEditing(true);
-            View.AddSubview(AppDelegate.ActivityIndicator);
-            AppDelegate.ActivityIndicator.Show();
+            if (withIndicator)
+            {
+                View.AddSubview(AppDelegate.ActivityIndicator);
+                AppDelegate.ActivityIndicator.Show();
+            }
             _presenter.ReloadAsync();
         }
 

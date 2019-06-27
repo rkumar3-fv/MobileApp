@@ -99,6 +99,8 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
 
         private void ProviderOnContactsUpdated(object sender, EventArgs e)
         {
+            if (_presenter.IsLoading)
+                return;
             UpdateList(null, null);
         }
 
