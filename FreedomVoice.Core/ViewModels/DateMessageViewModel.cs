@@ -5,7 +5,14 @@ namespace FreedomVoice.Core.ViewModels
 {
 	public class DateMessageViewModel : IChatMessage
 	{
-		public long MessageId { get; } = -1;
+		public long MessageId {
+            get
+            {
+                DateTime origin = new DateTime(1970, 1, 1, 0, 0, 0, 0);
+                TimeSpan diff = Date - origin;
+                return (long)diff.TotalMilliseconds;
+            }
+        }
 		public ChatMessageType Type => ChatMessageType.Date;
 
 		public string Message => Date.ToLocalTime().ToString("MM/dd/yyyy");

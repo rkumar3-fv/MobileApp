@@ -397,6 +397,8 @@ namespace FreedomVoice.Core.Presenters
                 Items.AddRange(group.Value);
                 Items.Add(new DateMessageViewModel(date));
             }
+            Items = Items.GroupBy(p => p.MessageId).Select(g => g.OrderBy(y => y.MessageId).First()).ToList();
+
         }
         
         private void ContactNameProviderOnContactsUpdated(object sender, EventArgs e)
