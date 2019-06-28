@@ -42,7 +42,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         protected long? ConversationId;
         protected ProgressBar _progressBar;
         private ProgressBar _sendProgress;
-        private ProgressBar _commonProgress;
+        protected ProgressBar _commonProgress;
 
 
         public static ConversationDetailFragment NewInstance(long conversationId, string phone)
@@ -141,7 +141,9 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             base.OnResume();
             _messageEt.TextChanged += MessageTextChanged;
             _sendIv.Click += ClickSend;
+       
             _presenter.ItemsChanged += ItemsChanged;
+            _presenter.MessageSent += PresenterOnMessageSent;
             _recycler.ScrollChange += ScrollChanged;
             UpdateList();
         }
@@ -152,6 +154,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             _messageEt.TextChanged -= MessageTextChanged;
             _sendIv.Click -= ClickSend;
             _presenter.ItemsChanged -= ItemsChanged;
+            _presenter.MessageSent -= PresenterOnMessageSent;
             _recycler.ScrollChange -= ScrollChanged;
         }
 
@@ -166,7 +169,28 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             }
         }
 
+        private void PresenterOnMessageSent(object sender, EventArgs e)
+        {
+            if (!(e is MessageSentEventArgs eventArgs))
+                return;
+
+            if (eventArgs.IsSuccess == false)
+            {
+                var errorDialog = new ErrorDialogFragment();
+                errorDialog.Message = eventArgs.Message;
+                var transaction = Activity.SupportFragmentManager.BeginTransaction();
+                transaction.Add(errorDialog, "ERROR_DLG_TAG");
+                transaction.CommitAllowingStateLoss();
+            }
+        }
+
         private void ItemsChanged(object sender, EventArgs e)
+        {
+            _commonProgress.Visibility = ViewStates.Gone;
+            UpdateList();
+        }
+
+        private void MessageSent(object sender, EventArgs e)
         {
             _commonProgress.Visibility = ViewStates.Gone;
             UpdateList();
@@ -177,23 +201,15 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         private void ClickSend(object sender, EventArgs e)
         {
             SendMessage();
-            ShowSendMessageProgress(true);  
         }
 
         protected virtual async void SendMessage()
         {
+            ShowSendMessageProgress(true);
             var res = await _presenter.SendMessageAsync(_messageEt.Text);
-            if (!res.HasValue)
+            if (res.HasValue)
             {
-                var airplaneDialog = new ErrorDialogFragment();
-               
-                var transaction = Activity.SupportFragmentManager.BeginTransaction();
-                transaction.Add(airplaneDialog, "ERROR_DLG_TAG");
-                transaction.CommitAllowingStateLoss();
-            }
-            else
-            {
-                _messageEt.SetText("", TextView.BufferType.Editable);
+                _messageEt.SetText("", TextView.BufferType.Editable);  
             }
             ShowSendMessageProgress(false);  
         }

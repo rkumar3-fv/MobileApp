@@ -29,10 +29,12 @@ namespace FreedomVoice.Core.Presenters
     public class MessageSentEventArgs : EventArgs
     {
         public bool IsSuccess;
+        public string Message;
 
-        public MessageSentEventArgs(bool isSuccess)
+        public MessageSentEventArgs(bool isSuccess, string Message)
         {
             IsSuccess = isSuccess;
+            this.Message = Message;
         }
     }
 
@@ -55,6 +57,8 @@ namespace FreedomVoice.Core.Presenters
         private bool _isLoading;
         private const int DefaultCount = 50;
         private const string DateFormat = "MM/dd/yyyy";
+        private const string SameNumberMessage = "Oops, It looks like you've sent this message to your own number. Please update the recipient phone number and try again.";
+        private const string DefaultError = "Something went wrong. Try later.";
         private Dictionary<string, List<IChatMessage>> _rawData;
 
         private long? _conversationId;
@@ -128,7 +132,7 @@ namespace FreedomVoice.Core.Presenters
             {
                 _addOutgoingMessage(e.Message);
                 return;
-            };
+            }
 
             chatMessages[visibleItemIndex] = CreateChatMessage(e.Message);
             _updateItems();
@@ -224,6 +228,12 @@ namespace FreedomVoice.Core.Presenters
             
             if (string.IsNullOrWhiteSpace(clearedCurrentPhone) || string.IsNullOrWhiteSpace(clearedToPhone))
                 return null;
+
+            if( clearedCurrentPhone.Equals(clearedToPhone) )
+            {
+                MessagedSentError(null, SameNumberMessage);
+                return null;
+            }
             
             var res = await _messagesService.SendMessage(clearedCurrentPhone, clearedToPhone, text);
 
@@ -302,15 +312,12 @@ namespace FreedomVoice.Core.Presenters
             _addMessage(new OutgoingMessageViewModel(lastMessage));
         }
 
-        private void MessagedSentError(Conversation conversation)
+        private void MessagedSentError(Conversation conversation, string MessageText = DefaultError)
         {
             var lastMessage = conversation?.Messages?.Last();
-            if (lastMessage == null)
-            {
-                return;
-            }
-            _addMessage(new OutgoingMessageViewModel(lastMessage));
-            MessageSent?.Invoke(this, new MessageSentEventArgs(false));
+            if (lastMessage != null) 
+                _addMessage(new OutgoingMessageViewModel(lastMessage));
+            MessageSent?.Invoke(this, new MessageSentEventArgs(false, MessageText));
         }
 
         private void MessagedSentSending(Conversation conversation)
@@ -328,7 +335,7 @@ namespace FreedomVoice.Core.Presenters
             _rawData[dateStr] = pack;
             _updateItems();
             ItemsChanged?.Invoke(this, new ConversationCollectionEventArgs(Items));
-            MessageSent?.Invoke(this, new MessageSentEventArgs(false));
+            //MessageSent?.Invoke(this, new MessageSentEventArgs(false));
         } 
         private void ResetState()
         {
