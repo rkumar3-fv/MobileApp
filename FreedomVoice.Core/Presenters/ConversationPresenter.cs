@@ -335,7 +335,6 @@ namespace FreedomVoice.Core.Presenters
             _rawData[dateStr] = pack;
             _updateItems();
             ItemsChanged?.Invoke(this, new ConversationCollectionEventArgs(Items));
-            //MessageSent?.Invoke(this, new MessageSentEventArgs(false));
         } 
         private void ResetState()
         {
