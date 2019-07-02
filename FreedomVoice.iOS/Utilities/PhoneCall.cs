@@ -48,9 +48,7 @@ namespace FreedomVoice.iOS.Utilities
 
             onSuccessAction?.Invoke();
 
-            //if (string.IsNullOrEmpty(expectedCallerIdNumber) || expectedCallerIdNumber.Length != 10)
-            //TODO: Only for test purposes, replace later
-            if (string.IsNullOrEmpty(expectedCallerIdNumber) || expectedCallerIdNumber.Length != 10 && expectedCallerIdNumber.Length != 12)
+            if (string.IsNullOrEmpty(expectedCallerIdNumber) || expectedCallerIdNumber.Length != 11)
             {
                 viewController.View.UserInteractionEnabled = true;
 
