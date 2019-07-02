@@ -120,7 +120,6 @@ namespace FreedomVoice.iOS.ViewControllers.Texts.NewConversation
 
 			_chatField.SetSending(false);
 
-			CheckSentResult(conversationId);
 			if (conversationId.HasValue)
 			{
 				UIView.Animate(0.24, () =>

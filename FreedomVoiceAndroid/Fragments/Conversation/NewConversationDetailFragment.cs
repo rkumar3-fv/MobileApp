@@ -40,6 +40,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             base.OnViewCreated(view, savedInstanceState);
             _spinnerContainer.Visibility = ViewStates.Gone;
             _selectContactContainer.Visibility = ViewStates.Visible;
+            _commonProgress.Visibility = ViewStates.Gone;
         }
 
         public override void OnResume()
@@ -99,8 +100,12 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                     ConversationPhone,
                     _messageEt.Text
                 );
-                ConversationId = convId;
-                ConversationSelected();
+                if (convId.HasValue)
+                {
+                    ConversationId = convId;
+                    ConversationSelected();
+                }
+                
                 ShowSendMessageProgress(false);
             }
             else

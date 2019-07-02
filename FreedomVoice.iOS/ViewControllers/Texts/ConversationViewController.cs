@@ -16,7 +16,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
     
     internal struct ConversationTexts
     {
-        public const string ErrorMessage = "Something went wrong. Try later.";
+      
         public const string ErrorTitle = "Error";
     }
     public partial class ConversationViewController : BaseViewController
@@ -76,6 +76,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             _SetupConstraints();
             _SetupData();
             AutomaticallyAdjustsScrollViewInsets = false;
+            Presenter.MessageSent += PresenterOnMessageSent;
         }
 
         public override void ViewWillAppear(bool animated)
@@ -151,6 +152,16 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             UIView.CommitAnimations();
         }
 
+        private void PresenterOnMessageSent(object sender, EventArgs e)
+        {
+            if (!(e is MessageSentEventArgs eventArgs))
+                return;
+            if (eventArgs.IsSuccess == false)
+            {
+                UIAlertHelper.ShowAlert(this, ConversationTexts.ErrorTitle, eventArgs.Message);
+            }
+        }
+
         protected virtual void _SetupConstraints()
         {
             _callerIdView.TopAnchor.ConstraintEqualTo(View.TopAnchor).Active = true;
@@ -218,20 +229,11 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
 
             _chatField.SetSending(true);
             var res = await Presenter.SendMessageAsync(_chatField.Text);
-            _chatField.SetSending(false);
-            CheckSentResult(res);
-        }
-
-        protected void CheckSentResult(long? conversationId)
-        {
-            if (conversationId.HasValue)
+            if (res.HasValue)
             {
                 _chatField.Text = "";
             }
-            else
-            {
-                UIAlertHelper.ShowAlert(this, ConversationTexts.ErrorTitle, ConversationTexts.ErrorMessage);
-            }
+            _chatField.SetSending(false);            
         }
 
         private void CallerIdEventOnCallerIdChanged(object sender, EventArgs e)
@@ -247,6 +249,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
 
         protected override void Dispose(bool disposing)
         {
+            Presenter.MessageSent -= PresenterOnMessageSent;
             Presenter.Dispose();
             base.Dispose(disposing);
         }
