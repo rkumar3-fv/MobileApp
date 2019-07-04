@@ -122,7 +122,8 @@ namespace FreedomVoice.iOS.ViewControllers.Texts.NewConversation
 
 			if (conversationId.HasValue)
 			{
-				UIView.Animate(0.24, () =>
+                _chatField.Text = "";
+                UIView.Animate(0.24, () =>
 				{
 					_callerIdView.Alpha = 1;
 					_addContactView.Alpha = 0;
