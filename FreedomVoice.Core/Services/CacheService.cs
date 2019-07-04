@@ -40,7 +40,10 @@ namespace FreedomVoice.Core.Services
         private void UpdateMessagesCacheWithoutSaving(Conversation conversation, IEnumerable<FreedomVoice.Entities.Message> messages, List<Phone> alreadyCreatedPhones)
         {
             if (conversation == null)
-                throw new ArgumentException("Conversation not found");
+            {
+                Console.WriteLine($"CacheService has been finished failed without saving because conversation does not exists for messages: ${messages}");
+                return;
+            }
             if (conversation.Messages == null)
                 conversation.Messages = new List<Message>();
             // Removing - we cannot to remove messages
