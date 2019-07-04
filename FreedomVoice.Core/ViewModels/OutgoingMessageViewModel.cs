@@ -18,7 +18,16 @@ namespace FreedomVoice.Core.ViewModels
 			Message = entity.Text;
 			MessageId = entity.Id;
 			Date = entity.CreatedAt ?? DateTime.Now;
-			SendingState = (SendingState) entity.State;
+            //entity.State == DAL.DbEntities.Enums.SendingState.Sending in this case we alredy have got response form backend
+            //but we don't get status from bandwith
+            if (entity.State == DAL.DbEntities.Enums.SendingState.Sending || entity.State == DAL.DbEntities.Enums.SendingState.Success)
+            {
+                SendingState = SendingState.Success;
+            }
+            else
+            {
+                SendingState = (SendingState)entity.State;
+            }
 		}
 	}
 }
