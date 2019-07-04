@@ -7,9 +7,9 @@
 	<key>CFBundleIdentifier</key>
 	<string>com.freedomvoice.mobileapp</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0.40</string>
+	<string>1.0.44</string>
 	<key>CFBundleVersion</key>
-	<string>1.0.40</string>
+	<string>1.0.44</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>MinimumOSVersion</key>
