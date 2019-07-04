@@ -104,6 +104,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                 {
                     ConversationId = convId;
                     ConversationSelected();
+                    _messageEt.SetText("", TextView.BufferType.Editable);
                 }
                 
                 ShowSendMessageProgress(false);
