@@ -7,14 +7,12 @@ using Android.Support.V7.Widget;
 using Android.Text;
 using Android.Views;
 using Android.Widget;
-using Android.Content;
 using com.FreedomVoice.MobileApp.Android.Adapters;
 using com.FreedomVoice.MobileApp.Android.Utils;
 using FreedomVoice.Core.Presenters;
-using Toolbar = Android.Support.V7.Widget.Toolbar;
-using AlertDialog = Android.Support.V7.App.AlertDialog;
-using Dialog = Android.App.Dialog;
 using com.FreedomVoice.MobileApp.Android.Dialogs;
+using Com.Orangegangsters.Github.Swipyrefreshlayout.Library;
+using Java.Lang;
 
 namespace com.FreedomVoice.MobileApp.Android.Fragments
 {
@@ -43,6 +41,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         protected ProgressBar _progressBar;
         private ProgressBar _sendProgress;
         protected ProgressBar _commonProgress;
+        private SwipyRefreshLayout _swipyRefreshLayout;
 
 
         public static ConversationDetailFragment NewInstance(long conversationId, string phone)
@@ -59,6 +58,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         protected override View InitView()
         {
             var view = Inflater.Inflate(Resource.Layout.frag_conversation_details, null, false);
+            _swipyRefreshLayout = view.FindViewById<SwipyRefreshLayout>(Resource.Id.swipyrefreshlayout);
             _messageEt = view.FindViewById<EditText>(Resource.Id.conversationDetailsFragment_et_message);
             _sendIv = view.FindViewById<ImageView>(Resource.Id.conversationDetailsFragment_iv_send);
             _sendProgress = view.FindViewById<ProgressBar>(Resource.Id.conversationDetailsFragment_pb_send);
@@ -90,7 +90,6 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             ConversationSelected();
         }
 
-        
         protected void SetTitle(string title)
         {
             if (title == null || title.Length <= 0)
@@ -102,7 +101,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                 Toolbar.Title = title;
             }
         }
-       
+
         protected void ConversationSelected()
         {
             if (ConversationPhone != null && ConversationId != null)
@@ -145,6 +144,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             _presenter.ItemsChanged += ItemsChanged;
             _presenter.MessageSent += PresenterOnMessageSent;
             _recycler.ScrollChange += ScrollChanged;
+            _swipyRefreshLayout.Refresh += SwipeLayoutRefresh;
             UpdateList();
         }
 
@@ -156,6 +156,12 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             _presenter.ItemsChanged -= ItemsChanged;
             _presenter.MessageSent -= PresenterOnMessageSent;
             _recycler.ScrollChange -= ScrollChanged;
+            _swipyRefreshLayout.Refresh -= SwipeLayoutRefresh;
+        }
+
+        private void SwipeLayoutRefresh(object sender, SwipyRefreshLayout.RefreshEventArgs refreshEventArgs)
+        {
+            _presenter?.ReloadAsync();
         }
 
         private void ScrollChanged(object sender, View.ScrollChangeEventArgs e)
@@ -261,6 +267,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         {
             Activity.RunOnUiThread(() =>
             {
+                _swipyRefreshLayout.Refreshing = false;
                 _progressBar.Visibility = ViewStates.Gone;
                 _adapter.UpdateItems(_presenter.Items);
                 _adapter.NotifyDataSetChanged();
