@@ -34,6 +34,7 @@ namespace FreedomVoice.Core.Presenters
         private const int DefaultCount = 50;
 
         private string _phoneNumber;
+
         public string PhoneNumber
         {
             get => _phoneNumber;
@@ -43,11 +44,13 @@ namespace FreedomVoice.Core.Presenters
                 if (_phoneNumber != null && newValue == _phoneNumber)
                     return;
                 _phoneNumber = newValue;
-
             }
         }
 
-        public bool IsLoading { get => _isLoading; }
+        public bool IsLoading
+        {
+            get => _isLoading;
+        }
 
         public string AccountNumber { get; set; }
 
@@ -85,7 +88,7 @@ namespace FreedomVoice.Core.Presenters
             var conversation = e.Conversation;
             var message = conversation.Messages.FirstOrDefault();
             if (message == null) return;
-            if ( !message.To.PhoneNumber.Equals(PhoneNumber) ) return;
+            if (!message.To.PhoneNumber.Equals(PhoneNumber)) return;
 
             _updateConversation(conversation);
         }
@@ -97,7 +100,7 @@ namespace FreedomVoice.Core.Presenters
             if (conversation == null) return;
             if (message == null) return;
             if (!message.From.PhoneNumber.Equals(PhoneNumber)) return;
-            conversation.Messages = new List<DAL.DbEntities.Message>{ message };
+            conversation.Messages = new List<DAL.DbEntities.Message> {message};
             conversation.SystemPhone = message.From;
             conversation.ToPhone = message.To;
 
@@ -116,6 +119,7 @@ namespace FreedomVoice.Core.Presenters
             {
                 Items[index] = viewModel;
             }
+
             Items = Items.OrderByDescending(item => item.DateTime).ToList();
             ItemsChanged?.Invoke(this, new ConversationsEventArgs(Items));
         }
@@ -142,16 +146,18 @@ namespace FreedomVoice.Core.Presenters
             _isLoading = true;
             Entities.Texting.ConversationListResponse res;
 
-            res = string.IsNullOrEmpty(Query) 
-                ? await _service.GetList( _phoneNumber, _currentDate, DefaultCount, _currentPage)
-                : await _service.Search(_phoneNumber, Query, _nameProvider.SearchNumbers(Query).ToArray(), _currentDate, DefaultCount, _currentPage);
+            res = string.IsNullOrEmpty(Query)
+                ? await _service.GetList(_phoneNumber, _currentDate, DefaultCount, _currentPage)
+                : await _service.Search(_phoneNumber, Query, _nameProvider.SearchNumbers(Query).ToArray(), _currentDate,
+                    DefaultCount, _currentPage);
 
             HasMore = !res.IsEnd;
 
             Items.AddRange(res.Conversations?.Select(row =>
-                               new ConversationViewModel(row, _nameProvider, _formatter)).Where(row => row.ConversationId > 0) ?? throw new Exception()
+                                   new ConversationViewModel(row, _nameProvider, _formatter))
+                               .Where(row => row.ConversationId > 0) ?? throw new Exception()
             );
-            
+
             ItemsChanged?.Invoke(this, new ConversationsEventArgs(Items));
             _isLoading = false;
         }
