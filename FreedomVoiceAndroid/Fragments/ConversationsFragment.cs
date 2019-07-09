@@ -8,6 +8,7 @@ using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Activities;
 using com.FreedomVoice.MobileApp.Android.Adapters;
 using com.FreedomVoice.MobileApp.Android.CustomControls;
+using com.FreedomVoice.MobileApp.Android.Dialogs;
 using com.FreedomVoice.MobileApp.Android.Helpers;
 using FreedomVoice.Core.Presenters;
 using FreedomVoice.Core.Utils;
@@ -76,10 +77,25 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                     AccountNumber = Helper?.SelectedAccount?.AccountName
                 };
                 _presenter.ItemsChanged += UpdateList;
+                _presenter.ServerError += OnListServerError;
                 _presenter.ReloadAsync();
             }
         }
-        
+
+        private void OnListServerError(object sender, EventArgs e)
+        {
+            Activity?.RunOnUiThread(() =>
+            {
+                _swipeToRefresh.Refreshing = false;
+                _progressBar.Visibility = ViewStates.Gone;
+                var errorDialog = new ErrorDialogFragment();
+                errorDialog.Message = ConversationsPresenter.DefaultError;
+                var transaction = Activity.SupportFragmentManager.BeginTransaction();
+                transaction.Add(errorDialog, "ERROR_DLG_TAG");
+                transaction.CommitAllowingStateLoss();
+            });
+        }
+
         public override void OnResume()
         {
             base.OnResume();

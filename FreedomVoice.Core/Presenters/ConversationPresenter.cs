@@ -57,8 +57,10 @@ namespace FreedomVoice.Core.Presenters
         private bool _isLoading;
         private const int DefaultCount = 50;
         private const string DateFormat = "MM/dd/yyyy";
-        private const string SameNumberMessage = "Oops, It looks like you've sent this message to your own number. Please update the recipient phone number and try again.";
-        private const string DefaultError = "Something went wrong. Try later.";
+
+        private const string SameNumberMessage =
+            "Oops, It looks like you've sent this message to your own number. Please update the recipient phone number and try again.";
+
         private Dictionary<string, List<IChatMessage>> _rawData;
 
         private long? _conversationId;
@@ -312,7 +314,7 @@ namespace FreedomVoice.Core.Presenters
             _addMessage(new OutgoingMessageViewModel(lastMessage));
         }
 
-        private void MessagedSentError(Conversation conversation, string MessageText = DefaultError)
+        private void MessagedSentError(Conversation conversation, string MessageText = ConversationsPresenter.DefaultError)
         {
             var lastMessage = conversation?.Messages?.Last();
             if (lastMessage != null) 

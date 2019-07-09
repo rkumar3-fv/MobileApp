@@ -212,6 +212,12 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             {
                 PhoneNumber = _callerIdView.SelectedNumber.PhoneNumber
             };
+            _presenter.ServerError += (sender, args) =>
+            {
+                AppDelegate.ActivityIndicator.Hide();
+                _refreshControl.EndRefreshing();
+                UIAlertHelper.ShowAlert(this, ConversationTexts.ErrorTitle, ConversationsPresenter.DefaultError);
+            };
             _presenter.ItemsChanged += (sender, args) =>
             {
                 _refreshControl.EndRefreshing();

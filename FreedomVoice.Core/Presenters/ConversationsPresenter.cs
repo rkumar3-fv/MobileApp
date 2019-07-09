@@ -22,8 +22,10 @@ namespace FreedomVoice.Core.Presenters
 
     public class ConversationsPresenter : IDisposable
     {
+        public const string DefaultError = "Something went wrong. Try later.";
         public List<ConversationViewModel> Items;
         public event EventHandler ItemsChanged;
+        public event EventHandler ServerError;
         private readonly IConversationService _service;
         private readonly IContactNameProvider _nameProvider;
         private readonly IPhoneFormatter _formatter;
@@ -147,7 +149,13 @@ namespace FreedomVoice.Core.Presenters
                 : await _service.Search(_phoneNumber, Query, _nameProvider.SearchNumbers(Query).ToArray(), _currentDate, DefaultCount, _currentPage);
 
             HasMore = !res.IsEnd;
-
+            Console.WriteLine($"check {res.ResponseCode}");
+            if(res.ResponseCode != Entities.Enums.ErrorCodes.Ok)
+            {
+                _isLoading = false;
+                ServerError?.Invoke(this, null);
+                return;
+            }
             Items.AddRange(res.Conversations?.Select(row =>
                                new ConversationViewModel(row, _nameProvider, _formatter)).Where(row => row.ConversationId > 0) ?? throw new Exception()
             );
