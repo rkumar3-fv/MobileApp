@@ -3,23 +3,23 @@ using FreedomVoice.Entities.Enums;
 
 namespace FreedomVoice.Core.ViewModels
 {
-	public class IncomingMessageViewModel : IChatMessage
-	{
-		public ChatMessageType Type => ChatMessageType.Incoming;
-		public long MessageId { get; }
+    public class IncomingMessageViewModel : IChatMessage
+    {
+        public ChatMessageType Type => ChatMessageType.Incoming;
+        public long MessageId { get; }
 
-		public string Message { get; }
-		public string Time => Date.ToLocalTime().ToString("t");
-		public DateTime Date { get; }
+        public string Message { get; }
+        public string Time => Date.ToLocalTime().ToString("t");
+        public DateTime Date { get; }
 
-		public SendingState SendingState { get; }
+        public SendingState SendingState { get; }
 
-		public IncomingMessageViewModel(DAL.DbEntities.Message entity)
-		{
-			Message = entity.Text;
-			MessageId = entity.Id;
-			Date = entity.CreatedAt ?? DateTime.Now;
-			SendingState = (SendingState) entity.State;
-		}
-	}
+        public IncomingMessageViewModel(DAL.DbEntities.Message entity)
+        {
+            Message = entity.Text;
+            MessageId = entity.Id;
+            Date = entity.CreatedAt ?? DateTime.Now;
+            SendingState = (SendingState) entity.State;
+        }
+    }
 }
