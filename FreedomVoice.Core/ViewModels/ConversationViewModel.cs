@@ -19,7 +19,8 @@ namespace FreedomVoice.Core.ViewModels
         private readonly IContactNameProvider _contactNameProvider;
 
 
-        public ConversationViewModel(Conversation entity, IContactNameProvider contactNameProvider, IPhoneFormatter formatter)
+        public ConversationViewModel(Conversation entity, IContactNameProvider contactNameProvider,
+            IPhoneFormatter formatter)
         {
             _contactNameProvider = contactNameProvider;
 
@@ -30,18 +31,19 @@ namespace FreedomVoice.Core.ViewModels
             if (message.CreatedAt != null)
             {
                 Date = TimeAgo((DateTime) message.CreatedAt);
-                DateTime = (DateTime)message.CreatedAt;
+                DateTime = (DateTime) message.CreatedAt;
                 IsNew = message.ReadAt == null;
             }
-            else if ( message.SentAt != null )
+            else if (message.SentAt != null)
             {
                 Date = TimeAgo((DateTime) message.SentAt);
-                DateTime = (DateTime)message.SentAt;
+                DateTime = (DateTime) message.SentAt;
                 IsNew = false;
             }
+
             ConversationId = entity.Id;
         }
-        
+
         private string TimeAgo(DateTime dateTime)
         {
             dateTime = dateTime.ToLocalTime();
