@@ -63,6 +63,12 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             foreach (var code in args.Codes)
             {
                 if (code != ActionsHelperEventArgs.ChangePresentation) continue;
+                if (_presenter != null)
+                {
+                    _presenter.ItemsChanged -= UpdateList;
+                    _presenter.Dispose();
+                    _presenter = null;
+                }
 
                 _presenter = new ConversationsPresenter()
                 {
@@ -83,7 +89,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             ContentActivity.SearchListener.OnCollapse += SearchListenerOnCancel;
             _contactNameProvider.ContactsUpdated += ProviderOnContactsUpdated;
             _contactNameProvider.ContactsUpdated += ProviderOnContactsUpdated;
-            if (_presenter != null) UpdateList(null, null);
+            if (_presenter != null && _presenter.Items.Count > 0) UpdateList(null, null);
         }      
 
         public override void OnPause()
