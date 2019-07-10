@@ -116,7 +116,7 @@ namespace FreedomVoice.Core.Presenters
 
         private void OnMessageUpdatedHandler(object sender, MessageEventArg e)
         {
-            if (!e.Message.CreatedAt.HasValue ||
+            if (e.Message == null || !e.Message.CreatedAt.HasValue ||
                 !_rawData.ContainsKey(e.Message.CreatedAt.Value.ToString(DateFormat)) ||
                 e.Message.Conversation?.Id != _conversationId.Value) return;
             var chatMessages = _rawData[e.Message.CreatedAt.Value.ToString(DateFormat)];

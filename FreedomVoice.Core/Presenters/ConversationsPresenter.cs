@@ -97,6 +97,10 @@ namespace FreedomVoice.Core.Presenters
 
         void OnMessageUpdatedHandler(object sender, MessageEventArg e)
         {
+            if (e.Message == null || e.Message.Conversation == null)
+            {
+                return;
+            }
             var conversation = e.Message.Conversation;
             var message = e.Message;
             if (conversation == null) return;
