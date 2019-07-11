@@ -7,9 +7,7 @@
 	<key>CFBundleIdentifier</key>
 	<string>com.freedomvoice.mobileapp</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0.44</string>
-	<key>CFBundleVersion</key>
-	<string>1.0.44</string>
+	<string>1.0.45</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>MinimumOSVersion</key>
@@ -94,5 +92,7 @@
 	</array>
 	<key>XSLaunchImageAssets</key>
 	<string>Resources/Media.xcassets/LaunchImage.launchimage</string>
+	<key>CFBundleVersion</key>
+	<string>1</string>
 </dict>
 </plist>
