@@ -15,6 +15,9 @@ using FreedomVoice.Core.Services.Interfaces;
 using FreedomVoice.Core.Utils;
 using FreedomVoice.Core.ViewModels;
 using Java.Lang;
+using Microsoft.AppCenter;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 using Process = System.Diagnostics.Process;
 
 namespace com.FreedomVoice.MobileApp.Android
@@ -58,6 +61,8 @@ namespace com.FreedomVoice.MobileApp.Android
         public override void OnCreate()
         {
             base.OnCreate();
+            AppCenter.Start("388143de-93b5-467f-866c-8734d68a8b68",
+                   typeof(Analytics), typeof(Crashes));
             FirebaseApp.InitializeApp(this);
             _helper.ActionsHelper = new ActionsHelper(this);
             RegisterActivityLifecycleCallbacks(this);
