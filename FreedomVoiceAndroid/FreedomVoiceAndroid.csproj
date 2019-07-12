@@ -415,6 +415,7 @@
     <Compile Include="Utils\TouchHelper.cs" />
     <Compile Include="Fragments\ConversationsFragment.cs" />
     <Compile Include="Dialogs\ErrorDialogFragment.cs" />
+    <Compile Include="Utils\XamarinRecyclerViewOnScrollListener.cs" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\bg_message_cloud_right.xml">
