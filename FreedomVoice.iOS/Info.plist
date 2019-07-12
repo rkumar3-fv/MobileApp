@@ -93,6 +93,6 @@
 	<key>XSLaunchImageAssets</key>
 	<string>Resources/Media.xcassets/LaunchImage.launchimage</string>
 	<key>CFBundleVersion</key>
-	<string>1</string>
+	<string>2</string>
 </dict>
 </plist>
