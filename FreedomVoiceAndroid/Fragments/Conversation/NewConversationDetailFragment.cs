@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Timers;
 using Android.App;
 using Android.Content;
 using Android.Graphics;
@@ -25,6 +27,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
     {
         private static int PICK_PHONE = 20009;
         private const string ExtraConversationPhone = "EXTRA_CONVERSATION_PHONE";
+        private Timer timer;
         
         public static NewConversationDetailFragment NewInstance(string phone)
         {
@@ -70,9 +73,17 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             SetTitle(name);
 
             _progressBar.Visibility = ViewStates.Visible;
-            
+            timer?.Stop();
+            timer = new Timer(700);
+            timer.Elapsed += (send, args) => { PerformCheckCurrentConversation(e.Text.ToString()); };
+            timer.AutoReset = false;
+            timer.Start();
+        }
+
+        private async Task PerformCheckCurrentConversation(string text)
+        {
             var convId =
-                await _presenter.GetConversationId(Helper.SelectedAccount.PresentationNumber, e.Text.ToString());
+                await _presenter.GetConversationId(Helper.SelectedAccount.PresentationNumber, text);
 
             if (convId.HasValue)
             {
