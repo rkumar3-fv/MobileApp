@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Android.OS;
+using Android.Support.V4.Content;
+using Android.Support.V4.View;
 using Android.Support.V4.Widget;
 using Android.Support.V7.Widget;
 using Android.Views;
@@ -10,6 +12,7 @@ using com.FreedomVoice.MobileApp.Android.Adapters;
 using com.FreedomVoice.MobileApp.Android.CustomControls;
 using com.FreedomVoice.MobileApp.Android.Dialogs;
 using com.FreedomVoice.MobileApp.Android.Helpers;
+using com.FreedomVoice.MobileApp.Android.Utils;
 using FreedomVoice.Core.Presenters;
 using FreedomVoice.Core.Utils;
 using FreedomVoice.Core.ViewModels;
@@ -26,6 +29,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         private IContactNameProvider _contactNameProvider;
         private SwipeRefreshLayout _swipeToRefresh;
         private ProgressBar _progressBar;
+        private XamarinRecyclerViewOnScrollListener _onScrollListener;
 
         protected override View InitView()
         {
@@ -51,8 +55,10 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             _recyclerView.SetLayoutManager(_layoutManager);
             _recyclerView.AddItemDecoration(new DividerItemDecorator(Activity, Resource.Drawable.divider));
             _recyclerView.SetAdapter(_adapter);
-            _recyclerView.NestedScrollingEnabled = false;
-            _recyclerView.ScrollChange += (sender, args) => { ListScrolled(); };
+            ViewCompat.StopNestedScroll(_recyclerView);
+            _onScrollListener = new XamarinRecyclerViewOnScrollListener();
+            _recyclerView.AddOnScrollListener(_onScrollListener);
+            _onScrollListener.ScrollEvent += ListScrolled;
             _swipeToRefresh.Refresh += SwipeRefresh;
             _contactNameProvider = ServiceContainer.Resolve<IContactNameProvider>();
         }
@@ -131,7 +137,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             _presenter.ReloadAsync();
         }
 
-        private void ListScrolled()
+        private void ListScrolled(object sender, EventArgs eventArgs)
         {
             const int countItemsToTheEndList = 8;
             var visibleItemCount = _layoutManager.ChildCount;
@@ -173,6 +179,13 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         private void SearchListenerOnChange(object sender, string s)
         {
             _presenter.Query = s;
+        }
+
+        public override void OnDestroyView()
+        {
+            base.OnDestroyView();
+            _onScrollListener.ScrollEvent += ListScrolled;
+            _swipeToRefresh.Refresh -= SwipeRefresh;
         }
 
         public override void OnDestroy()

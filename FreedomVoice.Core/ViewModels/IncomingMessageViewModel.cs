@@ -9,7 +9,7 @@ namespace FreedomVoice.Core.ViewModels
         public long MessageId { get; }
 
         public string Message { get; }
-        public string Time => Date.ToLocalTime().ToString("t");
+        public string Time => Date.ToString("t");
         public DateTime Date { get; }
 
         public SendingState SendingState { get; }
@@ -18,7 +18,7 @@ namespace FreedomVoice.Core.ViewModels
         {
             Message = entity.Text;
             MessageId = entity.Id;
-            Date = entity.CreatedAt ?? DateTime.Now;
+            Date = entity.CreatedAt?.ToLocalTime() ?? DateTime.Now;
             SendingState = (SendingState) entity.State;
         }
     }

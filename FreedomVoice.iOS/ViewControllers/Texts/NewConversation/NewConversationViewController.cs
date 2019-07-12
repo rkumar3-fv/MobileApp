@@ -1,8 +1,10 @@
 using System;
+using System.Threading.Tasks;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.Utilities;
 using UIKit;
 using Xamarin.Contacts;
+using System.Timers;
 
 namespace FreedomVoice.iOS.ViewControllers.Texts.NewConversation
 {
@@ -19,6 +21,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts.NewConversation
     public class NewConversationViewController : ConversationViewController
     {
         private readonly string _preselectedToPhone;
+        private Timer timer;
 
         private readonly AddContactView _addContactView = new AddContactView();
 
@@ -209,10 +212,21 @@ namespace FreedomVoice.iOS.ViewControllers.Texts.NewConversation
             Title = phonePlaceholder;
         }
 
-        private async void CheckCurrentConversation()
+        private void CheckCurrentConversation()
         {
-            if (string.IsNullOrWhiteSpace(CurrentPhone.PhoneNumber) || string.IsNullOrWhiteSpace(_addContactView.Text))
+            timer?.Stop();
+            timer = new Timer(700);
+            timer.Elapsed += (sender, args) => { PerformCheckCurrentConversation(); };
+            timer.AutoReset = false;
+            timer.Start();
+        }
+
+        private async Task PerformCheckCurrentConversation()
+        {
+            if (string.IsNullOrWhiteSpace(CurrentPhone.PhoneNumber) ||
+                string.IsNullOrWhiteSpace(_addContactView.Text))
                 return;
+
 
             var conversationId = await Presenter.GetConversationId(CurrentPhone.PhoneNumber, _addContactView.Text);
 

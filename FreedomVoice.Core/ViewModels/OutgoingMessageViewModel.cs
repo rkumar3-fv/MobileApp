@@ -11,13 +11,13 @@ namespace FreedomVoice.Core.ViewModels
         public string Message { get; }
         public DateTime Date { get; }
         public SendingState SendingState { get; }
-        public string Time => Date.ToLocalTime().ToString("t");
+        public string Time => Date.ToString("t");
 
         public OutgoingMessageViewModel(DAL.DbEntities.Message entity)
         {
             Message = entity.Text;
             MessageId = entity.Id;
-            Date = entity.CreatedAt ?? DateTime.Now;
+            Date = entity.CreatedAt?.ToLocalTime() ?? DateTime.Now;
             //entity.State == DAL.DbEntities.Enums.SendingState.Sending in this case we alredy have got response form backend
             //but we don't get status from bandwith
             if (entity.State == DAL.DbEntities.Enums.SendingState.Sending ||

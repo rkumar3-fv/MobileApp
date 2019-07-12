@@ -77,6 +77,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             _SetupData();
             AutomaticallyAdjustsScrollViewInsets = false;
             Presenter.MessageSent += PresenterOnMessageSent;
+            _SubscribeToEvents();
         }
 
         public override void ViewWillAppear(bool animated)
@@ -85,23 +86,16 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             if (TabBarController != null) TabBarController.TabBar.Hidden = true;
         }
 
-        public override void ViewDidAppear(bool animated)
-        {
-            base.ViewDidAppear(animated);
-            _SubscribeToEvents();
-        }
-
         public override void ViewWillDisappear(bool animated)
         {
             base.ViewWillDisappear(animated);
             if (TabBarController != null) TabBarController.TabBar.Hidden = false;
         }
 
-        public override void ViewDidDisappear(bool animated)
+        public override void ViewDidUnload()
         {
-            base.ViewDidDisappear(animated);
-            _UnsubscribeFromEvents();
-
+            base.ViewDidUnload();
+            //_UnsubscribeFromEvents();
         }
 
         protected virtual void _SetupViews()
@@ -219,6 +213,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             };
             View.AddSubview(AppDelegate.ActivityIndicator);
             AppDelegate.ActivityIndicator.Show();
+            AppDelegate.ActivityIndicator.SetActivityIndicatorCenter(Theme.ScreenCenter);
             Presenter.ReloadAsync();
         }
         
@@ -233,7 +228,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             {
                 _chatField.Text = "";
             }
-            _chatField.SetSending(false);            
+            _chatField.SetSending(false);
         }
 
         private void CallerIdEventOnCallerIdChanged(object sender, EventArgs e)
@@ -249,6 +244,10 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
 
         protected override void Dispose(bool disposing)
         {
+            if (disposing)
+            {
+                _UnsubscribeFromEvents();
+            }
             Presenter.MessageSent -= PresenterOnMessageSent;
             Presenter.Dispose();
             base.Dispose(disposing);

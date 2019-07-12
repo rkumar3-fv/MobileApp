@@ -42,6 +42,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         private ProgressBar _sendProgress;
         protected ProgressBar _commonProgress;
         private SwipyRefreshLayout _swipyRefreshLayout;
+        private XamarinRecyclerViewOnScrollListener _onScrollListener;
 
 
         public static ConversationDetailFragment NewInstance(long conversationId, string phone)
@@ -133,6 +134,8 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             _recycler.SetLayoutManager(_manager);
             _adapter = new ConversationMessageRecyclerAdapter();
             _recycler.SetAdapter(_adapter);
+            _onScrollListener = new XamarinRecyclerViewOnScrollListener();
+            _recycler.AddOnScrollListener(_onScrollListener);
         }
 
         public override void OnResume()
@@ -143,7 +146,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
        
             _presenter.ItemsChanged += ItemsChanged;
             _presenter.MessageSent += PresenterOnMessageSent;
-            _recycler.ScrollChange += ScrollChanged;
+            _onScrollListener.ScrollEvent += ScrollChanged;
             _swipyRefreshLayout.Refresh += SwipeLayoutRefresh;
             UpdateList();
         }
@@ -155,7 +158,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             _sendIv.Click -= ClickSend;
             _presenter.ItemsChanged -= ItemsChanged;
             _presenter.MessageSent -= PresenterOnMessageSent;
-            _recycler.ScrollChange -= ScrollChanged;
+            _onScrollListener.ScrollEvent -= ScrollChanged;
             _swipyRefreshLayout.Refresh -= SwipeLayoutRefresh;
         }
 
@@ -164,7 +167,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             _presenter?.ReloadAsync();
         }
 
-        private void ScrollChanged(object sender, View.ScrollChangeEventArgs e)
+        private void ScrollChanged(object sender, EventArgs eventArgs)
         {
             var visibleItemCount = _manager.ChildCount;
 

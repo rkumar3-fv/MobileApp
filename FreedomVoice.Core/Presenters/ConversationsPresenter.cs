@@ -158,12 +158,10 @@ namespace FreedomVoice.Core.Presenters
                     DefaultCount, _currentPage);
 
             HasMore = !res.IsEnd;
-            Console.WriteLine($"check {res.ResponseCode}");
             if(res.ResponseCode != Entities.Enums.ErrorCodes.Ok)
             {
                 _isLoading = false;
                 ServerError?.Invoke(this, null);
-                return;
             }
             Items.AddRange(res.Conversations?.Select(row =>
                                    new ConversationViewModel(row, _nameProvider, _formatter))

@@ -32,6 +32,11 @@ namespace FreedomVoice.Core.Utils
             Instance.Services[typeof(T)] = new Lazy<object>(() => service);
         }
 
+        public static void RegisterFactory<T>(Func<T> service)
+        {
+            Instance.Services[typeof(T)] = new Lazy<object>(() => service);
+        }
+
         public static void Register<T>() where T : new()
         {
             Instance.Services[typeof(T)] = new Lazy<object>(() => new T());
@@ -47,6 +52,10 @@ namespace FreedomVoice.Core.Utils
             Lazy<object> service;
             if (Instance.Services.TryGetValue(typeof(T), out service))
             {
+                if (service.Value is Func<T>)
+                {
+                    return ((Func<T>)service.Value)();
+                }
                 return (T)service.Value;
             }
 

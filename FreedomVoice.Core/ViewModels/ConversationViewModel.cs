@@ -25,19 +25,17 @@ namespace FreedomVoice.Core.ViewModels
             _contactNameProvider = contactNameProvider;
 
             _RawTo = formatter.Normalize(entity.ToPhone.PhoneNumber);
-            var message = entity.Messages.OrderByDescending(x => x.CreatedAt).FirstOrDefault();
+            var message = entity.Messages.OrderByDescending(x => x.OrderDate).FirstOrDefault();
             if (message == null) return;
             LastMessage = message.Text;
+            Date = TimeAgo((DateTime)message.OrderDate);
+            DateTime = (DateTime)message.OrderDate;
             if (message.CreatedAt != null)
             {
-                Date = TimeAgo((DateTime) message.CreatedAt);
-                DateTime = (DateTime) message.CreatedAt;
                 IsNew = message.ReadAt == null;
             }
             else if (message.SentAt != null)
             {
-                Date = TimeAgo((DateTime) message.SentAt);
-                DateTime = (DateTime) message.SentAt;
                 IsNew = false;
             }
 
@@ -46,21 +44,20 @@ namespace FreedomVoice.Core.ViewModels
 
         private string TimeAgo(DateTime dateTime)
         {
-            dateTime = dateTime.ToLocalTime();
             string result;
-            var timeSpan = DateTime.Now.Subtract(dateTime);
-
-            if (timeSpan <= TimeSpan.FromDays(1))
+            var nowDate = DateTime.Now;
+            var timeSpan = nowDate.ToUniversalTime().Subtract(dateTime);
+            if (timeSpan <= TimeSpan.FromDays(1) && dateTime.Day == nowDate.Day)
             {
-                result = dateTime.ToString("t");
+                result = dateTime.ToLocalTime().ToString("t");
             }
             else if (timeSpan <= TimeSpan.FromDays(7))
             {
-                result = dateTime.ToString("dddd");
+                result = dateTime.ToLocalTime().ToString("dddd");
             }
             else
             {
-                result = dateTime.ToString("MM/dd/yyyy");
+                result = dateTime.ToLocalTime().ToString("MM/dd/yyyy");
             }
 
             return result;
