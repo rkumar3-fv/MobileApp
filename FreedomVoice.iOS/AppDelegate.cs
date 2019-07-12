@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Firebase.Analytics;
 using Firebase.Core;
 using Foundation;
 using FreedomVoice.Core;
@@ -17,6 +18,8 @@ using FreedomVoice.iOS.Utilities.Helpers;
 using FreedomVoice.iOS.ViewControllers;
 using FreedomVoice.iOS.ViewModels;
 using FreedomVoice.iOS.Views;
+using Microsoft.AppCenter;
+using Microsoft.AppCenter.Crashes;
 using UIKit;
 using UserNotifications;
 
@@ -49,6 +52,8 @@ namespace FreedomVoice.iOS
 
         public override bool FinishedLaunching(UIApplication application, NSDictionary launchOptions)
         {
+            AppCenter.Start("321617ec-1ee4-448a-a93b-8ea2010f99c4",
+                typeof(Analytics), typeof(Crashes));
             Window = new UIWindow(UIScreen.MainScreen.Bounds);
 
             ServiceContainer.Register(Window);
