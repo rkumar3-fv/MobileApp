@@ -229,6 +229,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             _tableView.Source = dataSource;
             _tableView.ReloadData();
             View.AddSubview(AppDelegate.ActivityIndicator);
+            AppDelegate.ActivityIndicator.SetActivityIndicatorCenter(Theme.ScreenCenter);
             AppDelegate.ActivityIndicator.Show();
             _presenter.ReloadAsync();
         }

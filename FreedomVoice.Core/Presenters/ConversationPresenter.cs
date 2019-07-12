@@ -59,7 +59,7 @@ namespace FreedomVoice.Core.Presenters
         private const string SameNumberMessage =
             "Oops, It looks like you've sent this message to your own number. Please update the recipient phone number and try again.";
 
-        private Dictionary<string, List<IChatMessage>> _rawData;
+        private Dictionary<DateTime, List<IChatMessage>> _rawData;
 
         private long? _conversationId;
         private string _phoneNumber;
@@ -117,9 +117,9 @@ namespace FreedomVoice.Core.Presenters
         private void OnMessageUpdatedHandler(object sender, MessageEventArg e)
         {
             if (e.Message == null || !e.Message.CreatedAt.HasValue ||
-                !_rawData.ContainsKey(e.Message.CreatedAt.Value.ToString(DateFormat)) ||
+                !_rawData.ContainsKey(e.Message.CreatedAt.Value) ||
                 e.Message.Conversation?.Id != _conversationId.Value) return;
-            var chatMessages = _rawData[e.Message.CreatedAt.Value.ToString(DateFormat)];
+            var chatMessages = _rawData[e.Message.CreatedAt.Value];
             if (chatMessages == null)
             {
                 _addOutgoingMessage(e.Message);
@@ -331,10 +331,11 @@ namespace FreedomVoice.Core.Presenters
 
         private void _addMessage(IChatMessage message)
         {
-            var dateStr = message.Date.ToString(DateFormat);
-            var pack = _rawData.ContainsKey(dateStr) ? _rawData[dateStr] : new List<IChatMessage>();
+            var date = message.Date;
+            date = new DateTime(date.Year, date.Month, date.Day, 0, 0, 0);
+            var pack = _rawData.ContainsKey(date) ? _rawData[date] : new List<IChatMessage>();
             pack.Insert(0, message);
-            _rawData[dateStr] = pack;
+            _rawData[date] = pack;
             _updateItems();
             ItemsChanged?.Invoke(this, new ConversationCollectionEventArgs(Items));
         }
@@ -344,7 +345,7 @@ namespace FreedomVoice.Core.Presenters
             _currentDate = DateTime.Now;
             _currentPage = 1;
             Items = new List<IChatMessage>();
-            _rawData = new Dictionary<string, List<IChatMessage>>();
+            _rawData = new Dictionary<DateTime, List<IChatMessage>>();
             HasMore = false;
         }
 
@@ -365,11 +366,11 @@ namespace FreedomVoice.Core.Presenters
             foreach (var row in res.Messages)
             {
                 if (row.From == null) continue;
-                var dateStr = row.CreatedAt?.ToString(DateFormat);
-                if (dateStr == null) continue;
-                var pack = _rawData.ContainsKey(dateStr) ? _rawData[dateStr] : new List<IChatMessage>();
+                var date = row.CreatedAt.Value.ToLocalTime();
+                date = new DateTime(date.Year, date.Month, date.Day, 0, 0, 0);
+                var pack = _rawData.ContainsKey(date) ? _rawData[date] : new List<IChatMessage>();
                 pack.Add(CreateChatMessage(row));
-                _rawData[dateStr] = pack;
+                _rawData[date] = pack;
             }
 
             _updateItems();
@@ -394,10 +395,8 @@ namespace FreedomVoice.Core.Presenters
             Items = new List<IChatMessage>();
             foreach (var group in _rawData.OrderByDescending(item => item.Key))
             {
-                var date = DateTime.MinValue;
-                DateTime.TryParseExact(group.Key, DateFormat, null, System.Globalization.DateTimeStyles.None, out date);
                 Items.AddRange(group.Value);
-                Items.Add(new DateMessageViewModel(date));
+                Items.Add(new DateMessageViewModel(group.Key));
             }
 
             Items = Items.GroupBy(p => p.MessageId).Select(g => g.OrderBy(y => y.MessageId).First()).ToList();

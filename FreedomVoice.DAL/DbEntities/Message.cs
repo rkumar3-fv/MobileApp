@@ -15,5 +15,10 @@ namespace FreedomVoice.DAL.DbEntities
         public DateTime? LastUpdateDate { get; set; }
         public Conversation Conversation { get; set; }
         public SendingState State { get; set; }
+
+        public DateTime? OrderDate
+        {
+            get => SentAt ?? CreatedAt;
+        }
     }
 }

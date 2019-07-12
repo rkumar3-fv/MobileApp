@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace FreedomVoice.DAL
 {
@@ -48,9 +49,9 @@ namespace FreedomVoice.DAL
 
                 this.Entities.Add(entity);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                // ignore
+                Console.WriteLine($"EfRepository: InsertWithoutSaving : {e.Message}");
             }
         }
 
@@ -195,9 +196,9 @@ namespace FreedomVoice.DAL
             {
                 this._context.SaveChanges();
             }
-            catch(Exception)
+            catch (Exception e)
             {
-                // ignore
+                Console.WriteLine($"EfRepository: SAVE CHANGES : {e.Message}");
             }
         }
 

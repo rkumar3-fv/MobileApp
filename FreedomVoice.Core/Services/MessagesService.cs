@@ -50,10 +50,6 @@ namespace FreedomVoice.Core.Services
             if (conversation == null)
                 throw new ArgumentException("Conversation not found");
             var res = await SendMessage(conversation.SystemPhone.PhoneNumber, conversation.ToPhone.PhoneNumber, text);
-            if (res.Entity == null) return res;
-            var mapped = _mapper.Map<Conversation>(res.Entity);
-            _cacheService.UpdateConversationsCache(new []{ mapped });
-
             return res;
         }
 

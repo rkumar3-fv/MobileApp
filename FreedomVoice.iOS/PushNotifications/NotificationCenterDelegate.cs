@@ -47,8 +47,8 @@ namespace FreedomVoice.iOS.PushNotifications
 		public override void WillPresentNotification(UNUserNotificationCenter center, UNNotification notification, Action<UNNotificationPresentationOptions> completionHandler)
 		{
 			_logger.Debug(nameof(NotificationCenterDelegate), nameof(ProcessStatusChangedPushNotification), "WillPresentNotification");
-			completionHandler?.Invoke(UNNotificationPresentationOptions.Alert | UNNotificationPresentationOptions.Sound);
 			DidReceiveSilentRemoteNotification(notification.Request.Content.UserInfo, null);
+            completionHandler?.Invoke(UNNotificationPresentationOptions.Alert | UNNotificationPresentationOptions.Sound);
 		}
 
 		public async void DidReceiveSilentRemoteNotification(NSDictionary userInfo, Action<UIBackgroundFetchResult> completionHandler)
@@ -90,13 +90,12 @@ namespace FreedomVoice.iOS.PushNotifications
 		{
 			_logger.Debug(nameof(NotificationCenterDelegate), nameof(DidReceiveNotificationResponse), "DidReceiveNotificationResponse");
 
-			completionHandler?.Invoke();
-
 			if (!UserDefault.IsAuthenticated)
 			{
 				completionHandler?.Invoke();
 				_logger.Debug(nameof(NotificationCenterDelegate), nameof(DidReceiveNotificationResponse), "User is not authorized");
-				return;
+                completionHandler?.Invoke();
+                return;
 			}
 
 			pushNotificationData = PushResponseExtension.CreateFromFromJson(response.Notification.Request.Content.UserInfo);
@@ -104,7 +103,8 @@ namespace FreedomVoice.iOS.PushNotifications
 			if (pushNotificationData == null)
 			{
 				_logger.Debug(nameof(NotificationCenterDelegate), nameof(DidReceiveNotificationResponse), "Push-notification response is null");
-				return;
+                completionHandler?.Invoke();
+                return;
 			}
 
 			if (!await CheckCurrentNumber())
@@ -128,7 +128,8 @@ namespace FreedomVoice.iOS.PushNotifications
 					_logger.Debug(nameof(NotificationCenterDelegate), nameof(DidReceiveNotificationResponse), $"Push-notification type({pushNotificationData.PushType}) is not supported");
 					break;
 			}
-		}
+            completionHandler?.Invoke();
+        }
 
 		private async Task<bool> CheckCurrentNumber()
 		{
@@ -286,6 +287,11 @@ namespace FreedomVoice.iOS.PushNotifications
 				return;
 			}
 
+            if (UIApplication.SharedApplication.ApplicationState != UIApplicationState.Active)
+            {
+                DidReceiveSilentRemoteNotification(payload.DictionaryPayload, null);
+            }
+
 			if (!apsValue.ContainsKey(new NSString(AlertKey)))
 			{
 				_logger.Debug(nameof(NotificationCenterDelegate), nameof(DidUpdatePushCredentials), "Alert key is missing");
@@ -334,6 +340,7 @@ namespace FreedomVoice.iOS.PushNotifications
 
 			_logger.Debug(nameof(NotificationCenterDelegate), nameof(DidUpdatePushCredentials), $"'From' phone number has been found: {phoneHolder}");
 			ShowPushNotificationsNow(phoneHolder, bodyValue, subtitleValue, payload.DictionaryPayload);
+
 		}
 
 		private void ShowPushNotificationsNow(string title, string body, string subtitle, NSDictionary userInfo)
