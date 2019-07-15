@@ -211,6 +211,12 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
                 AppDelegate.ActivityIndicator.Hide();
                 _refreshControl.EndRefreshing();
             };
+            Presenter.ServerError += (sender, args) =>
+            {
+                AppDelegate.ActivityIndicator.Hide();
+                _refreshControl.EndRefreshing();
+                UIAlertHelper.ShowAlert(this, ConversationTexts.ErrorTitle, ConversationsPresenter.DefaultError);
+            };
             View.AddSubview(AppDelegate.ActivityIndicator);
             AppDelegate.ActivityIndicator.Show();
             AppDelegate.ActivityIndicator.SetActivityIndicatorCenter(Theme.ScreenCenter);

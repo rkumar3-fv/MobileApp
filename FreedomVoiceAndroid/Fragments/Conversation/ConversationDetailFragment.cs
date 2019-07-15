@@ -145,6 +145,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             _sendIv.Click += ClickSend;
        
             _presenter.ItemsChanged += ItemsChanged;
+            _presenter.ServerError += OnServerError;
             _presenter.MessageSent += PresenterOnMessageSent;
             _onScrollListener.ScrollEvent += ScrollChanged;
             _swipyRefreshLayout.Refresh += SwipeLayoutRefresh;
@@ -154,6 +155,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         public override void OnPause()
         {
             base.OnPause();
+            _presenter.ServerError -= OnServerError;
             _messageEt.TextChanged -= MessageTextChanged;
             _sendIv.Click -= ClickSend;
             _presenter.ItemsChanged -= ItemsChanged;
@@ -176,6 +178,18 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             {
                 _presenter.LoadMoreAsync();
             }
+        }
+        
+        private void OnServerError(object sender, EventArgs e)
+        {
+            Activity?.RunOnUiThread(() =>
+            {
+                _progressBar.Visibility = ViewStates.Gone;
+                var errorDialog = new ErrorDialogFragment {Message = ConversationsPresenter.DefaultError};
+                var transaction = Activity.SupportFragmentManager.BeginTransaction();
+                transaction.Add(errorDialog, "ERROR_DLG_TAG");
+                transaction.CommitAllowingStateLoss();
+            });
         }
 
         private void PresenterOnMessageSent(object sender, EventArgs e)
