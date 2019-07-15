@@ -12,7 +12,7 @@ namespace com.FreedomVoice.MobileApp.Android.Utils
         public override void OnScrolled(RecyclerView recyclerView, int dx, int dy)
         {
             base.OnScrolled(recyclerView, dx, dy);
-            ScrollEvent(this, null);
+            if (ScrollEvent != null) ScrollEvent(this, null);
         }
     }
 }
