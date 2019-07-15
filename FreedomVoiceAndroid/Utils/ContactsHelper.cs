@@ -38,10 +38,9 @@ namespace com.FreedomVoice.MobileApp.Android.Utils
 
         private void ContactsObserverOnContactsChangingEvent(object sender, bool b)
         {
-           if ((_phonesCache != null)&&(_phonesCache.Count > 0))
-                _phonesCache.Clear();
-
-            ContactsPermissionUpdated?.Invoke(null, null);
+           if (_phonesCache != null && _phonesCache.Count > 0)
+                _phonesCache.Clear(); 
+           ContactsPermissionUpdated?.Invoke(null, null);
         }
 
         /// <summary>

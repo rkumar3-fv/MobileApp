@@ -6,7 +6,8 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using FreedomVoice.DAL.DbEntities.Enums;
 
 namespace FreedomVoice.Core.Services
@@ -17,7 +18,7 @@ namespace FreedomVoice.Core.Services
         private readonly IRepository<Message> _messagesRepository;
         private readonly IRepository<Phone> _phoneRepository;
         private readonly IMapper _mapper;
-        readonly object _objLock = new object();
+        private readonly SemaphoreSlim _lock = new SemaphoreSlim(1, 1); 
 
         /// <summary>
         /// Ctor
@@ -40,7 +41,7 @@ namespace FreedomVoice.Core.Services
         /// <param name="conversation"></param>
         /// <param name="messages"></param>
         /// <param name="alreadyCreatedPhones"></param>
-        private void UpdateMessagesCacheWithoutSaving(Conversation conversation, IEnumerable<FreedomVoice.Entities.Message> messages, List<Phone> alreadyCreatedPhones)
+        private async Task UpdateMessagesCacheWithoutSaving(Conversation conversation, IEnumerable<FreedomVoice.Entities.Message> messages, List<Phone> alreadyCreatedPhones)
         {
             if (conversation == null)
             {
@@ -51,10 +52,12 @@ namespace FreedomVoice.Core.Services
                 conversation.Messages = new List<Message>();
             // Removing - we cannot to remove messages
 
-            var messagesForUpdate = _messagesRepository.Table.Where(messageFromRepository => messages.Any(message => message.Id == messageFromRepository.Id));
+            var messagesForUpdate = await _messagesRepository.Table
+                .Where(messageFromRepository => messages.Any(message => message.Id == messageFromRepository.Id))
+                .ToDictionaryAsync(message => message.Id);
             foreach (var messageFromApi in messages)
             {
-                var message = messagesForUpdate.FirstOrDefault(messageForUpdate => messageForUpdate.Id == messageFromApi.Id);
+                var message = messagesForUpdate.ContainsKey(messageFromApi.Id) ? messagesForUpdate[messageFromApi.Id] : null;
                 // Adding
                 if (message == null)
                 {
@@ -71,14 +74,14 @@ namespace FreedomVoice.Core.Services
                 }
             }
 
-            UpdatePhones(conversation, alreadyCreatedPhones);
+            await UpdatePhones(conversation, alreadyCreatedPhones);
         }
 
-        private Conversation UpdatePhones(Conversation conversation, List<Phone> alreadyCreatedPhones)
+        private async Task<Conversation> UpdatePhones(Conversation conversation, List<Phone> alreadyCreatedPhones)
         {
             if(conversation.SystemPhone != null)
             {
-                conversation.SystemPhone = _phoneRepository.Table.FirstOrDefault(phone => phone.Id == conversation.SystemPhone.Id) ??
+                conversation.SystemPhone = await _phoneRepository.Table.FirstOrDefaultAsync(phone => phone.Id == conversation.SystemPhone.Id) ??
                     alreadyCreatedPhones.FirstOrDefault(phone => phone.Id == conversation.SystemPhone.Id) ?? conversation.SystemPhone;
 
                 if (alreadyCreatedPhones.All(phone => phone.Id != conversation.SystemPhone.Id))
@@ -86,7 +89,7 @@ namespace FreedomVoice.Core.Services
             }
             if (conversation.ToPhone != null)
             {
-                conversation.ToPhone = _phoneRepository.Table.FirstOrDefault(phone => phone.Id == conversation.ToPhone.Id) ??
+                conversation.ToPhone = await _phoneRepository.Table.FirstOrDefaultAsync(phone => phone.Id == conversation.ToPhone.Id) ??
                     alreadyCreatedPhones.FirstOrDefault(phone => phone.Id == conversation.ToPhone.Id) ?? conversation.ToPhone;
                 if (alreadyCreatedPhones.All(phone => phone.Id != conversation.ToPhone.Id))
                     alreadyCreatedPhones.Add(conversation.ToPhone);
@@ -96,7 +99,7 @@ namespace FreedomVoice.Core.Services
             {
                 if (message.From != null)
                 {
-                    message.From = _phoneRepository.Table.FirstOrDefault(phone => phone.Id == message.From.Id) ??
+                    message.From = await _phoneRepository.Table.FirstOrDefaultAsync(phone => phone.Id == message.From.Id) ??
                     alreadyCreatedPhones.FirstOrDefault(phone => phone.Id == message.From.Id) ?? message.From;
                     if (alreadyCreatedPhones.All(phone => phone.Id != message.From.Id))
                         alreadyCreatedPhones.Add(message.From);
@@ -104,7 +107,7 @@ namespace FreedomVoice.Core.Services
 
                 if (message.To == null) continue;
                 {
-                    message.To = _phoneRepository.Table.FirstOrDefault(phone => phone.Id == message.To.Id) ??
+                    message.To = await _phoneRepository.Table.FirstOrDefaultAsync(phone => phone.Id == message.To.Id) ??
                                  alreadyCreatedPhones.FirstOrDefault(phone => phone.Id == message.To.Id) ?? message.To;
                     if (alreadyCreatedPhones.All(phone => phone.Id != message.To.Id))
                         alreadyCreatedPhones.Add(message.To);
@@ -118,20 +121,22 @@ namespace FreedomVoice.Core.Services
         /// Updating conversations cache by recieving entities
         /// </summary>
         /// <param name="conversations"></param>
-        public void UpdateConversationsCache(IEnumerable<FreedomVoice.Entities.Response.Conversation> conversations)
+        public async Task UpdateConversationsCache(IEnumerable<FreedomVoice.Entities.Response.Conversation> conversations)
         {
-            lock (_objLock)
+            await _lock.WaitAsync();
+            try
             {
                 var usedPhones = new List<Phone>();
                 foreach (var conversation in conversations)
                 {
-                    var cachedConversation = _conversationRepository.Table.Include(row => row.Messages)
+                    var cachedConversation = await _conversationRepository.Table.Include(row => row.Messages)
                         .Include(row => row.SystemPhone)
                         .Include(row => row.ToPhone)
-                        .FirstOrDefault(row => conversation.Id == row.Id);
+                        .FirstOrDefaultAsync(row => conversation.Id == row.Id);
                     // Adding
                     if (cachedConversation == null && !conversation.IsRemoved)
-                        _conversationRepository.InsertWithoutSaving(UpdatePhones(_mapper.Map<Conversation>(conversation), usedPhones));
+                        _conversationRepository.InsertWithoutSaving(
+                            await UpdatePhones(_mapper.Map<Conversation>(conversation), usedPhones));
                     // Removing
                     else if (cachedConversation != null && conversation.IsRemoved)
                         _conversationRepository.RemoveWithoutSave(cachedConversation);
@@ -140,10 +145,15 @@ namespace FreedomVoice.Core.Services
                     {
                         cachedConversation.ToPhone = _mapper.Map<Phone>(conversation.ToPhone);
                         cachedConversation.SystemPhone = _mapper.Map<Phone>(conversation.SystemPhone);
-                        UpdateMessagesCacheWithoutSaving(cachedConversation, conversation.Messages, usedPhones);
+                        await UpdateMessagesCacheWithoutSaving(cachedConversation, conversation.Messages, usedPhones);
                     }
                 }
+
                 _conversationRepository.SaveChanges();
+            }
+            finally
+            {
+                _lock.Release();
             }
         }
 
@@ -152,13 +162,18 @@ namespace FreedomVoice.Core.Services
         /// </summary>
         /// <param name="conversationId"></param>
         /// <param name="messages"></param>
-        public void UpdateMessagesCache(long conversationId, IEnumerable<FreedomVoice.Entities.Message> messages)
+        public async Task UpdateMessagesCache(long conversationId, IEnumerable<FreedomVoice.Entities.Message> messages)
         {
-            lock (_objLock)
+            await _lock.WaitAsync();
+            try
             {
                 var cachedConversation = _conversationRepository.Table.Include(conversation => conversation.Messages).FirstOrDefault(conversation => conversationId == conversation.Id);
-                UpdateMessagesCacheWithoutSaving(cachedConversation, messages, new List<Phone>());
+                await UpdateMessagesCacheWithoutSaving(cachedConversation, messages, new List<Phone>());
                 _conversationRepository.SaveChanges();
+            }
+            finally
+            {
+                _lock.Release();
             }
         }
 
@@ -167,12 +182,17 @@ namespace FreedomVoice.Core.Services
         /// </summary>
         /// <param name="conversation"></param>
         /// <param name="messages"></param>
-        public void UpdateMessagesCache(Conversation conversation, IEnumerable<FreedomVoice.Entities.Message> messages)
+        public async Task UpdateMessagesCache(Conversation conversation, IEnumerable<FreedomVoice.Entities.Message> messages)
         {
-            lock (_objLock)
+            await _lock.WaitAsync();
+            try
             {
-                UpdateMessagesCacheWithoutSaving(conversation, messages, new List<Phone>());
+                await UpdateMessagesCacheWithoutSaving(conversation, messages, new List<Phone>());
                 _conversationRepository.SaveChanges();
+            }
+            finally
+            {
+                _lock.Release();
             }
         }
 
@@ -184,9 +204,10 @@ namespace FreedomVoice.Core.Services
         /// <param name="limit"></param>
         /// <param name="start"></param>
         /// <returns>List of cached conversations</returns>
-        public IEnumerable<Conversation> GetConversations(string phone, int limit, int start)
+        public async Task<IEnumerable<Conversation>> GetConversations(string phone, int limit, int start)
         {
-            lock (_objLock)
+            await _lock.WaitAsync();
+            try
             {
                 var conversations = _conversationRepository
                     .TableNoTracking
@@ -201,14 +222,18 @@ namespace FreedomVoice.Core.Services
                 foreach (var conversation in conversations)
                     conversation.Messages = new[]
                     {
-                        _messagesRepository
+                        await  _messagesRepository
                             .TableNoTracking
                             .Include(message => message.From)
                             .Include(message => message.To)
                             .OrderByDescending(message => message.CreatedAt)
-                            .FirstOrDefault(message => message.Conversation.Id == conversation.Id)
+                            .FirstOrDefaultAsync(message => message.Conversation.Id == conversation.Id)
                     };
                 return conversations;
+            }
+            finally
+            {
+                _lock.Release();
             }
         }
 
@@ -217,26 +242,31 @@ namespace FreedomVoice.Core.Services
         /// </summary>
         /// <param name="conversationId"></param>
         /// <returns>Conversation from cache</returns>
-        public Conversation GetConversation(long conversationId)
+        public async Task<Conversation> GetConversation(long conversationId)
         {
-            lock (_objLock)
+            await _lock.WaitAsync();
+            try
             {
-                var conversation = _conversationRepository.TableNoTracking
+                var conversation = await  _conversationRepository.TableNoTracking
                     .Include(x => x.SystemPhone)
                     .Include(x => x.Messages)
                     .Include(x => x.ToPhone)
-                    .LastOrDefault(x => x.Id == conversationId);
+                    .LastOrDefaultAsync(x => x.Id == conversationId);
 
                 conversation.Messages = new[]
                     {
-                        _messagesRepository
+                        await _messagesRepository
                             .TableNoTracking
                             .Include(message => message.From)
                             .Include(message => message.To)
                             .OrderByDescending(message => message.CreatedAt)
-                            .FirstOrDefault(message => message.Conversation.Id == conversation.Id)
+                            .FirstOrDefaultAsync(message => message.Conversation.Id == conversation.Id)
                     };
                 return conversation;
+            }
+            finally
+            {
+                _lock.Release();
             }
         }
 
@@ -248,9 +278,9 @@ namespace FreedomVoice.Core.Services
         /// <param name="limit"></param>
         /// <param name="start"></param>
         /// <returns></returns>
-        public IEnumerable<Message> GetMessagesByConversation(Conversation conversation, int limit, int start)
+        public async Task<IEnumerable<Message>> GetMessagesByConversation(Conversation conversation, int limit, int start)
         {
-            return GetMessagesByConversation(conversation.Id, limit, start);
+            return await GetMessagesByConversation(conversation.Id, limit, start);
         }
 
         /// <summary>
@@ -261,9 +291,10 @@ namespace FreedomVoice.Core.Services
         /// <param name="limit"></param>
         /// <param name="start"></param>
         /// <returns></returns>
-        public IEnumerable<Message> GetMessagesByConversation(long conversationId, int limit, int start)
+        public async Task<IEnumerable<Message>> GetMessagesByConversation(long conversationId, int limit, int start)
         {
-            lock (_objLock)
+            await _lock.WaitAsync();
+            try
             {
                 var conversationWithMessages = _messagesRepository.TableNoTracking
                     .Include(conversation => conversation.Conversation)
@@ -272,6 +303,10 @@ namespace FreedomVoice.Core.Services
                     .Where(conversation => conversation.Conversation.Id == conversationId);
                 return conversationWithMessages.Skip(start).Take(limit);
             }
+            finally
+            {
+                _lock.Release();
+            }
         }
         
         /// <summary>
@@ -279,19 +314,25 @@ namespace FreedomVoice.Core.Services
         /// </summary>
         /// <param name="startTime"></param>
         /// <returns></returns>
-        public DateTime GetLastConversationUpdateDate(DateTime startTime)
+        public async Task<DateTime> GetLastConversationUpdateDate(DateTime startTime)
         {
-            lock (_objLock)
+            await _lock.WaitAsync();
+            try
             {
                 if (!_conversationRepository.TableNoTracking.Any(conversation => conversation.LastSyncDate < startTime))
                     return new DateTime();
                 return _conversationRepository.TableNoTracking.Where(conversation => conversation.LastSyncDate < startTime).Max(conversation => conversation.LastSyncDate);
             }
+            finally
+            {
+                _lock.Release();
+            }
         }
 
-        public Message GetMessageBy(long conversationId, long messageId)
+        public async Task<Message> GetMessageBy(long conversationId, long messageId)
         {
-            lock (_objLock)
+            await _lock.WaitAsync();
+            try
             {
                 var conversationWithMessages = _messagesRepository.TableNoTracking
                     .Include(conversation => conversation.Conversation)
@@ -299,7 +340,11 @@ namespace FreedomVoice.Core.Services
                     .Include(conversation => conversation.To)
                     .Where(conversation => conversation.Conversation.Id == conversationId && conversation.Id == messageId);
 
-                return conversationWithMessages.FirstOrDefault();
+                return await conversationWithMessages.FirstOrDefaultAsync();
+            }
+            finally
+            {
+                _lock.Release();
             }
         }
     }
