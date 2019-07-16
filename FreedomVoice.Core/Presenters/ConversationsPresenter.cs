@@ -136,6 +136,7 @@ namespace FreedomVoice.Core.Presenters
             if (_isLoading) return;
             _currentDate = DateTime.Now;
             _currentPage = 1;
+            HasMore = false;
             Items = new List<ConversationViewModel>();
             await _PerformLoading();
         }
