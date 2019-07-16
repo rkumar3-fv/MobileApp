@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
+    <device id="retina6_1" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="EHf-IW-A2E">
+            <objects>
+                <viewController id="01J-lp-oVM" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="Llm-lL-Icb"/>
+                        <viewControllerLayoutGuide type="bottom" id="xb3-aO-Qok"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="Ze5-6b-2t3">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" insetsLayoutMarginsFromSafeArea="NO" image="Login-667h.png" translatesAutoresizingMaskIntoConstraints="NO" id="B4Q-Ed-8mE">
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                            </imageView>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" insetsLayoutMarginsFromSafeArea="NO" image="logo_freedomvoice_white.png" translatesAutoresizingMaskIntoConstraints="NO" id="MGa-hJ-dc9">
+                                <rect key="frame" x="199" y="440" width="16" height="16"/>
+                            </imageView>
+                        </subviews>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="B4Q-Ed-8mE" secondAttribute="trailing" id="0fg-wQ-5UV"/>
+                            <constraint firstItem="B4Q-Ed-8mE" firstAttribute="top" secondItem="Ze5-6b-2t3" secondAttribute="top" id="NCH-7G-CQw"/>
+                            <constraint firstAttribute="bottom" secondItem="B4Q-Ed-8mE" secondAttribute="bottom" id="de9-vN-j4c"/>
+                            <constraint firstItem="MGa-hJ-dc9" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="oUo-zz-swa"/>
+                            <constraint firstItem="B4Q-Ed-8mE" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leading" id="ouN-0K-RTC"/>
+                            <constraint firstItem="MGa-hJ-dc9" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="rs9-Ce-JEc"/>
+                        </constraints>
+                    </view>
+                    <extendedEdge key="edgesForExtendedLayout"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="iYj-Kq-Ea1" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="53" y="375"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="Login-667h.png" width="375" height="667"/>
+        <image name="logo_freedomvoice_white.png" width="16" height="16"/>
+    </resources>
+</document>

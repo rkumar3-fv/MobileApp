@@ -142,7 +142,7 @@ namespace FreedomVoice.Core.Presenters
 
         public async void LoadMoreAsync()
         {
-            if (!HasMore && !_isLoading) return;
+            if (!HasMore || !_isLoading) return;
             _currentPage++;
             await _PerformLoading();
         }

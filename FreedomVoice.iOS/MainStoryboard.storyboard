@@ -37,7 +37,18 @@
                     <view key="view" contentMode="scaleToFill" id="1157">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Login-667h.png" translatesAutoresizingMaskIntoConstraints="NO" id="NQs-o9-mxa">
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                            </imageView>
+                        </subviews>
                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="NQs-o9-mxa" secondAttribute="trailing" id="1wU-4H-1pn"/>
+                            <constraint firstItem="NQs-o9-mxa" firstAttribute="top" secondItem="1157" secondAttribute="top" id="Fya-Sz-H9M"/>
+                            <constraint firstAttribute="bottom" secondItem="NQs-o9-mxa" secondAttribute="bottom" id="HXb-hl-tsE"/>
+                            <constraint firstItem="NQs-o9-mxa" firstAttribute="leading" secondItem="1157" secondAttribute="leading" id="RoE-aT-6u3"/>
+                        </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Title" id="2036"/>
                     <nil key="simulatedTopBarMetrics"/>
@@ -371,6 +382,9 @@
             <point key="canvasLocation" x="2678" y="317"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="Login-667h.png" width="16" height="16"/>
+    </resources>
     <inferredMetricsTieBreakers>
         <segue reference="4885"/>
     </inferredMetricsTieBreakers>

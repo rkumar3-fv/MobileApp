@@ -94,7 +94,7 @@ namespace FreedomVoice.iOS
             await viewModel.GetPoolingIntervalAsync();
 
             await ProceedGetAccountsList(true);
-            }
+        }
 
         private async void ProceedWithAuthenticatedUser()
         {
