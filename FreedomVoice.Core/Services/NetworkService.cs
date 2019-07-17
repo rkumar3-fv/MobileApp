@@ -41,8 +41,7 @@ namespace FreedomVoice.Core.Services
                     result.Result = messages.Select(x => _mapper.Map<Conversation>(x)).ToList();
                 }
                 if (result.Code == Entities.Enums.ErrorCodes.Ok) 
-                    _cacheService.UpdateConversationsCache(result.Result);
-
+                    await _cacheService.UpdateConversationsCache(result.Result);
                 result.Result = result.Result.Where(x => !x.IsRemoved).ToList();
                 return result;
             }
@@ -89,7 +88,7 @@ namespace FreedomVoice.Core.Services
                 });
                 
                 if (result.Code == Entities.Enums.ErrorCodes.Ok && result.Result != null)
-                    _cacheService.UpdateConversationsCache(new[] { result.Result });
+                    await _cacheService.UpdateConversationsCache(new[] { result.Result });
 
                 return result;
             }
@@ -123,7 +122,7 @@ namespace FreedomVoice.Core.Services
                     result.Result = messages.Select(x => _mapper.Map<Message>(x)).ToList();
                 }
                 if (result.Code == Entities.Enums.ErrorCodes.Ok)
-                    _cacheService.UpdateMessagesCache(conversationId, result.Result);
+                    await _cacheService.UpdateMessagesCache(conversationId, result.Result);
 
                 result.Result = result.Result.ToList();
                 return result;
@@ -145,7 +144,7 @@ namespace FreedomVoice.Core.Services
         {
             var result = await ApiHelper.SendMessage(request);
             if(result.Result != null && result.Result.Entity != null)
-                _cacheService.UpdateConversationsCache(new[] { result.Result.Entity });
+                await _cacheService.UpdateConversationsCache(new[] { result.Result.Entity });
 
             return result;
         }
