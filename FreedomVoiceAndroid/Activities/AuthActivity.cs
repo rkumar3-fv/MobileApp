@@ -2,6 +2,8 @@
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
+using Android.Gms.Common;
+using Android.Gms.Common.Apis;
 using Android.Graphics;
 using Android.OS;
 using Android.Support.Design.Widget;
@@ -66,6 +68,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             var progressColor = new Color(ContextCompat.GetColor(this, Resource.Color.colorProgressWhite));
             _progressLogin.IndeterminateDrawable?.SetColorFilter(progressColor, PorterDuff.Mode.SrcIn);
             _progressLogin.ProgressDrawable?.SetColorFilter(progressColor, PorterDuff.Mode.SrcIn);
+            CheckPlayServices();
         }
 
         private void FieldOnFocusChange(object sender, View.FocusChangeEventArgs focusChangeEventArgs)
@@ -136,6 +139,26 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                     _progressLogin.Visibility = ViewStates.Visible;
                 if (_authLabel.Visibility == ViewStates.Visible)
                     _authLabel.Visibility = ViewStates.Invisible;
+            }
+        }
+
+        private void CheckPlayServices()
+        {
+            TestIfGooglePlayServicesIsInstalled();
+        }
+
+        void TestIfGooglePlayServicesIsInstalled()
+        {
+            var queryResult = GoogleApiAvailability.Instance.IsGooglePlayServicesAvailable(this);
+            if (queryResult != ConnectionResult.Success)
+            {
+                if (GoogleApiAvailability.Instance.IsUserResolvableError(queryResult))
+                {
+                    var errorString = GoogleApiAvailability.Instance.GetErrorString(queryResult);
+                    var errorDialog = GoogleApiAvailability.Instance.GetErrorDialog(this, queryResult, 1000);
+                    errorDialog.SetCancelable(false);
+                    errorDialog.Show();
+                }
             }
         }
 

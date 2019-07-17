@@ -110,7 +110,10 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                 Toolbar.SetIcon(Resource.Drawable.ic_account_white);
                 Toolbar.SetDisplayShowHomeEnabled(true);
                 ContactsHelper.Instance(Context).GetName(ConversationPhone, out var name);
-                Toolbar.Title = string.IsNullOrEmpty(name) || name.Length < ConversationPhone.Length ? ConversationPhone : name;
+                var title = string.IsNullOrEmpty(name) || name.Length < ConversationPhone.Length
+                    ? ConversationPhone
+                    : name;
+                Toolbar.Title = " " + title;
                 _spinnerContainer.Visibility = ViewStates.Visible;
                 _selectContactContainer.Visibility = ViewStates.Gone;
 
