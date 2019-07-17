@@ -8,13 +8,15 @@ using UIKit;
 
 namespace FreedomVoice.iOS.ViewControllers
 {
-	partial class AccountsViewController : BaseViewController
-	{
+    partial class AccountsViewController : BaseViewController
+    {
         protected override string PageName => "Accounts Screen";
 
         public List<Account> AccountsList;
 
-	    public AccountsViewController(IntPtr handle) : base(handle) { }
+        public AccountsViewController(IntPtr handle) : base(handle)
+        {
+        }
 
         public override void ViewDidLoad()
         {
