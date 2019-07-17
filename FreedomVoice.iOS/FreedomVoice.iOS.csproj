@@ -345,6 +345,7 @@
     <Compile Include="TableViewCells\Texting\Messaging\OutgoingMessageTableViewCell.designer.cs">
       <DependentUpon>OutgoingMessageTableViewCell.cs</DependentUpon>
     </Compile>
+    <InterfaceDefinition Include="LaunchScreen.storyboard" />
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\tab_texts%402x.png" />
@@ -359,6 +360,7 @@
     <BundleResource Include="Resources\bubble_sent%402x.png" />
     <BundleResource Include="Resources\bubble_sent.png" />
     <BundleResource Include="Resources\bubble_sent%403x.png" />
+    <BundleResource Include="Resources\Default-568h.png" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="AutoMapper, Version=8.0.0.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
@@ -673,6 +675,7 @@
     <ImageAsset Include="Resources\Media.xcassets\LaunchImage.launchimage\Contents.json" />
     <ImageAsset Include="Resources\Media.xcassets\LaunchImage.launchimage\Default-568h%402x.png" />
     <ImageAsset Include="Resources\Media.xcassets\AppIcons.appiconset\Icon%402x.png" />
+    <ImageAsset Include="Resources\Media.xcassets\LaunchImage.launchimage\Default-568h.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FreedomVoice.Core\FreedomVoice.Core.csproj">

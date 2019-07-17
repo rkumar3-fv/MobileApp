@@ -34,10 +34,12 @@ namespace FreedomVoice.Core.Services
                     Start = start,
                     Limit = limit
                 });
-                
+
                 if (result.Result == null)
-                    result.Result = _cacheService.GetConversations(phone, limit, start).Select(x => _mapper.Map<Conversation>(x)).ToList();
-                
+                {
+                    var messages = await _cacheService.GetConversations(phone, limit, start);
+                    result.Result = messages.Select(x => _mapper.Map<Conversation>(x)).ToList();
+                }
                 if (result.Code == Entities.Enums.ErrorCodes.Ok) 
                     _cacheService.UpdateConversationsCache(result.Result);
 
@@ -48,10 +50,11 @@ namespace FreedomVoice.Core.Services
             {
                 Console.WriteLine($"GetConversations (phone: {phone}, startDate: {startDate}, lastUpdateDate: {lastUpdateDate}, start: {start}, limit: {lastUpdateDate})" +
                                   $" has been finished failed with error:\t\n{exception}");
+                var messages = await _cacheService.GetConversations(phone, limit, start);
                 return new BaseResult<List<Conversation>>
                 {
                     Code = Entities.Enums.ErrorCodes.ConnectionLost,
-                    Result = _cacheService.GetConversations(phone, limit, start).Select(x => _mapper.Map<Conversation>(x)).ToList()
+                    Result = messages.Select(x => _mapper.Map<Conversation>(x)).ToList()
                 };
             }
         }
@@ -113,10 +116,12 @@ namespace FreedomVoice.Core.Services
                         Start = start,
                         Limit = limit
                     });
-               
+
                 if (result.Result == null)
-                    result.Result = _cacheService.GetMessagesByConversation(conversationId, limit, start).Select(x => _mapper.Map<Message>(x)).ToList();
-               
+                {
+                    var messages = await _cacheService.GetMessagesByConversation(conversationId, limit, start);
+                    result.Result = messages.Select(x => _mapper.Map<Message>(x)).ToList();
+                }
                 if (result.Code == Entities.Enums.ErrorCodes.Ok)
                     _cacheService.UpdateMessagesCache(conversationId, result.Result);
 
@@ -127,10 +132,11 @@ namespace FreedomVoice.Core.Services
             {
                 Console.WriteLine($"GetMessages (conversationId: {conversationId}, startDate: {startDate}, lastUpdateDate: {lastUpdateDate}, start: {start}, limit: {lastUpdateDate})" +
                                   $" has been finished failed with error:\t\n{exception}");
+                var messages = await _cacheService.GetMessagesByConversation(conversationId, limit, start);
                 return new BaseResult<List<Message>>
                 {
                     Code = Entities.Enums.ErrorCodes.ConnectionLost,
-                    Result = _cacheService.GetMessagesByConversation(conversationId, limit, start).Select(x => _mapper.Map<Message>(x)).ToList()
+                    Result = messages.Select(x => _mapper.Map<Message>(x)).ToList()
                 };
             }
         }

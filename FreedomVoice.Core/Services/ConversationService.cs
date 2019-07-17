@@ -30,7 +30,7 @@ namespace FreedomVoice.Core.Services
             if (page <= 0) throw new ArgumentException(nameof(page));
             if (count <= 0) throw new ArgumentException(nameof(count));
             var result = new ConversationListResponse();
-            var lastSyncDate = _cacheService.GetLastConversationUpdateDate(current);
+            var lastSyncDate = await _cacheService.GetLastConversationUpdateDate(current);
             var start = count * (page - 1);
 
             var netConversations = await _networkService.GetConversations(phone, current, lastSyncDate, start, count);

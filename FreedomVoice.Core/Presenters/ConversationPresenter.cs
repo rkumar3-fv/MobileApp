@@ -71,11 +71,13 @@ namespace FreedomVoice.Core.Presenters
         public event EventHandler ContactsUpdated;
         public event EventHandler ItemsChanged;
         public event EventHandler MessageSent;
+        public event EventHandler ServerError;
 
         #endregion
 
         #region Public variables
 
+        
         public List<IChatMessage> Items;
         public bool HasMore { get; private set; }
 
@@ -361,6 +363,11 @@ namespace FreedomVoice.Core.Presenters
 
             _isLoading = true;
             var res = await _messagesService.GetList(_conversationId.Value, _currentDate, DefaultCount, _currentPage);
+            if(res.ResponseCode != Entities.Enums.ErrorCodes.Ok)
+            {
+                _isLoading = false;
+                ServerError?.Invoke(this, null);
+            }
             HasMore = !res.IsEnd;
 
             foreach (var row in res.Messages)

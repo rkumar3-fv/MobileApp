@@ -1,76 +1,6 @@
 {
   "images": [
     {
-      "orientation": "landscape",
-      "extent": "full-screen",
-      "size": "1920x1080",
-      "scale": "1x",
-      "idiom": "tv",
-      "minimum-system-version": "9.0"
-    },
-    {
-      "orientation": "landscape",
-      "extent": "full-screen",
-      "size": "1920x1080",
-      "scale": "2x",
-      "idiom": "tv",
-      "minimum-system-version": "11.0"
-    },
-    {
-      "minimum-system-version": "12.0",
-      "orientation": "portrait",
-      "extent": "full-screen",
-      "size": "414x896",
-      "subtype": "1792",
-      "scale": "3x",
-      "idiom": "iphone"
-    },
-    {
-      "minimum-system-version": "12.0",
-      "orientation": "portrait",
-      "extent": "full-screen",
-      "size": "276x597.3",
-      "subtype": "2688",
-      "scale": "3x",
-      "idiom": "iphone"
-    },
-    {
-      "minimum-system-version": "12.0",
-      "orientation": "landscape",
-      "extent": "full-screen",
-      "size": "896x414",
-      "subtype": "1792",
-      "scale": "3x",
-      "idiom": "iphone"
-    },
-    {
-      "minimum-system-version": "12.0",
-      "orientation": "landscape",
-      "extent": "full-screen",
-      "size": "597.3x276",
-      "subtype": "2688",
-      "scale": "3x",
-      "idiom": "iphone"
-    },
-    {
-      "minimum-system-version": "11.0",
-      "orientation": "portrait",
-      "extent": "full-screen",
-      "size": "375x812",
-      "subtype": "2436h",
-      "scale": "3x",
-      "idiom": "iphone"
-    },
-    {
-      "minimum-system-version": "11.0",
-      "orientation": "landscape",
-      "extent": "full-screen",
-      "size": "812x375",
-      "subtype": "2436h",
-      "scale": "3x",
-      "idiom": "iphone"
-    },
-    {
       "minimum-system-version": "8.0",
       "orientation": "portrait",
       "extent": "full-screen",
@@ -101,14 +31,6 @@
       "minimum-system-version": "7.0",
       "orientation": "portrait",
       "extent": "full-screen",
-      "size": "1024x1366",
-      "scale": "2x",
-      "idiom": "ipad"
-    },
-    {
-      "minimum-system-version": "7.0",
-      "orientation": "portrait",
-      "extent": "full-screen",
       "size": "320x480",
       "scale": "2x",
       "idiom": "iphone"
@@ -117,7 +39,6 @@
       "minimum-system-version": "7.0",
       "orientation": "portrait",
       "extent": "full-screen",
-      "filename": "Default-568h.png",
       "size": "320x568",
       "subtype": "retina4",
       "scale": "2x",
@@ -172,7 +93,6 @@
     {
       "orientation": "portrait",
       "extent": "full-screen",
-      "filename": "Default-568h@2x.png",
       "size": "320x568",
       "subtype": "retina4",
       "scale": "2x",
@@ -180,20 +100,6 @@
     },
     {
       "orientation": "portrait",
-      "extent": "to-status-bar",
-      "size": "768x1004",
-      "scale": "1x",
-      "idiom": "ipad"
-    },
-    {
-      "orientation": "portrait",
-      "extent": "to-status-bar",
-      "size": "768x1004",
-      "scale": "2x",
-      "idiom": "ipad"
-    },
-    {
-      "orientation": "portrait",
       "extent": "full-screen",
       "size": "768x1024",
       "scale": "1x",
@@ -207,16 +113,16 @@
       "idiom": "ipad"
     },
     {
-      "orientation": "landscape",
+      "orientation": "portrait",
       "extent": "to-status-bar",
-      "size": "1024x748",
+      "size": "768x1004",
       "scale": "1x",
       "idiom": "ipad"
     },
     {
-      "orientation": "landscape",
+      "orientation": "portrait",
       "extent": "to-status-bar",
-      "size": "1024x748",
+      "size": "768x1004",
       "scale": "2x",
       "idiom": "ipad"
     },
@@ -231,6 +137,20 @@
       "orientation": "landscape",
       "extent": "full-screen",
       "size": "1024x768",
+      "scale": "2x",
+      "idiom": "ipad"
+    },
+    {
+      "orientation": "landscape",
+      "extent": "to-status-bar",
+      "size": "1024x748",
+      "scale": "1x",
+      "idiom": "ipad"
+    },
+    {
+      "orientation": "landscape",
+      "extent": "to-status-bar",
+      "size": "1024x748",
       "scale": "2x",
       "idiom": "ipad"
     }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using FreedomVoice.Core.Services.Interfaces;
 using FreedomVoice.Core.Utils;
 using FreedomVoice.DAL.DbEntities;
@@ -39,9 +40,9 @@ namespace FreedomVoice.Core.Services
             return _instance;
         }
 
-        public void ReceivedNotification(PushType type, FreedomVoice.Entities.Response.Conversation model)
+        public async Task ReceivedNotification(PushType type, FreedomVoice.Entities.Response.Conversation model)
         {
-            var savedConversation = _saveConversation(model);
+            var savedConversation = await _saveConversation(model);
             switch (type)
             {
                 case PushType.NewMessage:
@@ -55,18 +56,18 @@ namespace FreedomVoice.Core.Services
             }
         }
 
-        private Conversation _saveConversation(FreedomVoice.Entities.Response.Conversation conversation)
+        private async Task<Conversation> _saveConversation(FreedomVoice.Entities.Response.Conversation conversation)
         {
             var list = new[] {conversation};
-            _cacheService.UpdateConversationsCache(list);
-            var saveConversation = _cacheService.GetConversation(conversation.Id);
+            await _cacheService.UpdateConversationsCache(list);
+            var saveConversation = await _cacheService.GetConversation(conversation.Id);
             return saveConversation;
         }
         
-        private Message _saveMessage(FreedomVoice.Entities.Response.Conversation conversation)
+        private async Task<Message> _saveMessage(FreedomVoice.Entities.Response.Conversation conversation)
         {
-            _cacheService.UpdateMessagesCache(conversation.Id, conversation.Messages);
-            return _cacheService.GetMessageBy(conversation.Id, conversation.Messages.First().Id);
+            await _cacheService.UpdateMessagesCache(conversation.Id, conversation.Messages);
+            return await _cacheService.GetMessageBy(conversation.Id, conversation.Messages.First().Id);
         }
     }
 }

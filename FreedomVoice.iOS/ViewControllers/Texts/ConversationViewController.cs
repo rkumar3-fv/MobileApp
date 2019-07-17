@@ -173,7 +173,10 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             _tableView.TrailingAnchor.ConstraintEqualTo(View.TrailingAnchor).Active = true;
             
             _chatField.TopAnchor.ConstraintEqualTo(_tableView.BottomAnchor).Active = true;
-            _bottomConstraint = _chatField.BottomAnchor.ConstraintEqualTo(View.BottomAnchor);
+            if (UIDevice.CurrentDevice.CheckSystemVersion(11, 0))
+                _bottomConstraint = _chatField.BottomAnchor.ConstraintEqualTo(View.SafeAreaLayoutGuide.BottomAnchor);
+            else
+                _bottomConstraint = _chatField.BottomAnchor.ConstraintEqualTo(View.BottomAnchor);
             _bottomConstraint.Active = true;
             
             _chatField.LeadingAnchor.ConstraintEqualTo(View.LeadingAnchor).Active = true;
@@ -210,6 +213,12 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
                 source.UpdateItems(items);
                 AppDelegate.ActivityIndicator.Hide();
                 _refreshControl.EndRefreshing();
+            };
+            Presenter.ServerError += (sender, args) =>
+            {
+                AppDelegate.ActivityIndicator.Hide();
+                _refreshControl.EndRefreshing();
+                UIAlertHelper.ShowAlert(this, ConversationTexts.ErrorTitle, ConversationsPresenter.DefaultError);
             };
             View.AddSubview(AppDelegate.ActivityIndicator);
             AppDelegate.ActivityIndicator.Show();

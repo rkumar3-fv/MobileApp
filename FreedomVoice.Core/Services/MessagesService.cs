@@ -34,7 +34,7 @@ namespace FreedomVoice.Core.Services
             if (count <= 0) throw new ArgumentException(nameof(count));
 
             var result = new MessageListResponse();
-            var lastSyncDate = _cacheService.GetLastConversationUpdateDate(current);
+            var lastSyncDate = await _cacheService.GetLastConversationUpdateDate(current);
             var start = count * (page - 1);
             var netMessages = await _networkService.GetMessages(conversationId, current, lastSyncDate, start, count);
             result.ResponseCode = netMessages.Code;
@@ -46,7 +46,7 @@ namespace FreedomVoice.Core.Services
 
         public async Task<SendingResponse<DAL.DbEntities.Conversation>> SendMessage(long conversationId, string text)
         {
-            var conversation = _cacheService.GetConversation(conversationId);
+            var conversation = await _cacheService.GetConversation(conversationId);
             if (conversation == null)
                 throw new ArgumentException("Conversation not found");
             var res = await SendMessage(conversation.SystemPhone.PhoneNumber, conversation.ToPhone.PhoneNumber, text);
