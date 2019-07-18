@@ -75,8 +75,6 @@ namespace FreedomVoice.Core.Services
                     message.State = (SendingState) messageFromApi.State;
                 }
             }
-
-//            await UpdatePhones(conversation, alreadyCreatedPhones);
         }
 
         private Conversation UpdateCachedPhones(Conversation conversation, IDictionary<long, Phone> alreadyCreatedPhones)
