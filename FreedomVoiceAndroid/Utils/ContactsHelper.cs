@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 using Android.Content;
 using Android.Database;
 using Android.Provider;
+using Android.Util;
 using com.FreedomVoice.MobileApp.Android.Activities;
 using com.FreedomVoice.MobileApp.Android.Helpers;
 using FreedomVoice.Core.Utils;
@@ -23,24 +24,95 @@ namespace com.FreedomVoice.MobileApp.Android.Utils
         private static readonly object Locker = new object();
         public event EventHandler ContactsPermissionUpdated;
         private readonly Context _context;
-        private readonly Dictionary<string, string> _phonesCache;
+        // normalized phone (only numbers) to contact name 
+        private readonly Dictionary<string, string> _phonesCache = new Dictionary<string, string>();
         private readonly AppHelper _appHelper;
         private readonly IPhoneFormatter _phoneFormatter = ServiceContainer.Resolve<IPhoneFormatter>();
 
         private ContactsHelper(Context context)
         {
             _context = context;
-            _phonesCache = new Dictionary<string, string>();
             _appHelper = App.GetApplication(_context).ApplicationHelper;
             if (_appHelper.CheckContactsPermission())
+            {
                 StartListenContactsChanges();
+            }
         }
 
         private void ContactsObserverOnContactsChangingEvent(object sender, bool b)
         {
-           if (_phonesCache != null && _phonesCache.Count > 0)
-                _phonesCache.Clear(); 
+           ReloadContactsCache();
            ContactsPermissionUpdated?.Invoke(null, null);
+        }
+
+        private void ReloadContactsCache()
+        {
+            _phonesCache.Clear();
+
+            string[] projection =
+            {
+                ContactsContract.Contacts.InterfaceConsts.Id,
+                ContactsContract.Contacts.InterfaceConsts.DisplayName,
+                ContactsContract.Contacts.InterfaceConsts.HasPhoneNumber
+            };
+
+            var selection = string.Format(
+                "(({0} IS NOT NULL) AND ({0} != '') AND ({1} = '1'))",
+                ContactsContract.Contacts.InterfaceConsts.DisplayName,
+                ContactsContract.Contacts.InterfaceConsts.InVisibleGroup
+            );
+            var loader = new CursorLoader(_context,
+                ContactsContract.Contacts.ContentUri,
+                projection,
+                selection,
+                null,
+                null
+            );
+            try
+            {
+                ICursor cursor = loader.LoadInBackground().JavaCast<ICursor>();
+                var idIndex = cursor.GetColumnIndex(ContactsContract.Contacts.InterfaceConsts.Id);
+                var displayNameIndex = cursor.GetColumnIndex(ContactsContract.Contacts.InterfaceConsts.DisplayName);
+                var hasPhoneIndex = cursor.GetColumnIndex(ContactsContract.Contacts.InterfaceConsts.HasPhoneNumber);
+
+                if (cursor.MoveToFirst())
+                {
+                    do
+                    {
+                        var contactId = cursor.GetString(idIndex);
+                        var name = cursor.GetString(displayNameIndex);
+                        var hasPhone = cursor.GetInt(hasPhoneIndex);
+
+                        if (hasPhone > 0)
+                        {
+                            var numberCursor = new CursorLoader(
+                                _context,
+                                ContactsContract.CommonDataKinds.Phone.ContentUri,
+                                new[] {ContactsContract.CommonDataKinds.Phone.Number},
+                                ContactsContract.CommonDataKinds.Phone.InterfaceConsts.ContactId + "=?",
+                                new[] {contactId},
+                                null
+                            ).LoadInBackground().JavaCast<ICursor>();
+
+                            if (numberCursor.MoveToFirst())
+                            {
+                                var numberIndex = numberCursor.GetColumnIndex(ContactsContract.CommonDataKinds.Phone.Number);
+                                do
+                                {
+                                    var number = numberCursor.GetString(numberIndex);
+                                    if (_phonesCache != null) _phonesCache[_phoneFormatter.Normalize(number)] = name;
+                                } while (numberCursor.MoveToNext());
+                            }
+                            numberCursor.Close();
+                        }
+                    } while (cursor.MoveToNext());
+                    cursor.Close();
+                }
+            }
+            catch (JavaException e)
+            {
+                Log.Error(this.GetType().Name, e.StackTrace);
+            }
         }
 
         /// <summary>
@@ -61,6 +133,7 @@ namespace com.FreedomVoice.MobileApp.Android.Utils
 
         private void StartListenContactsChanges()
         {
+            ReloadContactsCache();
             var contactsObserver = new ContactsObserver();
             _context.ContentResolver.RegisterContentObserver(ContactsContract.Contacts.ContentUri, true, contactsObserver);
             contactsObserver.ContactsChangingEvent += ContactsObserverOnContactsChangingEvent;
@@ -91,36 +164,7 @@ namespace com.FreedomVoice.MobileApp.Android.Utils
                 return true;
             }
 
-            var uri = Uri.WithAppendedPath(ContactsContract.PhoneLookup.ContentFilterUri, Uri.Encode(normalizedPhone));
-            string[] projection = { ContactsContract.Contacts.InterfaceConsts.DisplayName };
-            var selection = string.Format("(({0} IS NOT NULL) AND ({0} != '') AND ({1} = '1'))",
-                ContactsContract.Contacts.InterfaceConsts.DisplayName, ContactsContract.Contacts.InterfaceConsts.InVisibleGroup);
-            var loader = new CursorLoader(_context, uri, projection, selection, null, null);
-            ICursor cursor;
-            try
-            {
-                cursor = loader.LoadInBackground().JavaCast<ICursor>();
-            }
-            catch (Java.Lang.RuntimeException)
-            {
-                cursor = null;
-            }
-
-
-            if (cursor == null)
-            {
-                name = _phoneFormatter.Format(normalizedPhone);
-                return false;
-            }
-            if (cursor.MoveToFirst())
-            {
-                name = cursor.GetString(0);
-                AddToCache(normalizedPhone, name);
-                cursor.Close();
-                return true;
-            }
-            name = _phoneFormatter.Format(normalizedPhone);
-            cursor.Close();
+            name = normalizedPhone;
             return false;
         }
 
