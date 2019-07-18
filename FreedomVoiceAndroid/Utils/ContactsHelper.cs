@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Android.Content;
 using Android.Database;
+using Android.OS;
 using Android.Provider;
 using Android.Util;
 using com.FreedomVoice.MobileApp.Android.Activities;
@@ -41,8 +42,11 @@ namespace com.FreedomVoice.MobileApp.Android.Utils
 
         private void ContactsObserverOnContactsChangingEvent(object sender, bool b)
         {
-           ReloadContactsCache();
-           ContactsPermissionUpdated?.Invoke(null, null);
+            new Handler(Looper.MainLooper).Post(() =>
+            {
+                ReloadContactsCache();
+                ContactsPermissionUpdated?.Invoke(null, null);
+            });
         }
 
         private void ReloadContactsCache()
