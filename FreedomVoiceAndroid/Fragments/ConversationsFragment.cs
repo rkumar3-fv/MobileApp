@@ -5,6 +5,7 @@ using Android.Support.V4.Content;
 using Android.Support.V4.View;
 using Android.Support.V4.Widget;
 using Android.Support.V7.Widget;
+using Android.Util;
 using Android.Views;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Activities;
@@ -110,7 +111,6 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             ContentActivity.SearchListener.OnApply += SearchListenerOnApply;
             ContentActivity.SearchListener.OnCollapse += SearchListenerOnCancel;
             _contactNameProvider.ContactsUpdated += ProviderOnContactsUpdated;
-            _contactNameProvider.ContactsUpdated += ProviderOnContactsUpdated;
             if (_presenter != null && _presenter.Items.Count > 0) UpdateList(null, null);
         }      
 
@@ -121,7 +121,6 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             ContentActivity.SearchListener.OnChange -= SearchListenerOnChange;
             ContentActivity.SearchListener.OnApply -= SearchListenerOnApply;
             ContentActivity.SearchListener.OnCollapse -= SearchListenerOnCancel;
-            _contactNameProvider.ContactsUpdated -= ProviderOnContactsUpdated;
             _contactNameProvider.ContactsUpdated -= ProviderOnContactsUpdated;
         }
 
