@@ -668,6 +668,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         /// <returns>prepaired intent</returns>
         private void PrepareIntent(long requestId, BaseRequest request)
         {
+            if (!_app.IsAppInForeground && Build.VERSION.SdkInt >= BuildVersionCodes.O) return;
             var intent = new Intent(_app, typeof(ComService));
             intent.PutExtra(ComService.RequestIdTag, requestId);
             intent.PutExtra(ComServiceResultReceiver.ReceiverTag, _receiver);

@@ -36,13 +36,12 @@ namespace FreedomVoice.iOS.TableViewSources
             return _accounts?.Count ?? 0;
         }
 
-        public async override void RowSelected(UITableView tableView, NSIndexPath indexPath)
+        public override async void RowSelected(UITableView tableView, NSIndexPath indexPath)
         {
             tableView.DeselectRow(indexPath, false);
             var selectedAccount = _accounts[indexPath.Row];
 
             UserDefault.LastUsedAccount = selectedAccount.PhoneNumber;
-            UserDefault.AccountPhoneNumber = selectedAccount.PhoneNumber;
 
             if (!UserDefault.IsLaunchedBefore)
             {
@@ -56,12 +55,13 @@ namespace FreedomVoice.iOS.TableViewSources
                 return;
             }
 
-            var mainTabBarController = await AppDelegate.GetMainTabBarController(selectedAccount, _navigationController, true);
+            var mainTabBarController =
+                await AppDelegate.GetMainTabBarController(selectedAccount, _navigationController, true);
             if (mainTabBarController != null)
                 _navigationController.PushViewController(mainTabBarController, false);
             else
                 (UIApplication.SharedApplication.Delegate as AppDelegate)?.PassToAuthentificationProcess();
-            
+
             ServiceContainer.Resolve<IAppNavigator>()?.UpdateMainTabBarController(mainTabBarController);
         }
     }

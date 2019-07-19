@@ -57,11 +57,9 @@
 
   <!-- Content toolbar theme -->
   <style name="ToolbarTheme" parent="@style/Widget.AppCompat.Light.ActionBar">
-    <item name="android:background">@color/colorPrimary</item>
     <item name="android:colorBackground">@color/colorBackground</item>
     <item name="android:displayOptions">showHome|showTitle</item>
     <item name="displayOptions">showHome|showTitle</item>
-    <item name="background">@color/colorPrimary</item>
     <item name="android:itemTextAppearance">@style/MenuTextAppearance</item>
     <item name="titleTextStyle">@style/Theme.MyAuthTheme.ActionBar.TitleTextStyle</item>
     <item name="android:actionOverflowButtonStyle">@style/CustomButtonOverflow</item>
@@ -98,7 +96,6 @@
 
   <!-- OverFlow menu Styles -->
   <style name="PopupMenuListView" parent="@style/Widget.AppCompat.ListView.DropDown">
-    <item name="android:background">@color/colorBackground</item>
     <item name="android:colorBackground">@color/colorBackground</item>
     <item name="android:popupBackground">@color/colorBackground</item>
   </style>

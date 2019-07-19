@@ -337,7 +337,18 @@
                     <view key="view" contentMode="scaleToFill" id="5287">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Default-667h.png" translatesAutoresizingMaskIntoConstraints="NO" id="NHb-9w-eCG">
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                            </imageView>
+                        </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="NHb-9w-eCG" secondAttribute="trailing" id="8o0-8c-529"/>
+                            <constraint firstAttribute="bottom" secondItem="NHb-9w-eCG" secondAttribute="bottom" id="Jx6-g8-GGd"/>
+                            <constraint firstItem="NHb-9w-eCG" firstAttribute="leading" secondItem="5287" secondAttribute="leading" id="TQf-En-EKd"/>
+                            <constraint firstItem="NHb-9w-eCG" firstAttribute="top" secondItem="5287" secondAttribute="top" id="gSX-s4-BXV"/>
+                        </constraints>
                     </view>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5288" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -383,6 +394,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="Default-667h.png" width="16" height="16"/>
         <image name="Login-667h.png" width="16" height="16"/>
     </resources>
     <inferredMetricsTieBreakers>
