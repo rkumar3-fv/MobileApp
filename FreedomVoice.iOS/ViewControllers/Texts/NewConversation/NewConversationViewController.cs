@@ -5,6 +5,9 @@ using FreedomVoice.iOS.Utilities;
 using UIKit;
 using Xamarin.Contacts;
 using System.Timers;
+using CoreFoundation;
+using Foundation;
+using CoreGraphics;
 
 namespace FreedomVoice.iOS.ViewControllers.Texts.NewConversation
 {
@@ -21,9 +24,16 @@ namespace FreedomVoice.iOS.ViewControllers.Texts.NewConversation
     public class NewConversationViewController : ConversationViewController
     {
         private readonly string _preselectedToPhone;
-        private Timer timer;
+        private NSTimer timer;
 
         private readonly AddContactView _addContactView = new AddContactView();
+        private readonly UIActivityIndicatorView _progressView = new UIActivityIndicatorView(UIActivityIndicatorViewStyle.WhiteLarge) {
+            TranslatesAutoresizingMaskIntoConstraints = false,
+            Hidden = true
+        };
+        private IDisposable _observer1;
+        private IDisposable _observer2;
+        private NSLayoutConstraint _progressCenterConstraint;
 
         public NewConversationViewController()
         {
@@ -47,8 +57,12 @@ namespace FreedomVoice.iOS.ViewControllers.Texts.NewConversation
             base.ViewWillAppear(animated);
             Presenter.ContactsUpdated += ProviderOnContactsUpdated;
             Presenter.MessageSent += PresenterOnMessageSent;
+            Presenter.ItemsChanged += PresenterOnItemsChanged;
+            Presenter.ServerError += PresenterOnServerError;
             _addContactView.AddContactButtonPressed += AddContactButtonPressed;
             _addContactView.PhoneNumberChanged += PhoneNumberChanged;
+            _observer1 = UIKeyboard.Notifications.ObserveWillShow(WillShowNotification);
+            _observer2 = UIKeyboard.Notifications.ObserveWillHide(WillHideNotification);
         }
 
         public override void ViewWillDisappear(bool animated)
@@ -59,6 +73,10 @@ namespace FreedomVoice.iOS.ViewControllers.Texts.NewConversation
             _addContactView.PhoneNumberChanged -= PhoneNumberChanged;
             Presenter.ContactsUpdated -= ProviderOnContactsUpdated;
             Presenter.MessageSent -= PresenterOnMessageSent;
+            Presenter.ItemsChanged -= PresenterOnItemsChanged;
+            Presenter.ServerError -= PresenterOnServerError;
+            _observer1.Dispose();
+            _observer2.Dispose();
         }
 
         public override void ViewDidAppear(bool animated)
@@ -72,6 +90,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts.NewConversation
             base._SetupViews();
             View.AddSubview(_addContactView);
             _callerIdView.Alpha = 0;
+            View.AddSubview(_progressView);
         }
 
         protected override void _SetupConstraints()
@@ -82,6 +101,31 @@ namespace FreedomVoice.iOS.ViewControllers.Texts.NewConversation
             _addContactView.TopAnchor.ConstraintEqualTo(View.TopAnchor).Active = true;
             _addContactView.LeadingAnchor.ConstraintEqualTo(View.LeadingAnchor).Active = true;
             _addContactView.TrailingAnchor.ConstraintEqualTo(View.TrailingAnchor).Active = true;
+
+            _progressView.CenterXAnchor.ConstraintEqualTo(View.CenterXAnchor).Active = true;
+            _progressCenterConstraint = _progressView.CenterYAnchor.ConstraintEqualTo(View.CenterYAnchor);
+            _progressCenterConstraint.Active = true;
+        }
+
+        private void WillHideNotification(object sender, UIKeyboardEventArgs e)
+        {
+            UIView.BeginAnimations("AnimateForKeyboard");
+            UIView.SetAnimationBeginsFromCurrentState(true);
+            UIView.SetAnimationDuration(UIKeyboard.AnimationDurationFromNotification(e.Notification));
+            UIView.SetAnimationCurve((UIViewAnimationCurve)UIKeyboard.AnimationCurveFromNotification(e.Notification));
+            _progressCenterConstraint.Constant = 0;
+            UIView.CommitAnimations();
+        }
+
+        private void WillShowNotification(object sender, UIKeyboardEventArgs e)
+        {
+            var keyboardSize = e.FrameEnd.Size;
+            UIView.BeginAnimations("AnimateForKeyboard");
+            UIView.SetAnimationBeginsFromCurrentState(true);
+            UIView.SetAnimationDuration(UIKeyboard.AnimationDurationFromNotification(e.Notification));
+            UIView.SetAnimationCurve((UIViewAnimationCurve)UIKeyboard.AnimationCurveFromNotification(e.Notification));
+            _progressCenterConstraint.Constant = -keyboardSize.Height / 2;
+            UIView.CommitAnimations();
         }
 
         protected override void _SetupData()
@@ -187,6 +231,16 @@ namespace FreedomVoice.iOS.ViewControllers.Texts.NewConversation
         {
         }
 
+        private void PresenterOnItemsChanged(object sender, EventArgs e)
+        {
+            _progressView.Hidden = true;
+        }
+
+        private void PresenterOnServerError(object sender, EventArgs e)
+        {
+            _progressView.Hidden = true;
+        }
+
         private void UpdateTitle(string phone, string name = null,
             string phonePlaceholder = NewConversationTexts.NewMessage)
         {
@@ -214,19 +268,30 @@ namespace FreedomVoice.iOS.ViewControllers.Texts.NewConversation
 
         private void CheckCurrentConversation()
         {
-            timer?.Stop();
-            timer = new Timer(700);
-            timer.Elapsed += (sender, args) => { PerformCheckCurrentConversation(); };
-            timer.AutoReset = false;
-            timer.Start();
+            timer?.Invalidate();
+            timer = null;
+            timer = NSTimer.CreateScheduledTimer(0.7, (timer) => some());
+        }
+        private void some()
+        {
+            DispatchQueue.MainQueue.DispatchAsync(() =>
+            {
+                PerformCheckCurrentConversation();
+            });
         }
 
         private async Task PerformCheckCurrentConversation()
         {
-            if (string.IsNullOrWhiteSpace(CurrentPhone.PhoneNumber) ||
-                string.IsNullOrWhiteSpace(_addContactView.Text))
+            if (string.IsNullOrWhiteSpace(CurrentPhone.PhoneNumber) || string.IsNullOrWhiteSpace(_addContactView.Text))
+            {
+                Console.WriteLine("Clear history");
+                Presenter.ConversationId = ConversationId = null;
+                Presenter.Clear();
                 return;
+            }
 
+            _progressView.Hidden = false;
+            _progressView.StartAnimating();
 
             var conversationId = await Presenter.GetConversationId(CurrentPhone.PhoneNumber, _addContactView.Text);
 
