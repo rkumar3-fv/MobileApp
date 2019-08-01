@@ -52,7 +52,7 @@ namespace FreedomVoice.Core.Services
                 To = current.Ticks,
                 Limit = count,
                 Start = start,
-                Telnumbers = foundInNumbers,
+                PhoneNumbers = foundInNumbers,
                 SystemPhone = systemPhone,
                 Text = query
             };
