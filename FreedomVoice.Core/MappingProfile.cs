@@ -13,7 +13,10 @@ namespace FreedomVoice.Core
             CreateMap<Conversation, FreedomVoice.Entities.Response.Conversation>()
                 .ForMember(x => x.IsRemoved, opt => opt.Ignore());
             
-            CreateMap<FreedomVoice.Entities.Phone, Phone>();
+            CreateMap<FreedomVoice.Entities.Phone, Phone>()
+                .ForSourceMember(x => x.ApplicationNumber, opt => opt.DoNotValidate());
+            CreateMap<Phone, FreedomVoice.Entities.Phone> ()
+                .ForMember(x => x.ApplicationNumber, opt => opt.Ignore());
 
             CreateMap<FreedomVoice.Entities.Message, Message>()
                 .ForSourceMember(x => x.LastUpdateDate, opt => opt.DoNotValidate());
