@@ -22,13 +22,13 @@ namespace FreedomVoice.Core.Services
             _mapper = mapper;
         }
         
-        public async Task<BaseResult<List<Conversation>>> GetConversations(string phone, DateTime startDate, DateTime lastUpdateDate, int start, int limit)
+        public async Task<BaseResult<List<Conversation>>> GetConversations(string systemPhoneNumber, DateTime startDate, DateTime lastUpdateDate, int start, int limit)
         {
             try
             {
-                BaseResult<List<Conversation>> result = await ApiHelper.GetConversations(new ConversationsRequest
+                BaseResult<List<Conversation>> result = await ApiHelper.GetConversations(systemPhoneNumber, new ConversationsRequest
                 {
-                    PhoneNumber = phone,
+                    PhoneNumber = systemPhoneNumber,
                     From = startDate.Ticks,
                     To = lastUpdateDate.Ticks,
                     Start = start,
@@ -37,7 +37,7 @@ namespace FreedomVoice.Core.Services
 
                 if (result.Result == null)
                 {
-                    var messages = await _cacheService.GetConversations(phone, limit, start);
+                    var messages = await _cacheService.GetConversations(systemPhoneNumber, limit, start);
                     result.Result = messages.Select(x => _mapper.Map<Conversation>(x)).ToList();
                 }
                 if (result.Code == Entities.Enums.ErrorCodes.Ok) 
@@ -47,9 +47,9 @@ namespace FreedomVoice.Core.Services
             }
             catch (Exception exception)
             {
-                Console.WriteLine($"GetConversations (phone: {phone}, startDate: {startDate}, lastUpdateDate: {lastUpdateDate}, start: {start}, limit: {lastUpdateDate})" +
+                Console.WriteLine($"GetConversations (systemPhone: {systemPhoneNumber}, startDate: {startDate}, lastUpdateDate: {lastUpdateDate}, start: {start}, limit: {lastUpdateDate})" +
                                   $" has been finished failed with error:\t\n{exception}");
-                var messages = await _cacheService.GetConversations(phone, limit, start);
+                var messages = await _cacheService.GetConversations(systemPhoneNumber, limit, start);
                 return new BaseResult<List<Conversation>>
                 {
                     Code = Entities.Enums.ErrorCodes.ConnectionLost,
@@ -58,11 +58,11 @@ namespace FreedomVoice.Core.Services
             }
         }
 
-        public async Task<BaseResult<List<Conversation>>> SearchConversations(SearchConversationRequest searchConversationRequest)
+        public async Task<BaseResult<List<Conversation>>> SearchConversations(string systemPhoneNumber, SearchConversationRequest searchConversationRequest)
         {
             try
             {
-                BaseResult<List<Conversation>> result = await ApiHelper.SearchConversations(searchConversationRequest);
+                BaseResult<List<Conversation>> result = await ApiHelper.SearchConversations(systemPhoneNumber, searchConversationRequest);
                 result.Result = result.Result.Where(x => !x.IsRemoved).ToList();
                 return result;
             }
@@ -77,14 +77,14 @@ namespace FreedomVoice.Core.Services
             }
         }
 
-        public async Task<BaseResult<Conversation>> GetConversation(string systemPhone, string toPhone)
+        public async Task<BaseResult<Conversation>> GetConversation(string systemPhoneNumber, string toPhone)
         {
             try
             {
-                BaseResult<Conversation> result = await ApiHelper.GetConversation(new ConversationRequest
+                BaseResult<Conversation> result = await ApiHelper.GetConversation(systemPhoneNumber, new ConversationRequest
                 {
                     ToPhone = toPhone,
-                    SystemPhone = systemPhone
+                    SystemPhone = systemPhoneNumber
                 });
                 
                 if (result.Code == Entities.Enums.ErrorCodes.Ok && result.Result != null)
@@ -102,11 +102,11 @@ namespace FreedomVoice.Core.Services
             }
         }
 
-        public async Task<BaseResult<List<Message>>> GetMessages(long conversationId, DateTime startDate, DateTime lastUpdateDate, int start, int limit)
+        public async Task<BaseResult<List<Message>>> GetMessages(string systemPhoneNumber, long conversationId, DateTime startDate, DateTime lastUpdateDate, int start, int limit)
         {
             try
             {
-                BaseResult<List<Message>> result = await ApiHelper.GetMessages(
+                BaseResult<List<Message>> result = await ApiHelper.GetMessages(systemPhoneNumber,
                     new MessagesRequest()
                     {
                         ConversationId = conversationId,
@@ -140,18 +140,18 @@ namespace FreedomVoice.Core.Services
             }
         }
 
-        public async Task<BaseResult<SendingResponse<Conversation>>> SendMessage(MessageRequest request)
+        public async Task<BaseResult<SendingResponse<Conversation>>> SendMessage(string systemPhoneNumber, MessageRequest request)
         {
-            var result = await ApiHelper.SendMessage(request);
+            var result = await ApiHelper.SendMessage(systemPhoneNumber, request);
             if(result.Result != null && result.Result.Entity != null)
                 await _cacheService.UpdateConversationsCache(new[] { result.Result.Entity });
 
             return result;
         }
 
-        public async Task<BaseResult<string>> SendPushToken(PushRequest request, bool isRegistration)
+        public async Task<BaseResult<string>> SendPushToken(string systemPhoneNumber, PushRequest request, bool isRegistration)
         {
-            var result = await ApiHelper.SendPushToken(request, isRegistration: isRegistration);
+            var result = await ApiHelper.SendPushToken(systemPhoneNumber, request, isRegistration: isRegistration);
             //if (result.Result != null && result.Result.Entity != null)
                 //_cacheService.UpdateConversationsCache(new[] { result.Result.Entity });
 

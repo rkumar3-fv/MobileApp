@@ -27,7 +27,7 @@ namespace FreedomVoice.Core.Services
             _conversationService = conversationService;
         }
 
-        public async Task<MessageListResponse> GetList(long conversationId, DateTime current, int count = 10, int page = 1)
+        public async Task<MessageListResponse> GetList(string systemPhoneNumber, long conversationId, DateTime current, int count = 10, int page = 1)
         {
             if (page <= 0) throw new ArgumentException(nameof(page));
             if (count <= 0) throw new ArgumentException(nameof(count));
@@ -35,7 +35,7 @@ namespace FreedomVoice.Core.Services
             var result = new MessageListResponse();
             var lastSyncDate = await _cacheService.GetLastConversationUpdateDate(current);
             var start = count * (page - 1);
-            var netMessages = await _networkService.GetMessages(conversationId, current, lastSyncDate, start, count);
+            var netMessages = await _networkService.GetMessages(systemPhoneNumber, conversationId, current, lastSyncDate, start, count);
             result.ResponseCode = netMessages.Code;
             result.Message = netMessages.ErrorText;
             result.Messages = netMessages.Result.Select(x => _mapper.Map<Message>(x));
@@ -52,9 +52,9 @@ namespace FreedomVoice.Core.Services
             return res;
         }
 
-        public async Task<SendingResponse<DAL.DbEntities.Conversation>> SendMessage(string currentNumber, string to, string text)
+        public async Task<SendingResponse<DAL.DbEntities.Conversation>> SendMessage(string systemPhoneNumber, string toPhone, string text)
         {
-            var sendingResult = await _networkService.SendMessage(new FreedomVoice.Entities.Request.MessageRequest { From = currentNumber, To = to, Text = text });
+            var sendingResult = await _networkService.SendMessage(systemPhoneNumber, new FreedomVoice.Entities.Request.MessageRequest { From = systemPhoneNumber, To = toPhone, Text = text });
             if (sendingResult.Code != Entities.Enums.ErrorCodes.Ok || sendingResult.Result == null)
                 return new SendingResponse<DAL.DbEntities.Conversation> { ErrorMessage = sendingResult.ErrorText, State = FreedomVoice.Entities.Enums.SendingState.Error };
             return new SendingResponse<DAL.DbEntities.Conversation>

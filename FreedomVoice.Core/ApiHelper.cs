@@ -184,56 +184,57 @@ namespace FreedomVoice.Core
             return await MakeAsyncFileDownload($"/api/v1/systems/{systemPhoneNumber}/mailboxes/{mailboxNumber}/folders/{folder}/messages/{messageId}/media/{mediaType}", token);
         }
         
-        public static async Task<BaseResult<List<Conversation>>> GetConversations(
+        public static async Task<BaseResult<List<Conversation>>> GetConversations(string systemPhoneNumber,
             ConversationsRequest conversationsRequest, CancellationToken cancellationToken = default(CancellationToken))
         {
             return await MakeAsyncPostRequest<List<Conversation>>(
-                $"/api/v1/system/forward/conversations",
+                $"/api/v1/system/{systemPhoneNumber}/forward/conversations",
                 JsonConvert.SerializeObject(conversationsRequest),
                 "application/json",
                 cancellationToken);
         }
 
-        public static async Task<BaseResult<List<Conversation>>> SearchConversations(
+        public static async Task<BaseResult<List<Conversation>>> SearchConversations(string systemPhoneNumber,
             SearchConversationRequest searchConversationRequest, CancellationToken cancellationToken = default(CancellationToken))
         {
             return await MakeAsyncPostRequest<List<Conversation>>(
-                $"/api/v1/system/forward/conversations/search",
+                $"/api/v1/system/{systemPhoneNumber}/forward/conversations/search",
                 JsonConvert.SerializeObject(searchConversationRequest),
                 "application/json",
                 cancellationToken);
         }
 
-        public static async Task<BaseResult<Conversation>> GetConversation(
+        public static async Task<BaseResult<Conversation>> GetConversation(string systemPhoneNumber,
             ConversationRequest conversationRequest, CancellationToken cancellationToken = default(CancellationToken))
         {
             return await MakeAsyncPostRequest<Conversation>(
-                $"/api/v1/system/forward/conversation",
+                $"/api/v1/system/{systemPhoneNumber}/forward/conversation",
                 JsonConvert.SerializeObject(conversationRequest),
                 "application/json",
                 cancellationToken);
         }
 
-        public static async Task<BaseResult<List<FreedomVoice.Entities.Message>>> GetMessages(
+        public static async Task<BaseResult<List<FreedomVoice.Entities.Message>>> GetMessages(string systemPhoneNumber,
             MessagesRequest messagesRequest, CancellationToken cancellationToken = default(CancellationToken))
         {
             return await MakeAsyncPostRequest<List<FreedomVoice.Entities.Message>>(
-                $"/api/v1/system/forward/messages",
+                $"/api/v1/system/{systemPhoneNumber}/forward/messages",
                 JsonConvert.SerializeObject(messagesRequest),
                 "application/json",
                 cancellationToken);
         }
 
-        public static async Task<BaseResult<SendingResponse<Conversation>>> SendMessage(MessageRequest request)
+        public static async Task<BaseResult<SendingResponse<Conversation>>> SendMessage(string systemPhoneNumber, 
+            MessageRequest request, CancellationToken cancellationToken = default(CancellationToken))
         {
             try
             {
                 var content = JsonConvert.SerializeObject(request);
                 var result = await MakeAsyncPostRequest<SendingResponse<Conversation>>(
-                    $"/api/v1/system/forward/sendMessage",
+                    $"/api/v1/system/{systemPhoneNumber}/forward/sendMessage",
                     content,
                     "application/json",
-                    CancellationToken.None);
+                    cancellationToken);
                 return result;
             }
             catch(Exception)
@@ -242,13 +243,13 @@ namespace FreedomVoice.Core
             }
         }
 
-        public static async Task<BaseResult<string>> SendPushToken(PushRequest request, bool isRegistration)
+        public static async Task<BaseResult<string>> SendPushToken(string systemPhoneNumber, PushRequest request, bool isRegistration)
         {
             try
             {
                 var content = JsonConvert.SerializeObject(request);
                 var result = await MakeAsyncPostRequest<string>(
-                    isRegistration ? "/api/v1/system/forward/push/subscribe" : "/api/v1/system/forward/push/unsubscribe",
+                    isRegistration ? $"/api/v1/system/{systemPhoneNumber}/forward/push/subscribe" : $"/api/v1/system/{systemPhoneNumber}/forward/push/unsubscribe",
                     content,
                     "application/json",
                     CancellationToken.None);

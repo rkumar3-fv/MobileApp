@@ -12,28 +12,29 @@ namespace FreedomVoice.Core.Services.Interfaces
         /// <summary>
         /// Get conversations from API by provided parameters
         /// </summary>
-        /// <param name="phone"></param>
+        /// <param name="systemPhoneNumber"></param>
         /// <param name="startDate"></param>
         /// <param name="lastUpdateDate"></param>
         /// <param name="start"></param>
         /// <param name="limit"></param>
         /// <returns></returns>
-        Task<BaseResult<List<Conversation>>> GetConversations(string phone, DateTime startDate, DateTime lastUpdateDate, int start, int limit);
+        Task<BaseResult<List<Conversation>>> GetConversations(string systemPhoneNumber, DateTime startDate, DateTime lastUpdateDate, int start, int limit);
 
         /// <summary>
         /// Search conversations from API by provided parameters
         /// </summary>
+        /// <param name="systemPhoneNumber"></param>
         /// <param name="searchConversationRequest"></param>
         /// <returns></returns>
-        Task<BaseResult<List<Conversation>>> SearchConversations(SearchConversationRequest searchConversationRequest);
+        Task<BaseResult<List<Conversation>>> SearchConversations(string systemPhoneNumber, SearchConversationRequest searchConversationRequest);
 
         /// <summary>
         /// Get conversation by current phone and to phone
         /// </summary>
-        /// <param name="currentPhone"></param>
+        /// <param name="systemPhoneNumber"></param>
         /// <param name="toPhone"></param>
         /// <returns></returns>
-        Task<BaseResult<Conversation>> GetConversation(string currentPhone, string toPhone);
+        Task<BaseResult<Conversation>> GetConversation(string systemPhoneNumber, string toPhone);
 
         /// <summary>
         /// Get messages from API by provided parameters
@@ -44,14 +45,14 @@ namespace FreedomVoice.Core.Services.Interfaces
         /// <param name="start"></param>
         /// <param name="limit"></param>
         /// <returns></returns>
-        Task<BaseResult<List<FreedomVoice.Entities.Message>>> GetMessages(long conversationId, DateTime startDate, DateTime lastUpdateDate, int start, int limit);
+        Task<BaseResult<List<FreedomVoice.Entities.Message>>> GetMessages(string systemPhoneNumber, long conversationId, DateTime startDate, DateTime lastUpdateDate, int start, int limit);
 
         /// <summary>
         /// Sending message to API by provided parameter
         /// </summary>
         /// <param name="request"></param>
         /// <returns>Response from API about sending results</returns>
-        Task<BaseResult<SendingResponse<Conversation>>> SendMessage(MessageRequest request);
+        Task<BaseResult<SendingResponse<Conversation>>> SendMessage(string systemPhoneNumber, MessageRequest request);
 
         
         /// <summary>
@@ -60,6 +61,6 @@ namespace FreedomVoice.Core.Services.Interfaces
         /// <param name="request"></param>
         /// <param name="isRegistration"></param>
         /// <returns></returns>
-        Task<BaseResult<string>> SendPushToken(PushRequest request, bool isRegistration);
+        Task<BaseResult<string>> SendPushToken(string systemPhoneNumber, PushRequest request, bool isRegistration);
     }
 }
