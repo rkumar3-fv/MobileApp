@@ -46,7 +46,7 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
             if ((_currentContent != null) && (position < _currentContent.Count))
             {
                 var keys = _currentContent.Keys.ToList();
-                var normalizedPhone = ServiceContainer.Resolve<IPhoneFormatter>().Normalize(_currentContent[keys[position]].SingleRecent.PhoneNumber);
+                var normalizedPhone = ServiceContainer.Resolve<IPhoneFormatter>().NormalizeNational(_currentContent[keys[position]].SingleRecent.PhoneNumber);
                 var uri = Uri.WithAppendedPath(ContactsContract.PhoneLookup.ContentFilterUri,
                     Uri.Encode(normalizedPhone));
                 var selection = string.Format("(({0} IS NOT NULL) AND ({0} != '') AND ({1} = '1'))",

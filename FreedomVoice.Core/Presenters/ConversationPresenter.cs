@@ -97,7 +97,7 @@ namespace FreedomVoice.Core.Presenters
             get => _phoneNumber;
             set
             {
-                var newValue = _formatter.Normalize(value);
+                var newValue = _formatter.NormalizeNational(value);
                 if (_phoneNumber != null && newValue == _phoneNumber)
                     return;
                 _phoneNumber = newValue;
@@ -148,10 +148,10 @@ namespace FreedomVoice.Core.Presenters
                 return;
             }
 
-            var rawTo = _formatter.Normalize(message.To.PhoneNumber);
+            var rawTo = _formatter.NormalizeNational(message.To.PhoneNumber);
 
-            var rawFrom = _formatter.Normalize(message.From.PhoneNumber);
-            var current = _formatter.Normalize(PhoneNumber);
+            var rawFrom = _formatter.NormalizeNational(message.From.PhoneNumber);
+            var current = _formatter.NormalizeNational(PhoneNumber);
 
             if (rawFrom.Equals(current) || !rawTo.Equals(current))
             {
@@ -164,9 +164,9 @@ namespace FreedomVoice.Core.Presenters
 
         private void _addOutgoingMessage(Message message)
         {
-            var rawTo = _formatter.Normalize(message.To.PhoneNumber);
-            var rawFrom = _formatter.Normalize(message.From.PhoneNumber);
-            var current = _formatter.Normalize(PhoneNumber);
+            var rawTo = _formatter.NormalizeNational(message.To.PhoneNumber);
+            var rawFrom = _formatter.NormalizeNational(message.From.PhoneNumber);
+            var current = _formatter.NormalizeNational(PhoneNumber);
 
             if (rawTo.Equals(current) || !rawFrom.Equals(current))
             {
@@ -362,7 +362,7 @@ namespace FreedomVoice.Core.Presenters
             }
 
             _isLoading = true;
-            var current = _formatter.Normalize(PhoneNumber);
+            var current = _formatter.NormalizeNational(PhoneNumber);
             var res = await _messagesService.GetList(current, _conversationId.Value, _currentDate, DefaultCount, _currentPage);
             if(res.ResponseCode != Entities.Enums.ErrorCodes.Ok)
             {

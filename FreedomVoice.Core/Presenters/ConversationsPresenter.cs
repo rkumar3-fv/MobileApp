@@ -42,7 +42,7 @@ namespace FreedomVoice.Core.Presenters
             get => _phoneNumber;
             set
             {
-                var newValue = _formatter.Normalize(value);
+                var newValue = _formatter.NormalizeNational(value);
                 if (_phoneNumber != null && newValue == _phoneNumber)
                     return;
                 _phoneNumber = newValue;

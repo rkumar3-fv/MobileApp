@@ -85,7 +85,7 @@ namespace FreedomVoice.iOS.Utilities
 
         private static string FormatPhoneNumber(string unformattedPhoneNumber)
         {
-            return string.IsNullOrEmpty(unformattedPhoneNumber) ? string.Empty : ServiceContainer.Resolve<IPhoneFormatter>().Normalize(unformattedPhoneNumber);
+            return string.IsNullOrEmpty(unformattedPhoneNumber) ? string.Empty : ServiceContainer.Resolve<IPhoneFormatter>().NormalizeNational(unformattedPhoneNumber);
         }
     }
 }

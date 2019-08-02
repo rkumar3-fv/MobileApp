@@ -104,7 +104,7 @@ namespace com.FreedomVoice.MobileApp.Android.Utils
                                 do
                                 {
                                     var number = numberCursor.GetString(numberIndex);
-                                    if (_phonesCache != null) _phonesCache[_phoneFormatter.Normalize(number)] = name;
+                                    if (_phonesCache != null) _phonesCache[_phoneFormatter.NormalizeNational(number)] = name;
                                 } while (numberCursor.MoveToNext());
                             }
                             numberCursor.Close();
@@ -150,7 +150,7 @@ namespace com.FreedomVoice.MobileApp.Android.Utils
         /// <returns>Is in contacts</returns>
         public bool GetName(string phone, out string name)
         {
-            var rawNumber = _phoneFormatter.Normalize(phone);
+            var rawNumber = _phoneFormatter.NormalizeNational(phone);
             var res = _GetName(rawNumber, out name);
 
             if (!res) {
@@ -207,7 +207,7 @@ namespace com.FreedomVoice.MobileApp.Android.Utils
                     }
                 }
 
-                var uriPhones = Uri.Parse($"content://com.android.contacts/data/phones/filter/*{ServiceContainer.Resolve<IPhoneFormatter>().Normalize(query)}*");
+                var uriPhones = Uri.Parse($"content://com.android.contacts/data/phones/filter/*{ServiceContainer.Resolve<IPhoneFormatter>().NormalizeNational(query)}*");
                 string[] projectionPhones = { "contact_id", ContactsContract.Contacts.InterfaceConsts.DisplayName,
                 ContactsContract.Contacts.InterfaceConsts.HasPhoneNumber, ContactsContract.Contacts.InterfaceConsts.PhotoUri };
                 string selectionPhones;

@@ -133,12 +133,12 @@ namespace FreedomVoice.iOS.PushNotifications
 
 		private async Task<bool> CheckCurrentNumber()
 		{
-			var systemNumber = _phoneFormatter.Normalize(UserDefault.LastUsedAccount);
+			var systemNumber = _phoneFormatter.NormalizeNational(UserDefault.LastUsedAccount);
 
 			var service = ServiceContainer.Resolve<IPresentationNumbersService>();
 			var requestResult = await service.ExecuteRequest(systemNumber, false);
 			var accountNumbers = requestResult as PresentationNumbersResponse;
-			return accountNumbers.PresentationNumbers.Any(x => _phoneFormatter.Normalize(x.PhoneNumber) == systemNumber);
+			return accountNumbers.PresentationNumbers.Any(x => _phoneFormatter.NormalizeNational(x.PhoneNumber) == systemNumber);
 		}
 
 		private void ProcessStatusChangedPushNotification()
@@ -329,7 +329,7 @@ namespace FreedomVoice.iOS.PushNotifications
 			}
 
 			var fromPhone = pushResponseData.TextMessageReceivedFromNumber();
-			var phoneHolder = _contactNameProvider.GetNameOrNull(_phoneFormatter.Normalize(fromPhone));
+			var phoneHolder = _contactNameProvider.GetNameOrNull(_phoneFormatter.NormalizeNational(fromPhone));
 
 			if (string.IsNullOrWhiteSpace(phoneHolder))
 			{

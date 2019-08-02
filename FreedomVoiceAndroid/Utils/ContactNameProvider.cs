@@ -48,7 +48,7 @@ namespace com.FreedomVoice.MobileApp.Android.Utils
 
         public string GetClearPhoneNumber(string formattedPhoneNumber)
         {
-            return _formatter.Normalize(formattedPhoneNumber);
+            return _formatter.NormalizeNational(formattedPhoneNumber);
         }
 
         public List<string> SearchNumbers(string query)
@@ -78,7 +78,7 @@ namespace com.FreedomVoice.MobileApp.Android.Utils
                 }
                 while (phoneCursor != null && phoneCursor.MoveToNext())
                 {
-                    var phone = ServiceContainer.Resolve<IPhoneFormatter>().Normalize(phoneCursor.GetString(phoneCursor.GetColumnIndex(projection[1])));
+                    var phone = ServiceContainer.Resolve<IPhoneFormatter>().NormalizeNational(phoneCursor.GetString(phoneCursor.GetColumnIndex(projection[1])));
                     res.Add(GetClearPhoneNumber(phone));
                 }
                 phoneCursor.Close();

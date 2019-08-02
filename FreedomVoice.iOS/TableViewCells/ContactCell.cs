@@ -56,12 +56,12 @@ namespace FreedomVoice.iOS.TableViewCells
 
             var formatter = ServiceContainer.Resolve<IPhoneFormatter>();
 
-            var normalizedSearchText = formatter.Normalize(searchText);
-            var phoneNumber = person.Phones.FirstOrDefault(p => !string.IsNullOrEmpty(normalizedSearchText) && formatter.Normalize(p.Number).Contains(normalizedSearchText))?.Number;
+            var normalizedSearchText = formatter.NormalizeNational(searchText);
+            var phoneNumber = person.Phones.FirstOrDefault(p => !string.IsNullOrEmpty(normalizedSearchText) && formatter.NormalizeNational(p.Number).Contains(normalizedSearchText))?.Number;
 
             if (!string.IsNullOrEmpty(phoneNumber))
             {
-                DetailTextLabel.AttributedText = GetDetailTextAttributedString(formatter.Normalize(phoneNumber), normalizedSearchText);
+                DetailTextLabel.AttributedText = GetDetailTextAttributedString(formatter.NormalizeNational(phoneNumber), normalizedSearchText);
                 return;
             }
 
