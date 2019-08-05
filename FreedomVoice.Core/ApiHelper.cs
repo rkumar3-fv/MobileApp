@@ -17,6 +17,7 @@ using FreedomVoice.Core.Utils;
 using ModernHttpClient;
 using Newtonsoft.Json;
 using FreedomVoice.Entities.Request;
+using FreedomVoice.Entities.Request.Weblink;
 
 namespace FreedomVoice.Core
 {
@@ -185,11 +186,11 @@ namespace FreedomVoice.Core
         }
         
         public static async Task<BaseResult<List<Conversation>>> GetConversations(string systemPhoneNumber,
-            ConversationsRequest conversationsRequest, CancellationToken cancellationToken = default(CancellationToken))
+            FrameRequest frameRequest, CancellationToken cancellationToken = default(CancellationToken))
         {
             return await MakeAsyncPostRequest<List<Conversation>>(
                 $"/api/v1/system/{systemPhoneNumber}/forward/conversations",
-                JsonConvert.SerializeObject(conversationsRequest),
+                JsonConvert.SerializeObject(frameRequest),
                 "application/json",
                 cancellationToken);
         }
@@ -215,7 +216,7 @@ namespace FreedomVoice.Core
         }
 
         public static async Task<BaseResult<List<FreedomVoice.Entities.Message>>> GetMessages(string systemPhoneNumber,
-            MessagesRequest messagesRequest, CancellationToken cancellationToken = default(CancellationToken))
+            FreedomVoice.Entities.Request.Weblink.MessagesRequest messagesRequest, CancellationToken cancellationToken = default(CancellationToken))
         {
             return await MakeAsyncPostRequest<List<FreedomVoice.Entities.Message>>(
                 $"/api/v1/system/{systemPhoneNumber}/forward/messages",

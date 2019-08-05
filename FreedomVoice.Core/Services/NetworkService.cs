@@ -3,6 +3,7 @@ using FreedomVoice.Core.Entities.Base;
 using FreedomVoice.Core.Services.Interfaces;
 using FreedomVoice.Entities;
 using FreedomVoice.Entities.Request;
+using FreedomVoice.Entities.Request.Weblink;
 using FreedomVoice.Entities.Response;
 using System;
 using System.Collections.Generic;
@@ -26,9 +27,8 @@ namespace FreedomVoice.Core.Services
         {
             try
             {
-                BaseResult<List<Conversation>> result = await ApiHelper.GetConversations(systemPhoneNumber, new ConversationsRequest
+                BaseResult<List<Conversation>> result = await ApiHelper.GetConversations(systemPhoneNumber, new FrameRequest
                 {
-                    PhoneNumber = systemPhoneNumber,
                     From = startDate.Ticks,
                     To = lastUpdateDate.Ticks,
                     Start = start,
@@ -83,8 +83,7 @@ namespace FreedomVoice.Core.Services
             {
                 BaseResult<Conversation> result = await ApiHelper.GetConversation(systemPhoneNumber, new ConversationRequest
                 {
-                    ToPhone = toPhone,
-                    SystemPhone = systemPhoneNumber
+                    ToPhone = toPhone
                 });
                 
                 if (result.Code == Entities.Enums.ErrorCodes.Ok && result.Result != null)
@@ -107,7 +106,7 @@ namespace FreedomVoice.Core.Services
             try
             {
                 BaseResult<List<Message>> result = await ApiHelper.GetMessages(systemPhoneNumber,
-                    new MessagesRequest()
+                    new FreedomVoice.Entities.Request.Weblink.MessagesRequest()
                     {
                         ConversationId = conversationId,
                         From = startDate.Ticks,
