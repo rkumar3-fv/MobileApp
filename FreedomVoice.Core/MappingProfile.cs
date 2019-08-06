@@ -9,9 +9,11 @@ namespace FreedomVoice.Core
         public MappingProfile()
         {
             CreateMap<FreedomVoice.Entities.Response.Conversation, Conversation>()
-                .ForSourceMember(x => x.IsRemoved, opt => opt.DoNotValidate());
+                .ForSourceMember(x => x.IsRemoved, opt => opt.DoNotValidate())
+                .ForMember(x => x.SystemPhone, opt => opt.MapFrom(xx => xx.SystemPhoneNumber));
             CreateMap<Conversation, FreedomVoice.Entities.Response.Conversation>()
-                .ForMember(x => x.IsRemoved, opt => opt.Ignore());
+                .ForMember(x => x.IsRemoved, opt => opt.Ignore())
+                .ForMember(x => x.SystemPhoneNumber, opt => opt.MapFrom(xx => xx.SystemPhone));
             
             CreateMap<FreedomVoice.Entities.Phone, Phone>();
             CreateMap<Phone, FreedomVoice.Entities.Phone>();
