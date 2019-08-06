@@ -378,8 +378,8 @@
       <HintPath>..\packages\Xamarin.Firebase.iOS.InstanceID.3.4.0\lib\Xamarin.iOS10\Firebase.InstanceID.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="FreedomVoice.Entities, Version=1.0.16.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\FreedomVoice.Entities.1.0.16\lib\netstandard2.0\FreedomVoice.Entities.dll</HintPath>
+    <Reference Include="FreedomVoice.Entities, Version=1.0.17.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\FreedomVoice.Entities.1.0.17\lib\netstandard2.0\FreedomVoice.Entities.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Data.Sqlite, Version=2.2.3.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
