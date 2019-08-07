@@ -106,7 +106,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         public override void OnResume()
         {
             base.OnResume();
-            if (_presenter != null)_presenter.ItemsChanged += UpdateList;
+            if (_presenter != null) _presenter.ItemsChanged += UpdateList;
             ContentActivity.SearchListener.OnChange += SearchListenerOnChange;
             ContentActivity.SearchListener.OnApply += SearchListenerOnApply;
             ContentActivity.SearchListener.OnCollapse += SearchListenerOnCancel;
@@ -117,7 +117,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         public override void OnPause()
         {
             base.OnPause();
-            if (_presenter != null)_presenter.ItemsChanged -= UpdateList;
+            if (_presenter != null) _presenter.ItemsChanged -= UpdateList;
             ContentActivity.SearchListener.OnChange -= SearchListenerOnChange;
             ContentActivity.SearchListener.OnApply -= SearchListenerOnApply;
             ContentActivity.SearchListener.OnCollapse -= SearchListenerOnCancel;
@@ -165,18 +165,21 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         
         private void SearchListenerOnCancel(object sender, bool b)
         {
+            if (_presenter == null) return;
             _presenter.Query = null;
             _presenter.ReloadAsync();
         }
 
         private void SearchListenerOnApply(object sender, string s)
         {
+            if (_presenter == null) return;
             _presenter.Query = s;
             _presenter.ReloadAsync();
         }
 
         private void SearchListenerOnChange(object sender, string s)
         {
+            if (_presenter == null) return;
             _presenter.Query = s;
         }
 
