@@ -61,7 +61,18 @@ namespace FreedomVoice.iOS.Utilities
             }
 
             var callReservationViewModel = new CallReservationViewModel(systemNumber, expectedCallerIdNumber, presentationNumber, destinationNumber);
-            await callReservationViewModel.CreateCallReservationAsync();
+            
+            try
+            {
+                await callReservationViewModel.CreateCallReservationAsync();
+            }
+            catch (Exception ex)
+            {
+                Appearance.ShowOkAlertWithMessage(Appearance.AlertMessageType.CallFailed);
+                viewController.View.UserInteractionEnabled = true;
+                return false;
+            }
+            
             if (callReservationViewModel.IsErrorResponseReceived)
             {
                 Appearance.ShowOkAlertWithMessage(Appearance.AlertMessageType.CallFailed);
