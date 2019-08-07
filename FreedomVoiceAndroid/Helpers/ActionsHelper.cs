@@ -680,6 +680,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             _app.ApplicationHelper.Reports?.Log("HELPER INTENT CREATED: request ID=" + requestId);
 #endif
             _watchersDictionary.Add(requestId, Stopwatch.StartNew());
+            if (!_app.IsAppInForeground && Build.VERSION.SdkInt >= BuildVersionCodes.O) return;
             _app.StartService(intent);
         }
 
