@@ -2,9 +2,11 @@ using Android.App;
 using Android.Content;
 using Android.Content.PM;
 using Android.OS;
+using Android.Runtime;
 using Android.Support.V7.Widget;
 using Android.Text;
 using Android.Views;
+using Android.Views.InputMethods;
 using com.FreedomVoice.MobileApp.Android.Fragments;
 using Fragment = Android.Support.V4.App.Fragment;
 
@@ -66,6 +68,20 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             SupportFragmentManager.BeginTransaction()
                 .Replace(Resource.Id.chatActivity_container, fragment)
                 .Commit();
+        }
+
+        public override void OnBackPressed()
+        {
+            HideKeyboard();   
+            base.OnBackPressed();
+        }
+        
+        private void HideKeyboard()
+        {
+            var imm = (InputMethodManager) GetSystemService(Context.InputMethodService);
+            var focusView = CurrentFocus?.WindowToken;
+            if (focusView != null)
+                imm.HideSoftInputFromWindow(focusView, HideSoftInputFlags.None);
         }
 
         protected override void OnNewIntent(Intent intent)
