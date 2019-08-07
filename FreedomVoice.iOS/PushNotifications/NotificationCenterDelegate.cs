@@ -128,17 +128,31 @@ namespace FreedomVoice.iOS.PushNotifications
 					_logger.Debug(nameof(NotificationCenterDelegate), nameof(DidReceiveNotificationResponse), $"Push-notification type({pushNotificationData.PushType}) is not supported");
 					break;
 			}
-            completionHandler?.Invoke();
-        }
+			completionHandler?.Invoke();
+		}
 
 		private async Task<bool> CheckCurrentNumber()
 		{
-			var systemNumber = _phoneFormatter.Normalize(UserDefault.LastUsedAccount);
+			try
+			{
+				if (string.IsNullOrEmpty(UserDefault.LastUsedAccount))
+					return false;
 
-			var service = ServiceContainer.Resolve<IPresentationNumbersService>();
-			var requestResult = await service.ExecuteRequest(systemNumber, false);
-			var accountNumbers = requestResult as PresentationNumbersResponse;
-			return accountNumbers.PresentationNumbers.Any(x => _phoneFormatter.Normalize(x.PhoneNumber) == systemNumber);
+				var systemNumber = _phoneFormatter.Normalize(UserDefault.LastUsedAccount);
+
+				if (string.IsNullOrEmpty(systemNumber))
+					return false;
+
+				var service = ServiceContainer.Resolve<IPresentationNumbersService>();
+				var requestResult = await service.ExecuteRequest(systemNumber, false);
+				var accountNumbers = requestResult as PresentationNumbersResponse;
+				return accountNumbers?.PresentationNumbers?.Any(x => _phoneFormatter.Normalize(x.PhoneNumber) == systemNumber) ?? false;
+			}
+			catch (Exception ex)
+			{
+				_logger.Debug(nameof(NotificationCenterDelegate), nameof(CheckCurrentNumber), ex.Message);
+				return false;
+			}
 		}
 
 		private void ProcessStatusChangedPushNotification()
