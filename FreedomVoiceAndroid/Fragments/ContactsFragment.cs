@@ -241,13 +241,14 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
 
         public void ReloadContacts()
         {
+            if (Context == null) return;
             var uri = ContactsContract.Contacts.ContentUri;
             string[] projection = { ContactsContract.Contacts.InterfaceConsts.Id, ContactsContract.Contacts.InterfaceConsts.DisplayName,
                 ContactsContract.Contacts.InterfaceConsts.HasPhoneNumber, ContactsContract.Contacts.InterfaceConsts.PhotoUri };
             var selection = string.Format("(({0} IS NOT NULL) AND ({0} != '') AND ({1} = '1'))",
                 ContactsContract.Contacts.InterfaceConsts.DisplayName, ContactsContract.Contacts.InterfaceConsts.InVisibleGroup);
             var sortOrder = $"{ContactsContract.Contacts.InterfaceConsts.DisplayName} COLLATE LOCALIZED ASC";
-            var loader = new CursorLoader(ContentActivity, uri, projection, selection, null, sortOrder);
+            var loader = new CursorLoader(Context, uri, projection, selection, null, sortOrder);
             ICursor cursor;
             try
             {
