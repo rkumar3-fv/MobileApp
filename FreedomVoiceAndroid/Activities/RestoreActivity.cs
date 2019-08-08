@@ -121,6 +121,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         /// </summary>
         private void RestorationSuccessfull()
         {
+            if (IsFinishing) return;
             var restoreDlg = new RestoreDialogFragment();
             restoreDlg.DialogEvent += OnDialogEvent;
             var transaction = SupportFragmentManager.BeginTransaction();
