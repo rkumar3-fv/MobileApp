@@ -31,6 +31,8 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         private SwipeRefreshLayout _swipeToRefresh;
         private ProgressBar _progressBar;
         private XamarinRecyclerViewOnScrollListener _onScrollListener;
+        private const string ErrorDlgTag = "ERROR_DLG_TAG";
+        private string _presentationPhone = null; 
 
         protected override View InitView()
         {
@@ -71,53 +73,50 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             foreach (var code in args.Codes)
             {
                 if (code != ActionsHelperEventArgs.ChangePresentation) continue;
-                if (_presenter != null)
-                {
-                    _presenter.ItemsChanged -= UpdateList;
-                    _presenter.Dispose();
-                    _presenter = null;
-                }
-
-                _presenter = new ConversationsPresenter()
-                {
-                    PhoneNumber = Helper?.SelectedAccount?.PresentationNumber,
-                    AccountNumber = Helper?.SelectedAccount?.AccountName
-                };
-                _presenter.ItemsChanged += UpdateList;
-                _presenter.ServerError += OnListServerError;
-                _presenter.ReloadAsync();
+                if (_presentationPhone == Helper?.SelectedAccount?.PresentationNumber) continue;
+                _presentationPhone = Helper?.SelectedAccount?.PresentationNumber;
+                CreatePresenter();
             }
         }
 
-        private void OnListServerError(object sender, EventArgs e)
+        private void CreatePresenter()
         {
-            Activity?.RunOnUiThread(() =>
+            if (_presenter != null)
             {
-                _swipeToRefresh.Refreshing = false;
-                if (Activity == null || Activity.IsFinishing) return;
-                _progressBar.Visibility = ViewStates.Gone;
-                var errorDialog = new ErrorDialogFragment {Message = ConversationsPresenter.DefaultError};
-                var transaction = Activity.SupportFragmentManager.BeginTransaction();
-                transaction.Add(errorDialog, "ERROR_DLG_TAG");
-                transaction.CommitAllowingStateLoss();
-            });
+                _presenter.ItemsChanged -= UpdateList;
+                _presenter.ServerError -= ShowServerError;
+                _presenter.Dispose();
+                _presenter = null;
+            }
+
+            _presenter = new ConversationsPresenter()
+            {
+                PhoneNumber = Helper?.SelectedAccount?.PresentationNumber,
+                AccountNumber = Helper?.SelectedAccount?.AccountName
+            };
+            _presenter.ItemsChanged += UpdateList;
+            _presenter.ServerError += ShowServerError;
+            RefreshListWithProgress();
+
         }
 
         public override void OnResume()
         {
             base.OnResume();
             if (_presenter != null) _presenter.ItemsChanged += UpdateList;
+            if (_presenter != null) _presenter.ServerError += ShowServerError;
             ContentActivity.SearchListener.OnChange += SearchListenerOnChange;
             ContentActivity.SearchListener.OnApply += SearchListenerOnApply;
             ContentActivity.SearchListener.OnCollapse += SearchListenerOnCancel;
             _contactNameProvider.ContactsUpdated += ProviderOnContactsUpdated;
             if (_presenter != null && _presenter.Items.Count > 0) UpdateList(null, null);
-        }      
+        }
 
         public override void OnPause()
         {
             base.OnPause();
             if (_presenter != null) _presenter.ItemsChanged -= UpdateList;
+            if (_presenter != null) _presenter.ServerError -= ShowServerError;
             ContentActivity.SearchListener.OnChange -= SearchListenerOnChange;
             ContentActivity.SearchListener.OnApply -= SearchListenerOnApply;
             ContentActivity.SearchListener.OnCollapse -= SearchListenerOnCancel;
@@ -133,6 +132,14 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
 
         private void SwipeRefresh(object sender, EventArgs e)
         {
+            _presenter.ReloadAsync();
+        }
+
+        private void RefreshListWithProgress()
+        {
+            _noResultText.Visibility = ViewStates.Gone;
+            _recyclerView.Visibility = ViewStates.Gone;
+            _progressBar.Visibility = ViewStates.Visible;
             _presenter.ReloadAsync();
         }
 
@@ -162,19 +169,36 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                 _progressBar.Visibility = ViewStates.Gone;
             });
         }
-        
+
+        private void ShowServerError(object sender, EventArgs e)
+        {
+            Activity?.RunOnUiThread(() =>
+            {
+                _swipeToRefresh.Refreshing = false;
+                _progressBar.Visibility = ViewStates.Gone;
+                _recyclerView.Visibility = ViewStates.Visible;
+                if (Activity == null ||
+                    Activity.IsFinishing ||
+                    Activity.SupportFragmentManager.FindFragmentByTag(ErrorDlgTag) != null) return;
+                var errorDialog = new ErrorDialogFragment {Message = ConversationsPresenter.DefaultError};
+                var transaction = Activity.SupportFragmentManager.BeginTransaction();
+                transaction.Add(errorDialog, ErrorDlgTag);
+                transaction.CommitAllowingStateLoss();
+            });
+        }
+
         private void SearchListenerOnCancel(object sender, bool b)
         {
             if (_presenter == null) return;
             _presenter.Query = null;
-            _presenter.ReloadAsync();
+            RefreshListWithProgress();
         }
 
         private void SearchListenerOnApply(object sender, string s)
         {
             if (_presenter == null) return;
             _presenter.Query = s;
-            _presenter.ReloadAsync();
+            RefreshListWithProgress();
         }
 
         private void SearchListenerOnChange(object sender, string s)
@@ -186,7 +210,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         public override void OnDestroyView()
         {
             base.OnDestroyView();
-            _onScrollListener.ScrollEvent += ListScrolled;
+            _onScrollListener.ScrollEvent -= ListScrolled;
             _swipeToRefresh.Refresh -= SwipeRefresh;
         }
 
