@@ -1,11 +1,14 @@
 using System;
+using Android.Content;
 using Android.Graphics;
+using Android.InputMethodServices;
 using Android.OS;
 using Android.Support.V4.Content;
 using Android.Support.V7.App;
 using Android.Support.V7.Widget;
 using Android.Text;
 using Android.Views;
+using Android.Views.InputMethods;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Adapters;
 using com.FreedomVoice.MobileApp.Android.Utils;
@@ -43,6 +46,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         protected ProgressBar _commonProgress;
         private SwipyRefreshLayout _swipyRefreshLayout;
         private XamarinRecyclerViewOnScrollListener _onScrollListener;
+        private string _errorDlgTag = "ERROR_DLG_TAG";
 
 
         public static ConversationDetailFragment NewInstance(long conversationId, string phone)
@@ -148,7 +152,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             _sendIv.Click += ClickSend;
        
             _presenter.ItemsChanged += ItemsChanged;
-            _presenter.ServerError += OnServerError;
+            _presenter.ServerError += ServerError;
             _presenter.MessageSent += PresenterOnMessageSent;
             _onScrollListener.ScrollEvent += ScrollChanged;
             _swipyRefreshLayout.Refresh += SwipeLayoutRefresh;
@@ -158,7 +162,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         public override void OnPause()
         {
             base.OnPause();
-            _presenter.ServerError -= OnServerError;
+            _presenter.ServerError -= ServerError;
             _messageEt.TextChanged -= MessageTextChanged;
             _sendIv.Click -= ClickSend;
             _presenter.ItemsChanged -= ItemsChanged;
@@ -183,29 +187,32 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             }
         }
         
-        private void OnServerError(object sender, EventArgs e)
+        private void ServerError(object sender, EventArgs e)
         {
             Activity?.RunOnUiThread(() =>
             {
+                if (Activity == null || Activity.IsFinishing || 
+                    Activity.SupportFragmentManager.FindFragmentByTag(_errorDlgTag) != null) 
+                    return;
                 _progressBar.Visibility = ViewStates.Gone;
                 var errorDialog = new ErrorDialogFragment {Message = ConversationsPresenter.DefaultError};
                 var transaction = Activity.SupportFragmentManager.BeginTransaction();
-                transaction.Add(errorDialog, "ERROR_DLG_TAG");
+                transaction.Add(errorDialog, _errorDlgTag);
                 transaction.CommitAllowingStateLoss();
             });
         }
 
         private void PresenterOnMessageSent(object sender, EventArgs e)
         {
-            if (!(e is MessageSentEventArgs eventArgs))
+            if (!(e is MessageSentEventArgs eventArgs)) return;
+            if (Activity == null || Activity.IsFinishing || 
+                Activity.SupportFragmentManager.FindFragmentByTag(_errorDlgTag) != null) 
                 return;
-
             if (eventArgs.IsSuccess == false)
             {
-                var errorDialog = new ErrorDialogFragment();
-                errorDialog.Message = eventArgs.Message;
+                var errorDialog = new ErrorDialogFragment {Message = eventArgs.Message};
                 var transaction = Activity.SupportFragmentManager.BeginTransaction();
-                transaction.Add(errorDialog, "ERROR_DLG_TAG");
+                transaction.Add(errorDialog, _errorDlgTag);
                 transaction.CommitAllowingStateLoss();
             }
         }

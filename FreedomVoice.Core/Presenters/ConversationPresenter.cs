@@ -363,7 +363,7 @@ namespace FreedomVoice.Core.Presenters
 
             _isLoading = true;
             var res = await _messagesService.GetList(_conversationId.Value, _currentDate, DefaultCount, _currentPage);
-            if(res.ResponseCode != Entities.Enums.ErrorCodes.Ok)
+            if (res.ResponseCode != Entities.Enums.ErrorCodes.Ok)
             {
                 _isLoading = false;
                 ServerError?.Invoke(this, null);

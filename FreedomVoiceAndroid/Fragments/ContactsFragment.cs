@@ -116,6 +116,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                 switch (contact.PhonesList.Count)
                 {
                     case 0:
+                        if (Activity == null || Activity.IsFinishing) return;
                         var noPhonesDialog = new NoContactsDialogFragment(contact);
                         var transaction = ContentActivity.SupportFragmentManager.BeginTransaction();
                         transaction.Add(noPhonesDialog, GetString(Resource.String.DlgNumbers_content));
@@ -125,6 +126,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                         ContentActivity.Call(contact.PhonesList[0].PhoneNumber);
                         break;
                     default:
+                        if (Activity == null || Activity.IsFinishing) return;
                         var multiPhonesDialog = new MultiContactsDialogFragment(contact, ContentActivity);
                         multiPhonesDialog.PhoneClick += MultiPhonesDialogOnPhoneClick;
                         var transactionMultiPhones = ContentActivity.SupportFragmentManager.BeginTransaction();
@@ -141,6 +143,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                 switch (contact.PhonesList.Count)
                 {
                     case 0:
+                        if (Activity == null || Activity.IsFinishing) return;
                         var noPhonesDialog = new NoContactsDialogFragment(contact);
                         var transaction = ContentActivity.SupportFragmentManager.BeginTransaction();
                         transaction.Add(noPhonesDialog, GetString(Resource.String.DlgNumbers_content));
@@ -150,6 +153,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                         ChatActivity.StartNewChat(Activity, contact.PhonesList[0].PhoneNumber);
                         break;
                     default:
+                        if (Activity == null || Activity.IsFinishing) return;
                         var multiPhonesDialog = new MultiContactsDialogFragment(contact, ContentActivity);
                         multiPhonesDialog.PhoneClick += (sender1, phone) =>
                         {
@@ -162,7 +166,8 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                         break;
                 }
             };
-          
+
+            if (Activity == null || Activity.IsFinishing) return;
             alertDialog.Show();
         }
 

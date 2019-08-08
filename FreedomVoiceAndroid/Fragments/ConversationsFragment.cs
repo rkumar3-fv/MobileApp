@@ -94,9 +94,9 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             Activity?.RunOnUiThread(() =>
             {
                 _swipeToRefresh.Refreshing = false;
+                if (Activity == null || Activity.IsFinishing) return;
                 _progressBar.Visibility = ViewStates.Gone;
-                var errorDialog = new ErrorDialogFragment();
-                errorDialog.Message = ConversationsPresenter.DefaultError;
+                var errorDialog = new ErrorDialogFragment {Message = ConversationsPresenter.DefaultError};
                 var transaction = Activity.SupportFragmentManager.BeginTransaction();
                 transaction.Add(errorDialog, "ERROR_DLG_TAG");
                 transaction.CommitAllowingStateLoss();
