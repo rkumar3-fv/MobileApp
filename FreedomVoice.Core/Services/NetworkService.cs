@@ -52,7 +52,7 @@ namespace FreedomVoice.Core.Services
                 var messages = await _cacheService.GetConversations(phone, limit, start);
                 return new BaseResult<List<Conversation>>
                 {
-                    Code = Entities.Enums.ErrorCodes.ConnectionLost,
+                    Code = Entities.Enums.ErrorCodes.Unknown,
                     Result = messages.Select(x => _mapper.Map<Conversation>(x)).ToList()
                 };
             }
@@ -71,7 +71,7 @@ namespace FreedomVoice.Core.Services
                 Console.WriteLine($"SearchConversations has been finished failed with error:\t\n {exception}");
                 return new BaseResult<List<Conversation>>
                 {
-                    Code = Entities.Enums.ErrorCodes.ConnectionLost,
+                    Code = Entities.Enums.ErrorCodes.Unknown,
                     Result = null
                 };
             }
@@ -96,7 +96,7 @@ namespace FreedomVoice.Core.Services
             {
                 return new BaseResult<Conversation>
                 {
-                    Code = Entities.Enums.ErrorCodes.ConnectionLost,
+                    Code = Entities.Enums.ErrorCodes.Unknown,
                     Result = null
                 };
             }
@@ -134,7 +134,7 @@ namespace FreedomVoice.Core.Services
                 var messages = await _cacheService.GetMessagesByConversation(conversationId, limit, start);
                 return new BaseResult<List<Message>>
                 {
-                    Code = Entities.Enums.ErrorCodes.ConnectionLost,
+                    Code = Entities.Enums.ErrorCodes.Unknown,
                     Result = messages.Select(x => _mapper.Map<Message>(x)).ToList()
                 };
             }
