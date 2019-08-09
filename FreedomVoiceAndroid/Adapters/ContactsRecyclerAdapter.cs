@@ -23,6 +23,7 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
         private ICursor _oldCursor;
         private readonly Context _context;
         private int _id;
+        private ICursor Cursor { get; set; }
 
         /// <summary>
         /// Item short click event
@@ -87,8 +88,6 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
             _oldCursor = null;
         }
 
-        public ICursor Cursor { get; private set; }
-
         public override long GetItemId(int position)
         {
             if (Cursor != null && Cursor.MoveToPosition(position))
@@ -99,7 +98,7 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
         public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
         {
             var viewHolder = holder as ViewHolder;
-            if ((viewHolder == null)||(Cursor==null)) return;
+            if (viewHolder == null || Cursor == null || Cursor.IsClosed) return;
             if (!Cursor.MoveToPosition(position))
                 return;
             var name = Cursor.GetString(Cursor.GetColumnIndex(ContactsContract.Contacts.InterfaceConsts.DisplayName));
@@ -187,7 +186,15 @@ namespace com.FreedomVoice.MobileApp.Android.Adapters
             return new ViewHolder(itemView, OnClick);
         }
 
-        public override int ItemCount => Cursor?.Count ?? 0;
+        public override int ItemCount
+        {
+            get
+            {
+                if (Cursor == null || Cursor.IsClosed) return 0;
+                return Cursor?.Count ?? 0;
+            }
+        }
+
 
         /// <summary>
         /// Contacts selection viewholder

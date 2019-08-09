@@ -142,6 +142,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                         hasRecents = false;
                     else
                         hasRecents = true;
+                    if (IsFinishing) return true;
                     var logoutDialog = new LogoutDialogFragment(hasRecents);
                     logoutDialog.DialogEvent += OnDialogEvent;
                     var transaction = SupportFragmentManager.BeginTransaction();

@@ -168,7 +168,7 @@ namespace com.FreedomVoice.MobileApp.Android.Utils
                 return true;
             }
 
-            name = normalizedPhone;
+            name = _phoneFormatter.Format(normalizedPhone);
             return false;
         }
 

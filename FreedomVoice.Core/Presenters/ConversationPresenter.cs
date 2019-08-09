@@ -363,7 +363,7 @@ namespace FreedomVoice.Core.Presenters
 
             _isLoading = true;
             var res = await _messagesService.GetList(_conversationId.Value, _currentDate, DefaultCount, _currentPage);
-            if(res.ResponseCode != Entities.Enums.ErrorCodes.Ok)
+            if (res.ResponseCode != Entities.Enums.ErrorCodes.Ok)
             {
                 _isLoading = false;
                 ServerError?.Invoke(this, null);
@@ -406,7 +406,10 @@ namespace FreedomVoice.Core.Presenters
                 Items.Add(new DateMessageViewModel(group.Key));
             }
 
-            Items = Items.GroupBy(p => p.MessageId).Select(g => g.OrderBy(y => y.MessageId).First()).ToList();
+            Items = Items.GroupBy(p => p.MessageId)
+                .Select(g => g.OrderBy(y => y.MessageId).First())
+                .OrderByDescending(m => m.Date)
+                .ToList();
         }
 
         private void ContactNameProviderOnContactsUpdated(object sender, EventArgs e)

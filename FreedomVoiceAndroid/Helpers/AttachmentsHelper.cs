@@ -15,7 +15,6 @@ using com.FreedomVoice.MobileApp.Android.Utils;
 using FreedomVoice.Core.Utils;
 using FreedomVoice.Core.Utils.Interfaces;
 using Message = com.FreedomVoice.MobileApp.Android.Entities.Message;
-using NotificationCompat = Android.Support.V7.App.NotificationCompat;
 
 namespace com.FreedomVoice.MobileApp.Android.Helpers
 {
@@ -54,8 +53,10 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             _receiver = new ComServiceResultReceiver(new Handler());
             _receiver.SetListener(this);
 
+            var channelId = context.GetString(Resource.String.DefaultNotificationChannel);
             _notificationManager = NotificationManagerCompat.From(_context);
-            _builder = new NotificationCompat.Builder(_context);
+            _builder = new NotificationCompat.Builder(_context, channelId);
+            _builder.SetChannelId(channelId);
             _builder.SetCategory(Notification.CategoryTransport);
             _builder.SetOngoing(false);
             _builder.SetProgress(0, 0, false);

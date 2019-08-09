@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Foundation;
 using FreedomVoice.Core.Utils;
 using FreedomVoice.Core.Utils.Interfaces;
+using FreedomVoice.iOS.Core;
 using FreedomVoice.iOS.Utilities.Helpers;
 using FreedomVoice.iOS.ViewModels;
 using UIKit;
@@ -11,6 +12,7 @@ namespace FreedomVoice.iOS.Utilities
 {
     public static class PhoneCall
     {
+        private static readonly ILogger _logger = ServiceContainer.Resolve<ILogger>();
         public static async Task<bool> CreateCallReservation(string systemNumber, string presentationNumber, string destinationNumberFormatted, UIViewController viewController, Action onSuccessAction)
         {
             viewController.View.UserInteractionEnabled = false;
@@ -61,7 +63,19 @@ namespace FreedomVoice.iOS.Utilities
             }
 
             var callReservationViewModel = new CallReservationViewModel(systemNumber, expectedCallerIdNumber, presentationNumber, destinationNumber);
-            await callReservationViewModel.CreateCallReservationAsync();
+            
+            try
+            {
+                await callReservationViewModel.CreateCallReservationAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.Debug(nameof(PhoneCall), nameof(CreateCallReservation), ex.ToString());
+                Appearance.ShowOkAlertWithMessage(Appearance.AlertMessageType.CallFailed);
+                viewController.View.UserInteractionEnabled = true;
+                return false;
+            }
+            
             if (callReservationViewModel.IsErrorResponseReceived)
             {
                 Appearance.ShowOkAlertWithMessage(Appearance.AlertMessageType.CallFailed);

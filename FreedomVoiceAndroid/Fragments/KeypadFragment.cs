@@ -31,6 +31,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         private Button _buttonHash;
         private FloatingActionButton _buttonDial;
         private bool _cleanOnRestore;
+        private readonly IPhoneFormatter phoneFormatter = ServiceContainer.Resolve<IPhoneFormatter>();
 
         protected override View InitView()
         {
@@ -137,7 +138,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
 
         private void SetupNewText()
         {
-            _dialEdit.Text = ServiceContainer.Resolve<IPhoneFormatter>().Format(_enteredNumber);
+            _dialEdit.Text = phoneFormatter.Reformat(_enteredNumber);
         }
 
         protected override void OnHelperEvent(ActionsHelperEventArgs args)

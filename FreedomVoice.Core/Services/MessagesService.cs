@@ -55,7 +55,7 @@ namespace FreedomVoice.Core.Services
         public async Task<SendingResponse<DAL.DbEntities.Conversation>> SendMessage(string currentNumber, string to, string text)
         {
             var sendingResult = await _networkService.SendMessage(new FreedomVoice.Entities.Request.MessageRequest { From = currentNumber, To = to, Text = text });
-            if (sendingResult.Code != Entities.Enums.ErrorCodes.Ok || sendingResult.Result == null)
+            if (sendingResult.Code != Entities.Enums.ErrorCodes.Ok || sendingResult.Result == null) 
                 return new SendingResponse<DAL.DbEntities.Conversation> { ErrorMessage = sendingResult.ErrorText, State = FreedomVoice.Entities.Enums.SendingState.Error };
             return new SendingResponse<DAL.DbEntities.Conversation>
             {

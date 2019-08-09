@@ -34,6 +34,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             EndTextView = FindViewById<TextView>(Resource.Id.recordActivity_playerEndText);
             PlayerSeek = FindViewById<SeekBar>(Resource.Id.recordActivity_playerSeek);
             TouchLayout = FindViewById<RelativeLayout>(Resource.Id.recordActivity_touchArea);
+            SmsButton = FindViewById<Button>(Resource.Id.recordActivity_smsButton);
             SupportActionBar.SetTitle(Resource.String.ActivityRecord_title);
         }
 
