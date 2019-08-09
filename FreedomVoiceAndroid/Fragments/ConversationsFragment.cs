@@ -132,7 +132,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
 
         private void SwipeRefresh(object sender, EventArgs e)
         {
-            _presenter.ReloadAsync();
+            _presenter?.ReloadAsync();
         }
 
         private void RefreshListWithProgress()
