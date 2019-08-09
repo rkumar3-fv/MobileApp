@@ -130,8 +130,11 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             param.ScrollFlags = AppBarLayout.LayoutParams.ScrollFlagScroll | AppBarLayout.LayoutParams.ScrollFlagEnterAlways;
             _tabLayout.Visibility = ViewStates.Visible;
 
-            _navigationRedirectHelper.OnNewRedirect += OnRedirect;
-            _navigationRedirectHelper.Resume();
+            new Handler().PostDelayed(() =>
+            {
+                _navigationRedirectHelper.OnNewRedirect += OnRedirect;
+                _navigationRedirectHelper.Resume();
+            }, 1500);
         }
         
         

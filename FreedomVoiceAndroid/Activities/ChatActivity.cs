@@ -26,13 +26,15 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         private const string ExtraScreen = "EXTRA_SCREEN";
         private const string ExtraConversationId = "EXTRA_CONVERSATION_ID";
         private const string ExtraConversationPhone = "EXTRA_CONVERSATION_PHONE";
+        private const string ExtraMyPresentationPhone = "EXTRA_MY_PRESENTATION_PHONE";
 
-        public static Intent OpenChat(Context context, long conversationId, string phone)
+        public static Intent OpenChat(Context context, long conversationId, string phone, string myPresentationPhone)
         {
             var intent = new Intent(context, typeof(ChatActivity));
             intent.PutExtra(ExtraScreen, ExtraScreenValueChat);
             intent.PutExtra(ExtraConversationId, conversationId);
             intent.PutExtra(ExtraConversationPhone, phone);
+            intent.PutExtra(ExtraMyPresentationPhone, myPresentationPhone);
             return intent;
         }
 
@@ -53,6 +55,10 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             toolbar.NavigationClick += (sender, args) => OnBackPressed();
             var conversationId = Intent.GetLongExtra(ExtraConversationId, 0);
             var phone = Intent.GetStringExtra(ExtraConversationPhone);
+            var myPresentationPhone = Intent.GetStringExtra(ExtraMyPresentationPhone);
+            
+            if (myPresentationPhone != null)
+                Helper.TrySetCurrentPresentationNumber(myPresentationPhone);
 
             var screenKey = Intent.GetStringExtra(ExtraScreen);
             Fragment fragment;
