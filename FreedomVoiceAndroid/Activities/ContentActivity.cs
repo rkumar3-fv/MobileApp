@@ -48,6 +48,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         private ContactsFragment _contactsFragment;
         private NavigationRedirectHelper _navigationRedirectHelper;
 
+        private const int MaximumLoadedPages = 100;
+
         /// <summary>
         /// Contacts search listener
         /// </summary>
@@ -80,7 +82,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             if (_viewPager != null)
             {
                 _viewPager.AllowSwipe = false;
-                _viewPager.OffscreenPageLimit = 100;
+                _viewPager.OffscreenPageLimit = MaximumLoadedPages;
                 _pagerAdapter.AddFragment(recentsFragment, Resource.String.FragmentRecents_title, Resource.Drawable.ic_tab_history);
                 _pagerAdapter.AddFragment(_contactsFragment, Resource.String.FragmentContacts_title, Resource.Drawable.ic_tab_contacts);
                 _pagerAdapter.AddFragment(keypadFragment, Resource.String.FragmentKeypad_title, Resource.Drawable.ic_tab_keypad);

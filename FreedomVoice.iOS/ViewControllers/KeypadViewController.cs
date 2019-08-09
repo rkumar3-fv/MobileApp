@@ -26,6 +26,8 @@ namespace FreedomVoice.iOS.ViewControllers
 
         private CallerIdView CallerIdView { get; set; }
 
+        private readonly IPhoneFormatter phoneFormatter = ServiceContainer.Resolve<IPhoneFormatter>();
+
         private static MainTabBarController MainTabBarInstance => MainTabBarController.SharedInstance;
 
         public KeypadViewController(IntPtr handle) : base(handle) { }
@@ -124,7 +126,7 @@ namespace FreedomVoice.iOS.ViewControllers
             if (button == null) return;
 
             PhoneNumber += button.TextLabel.Text;
-            _phoneLabel.Text = ServiceContainer.Resolve<IPhoneFormatter>().CustomFormatter(PhoneNumber);
+            _phoneLabel.Text = phoneFormatter.Reformat(PhoneNumber);
             ChangeClearPhoneButtonVisibility();
         }
 
@@ -133,7 +135,7 @@ namespace FreedomVoice.iOS.ViewControllers
             if (recognizer.State != UIGestureRecognizerState.Began) return;
 
             PhoneNumber += "+";
-            _phoneLabel.Text = ServiceContainer.Resolve<IPhoneFormatter>().CustomFormatter(PhoneNumber);
+            _phoneLabel.Text = phoneFormatter.Reformat(PhoneNumber);
             ChangeClearPhoneButtonVisibility();
         }
 
@@ -154,7 +156,7 @@ namespace FreedomVoice.iOS.ViewControllers
             else
             {
                 PhoneNumber = PhoneNumber.Substring(0, PhoneNumber.Length - 1);
-                _phoneLabel.Text = ServiceContainer.Resolve<IPhoneFormatter>().CustomFormatter(PhoneNumber);
+                _phoneLabel.Text = phoneFormatter.Reformat(PhoneNumber);
             }
             ChangeClearPhoneButtonVisibility();
         }
@@ -177,7 +179,7 @@ namespace FreedomVoice.iOS.ViewControllers
                 if (Recents.RecentsCount == 0) return;
 
                 PhoneNumber = Recents.GetLastRecent().PhoneNumber;
-                _phoneLabel.Text = ServiceContainer.Resolve<IPhoneFormatter>().CustomFormatter(PhoneNumber);
+                _phoneLabel.Text = phoneFormatter.Reformat(PhoneNumber);
                 ChangeClearPhoneButtonVisibility();
                 return;
             }

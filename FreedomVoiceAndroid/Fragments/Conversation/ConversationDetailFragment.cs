@@ -152,7 +152,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             _sendIv.Click += ClickSend;
        
             _presenter.ItemsChanged += ItemsChanged;
-            _presenter.ServerError += ServerError;
+            _presenter.ServerError += OnServerError;
             _presenter.MessageSent += PresenterOnMessageSent;
             _onScrollListener.ScrollEvent += ScrollChanged;
             _swipyRefreshLayout.Refresh += SwipeLayoutRefresh;
@@ -162,7 +162,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         public override void OnPause()
         {
             base.OnPause();
-            _presenter.ServerError -= ServerError;
+            _presenter.ServerError -= OnServerError;
             _messageEt.TextChanged -= MessageTextChanged;
             _sendIv.Click -= ClickSend;
             _presenter.ItemsChanged -= ItemsChanged;
@@ -187,7 +187,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             }
         }
         
-        private void ServerError(object sender, EventArgs e)
+        private void OnServerError(object sender, EventArgs e)
         {
             Activity?.RunOnUiThread(() =>
             {
