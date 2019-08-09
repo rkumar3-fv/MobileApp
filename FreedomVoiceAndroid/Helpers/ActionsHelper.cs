@@ -143,6 +143,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         private readonly AtomicLong _idCounter;
         private readonly AppPreferencesHelper _preferencesHelper;
         private readonly IPushService _pushService;
+        private readonly IPhoneFormatter _formatter;
         private long _preferencesTime;
         private long _initHelperTime;
 
@@ -178,6 +179,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             ServiceContainer.Register<IDeviceCookieStorage>(() => cookieImpl);
             CoreModules.Load(AndroidDbPath.GetDatabasePath("freedomvoice.db"));
             _pushService = ServiceContainer.Resolve<IPushService>();
+            _formatter = ServiceContainer.Resolve<IPhoneFormatter>();
             RecentsDictionary = new SortedDictionary<long, RecentHolder>(Comparer<long>.Create((x, y) => y.CompareTo(x)));
             ExtensionsList = new List<Extension>();
             SelectedExtension = -1;
@@ -777,9 +779,8 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         public void TrySetCurrentPresentationNumber(string newNum)
         {
             if (SelectedAccount?.PresentationNumbers == null) return;
-            var formatter = ServiceContainer.Resolve<IPhoneFormatter>();
             var numberIndex = SelectedAccount.PresentationNumbers.FindIndex(accNum =>
-                formatter.Normalize(accNum) == formatter.Normalize(newNum)
+                _formatter.Normalize(accNum) == _formatter.Normalize(newNum)
             );
             if (numberIndex != -1) SetPresentationNumber(numberIndex);
         }
