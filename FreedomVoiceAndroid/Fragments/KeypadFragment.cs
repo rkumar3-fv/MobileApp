@@ -137,7 +137,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
 
         private void SetupNewText()
         {
-            _dialEdit.Text = ServiceContainer.Resolve<IPhoneFormatter>().Format(_enteredNumber);
+            _dialEdit.Text = ServiceContainer.Resolve<IPhoneFormatter>().CustomFormatter(_enteredNumber);
         }
 
         protected override void OnHelperEvent(ActionsHelperEventArgs args)

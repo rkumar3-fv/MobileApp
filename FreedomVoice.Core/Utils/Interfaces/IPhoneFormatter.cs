@@ -10,6 +10,8 @@ namespace FreedomVoice.Core.Utils.Interfaces
         /// <param name="phone">Phone.</param>
         string Format(string phone);
 
+        string CustomFormatter(string phone);
+
         /// <summary>
         /// Remove all formats and pass only digits
         /// </summary>
