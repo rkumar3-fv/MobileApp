@@ -28,6 +28,7 @@ using Uri = Android.Net.Uri;
 using com.FreedomVoice.MobileApp.Android.Data;
 using Firebase.Iid;
 using FreedomVoice.Core.Services.Interfaces;
+using FreedomVoice.Core.Utils.Interfaces;
 using FreedomVoice.Entities.Enums;
 
 namespace com.FreedomVoice.MobileApp.Android.Helpers
@@ -773,14 +774,23 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             HelperEvent?.Invoke(this, new ActionsHelperEventArgs(-1, new[] { ActionsHelperEventArgs.ClearRecents }));
         }
 
+        public void TrySetCurrentPresentationNumber(string newNum)
+        {
+            if (SelectedAccount?.PresentationNumbers == null) return;
+            var formatter = ServiceContainer.Resolve<IPhoneFormatter>();
+            var numberIndex = SelectedAccount.PresentationNumbers.FindIndex(accNum =>
+                formatter.Normalize(accNum) == formatter.Normalize(newNum)
+            );
+            if (numberIndex != -1) SetPresentationNumber(numberIndex);
+        }
+        
         /// <summary>
         /// Changing presentation number
         /// </summary>
         /// <param name="index">number index</param>
         public void SetPresentationNumber(int index)
         {
-            if (SelectedAccount == null)
-                return;
+            if (SelectedAccount == null) return;
             SelectedAccount.SelectedPresentationNumber = index;
             if (!string.IsNullOrEmpty(SelectedAccount.AccountName) &&
                 !string.IsNullOrEmpty(SelectedAccount.PresentationNumber))

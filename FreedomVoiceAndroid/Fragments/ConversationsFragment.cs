@@ -52,7 +52,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             base.OnViewCreated(view, savedInstanceState);
             _adapter = new ConversationRecyclerAdapter((sender, account) =>
             {
-                StartActivity(ChatActivity.OpenChat(Activity, account.ConversationId, account.To));
+                StartActivity(ChatActivity.OpenChat(Activity, account.ConversationId, account.To, null));
             });
             _layoutManager = new LinearLayoutManager(Context);
             _recyclerView.SetLayoutManager(_layoutManager);
