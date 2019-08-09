@@ -154,8 +154,8 @@ namespace FreedomVoice.Core.Presenters
             Entities.Texting.ConversationListResponse res;
 
             res = string.IsNullOrEmpty(Query)
-                ? await _service.GetList(_phoneNumber, _currentDate, DefaultCount, _currentPage)
-                : await _service.Search(_phoneNumber, Query, _nameProvider.SearchNumbers(Query).ToArray(), _currentDate,
+                ? await _service.GetList(AccountNumber, _phoneNumber, _currentDate, DefaultCount, _currentPage)
+                : await _service.Search(AccountNumber, _phoneNumber, Query, _nameProvider.SearchNumbers(Query).ToArray(), _currentDate,
                     DefaultCount, _currentPage);
 
             HasMore = !res.IsEnd;

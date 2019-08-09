@@ -27,7 +27,13 @@ namespace FreedomVoice.Core.Services
             _conversationService = conversationService;
         }
 
-        public async Task<MessageListResponse> GetList(string systemPhoneNumber, long conversationId, DateTime current, int count = 10, int page = 1)
+        public async Task<MessageListResponse> GetList(
+            string systemPhoneNumber, 
+            string presentationPhoneNumber, 
+            long conversationId, 
+            DateTime current, 
+            int count = 10, 
+            int page = 1)
         {
             if (page <= 0) throw new ArgumentException(nameof(page));
             if (count <= 0) throw new ArgumentException(nameof(count));
@@ -35,7 +41,7 @@ namespace FreedomVoice.Core.Services
             var result = new MessageListResponse();
             var lastSyncDate = await _cacheService.GetLastConversationUpdateDate(current);
             var start = count * (page - 1);
-            var netMessages = await _networkService.GetMessages(systemPhoneNumber, conversationId, current, lastSyncDate, start, count);
+            var netMessages = await _networkService.GetMessages(systemPhoneNumber, presentationPhoneNumber, conversationId, current, lastSyncDate, start, count);
             result.ResponseCode = netMessages.Code;
             result.Message = netMessages.ErrorText;
             result.Messages = netMessages.Result.Select(x => _mapper.Map<Message>(x));
@@ -43,18 +49,23 @@ namespace FreedomVoice.Core.Services
             return result;
         }
 
-        public async Task<SendingResponse<DAL.DbEntities.Conversation>> SendMessage(long conversationId, string text)
+        public async Task<SendingResponse<DAL.DbEntities.Conversation>> SendMessage(string systemPhoneNumber, long conversationId, string text)
         {
             var conversation = await _cacheService.GetConversation(conversationId);
             if (conversation == null)
                 throw new ArgumentException("Conversation not found");
-            var res = await SendMessage(conversation.SystemPhone.PhoneNumber, conversation.ToPhone.PhoneNumber, text);
+            var res = await SendMessage(systemPhoneNumber, conversation.SystemPhone.PhoneNumber, conversation.ToPhone.PhoneNumber, text);
             return res;
         }
 
-        public async Task<SendingResponse<DAL.DbEntities.Conversation>> SendMessage(string systemPhoneNumber, string toPhone, string text)
+        public async Task<SendingResponse<DAL.DbEntities.Conversation>> SendMessage(
+            string systemPhoneNumber, 
+            string presentationPhoneNumber, 
+            string toPhone, 
+            string text)
         {
-            var sendingResult = await _networkService.SendMessage(systemPhoneNumber, new FreedomVoice.Entities.Request.Weblink.MessageRequest { From = systemPhoneNumber, To = toPhone, Text = text });
+            var sendingResult = await _networkService.SendMessage(systemPhoneNumber, presentationPhoneNumber, 
+                new FreedomVoice.Entities.Request.Weblink.MessageRequest { From = systemPhoneNumber, To = toPhone, Text = text });
             if (sendingResult.Code != Entities.Enums.ErrorCodes.Ok || sendingResult.Result == null)
                 return new SendingResponse<DAL.DbEntities.Conversation> { ErrorMessage = sendingResult.ErrorText, State = FreedomVoice.Entities.Enums.SendingState.Error };
             return new SendingResponse<DAL.DbEntities.Conversation>

@@ -23,17 +23,26 @@ namespace FreedomVoice.Core.Services
             _mapper = mapper;
         }
         
-        public async Task<BaseResult<List<Conversation>>> GetConversations(string systemPhoneNumber, DateTime startDate, DateTime lastUpdateDate, int start, int limit)
+        public async Task<BaseResult<List<Conversation>>> GetConversations(
+            string systemPhoneNumber, 
+            string presentationPhoneNumber, 
+            DateTime startDate, 
+            DateTime lastUpdateDate, 
+            int start, 
+            int limit)
         {
             try
             {
-                BaseResult<List<Conversation>> result = await ApiHelper.GetConversations(systemPhoneNumber, new FrameRequest
-                {
-                    From = startDate.Ticks,
-                    To = lastUpdateDate.Ticks,
-                    Start = start,
-                    Limit = limit
-                });
+                BaseResult<List<Conversation>> result = await ApiHelper.GetConversations(
+                    systemPhoneNumber, 
+                    presentationPhoneNumber, 
+                    new FrameRequest
+                    {
+                        From = startDate.Ticks,
+                        To = lastUpdateDate.Ticks,
+                        Start = start,
+                        Limit = limit
+                    });
 
                 if (result.Result == null)
                 {
@@ -58,11 +67,17 @@ namespace FreedomVoice.Core.Services
             }
         }
 
-        public async Task<BaseResult<List<Conversation>>> SearchConversations(string systemPhoneNumber, SearchConversationRequest searchConversationRequest)
+        public async Task<BaseResult<List<Conversation>>> SearchConversations(
+            string systemPhoneNumber,
+            string presentationPhoneNumber, 
+            SearchConversationRequest searchConversationRequest)
         {
             try
             {
-                BaseResult<List<Conversation>> result = await ApiHelper.SearchConversations(systemPhoneNumber, searchConversationRequest);
+                BaseResult<List<Conversation>> result = await ApiHelper.SearchConversations(
+                    systemPhoneNumber, 
+                    presentationPhoneNumber, 
+                    searchConversationRequest);
                 result.Result = result.Result.Where(x => !x.IsRemoved).ToList();
                 return result;
             }
@@ -77,14 +92,20 @@ namespace FreedomVoice.Core.Services
             }
         }
 
-        public async Task<BaseResult<Conversation>> GetConversation(string systemPhoneNumber, string toPhone)
+        public async Task<BaseResult<Conversation>> GetConversation(
+            string systemPhoneNumber,
+            string presentationPhoneNumber, 
+            string toPhone)
         {
             try
             {
-                BaseResult<Conversation> result = await ApiHelper.GetConversation(systemPhoneNumber, new ConversationRequest
-                {
-                    ToPhone = toPhone
-                });
+                BaseResult<Conversation> result = await ApiHelper.GetConversation(
+                    systemPhoneNumber, 
+                    presentationPhoneNumber, 
+                    new ConversationRequest
+                    {
+                        ToPhone = toPhone
+                    });
                 
                 if (result.Code == Entities.Enums.ErrorCodes.Ok && result.Result != null)
                     await _cacheService.UpdateConversationsCache(new[] { result.Result });
@@ -101,12 +122,21 @@ namespace FreedomVoice.Core.Services
             }
         }
 
-        public async Task<BaseResult<List<Message>>> GetMessages(string systemPhoneNumber, long conversationId, DateTime startDate, DateTime lastUpdateDate, int start, int limit)
+        public async Task<BaseResult<List<Message>>> GetMessages(
+            string systemPhoneNumber,
+            string presentationPhoneNumber, 
+            long conversationId, 
+            DateTime startDate, 
+            DateTime lastUpdateDate, 
+            int start, 
+            int limit)
         {
             try
             {
-                BaseResult<List<Message>> result = await ApiHelper.GetMessages(systemPhoneNumber,
-                    new FreedomVoice.Entities.Request.Weblink.MessagesRequest()
+                BaseResult<List<Message>> result = await ApiHelper.GetMessages(
+                    systemPhoneNumber,
+                    presentationPhoneNumber,
+                    new MessagesRequest()
                     {
                         ConversationId = conversationId,
                         From = startDate.Ticks,
@@ -139,9 +169,12 @@ namespace FreedomVoice.Core.Services
             }
         }
 
-        public async Task<BaseResult<SendingResponse<Conversation>>> SendMessage(string systemPhoneNumber, MessageRequest request)
+        public async Task<BaseResult<SendingResponse<Conversation>>> SendMessage(
+            string systemPhoneNumber,
+            string presentationPhoneNumber, 
+            MessageRequest request)
         {
-            var result = await ApiHelper.SendMessage(systemPhoneNumber, request);
+            var result = await ApiHelper.SendMessage(systemPhoneNumber, presentationPhoneNumber, request);
             if(result.Result != null && result.Result.Entity != null)
                 await _cacheService.UpdateConversationsCache(new[] { result.Result.Entity });
 
@@ -150,11 +183,7 @@ namespace FreedomVoice.Core.Services
 
         public async Task<BaseResult<string>> SendPushToken(string systemPhoneNumber, PushRequest request, bool isRegistration)
         {
-            var result = await ApiHelper.SendPushToken(systemPhoneNumber, request, isRegistration: isRegistration);
-            //if (result.Result != null && result.Result.Entity != null)
-                //_cacheService.UpdateConversationsCache(new[] { result.Result.Entity });
-
-            return result;
+            return await ApiHelper.SendPushToken(systemPhoneNumber, request, isRegistration: isRegistration);
         }
     }
 }

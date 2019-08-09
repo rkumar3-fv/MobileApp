@@ -185,54 +185,54 @@ namespace FreedomVoice.Core
             return await MakeAsyncFileDownload($"/api/v1/systems/{systemPhoneNumber}/mailboxes/{mailboxNumber}/folders/{folder}/messages/{messageId}/media/{mediaType}", token);
         }
         
-        public static async Task<BaseResult<List<Conversation>>> GetConversations(string systemPhoneNumber,
+        public static async Task<BaseResult<List<Conversation>>> GetConversations(string systemPhoneNumber, string presentationPhoneNumber,
             FrameRequest frameRequest, CancellationToken cancellationToken = default(CancellationToken))
         {
             return await MakeAsyncPostRequest<List<Conversation>>(
-                $"/api/v1/system/{systemPhoneNumber}/forward/conversations",
+                $"/api/v1/system/{systemPhoneNumber}/{presentationPhoneNumber}/forward/conversations",
                 JsonConvert.SerializeObject(frameRequest),
                 "application/json",
                 cancellationToken);
         }
 
-        public static async Task<BaseResult<List<Conversation>>> SearchConversations(string systemPhoneNumber,
+        public static async Task<BaseResult<List<Conversation>>> SearchConversations(string systemPhoneNumber, string presentationPhoneNumber,
             SearchConversationRequest searchConversationRequest, CancellationToken cancellationToken = default(CancellationToken))
         {
             return await MakeAsyncPostRequest<List<Conversation>>(
-                $"/api/v1/system/{systemPhoneNumber}/forward/conversations/search",
+                $"/api/v1/system/{systemPhoneNumber}/{presentationPhoneNumber}/forward/conversations/search",
                 JsonConvert.SerializeObject(searchConversationRequest),
                 "application/json",
                 cancellationToken);
         }
 
-        public static async Task<BaseResult<Conversation>> GetConversation(string systemPhoneNumber,
+        public static async Task<BaseResult<Conversation>> GetConversation(string systemPhoneNumber, string presentationPhoneNumber,
             ConversationRequest conversationRequest, CancellationToken cancellationToken = default(CancellationToken))
         {
             return await MakeAsyncPostRequest<Conversation>(
-                $"/api/v1/system/{systemPhoneNumber}/forward/conversation",
+                $"/api/v1/system/{systemPhoneNumber}/{presentationPhoneNumber}/forward/conversation",
                 JsonConvert.SerializeObject(conversationRequest),
                 "application/json",
                 cancellationToken);
         }
 
-        public static async Task<BaseResult<List<FreedomVoice.Entities.Message>>> GetMessages(string systemPhoneNumber,
+        public static async Task<BaseResult<List<FreedomVoice.Entities.Message>>> GetMessages(string systemPhoneNumber, string presentationPhoneNumber,
             FreedomVoice.Entities.Request.Weblink.MessagesRequest messagesRequest, CancellationToken cancellationToken = default(CancellationToken))
         {
             return await MakeAsyncPostRequest<List<FreedomVoice.Entities.Message>>(
-                $"/api/v1/system/{systemPhoneNumber}/forward/messages",
+                $"/api/v1/system/{systemPhoneNumber}/{presentationPhoneNumber}/forward/messages",
                 JsonConvert.SerializeObject(messagesRequest),
                 "application/json",
                 cancellationToken);
         }
 
-        public static async Task<BaseResult<SendingResponse<Conversation>>> SendMessage(string systemPhoneNumber, 
+        public static async Task<BaseResult<SendingResponse<Conversation>>> SendMessage(string systemPhoneNumber, string presentationPhoneNumber, 
             MessageRequest request, CancellationToken cancellationToken = default(CancellationToken))
         {
             try
             {
                 var content = JsonConvert.SerializeObject(request);
                 var result = await MakeAsyncPostRequest<SendingResponse<Conversation>>(
-                    $"/api/v1/system/{systemPhoneNumber}/forward/sendMessage",
+                    $"/api/v1/system/{systemPhoneNumber}/{presentationPhoneNumber}/forward/sendMessage",
                     content,
                     "application/json",
                     cancellationToken);

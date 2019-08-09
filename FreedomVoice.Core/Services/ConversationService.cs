@@ -26,14 +26,14 @@ namespace FreedomVoice.Core.Services
             _mapper = mapper;
         }
 
-        public async Task<ConversationListResponse> GetList(string systemPhoneNumber, DateTime current, int count = 10, int page = 1)
+        public async Task<ConversationListResponse> GetList(string systemPhoneNumber, string presentationPhoneNumber, DateTime current, int count = 10, int page = 1)
         {
             if (page <= 0) throw new ArgumentException(nameof(page));
             if (count <= 0) throw new ArgumentException(nameof(count));
             var result = new ConversationListResponse();
             var lastSyncDate = await _cacheService.GetLastConversationUpdateDate(current);
             var start = count * (page - 1);
-            var netConversations = await _networkService.GetConversations(systemPhoneNumber, current, lastSyncDate, start, count);
+            var netConversations = await _networkService.GetConversations(systemPhoneNumber, presentationPhoneNumber, current, lastSyncDate, start, count);
             result.ResponseCode = netConversations.Code;
             result.Message = netConversations.ErrorText;
             result.Conversations = netConversations.Result.Select(x => _mapper.Map<Conversation>(x));
@@ -41,10 +41,11 @@ namespace FreedomVoice.Core.Services
             return result;
         }
 
-        public async Task<ConversationListResponse> Search(string systemPhoneNumber, string query, string[] foundInNumbers, DateTime current, int count = 10, int page = 1)
+        public async Task<ConversationListResponse> Search(string systemPhoneNumber, string presentationPhoneNumber, string query, string[] foundInNumbers, DateTime current, int count = 10, int page = 1)
         {
             if (string.IsNullOrEmpty(query)) throw new ArgumentException(nameof(query));
             if (string.IsNullOrEmpty(systemPhoneNumber)) throw new ArgumentException(nameof(systemPhoneNumber));
+            if (string.IsNullOrEmpty(presentationPhoneNumber)) throw new ArgumentException(nameof(presentationPhoneNumber));
             var result = new ConversationListResponse();
             var start = count * (page - 1);
             SearchConversationRequest search = new SearchConversationRequest
@@ -56,7 +57,7 @@ namespace FreedomVoice.Core.Services
                 PhoneNumbers = foundInNumbers,
                 Text = query
             };
-            var netConversations = await _networkService.SearchConversations(systemPhoneNumber, search);
+            var netConversations = await _networkService.SearchConversations(systemPhoneNumber, presentationPhoneNumber, search);
             result.ResponseCode = netConversations.Code;
             result.Message = netConversations.ErrorText;
             result.Conversations = netConversations.Result.Select(x => _mapper.Map<Conversation>(x));
@@ -64,10 +65,10 @@ namespace FreedomVoice.Core.Services
             return result;
         }
 
-        public async Task<ConversationResponse> Get(string systemPhoneNumber, string toPhone)
+        public async Task<ConversationResponse> Get(string systemPhoneNumber, string presentationPhoneNumber, string toPhone)
         {
             var result = new ConversationResponse();
-            var netConversation = await _networkService.GetConversation(systemPhoneNumber, toPhone);
+            var netConversation = await _networkService.GetConversation(systemPhoneNumber, presentationPhoneNumber, toPhone);
             result.ResponseCode = netConversation.Code;
             result.Message = netConversation.ErrorText;
             result.Conversation = _mapper.Map<Conversation>(netConversation.Result);

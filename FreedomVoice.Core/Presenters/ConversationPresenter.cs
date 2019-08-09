@@ -63,6 +63,7 @@ namespace FreedomVoice.Core.Presenters
 
         private long? _conversationId;
         private string _phoneNumber;
+        private string _accountNumber;
 
         #endregion
 
@@ -101,6 +102,18 @@ namespace FreedomVoice.Core.Presenters
                 if (_phoneNumber != null && newValue == _phoneNumber)
                     return;
                 _phoneNumber = newValue;
+            }
+        }
+
+        public string AccountNumber
+        {
+            get => _accountNumber;
+            set
+            {
+                var newValue = _formatter.NormalizeNational(value);
+                if (_accountNumber != null && newValue == _accountNumber)
+                    return;
+                _accountNumber = newValue;
             }
         }
 
@@ -197,7 +210,7 @@ namespace FreedomVoice.Core.Presenters
                 return null;
             }
 
-            var res = await _messagesService.SendMessage(_conversationId.Value, text);
+            var res = await _messagesService.SendMessage(AccountNumber, _conversationId.Value, text);
 
             if (res == null || res.Entity == null)
             {
@@ -237,7 +250,7 @@ namespace FreedomVoice.Core.Presenters
                 return null;
             }
 
-            var res = await _messagesService.SendMessage(clearedCurrentPhone, clearedToPhone, text);
+            var res = await _messagesService.SendMessage(AccountNumber, clearedCurrentPhone, clearedToPhone, text);
 
             if (res == null || res.Entity == null)
             {
@@ -296,7 +309,7 @@ namespace FreedomVoice.Core.Presenters
             if (string.IsNullOrWhiteSpace(clearedCurrentPhone) || string.IsNullOrWhiteSpace(clearedToPhone))
                 return null;
 
-            var conversation = await _conversationService.Get(clearedCurrentPhone, clearedToPhone);
+            var conversation = await _conversationService.Get(AccountNumber, clearedCurrentPhone, clearedToPhone);
             return conversation?.Conversation?.Id;
         }
 
@@ -363,7 +376,7 @@ namespace FreedomVoice.Core.Presenters
 
             _isLoading = true;
             var current = _formatter.NormalizeNational(PhoneNumber);
-            var res = await _messagesService.GetList(current, _conversationId.Value, _currentDate, DefaultCount, _currentPage);
+            var res = await _messagesService.GetList(AccountNumber, current, _conversationId.Value, _currentDate, DefaultCount, _currentPage);
             if(res.ResponseCode != Entities.Enums.ErrorCodes.Ok)
             {
                 _isLoading = false;
