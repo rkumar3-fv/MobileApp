@@ -211,7 +211,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             _presenter = new ConversationsPresenter()
             {
                 PhoneNumber = _callerIdView.SelectedNumber.PhoneNumber,
-                AccountNumber = UserDefault.AccountPhoneNumber
+                AccountNumber = UserDefault.LastUsedAccount
             };
             _presenter.ServerError += (sender, args) =>
             {

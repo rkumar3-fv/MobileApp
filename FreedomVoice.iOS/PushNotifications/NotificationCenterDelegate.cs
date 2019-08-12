@@ -131,6 +131,7 @@ namespace FreedomVoice.iOS.PushNotifications
             }
             completionHandler?.Invoke();
         }
+
         private async Task<bool> CheckCurrentNumber()
         {
             try
@@ -323,6 +324,7 @@ namespace FreedomVoice.iOS.PushNotifications
                     subtitleValue = alertValue[SubtitleKey] as NSString;
 
                     break;
+
                 case NSString apsTitle:
                     titleValue = apsTitle;
                     break;
@@ -358,7 +360,6 @@ namespace FreedomVoice.iOS.PushNotifications
         private void ShowPushNotificationsNow(string title, string body, string subtitle, NSDictionary userInfo)
         {
             _logger.Debug(nameof(NotificationCenterDelegate), nameof(ShowPushNotificationsNow), $"Show alerts as title: {title}, subtitle: {subtitle} body: {body}");
-
 
             if (UIDevice.CurrentDevice.CheckSystemVersion(12, 0))
                 ShowPushNotificationsNowForiOS12AndLater(title, body, subtitle, userInfo);
