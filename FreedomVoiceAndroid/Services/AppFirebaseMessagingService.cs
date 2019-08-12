@@ -76,40 +76,37 @@ namespace com.FreedomVoice.MobileApp.Android.Services
         {
             var myPresentationPhone = conversation?.Messages?.FirstOrDefault()?.To?.PhoneNumber;
             myPresentationPhone = _contactNameProvider.GetFormattedPhoneNumber(myPresentationPhone);
-            
+
             var conversationToPhoneNumber =
                 _contactNameProvider.GetFormattedPhoneNumber(conversation.ToPhone.PhoneNumber);
 
-            using (var h = new Handler(Looper.MainLooper))
+            new Handler(Looper.MainLooper).Post(() =>
             {
-                h.Post(() =>
+                try
                 {
-                    try
-                    {
-                        var contactNameOrPhone = _contactNameProvider.GetName(conversation.ToPhone.PhoneNumber);
-                        ShowConversationMessagePush(
-                            conversation.Id,
-                            conversationToPhoneNumber,
-                            myPresentationPhone,
-                            contactNameOrPhone,
-                            conversation.Messages?.FirstOr(null)?.Text ?? "new message"
-                        );
-                    }
-                    catch (Exception e)
-                    {
-                        Log.Error(PackageName, e.Message);
-                    }
-                });
-            }
+                    var contactNameOrPhone = _contactNameProvider.GetName(conversation.ToPhone.PhoneNumber);
+                    ShowConversationMessagePush(
+                        conversation.Id,
+                        conversationToPhoneNumber,
+                        myPresentationPhone,
+                        contactNameOrPhone,
+                        conversation.Messages?.FirstOr(null)?.Text ?? "new message"
+                    );
+                }
+                catch (Exception e)
+                {
+                    Log.Error(PackageName, e.Message);
+                }
+            });
         }
 
-        private void ShowConversationMessagePush(long conversationId, string phoneNumber, string subText, string title, string body)
+        private void ShowConversationMessagePush(long conversationId, string fromPhone, string myPhone, string title, string body)
         {
             var manager = NotificationManagerCompat.From(this);
             var channelId = GetString(Resource.String.DefaultNotificationChannel);
 
             var intent = new Intent(this, typeof(NotificationBroadcastReceiver));
-            var openChatIntent = ChatActivity.OpenChat(this, conversationId, phoneNumber);
+            var openChatIntent = ChatActivity.OpenChat(this, conversationId, fromPhone, myPhone);
             intent.PutExtra(BaseActivity.NavigationRedirectActivityName, Class.FromType(typeof(ChatActivity)).Name);
             intent.PutExtra(BaseActivity.NavigatePayloadBundle, openChatIntent.Extras);
 
@@ -123,7 +120,7 @@ namespace com.FreedomVoice.MobileApp.Android.Services
                 .SetSound(Settings.System.DefaultNotificationUri)
                 .SetContentIntent(pLaunchIntent)
                 .SetContentTitle(title)
-                .SetSubText(subText)
+                .SetSubText(myPhone)
                 .SetContentText(body);
 
 

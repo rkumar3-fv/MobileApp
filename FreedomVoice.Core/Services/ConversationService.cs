@@ -34,10 +34,10 @@ namespace FreedomVoice.Core.Services
             var lastSyncDate = await _cacheService.GetLastConversationUpdateDate(current);
             var start = count * (page - 1);
             var netConversations = await _networkService.GetConversations(systemPhoneNumber, presentationPhoneNumber, current, lastSyncDate, start, count);
-            result.ResponseCode = netConversations.Code;
-            result.Message = netConversations.ErrorText;
-            result.Conversations = netConversations.Result.Select(x => _mapper.Map<Conversation>(x));
-            result.IsEnd = netConversations.Result == null || netConversations.Result.Count < count;
+            result.ResponseCode = netConversations?.Code ?? Entities.Enums.ErrorCodes.Unknown;
+            result.Message = netConversations?.ErrorText ?? "Unknown Error";
+            result.Conversations = netConversations?.Result?.Select(x => _mapper.Map<Conversation>(x)) ?? new List<Conversation>();
+            result.IsEnd = netConversations == null || netConversations.Result == null || netConversations.Result.Count < count;
             return result;
         }
 
@@ -58,10 +58,10 @@ namespace FreedomVoice.Core.Services
                 Text = query
             };
             var netConversations = await _networkService.SearchConversations(systemPhoneNumber, presentationPhoneNumber, search);
-            result.ResponseCode = netConversations.Code;
-            result.Message = netConversations.ErrorText;
-            result.Conversations = netConversations.Result.Select(x => _mapper.Map<Conversation>(x));
-            result.IsEnd = netConversations.Result == null || netConversations.Result.Count < count;
+            result.ResponseCode = netConversations?.Code ?? Entities.Enums.ErrorCodes.Unknown;
+            result.Message = netConversations?.ErrorText ?? "Unknown Error";
+            result.Conversations = netConversations?.Result?.Select(x => _mapper.Map<Conversation>(x)) ?? new List<Conversation>();
+            result.IsEnd = netConversations == null || netConversations.Result == null || netConversations.Result.Count < count;
             return result;
         }
 
@@ -69,9 +69,9 @@ namespace FreedomVoice.Core.Services
         {
             var result = new ConversationResponse();
             var netConversation = await _networkService.GetConversation(systemPhoneNumber, presentationPhoneNumber, toPhone);
-            result.ResponseCode = netConversation.Code;
-            result.Message = netConversation.ErrorText;
-            result.Conversation = _mapper.Map<Conversation>(netConversation.Result);
+            result.ResponseCode = netConversation?.Code ?? Entities.Enums.ErrorCodes.Unknown;
+            result.Message = netConversation?.ErrorText ?? "Unknown Error";
+            result.Conversation = netConversation == null || netConversation.Result == null ? null : _mapper.Map<Conversation>(netConversation.Result);
             return result;
         }
     }

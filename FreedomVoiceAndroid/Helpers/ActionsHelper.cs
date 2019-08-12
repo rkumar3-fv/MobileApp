@@ -28,6 +28,7 @@ using Uri = Android.Net.Uri;
 using com.FreedomVoice.MobileApp.Android.Data;
 using Firebase.Iid;
 using FreedomVoice.Core.Services.Interfaces;
+using FreedomVoice.Core.Utils.Interfaces;
 using FreedomVoice.Entities.Enums;
 
 namespace com.FreedomVoice.MobileApp.Android.Helpers
@@ -142,6 +143,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         private readonly AtomicLong _idCounter;
         private readonly AppPreferencesHelper _preferencesHelper;
         private readonly IPushService _pushService;
+        private readonly IPhoneFormatter _formatter;
         private long _preferencesTime;
         private long _initHelperTime;
 
@@ -177,6 +179,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             ServiceContainer.Register<IDeviceCookieStorage>(() => cookieImpl);
             CoreModules.Load(AndroidDbPath.GetDatabasePath("freedomvoice.db"));
             _pushService = ServiceContainer.Resolve<IPushService>();
+            _formatter = ServiceContainer.Resolve<IPhoneFormatter>();
             RecentsDictionary = new SortedDictionary<long, RecentHolder>(Comparer<long>.Create((x, y) => y.CompareTo(x)));
             ExtensionsList = new List<Extension>();
             SelectedExtension = -1;
@@ -680,6 +683,7 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             _app.ApplicationHelper.Reports?.Log("HELPER INTENT CREATED: request ID=" + requestId);
 #endif
             _watchersDictionary.Add(requestId, Stopwatch.StartNew());
+            if (!_app.IsAppInForeground && Build.VERSION.SdkInt >= BuildVersionCodes.O) return;
             _app.StartService(intent);
         }
 
@@ -772,14 +776,22 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             HelperEvent?.Invoke(this, new ActionsHelperEventArgs(-1, new[] { ActionsHelperEventArgs.ClearRecents }));
         }
 
+        public void TrySetCurrentPresentationNumber(string newNum)
+        {
+            if (SelectedAccount?.PresentationNumbers == null) return;
+            var numberIndex = SelectedAccount.PresentationNumbers.FindIndex(accNum =>
+                _formatter.Normalize(accNum) == _formatter.Normalize(newNum)
+            );
+            if (numberIndex != -1) SetPresentationNumber(numberIndex);
+        }
+        
         /// <summary>
         /// Changing presentation number
         /// </summary>
         /// <param name="index">number index</param>
         public void SetPresentationNumber(int index)
         {
-            if (SelectedAccount == null)
-                return;
+            if (SelectedAccount == null) return;
             SelectedAccount.SelectedPresentationNumber = index;
             if (!string.IsNullOrEmpty(SelectedAccount.AccountName) &&
                 !string.IsNullOrEmpty(SelectedAccount.PresentationNumber))

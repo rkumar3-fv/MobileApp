@@ -420,7 +420,10 @@ namespace FreedomVoice.Core.Presenters
                 Items.Add(new DateMessageViewModel(group.Key));
             }
 
-            Items = Items.GroupBy(p => p.MessageId).Select(g => g.OrderBy(y => y.MessageId).First()).ToList();
+            Items = Items.GroupBy(p => p.MessageId)
+                .Select(g => g.OrderBy(y => y.MessageId).First())
+                .OrderByDescending(m => m.Date)
+                .ToList();
         }
 
         private void ContactNameProviderOnContactsUpdated(object sender, EventArgs e)

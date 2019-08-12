@@ -4,6 +4,13 @@ namespace FreedomVoice.Core.Utils.Interfaces
     public interface IPhoneFormatter
     {
         /// <summary>
+        /// Reformat the specified phone.
+        /// </summary>
+        /// <returns>The formatted phone number.</returns>
+        /// <param name="phone">Phone.</param>
+        string Reformat(string phone);
+        
+        /// <summary>
         /// Format the specified phone.
         /// </summary>
         /// <returns>The formatted phone number.</returns>

@@ -1,7 +1,6 @@
 using System.IO;
 using Android.App;
 using Android.Content;
-using Android.Content.PM;
 using Android.Net;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Activities;
@@ -37,22 +36,29 @@ namespace com.FreedomVoice.MobileApp.Android.Receivers
                         application.ApplicationHelper.NavigationRedirectHelper
                             .AddRedirect(new NavigationRedirectHelper.ActivityRedirect(redirect));
 
-                        var launchIntentForPackage =
-                            context.PackageManager.GetLaunchIntentForPackage(context.PackageName);
-                        context.StartActivity(launchIntentForPackage);
+                        StartDefaultLauncher(application);
                     }
                     else
                     {
                         redirect.PutExtras(payload);
-                        context.StartActivity(redirect);
+                        redirect.SetFlags(ActivityFlags.NewTask | ActivityFlags.ResetTaskIfNeeded);
+                        application.StartActivity(redirect);
                     }
                 }
                 else
                 {
-                    var launchIntentForPackage = context.PackageManager.GetLaunchIntentForPackage(context.PackageName);
-                    context.StartActivity(launchIntentForPackage);
+                    StartDefaultLauncher(application);
                 }
             }
+        }
+
+        private static void StartDefaultLauncher(Context context)
+        {
+            var launchIntentForPackage = context.PackageManager
+                .GetLaunchIntentForPackage(context.PackageName)
+                .SetPackage(null)
+                .SetFlags(ActivityFlags.NewTask | ActivityFlags.ResetTaskIfNeeded);
+            context.StartActivity(launchIntentForPackage);
         }
 
         private void ProcessPdf(Context context, Intent intent)
