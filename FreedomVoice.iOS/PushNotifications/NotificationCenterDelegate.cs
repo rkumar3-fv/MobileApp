@@ -131,164 +131,6 @@ namespace FreedomVoice.iOS.PushNotifications
             }
             completionHandler?.Invoke();
         }
-
-<<<<<<< HEAD
-		private async Task<bool> CheckCurrentNumber()
-		{
-			var systemNumber = _phoneFormatter.NormalizeNational(UserDefault.LastUsedAccount);
-
-			var service = ServiceContainer.Resolve<IPresentationNumbersService>();
-			var requestResult = await service.ExecuteRequest(systemNumber, false);
-			var accountNumbers = requestResult as PresentationNumbersResponse;
-			return accountNumbers.PresentationNumbers.Any(x => _phoneFormatter.NormalizeNational(x.PhoneNumber) == systemNumber);
-		}
-
-		private void ProcessStatusChangedPushNotification()
-		{
-			if (pushNotificationData.Data == null)
-			{
-				_logger.Debug(nameof(NotificationCenterDelegate), nameof(ProcessStatusChangedPushNotification), "Conversation is missing.");
-				return;
-			}
-			
-			_messagesService.ReceivedNotification(pushNotificationData.PushType, pushNotificationData.Data);
-			pushNotificationData = null;
-			_logger.Debug(nameof(NotificationCenterDelegate), nameof(ProcessStatusChangedPushNotification), "StatusChanged notification has been processed.");
-		}
-		
-		private async Task ProcessNewMessagePushNotification()
-		{
-			if (pushNotificationData.Data == null)
-			{
-				_logger.Debug(nameof(NotificationCenterDelegate), nameof(ProcessNewMessagePushNotification), "Conversation is missing.");
-				return;
-			}
-			
-			if (!(pushNotificationData.Data?.Id).HasValue)
-			{
-				_logger.Debug(nameof(NotificationCenterDelegate), nameof(ProcessNewMessagePushNotification), "Conversation id is missing.");
-				return;
-			}
-			
-			if (string.IsNullOrWhiteSpace(pushNotificationData?.TextMessageReceivedFromNumber()))
-			{
-				_logger.Debug(nameof(NotificationCenterDelegate), nameof(ProcessNewMessagePushNotification), "CollocutorPhone is missing.");
-				return;
-			}
-			
-			if (string.IsNullOrWhiteSpace(pushNotificationData?.TextMessageReceivedToNumber()))
-			{
-				_logger.Debug(nameof(NotificationCenterDelegate), nameof(ProcessNewMessagePushNotification), "CurrentPhone is missing.");
-				return;
-			}
-
-			if (_appNavigator.MainTabBarController != null || _appNavigator.CurrentController != null)
-			{
-				_logger.Debug(nameof(NotificationCenterDelegate), nameof(ProcessNewMessagePushNotification), "ShowConversationController");
-				await ShowConversationController();
-			}
-			else
-			{
-				_appNavigator.MainTabBarControllerChanged -= MainTabBarControllerChanged;
-				_appNavigator.CurrentControllerChanged -= CurrentControllerChanged;
-				
-				_logger.Debug(nameof(NotificationCenterDelegate), nameof(ProcessNewMessagePushNotification), "MainTabBarController is not prepared yet. Waiting MainTabBarControllerChanged");
-				
-				_appNavigator.MainTabBarControllerChanged += MainTabBarControllerChanged;
-				_appNavigator.CurrentControllerChanged += CurrentControllerChanged;
-			}
-			_logger.Debug(nameof(NotificationCenterDelegate), nameof(ProcessNewMessagePushNotification), "NewMessage notification has been processed.");
-
-		}
-
-		private void IsAuthenticatedChanged()
-		{
-			if (UserDefault.IsAuthenticated) return;
-			
-			_appNavigator.MainTabBarControllerChanged -= MainTabBarControllerChanged;
-			_appNavigator.CurrentControllerChanged -= CurrentControllerChanged;
-			pushNotificationData = null;
-		}
-
-		private async void CurrentControllerChanged(BaseViewController obj)
-		{
-			await ShowConversationController();
-		}
-
-		private async void MainTabBarControllerChanged(MainTabBarController obj)
-		{
-			await ShowConversationController();
-		}
-
-		private async Task ShowConversationController()
-		{
-			if (pushNotificationData?.Data == null)
-			{
-				pushNotificationData = null;
-				_appNavigator.MainTabBarControllerChanged -= MainTabBarControllerChanged;
-				_appNavigator.CurrentControllerChanged -= CurrentControllerChanged;
-				return;
-			}
-
-			if (_appNavigator.MainTabBarController == null || _appNavigator.CurrentController == null)
-				return;
-
-			if (_appNavigator.CurrentController is ConversationViewController)
-			{
-				_logger.Debug(nameof(NotificationCenterDelegate), nameof(ShowConversationController), "Conversation page have already opened)");
-				pushNotificationData = null;
-				_appNavigator.MainTabBarControllerChanged -= MainTabBarControllerChanged;
-				_appNavigator.CurrentControllerChanged -= CurrentControllerChanged;
-				return;
-			}
-
-			_appNavigator.MainTabBarControllerChanged -= MainTabBarControllerChanged;
-			_appNavigator.CurrentControllerChanged -= CurrentControllerChanged;
-
-			try
-			{
-				await FreedomVoice.iOS.Core.Utilities.Helpers.Contacts.GetContactsListAsync();
-			}
-			catch (Exception ex)
-			{
-				_logger.Debug(nameof(NotificationCenterDelegate), nameof(ShowConversationController), $"GetContactsListAsync failed: {ex}");
-			}
-
-			var phoneHolder = _contactNameProvider.GetNameOrNull(_contactNameProvider.GetClearPhoneNumber(pushNotificationData.Data.ToPhone.PhoneNumber));
-			var controller = new ConversationViewController();
-			controller.ConversationId = pushNotificationData.Data.Id;
-			controller.CurrentPhone = new PresentationNumber(pushNotificationData.TextMessageReceivedToNumber());
-			controller.Title = phoneHolder ?? pushNotificationData.TextMessageReceivedFromNumber();
-			_appNavigator.CurrentController.NavigationController?.PushViewController(controller, true);
-			pushNotificationData = null;
-		}
-
-		#region IPKPushRegistryDelegate implementation
-
-		public void DidUpdatePushCredentials(PKPushRegistry registry, PKPushCredentials credentials, string type)
-		{
-			_logger.Debug(nameof(NotificationCenterDelegate), nameof(DidUpdatePushCredentials), $"DidUpdatePushCredentials: {credentials.Token} {type}");
-			DidUpdatePushToken?.Invoke(credentials.Token);
-		}
-	
-		public void DidReceiveIncomingPush(PKPushRegistry registry, PKPushPayload payload, string type)
-		{
- 			_logger.Debug(nameof(NotificationCenterDelegate), nameof(DidUpdatePushCredentials), $"DidUpdatePushCredentials: {payload} {type}");
-
-			if (!payload.DictionaryPayload.ContainsKey(new NSString(ApsKey)))
-			{
-				_logger.Debug(nameof(NotificationCenterDelegate), nameof(DidUpdatePushCredentials), "APS key is missing");
-				return;
-			}
-			
-			var apsValue = payload.DictionaryPayload[ApsKey] as NSDictionary;
-			
-			if (apsValue.ContainsKey(new NSString(ContentAvailableKey)) && apsValue[ContentAvailableKey] is NSNumber contentAvailable && contentAvailable.Int32Value == 1)
-			{
-				DidReceiveSilentRemoteNotification(payload.DictionaryPayload, null);
-				return;
-			}
-=======
         private async Task<bool> CheckCurrentNumber()
         {
             try
@@ -457,7 +299,6 @@ namespace FreedomVoice.iOS.PushNotifications
                 DidReceiveSilentRemoteNotification(payload.DictionaryPayload, null);
                 return;
             }
->>>>>>> master
 
             if (UIApplication.SharedApplication.ApplicationState != UIApplicationState.Active)
             {
@@ -482,45 +323,6 @@ namespace FreedomVoice.iOS.PushNotifications
                     subtitleValue = alertValue[SubtitleKey] as NSString;
 
                     break;
-<<<<<<< HEAD
-				
-				case NSString apsTitle:
-					titleValue = apsTitle;
-					break;
-				
-				default:
-					_logger.Debug(nameof(NotificationCenterDelegate), nameof(DidUpdatePushCredentials), "APS doesn't have title content");
-					return;
-			}
-
-			var pushResponseData = PushResponseExtension.CreateFromFromJson(payload.DictionaryPayload);
-			if (pushResponseData == null)
-			{
-				_logger.Debug(nameof(NotificationCenterDelegate), nameof(DidUpdatePushCredentials), $"Can't parse Data(PushResponse).");
-				ShowPushNotificationsNow(titleValue, bodyValue, subtitleValue, payload.DictionaryPayload);
-				return;
-			}
-
-			var fromPhone = pushResponseData.TextMessageReceivedFromNumber();
-			var phoneHolder = _contactNameProvider.GetNameOrNull(_phoneFormatter.NormalizeNational(fromPhone));
-
-			if (string.IsNullOrWhiteSpace(phoneHolder))
-			{
-				_logger.Debug(nameof(NotificationCenterDelegate), nameof(DidUpdatePushCredentials), $"Can't parse 'From phone number'.");
-				ShowPushNotificationsNow(titleValue, bodyValue, subtitleValue, payload.DictionaryPayload);
-				return;
-			}
-
-			_logger.Debug(nameof(NotificationCenterDelegate), nameof(DidUpdatePushCredentials), $"'From' phone number has been found: {phoneHolder}");
-			ShowPushNotificationsNow(phoneHolder, bodyValue, subtitleValue, payload.DictionaryPayload);
-
-		}
-
-		private void ShowPushNotificationsNow(string title, string body, string subtitle, NSDictionary userInfo)
-		{
-			_logger.Debug(nameof(NotificationCenterDelegate), nameof(ShowPushNotificationsNow), $"Show alerts as title: {title}, subtitle: {subtitle} body: {body}");
-=======
-
                 case NSString apsTitle:
                     titleValue = apsTitle;
                     break;
@@ -556,7 +358,7 @@ namespace FreedomVoice.iOS.PushNotifications
         private void ShowPushNotificationsNow(string title, string body, string subtitle, NSDictionary userInfo)
         {
             _logger.Debug(nameof(NotificationCenterDelegate), nameof(ShowPushNotificationsNow), $"Show alerts as title: {title}, subtitle: {subtitle} body: {body}");
->>>>>>> master
+
 
             if (UIDevice.CurrentDevice.CheckSystemVersion(12, 0))
                 ShowPushNotificationsNowForiOS12AndLater(title, body, subtitle, userInfo);
