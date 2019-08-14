@@ -76,7 +76,7 @@
 	<key>CFBundleName</key>
 	<string>FreedomVoice</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Access to your photos allows you save images to your camera roll.</string>
+	<string>Access to your photos allows you save fax images to your photo library.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>Turn on location Services to enhance your in app experience.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
