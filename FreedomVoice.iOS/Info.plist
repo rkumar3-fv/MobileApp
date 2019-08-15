@@ -6,8 +6,6 @@
 	<string>FreedomVoice</string>
 	<key>CFBundleIdentifier</key>
 	<string>com.freedomvoice.mobileapp</string>
-	<key>CFBundleShortVersionString</key>
-	<string>1.0.45</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>MinimumOSVersion</key>
@@ -76,7 +74,7 @@
 	<key>CFBundleName</key>
 	<string>FreedomVoice</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Access to your photos allows you save images to your camera roll.</string>
+	<string>Access to your photos allows you save fax images to your photo library.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>Turn on location Services to enhance your in app experience.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
@@ -92,7 +90,9 @@
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
+	<key>CFBundleShortVersionString</key>
+	<string>2.0.0</string>
 	<key>CFBundleVersion</key>
-	<string>7</string>
+	<string>1</string>
 </dict>
 </plist>
