@@ -191,7 +191,7 @@ namespace FreedomVoice.Core
         {
 
             return await MakeAsyncGetRequest<List<Conversation>>(
-                $"/api/v1/system/{systemPhoneNumber}/presentationPhoneNumber/{presentationPhoneNumber}/forward/conversations?" +
+                $"/api/v1/systems/{systemPhoneNumber}/presentationPhoneNumber/{presentationPhoneNumber}/conversations?" +
                 $"from={frameRequest.From}&to={frameRequest.To}&start={frameRequest.Start}&limit={frameRequest.Limit}",
                 cancellationToken);
         }
@@ -200,7 +200,7 @@ namespace FreedomVoice.Core
             SearchConversationRequest searchConversationRequest, CancellationToken cancellationToken = default(CancellationToken))
         {
             return await MakeAsyncPostRequest<List<Conversation>>(
-                $"/api/v1/system/{systemPhoneNumber}/presentationPhoneNumber/{presentationPhoneNumber}/forward/conversations/search",
+                $"/api/v1/systems/{systemPhoneNumber}/presentationPhoneNumber/{presentationPhoneNumber}/conversations/search",
                 JsonConvert.SerializeObject(searchConversationRequest),
                 "application/json",
                 cancellationToken);
@@ -210,7 +210,7 @@ namespace FreedomVoice.Core
             ConversationRequest conversationRequest, CancellationToken cancellationToken = default(CancellationToken))
         {
             return await MakeAsyncGetRequest<Conversation>(
-                $"/api/v1/system/{systemPhoneNumber}/presentationPhoneNumber/{presentationPhoneNumber}/forward/conversation?" +
+                $"/api/v1/systems/{systemPhoneNumber}/presentationPhoneNumber/{presentationPhoneNumber}/conversation?" +
                 $"toPhone={conversationRequest.ToPhone}",
                 cancellationToken);
         }
@@ -219,7 +219,7 @@ namespace FreedomVoice.Core
             MessagesRequest messagesRequest, CancellationToken cancellationToken = default(CancellationToken))
         {
             return await MakeAsyncGetRequest<List<FreedomVoice.Entities.Message>>(
-                $"/api/v1/system/{systemPhoneNumber}/presentationPhoneNumber/{presentationPhoneNumber}/forward/messages?" +
+                $"/api/v1/systems/{systemPhoneNumber}/presentationPhoneNumber/{presentationPhoneNumber}/messages?" +
                 $"from={messagesRequest.From}&to={messagesRequest.To}&start={messagesRequest.Start}&limit={messagesRequest.Limit}&conversationId={messagesRequest.ConversationId}",
                 cancellationToken);
         }
@@ -231,7 +231,7 @@ namespace FreedomVoice.Core
             {
                 var content = JsonConvert.SerializeObject(request);
                 var result = await MakeAsyncPostRequest<SendingResponse<Conversation>>(
-                    $"/api/v1/system/{systemPhoneNumber}/presentationPhoneNumber/{presentationPhoneNumber}/forward/sendMessage",
+                    $"/api/v1/systems/{systemPhoneNumber}/presentationPhoneNumber/{presentationPhoneNumber}/sms",
                     content,
                     "application/json",
                     cancellationToken);
@@ -249,7 +249,7 @@ namespace FreedomVoice.Core
             {
                 var content = JsonConvert.SerializeObject(request);
                 var result = await MakeAsyncPostRequest<string>(
-                    isRegistration ? $"/api/v1/system/{systemPhoneNumber}/push/subscribe" : $"/api/v1/system/{systemPhoneNumber}/push/unsubscribe",
+                    isRegistration ? $"/api/v1/systems/{systemPhoneNumber}/push/subscribe" : $"/api/v1/systems/{systemPhoneNumber}/push/unsubscribe",
                     content,
                     "application/json",
                     CancellationToken.None);
