@@ -52,12 +52,10 @@ namespace com.FreedomVoice.MobileApp.Android.Services
             _downloadingUrls = new ConcurrentQueue<Message>();
             _cancellationTokens = new ConcurrentDictionary<int, CancellationTokenSource>();
 
-            var channelId = GetString(Resource.String.DefaultNotificationChannel);
             _notificationManager = NotificationManagerCompat.From(this);
-            _builder = new NotificationCompat.Builder(this, channelId);
+            _builder = NotificationUtils.GetProgressBuilder(this);
             _builder.SetSmallIcon(Resource.Drawable.ic_notification_download);
             _builder.SetCategory(Notification.CategoryProgress);
-            _builder.SetChannelId(channelId);
         }
 
         public override IBinder OnBind(Intent intent)
