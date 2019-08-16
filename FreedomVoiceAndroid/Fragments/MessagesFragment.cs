@@ -184,7 +184,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                     case ActionsHelperEventArgs.MsgUpdated:
                         if (_timer.Enabled)
                             _timer.Stop();
-                        ContentActivity.SetToolbarContent();
+                        if (this == ContentActivity.CurrentPagerFragment()) ContentActivity.SetToolbarContent();
                         if ((Helper.SelectedExtension == -1) || (Helper.SelectedFolder == -1))
                             _swipeTouchHelper.AttachToRecyclerView(null);
                         else

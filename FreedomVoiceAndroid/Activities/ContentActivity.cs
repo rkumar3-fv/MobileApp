@@ -19,6 +19,7 @@ using com.FreedomVoice.MobileApp.Android.Dialogs;
 using com.FreedomVoice.MobileApp.Android.Fragments;
 using com.FreedomVoice.MobileApp.Android.Helpers;
 using com.FreedomVoice.MobileApp.Android.Utils;
+using Fragment = Android.Support.V4.App.Fragment;
 using SearchView = Android.Support.V7.Widget.SearchView;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 
@@ -43,7 +44,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         private ContentPager _viewPager;
         private Toolbar _toolbar;
         private TabLayout _tabLayout;
-        private string _request;
+        private string _activeSearchQuery;
 
         private ContactsFragment _contactsFragment;
         private NavigationRedirectHelper _navigationRedirectHelper;
@@ -110,7 +111,17 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         {
             base.OnResumeFragments();
             SetToolbarContent();
-            if (_request != null)
+            
+            new Handler().PostDelayed(() =>
+            {
+                _navigationRedirectHelper.OnNewRedirect += OnRedirect;
+                _navigationRedirectHelper.Resume();
+            }, 1500);
+        }
+
+        private void RestoreSearchViewState()
+        {
+            if (_activeSearchQuery != null)
             {
                 var menu = _toolbar.Menu;
                 var item = menu?.FindItem(Resource.Id.menu_action_search);
@@ -120,24 +131,14 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                     var searchView = view?.JavaCast<SearchView>();
                     if (searchView != null)
                     {
-                        item.ExpandActionView();
-                        searchView.SetQuery(_request, false);
-                        return;
+                        if (!item.IsActionViewExpanded) item.ExpandActionView();
+                        if (searchView.Query != _activeSearchQuery)
+                            searchView.SetQuery(_activeSearchQuery, false);
                     }
                 }
             }
-            var param = _toolbar.LayoutParameters.JavaCast<AppBarLayout.LayoutParams>();
-            param.ScrollFlags = AppBarLayout.LayoutParams.ScrollFlagScroll | AppBarLayout.LayoutParams.ScrollFlagEnterAlways;
-            _tabLayout.Visibility = ViewStates.Visible;
-
-            new Handler().PostDelayed(() =>
-            {
-                _navigationRedirectHelper.OnNewRedirect += OnRedirect;
-                _navigationRedirectHelper.Resume();
-            }, 1500);
         }
-        
-        
+
 
         private void OnRedirect(object sender, NavigationRedirectHelper.IRedirect e)
         {
@@ -160,11 +161,11 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 var searchView = view?.JavaCast<SearchView>();
                 if ((searchView != null) && (!searchView.Iconified))
                 {
-                    _request = searchView.Query;
+                    _activeSearchQuery = searchView.Query;
                     return;
                 }
             }
-            _request = null;
+            _activeSearchQuery = null;
 
             _navigationRedirectHelper.OnNewRedirect -= OnRedirect;
         }
@@ -233,6 +234,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                     else
                     {
                         ContactsBarRestore();
+                        RestoreSearchViewState();
                     }
                     break;
                 case 2:
@@ -242,6 +244,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 case 4:
                     _toolbar.InflateMenu(Resource.Menu.menu_conversations);
                     ContactsBarRestore();
+                    RestoreSearchViewState();
                     break;
             }
         }
@@ -329,6 +332,13 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             var param = _toolbar.LayoutParameters.JavaCast<AppBarLayout.LayoutParams>();
             param.ScrollFlags = AppBarLayout.LayoutParams.ScrollFlagScroll | AppBarLayout.LayoutParams.ScrollFlagEnterAlways;
             _tabLayout.Visibility = ViewStates.Visible;
+            _activeSearchQuery = null;
+        }
+
+        public Fragment CurrentPagerFragment()
+        {
+            if (_viewPager == null || _pagerAdapter == null) return null;
+            return _pagerAdapter.GetItem(_viewPager.CurrentItem);
         }
 
         public void HideKeyboard()
