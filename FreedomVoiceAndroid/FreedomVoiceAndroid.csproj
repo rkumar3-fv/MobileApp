@@ -430,6 +430,8 @@
     <Compile Include="Utils\CookieSerializer.cs" />
     <Compile Include="Utils\DataValidationUtils.cs" />
     <Compile Include="Utils\ExceptionSupport.cs" />
+    <Compile Include="Utils\FileUtils.cs" />
+    <Compile Include="Utils\NotificationUtils.cs" />
     <Compile Include="Utils\SecurityHelper.cs" />
     <Compile Include="Utils\TouchHelper.cs" />
     <Compile Include="Fragments\ConversationsFragment.cs" />
@@ -1613,6 +1615,9 @@
   </ItemGroup>
   <ItemGroup>
     <LinkDescription Include="LinkerConfig.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\xml\file_paths.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

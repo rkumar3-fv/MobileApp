@@ -9,6 +9,7 @@ using Android.Support.V4.Content;
 using Android.Util;
 using com.FreedomVoice.MobileApp.Android.Activities;
 using com.FreedomVoice.MobileApp.Android.Receivers;
+using com.FreedomVoice.MobileApp.Android.Utils;
 using Firebase.Messaging;
 using FreedomVoice.Core.Services;
 using FreedomVoice.Core.Utils;
@@ -103,7 +104,6 @@ namespace com.FreedomVoice.MobileApp.Android.Services
         private void ShowConversationMessagePush(long conversationId, string fromPhone, string myPhone, string title, string body)
         {
             var manager = NotificationManagerCompat.From(this);
-            var channelId = GetString(Resource.String.DefaultNotificationChannel);
 
             var intent = new Intent(this, typeof(NotificationBroadcastReceiver));
             var openChatIntent = ChatActivity.OpenChat(this, conversationId, fromPhone, myPhone);
@@ -112,8 +112,7 @@ namespace com.FreedomVoice.MobileApp.Android.Services
 
             var pLaunchIntent = PendingIntent.GetBroadcast(this, 0, intent, PendingIntentFlags.UpdateCurrent);
 
-            var notification = new NotificationCompat.Builder(this, channelId)
-                .SetChannelId(channelId)
+            var notification = NotificationUtils.GetDefaultBuilder(this)
                 .SetSmallIcon(Resource.Drawable.ic_default_notification)
                 .SetColor(ContextCompat.GetColor(this, Resource.Color.colorActivatedControls))
                 .SetAutoCancel(true)
@@ -122,22 +121,6 @@ namespace com.FreedomVoice.MobileApp.Android.Services
                 .SetContentTitle(title)
                 .SetSubText(myPhone)
                 .SetContentText(body);
-
-
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
-            {
-                if (GetSystemService(Context.NotificationService) is NotificationManager newManager)
-                {
-                    var notificationChannel = newManager.GetNotificationChannel(channelId) ??
-                                              new NotificationChannel(
-                                                  channelId,
-                                                  GetString(Resource.String.ApplicationName),
-                                                  NotificationImportance.Default
-                                              );
-                    newManager.CreateNotificationChannel(notificationChannel);
-                }
-            }
-
             manager.Notify(Convert.ToInt32(conversationId), notification.Build());
         }
     }

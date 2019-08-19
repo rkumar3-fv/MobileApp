@@ -11,6 +11,7 @@ using Android.Util;
 using Android.Views;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Helpers;
+using com.FreedomVoice.MobileApp.Android.Utils;
 using Java.Lang;
 using Uri = Android.Net.Uri;
 
@@ -86,15 +87,13 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             base.AttachmentsHelperOnFinishLoading(sender, args);
             if (!_openFaxButton.Activated)
                 _openFaxButton.Activated = true;
-            var intent = new Intent(Intent.ActionView);
-            var file = new Java.IO.File(args.Result);
-            file.SetReadable(true);
-            intent.SetDataAndType(Uri.FromFile(file), "application/pdf");
-            intent.SetFlags(ActivityFlags.NoHistory);
+
+            var openPdfFileIntent = FileUtils.OpenPdfFileIntent(this, args.Result);
+
             JavaSystem.Gc();
             try
             {
-                StartActivity(intent);
+                StartActivity(openPdfFileIntent);
             }
             catch (ActivityNotFoundException)
             {
