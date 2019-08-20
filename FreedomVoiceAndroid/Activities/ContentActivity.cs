@@ -50,6 +50,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         private NavigationRedirectHelper _navigationRedirectHelper;
 
         private const int MaximumLoadedPages = 100;
+        private const int ResumeFragmentDelay = 1500;
 
         /// <summary>
         /// Contacts search listener
@@ -116,7 +117,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             {
                 _navigationRedirectHelper.OnNewRedirect += OnRedirect;
                 _navigationRedirectHelper.Resume();
-            }, 1500);
+            }, ResumeFragmentDelay);
         }
 
         private void RestoreSearchViewState()
