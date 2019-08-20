@@ -58,7 +58,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                     {
                         if (phone.Length > 4)
                         {
-                            var normalizedNumber = ServiceContainer.Resolve<IPhoneFormatter>().Format(phone);
+                            var normalizedNumber = ServiceContainer.Resolve<IPhoneFormatter>().Normalize(phone);
 
                             Helper.Call(normalizedNumber);
                             JavaSystem.Gc();

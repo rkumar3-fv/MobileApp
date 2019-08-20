@@ -25,7 +25,7 @@ namespace FreedomVoice.Core.Utils
         {
             if ( string.IsNullOrEmpty(phone) )
                 return "";
-            var phoneNumber = Regex.Match(phone, @"\d+").Value;
+            var phoneNumber = Regex.Replace(phone, @"\D", "");
             if ( string.IsNullOrEmpty(phone) )
                 return phoneNumber;
             if (phoneNumber.Length == 11 && phoneNumber.StartsWith(DefaultRegionCode))
