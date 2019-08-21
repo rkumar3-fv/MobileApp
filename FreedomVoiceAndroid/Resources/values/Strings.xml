@@ -81,6 +81,7 @@
   <string name="FragmentContacts_no">No Results</string>
   <string name="FragmentContacts_empty">No Items</string>
   <string name="FragmentConversations_empty">No Items</string>
+  <string name="FragmentConversations_search_hint">Search messages</string>
   <string name="ActivityVoice_title">Voicemail</string>
   <string name="ActivityVoice_speaker">Speaker</string>
   <string name="ActivityVoice_callback">Call</string>
