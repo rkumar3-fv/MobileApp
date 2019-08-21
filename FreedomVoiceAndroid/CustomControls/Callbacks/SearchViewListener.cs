@@ -12,7 +12,7 @@ namespace com.FreedomVoice.MobileApp.Android.CustomControls.Callbacks
     /// <summary>
     /// SearchView listener implementation
     /// </summary>
-    public class SearchViewListener : Object, SearchView.IOnQueryTextListener, MenuItemCompat.IOnActionExpandListener
+    public class SearchViewListener : Object, SearchView.IOnQueryTextListener, IMenuItemOnActionExpandListener
     {
         public string QueryString { get; private set; }
 
@@ -50,13 +50,13 @@ namespace com.FreedomVoice.MobileApp.Android.CustomControls.Callbacks
             return false;
         }
 
-        public bool OnMenuItemActionCollapse(IMenuItem item)
+        bool IMenuItemOnActionExpandListener.OnMenuItemActionCollapse(IMenuItem item)
         {
             OnCollapse?.Invoke(this, true);
             return true;
         }
 
-        public bool OnMenuItemActionExpand(IMenuItem item)
+        bool IMenuItemOnActionExpandListener.OnMenuItemActionExpand(IMenuItem item)
         {
             OnExpand?.Invoke(this, true);
             return true;

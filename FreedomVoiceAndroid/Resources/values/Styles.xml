@@ -108,7 +108,6 @@
 
   <!-- SearchView style-->
   <style name="AppSearchViewStyle" parent="Widget.AppCompat.SearchView">
-    <item name="queryHint">@string/FragmentContacts_hint</item>
     <item name="closeIcon">@drawable/ic_action_close</item>
     <item name="searchIcon">@drawable/ic_action_search</item>
     <item name="goIcon">@drawable/ic_action_search</item>

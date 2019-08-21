@@ -68,17 +68,17 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         public override void OnResume()
         {
             base.OnResume();
-            ContentActivity.SearchListener.OnChange += SearchListenerOnChange;
-            ContentActivity.SearchListener.OnApply += SearchListenerOnApply;
-            ContentActivity.SearchListener.OnCollapse += SearchListenerOnCancel;
+            ContentActivity.ContactsSearchListener.OnChange += SearchListenerOnChange;
+            ContentActivity.ContactsSearchListener.OnApply += SearchListenerOnApply;
+            ContentActivity.ContactsSearchListener.OnCollapse += SearchListenerOnCancel;
         }      
 
         public override void OnPause()
         {
             base.OnPause();
-            ContentActivity.SearchListener.OnChange -= SearchListenerOnChange;
-            ContentActivity.SearchListener.OnApply -= SearchListenerOnApply;
-            ContentActivity.SearchListener.OnCollapse -= SearchListenerOnCancel;
+            ContentActivity.ContactsSearchListener.OnChange -= SearchListenerOnChange;
+            ContentActivity.ContactsSearchListener.OnApply -= SearchListenerOnApply;
+            ContentActivity.ContactsSearchListener.OnCollapse -= SearchListenerOnCancel;
         }
 
         private void AdapterOnItemClick(object sender, Contact contact)

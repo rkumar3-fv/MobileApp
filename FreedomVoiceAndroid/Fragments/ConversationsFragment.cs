@@ -105,9 +105,9 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             base.OnResume();
             if (_presenter != null) _presenter.ItemsChanged += UpdateList;
             if (_presenter != null) _presenter.ServerError += ShowServerError;
-            ContentActivity.SearchListener.OnChange += SearchListenerOnChange;
-            ContentActivity.SearchListener.OnApply += SearchListenerOnApply;
-            ContentActivity.SearchListener.OnCollapse += SearchListenerOnCancel;
+            ContentActivity.ConversationsSearchListener.OnChange += SearchListenerOnChange;
+            ContentActivity.ConversationsSearchListener.OnApply += SearchListenerOnApply;
+            ContentActivity.ConversationsSearchListener.OnCollapse += SearchListenerOnCancel;
             _contactNameProvider.ContactsUpdated += ProviderOnContactsUpdated;
             if (_presenter != null && _presenter.Items.Count > 0) UpdateList(null, null);
         }
@@ -117,9 +117,9 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             base.OnPause();
             if (_presenter != null) _presenter.ItemsChanged -= UpdateList;
             if (_presenter != null) _presenter.ServerError -= ShowServerError;
-            ContentActivity.SearchListener.OnChange -= SearchListenerOnChange;
-            ContentActivity.SearchListener.OnApply -= SearchListenerOnApply;
-            ContentActivity.SearchListener.OnCollapse -= SearchListenerOnCancel;
+            ContentActivity.ConversationsSearchListener.OnChange -= SearchListenerOnChange;
+            ContentActivity.ConversationsSearchListener.OnApply -= SearchListenerOnApply;
+            ContentActivity.ConversationsSearchListener.OnCollapse -= SearchListenerOnCancel;
             _contactNameProvider.ContactsUpdated -= ProviderOnContactsUpdated;
         }
 

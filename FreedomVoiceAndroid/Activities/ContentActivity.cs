@@ -52,10 +52,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
         private const int MaximumLoadedPages = 100;
         private const int ResumeFragmentDelay = 1500;
 
-        /// <summary>
-        /// Contacts search listener
-        /// </summary>
-        public SearchViewListener SearchListener { get; private set; }
+        public readonly SearchViewListener ContactsSearchListener = new SearchViewListener();
+        public readonly SearchViewListener ConversationsSearchListener = new SearchViewListener();
 
         protected override void OnCreate(Bundle bundle)
         {
@@ -66,9 +64,10 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             RootLayout = _rootLayout;
             _whiteColor = new Color(ContextCompat.GetColor(this, Resource.Color.colorActionBarText));
             _grayColor = new Color(ContextCompat.GetColor(this, Resource.Color.colorTabIndicatorInactive));
-            SearchListener = new SearchViewListener();
-            SearchListener.OnCollapse += SearchListenerOnCollapse;
-            SearchListener.OnExpand += SearchListenerOnExpand;
+            ContactsSearchListener.OnCollapse += SearchListenerOnCollapse;
+            ContactsSearchListener.OnExpand += SearchListenerOnExpand;
+            ConversationsSearchListener.OnCollapse += SearchListenerOnCollapse;
+            ConversationsSearchListener.OnExpand += SearchListenerOnExpand;
             _appBar = FindViewById<AppBarLayout>(Resource.Id.contentActivity_contentAppBar);
             _tabLayout = FindViewById<TabLayout>(Resource.Id.contentActivity_tabs);
             _viewPager = FindViewById<ContentPager>(Resource.Id.contentActivity_contentPager);
@@ -234,7 +233,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                     }
                     else
                     {
-                        ContactsBarRestore();
+                        _toolbar.InflateMenu(Resource.Menu.menu_contacts);
+                        ShowSearchMenuOption(Resource.String.FragmentContacts_hint, ContactsSearchListener);
                         RestoreSearchViewState();
                     }
                     break;
@@ -244,7 +244,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                     break;
                 case 4:
                     _toolbar.InflateMenu(Resource.Menu.menu_conversations);
-                    ContactsBarRestore();
+                    ShowSearchMenuOption(Resource.String.FragmentConversations_search_hint, ConversationsSearchListener);
                     RestoreSearchViewState();
                     break;
             }
@@ -385,7 +385,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 case ContactsPermissionRequestId:
                     if (grantResults[0] == Permission.Granted)
                     {
-                        ContactsBarRestore();
+                        SetToolbarContent();
                         _contactsFragment?.ReloadContacts();
                         ContactsHelper.Instance(this).ContactsPermissionGranted();
                     }
@@ -396,21 +396,19 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             }
         }
 
-        private void ContactsBarRestore()
+        private void ShowSearchMenuOption(int? searchHintResource, SearchViewListener searchListener)
         {
-            _toolbar.InflateMenu(Resource.Menu.menu_contacts);
-            var menu = _toolbar.Menu;
-            var searchView =
-                MenuItemCompat.GetActionView(menu.FindItem(Resource.Id.menu_action_search))
-                    .JavaCast<SearchView>();
-            var menuItem = menu.FindItem(Resource.Id.menu_action_search);
-            if (menuItem == null || searchView == null) return;
-            MenuItemCompat.SetOnActionExpandListener(menuItem, SearchListener);
-            MenuItemCompat.SetActionView(menuItem, searchView);
-            searchView.SetOnQueryTextListener(SearchListener);
-            var editText = searchView.FindViewById<EditText>(Resource.Id.search_src_text);
+            var searchMenuItem = _toolbar.Menu.FindItem(Resource.Id.menu_action_search);
+            var searchActionView = searchMenuItem?.ActionView.JavaCast<SearchView>();
+            if (searchMenuItem == null || searchActionView == null) return;
+            searchMenuItem.SetVisible(true);
+            searchMenuItem.SetOnActionExpandListener(searchListener);
+            searchMenuItem.SetActionView(searchActionView);
+            searchActionView.SetOnQueryTextListener(searchListener);
+            var editText = searchActionView.FindViewById<EditText>(Resource.Id.search_src_text);
             editText.SetTextColor(_whiteColor);
             editText.SetHintTextColor(_grayColor);
+            if (searchHintResource.HasValue) editText.SetHint(searchHintResource.Value);
         }
     }
 }
