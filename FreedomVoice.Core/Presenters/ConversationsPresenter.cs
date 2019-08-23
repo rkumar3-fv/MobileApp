@@ -137,7 +137,6 @@ namespace FreedomVoice.Core.Presenters
             _currentDate = DateTime.Now;
             _currentPage = 1;
             HasMore = false;
-            Items = new List<ConversationViewModel>();
             await _PerformLoading();
         }
 
@@ -163,6 +162,11 @@ namespace FreedomVoice.Core.Presenters
             {
                 _isLoading = false;
                 ServerError?.Invoke(this, null);
+            }
+            // reload list when first page
+            if (_currentPage == 1)
+            {
+                Items = new List<ConversationViewModel>();
             }
             Items.AddRange(res.Conversations?.Select(row =>
                                    new ConversationViewModel(row, _nameProvider, _formatter))
