@@ -54,7 +54,7 @@ namespace com.FreedomVoice.MobileApp.Android.Utils
         public List<string> SearchNumbers(string query)
         {
             var res = new List<string>();
-            if (string.IsNullOrEmpty(query))
+            if (string.IsNullOrEmpty(query) || !App.GetApplication(_context).ApplicationHelper.CheckContactsPermission())
                 return res;
 
             var contactCursor = ContactsHelper.Instance(_context).Search(query);

@@ -53,10 +53,8 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
             _receiver = new ComServiceResultReceiver(new Handler());
             _receiver.SetListener(this);
 
-            var channelId = context.GetString(Resource.String.DefaultNotificationChannel);
             _notificationManager = NotificationManagerCompat.From(_context);
-            _builder = new NotificationCompat.Builder(_context, channelId);
-            _builder.SetChannelId(channelId);
+            _builder = NotificationUtils.GetProgressBuilder(_context);
             _builder.SetCategory(Notification.CategoryTransport);
             _builder.SetOngoing(false);
             _builder.SetProgress(0, 0, false);
@@ -176,15 +174,14 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                             case Message.TypeFax:
                                 title = _context.GetString(Resource.String.Notif_fax_success);
                                 icon = Resource.Drawable.ic_notification_fax;
-                                intent = new Intent(_context.GetString(Resource.String.Extra_notificationBroadcast));
+                                intent = new Intent(_context, typeof(NotificationBroadcastReceiver));
                                 intent.PutExtra(NotificationBroadcastReceiver.ExtraPdfPath, successReport.Path);
-                                var resultPendingIntent = PendingIntent.GetBroadcast(_context, 0, intent, 0);
+                                var resultPendingIntent = PendingIntent.GetBroadcast(_context, 0, intent, PendingIntentFlags.UpdateCurrent);
                                 _builder.SetContentIntent(resultPendingIntent);
                                 break;
                             case Message.TypeRec:
                                 title = _context.GetString(Resource.String.Notif_record_success);
                                 icon = Resource.Drawable.ic_notification_playback;
-
                                 intent = new Intent(_context, typeof(VoiceRecordActivity));
                                 intent.SetFlags(ActivityFlags.NoHistory);
                                 intent.PutExtra(MessageDetailsActivity.MessageExtraTag, successReport.Msg);
@@ -194,7 +191,6 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                             case Message.TypeVoice:
                                 title = _context.GetString(Resource.String.Notif_voicemail_success);
                                 icon = Resource.Drawable.ic_notification_playback;
-
                                 intent = new Intent(_context, typeof(VoiceMailActivity));
                                 intent.SetFlags(ActivityFlags.NoHistory);
                                 intent.PutExtra(MessageDetailsActivity.MessageExtraTag, successReport.Msg);

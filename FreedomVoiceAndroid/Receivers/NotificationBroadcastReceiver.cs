@@ -1,16 +1,14 @@
 using System.IO;
-using Android.App;
 using Android.Content;
-using Android.Net;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Activities;
 using com.FreedomVoice.MobileApp.Android.Helpers;
+using com.FreedomVoice.MobileApp.Android.Utils;
 using Java.Lang;
 
 namespace com.FreedomVoice.MobileApp.Android.Receivers
 {
-    [BroadcastReceiver(Enabled = true)]
-    [IntentFilter(new[] {"com.freedomvoice.android.notif"})]
+    [BroadcastReceiver(Exported= false)]
     public class NotificationBroadcastReceiver : BroadcastReceiver
     {
         public const string ExtraPdfPath = "ExtraPdfPath";
@@ -65,18 +63,14 @@ namespace com.FreedomVoice.MobileApp.Android.Receivers
         {
             var path = intent.GetStringExtra(ExtraPdfPath);
             if (path == null) return;
-
             if (!File.Exists(path)) return;
-            var pdfIntent = new Intent(Intent.ActionView);
-            var file = new Java.IO.File(path);
-            file.SetReadable(true);
-            pdfIntent.SetDataAndType(Uri.FromFile(file), "application/pdf");
-            pdfIntent.SetFlags(ActivityFlags.NewTask);
-            pdfIntent.AddFlags(ActivityFlags.NoHistory);
+
+            var application = App.GetApplication(context);
+            var openPdfFileIntent = FileUtils.OpenPdfFileIntent(application, path);
             JavaSystem.Gc();
             try
             {
-                App.GetApplication(context).StartActivity(pdfIntent);
+                application.StartActivity(openPdfFileIntent);
             }
             catch (ActivityNotFoundException)
             {
