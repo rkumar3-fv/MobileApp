@@ -1,9 +1,6 @@
-using Android.Graphics.Drawables;
 using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
-using FreedomVoice.Core.ViewModels;
-using FreedomVoice.Entities.Enums;
 
 namespace com.FreedomVoice.MobileApp.Android.Adapters
 {

@@ -10,9 +10,9 @@ namespace FreedomVoice.Core.Utils.Extensions
         public static List<Phone> AllPhones(this Conversation conversation)
         {
             var phones = new Dictionary<long, Phone>();
-            if (conversation.SystemPhone != null)
+            if (conversation.SystemPhoneNumber != null)
             {
-                phones[conversation.SystemPhone.Id] = conversation.SystemPhone;
+                phones[conversation.SystemPhoneNumber.Id] = conversation.SystemPhoneNumber;
             }
             if (conversation.ToPhone != null)
             {

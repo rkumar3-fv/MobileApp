@@ -318,7 +318,7 @@ namespace FreedomVoice.iOS.Core.Utilities.Helpers
 
         public static string NormalizePhoneNumber(string number)
         {
-            return string.IsNullOrEmpty(number) ? number : ServiceContainer.Resolve<IPhoneFormatter>().Normalize(number);
+            return string.IsNullOrEmpty(number) ? number : ServiceContainer.Resolve<IPhoneFormatter>().NormalizeNational(number);
         }
 
         public static Contact FindContactByNumber(string number)

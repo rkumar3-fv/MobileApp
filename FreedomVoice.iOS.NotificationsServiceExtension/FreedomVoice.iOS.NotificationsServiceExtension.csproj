@@ -86,8 +86,8 @@
     <MtouchFastDev>true</MtouchFastDev>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FreedomVoice.Entities, Version=1.0.16.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\FreedomVoice.Entities.1.0.16\lib\netstandard2.0\FreedomVoice.Entities.dll</HintPath>
+    <Reference Include="FreedomVoice.Entities, Version=1.0.17.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\FreedomVoice.Entities.1.0.17\lib\netstandard2.0\FreedomVoice.Entities.dll</HintPath>
     </Reference>
     <Reference Include="PhoneNumbers, Version=8.10.12.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\libphonenumber-csharp.8.10.12\lib\netstandard2.0\PhoneNumbers.dll</HintPath>

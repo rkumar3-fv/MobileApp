@@ -7,6 +7,7 @@ using FreedomVoice.iOS.PushNotifications;
 using FreedomVoice.iOS.TableViewSources.Texting;
 using FreedomVoice.iOS.Utilities;
 using FreedomVoice.iOS.Utilities.Events;
+using FreedomVoice.iOS.Utilities.Helpers;
 using FreedomVoice.iOS.Views;
 using FreedomVoice.iOS.Views.Shared;
 using UIKit;
@@ -202,10 +203,12 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
                 _tableView.RefreshControl = _refreshControl;
             else
                 _tableView.AddSubview(_refreshControl);
-            
+
             Presenter = new ConversationPresenter
             {
-                PhoneNumber = _callerIdView.SelectedNumber.PhoneNumber, ConversationId = ConversationId
+                PhoneNumber = _callerIdView.SelectedNumber.PhoneNumber,
+                ConversationId = ConversationId,
+                AccountNumber = UserDefault.LastUsedAccount
             };
             Presenter.ItemsChanged += (sender, args) =>
             {
@@ -243,6 +246,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
         private void CallerIdEventOnCallerIdChanged(object sender, EventArgs e)
         {
             Presenter.PhoneNumber = _callerIdView.SelectedNumber.PhoneNumber;
+            Presenter.AccountNumber = UserDefault.LastUsedAccount;
             Presenter.ReloadAsync();
         }
         

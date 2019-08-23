@@ -89,6 +89,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             {
                 ConversationId = convId;
                 _presenter.PhoneNumber = Helper.SelectedAccount.PresentationNumber;
+                _presenter.AccountNumber = Helper.SelectedAccount?.AccountName;
                 _presenter.ConversationId = ConversationId;
                 _presenter.ReloadAsync();
             }
@@ -106,11 +107,13 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             if (_selectContactContainer.Visibility == ViewStates.Visible)
             {
                 ConversationPhone = _contactPhoneEt.Text;
+                _presenter.AccountNumber = Helper.SelectedAccount?.AccountName;
                 var convId = await _presenter.SendMessage(
                     Helper.SelectedAccount.PresentationNumber,
                     ConversationPhone,
                     _messageEt.Text
                 );
+                if (Context == null || Activity == null || Activity.IsFinishing) return;
                 if (convId.HasValue)
                 {
                     ConversationId = convId;

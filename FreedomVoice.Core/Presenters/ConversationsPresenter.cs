@@ -42,7 +42,7 @@ namespace FreedomVoice.Core.Presenters
             get => _phoneNumber;
             set
             {
-                var newValue = _formatter.Normalize(value);
+                var newValue = _formatter.NormalizeNational(value);
                 if (_phoneNumber != null && newValue == _phoneNumber)
                     return;
                 _phoneNumber = newValue;
@@ -137,7 +137,6 @@ namespace FreedomVoice.Core.Presenters
             _currentDate = DateTime.Now;
             _currentPage = 1;
             HasMore = false;
-            Items = new List<ConversationViewModel>();
             await _PerformLoading();
         }
 
@@ -154,8 +153,8 @@ namespace FreedomVoice.Core.Presenters
             Entities.Texting.ConversationListResponse res;
 
             res = string.IsNullOrEmpty(Query)
-                ? await _service.GetList(_phoneNumber, _currentDate, DefaultCount, _currentPage)
-                : await _service.Search(_phoneNumber, Query, _nameProvider.SearchNumbers(Query).ToArray(), _currentDate,
+                ? await _service.GetList(AccountNumber, _phoneNumber, _currentDate, DefaultCount, _currentPage)
+                : await _service.Search(AccountNumber, _phoneNumber, Query, _nameProvider.SearchNumbers(Query).ToArray(), _currentDate,
                     DefaultCount, _currentPage);
 
             HasMore = !res.IsEnd;
@@ -163,6 +162,11 @@ namespace FreedomVoice.Core.Presenters
             {
                 _isLoading = false;
                 ServerError?.Invoke(this, null);
+            }
+            // reload list when first page
+            if (_currentPage == 1)
+            {
+                Items = new List<ConversationViewModel>();
             }
             Items.AddRange(res.Conversations?.Select(row =>
                                    new ConversationViewModel(row, _nameProvider, _formatter))
