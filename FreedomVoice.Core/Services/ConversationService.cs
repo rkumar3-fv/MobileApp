@@ -3,12 +3,14 @@ using FreedomVoice.Core.Entities.Texting;
 using FreedomVoice.Core.Services.Interfaces;
 using FreedomVoice.DAL;
 using FreedomVoice.DAL.DbEntities;
+using FreedomVoice.Entities.Request;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FreedomVoice.Entities.Request;
+
 
 namespace FreedomVoice.Core.Services
 {
@@ -72,6 +74,10 @@ namespace FreedomVoice.Core.Services
             result.Message = netConversation?.ErrorText ?? "Unknown Error";
             result.Conversation = netConversation == null || netConversation.Result == null ? null : _mapper.Map<Conversation>(netConversation.Result);
             return result;
+        }
+        public async Task UpdateMessageReadStatus(string systemPhone, string presentationNumber, long conversationId)
+        {
+            await _networkService.UpdateReadMessageStatus(systemPhone, presentationNumber, conversationId);
         }
     }
 }

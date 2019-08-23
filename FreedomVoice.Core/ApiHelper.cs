@@ -261,6 +261,17 @@ namespace FreedomVoice.Core
             }
         }
 
+        public static async Task SendMessageReadStatus(string systemPhoneNumber, string presentationPhoneNumber, long conversationId)
+        {
+
+            var postdata = "";
+            await MakeAsyncPutRequest<string>(
+               $"/api/v1/systems/{systemPhoneNumber}/presentationPhoneNumber/{presentationPhoneNumber}/conversation/{conversationId}/message",
+               postdata,
+               "application/x-www-form-urlencoded",
+               CancellationToken.None);
+
+        }
         private static HttpClient CreateClient()
         {
             CookieStorage = new CookieStorageClient(ServiceContainer.Resolve<IDeviceCookieStorage>());
@@ -309,6 +320,28 @@ namespace FreedomVoice.Core
             }
 
             return baseRes;
+        }
+
+        private static async Task MakeAsyncPutRequest<T>(string url, string postData, string contentType, CancellationToken ct, int timeout = TimeOut)
+        {
+            Client.Timeout = TimeSpan.FromSeconds(timeout);
+
+            BaseResult<T> baseRes;
+            try
+            {
+                var content = new StringContent(postData, Encoding.UTF8, contentType);
+                var postResp = await Client.PutAsync(url, content, ct);
+                baseRes = await GetResponse<T>(postResp, ct);
+            }
+            catch (WebException ex)
+            {
+                baseRes = new BaseResult<T>
+                {
+                    Code = ErrorCodes.ConnectionLost,
+                    Result = default(T)
+                };
+            }
+
         }
 
         private static async Task<HttpResponseMessage> MakeAsyncPostRequest(string url, string postData, string contentType, CancellationToken ct, int timeout = TimeOut)

@@ -4,7 +4,6 @@ using FreedomVoice.Entities.Response;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-
 namespace FreedomVoice.Core.Services.Interfaces
 {
     public interface INetworkService
@@ -84,7 +83,9 @@ namespace FreedomVoice.Core.Services.Interfaces
             string presentationPhoneNumber, 
             MessageRequest request);
 
-        
+        Task UpdateReadMessageStatus(string systemPhone, string presentationNumber, long conversationId);
+
+
         /// <summary>
         /// Sending push-token to API by provided parameter 
         /// </summary>

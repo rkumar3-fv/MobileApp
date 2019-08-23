@@ -19,6 +19,8 @@ namespace FreedomVoice.Core.Services.Interfaces
         /// <returns></returns>
         Task<ConversationListResponse> GetList(string systemPhoneNumber, string presentationPhoneNumber, DateTime current, int count = 10, int page = 1);
 
+        Task UpdateMessageReadStatus(string systemPhone, string presentationPhone, long conversationId );
+
         /// <summary>
         /// Search list of conversation by provided parameters
         /// </summary>
