@@ -240,6 +240,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         {
             ShowSendMessageProgress(true);
             var res = await _presenter.SendMessageAsync(_messageEt.Text);
+            if (Context == null || Activity == null || Activity.IsFinishing) return;
             if (res.HasValue)
             {
                 _messageEt.SetText("", TextView.BufferType.Editable);  
