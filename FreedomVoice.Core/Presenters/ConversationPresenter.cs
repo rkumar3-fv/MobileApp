@@ -110,10 +110,7 @@ namespace FreedomVoice.Core.Presenters
             get => _accountNumber;
             set
             {
-                var newValue = _formatter.NormalizeNational(value);
-                if (_accountNumber != null && newValue == _accountNumber)
-                    return;
-                _accountNumber = newValue;
+                _accountNumber = _formatter.NormalizeNational(value);
             }
         }
 
