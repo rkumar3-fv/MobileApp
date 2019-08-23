@@ -113,6 +113,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                     ConversationPhone,
                     _messageEt.Text
                 );
+                if (Context == null || Activity == null || Activity.IsFinishing) return;
                 if (convId.HasValue)
                 {
                     ConversationId = convId;
