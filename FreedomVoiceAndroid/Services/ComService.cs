@@ -3,10 +3,12 @@ using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.OS;
+using Android.Support.V4.App;
 #if DEBUG
 using Android.Util;
 #endif
 using com.FreedomVoice.MobileApp.Android.Actions.Requests;
+using com.FreedomVoice.MobileApp.Android.Utils;
 
 namespace com.FreedomVoice.MobileApp.Android.Services
 {
@@ -68,6 +70,7 @@ namespace com.FreedomVoice.MobileApp.Android.Services
 #endif
             _activeActions.Remove(request.Id);
             _receiver.Send(Result.Ok, data);
+            if (_activeActions.Count <= 0) StopSelf();
         }
 
         public override void OnDestroy()

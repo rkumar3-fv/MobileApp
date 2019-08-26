@@ -4,6 +4,7 @@ using Android.Content;
 using Android.Media;
 using Android.OS;
 using Android.Runtime;
+using Android.Support.V4.Content;
 #if DEBUG
 using Android.Util;
 #endif
@@ -115,7 +116,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 intent.SetAction(MediaService.MediaActionSeek);
                 intent.PutExtra(MediaService.MediaIdTag, Msg.Id);
                 intent.PutExtra(MediaService.MediaSeekTag, progress*1000);
-                StartService(intent);
+                if (!App.GetApplication(this).IsAppInForeground && Build.VERSION.SdkInt >= BuildVersionCodes.O) return;
+                ServiceUtils.StartService(this, intent);
             }
         }
 
@@ -154,7 +156,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             var intent = new Intent(this, typeof(MediaService));
             intent.SetAction(MediaService.MediaActionChangeOut);
             intent.PutExtra(MediaService.MediaOutputTag, !isInSpeaker);
-            StartService(intent);
+            if (!App.GetApplication(this).IsAppInForeground && Build.VERSION.SdkInt >= BuildVersionCodes.O) return;
+            ServiceUtils.StartService(this, intent);
         }
 
         /// <summary>
@@ -223,7 +226,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             intent.PutExtra(MediaService.MediaIdTag, Msg.Id);
             intent.PutExtra(MediaService.MediaPathTag, _soundPath);
             intent.PutExtra(MediaService.MediaMsgTag, Msg);
-            StartService(intent);
+            if (!App.GetApplication(this).IsAppInForeground && Build.VERSION.SdkInt >= BuildVersionCodes.O) return;
+            ServiceUtils.StartService(this, intent);
             _isCurrent = true;
             _isPlayed = true;
             PlayerSeek.Enabled = true;
@@ -239,7 +243,8 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             var intent = new Intent(this, typeof (MediaService));
             intent.SetAction(MediaService.MediaActionPause);
             intent.PutExtra(MediaService.MediaIdTag, Msg.Id);
-            StartService(intent);
+            if (!App.GetApplication(this).IsAppInForeground && Build.VERSION.SdkInt >= BuildVersionCodes.O) return;
+            ServiceUtils.StartService(this, intent);
             PlayerButton.SetImageResource(Resource.Drawable.ic_action_play);
             _isPlayed = false;
             _timer.Stop();
