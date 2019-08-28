@@ -116,7 +116,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
                 intent.SetAction(MediaService.MediaActionSeek);
                 intent.PutExtra(MediaService.MediaIdTag, Msg.Id);
                 intent.PutExtra(MediaService.MediaSeekTag, progress*1000);
-                if (!App.GetApplication(this).IsAppInForeground && Build.VERSION.SdkInt >= BuildVersionCodes.O) return;
                 ServiceUtils.StartService(this, intent);
             }
         }
@@ -156,7 +155,6 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             var intent = new Intent(this, typeof(MediaService));
             intent.SetAction(MediaService.MediaActionChangeOut);
             intent.PutExtra(MediaService.MediaOutputTag, !isInSpeaker);
-            if (!App.GetApplication(this).IsAppInForeground && Build.VERSION.SdkInt >= BuildVersionCodes.O) return;
             ServiceUtils.StartService(this, intent);
         }
 
@@ -226,8 +224,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             intent.PutExtra(MediaService.MediaIdTag, Msg.Id);
             intent.PutExtra(MediaService.MediaPathTag, _soundPath);
             intent.PutExtra(MediaService.MediaMsgTag, Msg);
-            if (!App.GetApplication(this).IsAppInForeground && Build.VERSION.SdkInt >= BuildVersionCodes.O) return;
-            ServiceUtils.StartService(this, intent);
+            if (!ServiceUtils.StartService(this, intent)) return;
             _isCurrent = true;
             _isPlayed = true;
             PlayerSeek.Enabled = true;
@@ -243,8 +240,7 @@ namespace com.FreedomVoice.MobileApp.Android.Activities
             var intent = new Intent(this, typeof (MediaService));
             intent.SetAction(MediaService.MediaActionPause);
             intent.PutExtra(MediaService.MediaIdTag, Msg.Id);
-            if (!App.GetApplication(this).IsAppInForeground && Build.VERSION.SdkInt >= BuildVersionCodes.O) return;
-            ServiceUtils.StartService(this, intent);
+            if (!ServiceUtils.StartService(this, intent)) return;
             PlayerButton.SetImageResource(Resource.Drawable.ic_action_play);
             _isPlayed = false;
             _timer.Stop();
