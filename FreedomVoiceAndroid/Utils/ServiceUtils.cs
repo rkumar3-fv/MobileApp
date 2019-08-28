@@ -25,6 +25,7 @@ namespace com.FreedomVoice.MobileApp.Android.Utils
 #else
                 App.GetApplication(context).ApplicationHelper.Reports?.Log(err.StackTrace);
 #endif
+                return false;
             }
         }
     }
