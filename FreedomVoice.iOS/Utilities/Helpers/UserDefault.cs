@@ -60,7 +60,7 @@ namespace FreedomVoice.iOS.Utilities.Helpers
         {
             get { return NSUserDefaults.StandardUserDefaults.StringForKey("AccountPhoneNumberKey"); }
             set {
-                var accountPhoneNumber = ServiceContainer.Resolve<IPhoneFormatter>().Normalize(value);
+                var accountPhoneNumber = ServiceContainer.Resolve<IPhoneFormatter>().NormalizeNational(value);
                 NSUserDefaults.StandardUserDefaults.SetString(accountPhoneNumber, "AccountPhoneNumberKey");
             }
         }

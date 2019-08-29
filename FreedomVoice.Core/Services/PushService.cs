@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using FreedomVoice.Core.Services.Interfaces;
 using FreedomVoice.Entities.Enums;
-using FreedomVoice.Entities.Request;
+using FreedomVoice.Entities.Request.Weblink;
 
 namespace FreedomVoice.Core.Services
 {
@@ -15,15 +15,15 @@ namespace FreedomVoice.Core.Services
             _networkService = networkService;
         }
         
-        public async Task<string> Register(DeviceType deviceType, string token, string systemPhone)
+        public async Task<string> Register(DeviceType deviceType, string token, string systemPhoneNumber)
         {
-            var res = await _networkService.SendPushToken(new PushRequest {Token = token, Type = deviceType, SystemPhone = systemPhone }, true);
+            var res = await _networkService.SendPushToken(systemPhoneNumber, new PushRequest {Token = token, Type = deviceType }, true);
             return res.Result;
         }
 
-        public async Task<string> Unregister(DeviceType deviceType, string token, string systemPhone)
+        public async Task<string> Unregister(DeviceType deviceType, string token, string systemPhoneNumber)
         {
-            var res = await _networkService.SendPushToken(new PushRequest {Token = token, Type = deviceType, SystemPhone = systemPhone }, false);
+            var res = await _networkService.SendPushToken(systemPhoneNumber, new PushRequest {Token = token, Type = deviceType }, false);
             return res.Result;
         }
     }

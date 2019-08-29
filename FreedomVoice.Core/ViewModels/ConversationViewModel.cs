@@ -24,7 +24,7 @@ namespace FreedomVoice.Core.ViewModels
         {
             _contactNameProvider = contactNameProvider;
 
-            _RawTo = formatter.Normalize(entity.ToPhone.PhoneNumber);
+            _RawTo = formatter.NormalizeNational(entity.ToPhone.PhoneNumber);
             var message = entity.Messages.OrderByDescending(x => x.OrderDate).FirstOrDefault();
             if (message == null) return;
             LastMessage = message.Text;

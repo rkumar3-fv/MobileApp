@@ -17,6 +17,8 @@ using FreedomVoice.Core.Utils;
 using ModernHttpClient;
 using Newtonsoft.Json;
 using FreedomVoice.Entities.Request;
+using FreedomVoice.Entities.Request.Weblink;
+using FreedomVoice.Core.Utils.Extensions;
 
 namespace FreedomVoice.Core
 {
@@ -35,6 +37,8 @@ namespace FreedomVoice.Core
         private static CookieStorageClient CookieStorage { get; set; }
 
         private static bool Native { get; set; }
+
+        private static string APISystemPath => "/api/v1/systems";
 
         static ApiHelper()
         {
@@ -90,7 +94,7 @@ namespace FreedomVoice.Core
 
             if (data != null && data.Result.PhoneNumbers.Length != 0) return data;
 
-            data = await MakeAsyncGetRequest<DefaultPhoneNumbers>("/api/v1/systems", CancellationToken.None);
+            data = await MakeAsyncGetRequest<DefaultPhoneNumbers>(APISystemPath, CancellationToken.None);
             if (data?.Result != null && data.Code == ErrorCodes.Ok)
                 await CacheStorage.SaveAccounts(data.Result.PhoneNumbers);
 
@@ -105,7 +109,7 @@ namespace FreedomVoice.Core
 
             if (data != null && data.Result.PhoneNumbers.Length != 0) return data;
 
-            data = await MakeAsyncGetRequest<PresentationPhoneNumbers>($"/api/v1/systems/{systemPhoneNumber}/presentationPhoneNumbers", CancellationToken.None);
+            data = await MakeAsyncGetRequest<PresentationPhoneNumbers>($"{APISystemPath}/{systemPhoneNumber}/presentationPhoneNumbers", CancellationToken.None);
             if (data?.Result != null && data.Code == ErrorCodes.Ok)
                 await CacheStorage.SavePresentationPhones(data.Result.PhoneNumbers);
 
@@ -119,7 +123,7 @@ namespace FreedomVoice.Core
             var destFormatted = WebUtility.UrlEncode(destinationPhoneNumber);
             var postdata = $"ExpectedCallerIdNumber={expectFormatted}&PresentationPhoneNumber={presentFormatted}&DestinationPhoneNumber={destFormatted}";
             return await MakeAsyncPostRequest<CreateCallReservationSetting>(
-                $"/api/v1/systems/{systemPhoneNumber}/createCallReservation",
+                $"{APISystemPath}/{systemPhoneNumber}/createCallReservation",
                 postdata,
                 "application/x-www-form-urlencoded",
                 CancellationToken.None);
@@ -127,29 +131,29 @@ namespace FreedomVoice.Core
 
         public static async Task<BaseResult<List<Mailbox>>> GetMailboxes(string systemPhoneNumber)
         {
-            return await MakeAsyncGetRequest<List<Mailbox>>($"/api/v1/systems/{systemPhoneNumber}/mailboxes", CancellationToken.None);
+            return await MakeAsyncGetRequest<List<Mailbox>>($"{APISystemPath}/{systemPhoneNumber}/mailboxes", CancellationToken.None);
         }
 
         public static async Task<BaseResult<List<MailboxWithCount>>> GetMailboxesWithCounts(string systemPhoneNumber)
         {
-            return await MakeAsyncGetRequest<List<MailboxWithCount>>($"/api/v1/systems/{systemPhoneNumber}/mailboxesWithCounts", CancellationToken.None);
+            return await MakeAsyncGetRequest<List<MailboxWithCount>>($"{APISystemPath}/{systemPhoneNumber}/mailboxesWithCounts", CancellationToken.None);
         }
 
         public static async Task<BaseResult<List<Folder>>> GetFolders(string systemPhoneNumber, int mailboxNumber)
         {
-            return await MakeAsyncGetRequest<List<Folder>>($"/api/v1/systems/{systemPhoneNumber}/mailboxes/{mailboxNumber}/folders", CancellationToken.None);
+            return await MakeAsyncGetRequest<List<Folder>>($"{APISystemPath}/{systemPhoneNumber}/mailboxes/{mailboxNumber}/folders", CancellationToken.None);
         }
 
         public static async Task<BaseResult<List<MessageFolderWithCounts>>> GetFoldersWithCount(string systemPhoneNumber, int mailboxNumber)
         {
-            return await MakeAsyncGetRequest<List<MessageFolderWithCounts>>($"/api/v1/systems/{systemPhoneNumber}/mailboxes/{mailboxNumber}/foldersWithCounts", CancellationToken.None);
+            return await MakeAsyncGetRequest<List<MessageFolderWithCounts>>($"{APISystemPath}/{systemPhoneNumber}/mailboxes/{mailboxNumber}/foldersWithCounts", CancellationToken.None);
         }
 
         public static async Task<BaseResult<List<Message>>> GetMesages(string systemPhoneNumber, int mailboxNumber, string folderName, int pageSize, int pageNumber, bool asc)
         {
             var folder = DataFormatUtils.UrlEncodeWithSpaces(folderName);
             return await MakeAsyncGetRequest<List<Message>>(
-                $"/api/v1/systems/{systemPhoneNumber}/mailboxes/{mailboxNumber}/folders/{folder}/messages?PageSize={pageSize}&PageNumber={pageNumber}&SortAsc={asc}",
+                $"{APISystemPath}/{systemPhoneNumber}/mailboxes/{mailboxNumber}/folders/{folder}/messages?PageSize={pageSize}&PageNumber={pageNumber}&SortAsc={asc}",
                 CancellationToken.None, LongTimeOut);
         }
 
@@ -161,7 +165,7 @@ namespace FreedomVoice.Core
             var postdata = $"DestinationFolderName={folder}{messagesStr}";
 
             return await MakeAsyncPostRequest<string>(
-                $"/api/v1/systems/{systemPhoneNumber}/mailboxes/{mailboxNumber}/moveMessages",
+                $"{APISystemPath}/{systemPhoneNumber}/mailboxes/{mailboxNumber}/moveMessages",
                 postdata,
                 "application/x-www-form-urlencoded",
                 CancellationToken.None);
@@ -172,7 +176,7 @@ namespace FreedomVoice.Core
             var postdata = messageIds.Aggregate(string.Empty, (current, messageId) => current + ("&MessageIds=" + messageId));
 
             return await MakeAsyncPostRequest<string>(
-                $"/api/v1/systems/{systemPhoneNumber}/mailboxes/{mailboxNumber}/deleteMessages",
+                $"{APISystemPath}/{systemPhoneNumber}/mailboxes/{mailboxNumber}/deleteMessages",
                 postdata,
                 "application/x-www-form-urlencoded",
                 CancellationToken.None);
@@ -181,59 +185,58 @@ namespace FreedomVoice.Core
         public static async Task<BaseResult<MediaResponse>> GetMedia(string systemPhoneNumber, int mailboxNumber, string folderName, string messageId, MediaType mediaType, CancellationToken token)
         {
             var folder = DataFormatUtils.UrlEncodeWithSpaces(folderName);
-            return await MakeAsyncFileDownload($"/api/v1/systems/{systemPhoneNumber}/mailboxes/{mailboxNumber}/folders/{folder}/messages/{messageId}/media/{mediaType}", token);
+            return await MakeAsyncFileDownload($"{APISystemPath}/{systemPhoneNumber}/mailboxes/{mailboxNumber}/folders/{folder}/messages/{messageId}/media/{mediaType}", token);
         }
         
-        public static async Task<BaseResult<List<Conversation>>> GetConversations(
-            ConversationsRequest conversationsRequest, CancellationToken cancellationToken = default(CancellationToken))
+        public static async Task<BaseResult<List<Conversation>>> GetConversations(string systemPhoneNumber, string presentationPhoneNumber,
+            FrameRequest frameRequest, CancellationToken cancellationToken = default(CancellationToken))
         {
-            return await MakeAsyncPostRequest<List<Conversation>>(
-                $"/api/v1/system/forward/conversations",
-                JsonConvert.SerializeObject(conversationsRequest),
-                "application/json",
+
+            return await MakeAsyncGetRequest<List<Conversation>>(
+                $"{APISystemPath}/{systemPhoneNumber}/presentationPhoneNumber/{presentationPhoneNumber}/conversations?" +
+                $"from={frameRequest.From}&to={frameRequest.To}&start={frameRequest.Start}&limit={frameRequest.Limit}",
                 cancellationToken);
         }
 
-        public static async Task<BaseResult<List<Conversation>>> SearchConversations(
+        public static async Task<BaseResult<List<Conversation>>> SearchConversations(string systemPhoneNumber, string presentationPhoneNumber,
             SearchConversationRequest searchConversationRequest, CancellationToken cancellationToken = default(CancellationToken))
         {
             return await MakeAsyncPostRequest<List<Conversation>>(
-                $"/api/v1/system/forward/conversations/search",
+                $"{APISystemPath}/{systemPhoneNumber}/presentationPhoneNumber/{presentationPhoneNumber}/conversations/search",
                 JsonConvert.SerializeObject(searchConversationRequest),
                 "application/json",
                 cancellationToken);
         }
 
-        public static async Task<BaseResult<Conversation>> GetConversation(
+        public static async Task<BaseResult<Conversation>> GetConversation(string systemPhoneNumber, string presentationPhoneNumber,
             ConversationRequest conversationRequest, CancellationToken cancellationToken = default(CancellationToken))
         {
-            return await MakeAsyncPostRequest<Conversation>(
-                $"/api/v1/system/forward/conversation",
-                JsonConvert.SerializeObject(conversationRequest),
-                "application/json",
+            return await MakeAsyncGetRequest<Conversation>(
+                $"{APISystemPath}/{systemPhoneNumber}/presentationPhoneNumber/{presentationPhoneNumber}/conversation?" +
+                $"toPhone={conversationRequest.ToPhone}",
                 cancellationToken);
         }
 
-        public static async Task<BaseResult<List<FreedomVoice.Entities.Message>>> GetMessages(
+        public static async Task<BaseResult<List<FreedomVoice.Entities.Message>>> GetMessages(string systemPhoneNumber, string presentationPhoneNumber,
             MessagesRequest messagesRequest, CancellationToken cancellationToken = default(CancellationToken))
         {
-            return await MakeAsyncPostRequest<List<FreedomVoice.Entities.Message>>(
-                $"/api/v1/system/forward/messages",
-                JsonConvert.SerializeObject(messagesRequest),
-                "application/json",
+            return await MakeAsyncGetRequest<List<FreedomVoice.Entities.Message>>(
+                $"{APISystemPath}/{systemPhoneNumber}/presentationPhoneNumber/{presentationPhoneNumber}/messages?" +
+                $"from={messagesRequest.From}&to={messagesRequest.To}&start={messagesRequest.Start}&limit={messagesRequest.Limit}&conversationId={messagesRequest.ConversationId}",
                 cancellationToken);
         }
 
-        public static async Task<BaseResult<SendingResponse<Conversation>>> SendMessage(MessageRequest request)
+        public static async Task<BaseResult<SendingResponse<Conversation>>> SendMessage(string systemPhoneNumber, string presentationPhoneNumber, 
+            MessageRequest request, CancellationToken cancellationToken = default(CancellationToken))
         {
             try
             {
                 var content = JsonConvert.SerializeObject(request);
                 var result = await MakeAsyncPostRequest<SendingResponse<Conversation>>(
-                    $"/api/v1/system/forward/sendMessage",
+                    $"{APISystemPath}/{systemPhoneNumber}/presentationPhoneNumber/{presentationPhoneNumber}/sms",
                     content,
                     "application/json",
-                    CancellationToken.None);
+                    cancellationToken);
                 return result;
             }
             catch(Exception)
@@ -242,13 +245,13 @@ namespace FreedomVoice.Core
             }
         }
 
-        public static async Task<BaseResult<string>> SendPushToken(PushRequest request, bool isRegistration)
+        public static async Task<BaseResult<string>> SendPushToken(string systemPhoneNumber, PushRequest request, bool isRegistration)
         {
             try
             {
                 var content = JsonConvert.SerializeObject(request);
                 var result = await MakeAsyncPostRequest<string>(
-                    isRegistration ? "/api/v1/system/forward/push/subscribe" : "/api/v1/system/forward/push/unsubscribe",
+                    isRegistration ? $"{APISystemPath}/{systemPhoneNumber}/push/subscribe" : $"{APISystemPath}/{systemPhoneNumber}/push/unsubscribe",
                     content,
                     "application/json",
                     CancellationToken.None);
@@ -328,10 +331,16 @@ namespace FreedomVoice.Core
         private static async Task<BaseResult<T>> MakeAsyncGetRequest<T>(string url, CancellationToken ct, int timeout = TimeOut)
         {
             Client.Timeout = TimeSpan.FromSeconds(timeout);
-
-            var request = new HttpRequestMessage(HttpMethod.Get, url);
-            var getResp = Client.SendAsync(request, ct);
-            return await GetResponse<T>(getResp, ct);
+            try
+            {
+                var request = new HttpRequestMessage(HttpMethod.Get, url);
+                var getResp = Client.SendAsync(request, ct);
+                return await GetResponse<T>(getResp, ct);
+            }
+            catch(Exception ex)
+            {
+                return new BaseResult<T> { ErrorText = ex.Message };
+            }
         }
 
         public static async Task<BaseResult<MediaResponse>> MakeAsyncFileDownload(string url, CancellationToken ct)

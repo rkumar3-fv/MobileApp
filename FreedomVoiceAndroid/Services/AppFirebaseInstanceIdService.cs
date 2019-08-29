@@ -3,7 +3,6 @@ using com.FreedomVoice.MobileApp.Android.Helpers;
 using Firebase.Iid;
 using FreedomVoice.Core.Services.Interfaces;
 using FreedomVoice.Core.Utils;
-using FreedomVoice.Entities.Enums;
 
 namespace com.FreedomVoice.MobileApp.Android.Services
 {

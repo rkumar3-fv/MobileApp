@@ -57,7 +57,7 @@ namespace FreedomVoice.iOS.Core.Utilities.Helpers
         
         public string GetClearPhoneNumber(string formattedNumber)
         {
-            return _phoneFormatter.Normalize(formattedNumber);
+            return _phoneFormatter.NormalizeNational(formattedNumber);
         }
 
         private void ContactItemsDidReceive(object sender, EventArgs e)
@@ -65,7 +65,7 @@ namespace FreedomVoice.iOS.Core.Utilities.Helpers
             foreach(var contact in Contacts.ContactList)
             {
                 foreach(var phone in contact.Phones) {
-                    var raw = _phoneFormatter.Normalize(phone.Number);
+                    var raw = _phoneFormatter.NormalizeNational(phone.Number);
                     _contactNames[raw] = contact.DisplayName;
                     var rawNational = _phoneFormatter.NormalizeNational(phone.Number);
                     if( !raw.Equals(rawNational) )

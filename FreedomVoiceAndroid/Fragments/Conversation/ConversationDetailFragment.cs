@@ -123,7 +123,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
 
                 _presenter.ConversationId = ConversationId.Value;
                 _presenter.PhoneNumber = Helper.SelectedAccount?.PresentationNumber;
-
+                _presenter.AccountNumber = Helper.SelectedAccount?.AccountName;
                 _progressBar.Visibility = ViewStates.Visible;
                 _presenter.ReloadAsync();
             }
@@ -239,6 +239,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         protected virtual async void SendMessage()
         {
             ShowSendMessageProgress(true);
+            _presenter.AccountNumber = Helper.SelectedAccount?.AccountName;
             var res = await _presenter.SendMessageAsync(_messageEt.Text);
             if (Context == null || Activity == null || Activity.IsFinishing) return;
             if (res.HasValue)
