@@ -3,6 +3,7 @@ using System.Timers;
 using Android.Content;
 using Android.Support.V7.Widget;
 using Android.Support.V7.Widget.Helper;
+using Android.Util;
 using Android.Views;
 using Android.Widget;
 using com.FreedomVoice.MobileApp.Android.Activities;
@@ -186,9 +187,9 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
                             _timer.Stop();
                         if (this == ContentActivity.CurrentPagerFragment()) ContentActivity.SetToolbarContent();
                         if ((Helper.SelectedExtension == -1) || (Helper.SelectedFolder == -1))
-                            _swipeTouchHelper.AttachToRecyclerView(null);
+                            SaveAttachRecyclerView(null);
                         else
-                            _swipeTouchHelper.AttachToRecyclerView(_recyclerView);
+                            SaveAttachRecyclerView(_recyclerView);
 
                         _adapter.CurrentContent = Helper.GetCurrent();
                         if ((Helper.SelectedFolder != -1) && (Helper.GetCurrent().Count == 0))
@@ -271,6 +272,26 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             }
         }
 
+
+        /**
+         * hard fix hidden error "System.ArgumentException: Handle must be valid. Parameter name: instance"
+         */
+        private void SaveAttachRecyclerView(RecyclerView recyclerView)
+        {
+            try
+            {
+                _swipeTouchHelper?.AttachToRecyclerView(recyclerView);
+            }
+            catch (Exception err)
+            {
+#if DEBUG
+                Log.Error(App.AppPackage, err.StackTrace);
+#else
+                App.GetApplication(context).ApplicationHelper.Reports?.Log(err.StackTrace);
+#endif
+            }
+        }
+        
         private void RestartTimer()
         {
             if (_timer.Enabled) return;
