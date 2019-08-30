@@ -89,7 +89,10 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
                 intent.PutExtra(AttachmentsDownloadService.ActionIdTag, msg.Id);
                 intent.PutExtra(AttachmentsDownloadService.ActionMsgTag, msg);
             }
-            _context.StartService(intent);
+
+            if (!App.GetApplication(_context).IsAppInForeground && Build.VERSION.SdkInt >= BuildVersionCodes.O)
+                return msg.Id;
+            ServiceUtils.StartService(_context, intent);
             return msg.Id;
         }
 

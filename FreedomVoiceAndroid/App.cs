@@ -34,6 +34,7 @@ namespace com.FreedomVoice.MobileApp.Android
     {
         public const string AppPackage = "com.FreedomVoice.MobileApp";
         private readonly AppHelper _helper;
+        private const string appCenterId = "ee6f6d34-7517-4926-9050-3e117c3406de";
 
         /// <summary>
         /// Main application helper
@@ -61,7 +62,7 @@ namespace com.FreedomVoice.MobileApp.Android
         public override void OnCreate()
         {
             base.OnCreate();
-            AppCenter.Start("388143de-93b5-467f-866c-8734d68a8b68",
+            AppCenter.Start(appCenterId,
                    typeof(Analytics), typeof(Crashes));
             FirebaseApp.InitializeApp(this);
             _helper.ActionsHelper = new ActionsHelper(this);

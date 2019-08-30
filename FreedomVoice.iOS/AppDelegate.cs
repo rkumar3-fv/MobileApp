@@ -45,6 +45,8 @@ namespace FreedomVoice.iOS
         private static IPushNotificationsService pushService;
         private static readonly NotificationCenterDelegate PushServiceCenter = new NotificationCenterDelegate();
 
+        private const string appCenterId = "4e7389a2-222d-4868-b291-6b3d38bfcd1c";
+
         public static T GetViewController<T>() where T : UIViewController
         {
             return (T)MainStoryboard.InstantiateViewController(typeof(T).Name);
@@ -52,8 +54,7 @@ namespace FreedomVoice.iOS
 
         public override bool FinishedLaunching(UIApplication application, NSDictionary launchOptions)
         {
-            AppCenter.Start("321617ec-1ee4-448a-a93b-8ea2010f99c4",
-                typeof(Analytics), typeof(Crashes));
+            InitializeAnalytics();
             Window = new UIWindow(UIScreen.MainScreen.Bounds);
 
             ServiceContainer.Register(Window);
@@ -69,8 +70,6 @@ namespace FreedomVoice.iOS
             NSHttpCookieStorage.SharedStorage.AcceptPolicy = NSHttpCookieAcceptPolicy.Always;
 
             Recents.RestoreRecentsFromCache();
-
-            InitializeAnalytics();
 
             Theme.Apply();
             
@@ -126,9 +125,6 @@ namespace FreedomVoice.iOS
 
             Window.MakeKeyAndVisible();
 
-            UserDefault.IsAuthenticated = false;
-            UserDefault.LastUsedAccount = string.Empty;
-
             try
             {
                 await pushService.UnregisterPushNotificationToken();
@@ -137,6 +133,9 @@ namespace FreedomVoice.iOS
             {
                 Console.WriteLine(e);
             }
+
+            UserDefault.IsAuthenticated = false;
+            UserDefault.LastUsedAccount = string.Empty;
 
             Recents.ClearRecents();
 
@@ -390,13 +389,14 @@ namespace FreedomVoice.iOS
 
         private static void InitializeAnalytics()
         {
+            AppCenter.Start(appCenterId,
+                typeof(Analytics), typeof(Crashes));
             InitializeFirebaseAnalytics();
         }
         
         private static void InitializeFirebaseAnalytics()
         {
             App.Configure();
-            Firebase.Analytics.Analytics.LogEvent("test", new NSDictionary<NSString, NSObject>());
         }
         
 

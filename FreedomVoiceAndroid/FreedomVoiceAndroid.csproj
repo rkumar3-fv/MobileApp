@@ -433,6 +433,7 @@
     <Compile Include="Utils\FileUtils.cs" />
     <Compile Include="Utils\NotificationUtils.cs" />
     <Compile Include="Utils\SecurityHelper.cs" />
+    <Compile Include="Utils\ServiceUtils.cs" />
     <Compile Include="Utils\TouchHelper.cs" />
     <Compile Include="Fragments\ConversationsFragment.cs" />
     <Compile Include="Dialogs\ErrorDialogFragment.cs" />

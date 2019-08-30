@@ -671,20 +671,19 @@ namespace com.FreedomVoice.MobileApp.Android.Helpers
         /// <returns>prepaired intent</returns>
         private void PrepareIntent(long requestId, BaseRequest request)
         {
-            if (!_app.IsAppInForeground && Build.VERSION.SdkInt >= BuildVersionCodes.O) return;
             var intent = new Intent(_app, typeof(ComService));
             intent.PutExtra(ComService.RequestIdTag, requestId);
             intent.PutExtra(ComServiceResultReceiver.ReceiverTag, _receiver);
             intent.PutExtra(ComService.RequestTag, request);
-            WaitingRequestArray.Add(requestId, request);
 #if DEBUG
             Log.Debug(App.AppPackage, "HELPER INTENT CREATED: request ID="+requestId);
 #else
             _app.ApplicationHelper.Reports?.Log("HELPER INTENT CREATED: request ID=" + requestId);
 #endif
-            _watchersDictionary.Add(requestId, Stopwatch.StartNew());
             if (!_app.IsAppInForeground && Build.VERSION.SdkInt >= BuildVersionCodes.O) return;
-            _app.StartService(intent);
+            WaitingRequestArray.Add(requestId, request);
+            _watchersDictionary.Add(requestId, Stopwatch.StartNew());
+            ServiceUtils.StartService(_app, intent);
         }
 
         private bool CheckRequestAbility(long requestId)
