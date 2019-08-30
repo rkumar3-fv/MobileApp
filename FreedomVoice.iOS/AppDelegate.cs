@@ -125,9 +125,6 @@ namespace FreedomVoice.iOS
 
             Window.MakeKeyAndVisible();
 
-            UserDefault.IsAuthenticated = false;
-            UserDefault.LastUsedAccount = string.Empty;
-
             try
             {
                 await pushService.UnregisterPushNotificationToken();
@@ -136,6 +133,9 @@ namespace FreedomVoice.iOS
             {
                 Console.WriteLine(e);
             }
+
+            UserDefault.IsAuthenticated = false;
+            UserDefault.LastUsedAccount = string.Empty;
 
             Recents.ClearRecents();
 

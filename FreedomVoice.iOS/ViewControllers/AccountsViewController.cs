@@ -36,8 +36,6 @@ namespace FreedomVoice.iOS.ViewControllers
         {
             Title = "Select Account";
 
-            UserDefault.LastUsedAccount = string.Empty;
-
             NavigationItem.SetRightBarButtonItem(Appearance.GetLogoutBarButton(this), true);
             NavigationController.NavigationBarHidden = false;
 
