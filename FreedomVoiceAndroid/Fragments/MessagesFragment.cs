@@ -287,7 +287,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
 #if DEBUG
                 Log.Error(App.AppPackage, err.StackTrace);
 #else
-                App.GetApplication(context).ApplicationHelper.Reports?.Log(err.StackTrace);
+                App.GetApplication(this.Context).ApplicationHelper.Reports?.Log(err.StackTrace);
 #endif
             }
         }
