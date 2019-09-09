@@ -19,7 +19,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreedomVoice.MigrationHelpe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FreedomVoice.ApiTests", "FreedomVoice.ApiTests\FreedomVoice.ApiTests.csproj", "{DECB20A6-6121-4F1C-B24D-11C4E7758BF7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FreedomVoice.Entities", "..\FreedomVoice.Entities\FreedomVoice.Entities\FreedomVoice.Entities.csproj", "{98338D11-C6A7-4632-8409-C7468325B429}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FreedomVoice.Entities", "FreedomVoice.Entities\FreedomVoice.Entities.csproj", "{98338D11-C6A7-4632-8409-C7468325B429}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

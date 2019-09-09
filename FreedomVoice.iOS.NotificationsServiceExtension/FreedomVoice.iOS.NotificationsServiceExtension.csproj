@@ -231,6 +231,8 @@
     <ProjectReference Include="..\FreedomVoice.iOS.Core\FreedomVoice.iOS.Core.csproj">
       <Project>{6F11EB92-C06F-4592-8ADB-0337410CE27B}</Project>
       <Name>FreedomVoice.iOS.Core</Name>
+      <IsAppExtension>false</IsAppExtension>
+      <IsWatchApp>false</IsWatchApp>
     </ProjectReference>
     <ProjectReference Include="..\FreedomVoice.Core\FreedomVoice.Core.csproj">
       <Project>{AA1B2017-3A77-46FA-BC08-35E20FA24DE3}</Project>
