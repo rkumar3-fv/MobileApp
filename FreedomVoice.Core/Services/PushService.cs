@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using FreedomVoice.Core.Services.Interfaces;
 using FreedomVoice.Entities.Enums;
-using FreedomVoice.Entities.Request.Weblink;
+using FreedomVoice.Entities.Request;
 
 namespace FreedomVoice.Core.Services
 {

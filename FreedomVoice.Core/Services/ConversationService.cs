@@ -9,7 +9,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FreedomVoice.Entities.Request;
-using FreedomVoice.Entities.Request.Weblink;
 
 namespace FreedomVoice.Core.Services
 {

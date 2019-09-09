@@ -86,9 +86,6 @@
     <MtouchFastDev>true</MtouchFastDev>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FreedomVoice.Entities, Version=1.0.17.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\FreedomVoice.Entities.1.0.17\lib\netstandard2.0\FreedomVoice.Entities.dll</HintPath>
-    </Reference>
     <Reference Include="PhoneNumbers, Version=8.10.12.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\libphonenumber-csharp.8.10.12\lib\netstandard2.0\PhoneNumbers.dll</HintPath>
       <Private>True</Private>
@@ -227,6 +224,10 @@
     <Compile Include="PushResponseExtension.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\FreedomVoice.Entities\FreedomVoice.Entities\FreedomVoice.Entities.csproj">
+      <Project>{98338D11-C6A7-4632-8409-C7468325B429}</Project>
+      <Name>FreedomVoice.Entities</Name>
+    </ProjectReference>
     <ProjectReference Include="..\FreedomVoice.iOS.Core\FreedomVoice.iOS.Core.csproj">
       <Project>{6F11EB92-C06F-4592-8ADB-0337410CE27B}</Project>
       <Name>FreedomVoice.iOS.Core</Name>

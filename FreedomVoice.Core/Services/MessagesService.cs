@@ -65,7 +65,7 @@ namespace FreedomVoice.Core.Services
             string text)
         {
             var sendingResult = await _networkService.SendMessage(systemPhoneNumber, presentationPhoneNumber, 
-                new FreedomVoice.Entities.Request.Weblink.MessageRequest { From = systemPhoneNumber, To = toPhone, Text = text });
+                new FreedomVoice.Entities.Request.MessageRequest { From = systemPhoneNumber, To = toPhone, Text = text });
             if (sendingResult.Code != Entities.Enums.ErrorCodes.Ok || sendingResult.Result == null)
                 return new SendingResponse<DAL.DbEntities.Conversation> { ErrorMessage = sendingResult.ErrorText, State = FreedomVoice.Entities.Enums.SendingState.Error };
             return new SendingResponse<DAL.DbEntities.Conversation>
