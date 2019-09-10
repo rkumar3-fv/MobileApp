@@ -1539,7 +1539,7 @@
     <AndroidResource Include="Resources\drawable-xxxhdpi\logo_voicemail.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\FreedomVoice.Entities\FreedomVoice.Entities\FreedomVoice.Entities.csproj">
+    <ProjectReference Include="..\FreedomVoice.Entities\FreedomVoice.Entities.csproj">
       <Project>{98338d11-c6a7-4632-8409-c7468325b429}</Project>
       <Name>FreedomVoice.Entities</Name>
     </ProjectReference>
