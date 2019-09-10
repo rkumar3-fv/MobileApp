@@ -6,8 +6,14 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreedomVoiceAndroid", "FreedomVoiceAndroid\FreedomVoiceAndroid.csproj", "{7E59F8D9-423C-448C-B809-33738074E77B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreedomVoice.iOS", "FreedomVoice.iOS\FreedomVoice.iOS.csproj", "{42B6DC7E-903E-495B-9BEF-053D35506CBB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{98338D11-C6A7-4632-8409-C7468325B429} = {98338D11-C6A7-4632-8409-C7468325B429}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FreedomVoice.Core", "FreedomVoice.Core\FreedomVoice.Core.csproj", "{AA1B2017-3A77-46FA-BC08-35E20FA24DE3}"
+	ProjectSection(ProjectDependencies) = postProject
+		{98338D11-C6A7-4632-8409-C7468325B429} = {98338D11-C6A7-4632-8409-C7468325B429}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FreedomVoice.DAL", "FreedomVoice.DAL\FreedomVoice.DAL.csproj", "{7118A53F-93AF-4FAD-A18F-5CF6F6289B32}"
 EndProject
@@ -15,7 +21,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreedomVoice.iOS.Notificati
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreedomVoice.iOS.Core", "FreedomVoice.iOS.Core\FreedomVoice.iOS.Core.csproj", "{6F11EB92-C06F-4592-8ADB-0337410CE27B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreedomVoice.MigrationHelper", "FreedomVoice.DummyEFConsoleApp\FreedomVoice.MigrationHelper.csproj", "{3E697547-6A66-4924-98B6-F6AF0BA3BD5E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FreedomVoice.MigrationHelper", "FreedomVoice.DummyEFConsoleApp\FreedomVoice.MigrationHelper.csproj", "{3E697547-6A66-4924-98B6-F6AF0BA3BD5E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FreedomVoice.ApiTests", "FreedomVoice.ApiTests\FreedomVoice.ApiTests.csproj", "{DECB20A6-6121-4F1C-B24D-11C4E7758BF7}"
 EndProject

@@ -14,8 +14,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\FreedomVoice.Entities\FreedomVoice.Entities\FreedomVoice.Entities.csproj" />
     <ProjectReference Include="..\FreedomVoice.DAL\FreedomVoice.DAL.csproj" />
+    <ProjectReference Include="..\FreedomVoice.Entities\FreedomVoice.Entities.csproj" />
   </ItemGroup>
 
   <ItemGroup>
