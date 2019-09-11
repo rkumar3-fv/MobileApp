@@ -80,9 +80,6 @@
     <Reference Include="AutoMapper, Version=8.0.0.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
       <HintPath>..\packages\AutoMapper.8.0.0\lib\netstandard2.0\AutoMapper.dll</HintPath>
     </Reference>
-    <Reference Include="FreedomVoice.Entities, Version=1.0.17.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\FreedomVoice.Entities.1.0.17\lib\netstandard2.0\FreedomVoice.Entities.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Data.Sqlite, Version=2.2.3.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Data.Sqlite.Core.2.2.3\lib\netstandard2.0\Microsoft.Data.Sqlite.dll</HintPath>
@@ -1542,6 +1539,10 @@
     <AndroidResource Include="Resources\drawable-xxxhdpi\logo_voicemail.jpg" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\FreedomVoice.Entities\FreedomVoice.Entities.csproj">
+      <Project>{98338d11-c6a7-4632-8409-c7468325b429}</Project>
+      <Name>FreedomVoice.Entities</Name>
+    </ProjectReference>
     <ProjectReference Include="..\FreedomVoice.Core\FreedomVoice.Core.csproj">
       <Project>{aa1b2017-3a77-46fa-bc08-35e20fa24de3}</Project>
       <Name>FreedomVoice.Core</Name>

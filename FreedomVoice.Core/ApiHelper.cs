@@ -17,8 +17,6 @@ using FreedomVoice.Core.Utils;
 using ModernHttpClient;
 using Newtonsoft.Json;
 using FreedomVoice.Entities.Request;
-using FreedomVoice.Entities.Request.Weblink;
-using FreedomVoice.Core.Utils.Extensions;
 
 namespace FreedomVoice.Core
 {

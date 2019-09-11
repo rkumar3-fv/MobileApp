@@ -6,10 +6,10 @@ using UserNotifications;
 using FreedomVoice.Core.Utils;
 using FreedomVoice.iOS.Core;
 using System.Collections.Generic;
-using FreedomVoice.Entities.Enums;
 using FreedomVoice.iOS.Core.Utilities.Helpers;
 using ContactsHelper = FreedomVoice.iOS.Core.Utilities.Helpers.Contacts;
 using FreedomVoice.Core.Utils.Interfaces;
+using FreedomVoice.Entities.Enums;
 
 namespace FreedomVoice.iOS.NotificationsServiceExtension
 {

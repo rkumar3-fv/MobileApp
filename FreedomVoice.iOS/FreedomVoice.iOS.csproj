@@ -378,9 +378,6 @@
       <HintPath>..\packages\Xamarin.Firebase.iOS.InstanceID.3.4.0\lib\Xamarin.iOS10\Firebase.InstanceID.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="FreedomVoice.Entities, Version=1.0.17.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\FreedomVoice.Entities.1.0.17\lib\netstandard2.0\FreedomVoice.Entities.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Data.Sqlite, Version=2.2.3.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Data.Sqlite.Core.2.2.3\lib\netstandard2.0\Microsoft.Data.Sqlite.dll</HintPath>
@@ -672,10 +669,18 @@
     <ImageAsset Include="Resources/Media.xcassets/AppIcons.appiconset/Icon-Small@3x.png">
       <Visible>false</Visible>
     </ImageAsset>
-    <ImageAsset Include="Resources\Media.xcassets\LaunchImage.launchimage\Contents.json" />
-    <ImageAsset Include="Resources\Media.xcassets\LaunchImage.launchimage\Default-568h%402x.png" />
-    <ImageAsset Include="Resources\Media.xcassets\AppIcons.appiconset\Icon%402x.png" />
-    <ImageAsset Include="Resources\Media.xcassets\LaunchImage.launchimage\Default-568h.png" />
+    <ImageAsset Include="Resources\Media.xcassets\LaunchImage.launchimage\Contents.json">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Resources\Media.xcassets\LaunchImage.launchimage\Default-568h%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Resources\Media.xcassets\AppIcons.appiconset\Icon%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Resources\Media.xcassets\LaunchImage.launchimage\Default-568h.png">
+      <Visible>false</Visible>
+    </ImageAsset>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FreedomVoice.Core\FreedomVoice.Core.csproj">
@@ -686,20 +691,25 @@
       <Project>{7118A53F-93AF-4FAD-A18F-5CF6F6289B32}</Project>
       <Name>FreedomVoice.DAL</Name>
     </ProjectReference>
+    <ProjectReference Include="..\FreedomVoice.Entities\FreedomVoice.Entities.csproj">
+      <Project>{98338D11-C6A7-4632-8409-C7468325B429}</Project>
+      <Name>FreedomVoice.Entities</Name>
+    </ProjectReference>
     <ProjectReference Include="..\FreedomVoice.iOS.NotificationsServiceExtension\FreedomVoice.iOS.NotificationsServiceExtension.csproj">
       <IsAppExtension>true</IsAppExtension>
       <Project>{A059CAEB-A0A7-40A1-B70D-7E3A429E387B}</Project>
       <Name>FreedomVoice.iOS.NotificationsServiceExtension</Name>
+      <IsWatchApp>false</IsWatchApp>
     </ProjectReference>
     <ProjectReference Include="..\FreedomVoice.iOS.Core\FreedomVoice.iOS.Core.csproj">
       <Project>{6F11EB92-C06F-4592-8ADB-0337410CE27B}</Project>
       <Name>FreedomVoice.iOS.Core</Name>
+      <IsAppExtension>false</IsAppExtension>
+      <IsWatchApp>false</IsWatchApp>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />
-  <ItemGroup>
-    <Folder Include="TableViewCells\Texting\Messaging\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

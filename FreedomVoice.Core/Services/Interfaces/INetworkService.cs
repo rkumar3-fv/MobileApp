@@ -1,6 +1,5 @@
 ﻿using FreedomVoice.Core.Entities.Base;
 using FreedomVoice.Entities.Request;
-using FreedomVoice.Entities.Request.Weblink;
 using FreedomVoice.Entities.Response;
 using System;
 using System.Collections.Generic;

@@ -10,10 +10,10 @@ namespace FreedomVoice.Core
         {
             CreateMap<FreedomVoice.Entities.Response.Conversation, Conversation>()
                 .ForSourceMember(x => x.IsRemoved, opt => opt.DoNotValidate())
-                .ForMember(x => x.SystemPhone, opt => opt.MapFrom(xx => xx.SystemPhoneNumber));
+                .ForMember(x => x.SystemPhone, opt => opt.MapFrom(xx => xx.SystemPhone));
             CreateMap<Conversation, FreedomVoice.Entities.Response.Conversation>()
                 .ForMember(x => x.IsRemoved, opt => opt.Ignore())
-                .ForMember(x => x.SystemPhoneNumber, opt => opt.MapFrom(xx => xx.SystemPhone));
+                .ForMember(x => x.SystemPhone, opt => opt.MapFrom(xx => xx.SystemPhone));
             
             CreateMap<FreedomVoice.Entities.Phone, Phone>();
             CreateMap<Phone, FreedomVoice.Entities.Phone>();
