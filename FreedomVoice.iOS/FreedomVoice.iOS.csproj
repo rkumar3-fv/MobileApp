@@ -692,7 +692,7 @@
       <Name>FreedomVoice.DAL</Name>
     </ProjectReference>
     <ProjectReference Include="..\FreedomVoice.Entities\FreedomVoice.Entities.csproj">
-      <Project>{98338D11-C6A7-4632-8409-C7468325B429}</Project>
+      <Project>{98338d11-c6a7-4632-8409-c7468325b429}</Project>
       <Name>FreedomVoice.Entities</Name>
     </ProjectReference>
     <ProjectReference Include="..\FreedomVoice.iOS.NotificationsServiceExtension\FreedomVoice.iOS.NotificationsServiceExtension.csproj">
