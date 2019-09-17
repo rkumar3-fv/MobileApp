@@ -55,6 +55,9 @@ namespace FreedomVoice.iOS.TableViewCells.Texting
             {
                 _isNew = value;
                 DateLabel.Font = UIFont.SystemFontOfSize(15, value ? UIFontWeight.Medium : UIFontWeight.Regular);
+                NameLabel.Font = UIFont.SystemFontOfSize(15, value ? UIFontWeight.Bold : UIFontWeight.Regular);
+                MessageLabel.Font = UIFont.SystemFontOfSize(15, value ? UIFontWeight.Bold : UIFontWeight.Regular);
+
                 //NewMessageView.Hidden = !value;
                 NewMessageView.Hidden = true;
             }

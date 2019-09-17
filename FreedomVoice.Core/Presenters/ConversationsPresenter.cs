@@ -85,6 +85,15 @@ namespace FreedomVoice.Core.Presenters
             NotificationMessageService.Instance().MessageUpdatedHandler -= OnMessageUpdatedHandler;
         }
 
+
+        public async Task SendMessageReadStatusAsync(long id)
+        {
+            var currentConversation = Items.Find(x => x.ConversationId == id);
+            currentConversation.IsNew = false;
+            ItemsChanged?.Invoke(this, new ConversationsEventArgs(Items));
+            await _service.UpdateMessageReadStatus(_phoneNumber, _phoneNumber, id);
+        }
+
         private void OnNewMessageEventHandler(object sender, ConversationEventArg e)
         {
             var conversation = e.Conversation;
