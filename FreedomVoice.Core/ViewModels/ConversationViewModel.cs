@@ -14,7 +14,7 @@ namespace FreedomVoice.Core.ViewModels
         public readonly string Date;
         public readonly DateTime DateTime;
         public readonly string LastMessage;
-        public  bool IsNew;
+        public readonly bool IsNew;
         public readonly long ConversationId;
         private readonly IContactNameProvider _contactNameProvider;
 
@@ -31,7 +31,7 @@ namespace FreedomVoice.Core.ViewModels
             Date = TimeAgo((DateTime)message.OrderDate);
             DateTime = (DateTime)message.OrderDate;
 
-            if (!message.From.PhoneNumber.Equals(entity.SystemPhone.PhoneNumber))
+            if (message.From.PhoneNumber.Equals(entity.ToPhone.PhoneNumber))
             {
                 IsNew = message.ReadAt == null;
             }

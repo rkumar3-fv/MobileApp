@@ -39,5 +39,14 @@ namespace FreedomVoice.Core.Services.Interfaces
         /// <param name="text"></param>
         /// <returns></returns>
         Task<SendingResponse<DAL.DbEntities.Conversation>> SendMessage(string systemPhoneNumber, string presentationPhoneNumber, string to, string text);
+
+        /// <summary>
+        /// Send message
+        /// </summary>
+        /// <param name="systemPhone"></param>
+        /// <param name="presentationPhone"></param>
+        /// <param name="conversationId"></param>
+        /// <returns></returns>
+        Task UpdateMessageReadStatus(string systemPhone, long conversationId);
     }
 }

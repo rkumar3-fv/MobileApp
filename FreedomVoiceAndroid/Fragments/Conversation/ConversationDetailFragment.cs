@@ -148,6 +148,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         public override void OnResume()
         {
             base.OnResume();
+            _presenter.MessagedRead(ConversationId.Value);
             _messageEt.TextChanged += MessageTextChanged;
             _sendIv.Click += ClickSend;
        
@@ -159,9 +160,15 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             UpdateList();
         }
 
+        protected virtual async void SendMessageReadStatus()
+        {
+            await _presenter.SendMessageReadStatusAsync();
+        }
+
         public override void OnPause()
         {
             base.OnPause();
+            SendMessageReadStatus();
             _presenter.ServerError -= OnServerError;
             _messageEt.TextChanged -= MessageTextChanged;
             _sendIv.Click -= ClickSend;

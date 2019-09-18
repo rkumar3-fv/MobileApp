@@ -79,13 +79,6 @@ namespace FreedomVoice.Core.Presenters
             NotificationMessageService.Instance().MessageUpdatedHandler -= OnMessageUpdatedHandler;
         }
        
-        public async Task SendMessageReadStatusAsync(long id)
-        {
-            var currentConversation = Items.Find(x => x.ConversationId == id);
-            currentConversation.IsNew = false;
-
-            await _service.UpdateMessageReadStatus(_phoneNumber, _phoneNumber, id );
-        }
         public void Dispose()
         {
             NotificationMessageService.Instance().NewMessageEventHandler -= OnNewMessageEventHandler;
@@ -112,11 +105,16 @@ namespace FreedomVoice.Core.Presenters
             var message = e.Message;
             if (conversation == null) return;
             if (message == null) return;
-            if (!message.From.PhoneNumber.Equals(PhoneNumber)) return;
-            conversation.Messages = new List<DAL.DbEntities.Message> {message};
-            conversation.SystemPhone = message.From;
-            conversation.ToPhone = message.To;
-
+            if (!message.From.PhoneNumber.Equals(PhoneNumber))
+            {
+                conversation.Messages = new List<DAL.DbEntities.Message> { message };
+            }
+            else
+            {
+                conversation.Messages = new List<DAL.DbEntities.Message> { message };
+                conversation.SystemPhone = message.From;
+                conversation.ToPhone = message.To;
+            }
             _updateConversation(conversation);
         }
 

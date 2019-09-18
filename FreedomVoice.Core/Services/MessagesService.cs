@@ -75,5 +75,13 @@ namespace FreedomVoice.Core.Services
                 Entity = _mapper.Map<DAL.DbEntities.Conversation>(sendingResult.Result.Entity)
             };
         }
+
+        public async Task UpdateMessageReadStatus(string systemPhone, long conversationId)
+        {
+            var conversation = await _cacheService.GetConversation(conversationId);
+            if (conversation == null)
+                throw new ArgumentException("Conversation not found");
+            await _networkService.UpdateReadMessageStatus(systemPhone, conversation.SystemPhone.PhoneNumber, conversationId);
+        }
     }
 }

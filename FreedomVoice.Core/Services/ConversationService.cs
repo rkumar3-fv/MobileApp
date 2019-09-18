@@ -75,9 +75,6 @@ namespace FreedomVoice.Core.Services
             result.Conversation = netConversation == null || netConversation.Result == null ? null : _mapper.Map<Conversation>(netConversation.Result);
             return result;
         }
-        public async Task UpdateMessageReadStatus(string systemPhone, string presentationNumber, long conversationId)
-        {
-            await _networkService.UpdateReadMessageStatus(systemPhone, presentationNumber, conversationId);
-        }
+
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using FreedomVoice.Core.Services.Interfaces;
 using FreedomVoice.Core.Utils;
 using FreedomVoice.DAL.DbEntities;
@@ -54,6 +55,17 @@ namespace FreedomVoice.Core.Services
                     MessageUpdatedHandler?.Invoke(this, new MessageEventArg {Message = savedMessage});
                     break;
             }
+        }
+
+        public async Task ReceivedMessageReadNotification(long conversationId)
+        {
+            var cachedConversation = await _cacheService.GetConversation(conversationId);
+            var latestConversation = ServiceContainer.Resolve<IMapper>().Map<FreedomVoice.Entities.Response.Conversation>(cachedConversation);
+            latestConversation.Messages.LastOrDefault<FreedomVoice.Entities.Message>().ReadAt = DateTime.Today;
+            var savedConversation = await _saveConversation(latestConversation);
+            var savedMessage = savedConversation.Messages.LastOrDefault();
+            savedMessage.Conversation = savedConversation;
+            MessageUpdatedHandler?.Invoke(this, new MessageEventArg { Message = savedMessage });
         }
 
         private async Task<Conversation> _saveConversation(FreedomVoice.Entities.Response.Conversation conversation)

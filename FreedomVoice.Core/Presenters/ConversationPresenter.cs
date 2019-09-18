@@ -200,6 +200,11 @@ namespace FreedomVoice.Core.Presenters
             await _PerformLoading();
         }
 
+        public async Task SendMessageReadStatusAsync()
+        {
+            await _messagesService.UpdateMessageReadStatus(AccountNumber, _conversationId.Value);
+        }
+
         public async Task<long?> SendMessageAsync(string text)
         {
             if (!_conversationId.HasValue || _conversationId.Value <= 0)
@@ -324,6 +329,11 @@ namespace FreedomVoice.Core.Presenters
             }
 
             _addMessage(new OutgoingMessageViewModel(lastMessage));
+        }
+
+        public async void MessagedRead(long conversationId)
+        {      
+           await NotificationMessageService.Instance().ReceivedMessageReadNotification(conversationId);
         }
 
         private void MessagedSentError(Conversation conversation, string MessageText = ConversationsPresenter.DefaultError)

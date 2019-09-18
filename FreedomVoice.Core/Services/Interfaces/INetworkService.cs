@@ -83,6 +83,14 @@ namespace FreedomVoice.Core.Services.Interfaces
             string presentationPhoneNumber, 
             MessageRequest request);
 
+
+        /// <summary>
+        /// Sending message Read status to API by provided parameter
+        /// </summary>
+        /// <param name="systemPhone"></param>
+        /// <param name="presentationNumber"></param>
+        /// <param name="conversationId"></param>
+        /// <returns>Response from API about sending results</returns>
         Task UpdateReadMessageStatus(string systemPhone, string presentationNumber, long conversationId);
 
 
