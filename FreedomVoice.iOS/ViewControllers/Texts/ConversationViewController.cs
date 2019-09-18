@@ -79,6 +79,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             AutomaticallyAdjustsScrollViewInsets = false;
             Presenter.MessageSent += PresenterOnMessageSent;
             _SubscribeToEvents();
+            Presenter.MessagedRead(ConversationId.Value);
         }
 
         public override void ViewWillAppear(bool animated)
@@ -90,7 +91,14 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
         public override void ViewWillDisappear(bool animated)
         {
             base.ViewWillDisappear(animated);
+            SendMessageReadStatus();
+
             if (TabBarController != null) TabBarController.TabBar.Hidden = false;
+        }
+
+        protected async void SendMessageReadStatus()
+        {
+            await Presenter.SendMessageReadStatusAsync();
         }
 
         public override void ViewDidUnload()

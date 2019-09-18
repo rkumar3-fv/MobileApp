@@ -276,18 +276,12 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             {
                 return;
             }
-            SendMessageReadStatus(arg.ConversationId);
             View.EndEditing(true);
             var controller = AppDelegate.GetViewController<ConversationViewController>();
             controller.ConversationId = arg.ConversationId;
             controller.CurrentPhone = _callerIdView.SelectedNumber;
             controller.Title = arg.Name;
             NavigationController.PushViewController(controller, true);
-        }
-
-        protected async void SendMessageReadStatus(long id)
-        {
-            await _presenter.SendMessageReadStatusAsync(id);
         }
 
         protected override void Dispose(bool disposing)
