@@ -36,6 +36,7 @@ namespace FreedomVoice.iOS.PushNotifications
         private readonly NSString TitleKey = new NSString("title");
         private readonly NSString BodyKey = new NSString("body");
         private readonly NSString SubtitleKey = new NSString("subtitle");
+        private readonly NSString BadgeKey = new NSString("badge");
         private readonly IPresentationNumbersService _presentationNumbersService = ServiceContainer.Resolve<IPresentationNumbersService>();
 
         public event Action<NSData> DidUpdatePushToken;
@@ -285,6 +286,7 @@ namespace FreedomVoice.iOS.PushNotifications
 
         public void DidReceiveIncomingPush(PKPushRegistry registry, PKPushPayload payload, string type)
         {
+            int badgeCount = 0;
             _logger.Debug(nameof(NotificationCenterDelegate), nameof(DidUpdatePushCredentials), $"DidUpdatePushCredentials: {payload} {type}");
 
             if (!payload.DictionaryPayload.ContainsKey(new NSString(ApsKey)))
@@ -293,6 +295,11 @@ namespace FreedomVoice.iOS.PushNotifications
                 return;
             }
 
+            if (payload.DictionaryPayload.ContainsKey(new NSString(BadgeKey)))
+            {
+                var badge = payload.DictionaryPayload[BadgeKey] as NSNumber;
+                badgeCount = badge.Int32Value;
+            }
             var apsValue = payload.DictionaryPayload[ApsKey] as NSDictionary;
 
             if (apsValue.ContainsKey(new NSString(ContentAvailableKey)) && apsValue[ContentAvailableKey] is NSNumber contentAvailable && contentAvailable.Int32Value == 1)
@@ -338,7 +345,7 @@ namespace FreedomVoice.iOS.PushNotifications
             if (pushResponseData == null)
             {
                 _logger.Debug(nameof(NotificationCenterDelegate), nameof(DidUpdatePushCredentials), $"Can't parse Data(PushResponse).");
-                ShowPushNotificationsNow(titleValue, bodyValue, subtitleValue, payload.DictionaryPayload);
+                ShowPushNotificationsNow(titleValue, bodyValue, subtitleValue, payload.DictionaryPayload, badgeCount);
                 return;
             }
 
@@ -348,27 +355,27 @@ namespace FreedomVoice.iOS.PushNotifications
             if (string.IsNullOrWhiteSpace(phoneHolder))
             {
                 _logger.Debug(nameof(NotificationCenterDelegate), nameof(DidUpdatePushCredentials), $"Can't parse 'From phone number'.");
-                ShowPushNotificationsNow(titleValue, bodyValue, subtitleValue, payload.DictionaryPayload);
+                ShowPushNotificationsNow(titleValue, bodyValue, subtitleValue, payload.DictionaryPayload, badgeCount);
                 return;
             }
 
             _logger.Debug(nameof(NotificationCenterDelegate), nameof(DidUpdatePushCredentials), $"'From' phone number has been found: {phoneHolder}");
-            ShowPushNotificationsNow(phoneHolder, bodyValue, subtitleValue, payload.DictionaryPayload);
+            ShowPushNotificationsNow(phoneHolder, bodyValue, subtitleValue, payload.DictionaryPayload), badgeCount;
 
         }
 
-        private void ShowPushNotificationsNow(string title, string body, string subtitle, NSDictionary userInfo)
+        private void ShowPushNotificationsNow(string title, string body, string subtitle, NSDictionary userInfo, int badgeCount)
         {
             _logger.Debug(nameof(NotificationCenterDelegate), nameof(ShowPushNotificationsNow), $"Show alerts as title: {title}, subtitle: {subtitle} body: {body}");
 
             if (UIDevice.CurrentDevice.CheckSystemVersion(12, 0))
-                ShowPushNotificationsNowForiOS12AndLater(title, body, subtitle, userInfo);
+                ShowPushNotificationsNowForiOS12AndLater(title, body, subtitle, userInfo, badgeCount);
             else
-                ShowPushNotificationsNowForiOS11AndLess(title, body, subtitle, userInfo);
+                ShowPushNotificationsNowForiOS11AndLess(title, body, subtitle, userInfo, badgeCount);
 
         }
 
-        private void ShowPushNotificationsNowForiOS12AndLater(string title, string body, string subtitle, NSDictionary userInfo)
+        private void ShowPushNotificationsNowForiOS12AndLater(string title, string body, string subtitle, NSDictionary userInfo, int badgeCount)
         {
             try
             {
@@ -380,6 +387,7 @@ namespace FreedomVoice.iOS.PushNotifications
                 if (subtitle != null) notificationContent.Subtitle = subtitle;
                 if (userInfo != null) notificationContent.UserInfo = userInfo;
                 notificationContent.Sound = UNNotificationSound.Default;
+                if(badgeCount >0) notificationContent.Badge = badgeCount;
 
                 var trigger = UNTimeIntervalNotificationTrigger.CreateTrigger(1, false);
                 var localNotificationRequest = UNNotificationRequest.FromIdentifier(new NSUuid().AsString(), notificationContent, trigger);
@@ -395,7 +403,7 @@ namespace FreedomVoice.iOS.PushNotifications
             }
         }
 
-        private void ShowPushNotificationsNowForiOS11AndLess(string title, string body, string subtitle, NSDictionary userInfo)
+        private void ShowPushNotificationsNowForiOS11AndLess(string title, string body, string subtitle, NSDictionary userInfo, int badgeCount)
         {
             _logger.Debug(nameof(NotificationCenterDelegate), nameof(ShowPushNotificationsNowForiOS11AndLess), $"Show alert for iOS 11 and less.");
 
@@ -407,6 +415,7 @@ namespace FreedomVoice.iOS.PushNotifications
 
                 if (title != null) notification.AlertTitle = title;
                 if (userInfo != null) notification.UserInfo = userInfo;
+                if (badgeCount > 0) notification.ApplicationIconBadgeNumber = badgeCount;
                 notification.AlertBody = $"{(string.IsNullOrWhiteSpace(subtitle) ? "" : subtitle + "\n")}{body ?? ""}";
 
                 notification.SoundName = UILocalNotification.DefaultSoundName;

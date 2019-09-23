@@ -30,6 +30,7 @@ namespace com.FreedomVoice.MobileApp.Android.Services
     {
         private IContactNameProvider _contactNameProvider;
         private const string DataKey = "data";
+        private const string BadgeKey = "badge";
 
         public override void OnCreate()
         {
@@ -54,7 +55,9 @@ namespace com.FreedomVoice.MobileApp.Android.Services
                     case PushType.NewMessage:
                         var newMessageRequest =
                             JsonConvert.DeserializeObject<PushResponse<Conversation>>(message.Data[DataKey]);
-                        ProcessNewMessage(newMessageRequest.Data);
+                        var badgeCount =
+                            JsonConvert.DeserializeObject<int>(message.Data[BadgeKey]);
+                        ProcessNewMessage(newMessageRequest.Data, badgeCount);
                         NotificationMessageService.Instance().ReceivedNotification(pushType, newMessageRequest.Data);
                         break;
                     case PushType.StatusChanged:
@@ -72,7 +75,7 @@ namespace com.FreedomVoice.MobileApp.Android.Services
             }
         }
 
-        private void ProcessNewMessage(Conversation conversation)
+        private void ProcessNewMessage(Conversation conversation, int badgeCount)
         {
             var myPresentationPhone = conversation?.Messages?.FirstOrDefault()?.To?.PhoneNumber;
             myPresentationPhone = _contactNameProvider.GetFormattedPhoneNumber(myPresentationPhone);
@@ -90,7 +93,8 @@ namespace com.FreedomVoice.MobileApp.Android.Services
                         conversationToPhoneNumber,
                         myPresentationPhone,
                         contactNameOrPhone,
-                        conversation.Messages?.FirstOr(null)?.Text ?? "new message"
+                        conversation.Messages?.FirstOr(null)?.Text ?? "new message",
+                        badgeCount
                     );
                 }
                 catch (Exception e)
@@ -100,7 +104,7 @@ namespace com.FreedomVoice.MobileApp.Android.Services
             });
         }
 
-        private void ShowConversationMessagePush(long conversationId, string fromPhone, string myPhone, string title, string body)
+        private void ShowConversationMessagePush(long conversationId, string fromPhone, string myPhone, string title, string body, int badgeCount)
         {
             var manager = NotificationManagerCompat.From(this);
 
@@ -118,6 +122,7 @@ namespace com.FreedomVoice.MobileApp.Android.Services
                 .SetSound(Settings.System.DefaultNotificationUri)
                 .SetContentIntent(pLaunchIntent)
                 .SetContentTitle(title)
+                .SetNumber(badgeCount)
                 .SetSubText(myPhone)
                 .SetContentText(body);
             manager.Notify(Convert.ToInt32(conversationId), notification.Build());
