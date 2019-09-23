@@ -71,7 +71,10 @@ namespace FreedomVoice.Core.Services
                 else
                 {
                     message.Conversation = conversation;
-                    message.ReadAt = messageFromApi.ReadAt;
+                    if(message.ReadAt ==null)
+                    {
+                        message.ReadAt = messageFromApi.ReadAt;
+                    }
                     message.State = (SendingState) messageFromApi.State;
                 }
             }

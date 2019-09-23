@@ -45,6 +45,7 @@ namespace FreedomVoice.Core.Presenters
         private readonly IContactNameProvider _contactNameProvider = ServiceContainer.Resolve<IContactNameProvider>();
         private readonly IMessagesService _messagesService = ServiceContainer.Resolve<IMessagesService>();
         private readonly IPhoneFormatter _formatter = ServiceContainer.Resolve<IPhoneFormatter>();
+        private readonly ICacheService _cacheService = ServiceContainer.Resolve<ICacheService>();
 
         #endregion
 
@@ -199,10 +200,40 @@ namespace FreedomVoice.Core.Presenters
             _currentPage++;
             await _PerformLoading();
         }
+        public async Task MessagedRead()
+        {
+            bool isUpdatePending = await IsMessageReadUpdatePending();
+            if (isUpdatePending)
+            {
+                await NotificationMessageService.Instance().ReceivedMessageReadNotification(_conversationId.Value);
+                await _messagesService.UpdateMessageReadStatus(AccountNumber, _conversationId.Value);
+            }
+        }
+
+        public async Task<bool> IsMessageReadUpdatePending()
+        {
+            bool IsReadStatusPending = false;
+            var conversation = await _cacheService.GetConversation(_conversationId.Value);
+            if (conversation == null)
+                return false;
+
+            var message = conversation.Messages.OrderByDescending(x => x.OrderDate).FirstOrDefault();
+            if (message == null) return false;
+
+            if (message.To.PhoneNumber.Equals(PhoneNumber))
+            {
+                IsReadStatusPending = message.ReadAt == null;
+            }
+            return IsReadStatusPending;
+        }
 
         public async Task SendMessageReadStatusAsync()
         {
-            await _messagesService.UpdateMessageReadStatus(AccountNumber, _conversationId.Value);
+            bool isUpdatePending = await IsMessageReadUpdatePending();
+            if (isUpdatePending)
+            {
+                await _messagesService.UpdateMessageReadStatus(AccountNumber, _conversationId.Value);
+            }
         }
 
         public async Task<long?> SendMessageAsync(string text)
@@ -329,11 +360,6 @@ namespace FreedomVoice.Core.Presenters
             }
 
             _addMessage(new OutgoingMessageViewModel(lastMessage));
-        }
-
-        public async void MessagedRead(long conversationId)
-        {      
-           await NotificationMessageService.Instance().ReceivedMessageReadNotification(conversationId);
         }
 
         private void MessagedSentError(Conversation conversation, string MessageText = ConversationsPresenter.DefaultError)

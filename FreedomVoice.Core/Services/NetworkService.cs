@@ -9,8 +9,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-
-
 namespace FreedomVoice.Core.Services
 {
     public class NetworkService : INetworkService
@@ -34,7 +32,6 @@ namespace FreedomVoice.Core.Services
         {
             try
             {
-
                 BaseResult<List<Conversation>> result = await ApiHelper.GetConversations(
                     systemPhoneNumber, 
                     presentationPhoneNumber, 
@@ -45,7 +42,6 @@ namespace FreedomVoice.Core.Services
                         Start = start,
                         Limit = limit
                     });
-
 
                 if (result.Result == null)
                 {
@@ -183,7 +179,6 @@ namespace FreedomVoice.Core.Services
 
             return result;
         }
-
 
         public async Task<BaseResult<string>> SendPushToken(string systemPhoneNumber, PushRequest request, bool isRegistration)
         {

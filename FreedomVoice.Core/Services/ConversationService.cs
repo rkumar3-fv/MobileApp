@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using FreedomVoice.Entities.Request;
 
 
 namespace FreedomVoice.Core.Services
@@ -75,6 +74,5 @@ namespace FreedomVoice.Core.Services
             result.Conversation = netConversation == null || netConversation.Result == null ? null : _mapper.Map<Conversation>(netConversation.Result);
             return result;
         }
-
     }
 }

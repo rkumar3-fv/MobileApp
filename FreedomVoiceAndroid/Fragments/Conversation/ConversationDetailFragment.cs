@@ -148,10 +148,9 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
         public override void OnResume()
         {
             base.OnResume();
-            _presenter.MessagedRead(ConversationId.Value);
             _messageEt.TextChanged += MessageTextChanged;
             _sendIv.Click += ClickSend;
-       
+            _presenter.MessagedRead();
             _presenter.ItemsChanged += ItemsChanged;
             _presenter.ServerError += OnServerError;
             _presenter.MessageSent += PresenterOnMessageSent;
