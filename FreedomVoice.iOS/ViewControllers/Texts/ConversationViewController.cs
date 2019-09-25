@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using CoreGraphics;
+using Foundation;
 using FreedomVoice.Core.Presenters;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.PushNotifications;
@@ -55,6 +56,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
         
         private IDisposable _observer1;
         private IDisposable _observer2;
+        private NSObject _inactiveNotification;
         private static MainTabBarController MainTabBarInstance => MainTabBarController.SharedInstance;
 
         private NSLayoutConstraint _bottomConstraint;
@@ -72,6 +74,9 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
 
         public override void ViewDidLoad()
         {
+          _inactiveNotification = NSNotificationCenter.DefaultCenter.AddObserver(
+                UIApplication.DidEnterBackgroundNotification,
+                OnBecameInActive);
             base.ViewDidLoad();
             _SetupViews();
             _SetupConstraints();
@@ -79,7 +84,12 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             AutomaticallyAdjustsScrollViewInsets = false;
             Presenter.MessageSent += PresenterOnMessageSent;
             _SubscribeToEvents();
-            Presenter.MessagedRead(ConversationId.Value);
+            Presenter.MessagedRead();
+        }
+
+        void OnBecameInActive(NSNotification notification)
+        {
+            Presenter.SendMessageReadStatusAsync();
         }
 
         public override void ViewWillAppear(bool animated)
@@ -91,14 +101,14 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
         public override void ViewWillDisappear(bool animated)
         {
             base.ViewWillDisappear(animated);
-            SendMessageReadStatus();
+            Presenter.SendMessageReadStatusAsync();
 
             if (TabBarController != null) TabBarController.TabBar.Hidden = false;
-        }
-
-        protected async void SendMessageReadStatus()
-        {
-            await Presenter.SendMessageReadStatusAsync();
+            if (_inactiveNotification != null)
+            {
+                NSNotificationCenter.DefaultCenter.RemoveObserver(_inactiveNotification);
+                _inactiveNotification = null;
+            }
         }
 
         public override void ViewDidUnload()
