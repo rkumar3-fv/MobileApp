@@ -65,6 +65,7 @@ namespace FreedomVoice.Core.Presenters
         private long? _conversationId;
         private string _phoneNumber;
         private string _accountNumber;
+        private bool isMsgReadCacheUpdated =false;
 
         #endregion
 
@@ -205,8 +206,8 @@ namespace FreedomVoice.Core.Presenters
             bool isUpdatePending = await IsMessageReadUpdatePending();
             if (isUpdatePending)
             {
+                isMsgReadCacheUpdated = true;
                 await NotificationMessageService.Instance().ReceivedMessageReadNotification(_conversationId.Value);
-                await _messagesService.UpdateMessageReadStatus(AccountNumber, _conversationId.Value);
             }
         }
 
@@ -230,7 +231,7 @@ namespace FreedomVoice.Core.Presenters
         public async Task SendMessageReadStatusAsync()
         {
             bool isUpdatePending = await IsMessageReadUpdatePending();
-            if (isUpdatePending)
+            if (isUpdatePending || isMsgReadCacheUpdated)
             {
                 await _messagesService.UpdateMessageReadStatus(AccountNumber, _conversationId.Value);
             }

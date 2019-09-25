@@ -16,6 +16,7 @@ using FreedomVoice.Core.Presenters;
 using com.FreedomVoice.MobileApp.Android.Dialogs;
 using Com.Orangegangsters.Github.Swipyrefreshlayout.Library;
 using Java.Lang;
+using Android.Support.V4.App;
 
 namespace com.FreedomVoice.MobileApp.Android.Fragments
 {
@@ -91,10 +92,19 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             ConversationPhone = Arguments?.GetString(ExtraConversationPhone);
             var convId = Arguments?.GetLong(ExtraConversationId, -1);
             ConversationId = convId == -1 ? null : convId;
-            
+            ClearNotification();
             ConversationSelected();
         }
 
+        private void ClearNotification()
+        {
+            var manager = NotificationManagerCompat.From(this.Context);
+            if (ConversationId != null)
+            {
+                Console.WriteLine("!!!!!!!!!!!!!!!!!! Cleared notification!!!!!!!!!!!!!!!!!!!!!");
+                manager.Cancel(Convert.ToInt32(ConversationId.Value));
+            }
+        }
         protected void SetTitle(string title)
         {
             if (title == null || title.Length <= 0)
@@ -175,6 +185,7 @@ namespace com.FreedomVoice.MobileApp.Android.Fragments
             _presenter.MessageSent -= PresenterOnMessageSent;
             _onScrollListener.ScrollEvent -= ScrollChanged;
             _swipyRefreshLayout.Refresh -= SwipeLayoutRefresh;
+            ClearNotification();
         }
 
         private void SwipeLayoutRefresh(object sender, SwipyRefreshLayout.RefreshEventArgs refreshEventArgs)

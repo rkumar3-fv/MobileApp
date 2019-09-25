@@ -266,7 +266,7 @@ namespace FreedomVoice.Core
 
             var postdata = "";
             await MakeAsyncPutRequest<string>(
-               $"/api/v1/systems/{systemPhoneNumber}/presentationPhoneNumber/{presentationPhoneNumber}/conversation/{conversationId}/message",
+               $"{APISystemPath}/{systemPhoneNumber}/presentationPhoneNumber/{presentationPhoneNumber}/conversation/{conversationId}/message",
                postdata,
                "application/x-www-form-urlencoded",
                CancellationToken.None);
@@ -332,6 +332,7 @@ namespace FreedomVoice.Core
                 var content = new StringContent(postData, Encoding.UTF8, contentType);
                 var postResp = await Client.PutAsync(url, content, ct);
                 baseRes = await GetResponse<T>(postResp, ct);
+
             }
             catch (WebException ex)
             {
