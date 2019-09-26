@@ -214,6 +214,10 @@ namespace FreedomVoice.Core.Presenters
         public async Task<bool> IsMessageReadUpdatePending()
         {
             bool IsReadStatusPending = false;
+            if (!_conversationId.HasValue || _conversationId.Value <= 0)
+            {
+                return false;
+            }
             var conversation = await _cacheService.GetConversation(_conversationId.Value);
             if (conversation == null)
                 return false;
