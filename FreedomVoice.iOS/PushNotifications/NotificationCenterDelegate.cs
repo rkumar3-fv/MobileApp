@@ -360,13 +360,14 @@ namespace FreedomVoice.iOS.PushNotifications
             }
 
             _logger.Debug(nameof(NotificationCenterDelegate), nameof(DidUpdatePushCredentials), $"'From' phone number has been found: {phoneHolder}");
-            ShowPushNotificationsNow(phoneHolder, bodyValue, subtitleValue, payload.DictionaryPayload), badgeCount;
+            ShowPushNotificationsNow(phoneHolder, bodyValue, subtitleValue, payload.DictionaryPayload, badgeCount);
 
         }
 
         private void ShowPushNotificationsNow(string title, string body, string subtitle, NSDictionary userInfo, int badgeCount)
         {
             _logger.Debug(nameof(NotificationCenterDelegate), nameof(ShowPushNotificationsNow), $"Show alerts as title: {title}, subtitle: {subtitle} body: {body}");
+            UIApplication.SharedApplication.ApplicationIconBadgeNumber = badgeCount;
 
             if (UIDevice.CurrentDevice.CheckSystemVersion(12, 0))
                 ShowPushNotificationsNowForiOS12AndLater(title, body, subtitle, userInfo, badgeCount);
