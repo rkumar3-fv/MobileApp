@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using CoreGraphics;
+using Foundation;
 using FreedomVoice.Core.Presenters;
 using FreedomVoice.iOS.Entities;
 using FreedomVoice.iOS.PushNotifications;
@@ -55,6 +56,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
         
         private IDisposable _observer1;
         private IDisposable _observer2;
+        private NSObject _notificationObject;
         private static MainTabBarController MainTabBarInstance => MainTabBarController.SharedInstance;
 
         private NSLayoutConstraint _bottomConstraint;
@@ -72,6 +74,9 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
 
         public override void ViewDidLoad()
         {
+            _notificationObject = NSNotificationCenter.DefaultCenter.AddObserver(
+                     UIApplication.DidEnterBackgroundNotification,
+                     OnBecameInActive);
             base.ViewDidLoad();
             _SetupViews();
             _SetupConstraints();
@@ -79,6 +84,21 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
             AutomaticallyAdjustsScrollViewInsets = false;
             Presenter.MessageSent += PresenterOnMessageSent;
             _SubscribeToEvents();
+            Presenter.MessagedRead();
+        }
+        protected async void SendMessageReadStatus()
+        {
+            if (_notificationObject != null)
+            {
+                NSNotificationCenter.DefaultCenter.RemoveObserver(_notificationObject);
+                _notificationObject = null;
+            }
+            await Presenter.SendMessageReadStatusAsync();
+        }
+
+        void OnBecameInActive(NSNotification notification)
+        {
+            SendMessageReadStatus();
         }
 
         public override void ViewWillAppear(bool animated)
@@ -91,6 +111,7 @@ namespace FreedomVoice.iOS.ViewControllers.Texts
         {
             base.ViewWillDisappear(animated);
             if (TabBarController != null) TabBarController.TabBar.Hidden = false;
+            SendMessageReadStatus();
         }
 
         public override void ViewDidUnload()

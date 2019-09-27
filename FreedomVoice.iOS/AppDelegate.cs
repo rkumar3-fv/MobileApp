@@ -374,6 +374,7 @@ namespace FreedomVoice.iOS
         // If your application supports background exection this method is called instead of WillTerminate when the user quits.
         public override void DidEnterBackground(UIApplication application)
         {
+            NSNotificationCenter.DefaultCenter.PostNotificationName(UIApplication.DidEnterBackgroundNotification, null);
             Recents.StoreRecentsToCache();
 
             NSUserDefaults.StandardUserDefaults.Synchronize();
